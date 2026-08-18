@@ -34,7 +34,12 @@ namespace Mediapipe.Unity.Sample
     [Header("WebCam Source")]
     [Tooltip("For the default resolution, the one whose width is closest to this value will be chosen")]
 
-    [SerializeField] private int _preferredDefaultWebCamWidth = 1280;
+    [SerializeField] private int _preferredDefaultWebCamWidth = 640;
+    [Tooltip("A connected camera containing one of these names is selected before the generic first-device fallback.")]
+    [SerializeField] private string[] _preferredWebCamDeviceKeywords = new string[] { "CM831", "UGREEN" };
+    [SerializeField] private int _preferredWebCamProfileWidth = 1280;
+    [SerializeField] private int _preferredWebCamProfileHeight = 720;
+    [SerializeField] private int _preferredWebCamProfileFrameRate = 60;
     [SerializeField] private ImageSource.ResolutionStruct[] _defaultAvailableWebCamResolutions = new ImageSource.ResolutionStruct[] {
       new ImageSource.ResolutionStruct(176, 144, 30),
       new ImageSource.ResolutionStruct(320, 240, 30),
@@ -43,9 +48,10 @@ namespace Mediapipe.Unity.Sample
       new ImageSource.ResolutionStruct(640, 480, 30),
       new ImageSource.ResolutionStruct(848, 480, 30),
       new ImageSource.ResolutionStruct(960, 540, 30),
-      new ImageSource.ResolutionStruct(1280, 720, 30),
+      new ImageSource.ResolutionStruct(1280, 720, 60),
       new ImageSource.ResolutionStruct(1600, 896, 30),
       new ImageSource.ResolutionStruct(1920, 1080, 30),
+      new ImageSource.ResolutionStruct(1920, 1080, 60),
     };
 
     [Header("Static Image Source")]
@@ -78,7 +84,11 @@ namespace Mediapipe.Unity.Sample
 
     public WebCamSource BuildWebCamSource() => new WebCamSource(
       _preferredDefaultWebCamWidth,
-      _defaultAvailableWebCamResolutions
+      _defaultAvailableWebCamResolutions,
+      _preferredWebCamDeviceKeywords,
+      _preferredWebCamProfileWidth,
+      _preferredWebCamProfileHeight,
+      _preferredWebCamProfileFrameRate
     );
 
     public StaticImageSource BuildStaticImageSource() => new StaticImageSource(

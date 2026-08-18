@@ -1,0 +1,27 @@
+KiwiAvatarSystem v3.7.1 - External Requirements (No Dependencies Folder)
+==========================================================================
+
+FILE YOU MUST KEEP SEPARATELY
+- com.github.homuler.mediapipe-0.16.3.tgz
+  Install/register it by running SETUP_MEDIAPIPE.cmd before the first Unity launch.
+  It can live anywhere on your PC. It is not copied into the project.
+
+NO SEPARATE FILE DOWNLOAD NEEDED FOR THESE
+Unity Package Manager resolves them from configured registries:
+- com.unity.burst 1.8.29
+- com.unity.collections 2.6.7
+- com.unity.mathematics 1.3.3
+- com.unity.test-framework 1.4.6
+- com.unity.ugui 1.0.0
+- jp.keijiro.klak.spout 2.0.6
+
+ALREADY IN ASSETS
+- UniGLTF / UniVRM 0.130.1 / VRM 0.x
+- KiwiAvatarSystem v3.7.1
+- face_landmarker_v2_with_blendshapes.bytes
+- required Face Landmark Detection project assets
+
+NOT USED
+- Dependencies/ folder
+- embedded MediaPipe package under Packages/
+- unpacked MediaPipe package under Assets/

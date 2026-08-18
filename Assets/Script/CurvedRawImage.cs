@@ -10,11 +10,11 @@ public class CurvedRawImage : RawImage
 
     [Header("Curved Mesh")]
 
-    [Tooltip("‰¡•ûŒü‚Ì•ªŠ„”")]
+    [Tooltip("æ¨ªæ–¹å‘ã®åˆ†å‰²æ•°")]
     [Range(2, 40)]
     public int horizontalSegments = 16;
 
-    [Tooltip("c•ûŒü‚Ì•ªŠ„”")]
+    [Tooltip("ç¸¦æ–¹å‘ã®åˆ†å‰²æ•°")]
     [Range(2, 30)]
     public int verticalSegments = 8;
 
@@ -26,17 +26,17 @@ public class CurvedRawImage : RawImage
     [Header("Curvature")]
 
     [Tooltip(
-        "‰¡•ûŒü‚Ì˜p‹È—ÊB\n" +
-        "ƒvƒ‰ƒX‚Å’[‚ª‰œ‚Ö“ü‚éB\n" +
-        "‹t•ûŒü‚È‚çƒ}ƒCƒiƒX‚É‚·‚éB"
+        "æ¨ªæ–¹å‘ã®æ¹¾æ›²é‡ã€‚\n" +
+        "ãƒ—ãƒ©ã‚¹ã§ç«¯ãŒå¥¥ã¸å…¥ã‚‹ã€‚\n" +
+        "é€†æ–¹å‘ãªã‚‰ãƒã‚¤ãƒŠã‚¹ã«ã™ã‚‹ã€‚"
     )]
     [Range(-50f, 50f)]
     public float horizontalCurveDepth = 10f;
 
 
     [Tooltip(
-        "c•ûŒü‚Ì˜p‹È—ÊB\n" +
-        "–Ú‚Íã‚ßAŒû‚Í­‚µ‹­‚ß‚ª‚¨‚·‚·‚ßB"
+        "ç¸¦æ–¹å‘ã®æ¹¾æ›²é‡ã€‚\n" +
+        "ç›®ã¯å¼±ã‚ã€å£ã¯å°‘ã—å¼·ã‚ãŒãŠã™ã™ã‚ã€‚"
     )]
     [Range(-50f, 50f)]
     public float verticalCurveDepth = 3f;
@@ -49,8 +49,8 @@ public class CurvedRawImage : RawImage
     [Header("Shape")]
 
     [Tooltip(
-        "’†‰›‚ğ­‚µ‘O‚Ö–c‚ç‚Ü‚¹‚é—ÊB\n" +
-        "Šî–{‚Í0‚ÅOKB"
+        "ä¸­å¤®ã‚’å°‘ã—å‰ã¸è†¨ã‚‰ã¾ã›ã‚‹é‡ã€‚\n" +
+        "åŸºæœ¬ã¯0ã§OKã€‚"
     )]
     [Range(-30f, 30f)]
     public float centerBulge = 0f;
@@ -103,7 +103,7 @@ public class CurvedRawImage : RawImage
                 );
 
 
-            // -1 ` +1
+            // -1 ï½ +1
             float normalizedY =
                 v * 2f -
                 1f;
@@ -124,17 +124,17 @@ public class CurvedRawImage : RawImage
                     );
 
 
-                // -1 ` +1
+                // -1 ï½ +1
                 float normalizedX =
                     u * 2f -
                     1f;
 
 
                 // =============================================
-                // ‹È–Ê
+                // æ›²é¢
                 //
-                // ’†‰› = 0
-                // ’[   = ‰œ
+                // ä¸­å¤® = 0
+                // ç«¯   = å¥¥
                 // =============================================
 
                 float curveX =
@@ -160,7 +160,7 @@ public class CurvedRawImage : RawImage
 
 
                 // =============================================
-                // ’†‰›‚Ì–c‚ç‚İ
+                // ä¸­å¤®ã®è†¨ã‚‰ã¿
                 // =============================================
 
                 if (
@@ -188,7 +188,7 @@ public class CurvedRawImage : RawImage
 
 
                 // =============================================
-                // FacePartCropper‚ªİ’è‚µ‚½uvRect‚ğg—p
+                // FacePartCropperãŒè¨­å®šã—ãŸuvRectã‚’ä½¿ç”¨
                 // =============================================
 
                 Vector2 textureUV =
@@ -208,9 +208,9 @@ public class CurvedRawImage : RawImage
 
 
                 // =============================================
-                // Mask—pUV
+                // Maskç”¨UV
                 //
-                // FacePartSoftMask‚ÌTEXCOORD1‚Ö“n‚·
+                // FacePartSoftMaskã®TEXCOORD1ã¸æ¸¡ã™
                 // =============================================
 
                 Vector2 maskUV =
@@ -303,7 +303,7 @@ public class CurvedRawImage : RawImage
 
 
     // =========================================================
-    // Inspector•ÏX‚É‘¦XV
+    // Inspectorå¤‰æ›´æ™‚ã«å³æ›´æ–°
     // =========================================================
 
 #if UNITY_EDITOR

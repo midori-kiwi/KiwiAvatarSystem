@@ -24,6 +24,12 @@ Shader "UI/FacePartSoftMask"
         ) = 1
 
 
+        _PoseVisibility (
+            "Coherent Pose Visibility",
+            Range(0,1)
+        ) = 1
+
+
         // =====================================================
         // Position
         //
@@ -39,8 +45,8 @@ Shader "UI/FacePartSoftMask"
         // =====================================================
         // Legacy Uniform Scale
         //
-        // å›ä∑ê´à€éùópÅB
-        // í èÌÇÕ1.0ÅB
+        // ‰∫íÊèõÊÄßÁ∂≠ÊåÅÁî®„ÄÇ
+        // ÈÄöÂ∏∏„ÅØ1.0„ÄÇ
         // =====================================================
 
         _SampleScale (
@@ -50,10 +56,10 @@ Shader "UI/FacePartSoftMask"
 
 
         // =====================================================
-        // ÅöIndependent X/Y Size Lock
+        // ‚òÖIndependent X/Y Size Lock
         //
-        // x > 1 Å® â°ï˚å¸Çè¨Ç≥Ç≠ï\é¶
-        // y > 1 Å® ècï˚å¸Çè¨Ç≥Ç≠ï\é¶
+        // x > 1 ‚Üí Ê®™ÊñπÂêë„ÇíÂ∞è„Åï„ÅèË°®Á§∫
+        // y > 1 ‚Üí Á∏¶ÊñπÂêë„ÇíÂ∞è„Åï„ÅèË°®Á§∫
         // =====================================================
 
         _SampleScaleXY (
@@ -172,7 +178,11 @@ Shader "UI/FacePartSoftMask"
 
         ZWrite Off
 
-        ZTest [unity_GUIZTestMode]
+        // The fitted eyes and mouth are one facial overlay. Testing each
+        // transparent surface independently against the opaque head made them
+        // pop in and out at grazing angles. Back-side exposure is prevented by
+        // the coherent pose gate instead of per-pixel depth crossings.
+        ZTest Always
 
 
         Blend SrcAlpha OneMinusSrcAlpha
@@ -245,6 +255,8 @@ Shader "UI/FacePartSoftMask"
             float _Feather;
 
             float _MaskVisibility;
+
+            float _PoseVisibility;
 
 
             float4 _SampleOffset;
@@ -360,7 +372,7 @@ Shader "UI/FacePartSoftMask"
 
 
                 // =============================================
-                // ÅöIndependent X/Y limit
+                // ‚òÖIndependent X/Y limit
                 // =============================================
 
                 p.x *=
@@ -427,9 +439,10 @@ Shader "UI/FacePartSoftMask"
                     _SampleOffset.xy;
 
 
-                return saturate(
-                    result
-                );
+                // Keep signed UV coordinates here. FacePartCropper may place
+                // an eye or mouth crop beyond a camera edge to preserve its center.
+                // Early saturation would collapse overscan onto the border.
+                return result;
             }
 
 
@@ -655,10 +668,17 @@ Shader "UI/FacePartSoftMask"
                     );
 
 
+                float insideTexture =
+                    step(0.0, sampleUV.x) *
+                    step(sampleUV.x, 1.0) *
+                    step(0.0, sampleUV.y) *
+                    step(sampleUV.y, 1.0);
+
+
                 fixed4 col =
                     tex2D(
                         _MainTex,
-                        sampleUV
+                        saturate(sampleUV)
                     )
                     *
                     IN.color;
@@ -672,8 +692,12 @@ Shader "UI/FacePartSoftMask"
 
                 col.a *=
                     mask *
+                    insideTexture *
                     saturate(
                         _MaskVisibility
+                    ) *
+                    saturate(
+                        _PoseVisibility
                     );
 
 

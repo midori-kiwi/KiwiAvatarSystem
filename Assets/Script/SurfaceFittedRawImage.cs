@@ -52,7 +52,7 @@ public class SurfaceFittedRawImage : RawImage
     // =========================================================
     // Visual UV Zoom
     //
-    // GeometryÇÕïœçXÇµÇ»Ç¢ÅB
+    // Geometry„ÅØÂ§âÊõ¥„Åó„Å™„ÅÑ„ÄÇ
     // =========================================================
 
     private float _visualZoomX = 1f;
@@ -103,6 +103,11 @@ public class SurfaceFittedRawImage : RawImage
             return _hasSurfaceFit;
         }
     }
+
+
+    public float VisualZoomX => _visualZoomX;
+
+    public float VisualZoomY => _visualZoomY;
 
 
     // =========================================================
@@ -232,6 +237,54 @@ public class SurfaceFittedRawImage : RawImage
     }
 
 
+    public bool TryGetSurfaceLocalPosition(
+        Vector2 normalizedPosition,
+        out Vector3 localPosition)
+    {
+        float u = Mathf.Clamp01(normalizedPosition.x);
+        float v = Mathf.Clamp01(normalizedPosition.y);
+        int xCount = XSegments;
+        int yCount = YSegments;
+
+        float gridX = u * xCount;
+        float gridY = v * yCount;
+        int x0 = Mathf.Clamp(Mathf.FloorToInt(gridX), 0, xCount);
+        int y0 = Mathf.Clamp(Mathf.FloorToInt(gridY), 0, yCount);
+        int x1 = Mathf.Min(x0 + 1, xCount);
+        int y1 = Mathf.Min(y0 + 1, yCount);
+        float tx = gridX - x0;
+        float ty = gridY - y0;
+
+        Vector3 p00 = GetSurfaceGridPosition(x0, y0);
+        Vector3 p10 = GetSurfaceGridPosition(x1, y0);
+        Vector3 p01 = GetSurfaceGridPosition(x0, y1);
+        Vector3 p11 = GetSurfaceGridPosition(x1, y1);
+
+        localPosition = Vector3.Lerp(
+            Vector3.Lerp(p00, p10, tx),
+            Vector3.Lerp(p01, p11, tx),
+            ty
+        );
+        return true;
+    }
+
+
+    private Vector3 GetSurfaceGridPosition(int x, int y)
+    {
+        int expectedCount = (XSegments + 1) * (YSegments + 1);
+        if (
+            _hasSurfaceFit &&
+            _fittedLocalPositions != null &&
+            _fittedLocalPositions.Length == expectedCount
+        )
+        {
+            return _fittedLocalPositions[y * (XSegments + 1) + x];
+        }
+
+        return GetFlatLocalPosition(x, y);
+    }
+
+
     // =========================================================
     // Surface Fit
     // =========================================================
@@ -338,7 +391,7 @@ public class SurfaceFittedRawImage : RawImage
         {
             Debug.LogWarning(
                 name +
-                ": KiwiSurfaceFitter Ç™å©Ç¬Ç©ÇËÇ‹ÇπÇÒÅB"
+                ": KiwiSurfaceFitter „ÅåË¶ã„Å§„Åã„Çä„Åæ„Åõ„Çì„ÄÇ"
             );
         }
     }

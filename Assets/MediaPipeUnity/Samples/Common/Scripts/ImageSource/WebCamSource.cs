@@ -19,15 +19,40 @@ namespace Mediapipe.Unity
   public class WebCamSource : ImageSource
   {
     private readonly int _preferableDefaultWidth = 1280;
+    private readonly string[] _preferredDeviceKeywords;
+    private readonly int _preferredProfileWidth;
+    private readonly int _preferredProfileHeight;
+    private readonly int _preferredProfileFrameRate;
 
     private const string _TAG = nameof(WebCamSource);
 
     private readonly ResolutionStruct[] _defaultAvailableResolutions;
 
     public WebCamSource(int preferableDefaultWidth, ResolutionStruct[] defaultAvailableResolutions)
+      : this(
+          preferableDefaultWidth,
+          defaultAvailableResolutions,
+          Array.Empty<string>(),
+          0,
+          0,
+          0)
+    {
+    }
+
+    public WebCamSource(
+      int preferableDefaultWidth,
+      ResolutionStruct[] defaultAvailableResolutions,
+      string[] preferredDeviceKeywords,
+      int preferredProfileWidth,
+      int preferredProfileHeight,
+      int preferredProfileFrameRate)
     {
       _preferableDefaultWidth = preferableDefaultWidth;
       _defaultAvailableResolutions = defaultAvailableResolutions;
+      _preferredDeviceKeywords = preferredDeviceKeywords ?? Array.Empty<string>();
+      _preferredProfileWidth = preferredProfileWidth;
+      _preferredProfileHeight = preferredProfileHeight;
+      _preferredProfileFrameRate = preferredProfileFrameRate;
     }
 
     private static readonly object _PermissionLock = new object();
@@ -78,6 +103,7 @@ namespace Mediapipe.Unity
       }
     }
     public override string sourceName => (webCamDevice is WebCamDevice valueOfWebCamDevice) ? valueOfWebCamDevice.name : null;
+    public bool usesPreferredProfile => MatchesPreferredDevice(sourceName);
 
     private WebCamDevice[] _availableSources;
     private WebCamDevice[] availableSources
@@ -132,7 +158,8 @@ namespace Mediapipe.Unity
 
       if (availableSources != null && availableSources.Length > 0)
       {
-        webCamDevice = availableSources[0];
+        int preferredSource = FindPreferredSourceIndex(availableSources);
+        webCamDevice = availableSources[preferredSource >= 0 ? preferredSource : 0];
       }
     }
 
@@ -196,6 +223,12 @@ namespace Mediapipe.Unity
       InitializeWebCamTexture();
       webCamTexture.Play();
       yield return WaitForWebCamTexture();
+
+      Debug.Log(
+        $"[{_TAG}] Camera='{sourceName}', requested={resolution}, " +
+        $"actual={webCamTexture.width}x{webCamTexture.height}, " +
+        $"preferredProfile={usesPreferredProfile}"
+      );
     }
 
     public override IEnumerator Resume()
@@ -233,7 +266,67 @@ namespace Mediapipe.Unity
     private ResolutionStruct GetDefaultResolution()
     {
       var resolutions = availableResolutions;
-      return resolutions == null || resolutions.Length == 0 ? new ResolutionStruct() : resolutions.OrderBy(resolution => resolution, new ResolutionStructComparer(_preferableDefaultWidth)).First();
+      if (resolutions == null || resolutions.Length == 0)
+      {
+        return new ResolutionStruct();
+      }
+
+      if (usesPreferredProfile)
+      {
+        return resolutions.OrderBy(
+          value => value,
+          new ResolutionStructComparer(
+            _preferredProfileWidth,
+            _preferredProfileHeight,
+            _preferredProfileFrameRate
+          )
+        ).First();
+      }
+
+      return resolutions.OrderBy(
+        value => value,
+        new ResolutionStructComparer(_preferableDefaultWidth)
+      ).First();
+    }
+
+    public static bool IsCm831DeviceName(string deviceName)
+    {
+      return !string.IsNullOrWhiteSpace(deviceName) &&
+        (deviceName.IndexOf("CM831", StringComparison.OrdinalIgnoreCase) >= 0 ||
+         deviceName.IndexOf("UGREEN", StringComparison.OrdinalIgnoreCase) >= 0);
+    }
+
+    private bool MatchesPreferredDevice(string deviceName)
+    {
+      if (string.IsNullOrWhiteSpace(deviceName))
+      {
+        return false;
+      }
+
+      for (int i = 0; i < _preferredDeviceKeywords.Length; i++)
+      {
+        string keyword = _preferredDeviceKeywords[i];
+        if (!string.IsNullOrWhiteSpace(keyword) &&
+            deviceName.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    private int FindPreferredSourceIndex(WebCamDevice[] sources)
+    {
+      for (int i = 0; i < sources.Length; i++)
+      {
+        if (MatchesPreferredDevice(sources[i].name))
+        {
+          return i;
+        }
+      }
+
+      return -1;
     }
 
     private void InitializeWebCamTexture()
@@ -263,10 +356,22 @@ namespace Mediapipe.Unity
     private class ResolutionStructComparer : IComparer<ResolutionStruct>
     {
       private readonly int _preferableDefaultWidth;
+      private readonly int _preferableHeight;
+      private readonly double _preferableFrameRate;
 
       public ResolutionStructComparer(int preferableDefaultWidth)
+        : this(preferableDefaultWidth, 0, 0)
+      {
+      }
+
+      public ResolutionStructComparer(
+        int preferableDefaultWidth,
+        int preferableHeight,
+        double preferableFrameRate)
       {
         _preferableDefaultWidth = preferableDefaultWidth;
+        _preferableHeight = preferableHeight;
+        _preferableFrameRate = preferableFrameRate;
       }
 
       public int Compare(ResolutionStruct a, ResolutionStruct b)
@@ -277,13 +382,36 @@ namespace Mediapipe.Unity
         {
           return aDiff - bDiff;
         }
-        if (a.height != b.height)
+
+        if (_preferableHeight > 0)
+        {
+          var aHeightDiff = Mathf.Abs(a.height - _preferableHeight);
+          var bHeightDiff = Mathf.Abs(b.height - _preferableHeight);
+          if (aHeightDiff != bHeightDiff)
+          {
+            return aHeightDiff - bHeightDiff;
+          }
+        }
+        else if (a.height != b.height)
         {
           // prefer smaller height
           return a.height - b.height;
         }
-        // prefer smaller frame rate
-        return (int)(a.frameRate - b.frameRate);
+
+        if (_preferableFrameRate > 0)
+        {
+          var aRateDiff = Math.Abs(a.frameRate - _preferableFrameRate);
+          var bRateDiff = Math.Abs(b.frameRate - _preferableFrameRate);
+          int rateComparison = aRateDiff.CompareTo(bRateDiff);
+          if (rateComparison != 0)
+          {
+            return rateComparison;
+          }
+        }
+
+        // Lower capture intervals reduce motion-to-photon latency. Prefer the
+        // highest device-reported frame rate when width and height are equal.
+        return b.frameRate.CompareTo(a.frameRate);
       }
     }
   }

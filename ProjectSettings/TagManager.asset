@@ -3,18 +3,17 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags:
-  - Global Resource
+  tags: []
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - VtuberMode1
+  - 
   - Water
   - UI
   - 
   - 
-  - 
+  - VTuberModel1
   - 
   - 
   - 
@@ -42,3 +41,5 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  m_RenderingLayers:
+  - Default

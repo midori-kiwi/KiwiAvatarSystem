@@ -9,8 +9,8 @@ using Mediapipe.Unity.Sample.FaceLandmarkDetection;
 public class FacePartAngleLock : MonoBehaviour
 {
     [Header("Landmarker Direct Tracking")]
-    [Tooltip("ON: angle compensation uses each newest Landmarker angle with zero temporal dead-zone.")]
-    public bool strictLandmarkerTracking = true;
+    [Tooltip("ON: angle compensation jumps at Landmarker cadence. OFF interpolates at render cadence with a very short time constant.")]
+    public bool strictLandmarkerTracking = false;
 
 
     // =========================================================
@@ -34,7 +34,7 @@ public class FacePartAngleLock : MonoBehaviour
     [Header("References")]
 
     [Tooltip(
-        "Solution ‚Ì FaceLandmarkerRunner"
+        "Solution ã® FaceLandmarkerRunner"
     )]
     public FaceLandmarkerRunner runner;
 
@@ -56,16 +56,16 @@ public class FacePartAngleLock : MonoBehaviour
     [Header("Angle Lock")]
 
     [Tooltip(
-        "Camera‰f‘œ“à‚Ì–ÚEŒû‚Ì‰ñ“]‚ğ‘ŠE‚·‚é"
+        "Cameraæ˜ åƒå†…ã®ç›®ãƒ»å£ã®å›è»¢ã‚’ç›¸æ®ºã™ã‚‹"
     )]
     public bool enableAngleLock =
         true;
 
 
     [Tooltip(
-        "1.0 = Camera‘¤‚ÌŠp“x•Ï‰»‚ğ100%‘ŠEB\n"
+        "1.0 = Cameraå´ã®è§’åº¦å¤‰åŒ–ã‚’100%ç›¸æ®ºã€‚\n"
         +
-        "3DƒLƒEƒC–{‘Ì‚Ì‰ñ“]‚¾‚¯‚ªc‚éB"
+        "3Dã‚­ã‚¦ã‚¤æœ¬ä½“ã®å›è»¢ã ã‘ãŒæ®‹ã‚‹ã€‚"
     )]
     [Range(0f, 1f)]
     public float angleLockStrength =
@@ -73,7 +73,7 @@ public class FacePartAngleLock : MonoBehaviour
 
 
     [Tooltip(
-        "‚±‚ÌŠp“xˆÈ‰º‚Ì•Ï‰»‚ÍƒmƒCƒY‚Æ‚µ‚Ä–³‹"
+        "ã“ã®è§’åº¦ä»¥ä¸‹ã®å¤‰åŒ–ã¯ãƒã‚¤ã‚ºã¨ã—ã¦ç„¡è¦–"
     )]
     [Range(0f, 3f)]
     public float angleDeadZone =
@@ -81,11 +81,22 @@ public class FacePartAngleLock : MonoBehaviour
 
 
     [Tooltip(
-        "ˆÙíŒŸo‚É‰ñ‚è‚·‚¬‚È‚¢‚½‚ß‚ÌÅ‘å•â³Šp“x"
+        "ç•°å¸¸æ¤œå‡ºæ™‚ã«å›ã‚Šã™ããªã„ãŸã‚ã®æœ€å¤§è£œæ­£è§’åº¦"
     )]
     [Range(5f, 90f)]
     public float maximumCorrectionAngle =
         55f;
+
+
+    [Tooltip("Render-rate response for eye/mouth counter-rotation. High values remove sample steps without adding visible lag.")]
+    [Range(30f, 400f)]
+    public float correctionRenderResponse =
+        180f;
+
+
+    [Tooltip("Uses the center of the UV crop that is actually being rendered as the counter-rotation pivot. This prevents raw landmark updates from moving an eye inside an interpolated crop while the face is tilted.")]
+    public bool lockPivotToRenderedCrop =
+        true;
 
 
     // =========================================================
@@ -95,7 +106,7 @@ public class FacePartAngleLock : MonoBehaviour
     [Header("Front Angle Calibration")]
 
     [Tooltip(
-        "PlayŠJnŒãA³–Ê‚ğŒü‚¢‚Ä‘Ò‚ÂŠÔ"
+        "Playé–‹å§‹å¾Œã€æ­£é¢ã‚’å‘ã„ã¦å¾…ã¤æ™‚é–“"
     )]
     [Range(0f, 2f)]
     public float calibrationDelay =
@@ -103,7 +114,7 @@ public class FacePartAngleLock : MonoBehaviour
 
 
     [Tooltip(
-        "³–ÊŠp“x‚ğ•½‹Ï‚·‚éƒTƒ“ƒvƒ‹”"
+        "æ­£é¢è§’åº¦ã‚’å¹³å‡ã™ã‚‹ã‚µãƒ³ãƒ—ãƒ«æ•°"
     )]
     [Range(3, 30)]
     public int calibrationSamples =
@@ -117,16 +128,16 @@ public class FacePartAngleLock : MonoBehaviour
     [Header("Eye Mapping")]
 
     [Tooltip(
-        "Œ»İ‚ÌUV Rect‚©‚ç³‚µ‚¢¶‰E‚Ì–Ú‚ğ©“®‘I‘ğ"
+        "ç¾åœ¨ã®UV Rectã‹ã‚‰æ­£ã—ã„å·¦å³ã®ç›®ã‚’è‡ªå‹•é¸æŠ"
     )]
     public bool automaticEyeMatching =
         true;
 
 
     [Tooltip(
-        "ˆê“xŒˆ’è‚µ‚½¶‰E‘Î‰‚ğŒÅ’è‚·‚éB\n"
+        "ä¸€åº¦æ±ºå®šã—ãŸå·¦å³å¯¾å¿œã‚’å›ºå®šã™ã‚‹ã€‚\n"
         +
-        "ƒEƒCƒ“ƒN‚Ì“ü‚ê‘Ö‚í‚è–h~B"
+        "ã‚¦ã‚¤ãƒ³ã‚¯æ™‚ã®å…¥ã‚Œæ›¿ã‚ã‚Šé˜²æ­¢ã€‚"
     )]
     public bool lockEyeAssignment =
         true;
@@ -176,7 +187,7 @@ public class FacePartAngleLock : MonoBehaviour
     // MediaPipe landmarks
     // =========================================================
 
-    // 362 / 263 ‘¤
+    // 362 / 263 å´
     private static readonly int[] EyeAIndices =
     {
         362,
@@ -200,7 +211,7 @@ public class FacePartAngleLock : MonoBehaviour
     };
 
 
-    // 33 / 133 ‘¤
+    // 33 / 133 å´
     private static readonly int[] EyeBIndices =
     {
         33,
@@ -280,7 +291,6 @@ public class FacePartAngleLock : MonoBehaviour
     private const int MouthEnd =
         291;
 
-
     // =========================================================
     // Runtime
     // =========================================================
@@ -335,12 +345,12 @@ public class FacePartAngleLock : MonoBehaviour
     // =========================================================
     // Calibration
     //
-    // Angle is 180‹ periodic.
+    // Angle is 180Â° periodic.
     //
     // Therefore average:
     //
-    // sin(2ƒÆ)
-    // cos(2ƒÆ)
+    // sin(2Î¸)
+    // cos(2Î¸)
     //
     // instead of normal angle average.
     // =========================================================
@@ -375,6 +385,18 @@ public class FacePartAngleLock : MonoBehaviour
 
     private float _heldCorrectionAngle =
         0f;
+
+
+    private float _targetCorrectionAngle =
+        0f;
+
+
+    private Vector2 _heldPivot =
+        Vector2.one * 0.5f;
+
+
+    private Vector2 _targetPivot =
+        Vector2.one * 0.5f;
 
 
     // =========================================================
@@ -431,7 +453,7 @@ public class FacePartAngleLock : MonoBehaviour
         if (runner == null)
         {
             runner =
-                FindObjectOfType<
+                FindFirstObjectByType<
                     FaceLandmarkerRunner
                 >();
         }
@@ -502,24 +524,18 @@ public class FacePartAngleLock : MonoBehaviour
 
 
         bool valid =
-            runner.TryGetLatestLandmarks(
+            runner.TryGetLatestLandmarksIfChanged(
                 ref _landmarks,
+                _lastTimestamp,
                 out landmarkCount,
-                out timestamp
+                out timestamp,
+                out _
             );
 
 
         if (!valid)
         {
-            return;
-        }
-
-
-        if (
-            timestamp ==
-            _lastTimestamp
-        )
-        {
+            AdvanceRenderedCorrection(material);
             return;
         }
 
@@ -658,10 +674,23 @@ public class FacePartAngleLock : MonoBehaviour
             0.5f;
 
 
+        // Use exactly the same complete-lip bounds center as FacePartCropper.
+        // A different pivot would reintroduce drift when size limiting or
+        // angle correction is applied after the crop has been centered.
+        if (
+            resolvedPart == PartType.Mouth
+        )
+        {
+            pivot = CalculateOrientedBoundsCenter(
+                MouthIndices
+            );
+        }
+
+
         // =====================================================
         // Current feature angle
         //
-        // šNormalized UV angle is NOT enough.
+        // â˜…Normalized UV angle is NOT enough.
         //
         // X is converted by texture aspect so
         // 16:9 / 4:3 cameras produce correct angles.
@@ -733,13 +762,13 @@ public class FacePartAngleLock : MonoBehaviour
         else
         {
             // =================================================
-            // šFull compensation
+            // â˜…Full compensation
             //
-            // Camera feature rotates +ƒÆ
+            // Camera feature rotates +Î¸
             //
-            // Sampling coordinates rotate +ƒÆ
+            // Sampling coordinates rotate +Î¸
             //
-            // Displayed feature rotates -ƒÆ
+            // Displayed feature rotates -Î¸
             //
             // Result:
             // Camera-side rotation is cancelled.
@@ -760,22 +789,81 @@ public class FacePartAngleLock : MonoBehaviour
 
 
         // =====================================================
-        // šNO LERP
+        // â˜…NO LERP
         //
-        // Tracking latency‚ğ‘‚â‚³‚È‚¢B
+        // Tracking latencyã‚’å¢—ã‚„ã•ãªã„ã€‚
         // =====================================================
 
-        _heldCorrectionAngle =
+        _targetCorrectionAngle =
             targetCorrection;
+
+
+        _targetPivot =
+            pivot;
+
+
+        AdvanceRenderedCorrection(material);
+
+
+        return;
+    }
+
+
+    private void AdvanceRenderedCorrection(
+        Material material)
+    {
+        if (!_calibrated)
+        {
+            return;
+        }
+
+
+        if (strictLandmarkerTracking)
+        {
+            _heldCorrectionAngle =
+                _targetCorrectionAngle;
+        }
+        else
+        {
+            float dt =
+                Mathf.Clamp(
+                    Time.unscaledDeltaTime,
+                    1f / 500f,
+                    0.05f
+                );
+
+
+            float responseT =
+                1f -
+                Mathf.Exp(
+                    -Mathf.Max(1f, correctionRenderResponse) *
+                    dt
+                );
+
+
+            _heldCorrectionAngle =
+                Mathf.LerpAngle(
+                    _heldCorrectionAngle,
+                    _targetCorrectionAngle,
+                    responseT
+                );
+        }
 
 
         debugCorrectionAngle =
             _heldCorrectionAngle;
 
 
+        _heldPivot = KiwiFacePartTiltMath.ResolveRotationPivot(
+            lockPivotToRenderedCrop,
+            _image != null ? _image.uvRect : default,
+            _targetPivot
+        );
+
+
         SetRotation(
             material,
-            pivot,
+            _heldPivot,
             _heldCorrectionAngle
         );
     }
@@ -791,10 +879,21 @@ public class FacePartAngleLock : MonoBehaviour
         float angle,
         long timestamp)
     {
+        _targetPivot =
+            pivot;
+
+
+        _heldPivot = KiwiFacePartTiltMath.ResolveRotationPivot(
+            lockPivotToRenderedCrop,
+            _image != null ? _image.uvRect : default,
+            _targetPivot
+        );
+
+
         // Compensation off during calibration.
         SetRotation(
             material,
-            pivot,
+            _heldPivot,
             0f
         );
 
@@ -820,11 +919,11 @@ public class FacePartAngleLock : MonoBehaviour
 
 
         // =====================================================
-        // 180‹ periodic angle averaging
+        // 180Â° periodic angle averaging
         //
-        // ƒÆ and ƒÆ+180 are the same line orientation.
+        // Î¸ and Î¸+180 are the same line orientation.
         //
-        // therefore use 2ƒÆ.
+        // therefore use 2Î¸.
         // =====================================================
 
         float doubleRad =
@@ -957,7 +1056,7 @@ public class FacePartAngleLock : MonoBehaviour
     //
     // A line does not have a direction.
     //
-    // 0‹ = 180‹
+    // 0Â° = 180Â°
     //
     // Result:
     // -90 .. +90
@@ -993,7 +1092,7 @@ public class FacePartAngleLock : MonoBehaviour
     // =========================================================
     // Line angle delta
     //
-    // 180‹ periodic.
+    // 180Â° periodic.
     // =========================================================
 
     private float DeltaLineAngle(
@@ -1376,6 +1475,40 @@ public class FacePartAngleLock : MonoBehaviour
     }
 
 
+    private Vector2 CalculateOrientedBoundsCenter(
+        int[] indices)
+    {
+        Vector2 minimum =
+            new Vector2(
+                float.MaxValue,
+                float.MaxValue
+            );
+
+        Vector2 maximum =
+            new Vector2(
+                float.MinValue,
+                float.MinValue
+            );
+
+
+        for (int i = 0; i < indices.Length; i++)
+        {
+            Vector2 point =
+                ApplyOrientation(
+                    _landmarks[indices[i]]
+                );
+
+            minimum = Vector2.Min(minimum, point);
+            maximum = Vector2.Max(maximum, point);
+        }
+
+
+        return
+            (minimum + maximum) *
+            0.5f;
+    }
+
+
     // =========================================================
     // Orientation
     // =========================================================
@@ -1545,7 +1678,7 @@ public class FacePartAngleLock : MonoBehaviour
     // =========================================================
     // Recalibrate
     //
-    // ³–Ê‚ğŒü‚¢‚ÄÀsB
+    // æ­£é¢ã‚’å‘ã„ã¦å®Ÿè¡Œã€‚
     // =========================================================
 
     [ContextMenu("Recalibrate Front Angle")]
@@ -1581,6 +1714,18 @@ public class FacePartAngleLock : MonoBehaviour
 
         _heldCorrectionAngle =
             0f;
+
+
+        _targetCorrectionAngle =
+            0f;
+
+
+        _heldPivot =
+            Vector2.one * 0.5f;
+
+
+        _targetPivot =
+            Vector2.one * 0.5f;
 
 
         debugCalibrated =
@@ -1660,6 +1805,18 @@ public class FacePartAngleLock : MonoBehaviour
 
         _heldCorrectionAngle =
             0f;
+
+
+        _targetCorrectionAngle =
+            0f;
+
+
+        _heldPivot =
+            Vector2.one * 0.5f;
+
+
+        _targetPivot =
+            Vector2.one * 0.5f;
 
 
         debugCalibrated =
@@ -1768,5 +1925,41 @@ public class FacePartAngleLock : MonoBehaviour
     private void OnDisable()
     {
         ResetShaderRotation();
+    }
+}
+
+
+public static class KiwiFacePartTiltMath
+{
+    public static Vector2 ResolveRotationPivot(
+        bool lockToRenderedCrop,
+        Rect renderedCrop,
+        Vector2 landmarkPivot)
+    {
+        if (
+            lockToRenderedCrop &&
+            IsFinite(renderedCrop.center) &&
+            IsFinite(renderedCrop.size) &&
+            Mathf.Abs(renderedCrop.width) > 0.000001f &&
+            Mathf.Abs(renderedCrop.height) > 0.000001f
+        )
+        {
+            return renderedCrop.center;
+        }
+
+
+        return IsFinite(landmarkPivot)
+            ? landmarkPivot
+            : Vector2.one * 0.5f;
+    }
+
+
+    private static bool IsFinite(Vector2 value)
+    {
+        return
+            !float.IsNaN(value.x) &&
+            !float.IsInfinity(value.x) &&
+            !float.IsNaN(value.y) &&
+            !float.IsInfinity(value.y);
     }
 }

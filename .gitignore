@@ -51,3 +51,23 @@ crashlytics-build.properties
 # Auto-generated StreamingAssets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# ============================================================
+# KiwiAvatarSystem - Local backups / installers / external tools
+# ============================================================
+
+# Project backup archives
+/Backups/
+
+# Local MediaPipe package archives
+/Packages/*.tgz
+/Packages/*.tar.gz
+
+# FFmpeg binaries
+/Tools/ffmpeg/bin/*.exe
+
+# Unity installers
+/Tools/UnityInstallers/
+
+# Generic installer files
+*.msi

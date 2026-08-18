@@ -1,0 +1,127 @@
+KiwiAvatarSystem v5.3.0 Validation
+=================================
+
+[PASS] Supplied 50.228 s recording inspected from native H.264 source
+[PASS] Recording metadata: 2560x1352, H.264, 23.9308 fps
+[PASS] Runtime diagnostics show render output at roughly 40-48 fps
+[PASS] Runtime diagnostics isolate accepted LandMarker results at roughly 6-8 Hz
+[PASS] Unity 2022.3.62f2 batch compilation
+[PASS] MediaPipe Face LandMarker remains the only tracking source
+[PASS] LIVE_STREAM / platform-selected CPU or CPUAsync path retained without an artificial 10 Hz throttle
+[PASS] CPU or CPUAsync readback starts only for an observed fresh WebCamTexture frame
+[PASS] Update observer retains camera updates while the coroutine awaits readback
+[PASS] Generation-counted latest-frame mailbox cannot erase a newer camera frame
+[PASS] LIVE_STREAM minimum-latency default does not serialize readback and inference
+[PASS] Windows LandMarker input is capped at 480 pixels wide while 640x360 face-part textures remain independent
+[PASS] 640x360 to 480x270 reduces the current tracking readback pixels by 43.75 percent
+[PASS] CPU and CPUAsync frame-pool capacity reduced from 10 to 2
+[PASS] Runtime adjustment foldouts start collapsed while diagnostics remain visible
+[PASS] Unchanged shader scale and mouth visibility values are not resent every render frame
+[PASS] Zero camera-follow mode bypasses unnecessary SmoothDamp work
+[PASS] Source-frame host time is latched before platform-selected readback
+[PASS] Complete measured-result-age compensation installed
+[PASS] Ultra compensation ceiling increased from 0.028 s to 0.100 s
+[PASS] Prediction strength 1.00 and low-speed activation installed
+[PASS] Display response increased to 110 / 220
+[PASS] Static pose lock defaults OFF; adaptive micro-jitter filter remains ON
+[PASS] 478-point debug annotation presentation defaults OFF
+[PASS] Source / submission / result Hz and readback latency diagnostics installed
+[PASS] Current scene explicitly enables v4.8 continuous fresh-frame defaults
+[PASS] Previously saved v8 pipeline settings are intentionally ignored during v4.8 upgrade
+[PASS] Render-boundary prediction refresh removes LateUpdate-to-render motion age
+[PASS] Intentional rotation bypasses the final display smoother
+[PASS] Intentional X/Y movement uses continuous velocity feed-forward
+[PASS] Intentional depth movement bypasses the final display smoother
+[PASS] Rest/microscopic motion retains display-rate anti-jitter smoothing
+[PASS] v9 settings key prevents saved v8 serial-gate values overriding v4.8 defaults
+[PASS] Position correction response reduced from 70 to 45 while feed-forward remains immediate
+[PASS] High-resolution 1280x720 at 60 fps option remains available
+[PASS] Equal-resolution modes prefer the highest precise reported frame rate
+[PASS] Supplied v5.2 recording inspected from native H.264 source
+[PASS] v5.2 recording metadata: 30.18 seconds, 2560x1352, H.264, 26.28 average encoded fps
+[PASS] Recording diagnostics show Render 87.5-104.4 fps
+[PASS] Recording diagnostics show source 15.7-18.5 Hz and results 16.8-19.2 Hz
+[PASS] Recording diagnostics isolate 640x360 synchronous readback at 45.3-48.2 ms
+[PASS] Windows LandMarker input reduced to 480x270 while visible eye/mouth textures stay 640x360
+[PASS] Persistent downscaled RenderTexture bypasses redundant EndOfFrame wait
+[PASS] Crop position/size resample at render rate with response 180/200 and no crop prediction
+[PASS] Mask contours resample at render rate using fixed preallocated buffers
+[PASS] Eye blink visibility fades at render rate instead of binary Canvas alpha switching
+[PASS] Face-part counter-rotation resamples at render rate
+[PASS] Mouth-height calibration defaults OFF, preserving the no-downward-drift path
+[PASS] Runtime panel exposes and persists input, crop, contour, rotation, blink, and height-lock controls under settings key v12
+[PASS] Settling at 100 render fps: response 180 reaches 97.3 percent and response 200 reaches 98.2 percent in two frames
+[PASS] Converged contours stop redundant shader array uploads
+[PASS] Supplied v5.1 recording inspected from native H.264 source
+[PASS] v5.1 recording metadata: 28.16 seconds, 2560x1352, 357 decoded frames
+[PASS] Recording diagnostics show Render 50-54 fps
+[PASS] Recording diagnostics show source, submission and results only 7.2-7.9 Hz
+[PASS] Recording diagnostics isolate 960x540 DX11 readback at 89-96 ms
+[PASS] Recording source-to-result age is 99-104 ms with estimated model work about 5-10 ms
+[PASS] Windows default camera profile changed to 640x360 at 30 fps
+[PASS] Windows LandMarker input changed to bounded 640x360
+[PASS] Windows uses synchronous CPU readback to avoid the measured asynchronous queue
+[PASS] Android and iOS retain CPUAsync readback
+[PASS] Diagnostics separate camera/input resolutions and source-to-result/model timing
+[PASS] Steady movement retains response 45 and predictive feed-forward
+[PASS] Stop / acceleration / reversal recovery adapts up to response 180
+[PASS] At 60 render fps recovery applies 95.02 percent of a new residual in one frame
+[PASS] Recovery response is exposed, finite-clamped and persisted under current settings key v11
+[PASS] Rotation, position and depth velocity estimates use independent consistency-adaptive response
+[PASS] Coherent 60 Hz first velocity estimate improves from 63.2 to 86.2 percent
+[PASS] Coherent velocity estimate exceeds 99 percent after the next sample
+[PASS] Inconsistent/noisy velocity retains the stable response 60 path
+[PASS] Camera exposure midpoint compensation derives from measured source Hz, not result Hz
+[PASS] Capture compensation is 8.33 ms at 60 Hz, 16.67 ms at 30 Hz, and capped at 20 ms
+[PASS] Velocity/capture controls persist under settings key v11 and capture compensation is diagnostic
+[PASS] Constant-velocity position resampling adds zero smoothing delay
+[PASS] New LandMarker position corrections blend instead of snapping
+[PASS] Position correction is invariant across render-frame subdivision
+[PASS] Shared host-time delta prevents LateUpdate/onBeforeRender double advancement
+[PASS] Runtime controls save/load with finite range clamps
+[PASS] Avatar-right yaw, roll and combined right/down mapping
+[PASS] Tracked-right translation maps to Kiwi-own-right
+[PASS] Mouth crop center uses all 20 outer-lip landmarks
+[PASS] Wide-open mouth receives dynamic upper/lower safety clearance
+[PASS] Mouth scale/rotation pivot uses the identical 20-point bounds center
+[PASS] Mouth safety path adds no temporal filter or calibration delay
+[PASS] Camera-edge mouth UV preserves its calculated center beyond 0/1
+[PASS] Signed shader UV prevents overscan vertices collapsing onto the texture edge
+[PASS] Out-of-texture pixels are transparent rather than repeated or stretched
+[PASS] 36 edge/extreme-size cases: old maximum drift 0.476190, new drift 0.000000
+[PASS] Direct BuildMouthRect injection preserves the signed mouth edge center
+[PASS] Direct BuildEyeRect injection preserves the signed eye edge center
+[PASS] Strict and interpolated eye paths no longer push whole eyes inward at texture edges
+[PASS] Mouth edge state uses all 20 actual outer-lip landmarks, not padded crop bounds
+[PASS] Mouth hide/show spatial hysteresis prevents boundary flicker
+[PASS] Actual outer-lip loss triggers same-sample complete mouth hiding
+[PASS] Render-rate fade math reaches hidden/restored state in 0.040 / 0.060 seconds
+[PASS] Runtime panel exposes and persists mouth-edge and eye-center safety controls
+[PASS] Prediction reversal consistency and absolute safety caps retained
+[PASS] Changed-only landmark consumers retained
+[PASS] Face runner source/template SHA-256 match
+[PASS] Face motion source/template SHA-256 match
+[PASS] Safe installer v5.3.0 target SHA-256 match
+[PASS] Duplicate artifact suffix scan
+[PASS] Optimization validator 25 / 25
+[PASS] Direction math 100,000-iteration check: 18.95 ms
+
+RESULT: 104 / 104 PASS
+
+2026-08-13 face-part dropout continuity update:
+[PASS] Supplied 12.26-second recording decoded and all 317 frames inspected
+[PASS] Common eye/mouth one-frame dropouts isolated at frame 166 (6.418 s) and frame 224 (8.661 s)
+[PASS] Tracking-loss rendering freezes the last valid eye/mouth crops instead of disabling all RawImages
+[PASS] Reacquisition preserves pre-loss crop state and resumes high-response interpolation
+[PASS] Coherent face translations pass the mouth continuity guard without an added frame
+[PASS] Isolated mouth UV spikes are rejected relative to common eye translation
+[PASS] Mouth camera-edge hiding requires two consecutive Landmarker results
+[PASS] Existing mouth edge fade and safe re-entry hysteresis remain active
+[PASS] Runtime controls expose and persist dropout freeze, mouth-spike rejection and edge confirmation count
+[PASS] Application and package version remain fixed at 1.0.0
+[PASS] Unity 2022.3.62f2 batchmode compile and KiwiOptimizationValidator 29 / 29
+
+Not performed:
+- a new live webcam capture after this v5.3.0 latency/flicker optimization
+- Android physical-device performance measurement
+- iOS physical-device verification (intentionally out of scope)

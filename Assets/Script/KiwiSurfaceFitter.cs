@@ -11,15 +11,15 @@ public class KiwiSurfaceFitter : MonoBehaviour
     [Header("Kiwi Model")]
 
     [Tooltip(
-        "ƒLƒEƒC–{‘Ì‚ÌSkinnedMeshRendererB\n" +
-        "‹ó—“‚È‚ç©“®ŒŸõB"
+        "ã‚­ã‚¦ã‚¤æœ¬ä½“ã®SkinnedMeshRendererã€‚\n" +
+        "ç©ºæ¬„ãªã‚‰è‡ªå‹•æ¤œç´¢ã€‚"
     )]
     public SkinnedMeshRenderer targetRenderer;
 
 
     [Tooltip(
-        "©“®ŒŸõ‚·‚éVRM RootB\n" +
-        "‹ó—“‚È‚ç transform.rootB"
+        "è‡ªå‹•æ¤œç´¢ã™ã‚‹VRM Rootã€‚\n" +
+        "ç©ºæ¬„ãªã‚‰ transform.rootã€‚"
     )]
     public Transform modelRoot;
 
@@ -31,8 +31,8 @@ public class KiwiSurfaceFitter : MonoBehaviour
     [Header("Face Parts")]
 
     [Tooltip(
-        "–ÚEŒû‚ğŒŸõ‚·‚éRootB\n" +
-        "‹ó—“‚È‚ç‚±‚ÌGameObjectˆÈ‰ºB"
+        "ç›®ãƒ»å£ã‚’æ¤œç´¢ã™ã‚‹Rootã€‚\n" +
+        "ç©ºæ¬„ãªã‚‰ã“ã®GameObjectä»¥ä¸‹ã€‚"
     )]
     public Transform partsRoot;
 
@@ -50,8 +50,8 @@ public class KiwiSurfaceFitter : MonoBehaviour
 
 
     [Tooltip(
-        "Unity‚ÌTransform / Canvas‚ªŠm’è‚µ‚Ä‚©‚ç" +
-        "1ƒtƒŒ[ƒ€‘Ò‚Á‚ÄSurface Fit‚·‚éB"
+        "Unityã®Transform / CanvasãŒç¢ºå®šã—ã¦ã‹ã‚‰" +
+        "1ãƒ•ãƒ¬ãƒ¼ãƒ å¾…ã£ã¦Surface Fitã™ã‚‹ã€‚"
     )]
     public bool waitOneFrame = true;
 
@@ -63,16 +63,16 @@ public class KiwiSurfaceFitter : MonoBehaviour
     [Header("Raycast")]
 
     [Tooltip(
-        "ƒ‚ƒfƒ‹”¼Œa‚É‘Î‚·‚éRayŠJn‹——£B" +
-        "’Êí‚Í•ÏX•s—vB"
+        "ãƒ¢ãƒ‡ãƒ«åŠå¾„ã«å¯¾ã™ã‚‹Rayé–‹å§‹è·é›¢ã€‚" +
+        "é€šå¸¸ã¯å¤‰æ›´ä¸è¦ã€‚"
     )]
     [Range(1.2f, 6f)]
     public float rayStartMultiplier = 2.5f;
 
 
     [Tooltip(
-        "Ray‘S’·‚Ì”{—¦B" +
-        "’Êí‚Í•ÏX•s—vB"
+        "Rayå…¨é•·ã®å€ç‡ã€‚" +
+        "é€šå¸¸ã¯å¤‰æ›´ä¸è¦ã€‚"
     )]
     [Range(2f, 12f)]
     public float rayLengthMultiplier = 6f;
@@ -99,6 +99,16 @@ public class KiwiSurfaceFitter : MonoBehaviour
 
 
     private bool _isFitting = false;
+
+    [Range(0f, 1f)]
+    public float minimumSuccessfulFitRate = 0.70f;
+
+    public int LastTotalVertices { get; private set; }
+    public int LastTotalHits { get; private set; }
+    public float LastSuccessRate { get; private set; }
+    public bool LastFitSucceeded =>
+        LastTotalVertices > 0 &&
+        LastSuccessRate >= minimumSuccessfulFitRate;
 
 
     // =========================================================
@@ -142,6 +152,10 @@ public class KiwiSurfaceFitter : MonoBehaviour
         _isFitting =
             true;
 
+        LastTotalVertices = 0;
+        LastTotalHits = 0;
+        LastSuccessRate = 0f;
+
 
         bool oldQueriesHitBackfaces =
             Physics.queriesHitBackfaces;
@@ -163,7 +177,7 @@ public class KiwiSurfaceFitter : MonoBehaviour
             {
                 Debug.LogWarning(
                     "[KiwiSurfaceFitter] " +
-                    "SurfaceFittedRawImage ‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB"
+                    "SurfaceFittedRawImage ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚"
                 );
 
                 return;
@@ -179,8 +193,8 @@ public class KiwiSurfaceFitter : MonoBehaviour
             {
                 Debug.LogError(
                     "[KiwiSurfaceFitter] " +
-                    "ƒLƒEƒC–{‘Ì‚ÌSkinnedMeshRenderer‚ª" +
-                    "Œ©‚Â‚©‚è‚Ü‚¹‚ñB"
+                    "ã‚­ã‚¦ã‚¤æœ¬ä½“ã®SkinnedMeshRendererãŒ" +
+                    "è¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚"
                 );
 
                 return;
@@ -188,14 +202,14 @@ public class KiwiSurfaceFitter : MonoBehaviour
 
 
             // =============================================
-            // ‘O‰ñ‚Ìˆêƒf[ƒ^‚ğ”O‚Ì‚½‚ßíœ
+            // å‰å›ã®ä¸€æ™‚ãƒ‡ãƒ¼ã‚¿ã‚’å¿µã®ãŸã‚å‰Šé™¤
             // =============================================
 
             CleanupTemporaryObjects();
 
 
             // =============================================
-            // š BakeMesh‚Í‚±‚±‚Å1‰ñ‚¾‚¯
+            // â˜… BakeMeshã¯ã“ã“ã§1å›ã ã‘
             // =============================================
 
             _bakedMesh =
@@ -212,7 +226,7 @@ public class KiwiSurfaceFitter : MonoBehaviour
 
 
             // =============================================
-            // š MeshCollider‚à1ŒÂ‚¾‚¯
+            // â˜… MeshColliderã‚‚1å€‹ã ã‘
             // =============================================
 
             _colliderObject =
@@ -262,8 +276,8 @@ public class KiwiSurfaceFitter : MonoBehaviour
 
 
             // =============================================
-            // •\— ‚Ç‚¿‚ç‚©‚ç‚Å‚àRay‚ª’Ê‚é‚æ‚¤‚É
-            // Fit’†‚¾‚¯—LŒø‰»
+            // è¡¨è£ã©ã¡ã‚‰ã‹ã‚‰ã§ã‚‚RayãŒé€šã‚‹ã‚ˆã†ã«
+            // Fitä¸­ã ã‘æœ‰åŠ¹åŒ–
             // =============================================
 
             Physics.queriesHitBackfaces =
@@ -271,7 +285,7 @@ public class KiwiSurfaceFitter : MonoBehaviour
 
 
             // =============================================
-            // Ray‹——£
+            // Rayè·é›¢
             // =============================================
 
             float modelRadius =
@@ -298,7 +312,7 @@ public class KiwiSurfaceFitter : MonoBehaviour
 
 
             // =============================================
-            // ‘SFace Part‚ğ“¯‚¶Collider‚Åˆ—
+            // å…¨Face Partã‚’åŒã˜Colliderã§å‡¦ç†
             // =============================================
 
             int totalVertices =
@@ -319,6 +333,8 @@ public class KiwiSurfaceFitter : MonoBehaviour
                     continue;
                 }
 
+                part.targetRenderer = targetRenderer;
+
 
                 int partHits =
                     FitPart(
@@ -335,6 +351,12 @@ public class KiwiSurfaceFitter : MonoBehaviour
                 totalHits +=
                     partHits;
             }
+
+            LastTotalVertices = totalVertices;
+            LastTotalHits = totalHits;
+            LastSuccessRate = totalVertices > 0
+                ? totalHits / (float)totalVertices
+                : 0f;
 
 
             // =============================================
@@ -358,7 +380,7 @@ public class KiwiSurfaceFitter : MonoBehaviour
 
                 Debug.Log(
                     "[KiwiSurfaceFitter] " +
-                    "Surface Fit Š®—¹  " +
+                    "Surface Fit å®Œäº†  " +
                     totalHits +
                     " / " +
                     totalVertices +
@@ -375,10 +397,10 @@ public class KiwiSurfaceFitter : MonoBehaviour
 
 
             // =============================================
-            // š FitŒã‚Í‘S•””jŠü
+            // â˜… Fitå¾Œã¯å…¨éƒ¨ç ´æ£„
             //
-            // Às’†Collider = 0
-            // BakeMeshˆ—    = 0/frame
+            // å®Ÿè¡Œä¸­Collider = 0
+            // BakeMeshå‡¦ç†    = 0/frame
             // Raycast         = 0/frame
             // =============================================
 
@@ -419,6 +441,67 @@ public class KiwiSurfaceFitter : MonoBehaviour
     // Resolve Renderer
     // =========================================================
 
+    public static SkinnedMeshRenderer FindBestFaceRenderer(
+        Transform root,
+        Transform head)
+    {
+        if (root == null)
+        {
+            return null;
+        }
+
+        SkinnedMeshRenderer[] renderers =
+            root.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+        SkinnedMeshRenderer best = null;
+        float bestScore = float.NegativeInfinity;
+
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            SkinnedMeshRenderer renderer = renderers[i];
+            Mesh mesh = renderer != null ? renderer.sharedMesh : null;
+            if (mesh == null || mesh.vertexCount < 3)
+            {
+                continue;
+            }
+
+            string rendererName = renderer.name.ToLowerInvariant();
+            float nameScore =
+                rendererName.Contains("face") ? 5f :
+                rendererName.Contains("head") ? 4f :
+                rendererName.Contains("body") ? 1f : 0f;
+            float blendShapeScore = mesh.blendShapeCount > 0 ? 2f : 0f;
+            float headBoneScore = 0f;
+
+            if (head != null && renderer.bones != null)
+            {
+                for (int boneIndex = 0; boneIndex < renderer.bones.Length; boneIndex++)
+                {
+                    if (renderer.bones[boneIndex] == head)
+                    {
+                        headBoneScore = 6f;
+                        break;
+                    }
+                }
+            }
+
+            float distancePenalty = head != null
+                ? Mathf.Sqrt(renderer.bounds.SqrDistance(head.position)) /
+                    Mathf.Max(0.001f, renderer.bounds.extents.magnitude)
+                : 0f;
+            float detailScore = Mathf.Log10(Mathf.Max(10, mesh.vertexCount));
+            float score =
+                headBoneScore + nameScore + blendShapeScore + detailScore - distancePenalty;
+
+            if (score > bestScore)
+            {
+                bestScore = score;
+                best = renderer;
+            }
+        }
+
+        return best;
+    }
+
     private void ResolveTargetRenderer(
         SurfaceFittedRawImage[] parts)
     {
@@ -429,8 +512,8 @@ public class KiwiSurfaceFitter : MonoBehaviour
 
 
         // =============================================
-        // ‹Œ”ÅSurfaceFittedRawImage‚É
-        // Renderer‚ªİ’è‚³‚ê‚Ä‚¢‚ê‚Î—¬—p
+        // æ—§ç‰ˆSurfaceFittedRawImageã«
+        // RendererãŒè¨­å®šã•ã‚Œã¦ã„ã‚Œã°æµç”¨
         // =============================================
 
         if (parts != null)
@@ -456,7 +539,7 @@ public class KiwiSurfaceFitter : MonoBehaviour
 
 
         // =============================================
-        // ©“®ŒŸõ
+        // è‡ªå‹•æ¤œç´¢
         // =============================================
 
         Transform root =
@@ -492,8 +575,8 @@ public class KiwiSurfaceFitter : MonoBehaviour
 
 
         // =============================================
-        // ˆê”Ô’¸“_”‚Ì‘½‚¢Renderer‚ğ
-        // –{‘Ì‚Æ‚µ‚Ä‘I‘ğ
+        // ä¸€ç•ªé ‚ç‚¹æ•°ã®å¤šã„Rendererã‚’
+        // æœ¬ä½“ã¨ã—ã¦é¸æŠ
         // =============================================
 
         int bestVertexCount =
@@ -600,7 +683,7 @@ public class KiwiSurfaceFitter : MonoBehaviour
 
 
         // =============================================
-        // ‚±‚Ìƒp[ƒc‚Ì³–Ê•ûŒü
+        // ã“ã®ãƒ‘ãƒ¼ãƒ„ã®æ­£é¢æ–¹å‘
         // =============================================
 
         Vector3 planeNormal =
@@ -621,8 +704,8 @@ public class KiwiSurfaceFitter : MonoBehaviour
 
 
         // =============================================
-        // ’†‰›1“_‚¾‚¯‘OŒã‚©‚ç’²‚×‚Ä
-        // ƒLƒEƒC‚ª‚Ç‚¿‚ç‘¤‚É‚ ‚é‚©Œˆ‚ß‚é
+        // ä¸­å¤®1ç‚¹ã ã‘å‰å¾Œã‹ã‚‰èª¿ã¹ã¦
+        // ã‚­ã‚¦ã‚¤ãŒã©ã¡ã‚‰å´ã«ã‚ã‚‹ã‹æ±ºã‚ã‚‹
         // =============================================
 
         Vector3 centerWorld =
@@ -643,20 +726,20 @@ public class KiwiSurfaceFitter : MonoBehaviour
 
         if (!hasDirection)
         {
-            // ’†‰›‚Éƒqƒbƒg‚µ‚È‚©‚Á‚½ê‡A
-            // Œ»İ‚ÌCanvas³–Ê‘¤‚ğ‰¼Ì—p
+            // ä¸­å¤®ã«ãƒ’ãƒƒãƒˆã—ãªã‹ã£ãŸå ´åˆã€
+            // ç¾åœ¨ã®Canvasæ­£é¢å´ã‚’ä»®æ¡ç”¨
             sideSign =
                 1f;
         }
 
 
-        // origin•ûŒü
+        // originæ–¹å‘
         Vector3 outwardDirection =
             planeNormal *
             sideSign;
 
 
-        // ƒLƒEƒC‚ÖŒü‚©‚¤Ray
+        // ã‚­ã‚¦ã‚¤ã¸å‘ã‹ã†Ray
         Vector3 castDirection =
             -outwardDirection;
 
@@ -670,7 +753,7 @@ public class KiwiSurfaceFitter : MonoBehaviour
 
 
         // =============================================
-        // ‘S’¸“_
+        // å…¨é ‚ç‚¹
         // =============================================
 
         for (
@@ -710,8 +793,8 @@ public class KiwiSurfaceFitter : MonoBehaviour
 
 
                 // =========================================
-                // –œˆêƒqƒbƒg‚µ‚È‚¯‚ê‚Î
-                // ”½‘Î•ûŒü‚©‚ç1‰ñ‚¾‚¯Fallback
+                // ä¸‡ä¸€ãƒ’ãƒƒãƒˆã—ãªã‘ã‚Œã°
+                // åå¯¾æ–¹å‘ã‹ã‚‰1å›ã ã‘Fallback
                 // =========================================
 
                 if (!found)
@@ -731,7 +814,7 @@ public class KiwiSurfaceFitter : MonoBehaviour
                 if (found)
                 {
                     // =====================================
-                    // Normal‚ªRay‘¤‚ğŒü‚­‚æ‚¤•â³
+                    // NormalãŒRayå´ã‚’å‘ãã‚ˆã†è£œæ­£
                     // =====================================
 
                     Vector3 surfaceNormal =
@@ -749,8 +832,8 @@ public class KiwiSurfaceFitter : MonoBehaviour
                         );
 
 
-                    // ÀÛ‚É‚Í -castDirection ‚Æ
-                    // “¯‚¶Œü‚«‚ªŠO‘¤
+                    // å®Ÿéš›ã«ã¯ -castDirection ã¨
+                    // åŒã˜å‘ããŒå¤–å´
                     Vector3 expectedOutward =
                         -castDirection;
 
@@ -791,8 +874,8 @@ public class KiwiSurfaceFitter : MonoBehaviour
                 else
                 {
                     // =====================================
-                    // ‚Ç‚¤‚µ‚Ä‚à“–‚½‚ç‚È‚¢’¸“_‚¾‚¯
-                    // Œ³‚Ì•½–Ê‚ğˆÛ
+                    // ã©ã†ã—ã¦ã‚‚å½“ãŸã‚‰ãªã„é ‚ç‚¹ã ã‘
+                    // å…ƒã®å¹³é¢ã‚’ç¶­æŒ
                     // =====================================
 
                     fittedPositions[
@@ -854,8 +937,8 @@ public class KiwiSurfaceFitter : MonoBehaviour
     // =========================================================
     // Determine Side
     //
-    // ’†‰›‚¾‚¯‘OŒã2•ûŒüB
-    // ‹ß‚¢Surface‘¤‚ğÌ—pB
+    // ä¸­å¤®ã ã‘å‰å¾Œ2æ–¹å‘ã€‚
+    // è¿‘ã„Surfaceå´ã‚’æ¡ç”¨ã€‚
     // =========================================================
 
     private bool DetermineProjectionSide(
@@ -870,7 +953,7 @@ public class KiwiSurfaceFitter : MonoBehaviour
 
 
         // =============================================
-        // +Normal‘¤‚©‚ç
+        // +Normalå´ã‹ã‚‰
         // =============================================
 
         Vector3 originA =
@@ -896,7 +979,7 @@ public class KiwiSurfaceFitter : MonoBehaviour
 
 
         // =============================================
-        // -Normal‘¤‚©‚ç
+        // -Normalå´ã‹ã‚‰
         // =============================================
 
         Vector3 originB =
@@ -922,7 +1005,7 @@ public class KiwiSurfaceFitter : MonoBehaviour
 
 
         // =============================================
-        // —¼•û
+        // ä¸¡æ–¹
         // =============================================
 
         if (
@@ -957,7 +1040,7 @@ public class KiwiSurfaceFitter : MonoBehaviour
 
 
         // =============================================
-        // +Normal‚Ì‚İ
+        // +Normalã®ã¿
         // =============================================
 
         if (hitA)
@@ -971,7 +1054,7 @@ public class KiwiSurfaceFitter : MonoBehaviour
 
 
         // =============================================
-        // -Normal‚Ì‚İ
+        // -Normalã®ã¿
         // =============================================
 
         if (hitB)

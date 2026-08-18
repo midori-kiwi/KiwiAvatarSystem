@@ -9,8 +9,8 @@ using Mediapipe.Unity.Sample.FaceLandmarkDetection;
 public class FacePartShapeMask : MonoBehaviour
 {
     [Header("Landmarker Direct Tracking")]
-    [Tooltip("ON: raw contour points are used every Landmarker timestamp and mouth sample offset is not temporally locked.")]
-    public bool strictLandmarkerTracking = true;
+    [Tooltip("ON: contour and visibility jump at Landmarker cadence. OFF uses high-response render-rate interpolation to remove eye/mouth flicker.")]
+    public bool strictLandmarkerTracking = false;
 
 
     // =========================================================
@@ -33,7 +33,23 @@ public class FacePartShapeMask : MonoBehaviour
 
     public FaceLandmarkerRunner runner;
 
+    public KiwiFaceMotion faceMotion;
+
+    public FacePartCropper cropper;
+
     public Material baseMaterial;
+
+
+    [Header("Coherent Surface Visibility")]
+
+    [Tooltip("Render all face parts above the head depth as one overlay, then fade the group together before it reaches the back side.")]
+    public bool stabilizeSurfaceOcclusion = true;
+
+    [Range(0f, 80f)]
+    public float fullVisibilityYaw = 48f;
+
+    [Range(1f, 90f)]
+    public float hiddenVisibilityYaw = 58f;
 
 
     // =========================================================
@@ -139,10 +155,35 @@ public class FacePartShapeMask : MonoBehaviour
         true;
 
 
+    [Header("Flicker-Free Eye Visibility")]
+
+    [Tooltip("Requires coherent blink evidence before reducing eye opacity. Position and contour tracking stay immediate.")]
+    public bool stabilizeEyeVisibility =
+        true;
+
+
+    [Tooltip("Consecutive coherent Landmarker results required to enter the closed-eye visibility state.")]
+    [Range(1, 4)]
+    public int eyeCloseConfirmationSamples =
+        2;
+
+
+    [Tooltip("Consecutive clearly-open results required to leave the closed-eye visibility state.")]
+    [Range(1, 3)]
+    public int eyeOpenConfirmationSamples =
+        1;
+
+
+    [Tooltip("Minimum opacity retained for a confirmed closed eye. The compressed contour remains visible as an eyelid line.")]
+    [Range(0.10f, 1f)]
+    public float closedEyeVisibilityFloor =
+        0.35f;
+
+
     // =========================================================
     // Edge
     //
-    // åªç›ÇÃäÓèÄíl 0.04
+    // ÁèæÂú®„ÅÆÂü∫Ê∫ñÂÄ§ 0.04
     // =========================================================
 
     [Header("Soft Edge")]
@@ -160,7 +201,32 @@ public class FacePartShapeMask : MonoBehaviour
 
     [Range(0f, 0.005f)]
     public float microJitterDeadZone =
-        0.00015f;
+        0.00055f;
+
+
+    [Tooltip("Render-rate contour response. 180 blends a 16-20 Hz landmark step across roughly two display frames without visible lag.")]
+    [Range(30f, 400f)]
+    public float contourRenderResponse =
+        110f;
+
+    [Tooltip("Keep the rendered contour in crop-local coordinates so eye/mouth masks cannot lag behind a moving UV crop.")]
+    public bool lockContourToMovingCrop = true;
+
+    [Tooltip("Minimum normalized clearance between the contour and the crop boundary.")]
+    [Range(0f, 0.15f)]
+    public float cropLocalSafetyMargin = 0.015f;
+
+
+    [Tooltip("Seconds used to hide an eye at full blink. Applied every render frame instead of as a binary sample step.")]
+    [Range(0.005f, 0.10f)]
+    public float eyeHideFadeSeconds =
+        0.025f;
+
+
+    [Tooltip("Seconds used to restore an eye after a blink.")]
+    [Range(0.005f, 0.15f)]
+    public float eyeShowFadeSeconds =
+        0.045f;
 
 
     // =========================================================
@@ -183,24 +249,24 @@ public class FacePartShapeMask : MonoBehaviour
 
 
     // =========================================================
-    // Åö Mouth Height Lock
+    // ‚òÖ Mouth Height Lock
     //
-    // uvRectÇÕê‚ëŒÇ…ïœçXÇµÇ»Ç¢ÅB
+    // uvRect„ÅØÁµ∂ÂØæ„Å´Â§âÊõ¥„Åó„Å™„ÅÑ„ÄÇ
     //
-    // Camera samplingÇæÇØï‚ê≥Ç∑ÇÈÅB
+    // Camera sampling„Å†„ÅëË£úÊ≠£„Åô„Çã„ÄÇ
     // =========================================================
 
     [Header("Mouth Height Lock")]
 
     [Tooltip(
-        "ê≥ñ ÇäÓèÄÇ…å˚ÇÃï\é¶çÇÇ≥Çå≈íË"
+        "Ê≠£Èù¢„ÇíÂü∫Ê∫ñ„Å´Âè£„ÅÆË°®Á§∫È´ò„Åï„ÇíÂõ∫ÂÆö"
     )]
     public bool lockMouthHeight =
-        true;
+        false;
 
 
     [Tooltip(
-        "ê≥ñ äÓèÄÇéÊìæÇ∑ÇÈÇ‹Ç≈ÇÃë“ã@éûä‘"
+        "Ê≠£Èù¢Âü∫Ê∫ñ„ÇíÂèñÂæó„Åô„Çã„Åæ„Åß„ÅÆÂæÖÊ©üÊôÇÈñì"
     )]
     [Range(0f, 2f)]
     public float mouthCalibrationDelay =
@@ -208,7 +274,7 @@ public class FacePartShapeMask : MonoBehaviour
 
 
     [Tooltip(
-        "äÓèÄà íuÇïΩãœÇ∑ÇÈÉTÉìÉvÉãêî"
+        "Âü∫Ê∫ñ‰ΩçÁΩÆ„ÇíÂπ≥Âùá„Åô„Çã„Çµ„É≥„Éó„É´Êï∞"
     )]
     [Range(1, 30)]
     public int mouthCalibrationSamples =
@@ -216,7 +282,7 @@ public class FacePartShapeMask : MonoBehaviour
 
 
     [Tooltip(
-        "ç≈ëÂï‚ê≥ó ÅBCropçÇÇ≥Ç…ëŒÇ∑ÇÈäÑçá"
+        "ÊúÄÂ§ßË£úÊ≠£Èáè„ÄÇCropÈ´ò„Åï„Å´ÂØæ„Åô„ÇãÂâ≤Âêà"
     )]
     [Range(0.05f, 0.80f)]
     public float maximumMouthHeightCorrection =
@@ -224,11 +290,81 @@ public class FacePartShapeMask : MonoBehaviour
 
 
     [Tooltip(
-        "Ç±ÇÃíˆìxÇÃè„â∫ïœâªÇÕï‚ê≥ÇµÇ»Ç¢"
+        "„Åì„ÅÆÁ®ãÂ∫¶„ÅÆ‰∏ä‰∏ãÂ§âÂåñ„ÅØË£úÊ≠£„Åó„Å™„ÅÑ"
     )]
     [Range(0f, 0.01f)]
     public float mouthHeightDeadZone =
         0.00015f;
+
+
+    // =========================================================
+    // Mouth camera-edge visibility
+    // =========================================================
+
+    [Header("Mouth Camera Edge Visibility")]
+
+    [Tooltip("Fades the complete mouth out when the actual outer-lip contour reaches the camera image edge.")]
+    public bool hideMouthOutsideTexture =
+        true;
+
+
+    [Tooltip("Keeps the mouth visible while a blink is in progress. Blink samples cannot advance or retain an edge-hide decision.")]
+    public bool protectMouthDuringBlink =
+        true;
+
+
+    [Tooltip("Either eye at or above this BlendShape score activates mouth protection.")]
+    [Range(0.10f, 0.90f)]
+    public float mouthBlinkProtectionThreshold =
+        0.35f;
+
+
+    [Tooltip("Landmark fallback used only when BlendShapes are unavailable. Lower eye aspect means more closed.")]
+    [Range(0.05f, 0.25f)]
+    public float mouthBlinkGeometryThreshold =
+        0.13f;
+
+
+    [Tooltip("Hide threshold measured from the actual outer-lip contour to the nearest texture edge.")]
+    [Range(0f, 0.05f)]
+    public float mouthHideEdgeMargin =
+        0.003f;
+
+
+    [Tooltip("The mouth must return this far inside the texture before it is shown again. Keep this above the hide margin to prevent flicker.")]
+    [Range(0f, 0.10f)]
+    public float mouthShowEdgeMargin =
+        0.015f;
+
+
+    [Tooltip("Consecutive Landmarker results required before edge hiding. Two rejects a one-result edge spike without delaying normal tracking.")]
+    [Range(1, 6)]
+    public int mouthEdgeHideConfirmationSamples =
+        3;
+
+
+    [Tooltip("Minimum time an incomplete mouth must persist before it can fade out. During this grace period the last complete crop and contour are held.")]
+    [Range(0f, 0.30f)]
+    public float mouthEdgeHideGraceSeconds =
+        0.12f;
+
+
+    [Tooltip("Consecutive safe results required before a hidden or held mouth is released back to live tracking.")]
+    [Range(1, 4)]
+    public int mouthEdgeShowConfirmationSamples =
+        2;
+
+
+    [Tooltip("Seconds used to hide the mouth after it reaches a camera edge.")]
+    [Range(0.005f, 0.20f)]
+    public float mouthHideFadeSeconds =
+        0.040f;
+
+
+    [Tooltip("Seconds used to restore the mouth after the full contour is safely inside the camera image.")]
+    [Range(0.005f, 0.30f)]
+    public float mouthShowFadeSeconds =
+        0.060f;
 
 
     // =========================================================
@@ -279,6 +415,26 @@ public class FacePartShapeMask : MonoBehaviour
     [SerializeField]
     private float debugMouthOffsetY =
         0f;
+
+
+    [SerializeField]
+    private float debugMouthEdgeClearance =
+        1f;
+
+
+    [SerializeField]
+    private bool debugMouthHiddenByFrame =
+        false;
+
+
+    [SerializeField]
+    private float debugMouthFrameVisibility =
+        1f;
+
+
+    [SerializeField]
+    private bool debugMouthProtectedByBlink =
+        false;
 
 
     // =========================================================
@@ -415,6 +571,34 @@ public class FacePartShapeMask : MonoBehaviour
         new Vector4[MaxPoints];
 
 
+    private readonly Vector4[] _targetShaderPoints =
+        new Vector4[MaxPoints];
+
+
+    private readonly Vector4[] _uploadShaderPoints =
+        new Vector4[MaxPoints];
+
+
+    private bool _maskPointsAreCropLocal =
+        false;
+
+
+    private int _renderedPointCount =
+        0;
+
+
+    private int _targetPointCount =
+        0;
+
+
+    private bool _hasRenderedContour =
+        false;
+
+
+    private bool _contourUploadDirty =
+        false;
+
+
     private bool _hasStableContour =
         false;
 
@@ -491,6 +675,72 @@ public class FacePartShapeMask : MonoBehaviour
 
 
     // =========================================================
+    // Mouth camera-edge visibility
+    // =========================================================
+
+    private float _mouthFrameVisibility =
+        1f;
+
+
+    private float _mouthFrameVisibilityTarget =
+        1f;
+
+
+    private int _mouthEdgeViolationSamples =
+        0;
+
+
+    private int _mouthEdgeRecoverySamples =
+        0;
+
+
+    private float _mouthEdgeViolationStartTime =
+        -1f;
+
+
+    private bool _holdMouthVisual =
+        false;
+
+
+    private bool _hasSafeMouthUvRect =
+        false;
+
+
+    private Rect _safeMouthUvRect;
+
+
+    private float _eyeFrameVisibility =
+        1f;
+
+
+    private float _eyeFrameVisibilityTarget =
+        1f;
+
+
+    private int _eyeCloseEvidenceSamples =
+        0;
+
+
+    private int _eyeOpenEvidenceSamples =
+        0;
+
+
+    private bool _eyeClosureConfirmed =
+        false;
+
+    private float _lastAppliedFrameVisibility =
+        float.NaN;
+
+
+    private float _lastAppliedPoseVisibility =
+        float.NaN;
+
+
+    private Vector2 _lastAppliedVisibleScale =
+        new Vector2(float.NaN, float.NaN);
+
+
+    // =========================================================
     // Shader IDs
     // =========================================================
 
@@ -518,10 +768,270 @@ public class FacePartShapeMask : MonoBehaviour
         );
 
 
+    private static readonly int PoseVisibilityId =
+        Shader.PropertyToID(
+            "_PoseVisibility"
+        );
+
+
     private static readonly int SampleOffsetId =
         Shader.PropertyToID(
             "_SampleOffset"
         );
+
+
+    private static readonly int SampleScaleId =
+        Shader.PropertyToID("_SampleScale");
+
+
+    private static readonly int SampleScaleXYId =
+        Shader.PropertyToID("_SampleScaleXY");
+
+
+    private static readonly int SamplePivotId =
+        Shader.PropertyToID("_SamplePivot");
+
+
+    private static readonly int SampleRotationRadId =
+        Shader.PropertyToID("_SampleRotationRad");
+
+
+    private static readonly int SourceAspectId =
+        Shader.PropertyToID("_SourceAspect");
+
+
+    // =========================================================
+    // Rendered contour bounds
+    // =========================================================
+
+    public bool TryGetRenderedContourScreenRect(
+        Camera camera,
+        out Rect screenRect)
+    {
+        Vector2 currentScale = _runtimeMaterial != null
+            ? (Vector2)_runtimeMaterial.GetVector(SampleScaleXYId)
+            : Vector2.one;
+
+        return TryGetRenderedContourScreenRect(
+            camera,
+            currentScale,
+            out screenRect
+        );
+    }
+
+
+    public bool IsRenderedContourInsideSurface(
+        Vector2 sampleScaleXY,
+        float safetyMargin)
+    {
+        if (
+            !_hasRenderedContour ||
+            _renderedPointCount < 3 ||
+            _image == null ||
+            _runtimeMaterial == null
+        )
+        {
+            return true;
+        }
+
+
+        sampleScaleXY.x = Mathf.Max(0.01f, sampleScaleXY.x);
+        sampleScaleXY.y = Mathf.Max(0.01f, sampleScaleXY.y);
+        float uniformScale = Mathf.Max(
+            0.01f,
+            _runtimeMaterial.GetFloat(SampleScaleId)
+        );
+        Vector2 pivot = _runtimeMaterial.GetVector(SamplePivotId);
+        Vector2 offset = _runtimeMaterial.GetVector(SampleOffsetId);
+        float rotation = _runtimeMaterial.GetFloat(SampleRotationRadId);
+        float aspect = Mathf.Max(
+            0.0001f,
+            _runtimeMaterial.GetFloat(SourceAspectId)
+        );
+        Rect sourceRect = _image.uvRect;
+        if (
+            Mathf.Abs(sourceRect.width) < 0.000001f ||
+            Mathf.Abs(sourceRect.height) < 0.000001f
+        )
+        {
+            return true;
+        }
+
+
+        for (int i = 0; i < _renderedPointCount; i++)
+        {
+            Vector2 sampleUv =
+                _maskPointsAreCropLocal
+                    ? KiwiFacePartMaskCoherenceMath.FromCropLocal(
+                        _shaderPoints[i],
+                        sourceRect
+                    )
+                    : (Vector2)_shaderPoints[i];
+            Vector2 normalizedSurface =
+                KiwiFacePartSurfaceSafetyMath.CalculateNormalizedSurface(
+                    sampleUv,
+                    sourceRect,
+                    pivot,
+                    offset,
+                    uniformScale,
+                    sampleScaleXY,
+                    rotation,
+                    aspect,
+                    new Vector2(_image.VisualZoomX, _image.VisualZoomY)
+                );
+
+
+            if (
+                !KiwiFacePartSurfaceSafetyMath.IsInsideSurface(
+                    normalizedSurface,
+                    safetyMargin
+                )
+            )
+            {
+                return false;
+            }
+        }
+
+
+        return true;
+    }
+
+
+    public void SetVisibleScale(float scaleX, float scaleY)
+    {
+        if (_runtimeMaterial == null)
+        {
+            return;
+        }
+
+
+        Vector2 visibleScale = new Vector2(
+            Mathf.Clamp(scaleX, 0.50f, 3.00f),
+            Mathf.Clamp(scaleY, 0.50f, 3.00f)
+        );
+
+
+        if (
+            Mathf.Abs(visibleScale.x - _lastAppliedVisibleScale.x) < 0.0001f &&
+            Mathf.Abs(visibleScale.y - _lastAppliedVisibleScale.y) < 0.0001f
+        )
+        {
+            return;
+        }
+
+
+        _runtimeMaterial.SetFloat(SampleScaleId, 1f);
+        _runtimeMaterial.SetVector(
+            SampleScaleXYId,
+            new Vector4(
+                1f / visibleScale.x,
+                1f / visibleScale.y,
+                0f,
+                0f
+            )
+        );
+
+
+        _lastAppliedVisibleScale = visibleScale;
+    }
+
+
+    public bool TryGetRenderedContourScreenRect(
+        Camera camera,
+        Vector2 sampleScaleXY,
+        out Rect screenRect)
+    {
+        screenRect = default;
+        if (
+            !_hasRenderedContour ||
+            _renderedPointCount < 3 ||
+            _image == null ||
+            _runtimeMaterial == null
+        )
+        {
+            return false;
+        }
+
+        sampleScaleXY.x = Mathf.Max(0.01f, sampleScaleXY.x);
+        sampleScaleXY.y = Mathf.Max(0.01f, sampleScaleXY.y);
+        float uniformScale = Mathf.Max(
+            0.01f,
+            _runtimeMaterial.GetFloat(SampleScaleId)
+        );
+        Vector2 pivot = _runtimeMaterial.GetVector(SamplePivotId);
+        Vector2 offset = _runtimeMaterial.GetVector(SampleOffsetId);
+        float rotation = _runtimeMaterial.GetFloat(SampleRotationRadId);
+        float aspect = Mathf.Max(
+            0.0001f,
+            _runtimeMaterial.GetFloat(SourceAspectId)
+        );
+        Rect sourceRect = _image.uvRect;
+        if (
+            Mathf.Abs(sourceRect.width) < 0.000001f ||
+            Mathf.Abs(sourceRect.height) < 0.000001f
+        )
+        {
+            return false;
+        }
+
+        bool initialized = false;
+        float minX = 0f;
+        float minY = 0f;
+        float maxX = 0f;
+        float maxY = 0f;
+
+        for (int i = 0; i < _renderedPointCount; i++)
+        {
+            Vector2 sampleUv =
+                _maskPointsAreCropLocal
+                    ? KiwiFacePartMaskCoherenceMath.FromCropLocal(
+                        _shaderPoints[i],
+                        sourceRect
+                    )
+                    : (Vector2)_shaderPoints[i];
+            Vector2 normalizedSurface =
+                KiwiFacePartSurfaceSafetyMath.CalculateNormalizedSurface(
+                    sampleUv,
+                    sourceRect,
+                    pivot,
+                    offset,
+                    uniformScale,
+                    sampleScaleXY,
+                    rotation,
+                    aspect,
+                    new Vector2(_image.VisualZoomX, _image.VisualZoomY)
+                );
+
+            if (!_image.TryGetSurfaceLocalPosition(normalizedSurface, out Vector3 local))
+            {
+                continue;
+            }
+
+            Vector3 world = _image.rectTransform.TransformPoint(local);
+            Vector2 screen = RectTransformUtility.WorldToScreenPoint(camera, world);
+            if (!initialized)
+            {
+                minX = maxX = screen.x;
+                minY = maxY = screen.y;
+                initialized = true;
+            }
+            else
+            {
+                minX = Mathf.Min(minX, screen.x);
+                minY = Mathf.Min(minY, screen.y);
+                maxX = Mathf.Max(maxX, screen.x);
+                maxY = Mathf.Max(maxY, screen.y);
+            }
+        }
+
+        if (!initialized)
+        {
+            return false;
+        }
+
+        screenRect = Rect.MinMaxRect(minX, minY, maxX, maxY);
+        return true;
+    }
 
 
     // =========================================================
@@ -530,6 +1040,10 @@ public class FacePartShapeMask : MonoBehaviour
 
     private void OnEnable()
     {
+        Application.onBeforeRender +=
+            RefreshPoseVisibility;
+
+
         _enableTime =
             Time.unscaledTime;
 
@@ -556,8 +1070,26 @@ public class FacePartShapeMask : MonoBehaviour
         if (runner == null)
         {
             runner =
-                FindObjectOfType<
+                FindFirstObjectByType<
                     FaceLandmarkerRunner
+                >();
+        }
+
+
+        if (faceMotion == null)
+        {
+            faceMotion =
+                FindFirstObjectByType<
+                    KiwiFaceMotion
+                >();
+        }
+
+
+        if (cropper == null)
+        {
+            cropper =
+                FindFirstObjectByType<
+                    FacePartCropper
                 >();
         }
 
@@ -593,6 +1125,10 @@ public class FacePartShapeMask : MonoBehaviour
         }
 
 
+        FacePartType resolvedPart =
+            ResolveFacePart();
+
+
         int landmarkCount =
             0;
 
@@ -602,24 +1138,18 @@ public class FacePartShapeMask : MonoBehaviour
 
 
         bool valid =
-            runner.TryGetLatestLandmarks(
+            runner.TryGetLatestLandmarksIfChanged(
                 ref _landmarks,
+                _lastTimestamp,
                 out landmarkCount,
-                out timestamp
+                out timestamp,
+                out _
             );
 
 
         if (!valid)
         {
-            return;
-        }
-
-
-        if (
-            timestamp ==
-            _lastTimestamp
-        )
-        {
+            RenderFrameState(resolvedPart);
             return;
         }
 
@@ -645,11 +1175,24 @@ public class FacePartShapeMask : MonoBehaviour
 
 
         FacePartType part =
-            ResolveFacePart();
+            resolvedPart;
 
 
         Rect uvRect =
             _image.uvRect;
+
+
+        Rect contourReferenceRect =
+            uvRect;
+
+
+        bool useCropLocalContour =
+            lockContourToMovingCrop &&
+            cropper != null &&
+            cropper.TryGetSampleRect(
+                _image,
+                out contourReferenceRect
+            );
 
 
         int[] contourIndices;
@@ -683,7 +1226,7 @@ public class FacePartShapeMask : MonoBehaviour
             );
 
 
-            // EyeÇ…ÇÕSamplingï‚ê≥Ç»ÇµÅB
+            // Eye„Å´„ÅØSamplingË£úÊ≠£„Å™„Åó„ÄÇ
             SetSampleOffset(
                 0f,
                 0f
@@ -708,8 +1251,38 @@ public class FacePartShapeMask : MonoBehaviour
             );
 
 
-            // Åöå˚ÇÃçÇÇ≥ï‚ê≥
-            if (strictLandmarkerTracking)
+            bool mouthProtectedByBlink =
+                IsMouthBlinkProtectionActive(
+                    landmarkCount,
+                    hasExpression,
+                    expression
+                );
+
+
+            UpdateMouthFrameVisibilityTarget(
+                landmarkCount,
+                mirrorX,
+                flipY,
+                mouthProtectedByBlink
+            );
+
+
+            // FacePartCropper updates first. While an edge sample is being
+            // confirmed, restore the last complete crop here and keep the
+            // matching contour unchanged. This prevents transparent overscan
+            // from flashing without adding any filter to normal mouth motion.
+            if (
+                _holdMouthVisual &&
+                _hasSafeMouthUvRect
+            )
+            {
+                _image.uvRect =
+                    _safeMouthUvRect;
+            }
+
+
+            // ‚òÖÂè£„ÅÆÈ´ò„ÅïË£úÊ≠£
+            if (strictLandmarkerTracking || !lockMouthHeight)
             {
                 _heldMouthOffsetY = 0f;
                 SetSampleOffset(0f, 0f);
@@ -732,6 +1305,21 @@ public class FacePartShapeMask : MonoBehaviour
             3
         )
         {
+            return;
+        }
+
+
+        if (
+            part == FacePartType.Mouth &&
+            _holdMouthVisual &&
+            _hasRenderedContour
+        )
+        {
+            _lastTimestamp =
+                timestamp;
+
+
+            RenderFrameState(part);
             return;
         }
 
@@ -793,20 +1381,19 @@ public class FacePartShapeMask : MonoBehaviour
 
             _hasStableContour = true;
         }
-        else
+        else if (
+            KiwiFacePartContourStabilityMath.ShouldUpdateContour(
+                _stableContour,
+                _rawContour,
+                rawCount,
+                microJitterDeadZone,
+                microJitterDeadZone * 0.80f
+            )
+        )
         {
             for (int i = 0; i < rawCount; i++)
             {
-                float movement =
-                    Vector2.Distance(
-                        _stableContour[i],
-                        _rawContour[i]
-                    );
-
-                if (movement > microJitterDeadZone)
-                {
-                    _stableContour[i] = _rawContour[i];
-                }
+                _stableContour[i] = _rawContour[i];
             }
         }
 
@@ -861,6 +1448,10 @@ public class FacePartShapeMask : MonoBehaviour
                 ref visibility,
                 ref hardClosed
             );
+
+
+            _eyeFrameVisibilityTarget =
+                visibility;
         }
 
         // =====================================================
@@ -878,7 +1469,7 @@ public class FacePartShapeMask : MonoBehaviour
 
 
             visibility =
-                1f;
+                _mouthFrameVisibility;
 
 
             hardClosed =
@@ -902,7 +1493,7 @@ public class FacePartShapeMask : MonoBehaviour
 
 
             debugVisibility =
-                1f;
+                visibility;
         }
 
 
@@ -922,79 +1513,17 @@ public class FacePartShapeMask : MonoBehaviour
         // Upload
         // =====================================================
 
-        for (
-            int i = 0;
-            i < smoothCount;
-            i++
-        )
-        {
-            Vector2 p =
-                _smoothContour[i];
-
-
-            _shaderPoints[i] =
-                new Vector4(
-                    p.x,
-                    p.y,
-                    0f,
-                    0f
-                );
-        }
-
-
-        for (
-            int i = smoothCount;
-            i < MaxPoints;
-            i++
-        )
-        {
-            _shaderPoints[i] =
-                Vector4.zero;
-        }
-
-
-        _runtimeMaterial.SetVectorArray(
-            MaskPointsId,
-            _shaderPoints
+        SetContourTarget(
+            smoothCount,
+            contourReferenceRect,
+            useCropLocalContour
         );
 
 
-        _runtimeMaterial.SetFloat(
-            MaskPointCountId,
-            smoothCount
-        );
-
-
-        _runtimeMaterial.SetFloat(
-            VisibilityId,
-            visibility
-        );
-
-
-        // =====================================================
-        // Eye hard hide
-        // =====================================================
-
-        if (
-            part ==
-            FacePartType.Eye &&
-            hardHideWhenFullyClosed
-        )
-        {
-            _image.canvasRenderer.SetAlpha(
-                hardClosed
-                ?
-                0f
-                :
-                1f
-            );
-        }
-        else
-        {
-            _image.canvasRenderer.SetAlpha(
-                1f
-            );
-        }
+        // Canvas alpha remains continuous. Complete blinks now fade through the
+        // material at render cadence instead of switching the whole eye on/off
+        // only when a new Landmarker sample arrives.
+        _image.canvasRenderer.SetAlpha(1f);
 
 
         // =====================================================
@@ -1024,11 +1553,326 @@ public class FacePartShapeMask : MonoBehaviour
 
         _lastTimestamp =
             timestamp;
+
+
+        RenderFrameState(part);
+    }
+
+
+    private void SetContourTarget(
+        int count,
+        Rect referenceRect,
+        bool cropLocal)
+    {
+        bool coordinateModeChanged =
+            _maskPointsAreCropLocal != cropLocal;
+
+
+        _maskPointsAreCropLocal =
+            cropLocal;
+
+
+        _targetPointCount =
+            Mathf.Clamp(count, 0, MaxPoints);
+
+
+        for (int i = 0; i < _targetPointCount; i++)
+        {
+            Vector2 point =
+                cropLocal
+                    ? KiwiFacePartMaskCoherenceMath.ToCropLocal(
+                        _smoothContour[i],
+                        referenceRect,
+                        cropLocalSafetyMargin
+                    )
+                    : _smoothContour[i];
+
+
+            _targetShaderPoints[i] =
+                new Vector4(point.x, point.y, 0f, 0f);
+        }
+
+
+        for (int i = _targetPointCount; i < MaxPoints; i++)
+        {
+            _targetShaderPoints[i] =
+                Vector4.zero;
+        }
+
+
+        if (
+            strictLandmarkerTracking ||
+            !_hasRenderedContour ||
+            coordinateModeChanged ||
+            _renderedPointCount != _targetPointCount
+        )
+        {
+            CopyTargetContourToRendered();
+        }
+    }
+
+
+    private void CopyTargetContourToRendered()
+    {
+        for (int i = 0; i < MaxPoints; i++)
+        {
+            _shaderPoints[i] =
+                _targetShaderPoints[i];
+        }
+
+
+        _renderedPointCount =
+            _targetPointCount;
+
+
+        _hasRenderedContour =
+            _renderedPointCount > 0;
+
+
+        _contourUploadDirty =
+            _hasRenderedContour;
+    }
+
+
+    private void RenderFrameState(
+        FacePartType part)
+    {
+        AdvanceRenderedContour();
+        AdvanceFrameVisibility(part);
+        RefreshPoseVisibility();
+
+
+        if (
+            _hasRenderedContour &&
+            (_contourUploadDirty || _maskPointsAreCropLocal)
+        )
+        {
+            Rect renderedRect =
+                _image != null
+                    ? _image.uvRect
+                    : new Rect(0f, 0f, 1f, 1f);
+
+
+            for (int i = 0; i < MaxPoints; i++)
+            {
+                Vector2 point =
+                    _shaderPoints[i];
+
+
+                if (
+                    _maskPointsAreCropLocal &&
+                    i < _renderedPointCount
+                )
+                {
+                    point =
+                        KiwiFacePartMaskCoherenceMath.FromCropLocal(
+                            point,
+                            renderedRect
+                        );
+                }
+
+
+                _uploadShaderPoints[i] =
+                    new Vector4(
+                        point.x,
+                        point.y,
+                        0f,
+                        0f
+                    );
+            }
+
+
+            _runtimeMaterial.SetVectorArray(
+                MaskPointsId,
+                _uploadShaderPoints
+            );
+
+
+            _runtimeMaterial.SetFloat(
+                MaskPointCountId,
+                _renderedPointCount
+            );
+
+
+            _contourUploadDirty =
+                false;
+        }
+    }
+
+
+    private void RefreshPoseVisibility()
+    {
+        if (_runtimeMaterial == null)
+        {
+            return;
+        }
+
+
+        float poseVisibility =
+            !stabilizeSurfaceOcclusion || faceMotion == null
+                ? 1f
+                : KiwiFacePartVisibilityMath.CalculatePoseVisibility(
+                    faceMotion.RenderedYawDegrees,
+                    fullVisibilityYaw,
+                    hiddenVisibilityYaw
+                );
+
+
+        if (
+            float.IsNaN(_lastAppliedPoseVisibility) ||
+            Mathf.Abs(
+                _lastAppliedPoseVisibility - poseVisibility
+            ) > 0.0001f
+        )
+        {
+            _runtimeMaterial.SetFloat(
+                PoseVisibilityId,
+                poseVisibility
+            );
+
+
+            _lastAppliedPoseVisibility =
+                poseVisibility;
+        }
+    }
+
+
+    private void AdvanceRenderedContour()
+    {
+        if (!_hasRenderedContour)
+        {
+            return;
+        }
+
+
+        if (
+            strictLandmarkerTracking ||
+            _renderedPointCount != _targetPointCount
+        )
+        {
+            CopyTargetContourToRendered();
+            return;
+        }
+
+
+        float dt =
+            Mathf.Clamp(
+                Time.unscaledDeltaTime,
+                1f / 500f,
+                0.05f
+            );
+
+
+        float responseT =
+            1f -
+            Mathf.Exp(
+                -Mathf.Max(1f, contourRenderResponse) *
+                dt
+            );
+
+
+        bool changed =
+            false;
+
+
+        for (int i = 0; i < _renderedPointCount; i++)
+        {
+            Vector4 delta =
+                _targetShaderPoints[i] -
+                _shaderPoints[i];
+
+
+            if (delta.sqrMagnitude <= 0.0000000001f)
+            {
+                changed |=
+                    delta.sqrMagnitude > 0f;
+
+
+                _shaderPoints[i] =
+                    _targetShaderPoints[i];
+                continue;
+            }
+
+
+            _shaderPoints[i] +=
+                delta * responseT;
+
+
+            changed =
+                true;
+        }
+
+
+        _contourUploadDirty |=
+            changed;
+    }
+
+
+    private void AdvanceFrameVisibility(
+        FacePartType part)
+    {
+        float dt =
+            Mathf.Min(
+                Time.unscaledDeltaTime,
+                0.05f
+            );
+
+
+        float visibility;
+
+
+        if (part == FacePartType.Eye)
+        {
+            _eyeFrameVisibility =
+                strictLandmarkerTracking
+                    ? _eyeFrameVisibilityTarget
+                    : KiwiFacePartVisibilityMath.MoveVisibility(
+                        _eyeFrameVisibility,
+                        _eyeFrameVisibilityTarget,
+                        dt,
+                        eyeHideFadeSeconds,
+                        eyeShowFadeSeconds
+                    );
+
+
+            visibility =
+                _eyeFrameVisibility;
+
+
+            debugVisibility =
+                visibility;
+        }
+        else
+        {
+            AdvanceMouthFrameVisibility();
+
+
+            visibility =
+                _mouthFrameVisibility;
+        }
+
+
+        if (
+            float.IsNaN(_lastAppliedFrameVisibility) ||
+            Mathf.Abs(
+                _lastAppliedFrameVisibility - visibility
+            ) > 0.0001f
+        )
+        {
+            _runtimeMaterial.SetFloat(
+                VisibilityId,
+                visibility
+            );
+
+
+            _lastAppliedFrameVisibility =
+                visibility;
+        }
     }
 
 
     // =========================================================
-    // ÅöMouth Height Lock
+    // ‚òÖMouth Height Lock
     // =========================================================
 
     private void UpdateMouthHeightLock(
@@ -1073,8 +1917,8 @@ public class FacePartShapeMask : MonoBehaviour
 
 
         // =====================================================
-        // åªç›ÇÃå˚äpíÜì_Ç™
-        // Cropì‡ÇÃâΩ%ÇÃçÇÇ≥Ç…ë∂ç›Ç∑ÇÈÇ©
+        // ÁèæÂú®„ÅÆÂè£Ëßí‰∏≠ÁÇπ„Åå
+        // CropÂÜÖ„ÅÆ‰Ωï%„ÅÆÈ´ò„Åï„Å´Â≠òÂú®„Åô„Çã„Åã
         // =====================================================
 
         float currentLocalV =
@@ -1118,7 +1962,7 @@ public class FacePartShapeMask : MonoBehaviour
             }
 
 
-            // àŸèÌílèúäO
+            // Áï∞Â∏∏ÂÄ§Èô§Â§ñ
             if (
                 currentLocalV <
                 -0.5f ||
@@ -1182,16 +2026,16 @@ public class FacePartShapeMask : MonoBehaviour
 
 
         // =====================================================
-        // ê≥ñ éûÇ∆ìØÇ∂Local Và íuÇ÷
-        // å˚äpíÜì_ÇîzíuÅB
+        // Ê≠£Èù¢ÊôÇ„Å®Âêå„ÅòLocal V‰ΩçÁΩÆ„Å∏
+        // Âè£Ëßí‰∏≠ÁÇπ„ÇíÈÖçÁΩÆ„ÄÇ
         //
-        // Ç±ÇÃUVà íuÇ…ñ{óàÇ†ÇÈÇ◊Ç´å˚äpÅF
+        // „Åì„ÅÆUV‰ΩçÁΩÆ„Å´Êú¨Êù•„ÅÇ„Çã„Åπ„ÅçÂè£ËßíÔºö
         // uvRect.y + referenceV * height
         //
-        // é¿ç€ÅF
+        // ÂÆüÈöõÔºö
         // anchor.y
         //
-        // ç∑ï™ÇæÇØSamplingÇà⁄ìÆÅB
+        // Â∑ÆÂàÜ„Å†„ÅëSampling„ÇíÁßªÂãï„ÄÇ
         // =====================================================
 
         float expectedAnchorY =
@@ -1207,7 +2051,7 @@ public class FacePartShapeMask : MonoBehaviour
 
 
         // =====================================================
-        // ã…í[Ç»ï‚ê≥Çñhé~
+        // Ê•µÁ´Ø„Å™Ë£úÊ≠£„ÇíÈò≤Ê≠¢
         // =====================================================
 
         float maxCorrection =
@@ -1229,7 +2073,7 @@ public class FacePartShapeMask : MonoBehaviour
         // =====================================================
         // Zero latency dead-zone
         //
-        // LerpÇ»ÇµÅB
+        // Lerp„Å™„Åó„ÄÇ
         // =====================================================
 
         if (
@@ -1260,9 +2104,9 @@ public class FacePartShapeMask : MonoBehaviour
     // =========================================================
     // Mouth Anchor
     //
-    // äOêOëSëÃÇÃïΩãœÇégÇÌÇ»Ç¢ÅB
+    // Â§ñÂîáÂÖ®‰Ωì„ÅÆÂπ≥Âùá„Çí‰Ωø„Çè„Å™„ÅÑ„ÄÇ
     //
-    // 61 / 291 ÇÃå˚äpíÜì_ÅB
+    // 61 / 291 „ÅÆÂè£Ëßí‰∏≠ÁÇπ„ÄÇ
     // =========================================================
 
     private Vector2 GetMouthAnchor(
@@ -1457,14 +2301,34 @@ public class FacePartShapeMask : MonoBehaviour
 
 
         // =====================================================
-        // Strongest close signal
+        // Confidence fusion
+        //
+        // Blendshape reacts quickly, while geometry provides an independent
+        // plausibility check. A disagreement may still shape the eyelid, but
+        // it must never make the complete eye disappear by itself.
         // =====================================================
 
+        bool hasBlendSignal =
+            useBlendshapeBlink &&
+            hasExpression;
+
+
+        bool hasGeometrySignal =
+            useGeometryCloseFallback;
+
+
         float closeAmount =
-            Mathf.Max(
-                blendClose,
-                geometryClose
-            );
+            stabilizeEyeVisibility
+                ? KiwiFacePartVisibilityMath.FuseEyeCloseAmount(
+                    blendClose,
+                    geometryClose,
+                    hasBlendSignal,
+                    hasGeometrySignal
+                )
+                : Mathf.Max(
+                    blendClose,
+                    geometryClose
+                );
 
 
         closeAmount =
@@ -1600,40 +2464,154 @@ public class FacePartShapeMask : MonoBehaviour
         }
 
 
-        visibility =
-            Mathf.Min(
-                blendVisibility,
-                geometryVisibility
-            );
-
-
         bool blinkClosed =
-            useBlendshapeBlink &&
-            hasExpression &&
+            hasBlendSignal &&
             blinkScore >=
             blinkHideThreshold;
 
 
         bool geometryClosed =
-            useGeometryCloseFallback &&
+            hasGeometrySignal &&
             openness <=
             geometryCloseFull;
 
 
-        hardClosed =
-            blinkClosed ||
-            geometryClosed;
+        if (stabilizeEyeVisibility)
+        {
+            UpdateEyeVisibilityState(
+                hasBlendSignal,
+                hasGeometrySignal,
+                blinkClosed,
+                geometryClosed,
+                blinkScore,
+                openness
+            );
 
 
-        if (hardClosed)
+            hardClosed =
+                _eyeClosureConfirmed;
+
+
+            // Opacity is state-driven rather than sample-driven. Contour
+            // compression above still follows the current sample immediately,
+            // so a real blink stays responsive without alpha chatter.
+            visibility =
+                _eyeClosureConfirmed
+                    ? Mathf.Clamp(
+                        closedEyeVisibilityFloor,
+                        0.10f,
+                        1f
+                    )
+                    : 1f;
+        }
+        else
         {
             visibility =
-                0f;
+                Mathf.Min(
+                    blendVisibility,
+                    geometryVisibility
+                );
+
+
+            hardClosed =
+                blinkClosed ||
+                geometryClosed;
+
+
+            if (
+                hardHideWhenFullyClosed &&
+                hardClosed
+            )
+            {
+                visibility =
+                    0f;
+            }
         }
 
 
         debugVisibility =
             visibility;
+    }
+
+
+    private void UpdateEyeVisibilityState(
+        bool hasBlendSignal,
+        bool hasGeometrySignal,
+        bool blinkClosed,
+        bool geometryClosed,
+        float blinkScore,
+        float openness)
+    {
+        bool coherentClosed =
+            KiwiFacePartVisibilityMath.HasCoherentEyeClosure(
+                hasBlendSignal,
+                hasGeometrySignal,
+                blinkClosed,
+                geometryClosed
+            );
+
+
+        bool clearlyOpen =
+            (!hasBlendSignal || blinkScore < blinkFadeStart) &&
+            (!hasGeometrySignal || openness > geometryCloseStart);
+
+
+        if (!_eyeClosureConfirmed)
+        {
+            _eyeOpenEvidenceSamples =
+                0;
+
+
+            _eyeCloseEvidenceSamples =
+                KiwiFacePartVisibilityMath.AdvanceEvidenceCounter(
+                    _eyeCloseEvidenceSamples,
+                    coherentClosed,
+                    eyeCloseConfirmationSamples
+                );
+
+
+            if (
+                _eyeCloseEvidenceSamples >=
+                Mathf.Max(1, eyeCloseConfirmationSamples)
+            )
+            {
+                _eyeClosureConfirmed =
+                    true;
+
+
+                _eyeOpenEvidenceSamples =
+                    0;
+            }
+
+
+            return;
+        }
+
+
+        _eyeCloseEvidenceSamples =
+            0;
+
+
+        _eyeOpenEvidenceSamples =
+            KiwiFacePartVisibilityMath.AdvanceEvidenceCounter(
+                _eyeOpenEvidenceSamples,
+                clearlyOpen,
+                eyeOpenConfirmationSamples
+            );
+
+
+        if (
+            _eyeOpenEvidenceSamples >=
+            Mathf.Max(1, eyeOpenConfirmationSamples)
+        )
+        {
+            _eyeClosureConfirmed =
+                false;
+
+
+            _eyeOpenEvidenceSamples =
+                0;
+        }
     }
 
 
@@ -1934,6 +2912,502 @@ public class FacePartShapeMask : MonoBehaviour
 
         flipY =
             _mouthFlipY;
+    }
+
+
+    // =========================================================
+    // Mouth camera-edge visibility
+    // =========================================================
+
+    private bool IsMouthBlinkProtectionActive(
+        int landmarkCount,
+        bool hasExpression,
+        FaceExpressionData expression)
+    {
+        if (!protectMouthDuringBlink)
+        {
+            debugMouthProtectedByBlink =
+                false;
+
+
+            return false;
+        }
+
+
+        float eyeAOpen =
+            -1f;
+
+
+        float eyeBOpen =
+            -1f;
+
+
+        if (!hasExpression)
+        {
+            eyeAOpen =
+                CalculateRawEyeAspect(
+                    362,
+                    263,
+                    386,
+                    374,
+                    landmarkCount
+                );
+
+
+            eyeBOpen =
+                CalculateRawEyeAspect(
+                    33,
+                    133,
+                    159,
+                    145,
+                    landmarkCount
+                );
+        }
+
+
+        bool active =
+            KiwiFacePartVisibilityMath.IsMouthBlinkProtectionActive(
+                protectMouthDuringBlink,
+                hasExpression,
+                expression.eyeBlinkLeft,
+                expression.eyeBlinkRight,
+                mouthBlinkProtectionThreshold,
+                eyeAOpen,
+                eyeBOpen,
+                mouthBlinkGeometryThreshold
+            );
+
+
+        debugMouthProtectedByBlink =
+            active;
+
+
+        return active;
+    }
+
+
+    private float CalculateRawEyeAspect(
+        int cornerA,
+        int cornerB,
+        int upper,
+        int lower,
+        int landmarkCount)
+    {
+        if (
+            cornerA < 0 ||
+            cornerB < 0 ||
+            upper < 0 ||
+            lower < 0 ||
+            cornerA >= landmarkCount ||
+            cornerB >= landmarkCount ||
+            upper >= landmarkCount ||
+            lower >= landmarkCount ||
+            cornerA >= _landmarks.Length ||
+            cornerB >= _landmarks.Length ||
+            upper >= _landmarks.Length ||
+            lower >= _landmarks.Length
+        )
+        {
+            return -1f;
+        }
+
+
+        return KiwiFacePartVisibilityMath.CalculateEyeAspect(
+            _landmarks[cornerA],
+            _landmarks[cornerB],
+            _landmarks[upper],
+            _landmarks[lower]
+        );
+    }
+
+    private void UpdateMouthFrameVisibilityTarget(
+        int landmarkCount,
+        bool mirrorX,
+        bool flipY,
+        bool protectedByBlink)
+    {
+        if (!hideMouthOutsideTexture)
+        {
+            _mouthFrameVisibilityTarget =
+                1f;
+
+
+            debugMouthEdgeClearance =
+                1f;
+
+
+            debugMouthHiddenByFrame =
+                false;
+
+
+            _mouthEdgeViolationSamples =
+                0;
+
+
+            _mouthEdgeRecoverySamples =
+                0;
+
+
+            _mouthEdgeViolationStartTime =
+                -1f;
+
+
+            _holdMouthVisual =
+                false;
+
+
+            CacheSafeMouthUvRect();
+
+
+            return;
+        }
+
+
+        float minX =
+            float.MaxValue;
+
+
+        float minY =
+            float.MaxValue;
+
+
+        float maxX =
+            float.MinValue;
+
+
+        float maxY =
+            float.MinValue;
+
+
+        for (int i = 0; i < MouthIndices.Length; i++)
+        {
+            int index =
+                MouthIndices[i];
+
+
+            if (
+                index < 0 ||
+                index >= landmarkCount ||
+                index >= _landmarks.Length
+            )
+            {
+                debugMouthEdgeClearance =
+                    -1f;
+
+
+                if (protectedByBlink)
+                {
+                    ProtectMouthVisibilityDuringBlink(
+                        false
+                    );
+
+
+                    return;
+                }
+
+
+                ConfirmMouthEdgeViolation(
+                    Time.unscaledTime
+                );
+
+
+                return;
+            }
+
+
+            Vector2 point =
+                ApplyOrientation(
+                    _landmarks[index],
+                    mirrorX,
+                    flipY
+                );
+
+
+            minX = Mathf.Min(minX, point.x);
+            minY = Mathf.Min(minY, point.y);
+            maxX = Mathf.Max(maxX, point.x);
+            maxY = Mathf.Max(maxY, point.y);
+        }
+
+
+        float clearance =
+            KiwiFacePartVisibilityMath.CalculateTextureEdgeClearance(
+                minX,
+                minY,
+                maxX,
+                maxY
+            );
+
+
+        if (protectedByBlink)
+        {
+            ProtectMouthVisibilityDuringBlink(
+                clearance >=
+                Mathf.Max(
+                    0f,
+                    mouthHideEdgeMargin
+                )
+            );
+
+
+            debugMouthEdgeClearance =
+                clearance;
+
+
+            return;
+        }
+
+
+        bool safelyInside =
+            clearance >=
+            (
+                _holdMouthVisual ||
+                _mouthFrameVisibilityTarget < 0.5f
+                    ? Mathf.Max(
+                        mouthHideEdgeMargin,
+                        mouthShowEdgeMargin
+                    )
+                    : Mathf.Max(
+                        0f,
+                        mouthHideEdgeMargin
+                    )
+            );
+
+
+        if (safelyInside)
+        {
+            _mouthEdgeViolationSamples =
+                0;
+
+
+            _mouthEdgeViolationStartTime =
+                -1f;
+
+
+            if (
+                _holdMouthVisual ||
+                _mouthFrameVisibilityTarget < 0.5f
+            )
+            {
+                _mouthEdgeRecoverySamples =
+                    KiwiFacePartVisibilityMath.AdvanceEvidenceCounter(
+                        _mouthEdgeRecoverySamples,
+                        true,
+                        mouthEdgeShowConfirmationSamples
+                    );
+
+
+                if (
+                    _mouthEdgeRecoverySamples >=
+                    Mathf.Max(
+                        1,
+                        mouthEdgeShowConfirmationSamples
+                    )
+                )
+                {
+                    _holdMouthVisual =
+                        false;
+
+
+                    _mouthFrameVisibilityTarget =
+                        1f;
+
+
+                    _mouthEdgeRecoverySamples =
+                        0;
+
+
+                    CacheSafeMouthUvRect();
+                }
+            }
+            else
+            {
+                _mouthEdgeRecoverySamples =
+                    0;
+
+
+                _mouthFrameVisibilityTarget =
+                    1f;
+
+
+                CacheSafeMouthUvRect();
+            }
+        }
+        else
+        {
+            _mouthEdgeRecoverySamples =
+                0;
+
+
+            ConfirmMouthEdgeViolation(
+                Time.unscaledTime
+            );
+        }
+
+
+        debugMouthEdgeClearance =
+            clearance;
+
+
+        debugMouthHiddenByFrame =
+            _mouthFrameVisibilityTarget < 0.5f;
+    }
+
+
+    private void ProtectMouthVisibilityDuringBlink(
+        bool currentCropIsComplete)
+    {
+        // A blink must never inherit an in-progress mouth fade. Restore both
+        // current and target visibility in the same Landmarker result.
+        _mouthFrameVisibility =
+            1f;
+
+
+        _mouthFrameVisibilityTarget =
+            1f;
+
+
+        _mouthEdgeViolationSamples =
+            0;
+
+
+        _mouthEdgeRecoverySamples =
+            0;
+
+
+        _mouthEdgeViolationStartTime =
+            -1f;
+
+
+        if (currentCropIsComplete)
+        {
+            _holdMouthVisual =
+                false;
+
+
+            CacheSafeMouthUvRect();
+        }
+        else
+        {
+            _holdMouthVisual =
+                _hasSafeMouthUvRect;
+        }
+
+
+        debugMouthHiddenByFrame =
+            false;
+    }
+
+
+    private void CacheSafeMouthUvRect()
+    {
+        if (_image == null)
+        {
+            return;
+        }
+
+
+        _safeMouthUvRect =
+            _image.uvRect;
+
+
+        _hasSafeMouthUvRect =
+            true;
+    }
+
+
+    private void ConfirmMouthEdgeViolation(
+        float sampleTime)
+    {
+        int requiredSamples =
+            Mathf.Max(
+                1,
+                mouthEdgeHideConfirmationSamples
+            );
+
+
+        if (_mouthEdgeViolationSamples <= 0)
+        {
+            _mouthEdgeViolationStartTime =
+                sampleTime;
+        }
+
+
+        _mouthEdgeViolationSamples =
+            Mathf.Min(
+                _mouthEdgeViolationSamples + 1,
+                requiredSamples
+            );
+
+
+        // Hold the last complete visual from the first suspect result. This is
+        // a zero-order hold only for invalid edge samples; valid tracking is
+        // never smoothed or delayed.
+        _holdMouthVisual =
+            _hasSafeMouthUvRect;
+
+
+        float violationDuration =
+            _mouthEdgeViolationStartTime >= 0f
+                ? Mathf.Max(
+                    0f,
+                    sampleTime -
+                    _mouthEdgeViolationStartTime
+                )
+                : 0f;
+
+
+        if (
+            KiwiFacePartVisibilityMath.ShouldConfirmVisibilityLoss(
+                _mouthEdgeViolationSamples,
+                requiredSamples,
+                violationDuration,
+                mouthEdgeHideGraceSeconds
+            )
+        )
+        {
+            _mouthFrameVisibilityTarget =
+                0f;
+        }
+
+
+        debugMouthHiddenByFrame =
+            _mouthFrameVisibilityTarget < 0.5f;
+    }
+
+
+    private void AdvanceMouthFrameVisibility()
+    {
+        if (!hideMouthOutsideTexture)
+        {
+            _mouthFrameVisibilityTarget =
+                1f;
+        }
+
+
+        float dt =
+            Mathf.Min(
+                Time.unscaledDeltaTime,
+                0.05f
+            );
+
+
+        _mouthFrameVisibility =
+            KiwiFacePartVisibilityMath.MoveVisibility(
+                _mouthFrameVisibility,
+                _mouthFrameVisibilityTarget,
+                dt,
+                mouthHideFadeSeconds,
+                mouthShowFadeSeconds
+            );
+
+
+        debugMouthFrameVisibility =
+            _mouthFrameVisibility;
+
+
+        debugVisibility =
+            _mouthFrameVisibility;
     }
 
 
@@ -2535,7 +4009,7 @@ public class FacePartShapeMask : MonoBehaviour
             Debug.LogError(
                 "[FacePartShapeMask] "
                 +
-                "UI/FacePartSoftMask Ç™å©Ç¬Ç©ÇËÇ‹ÇπÇÒÅB",
+                "UI/FacePartSoftMask „ÅåË¶ã„Å§„Åã„Çä„Åæ„Åõ„Çì„ÄÇ",
                 this
             );
 
@@ -2577,6 +4051,24 @@ public class FacePartShapeMask : MonoBehaviour
             VisibilityId,
             1f
         );
+
+
+        _runtimeMaterial.SetFloat(
+            PoseVisibilityId,
+            1f
+        );
+
+
+        _lastAppliedFrameVisibility =
+            1f;
+
+
+        _lastAppliedPoseVisibility =
+            1f;
+
+
+        _lastAppliedVisibleScale =
+            new Vector2(float.NaN, float.NaN);
 
 
         SetSampleOffset(
@@ -2707,12 +4199,110 @@ public class FacePartShapeMask : MonoBehaviour
             1f;
 
 
+        _mouthFrameVisibility =
+            1f;
+
+
+        _mouthFrameVisibilityTarget =
+            1f;
+
+
+        _mouthEdgeViolationSamples =
+            0;
+
+
+        _mouthEdgeRecoverySamples =
+            0;
+
+
+        _mouthEdgeViolationStartTime =
+            -1f;
+
+
+        _holdMouthVisual =
+            false;
+
+
+        _hasSafeMouthUvRect =
+            false;
+
+
+        _eyeFrameVisibility =
+            1f;
+
+
+        _eyeFrameVisibilityTarget =
+            1f;
+
+
+        _eyeCloseEvidenceSamples =
+            0;
+
+
+        _eyeOpenEvidenceSamples =
+            0;
+
+
+        _eyeClosureConfirmed =
+            false;
+
+
+        _renderedPointCount =
+            0;
+
+
+        _targetPointCount =
+            0;
+
+
+        _hasRenderedContour =
+            false;
+
+
+        _contourUploadDirty =
+            false;
+
+
+        _maskPointsAreCropLocal =
+            false;
+
+
+        debugMouthEdgeClearance =
+            1f;
+
+
+        debugMouthHiddenByFrame =
+            false;
+
+
+        debugMouthFrameVisibility =
+            1f;
+
+
+        debugMouthProtectedByBlink =
+            false;
+
+
         if (_runtimeMaterial != null)
         {
             _runtimeMaterial.SetFloat(
                 VisibilityId,
                 1f
             );
+
+
+            _runtimeMaterial.SetFloat(
+                PoseVisibilityId,
+                1f
+            );
+
+
+            _lastAppliedFrameVisibility =
+                1f;
+
+
+            _lastAppliedPoseVisibility =
+                1f;
 
 
             SetSampleOffset(
@@ -2740,6 +4330,10 @@ public class FacePartShapeMask : MonoBehaviour
 
     private void OnDisable()
     {
+        Application.onBeforeRender -=
+            RefreshPoseVisibility;
+
+
         if (_image != null)
         {
             _image.canvasRenderer.SetAlpha(
@@ -2796,5 +4390,456 @@ public class FacePartShapeMask : MonoBehaviour
 
         _runtimeMaterial =
             null;
+
+
+        _lastAppliedFrameVisibility =
+            float.NaN;
+
+
+        _lastAppliedPoseVisibility =
+            float.NaN;
+    }
+}
+
+
+public static class KiwiFacePartContourStabilityMath
+{
+    public static bool ShouldUpdateContour(
+        Vector2[] stable,
+        Vector2[] raw,
+        int count,
+        float translationDeadZone,
+        float shapeDeadZone)
+    {
+        if (
+            stable == null ||
+            raw == null ||
+            count <= 0 ||
+            count > stable.Length ||
+            count > raw.Length
+        )
+        {
+            return true;
+        }
+
+
+        Vector2 stableCenter = Vector2.zero;
+        Vector2 rawCenter = Vector2.zero;
+
+
+        for (int i = 0; i < count; i++)
+        {
+            stableCenter += stable[i];
+            rawCenter += raw[i];
+        }
+
+
+        float inverseCount = 1f / count;
+        stableCenter *= inverseCount;
+        rawCenter *= inverseCount;
+
+
+        if (
+            Vector2.Distance(stableCenter, rawCenter) >
+            Mathf.Max(0f, translationDeadZone)
+        )
+        {
+            return true;
+        }
+
+
+        Vector2 coherentTranslation = rawCenter - stableCenter;
+        float residualSum = 0f;
+
+
+        for (int i = 0; i < count; i++)
+        {
+            Vector2 residual =
+                raw[i] - stable[i] - coherentTranslation;
+
+
+            residualSum += residual.sqrMagnitude;
+        }
+
+
+        float rmsShapeChange = Mathf.Sqrt(
+            residualSum * inverseCount
+        );
+
+
+        return
+            rmsShapeChange >
+            Mathf.Max(0f, shapeDeadZone);
+    }
+}
+
+
+public static class KiwiFacePartMaskCoherenceMath
+{
+    public static Vector2 ToCropLocal(
+        Vector2 point,
+        Rect cropRect,
+        float safetyMargin)
+    {
+        float safeWidth =
+            Mathf.Max(0.000001f, Mathf.Abs(cropRect.width));
+
+        float safeHeight =
+            Mathf.Max(0.000001f, Mathf.Abs(cropRect.height));
+
+        Vector2 local =
+            new Vector2(
+                (point.x - cropRect.xMin) / safeWidth,
+                (point.y - cropRect.yMin) / safeHeight
+            );
+
+        float margin =
+            Mathf.Clamp(safetyMargin, 0f, 0.49f);
+
+        local.x =
+            Mathf.Clamp(local.x, margin, 1f - margin);
+
+        local.y =
+            Mathf.Clamp(local.y, margin, 1f - margin);
+
+        return local;
+    }
+
+
+    public static Vector2 FromCropLocal(
+        Vector2 localPoint,
+        Rect cropRect)
+    {
+        return new Vector2(
+            cropRect.xMin + localPoint.x * cropRect.width,
+            cropRect.yMin + localPoint.y * cropRect.height
+        );
+    }
+}
+
+
+public static class KiwiFacePartSurfaceSafetyMath
+{
+    public static Vector2 CalculateNormalizedSurface(
+        Vector2 sampleUv,
+        Rect sourceRect,
+        Vector2 pivot,
+        Vector2 offset,
+        float uniformScale,
+        Vector2 sampleScaleXY,
+        float rotationRadians,
+        float sourceAspect,
+        Vector2 visualZoom)
+    {
+        float aspect = Mathf.Max(0.0001f, sourceAspect);
+        float scaleX = Mathf.Max(0.01f, uniformScale * sampleScaleXY.x);
+        float scaleY = Mathf.Max(0.01f, uniformScale * sampleScaleXY.y);
+        Vector2 rotated = sampleUv - offset - pivot;
+        rotated.x *= aspect;
+
+
+        float sine = Mathf.Sin(rotationRadians);
+        float cosine = Mathf.Cos(rotationRadians);
+        Vector2 unrotated = new Vector2(
+            cosine * rotated.x + sine * rotated.y,
+            -sine * rotated.x + cosine * rotated.y
+        );
+        unrotated.x /= scaleX * aspect;
+        unrotated.y /= scaleY;
+
+
+        Vector2 inputUv = pivot + unrotated;
+        float width = Mathf.Max(0.000001f, Mathf.Abs(sourceRect.width));
+        float height = Mathf.Max(0.000001f, Mathf.Abs(sourceRect.height));
+        return new Vector2(
+            0.5f +
+                (inputUv.x - sourceRect.center.x) /
+                width * Mathf.Max(0.01f, visualZoom.x),
+            0.5f +
+                (inputUv.y - sourceRect.center.y) /
+                height * Mathf.Max(0.01f, visualZoom.y)
+        );
+    }
+
+
+    public static bool IsInsideSurface(
+        Vector2 normalizedSurface,
+        float safetyMargin)
+    {
+        float margin = Mathf.Clamp(safetyMargin, 0f, 0.49f);
+        return
+            !float.IsNaN(normalizedSurface.x) &&
+            !float.IsInfinity(normalizedSurface.x) &&
+            !float.IsNaN(normalizedSurface.y) &&
+            !float.IsInfinity(normalizedSurface.y) &&
+            normalizedSurface.x >= margin &&
+            normalizedSurface.x <= 1f - margin &&
+            normalizedSurface.y >= margin &&
+            normalizedSurface.y <= 1f - margin;
+    }
+}
+
+
+public static class KiwiFacePartVisibilityMath
+{
+    public static float CalculatePoseVisibility(
+        float yawDegrees,
+        float fullVisibilityYaw,
+        float hiddenVisibilityYaw)
+    {
+        float full = Mathf.Max(0f, fullVisibilityYaw);
+        float hidden = Mathf.Max(full + 0.1f, hiddenVisibilityYaw);
+        float transition = Mathf.InverseLerp(
+            full,
+            hidden,
+            Mathf.Abs(yawDegrees)
+        );
+
+        transition = transition * transition * (3f - 2f * transition);
+        return 1f - transition;
+    }
+
+
+    public static bool IsMouthBlinkProtectionActive(
+        bool enabled,
+        bool hasExpression,
+        float blinkLeft,
+        float blinkRight,
+        float blendshapeThreshold,
+        float eyeAAspect,
+        float eyeBAspect,
+        float geometryThreshold)
+    {
+        if (!enabled)
+        {
+            return false;
+        }
+
+
+        if (hasExpression)
+        {
+            return
+                Mathf.Max(
+                    blinkLeft,
+                    blinkRight
+                ) >=
+                Mathf.Clamp01(
+                    blendshapeThreshold
+                );
+        }
+
+
+        return
+            eyeAAspect >= 0f &&
+            eyeBAspect >= 0f &&
+            Mathf.Min(
+                eyeAAspect,
+                eyeBAspect
+            ) <=
+            Mathf.Max(
+                0f,
+                geometryThreshold
+            );
+    }
+
+
+    public static float CalculateEyeAspect(
+        Vector2 cornerA,
+        Vector2 cornerB,
+        Vector2 upper,
+        Vector2 lower)
+    {
+        float width =
+            Vector2.Distance(
+                cornerA,
+                cornerB
+            );
+
+
+        if (width <= 0.000001f)
+        {
+            return -1f;
+        }
+
+
+        return
+            Vector2.Distance(
+                upper,
+                lower
+            ) /
+            width;
+    }
+
+
+    public static float FuseEyeCloseAmount(
+        float blendClose,
+        float geometryClose,
+        bool hasBlendSignal,
+        bool hasGeometrySignal)
+    {
+        blendClose =
+            Mathf.Clamp01(blendClose);
+
+
+        geometryClose =
+            Mathf.Clamp01(geometryClose);
+
+
+        if (hasBlendSignal && hasGeometrySignal)
+        {
+            float agreement =
+                Mathf.Min(
+                    blendClose,
+                    geometryClose
+                );
+
+
+            float primary =
+                blendClose * 0.65f +
+                geometryClose * 0.35f;
+
+
+            // Agreement is weighted heavily so a yaw-compressed landmark eye
+            // cannot instantly collapse an otherwise open BlendShape eye.
+            return Mathf.Clamp01(
+                primary * 0.45f +
+                agreement * 0.55f
+            );
+        }
+
+
+        if (hasBlendSignal)
+        {
+            return blendClose;
+        }
+
+
+        if (hasGeometrySignal)
+        {
+            return geometryClose;
+        }
+
+
+        return 0f;
+    }
+
+
+    public static bool HasCoherentEyeClosure(
+        bool hasBlendSignal,
+        bool hasGeometrySignal,
+        bool blinkClosed,
+        bool geometryClosed)
+    {
+        // Full opacity reduction requires two independent signals. If only one
+        // source is available, contour compression still represents the blink
+        // while the eye texture remains present.
+        return
+            hasBlendSignal &&
+            hasGeometrySignal &&
+            blinkClosed &&
+            geometryClosed;
+    }
+
+
+    public static int AdvanceEvidenceCounter(
+        int current,
+        bool evidence,
+        int required)
+    {
+        if (!evidence)
+        {
+            return 0;
+        }
+
+
+        int limit =
+            Mathf.Max(
+                1,
+                required
+            );
+
+
+        return Mathf.Min(
+            Mathf.Max(0, current) + 1,
+            limit
+        );
+    }
+
+
+    public static bool ShouldConfirmVisibilityLoss(
+        int evidenceSamples,
+        int requiredSamples,
+        float evidenceSeconds,
+        float graceSeconds)
+    {
+        return
+            evidenceSamples >=
+            Mathf.Max(1, requiredSamples) &&
+            evidenceSeconds >=
+            Mathf.Max(0f, graceSeconds);
+    }
+
+
+    public static float CalculateTextureEdgeClearance(
+        float minX,
+        float minY,
+        float maxX,
+        float maxY)
+    {
+        return Mathf.Min(
+            Mathf.Min(minX, minY),
+            Mathf.Min(1f - maxX, 1f - maxY)
+        );
+    }
+
+
+    public static bool ResolveVisibleState(
+        bool currentlyShown,
+        float edgeClearance,
+        float hideMargin,
+        float showMargin)
+    {
+        float hideThreshold =
+            Mathf.Max(0f, hideMargin);
+
+
+        float showThreshold =
+            Mathf.Max(
+                hideThreshold,
+                showMargin
+            );
+
+
+        return currentlyShown
+            ? edgeClearance > hideThreshold
+            : edgeClearance >= showThreshold;
+    }
+
+
+    public static float MoveVisibility(
+        float current,
+        float target,
+        float deltaTime,
+        float hideSeconds,
+        float showSeconds)
+    {
+        float duration =
+            target < current
+                ? hideSeconds
+                : showSeconds;
+
+
+        if (duration <= 0.0001f)
+        {
+            return Mathf.Clamp01(target);
+        }
+
+
+        return Mathf.MoveTowards(
+            Mathf.Clamp01(current),
+            Mathf.Clamp01(target),
+            Mathf.Max(0f, deltaTime) /
+            duration
+        );
     }
 }

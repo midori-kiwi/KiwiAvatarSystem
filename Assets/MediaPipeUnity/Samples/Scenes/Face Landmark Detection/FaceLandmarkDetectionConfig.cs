@@ -4,7 +4,7 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 {
     public class FaceLandmarkDetectionConfig
     {
-        // WindowsÇ≈ÇÕCPU
+        // Windows„Åß„ÅØCPU
         public Tasks.Core.BaseOptions.Delegate Delegate { get; set; } =
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
             Tasks.Core.BaseOptions.Delegate.CPU;
@@ -12,8 +12,15 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             Tasks.Core.BaseOptions.Delegate.GPU;
 #endif
 
-        public ImageReadMode ImageReadMode { get; set; }
-            = ImageReadMode.CPUAsync;
+        // Windows/DX11 AsyncGPUReadback measured 89-96 ms at 960x540 in the
+        // supplied v5.1 recording. A bounded 640-wide synchronous read avoids
+        // that queued GPU age. Mobile keeps the non-blocking path.
+        public ImageReadMode ImageReadMode { get; set; } =
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+            ImageReadMode.CPU;
+#else
+            ImageReadMode.CPUAsync;
+#endif
 
         public Tasks.Vision.Core.RunningMode RunningMode { get; set; }
             = Tasks.Vision.Core.RunningMode.LIVE_STREAM;

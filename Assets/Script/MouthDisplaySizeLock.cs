@@ -10,40 +10,56 @@ public class MouthDisplaySizeLock : MonoBehaviour
     // Purpose
     // =========================================================
     //
-    // Landmarker ‚Ì uvRect / —ÖŠs / ˆÊ’u / Šp“x‚É‚ÍˆêØè‚ğ‰Á‚¦‚¸A
-    // ÅI•\¦‚¾‚¯‚ğˆê’è”{—¦‚Ék¬‚·‚éB
+    // Landmarker ã® uvRect / è¼ªéƒ­ / ä½ç½® / è§’åº¦ã«ã¯ä¸€åˆ‡æ‰‹ã‚’åŠ ãˆãšã€
+    // æœ€çµ‚è¡¨ç¤ºã ã‘ã‚’ä¸€å®šå€ç‡ã«ç¸®å°ã™ã‚‹ã€‚
     //
-    // FacePartSoftMask ‚Ì _SampleScaleXY ‚Í
-    // 1 ‚æ‚è‘å‚«‚¢‚Ù‚Ç•\¦Œ‹‰Ê‚ª¬‚³‚­‚È‚é‚½‚ßA
-    // •\¦”{—¦ 0.50 -> SampleScale 2.00 ‚Æ‚·‚éB
+    // FacePartSoftMask ã® _SampleScaleXY ã¯
+    // 1 ã‚ˆã‚Šå¤§ãã„ã»ã©è¡¨ç¤ºçµæœãŒå°ã•ããªã‚‹ãŸã‚ã€
+    // è¡¨ç¤ºå€ç‡ 0.50 -> SampleScale 2.00 ã¨ã™ã‚‹ã€‚
     //
-    // ŠÔ•½ŠŠ‰»EƒLƒƒƒŠƒuƒŒ[ƒVƒ‡ƒ“EDeadZone ‚Íg—p‚µ‚È‚¢B
-    // ‚»‚Ì‚½‚ß Landmarker ’Ç]’x‰„‚Í‘‚¦‚È‚¢B
+    // æ™‚é–“å¹³æ»‘åŒ–ãƒ»ã‚­ãƒ£ãƒªãƒ–ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³ãƒ»DeadZone ã¯ä½¿ç”¨ã—ãªã„ã€‚
+    // ãã®ãŸã‚ Landmarker è¿½å¾“é…å»¶ã¯å¢—ãˆãªã„ã€‚
     // =========================================================
 
 
     [Header("Maximum Mouth Display Size")]
 
     [Tooltip(
-        "1.00 = Œ»İƒTƒCƒY / 0.50 = Œ»İ‚Ì–ñ”¼•ªBLandmarker‚Ì’Ç]‚»‚Ì‚à‚Ì‚Í•ÏX‚µ‚Ü‚¹‚ñB"
+        "1.00 = ç¾åœ¨ã‚µã‚¤ã‚º / 0.50 = ç¾åœ¨ã®ç´„åŠåˆ†ã€‚Landmarkerã®è¿½å¾“ãã®ã‚‚ã®ã¯å¤‰æ›´ã—ã¾ã›ã‚“ã€‚"
     )]
     [Range(0.25f, 1.00f)]
     public float maximumVisibleScale =
-        0.50f;
+        0.78f;
 
 
     [Tooltip(
-        "‰¡•ûŒü‚É‚àÅ‘å•\¦”{—¦‚ğ“K—p‚µ‚Ü‚·B"
+        "æ¨ªæ–¹å‘ã«ã‚‚æœ€å¤§è¡¨ç¤ºå€ç‡ã‚’é©ç”¨ã—ã¾ã™ã€‚"
     )]
     public bool limitWidth =
         true;
 
 
     [Tooltip(
-        "c•ûŒü‚É‚àÅ‘å•\¦”{—¦‚ğ“K—p‚µ‚Ü‚·B"
+        "ç¸¦æ–¹å‘ã«ã‚‚æœ€å¤§è¡¨ç¤ºå€ç‡ã‚’é©ç”¨ã—ã¾ã™ã€‚"
     )]
     public bool limitHeight =
         true;
+
+
+    [Header("Native GPU Expression Zoom")]
+
+    [Tooltip(
+        "The expression zoom is combined with the calibrated maximum size in the shader. " +
+        "It does not rebuild the UI mesh and therefore adds no CPU-side geometry latency."
+    )]
+    [SerializeField]
+    [Min(1.00f)]
+    private float expressionZoomX = 1.00f;
+
+
+    [SerializeField]
+    [Min(1.00f)]
+    private float expressionZoomY = 1.00f;
 
 
     // =========================================================
@@ -68,6 +84,13 @@ public class MouthDisplaySizeLock : MonoBehaviour
 
     private SurfaceFittedRawImage _image;
     private Material _lastMaterial;
+    private float _lastAppliedScaleX = float.NaN;
+    private float _lastAppliedScaleY = float.NaN;
+
+
+    public float ExpressionZoomX => expressionZoomX;
+
+    public float ExpressionZoomY => expressionZoomY;
 
 
     private static readonly int SampleScaleId =
@@ -123,9 +146,9 @@ public class MouthDisplaySizeLock : MonoBehaviour
         }
 
 
-        // FacePartShapeMask ‚ª runtime material ‚ğì‚è’¼‚µ‚½ê‡‚¾‚¯‚Å‚È‚­A
-        // Inspector ‚©‚ç”{—¦‚ğ•ÏX‚µ‚½ê‡‚à‘¦”½‰f‚·‚é‚½‚ß–ˆ LateUpdate “K—p‚·‚éB
-        // SetFloat / SetVector ‚Ì‚İ‚È‚Ì‚Å’Ç]Œo˜H‚Ö‚ÌŠÔƒtƒBƒ‹ƒ^‚Í”­¶‚µ‚È‚¢B
+        // FacePartShapeMask ãŒ runtime material ã‚’ä½œã‚Šç›´ã—ãŸå ´åˆã ã‘ã§ãªãã€
+        // Inspector ã‹ã‚‰å€ç‡ã‚’å¤‰æ›´ã—ãŸå ´åˆã‚‚å³æ™‚åæ˜ ã™ã‚‹ãŸã‚æ¯ LateUpdate é©ç”¨ã™ã‚‹ã€‚
+        // SetFloat / SetVector ã®ã¿ãªã®ã§è¿½å¾“çµŒè·¯ã¸ã®æ™‚é–“ãƒ•ã‚£ãƒ«ã‚¿ã¯ç™ºç”Ÿã—ãªã„ã€‚
         ApplyMaximumSize();
     }
 
@@ -138,6 +161,10 @@ public class MouthDisplaySizeLock : MonoBehaviour
                 0.25f,
                 1.00f
             );
+
+
+        expressionZoomX = SanitizeZoom(expressionZoomX);
+        expressionZoomY = SanitizeZoom(expressionZoomY);
 
 
         if (Application.isPlaying)
@@ -174,6 +201,58 @@ public class MouthDisplaySizeLock : MonoBehaviour
     // Apply
     // =========================================================
 
+    public void SetExpressionZoom(float zoomX, float zoomY)
+    {
+        float nextX = SanitizeZoom(zoomX);
+        float nextY = SanitizeZoom(zoomY);
+
+        if (
+            Mathf.Approximately(expressionZoomX, nextX) &&
+            Mathf.Approximately(expressionZoomY, nextY)
+        )
+        {
+            return;
+        }
+
+        expressionZoomX = nextX;
+        expressionZoomY = nextY;
+        ApplyMaximumSize();
+    }
+
+
+    public void ResetExpressionZoom()
+    {
+        SetExpressionZoom(1.00f, 1.00f);
+    }
+
+
+    public Vector2 CalculateSampleScaleForExpression(
+        float zoomX,
+        float zoomY)
+    {
+        float visibleScale = Mathf.Clamp(
+            maximumVisibleScale,
+            0.25f,
+            1.00f
+        );
+        float inverseScale = 1.00f / visibleScale;
+        zoomX = SanitizeZoom(zoomX);
+        zoomY = SanitizeZoom(zoomY);
+
+        return new Vector2(
+            Mathf.Clamp(
+                (limitWidth ? inverseScale : 1.00f) / zoomX,
+                0.25f,
+                4.00f
+            ),
+            Mathf.Clamp(
+                (limitHeight ? inverseScale : 1.00f) / zoomY,
+                0.25f,
+                4.00f
+            )
+        );
+    }
+
     private void ApplyMaximumSize()
     {
         if (
@@ -189,38 +268,32 @@ public class MouthDisplaySizeLock : MonoBehaviour
             _image.material;
 
 
-        _lastMaterial =
-            material;
-
-
-        // 0.50 ”{•\¦‚È‚ç shader sample scale ‚Í 2.00B
+        // 0.50 å€è¡¨ç¤ºãªã‚‰ shader sample scale ã¯ 2.00ã€‚
         // visibleScale = 1 / sampleScale
-        float visibleScale =
-            Mathf.Clamp(
-                maximumVisibleScale,
-                0.25f,
-                1.00f
-            );
+        Vector2 sampleScale = CalculateSampleScaleForExpression(
+            expressionZoomX,
+            expressionZoomY
+        );
+        float scaleX = sampleScale.x;
+        float scaleY = sampleScale.y;
 
 
-        float inverseScale =
-            1.00f /
-            visibleScale;
+        if (
+            material == _lastMaterial &&
+            Mathf.Approximately(scaleX, _lastAppliedScaleX) &&
+            Mathf.Approximately(scaleY, _lastAppliedScaleY)
+        )
+        {
+            return;
+        }
 
 
-        float scaleX =
-            limitWidth
-                ? inverseScale
-                : 1.00f;
+        _lastMaterial = material;
+        _lastAppliedScaleX = scaleX;
+        _lastAppliedScaleY = scaleY;
 
 
-        float scaleY =
-            limitHeight
-                ? inverseScale
-                : 1.00f;
-
-
-        // Legacy uniform scale ‚Íí‚É NeutralB
+        // Legacy uniform scale ã¯å¸¸ã« Neutralã€‚
         if (
             material.HasProperty(
                 SampleScaleId
@@ -265,6 +338,16 @@ public class MouthDisplaySizeLock : MonoBehaviour
     // Reset
     // =========================================================
 
+    private static float SanitizeZoom(float value)
+    {
+        if (float.IsNaN(value) || float.IsInfinity(value))
+        {
+            return 1.00f;
+        }
+
+        return Mathf.Clamp(value, 1.00f, 3.00f);
+    }
+
     private void ResetMaterialScale()
     {
         Material material =
@@ -276,6 +359,8 @@ public class MouthDisplaySizeLock : MonoBehaviour
 
         if (material == null)
         {
+            _lastAppliedScaleX = float.NaN;
+            _lastAppliedScaleY = float.NaN;
             return;
         }
 
@@ -309,5 +394,9 @@ public class MouthDisplaySizeLock : MonoBehaviour
                 )
             );
         }
+
+
+        _lastAppliedScaleX = float.NaN;
+        _lastAppliedScaleY = float.NaN;
     }
 }

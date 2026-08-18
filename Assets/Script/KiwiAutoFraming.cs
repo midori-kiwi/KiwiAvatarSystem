@@ -13,14 +13,14 @@ public class KiwiAutoFraming : MonoBehaviour
     [Header("Target")]
 
     [Tooltip(
-        "ƒLƒEƒC–{‘Ì‚ÌRendererB\n" +
-        "’Êí‚Í geometry_0 ‚Ì SkinnedMeshRenderer ‚ğw’èB"
+        "ã‚­ã‚¦ã‚¤æœ¬ä½“ã®Rendererã€‚\n" +
+        "é€šå¸¸ã¯ geometry_0 ã® SkinnedMeshRenderer ã‚’æŒ‡å®šã€‚"
     )]
     public Renderer targetRenderer;
 
 
     [Tooltip(
-        "Target Renderer‚ª–¢w’è‚È‚çA‚±‚±‚©‚çÅ‘å‚ÌRenderer‚ğ©“®ŒŸõB"
+        "Target RendererãŒæœªæŒ‡å®šãªã‚‰ã€ã“ã“ã‹ã‚‰æœ€å¤§ã®Rendererã‚’è‡ªå‹•æ¤œç´¢ã€‚"
     )]
     public Transform targetRoot;
 
@@ -32,7 +32,7 @@ public class KiwiAutoFraming : MonoBehaviour
     [Header("Camera FOV")]
 
     [Tooltip(
-        "”zM—p‚ÉPerspective˜c‚İ‚ğ—}‚¦‚½ŒÅ’èFOV‚ğg—p‚·‚éB"
+        "é…ä¿¡ç”¨ã«Perspectiveæ­ªã¿ã‚’æŠ‘ãˆãŸå›ºå®šFOVã‚’ä½¿ç”¨ã™ã‚‹ã€‚"
     )]
     public bool useOptimizedFieldOfView =
         true;
@@ -50,8 +50,8 @@ public class KiwiAutoFraming : MonoBehaviour
     [Header("Safe Frame")]
 
     [Tooltip(
-        "¶‰E‚ÉŠm•Û‚·‚é—]”’B\n" +
-        "0.10 = ¶‰E10%‚¸‚ÂB"
+        "å·¦å³ã«ç¢ºä¿ã™ã‚‹ä½™ç™½ã€‚\n" +
+        "0.10 = å·¦å³10%ãšã¤ã€‚"
     )]
     [Range(0.02f, 0.25f)]
     public float horizontalMargin =
@@ -59,8 +59,8 @@ public class KiwiAutoFraming : MonoBehaviour
 
 
     [Tooltip(
-        "ã‰º‚ÉŠm•Û‚·‚é—]”’B\n" +
-        "0.10 = ã‰º10%‚¸‚ÂB"
+        "ä¸Šä¸‹ã«ç¢ºä¿ã™ã‚‹ä½™ç™½ã€‚\n" +
+        "0.10 = ä¸Šä¸‹10%ãšã¤ã€‚"
     )]
     [Range(0.02f, 0.25f)]
     public float verticalMargin =
@@ -79,9 +79,9 @@ public class KiwiAutoFraming : MonoBehaviour
     [Header("Movement Follow")]
 
     [Tooltip(
-        "ƒLƒEƒC‚Ì‰¡ˆÚ“®‚ğCamera‚ª’Ç]‚·‚éŠ„‡B\n" +
-        "0 = CameraŒÅ’è\n" +
-        "1 = Š®‘S’Ç]"
+        "ã‚­ã‚¦ã‚¤ã®æ¨ªç§»å‹•ã‚’CameraãŒè¿½å¾“ã™ã‚‹å‰²åˆã€‚\n" +
+        "0 = Cameraå›ºå®š\n" +
+        "1 = å®Œå…¨è¿½å¾“"
     )]
     [Range(0f, 1f)]
     public float horizontalFollow =
@@ -89,7 +89,7 @@ public class KiwiAutoFraming : MonoBehaviour
 
 
     [Tooltip(
-        "ƒLƒEƒC‚Ìã‰ºˆÚ“®‚ğCamera‚ª’Ç]‚·‚éŠ„‡B"
+        "ã‚­ã‚¦ã‚¤ã®ä¸Šä¸‹ç§»å‹•ã‚’CameraãŒè¿½å¾“ã™ã‚‹å‰²åˆã€‚"
     )]
     [Range(0f, 1f)]
     public float verticalFollow =
@@ -97,8 +97,8 @@ public class KiwiAutoFraming : MonoBehaviour
 
 
     [Tooltip(
-        "¬‚³‚È“®‚«‚Å‚ÍCamera‚ğ“®‚©‚³‚È‚¢B\n" +
-        "‰Šúƒ‚ƒfƒ‹ƒTƒCƒY‚É‘Î‚·‚éŠ„‡B"
+        "å°ã•ãªå‹•ãã§ã¯Cameraã‚’å‹•ã‹ã•ãªã„ã€‚\n" +
+        "åˆæœŸãƒ¢ãƒ‡ãƒ«ã‚µã‚¤ã‚ºã«å¯¾ã™ã‚‹å‰²åˆã€‚"
     )]
     [Range(0f, 0.20f)]
     public float centerDeadZoneFraction =
@@ -106,8 +106,8 @@ public class KiwiAutoFraming : MonoBehaviour
 
 
     [Tooltip(
-        "Camera‚ÌX/Y’Ç]‘¬“xB\n" +
-        "¬‚³‚¢‚Ù‚Ç‘¬‚¢B"
+        "Cameraã®X/Yè¿½å¾“é€Ÿåº¦ã€‚\n" +
+        "å°ã•ã„ã»ã©é€Ÿã„ã€‚"
     )]
     [Range(0.01f, 0.50f)]
     public float followSmoothTime =
@@ -121,14 +121,14 @@ public class KiwiAutoFraming : MonoBehaviour
     [Header("Auto Zoom Out")]
 
     [Tooltip(
-        "‰æ–Ê‚©‚çØ‚ê‚»‚¤‚È‚¾‚¯Camera‚ğŒã‘Ş‚³‚¹‚éB"
+        "ç”»é¢ã‹ã‚‰åˆ‡ã‚Œãã†ãªæ™‚ã ã‘Cameraã‚’å¾Œé€€ã•ã›ã‚‹ã€‚"
     )]
     public bool enableAutoZoomOut =
         true;
 
 
     [Tooltip(
-        "ƒLƒEƒC‚ªŒ³‚ÌƒTƒCƒY‚Ö–ß‚Á‚½‚ÉCamera‚ª–ß‚é‘¬“xB"
+        "ã‚­ã‚¦ã‚¤ãŒå…ƒã®ã‚µã‚¤ã‚ºã¸æˆ»ã£ãŸæ™‚ã«CameraãŒæˆ»ã‚‹é€Ÿåº¦ã€‚"
     )]
     [Range(0.05f, 1f)]
     public float zoomReturnSmoothTime =
@@ -136,7 +136,7 @@ public class KiwiAutoFraming : MonoBehaviour
 
 
     [Tooltip(
-        "Camera‚ªŒã‘Ş‚Å‚«‚éÅ‘å‹——£B"
+        "CameraãŒå¾Œé€€ã§ãã‚‹æœ€å¤§è·é›¢ã€‚"
     )]
     [Range(0.1f, 20f)]
     public float maximumExtraDistance =
@@ -144,7 +144,7 @@ public class KiwiAutoFraming : MonoBehaviour
 
 
     [Tooltip(
-        "Near Clip‚Æ‚ÌˆÀ‘S‹——£B"
+        "Near Clipã¨ã®å®‰å…¨è·é›¢ã€‚"
     )]
     [Range(0.001f, 0.5f)]
     public float nearClipPadding =
@@ -158,8 +158,8 @@ public class KiwiAutoFraming : MonoBehaviour
     [Header("Skinned Mesh")]
 
     [Tooltip(
-        "‰æ–ÊŠO‚Å‚àSkinnedMesh‚ÌBounds‚ğXV‚·‚éB\n" +
-        "ƒLƒEƒC1‘Ì‚È‚çON„§B"
+        "ç”»é¢å¤–ã§ã‚‚SkinnedMeshã®Boundsã‚’æ›´æ–°ã™ã‚‹ã€‚\n" +
+        "ã‚­ã‚¦ã‚¤1ä½“ãªã‚‰ONæ¨å¥¨ã€‚"
     )]
     public bool updateBoundsWhenOffscreen =
         true;
@@ -172,7 +172,7 @@ public class KiwiAutoFraming : MonoBehaviour
     [Header("Late Latch")]
 
     [Tooltip(
-        "KiwiFaceMotion‚ÌÅIXVŒã‚É‚àØ‚ê‚ğÄƒ`ƒFƒbƒN‚·‚éB"
+        "KiwiFaceMotionã®æœ€çµ‚æ›´æ–°å¾Œã«ã‚‚åˆ‡ã‚Œã‚’å†ãƒã‚§ãƒƒã‚¯ã™ã‚‹ã€‚"
     )]
     public bool useBeforeRenderSafetyCheck =
         true;
@@ -373,7 +373,7 @@ public class KiwiAutoFraming : MonoBehaviour
         {
             Debug.LogError(
                 "[KiwiAutoFraming] " +
-                "Target Renderer ‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB",
+                "Target Renderer ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚",
                 this
             );
 
@@ -425,8 +425,8 @@ public class KiwiAutoFraming : MonoBehaviour
         // =====================================================
         // Capture current composition
         //
-        // ¡‚ÌVTuberCameraˆÊ’u‚ğ
-        // u‚±‚êˆÈã‹ß‚Ã‚©‚È‚¢Šî€ˆÊ’uv‚Æ‚·‚éB
+        // ä»Šã®VTuberCameraä½ç½®ã‚’
+        // ã€Œã“ã‚Œä»¥ä¸Šè¿‘ã¥ã‹ãªã„åŸºæº–ä½ç½®ã€ã¨ã™ã‚‹ã€‚
         // =====================================================
 
         _baseCameraPosition =
@@ -511,11 +511,11 @@ public class KiwiAutoFraming : MonoBehaviour
     // =========================================================
     // Before Render
     //
-    // KiwiFaceMotion ‚ª onBeforeRender ‚Å
-    // ÅŒã‚ÉˆÊ’u‚ğ•ÏX‚·‚é‰Â”\«‚ª‚ ‚é‚½‚ßA
-    // ÅI“I‚ÈuØ‚ê–h~v‚¾‚¯ÄŒvZB
+    // KiwiFaceMotion ãŒ onBeforeRender ã§
+    // æœ€å¾Œã«ä½ç½®ã‚’å¤‰æ›´ã™ã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹ãŸã‚ã€
+    // æœ€çµ‚çš„ãªã€Œåˆ‡ã‚Œé˜²æ­¢ã€ã ã‘å†è¨ˆç®—ã€‚
     //
-    // ‚±‚±‚Å‚ÍSmoothˆ—‚ği‚ß‚È‚¢B
+    // ã“ã“ã§ã¯Smoothå‡¦ç†ã‚’é€²ã‚ãªã„ã€‚
     // =========================================================
 
     private void OnBeforeRender()
@@ -633,8 +633,8 @@ public class KiwiAutoFraming : MonoBehaviour
         // =====================================================
         // Partial follow
         //
-        // 100%’Ç]‚³‚¹‚È‚¢‚±‚Æ‚ÅA
-        // ƒLƒEƒC©g‚ÌˆÚ“®Š´‚ğc‚·B
+        // 100%è¿½å¾“ã•ã›ãªã„ã“ã¨ã§ã€
+        // ã‚­ã‚¦ã‚¤è‡ªèº«ã®ç§»å‹•æ„Ÿã‚’æ®‹ã™ã€‚
         // =====================================================
 
         float effectiveHorizontalFollow =
@@ -652,7 +652,13 @@ public class KiwiAutoFraming : MonoBehaviour
             effectiveVerticalFollow;
 
 
-        if (instant)
+        if (
+            instant ||
+            (
+                effectiveHorizontalFollow <= 0f &&
+                effectiveVerticalFollow <= 0f
+            )
+        )
         {
             _currentFollowX =
                 targetFollowX;
@@ -754,15 +760,15 @@ public class KiwiAutoFraming : MonoBehaviour
 
 
         // =====================================================
-        // šZoom OUT = immediate
+        // â˜…Zoom OUT = immediate
         //
-        // Ø‚ê‚»‚¤‚È‚ÉSmooth‚·‚é‚Æ
-        // ˆêu‰æ–ÊŠO‚Öo‚é‚½‚ßA
-        // Œã‘Ş‚¾‚¯‚Í‘¦B
+        // åˆ‡ã‚Œãã†ãªæ™‚ã«Smoothã™ã‚‹ã¨
+        // ä¸€ç¬ç”»é¢å¤–ã¸å‡ºã‚‹ãŸã‚ã€
+        // å¾Œé€€ã ã‘ã¯å³æ™‚ã€‚
         //
-        // šZoom IN = smooth
+        // â˜…Zoom IN = smooth
         //
-        // –ß‚é‚¾‚¯‚ä‚Á‚­‚èB
+        // æˆ»ã‚‹æ™‚ã ã‘ã‚†ã£ãã‚Šã€‚
         // =====================================================
 
         if (
@@ -806,8 +812,8 @@ public class KiwiAutoFraming : MonoBehaviour
         // =====================================================
         // Final Camera Transform
         //
-        // FOV‚ÍŒÅ’èB
-        // Camera‹——£‚¾‚¯‚ğ•ÏXB
+        // FOVã¯å›ºå®šã€‚
+        // Cameraè·é›¢ã ã‘ã‚’å¤‰æ›´ã€‚
         // =====================================================
 
         transform.position =
@@ -825,10 +831,10 @@ public class KiwiAutoFraming : MonoBehaviour
     // =========================================================
     // Emergency fit
     //
-    // BeforeRender‚Å‚ÍØ‚ê‚»‚¤‚Èê‡‚¾‚¯
-    // Camera‚ğ‚³‚ç‚ÉŒã‘Ş‚³‚¹‚éB
+    // BeforeRenderã§ã¯åˆ‡ã‚Œãã†ãªå ´åˆã ã‘
+    // Cameraã‚’ã•ã‚‰ã«å¾Œé€€ã•ã›ã‚‹ã€‚
     //
-    // Camera‚ğ‘O‚Ö–ß‚·ˆ—‚Í‚µ‚È‚¢B
+    // Cameraã‚’å‰ã¸æˆ»ã™å‡¦ç†ã¯ã—ãªã„ã€‚
     // =========================================================
 
     private void EmergencyFitCheck()
@@ -931,9 +937,9 @@ public class KiwiAutoFraming : MonoBehaviour
     // =========================================================
     // Calculate Distance Required To Fit Bounds
     //
-    // Perspective frustum‚ğ‹tZ‚µ‚Ä
-    // ‘S8Šp‚ªSafe Frame“à‚É“ü‚é
-    // Å¬’Ç‰Á‹——£‚ğ‹‚ß‚éB
+    // Perspective frustumã‚’é€†ç®—ã—ã¦
+    // å…¨8è§’ãŒSafe Frameå†…ã«å…¥ã‚‹
+    // æœ€å°è¿½åŠ è·é›¢ã‚’æ±‚ã‚ã‚‹ã€‚
     // =========================================================
 
     private float CalculateRequiredExtraDistance(
@@ -948,8 +954,8 @@ public class KiwiAutoFraming : MonoBehaviour
         // =====================================================
         // Effective aspect
         //
-        // RenderTexture‚ª‚ ‚éê‡‚Í
-        // RenderTexture‚ÌAspect‚ğÅ—DæB
+        // RenderTextureãŒã‚ã‚‹å ´åˆã¯
+        // RenderTextureã®Aspectã‚’æœ€å„ªå…ˆã€‚
         // =====================================================
 
         float aspect =
@@ -1472,7 +1478,7 @@ public class KiwiAutoFraming : MonoBehaviour
     // =========================================================
     // Recenter
     //
-    // Play’†‚ÉŒ»İˆÊ’u‚ğV‚µ‚¢Šî€‚É‚µ‚½‚¢—pB
+    // Playä¸­ã«ç¾åœ¨ä½ç½®ã‚’æ–°ã—ã„åŸºæº–ã«ã—ãŸã„æ™‚ç”¨ã€‚
     // =========================================================
 
     [ContextMenu("Capture Current Framing As Base")]
@@ -1502,8 +1508,8 @@ public class KiwiAutoFraming : MonoBehaviour
 
 
         // =====================================================
-        // Œ»İ‚ÌExtra Distance‚ğœ‚¢‚½ˆÊ’u‚ğ
-        // V‚µ‚¢Base‚Æ‚µ‚Ä•Û‘¶B
+        // ç¾åœ¨ã®Extra Distanceã‚’é™¤ã„ãŸä½ç½®ã‚’
+        // æ–°ã—ã„Baseã¨ã—ã¦ä¿å­˜ã€‚
         // =====================================================
 
         Vector3 forward =

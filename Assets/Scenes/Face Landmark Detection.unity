@@ -254,7 +254,7 @@ GameObject:
   - component: {fileID: 553149538}
   - component: {fileID: 553149539}
   - component: {fileID: 553149540}
-  m_Layer: 3
+  m_Layer: 8
   m_Name: Mouth3D
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -277,7 +277,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -350}
+  m_AnchoredPosition: {x: 0, y: -400}
   m_SizeDelta: {x: 1000, y: 1000}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &553149536
@@ -333,7 +333,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd3b8e57db439814eaac64aaa9cde497, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  strictLandmarkerTracking: 1
+  strictLandmarkerTracking: 0
   runner: {fileID: 1064799462}
   baseMaterial: {fileID: 2100000, guid: f1a4d843a90c29d4cace54547dc33afa, type: 2}
   facePart: 0
@@ -351,16 +351,36 @@ MonoBehaviour:
   closedEyeFeather: 0.022
   closeCurve: 1.2
   hardHideWhenFullyClosed: 1
+  stabilizeEyeVisibility: 1
+  eyeCloseConfirmationSamples: 2
+  eyeOpenConfirmationSamples: 1
+  closedEyeVisibilityFloor: 0.35
   feather: 0.022
-  microJitterDeadZone: 0.0002
+  microJitterDeadZone: 0.00055
+  contourRenderResponse: 110
+  lockContourToMovingCrop: 1
+  cropLocalSafetyMargin: 0.025
+  eyeHideFadeSeconds: 0.025
+  eyeShowFadeSeconds: 0.045
   automaticEyeMatching: 1
   lockEyeAssignment: 1
   eyeSwitchHysteresis: 1.25
-  lockMouthHeight: 1
+  lockMouthHeight: 0
   mouthCalibrationDelay: 0.4
   mouthCalibrationSamples: 10
   maximumMouthHeightCorrection: 0.4
   mouthHeightDeadZone: 0.00015
+  hideMouthOutsideTexture: 1
+  protectMouthDuringBlink: 1
+  mouthBlinkProtectionThreshold: 0.35
+  mouthBlinkGeometryThreshold: 0.13
+  mouthHideEdgeMargin: 0.003
+  mouthShowEdgeMargin: 0.015
+  mouthEdgeHideConfirmationSamples: 3
+  mouthEdgeHideGraceSeconds: 0.12
+  mouthEdgeShowConfirmationSamples: 2
+  mouthHideFadeSeconds: 0.04
+  mouthShowFadeSeconds: 0.06
   logMatching: 0
   debugSelectedEye: '-'
   debugBlinkScore: 0
@@ -370,6 +390,9 @@ MonoBehaviour:
   debugMouthCalibrated: 0
   debugMouthReferenceV: 0.5
   debugMouthOffsetY: 0
+  debugMouthEdgeClearance: 1
+  debugMouthHiddenByFrame: 0
+  debugMouthFrameVisibility: 1
 --- !u!114 &553149539
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -382,13 +405,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4aaa4ec5f68a0c544a260633cbd654ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  strictLandmarkerTracking: 1
+  strictLandmarkerTracking: 0
   runner: {fileID: 1064799462}
   partType: 0
   enableAngleLock: 1
   angleLockStrength: 1
   angleDeadZone: 0.2
   maximumCorrectionAngle: 55
+  correctionRenderResponse: 180
+  lockPivotToRenderedCrop: 1
   calibrationDelay: 0.45
   calibrationSamples: 10
   automaticEyeMatching: 1
@@ -412,9 +437,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc4900181dea71746970c357a3d64ce1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maximumVisibleScale: 0.6
+  maximumVisibleScale: 0.78
   limitWidth: 1
   limitHeight: 1
+  expressionZoomX: 1
+  expressionZoomY: 1
   debugAppliedSampleScaleX: 2
   debugAppliedSampleScaleY: 2
 --- !u!1001 &627993009
@@ -502,6 +529,138 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1ec0e202f29d7ee28cccba68415d95b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &695769409
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 695769414}
+  - component: {fileID: 695769413}
+  - component: {fileID: 695769412}
+  - component: {fileID: 695769411}
+  - component: {fileID: 695769410}
+  m_Layer: 0
+  m_Name: AvatarSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &695769410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 695769409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3f87ff0b4cbfee3463180a87721e65f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  runner: {fileID: 1064799462}
+  status: Not required
+--- !u!114 &695769411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 695769409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31ea6b38038abefb6902ea5bf71d924b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  vtuberCamera: {fileID: 1402437444}
+  mobileTargetFrameRate: 60
+  keepScreenAwake: 1
+  showMobilePreview: 1
+  useOptimizedMobileOutput: 1
+  mobileOutputWidth: 1280
+  mobileOutputHeight: 720
+  adaptiveLowMemoryOutput: 1
+  lowMemoryDeviceThresholdMB: 3072
+  lowMemoryOutputWidth: 960
+  lowMemoryOutputHeight: 540
+  spoutOutput: {fileID: 491402348}
+  activeOutputWidth: 0
+  activeOutputHeight: 0
+  lowMemoryMode: 0
+--- !u!114 &695769412
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 695769409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 936ceb2914d044b6e694a0c974239fcb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  manager: {fileID: 695769413}
+  visible: 1
+  toggleKey: 289
+--- !u!114 &695769413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 695769409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 050f17dd1027a7f66c7f976aada5b60e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  faceMotion: {fileID: 1435267720}
+  motionRoot: {fileID: 1653504002}
+  fallbackModel: {fileID: 1435267719}
+  fallbackHead: {fileID: 1435267718}
+  faceAnchor: {fileID: 1388073754}
+  fallbackFaceAnchorHeadLocalPosition: {x: 0, y: -0.259, z: -0.78}
+  fallbackFaceAnchorHeadLocalEulerAngles: {x: -0, y: 0, z: 0}
+  fallbackFaceAnchorHeadLocalScale: {x: 1, y: 1, z: 1}
+  fallbackHeadMotionLocalPosition: {x: 0, y: 0.6, z: 0}
+  fallbackHeadMotionLocalEulerAngles: {x: -0, y: 0, z: 0}
+  fallbackFaceAnchorMotionLocalPosition: {x: 0, y: 0.34100002, z: -0.78}
+  fallbackFaceAnchorMotionLocalEulerAngles: {x: -0, y: 0, z: 0}
+  fallbackFaceAnchorRelativeLossyScale: {x: 1, y: 1, z: 1}
+  fallbackReferenceCaptured: 1
+  vtuberLayerName: VTuberModel1
+  autoLoadLastAvatar: 1
+  enableSpringBone: 1
+  maximumRuntimeModelSizeMB: 200
+  mobileMaximumRuntimeModelSizeMB: 128
+  adaptiveMobileMemoryGuard: 1
+  lowMemoryDeviceModelLimitMB: 64
+  enableAdaptiveHeadFit: 1
+  minimumAdaptiveFaceConfidence: 0.52
+  maximumAdaptiveVertexSamples: 24000
+  minimumAdaptiveScaleRatio: 0.35
+  maximumAdaptiveScaleRatio: 3.5
+  currentAvatarName: Kiwi (Embedded)
+  status: Not initialized
+  busy: 0
+--- !u!4 &695769414
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 695769409}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &788061710
 GameObject:
   m_ObjectHideFlags: 0
@@ -515,7 +674,7 @@ GameObject:
   - component: {fileID: 788061712}
   - component: {fileID: 788061714}
   - component: {fileID: 788061715}
-  m_Layer: 3
+  m_Layer: 8
   m_Name: RightEye3D
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -539,7 +698,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -250, y: 0}
-  m_SizeDelta: {x: 900, y: 700}
+  m_SizeDelta: {x: 900, y: 800}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &788061712
 MonoBehaviour:
@@ -594,11 +753,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd3b8e57db439814eaac64aaa9cde497, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  strictLandmarkerTracking: 1
+  strictLandmarkerTracking: 0
   runner: {fileID: 1064799462}
   baseMaterial: {fileID: 2100000, guid: f1a4d843a90c29d4cace54547dc33afa, type: 2}
   facePart: 0
-  eyeContourMargin: 0.3
+  eyeContourMargin: 0.12
   mouthContourMargin: 0.02
   useBlendshapeBlink: 1
   blinkShapeStart: 0.15
@@ -612,8 +771,17 @@ MonoBehaviour:
   closedEyeFeather: 0.02
   closeCurve: 1.2
   hardHideWhenFullyClosed: 1
+  stabilizeEyeVisibility: 1
+  eyeCloseConfirmationSamples: 2
+  eyeOpenConfirmationSamples: 1
+  closedEyeVisibilityFloor: 0.35
   feather: 0.04
-  microJitterDeadZone: 0.00015
+  microJitterDeadZone: 0.00055
+  contourRenderResponse: 110
+  lockContourToMovingCrop: 1
+  cropLocalSafetyMargin: 0.025
+  eyeHideFadeSeconds: 0.025
+  eyeShowFadeSeconds: 0.045
   automaticEyeMatching: 1
   lockEyeAssignment: 1
   eyeSwitchHysteresis: 1.3
@@ -643,13 +811,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4aaa4ec5f68a0c544a260633cbd654ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  strictLandmarkerTracking: 1
+  strictLandmarkerTracking: 0
   runner: {fileID: 1064799462}
   partType: 0
   enableAngleLock: 1
   angleLockStrength: 1
   angleDeadZone: 0.2
   maximumCorrectionAngle: 55
+  correctionRenderResponse: 180
+  lockPivotToRenderedCrop: 1
   calibrationDelay: 0.45
   calibrationSamples: 10
   automaticEyeMatching: 1
@@ -674,7 +844,7 @@ GameObject:
   - component: {fileID: 842958310}
   - component: {fileID: 842958312}
   - component: {fileID: 842958313}
-  m_Layer: 3
+  m_Layer: 8
   m_Name: LeftEye3D
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -698,7 +868,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 250, y: 0}
-  m_SizeDelta: {x: 900, y: 700}
+  m_SizeDelta: {x: 900, y: 800}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &842958310
 MonoBehaviour:
@@ -753,11 +923,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd3b8e57db439814eaac64aaa9cde497, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  strictLandmarkerTracking: 1
+  strictLandmarkerTracking: 0
   runner: {fileID: 1064799462}
   baseMaterial: {fileID: 2100000, guid: f1a4d843a90c29d4cace54547dc33afa, type: 2}
   facePart: 0
-  eyeContourMargin: 0.3
+  eyeContourMargin: 0.12
   mouthContourMargin: 0.02
   useBlendshapeBlink: 1
   blinkShapeStart: 0.15
@@ -771,8 +941,17 @@ MonoBehaviour:
   closedEyeFeather: 0.02
   closeCurve: 1.2
   hardHideWhenFullyClosed: 1
+  stabilizeEyeVisibility: 1
+  eyeCloseConfirmationSamples: 2
+  eyeOpenConfirmationSamples: 1
+  closedEyeVisibilityFloor: 0.35
   feather: 0.04
-  microJitterDeadZone: 0.00015
+  microJitterDeadZone: 0.00055
+  contourRenderResponse: 110
+  lockContourToMovingCrop: 1
+  cropLocalSafetyMargin: 0.025
+  eyeHideFadeSeconds: 0.025
+  eyeShowFadeSeconds: 0.045
   automaticEyeMatching: 1
   lockEyeAssignment: 1
   eyeSwitchHysteresis: 1.3
@@ -802,13 +981,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4aaa4ec5f68a0c544a260633cbd654ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  strictLandmarkerTracking: 1
+  strictLandmarkerTracking: 0
   runner: {fileID: 1064799462}
   partType: 0
   enableAngleLock: 1
   angleLockStrength: 1
   angleDeadZone: 0.2
   maximumCorrectionAngle: 55
+  correctionRenderResponse: 180
+  lockPivotToRenderedCrop: 1
   calibrationDelay: 0.45
   calibrationSamples: 10
   automaticEyeMatching: 1
@@ -1034,6 +1215,13 @@ MonoBehaviour:
   screen: {fileID: 1006057043}
   runningMode: 0
   _faceLandmarkerResultAnnotationController: {fileID: 1006057044}
+  renderDebugLandmarkAnnotations: 0
+  processOnlyFreshWebCamFrames: 1
+  latestFrameOnlyLiveStream: 1
+  downscaleTrackingInput: 1
+  trackingInputMaxWidth: 480
+  autoOptimizeCm831: 1
+  cm831TrackingInputWidth: 480
 --- !u!224 &1229135957 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3259285889726014650, guid: 5713b959e3c77a58fb258133fc8e4aef, type: 3}
@@ -1049,7 +1237,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1388073754}
   - component: {fileID: 1388073755}
-  m_Layer: 3
+  m_Layer: 8
   m_Name: FaceAnchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1150,7 +1338,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 256
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: 48ee04b3627df894b86e19b4d7110dbe, type: 2}
   m_TargetDisplay: 0
@@ -1217,31 +1405,31 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1653504002}
     m_Modifications:
     - target: {fileID: 320837132162436559, guid: 9f9af2b96610a144c83e229a8e7ea5f9, type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 551155816414639784, guid: 9f9af2b96610a144c83e229a8e7ea5f9, type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 1272875337144628260, guid: 9f9af2b96610a144c83e229a8e7ea5f9, type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 1752793845805077115, guid: 9f9af2b96610a144c83e229a8e7ea5f9, type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 1903593234350676844, guid: 9f9af2b96610a144c83e229a8e7ea5f9, type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 2177075083420478710, guid: 9f9af2b96610a144c83e229a8e7ea5f9, type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 2564772312426340949, guid: 9f9af2b96610a144c83e229a8e7ea5f9, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1285,7 +1473,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2614427240230481319, guid: 9f9af2b96610a144c83e229a8e7ea5f9, type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 2790368671015158884, guid: 9f9af2b96610a144c83e229a8e7ea5f9, type: 3}
       propertyPath: m_Name
@@ -1293,43 +1481,43 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2790368671015158884, guid: 9f9af2b96610a144c83e229a8e7ea5f9, type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4577813068253230182, guid: 9f9af2b96610a144c83e229a8e7ea5f9, type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4687232503789459081, guid: 9f9af2b96610a144c83e229a8e7ea5f9, type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 5078721904368892444, guid: 9f9af2b96610a144c83e229a8e7ea5f9, type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 5270008286034978163, guid: 9f9af2b96610a144c83e229a8e7ea5f9, type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 5374074457774947426, guid: 9f9af2b96610a144c83e229a8e7ea5f9, type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 5831682833256539340, guid: 9f9af2b96610a144c83e229a8e7ea5f9, type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 6116435186368104439, guid: 9f9af2b96610a144c83e229a8e7ea5f9, type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 6945782096579539264, guid: 9f9af2b96610a144c83e229a8e7ea5f9, type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 7647379739302144420, guid: 9f9af2b96610a144c83e229a8e7ea5f9, type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 8210461394278047596, guid: 9f9af2b96610a144c83e229a8e7ea5f9, type: 3}
       propertyPath: m_DirtyAABB
@@ -1361,15 +1549,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8305779112131311826, guid: 9f9af2b96610a144c83e229a8e7ea5f9, type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 8452524212132393035, guid: 9f9af2b96610a144c83e229a8e7ea5f9, type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 8744352746935439734, guid: 9f9af2b96610a144c83e229a8e7ea5f9, type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1409,11 +1597,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea0c91b1a00025b49898de00116e93ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  runner: {fileID: 1064799462}
+  kiwiRoot: {fileID: 1653504002}
+  expressionReaction: {fileID: 1592355493}
   strictLandmarkerTracking: 1
   useBeforeRenderLateLatch: 1
-  runner: {fileID: 1064799462}
-  kiwiRoot: {fileID: 1435267719}
-  expressionReaction: {fileID: 1592355493}
+  useScreenSpacePositionMapping: 1
+  positionReferenceCamera: {fileID: 1402437444}
+  screenPositionGainX: 1
+  screenPositionGainY: 1
+  avatarCentricHorizontalMovement: 1
   faceMotionMultiplier: 1
   depthMovementMultiplier: 2
   reactionMultiplier: 5
@@ -1429,15 +1622,76 @@ MonoBehaviour:
   reactionBoostStart: 3
   reactionBoostFull: 15
   landMarkerSpeedMode: 1
+  enableUltraLowLatencyTracking: 1
+  ultraUseRunnerPositionAnchor: 1
+  ultraConsumeLatestSampleBeforeRender: 1
+  ultraDisableSecondaryBodyMotion: 1
+  ultraAdaptiveMicroFilter: 1
+  ultraStaticPoseLock: 1
+  ultraStaticLockSeconds: 0.065
+  ultraRotationDeadZone: 0.18
+  ultraRotationStaticReleaseSpeed: 18
+  ultraRotationSlowResponse: 120
+  ultraRotationFastResponse: 220
+  ultraRotationDirectSpeed: 110
+  ultraRotationDirectError: 1.2
+  ultraPositionDeadZone: 0.0006
+  ultraPositionStaticReleaseSpeed: 0.035
+  ultraPositionSlowResponse: 80
+  ultraPositionFastResponse: 180
+  ultraPositionDirectSpeed: 0.15
+  ultraPositionDirectError: 0.0015
+  ultraScaleDeadZone: 0.0015
+  ultraScaleStaticReleaseSpeed: 0.2
+  ultraScaleSlowResponse: 80
+  ultraScaleFastResponse: 160
+  ultraScaleDirectSpeed: 0.5
+  ultraScaleDirectError: 0.012
+  ultraPredictionStrength: 1
+  ultraMaxPredictionSeconds: 0.1
+  ultraPredictionMinRotationSpeed: 3
+  ultraPredictionMinPositionSpeed: 0.005
+  ultraPredictionMinScaleSpeed: 0.02
+  ultraCompensateFullResultAge: 1
+  ultraCompensateCameraCaptureAge: 1
+  ultraCaptureIntervalFraction: 0.5
+  ultraMaxCaptureAgeSeconds: 0.02
+  ultraDisplayRateSmoothing: 1
+  ultraDisplaySmoothingResponse: 90
+  ultraDisplayFastResponse: 220
+  ultraDirectDisplayDuringMotion: 1
+  ultraDirectDisplayRotationSpeed: 18
+  ultraDirectDisplayPositionSpeed: 0.035
+  ultraDirectDisplayScaleSpeed: 0.2
+  ultraPredictivePositionResampling: 1
+  ultraPositionCorrectionResponse: 45
+  ultraPositionRecoveryResponse: 180
+  enableHybridPrecisionTracking: 1
+  enablePrecisionOutlierGuard: 1
+  useBoundedLatestResultCorrection: 1
+  precisionOutlierQualityThreshold: 0.45
+  precisionAngularOutlierSpeed: 950
+  precisionPositionOutlierSpeed: 1.35
+  precisionDepthOutlierSpeed: 4
+  usePrecisionDepthFusion: 1
+  enableRenderTimeLatePrediction: 1
+  predictionStrength: 0.8
+  maxPredictionSeconds: 0.022
+  predictionStaleTime: 0.18
+  predictionMinQuality: 0.45
+  predictionVelocityResponse: 60
+  predictionVelocityFastResponse: 180
+  maxRotationPredictionDegrees: 16
+  maxPositionPredictionHeight: 0.04
+  maxScalePrediction: 0.045
   rotationStaticDeadZone: 0.1
   rotationDeadZoneReleaseSpeed: 4
   enablePosition: 1
   positionGainX: 3
   positionGainY: 0.8
-  useScreenSpacePositionMapping: 1
-  positionReferenceCamera: {fileID: 1402437444}
-  screenPositionGainX: 1
-  screenPositionGainY: 1
+  useRollStablePositionAnchor: 1
+  virtualNeckExtension: 1.65
+  rollIsolationStrength: 1
   positionStaticDeadZone: 0.00025
   positionDeadZoneReleaseSpeed: 0.006
   enableDistanceScale: 1
@@ -1518,7 +1772,7 @@ GameObject:
   - component: {fileID: 1481899707}
   - component: {fileID: 1481899706}
   - component: {fileID: 1481899705}
-  m_Layer: 3
+  m_Layer: 8
   m_Name: KiwiFaceCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1640,7 +1894,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 749d9f64b6cbd1d4e8c514f42e4700f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  strictLandmarkerTracking: 1
+  strictLandmarkerTracking: 0
   runner: {fileID: 1064799462}
   sourceImage: {fileID: 1006057045}
   leftEyeImage: {fileID: 842958310}
@@ -1654,32 +1908,51 @@ MonoBehaviour:
   eyeHeightToWidth: 0.58
   eyePaddingX: 0.025
   eyePaddingY: 0.025
+  preserveEyeCenterAtTextureEdges: 1
   mouthWidthScale: 1.35
   mouthHeightToWidth: 0.55
   mouthPaddingX: 0.025
   mouthPaddingY: 0.035
-  sampleIdleResponse: 20
-  sampleMovingResponse: 85
-  sampleMotionFullSpeed: 0.35
-  microJitterStart: 0.00015
-  microJitterFull: 0.0015
-  microJitterMinimumGain: 0.08
-  eyeSampleSizeResponse: 6
-  mouthSampleSizeResponse: 7
-  eyeRenderResponse: 110
-  mouthRenderResponse: 120
-  eyeRenderSizeResponse: 14
-  mouthRenderSizeResponse: 16
-  velocityResponse: 15
+  useMouthContourSafeCrop: 1
+  mouthContourSafetyX: 0.1
+  mouthContourSafetyY: 0.14
+  preserveMouthCenterAtTextureEdges: 1
+  debugMouthUvOverscan: {x: 0, y: 0, z: 0, w: 0}
+  sampleIdleResponse: 120
+  sampleMovingResponse: 240
+  sampleMotionFullSpeed: 0.2
+  microJitterStart: 0.0002
+  microJitterFull: 0.0012
+  microJitterMinimumGain: 0.12
+  eyeSampleSizeResponse: 80
+  mouthSampleSizeResponse: 90
+  eyeRenderResponse: 180
+  mouthRenderResponse: 200
+  eyeRenderSizeResponse: 70
+  mouthRenderSizeResponse: 80
+  velocityResponse: 120
   maxCenterVelocity: 2.5
   enablePrediction: 1
+  compensateMatchedFrameAge: 1
+  directPositionDuringMotion: 1
+  directPositionSpeed: 0.12
   predictionLeadSeconds: 0.001
-  maxExtrapolationSeconds: 0.01
-  maxPredictionDistance: 0.03
+  maxExtrapolationSeconds: 0.09
+  maxPredictionDistance: 0.004
+  stabilizeCoherentVerticalMotion: 1
+  coherentVerticalMotionMinSpeed: 0.025
+  coherentVerticalDeltaTolerance: 0.003
+  phaseLockVerticalPrediction: 1
+  coherentVerticalRenderResponse: 200
   restSpeed: 0.02
-  restJitterThreshold: 0.0005
+  restJitterThreshold: 0.00075
+  restSizeJitterThreshold: 0.0012
   lostTrackingResetTime: 0.4
-  hidePartsWhenLost: 1
+  hidePartsWhenLost: 0
+  rejectIsolatedMouthOutliers: 1
+  mouthOutlierAbsoluteTolerance: 0.045
+  mouthOutlierEyeSpanMultiplier: 1.25
+  debugRejectedMouthSamples: 0
 --- !u!4 &1592355492
 Transform:
   m_ObjectHideFlags: 0
@@ -1712,14 +1985,18 @@ MonoBehaviour:
   leftEyeImage: {fileID: 842958310}
   rightEyeImage: {fileID: 788061712}
   mouthImage: {fileID: 553149536}
+  mouthDisplaySizeLock: {fileID: 553149540}
+  leftEyeShapeMask: {fileID: 842958312}
+  rightEyeShapeMask: {fileID: 788061714}
+  mouthShapeMask: {fileID: 553149538}
   blinkStart: 0.28
   blinkFull: 0.72
   eyeWideStart: 0.04
   eyeWideFull: 0.28
-  mouthOpenStart: 0.015
-  mouthOpenFull: 0.18
-  smileStart: 0.025
-  smileFull: 0.16
+  mouthOpenStart: 0.06
+  mouthOpenFull: 0.5
+  smileStart: 0.1
+  smileFull: 0.5
   browUpStart: 0.12
   browUpFull: 0.55
   poutStart: 0.12
@@ -1734,14 +2011,61 @@ MonoBehaviour:
   talkMotionStart: 0.25
   talkMotionFull: 3
   enableEyeVisualZoom: 1
+  enableEyeDisplayScale: 1
+  eyeBaseDisplayScaleX: 1.18
+  eyeBaseDisplayScaleY: 1.25
   eyeMaxZoomX: 1.08
   eyeMaxZoomY: 1.18
   enableMouthVisualZoom: 1
-  mouthOpenMaxZoomX: 0.7
-  mouthOpenMaxZoomY: 0.7
-  mouthPoutMaxZoomX: 0.7
-  mouthPoutMaxZoomY: 0.7
+  mouthLayoutPositionY: -400
+  mouthOpenMaxZoomX: 2
+  mouthOpenMaxZoomY: 2
+  mouthPoutMaxZoomX: 1.25
+  mouthPoutMaxZoomY: 1.15
+  mouthSmileMaxZoomX: 2.6
+  mouthSmileMaxZoomY: 1.35
+  mouthEffectResponse: 72
+  mouthEffectDirectThreshold: 0.24
+  mouthEffectRestDeadZone: 0.004
+  preventMouthEyeOverlap: 1
+  mouthEyeSafetyMarginPixels: 14
+  mouthEyeLimitReleaseResponse: 80
+  preventMouthSurfaceClipping: 1
+  mouthSurfaceSafetyMargin: 0.035
+  mouthSurfaceLimitReleaseResponse: 100
   trackingLostTime: 0.35
+--- !u!1 &1653504001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1653504002}
+  m_Layer: 0
+  m_Name: AvatarMotionRoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1653504002
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1653504001}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1435267719}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1806680259
 GameObject:
   m_ObjectHideFlags: 0
@@ -2260,4 +2584,5 @@ SceneRoots:
   - {fileID: 420786856}
   - {fileID: 1064799461}
   - {fileID: 1592355492}
-  - {fileID: 1435267716}
+  - {fileID: 1653504002}
+  - {fileID: 695769414}

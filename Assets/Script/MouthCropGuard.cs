@@ -4,9 +4,9 @@ using Mediapipe.Unity.Sample.FaceLandmarkDetection;
 
 
 // =============================================================
-// FacePartCropper       ¨ æ‚É’ÊíCrop
-// MouthCropGuard  800   ¨ ŒûˆÊ’uEŒÅ’èƒTƒCƒY‚ğŠm’è
-// FacePartShapeMask 850 ¨ Šm’è‚µ‚½UV‚Åƒ}ƒXƒN
+// FacePartCropper       â†’ å…ˆã«é€šå¸¸Crop
+// MouthCropGuard  800   â†’ å£ä½ç½®ãƒ»å›ºå®šã‚µã‚¤ã‚ºã‚’ç¢ºå®š
+// FacePartShapeMask 850 â†’ ç¢ºå®šã—ãŸUVã§ãƒã‚¹ã‚¯
 // =============================================================
 
 [DefaultExecutionOrder(800)]
@@ -25,31 +25,31 @@ public class MouthCropGuard : MonoBehaviour
 
     [Header("References")]
 
-    [Tooltip("Solution ‚Ì FaceLandmarkerRunner")]
+    [Tooltip("Solution ã® FaceLandmarkerRunner")]
     public FaceLandmarkerRunner runner;
 
 
-    [Tooltip("Mouth3DB‹ó‚È‚ç©“®æ“¾")]
+    [Tooltip("Mouth3Dã€‚ç©ºãªã‚‰è‡ªå‹•å–å¾—")]
     public SurfaceFittedRawImage mouthImage;
 
 
     // =========================================================
     // Fixed Size
     //
-    // Œû‚ğŠJ‚¢‚Ä‚à•Â‚¶‚Ä‚àƒTƒCƒY•ÏX‚µ‚È‚¢B
+    // å£ã‚’é–‹ã„ã¦ã‚‚é–‰ã˜ã¦ã‚‚ã‚µã‚¤ã‚ºå¤‰æ›´ã—ãªã„ã€‚
     // =========================================================
 
     [Header("Fixed Mouth Size")]
 
     [Tooltip(
-        "Šî€Crop‚É‘Î‚·‚é‰¡•”{—¦B‘å‚«‚¢‚Ù‚ÇŒû‚ª¬‚³‚­•\¦‚³‚ê‚é"
+        "åŸºæº–Cropã«å¯¾ã™ã‚‹æ¨ªå¹…å€ç‡ã€‚å¤§ãã„ã»ã©å£ãŒå°ã•ãè¡¨ç¤ºã•ã‚Œã‚‹"
     )]
     [Range(1f, 3f)]
     public float fixedWidthMultiplier = 1.50f;
 
 
     [Tooltip(
-        "Šî€Crop‚É‘Î‚·‚éc•”{—¦BŒ©Ø‚ê–h~"
+        "åŸºæº–Cropã«å¯¾ã™ã‚‹ç¸¦å¹…å€ç‡ã€‚è¦‹åˆ‡ã‚Œé˜²æ­¢"
     )]
     [Range(1f, 3f)]
     public float fixedHeightMultiplier = 2.10f;
@@ -58,25 +58,25 @@ public class MouthCropGuard : MonoBehaviour
     // =========================================================
     // Position Lock
     //
-    // š¡‰ñ‚Ìd—v•”•ª
+    // â˜…ä»Šå›ã®é‡è¦éƒ¨åˆ†
     // =========================================================
 
     [Header("Mouth Position Lock")]
 
     [Tooltip(
-        "³–Ê‚ÌŒû‚Ì‚‚³‚ğˆÛ‚·‚é"
+        "æ­£é¢æ™‚ã®å£ã®é«˜ã•ã‚’ç¶­æŒã™ã‚‹"
     )]
     public bool lockMouthHeight = true;
 
 
     [Tooltip(
-        "³–Ê‚Ì‰¡ˆÊ’u‚à“¯‚¶Šî€ˆÊ’u‚ÖŒÅ’è‚·‚é"
+        "æ­£é¢æ™‚ã®æ¨ªä½ç½®ã‚‚åŒã˜åŸºæº–ä½ç½®ã¸å›ºå®šã™ã‚‹"
     )]
     public bool lockMouthHorizontalPlacement = true;
 
 
     [Tooltip(
-        "ŒûŠpŠî€“_‚Ì”÷¬ƒmƒCƒY‚¾‚¯–³‹‚·‚é"
+        "å£è§’åŸºæº–ç‚¹ã®å¾®å°ãƒã‚¤ã‚ºã ã‘ç„¡è¦–ã™ã‚‹"
     )]
     [Range(0f, 0.005f)]
     public float anchorDeadZone = 0.00015f;
@@ -89,14 +89,14 @@ public class MouthCropGuard : MonoBehaviour
     [Header("Front Calibration")]
 
     [Tooltip(
-        "³–Ê‚ğŒü‚¢‚½ó‘Ô‚ÅŠî€‚ğæ“¾‚·‚é‚Ü‚Å‚Ì‘Ò‚¿ŠÔ"
+        "æ­£é¢ã‚’å‘ã„ãŸçŠ¶æ…‹ã§åŸºæº–ã‚’å–å¾—ã™ã‚‹ã¾ã§ã®å¾…ã¡æ™‚é–“"
     )]
     [Range(0f, 2f)]
     public float captureDelay = 0.40f;
 
 
     [Tooltip(
-        "³–ÊŠî€‚ğ•½‹Ï‚·‚éƒTƒ“ƒvƒ‹”"
+        "æ­£é¢åŸºæº–ã‚’å¹³å‡ã™ã‚‹ã‚µãƒ³ãƒ—ãƒ«æ•°"
     )]
     [Range(1, 20)]
     public int captureSamples = 8;
@@ -113,7 +113,7 @@ public class MouthCropGuard : MonoBehaviour
     [Header("Visual Zoom")]
 
     [Tooltip(
-        "Œû‚ÌŠg‘åk¬‚ğŠ®‘S‚É‹Ö~"
+        "å£ã®æ‹¡å¤§ç¸®å°ã‚’å®Œå…¨ã«ç¦æ­¢"
     )]
     public bool forceVisualZoomOne = true;
 
@@ -147,11 +147,11 @@ public class MouthCropGuard : MonoBehaviour
     // =========================================================
     // Stable Mouth Anchor
     //
-    // 61  = ŒûŠp
-    // 291 = ”½‘Î‘¤‚ÌŒûŠp
+    // 61  = å£è§’
+    // 291 = åå¯¾å´ã®å£è§’
     //
-    // O20“_•½‹Ï‚æ‚èA
-    // ŠJ•ÂEÎ‚ßŒü‚«‚É‚æ‚éã‰º•Ï‰»‚ª­‚È‚¢B
+    // å”‡20ç‚¹å¹³å‡ã‚ˆã‚Šã€
+    // é–‹é–‰ãƒ»æ–œã‚å‘ãã«ã‚ˆã‚‹ä¸Šä¸‹å¤‰åŒ–ãŒå°‘ãªã„ã€‚
     // =========================================================
 
     private const int MouthCornerA = 61;
@@ -217,11 +217,11 @@ public class MouthCropGuard : MonoBehaviour
     // =========================================================
     // Reference position inside Mouth3D
     //
-    // 0 = ‰º/¶’[
-    // 0.5 = ’†‰›
-    // 1 = ã/‰E’[
+    // 0 = ä¸‹/å·¦ç«¯
+    // 0.5 = ä¸­å¤®
+    // 1 = ä¸Š/å³ç«¯
     //
-    // ³–Ê‚ÌˆÊ’u‚ğ‹L‰¯‚·‚éB
+    // æ­£é¢æ™‚ã®ä½ç½®ã‚’è¨˜æ†¶ã™ã‚‹ã€‚
     // =========================================================
 
     private float _referenceAnchorU = 0.5f;
@@ -279,7 +279,7 @@ public class MouthCropGuard : MonoBehaviour
         if (runner == null)
         {
             runner =
-                FindObjectOfType<
+                FindFirstObjectByType<
                     FaceLandmarkerRunner
                 >();
         }
@@ -305,7 +305,7 @@ public class MouthCropGuard : MonoBehaviour
 
 
         // =====================================================
-        // Šg‘åk¬‚ğŠ®‘S‹Ö~
+        // æ‹¡å¤§ç¸®å°ã‚’å®Œå…¨ç¦æ­¢
         // =====================================================
 
         ForceNoVisualZoom();
@@ -321,16 +321,18 @@ public class MouthCropGuard : MonoBehaviour
         long timestamp = 0;
 
 
-        bool valid =
-            runner.TryGetLatestLandmarks(
+        bool hasNewLandmarks =
+            runner.TryGetLatestLandmarksIfChanged(
                 ref _landmarks,
+                _lastTimestamp,
                 out landmarkCount,
-                out timestamp
+                out timestamp,
+                out bool hasFace
             );
 
 
         if (
-            !valid ||
+            !hasFace ||
             !ValidateLandmarks(
                 landmarkCount
             )
@@ -343,7 +345,7 @@ public class MouthCropGuard : MonoBehaviour
 
 
         // =====================================================
-        // ³–ÊŠî€ƒLƒƒƒŠƒuƒŒ[ƒVƒ‡ƒ“
+        // æ­£é¢åŸºæº–ã‚­ãƒ£ãƒªãƒ–ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³
         // =====================================================
 
         if (!_calibrated)
@@ -358,13 +360,10 @@ public class MouthCropGuard : MonoBehaviour
 
 
         // =====================================================
-        // V‚µ‚¢MediaPipeŒ‹‰Ê‚¾‚¯ˆ—
+        // æ–°ã—ã„MediaPipeçµæœã ã‘å‡¦ç†
         // =====================================================
 
-        if (
-            timestamp !=
-            _lastTimestamp
-        )
+        if (hasNewLandmarks)
         {
             UpdateStableAnchor();
 
@@ -377,8 +376,8 @@ public class MouthCropGuard : MonoBehaviour
         }
 
 
-        // FacePartCropper‚ª–ˆƒtƒŒ[ƒ€uvRect‚ğXV‚µ‚Ä‚à
-        // ÅŒã‚ÉŒÅ’èRect‚ğÄ“K—pB
+        // FacePartCropperãŒæ¯ãƒ•ãƒ¬ãƒ¼ãƒ uvRectã‚’æ›´æ–°ã—ã¦ã‚‚
+        // æœ€å¾Œã«å›ºå®šRectã‚’å†é©ç”¨ã€‚
         ApplyFinalRect();
     }
 
@@ -386,10 +385,10 @@ public class MouthCropGuard : MonoBehaviour
     // =========================================================
     // Front Reference Capture
     //
-    // š³–Ê‚ğŒü‚¢‚½ó‘Ô‚ÅA
+    // â˜…æ­£é¢ã‚’å‘ã„ãŸçŠ¶æ…‹ã§ã€
     //
-    // ŒûŠp’†“_‚ªMouth3D“à‚Ì
-    // ‚Ç‚ÌˆÊ’u‚É•`‰æ‚³‚ê‚Ä‚¢‚é‚©‚ğ•Û‘¶‚·‚éB
+    // å£è§’ä¸­ç‚¹ãŒMouth3Då†…ã®
+    // ã©ã®ä½ç½®ã«æç”»ã•ã‚Œã¦ã„ã‚‹ã‹ã‚’ä¿å­˜ã™ã‚‹ã€‚
     // =========================================================
 
     private void CaptureFrontReference(
@@ -444,7 +443,7 @@ public class MouthCropGuard : MonoBehaviour
 
 
         // =====================================================
-        // Texture•ûŒü‚ÍÅ‰‚Ì—LŒøƒTƒ“ƒvƒ‹‚Åˆê“x‚¾‚¯Œˆ’è
+        // Textureæ–¹å‘ã¯æœ€åˆã®æœ‰åŠ¹ã‚µãƒ³ãƒ—ãƒ«ã§ä¸€åº¦ã ã‘æ±ºå®š
         // =====================================================
 
         if (!_orientationResolved)
@@ -460,8 +459,8 @@ public class MouthCropGuard : MonoBehaviour
 
 
         // =====================================================
-        // Œ»İ‚ÌCrop“à‚ÅA
-        // ŒûŠp’†“_‚ª‰½%ˆÊ’u‚É‚ ‚é‚©
+        // ç¾åœ¨ã®Cropå†…ã§ã€
+        // å£è§’ä¸­ç‚¹ãŒä½•%ä½ç½®ã«ã‚ã‚‹ã‹
         // =====================================================
 
         float anchorU =
@@ -580,7 +579,7 @@ public class MouthCropGuard : MonoBehaviour
 
 
         // =====================================================
-        // š³–Ê‚Ì•\¦ˆÊ’u‚ğ•Û‘¶
+        // â˜…æ­£é¢æ™‚ã®è¡¨ç¤ºä½ç½®ã‚’ä¿å­˜
         // =====================================================
 
         _referenceAnchorU =
@@ -666,9 +665,9 @@ public class MouthCropGuard : MonoBehaviour
     // =========================================================
     // Stable Mouth Anchor
     //
-    // šŒû‚ÌŠOü20“_•½‹Ï‚Íg‚í‚È‚¢B
+    // â˜…å£ã®å¤–å‘¨20ç‚¹å¹³å‡ã¯ä½¿ã‚ãªã„ã€‚
     //
-    // 61 / 291 ‚ÌŒûŠp’†“_‚¾‚¯g‚¤B
+    // 61 / 291 ã®å£è§’ä¸­ç‚¹ã ã‘ä½¿ã†ã€‚
     // =========================================================
 
     private void UpdateStableAnchor()
@@ -697,9 +696,9 @@ public class MouthCropGuard : MonoBehaviour
 
 
         // =====================================================
-        // X / Y ŒÂ•ÊDeadZone
+        // X / Y å€‹åˆ¥DeadZone
         //
-        // Lerp‚Íg‚í‚È‚¢B
+        // Lerpã¯ä½¿ã‚ãªã„ã€‚
         // =====================================================
 
         if (
@@ -732,14 +731,14 @@ public class MouthCropGuard : MonoBehaviour
     // =========================================================
     // Build Rect
     //
-    // š¡‰ñ‚ÌŠjS
+    // â˜…ä»Šå›ã®æ ¸å¿ƒ
     //
     // source mouth anchor
-    // «
-    // í‚É³–Ê‚Æ“¯‚¶U/VˆÊ’u‚Öƒ}ƒbƒsƒ“ƒO
+    // â†“
+    // å¸¸ã«æ­£é¢æ™‚ã¨åŒã˜U/Vä½ç½®ã¸ãƒãƒƒãƒ”ãƒ³ã‚°
     //
-    // ‚»‚Ì‚½‚ß‰¡EÎ‚ßEŒûŠJ•Â‚Å‚à
-    // ƒLƒEƒCã‚ÌŒû‚Ì‚‚³‚ª•Ï‚í‚ç‚È‚¢B
+    // ãã®ãŸã‚æ¨ªãƒ»æ–œã‚ãƒ»å£é–‹é–‰ã§ã‚‚
+    // ã‚­ã‚¦ã‚¤ä¸Šã®å£ã®é«˜ã•ãŒå¤‰ã‚ã‚‰ãªã„ã€‚
     // =========================================================
 
     private void BuildFinalRect()
@@ -833,9 +832,9 @@ public class MouthCropGuard : MonoBehaviour
     // =========================================================
     // Mouth Anchor
     //
-    // ŒûŠp2“_‚Ì’†“_B
+    // å£è§’2ç‚¹ã®ä¸­ç‚¹ã€‚
     //
-    // Œû‚ğŠJ‚¢‚Ä‚à‰ºO‚Éˆø‚Á’£‚ç‚ê‚È‚¢B
+    // å£ã‚’é–‹ã„ã¦ã‚‚ä¸‹å”‡ã«å¼•ã£å¼µã‚‰ã‚Œãªã„ã€‚
     // =========================================================
 
     private Vector2 GetRawMouthAnchor()
@@ -1094,7 +1093,7 @@ public class MouthCropGuard : MonoBehaviour
     // =========================================================
     // Recalibrate
     //
-    // •K‚¸³–Ê‚ğŒü‚¢‚ÄÀsB
+    // å¿…ãšæ­£é¢ã‚’å‘ã„ã¦å®Ÿè¡Œã€‚
     // =========================================================
 
     [ContextMenu("Recalibrate Front Mouth Position")]

@@ -8,8 +8,8 @@ using Mediapipe.Unity.Sample.FaceLandmarkDetection;
 public class FacePartCropper : MonoBehaviour
 {
     [Header("Landmarker Direct Tracking")]
-    [Tooltip("ON: each new Landmarker crop is applied immediately with no temporal smoothing, prediction or dead-zone.")]
-    public bool strictLandmarkerTracking = true;
+    [Tooltip("ON: each new Landmarker crop is applied immediately. OFF uses high-response render-rate interpolation to remove sample-and-hold flicker.")]
+    public bool strictLandmarkerTracking = false;
 
 
     // =========================================================
@@ -41,7 +41,7 @@ public class FacePartCropper : MonoBehaviour
 
     public bool mirrorX = true;
 
-    // ¶‰E‚Ì–Ú‚ª‹t‚È‚çON
+    // å·¦å³ã®ç›®ãŒé€†ãªã‚‰ON
     public bool swapEyes = true;
 
 
@@ -75,6 +75,9 @@ public class FacePartCropper : MonoBehaviour
     [Range(0f, 0.1f)]
     public float eyePaddingY = 0.008f;
 
+    [Tooltip("Keeps each eye centered when its crop extends beyond a camera edge. Out-of-range pixels are made transparent by the mask shader.")]
+    public bool preserveEyeCenterAtTextureEdges = true;
+
 
     // =========================================================
     // Mouth Crop
@@ -94,88 +97,109 @@ public class FacePartCropper : MonoBehaviour
     [Range(0f, 0.1f)]
     public float mouthPaddingY = 0.012f;
 
+    [Header("Mouth Contour Safe Crop")]
+
+    [Tooltip("Centers the crop on the complete outer lip contour and expands it when the mouth opens.")]
+    public bool useMouthContourSafeCrop = true;
+
+    [Tooltip("Extra horizontal clearance on each side, relative to mouth-corner width.")]
+    [Range(0f, 0.8f)]
+    public float mouthContourSafetyX = 0.10f;
+
+    [Tooltip("Extra vertical clearance above and below, relative to aspect-corrected mouth-corner width.")]
+    [Range(0f, 0.8f)]
+    public float mouthContourSafetyY = 0.14f;
+
+    [Tooltip("Keeps the mouth centered when its crop extends beyond a camera edge. Out-of-range pixels are made transparent by the mask shader.")]
+    public bool preserveMouthCenterAtTextureEdges = true;
+
+    [Header("Mouth Edge Diagnostics")]
+
+    [SerializeField]
+    private Vector4 debugMouthUvOverscan = Vector4.zero;
+
 
     // =========================================================
-    // š MediaPipe Sample Stabilizer
+    // â˜… MediaPipe Sample Stabilizer
     //
-    // FaceLandmarkList‚É‹ß‚Ã‚¯‚éã‚Åˆê”Ôd—v
+    // FaceLandmarkListã«è¿‘ã¥ã‘ã‚‹ä¸Šã§ä¸€ç•ªé‡è¦
     // =========================================================
 
     [Header("Sample Stabilizer")]
 
-    [Tooltip("‚Ù‚ÚÃ~‚ÌMediaPipeƒTƒ“ƒvƒ‹•½ŠŠ‰»")]
-    [Range(1f, 100f)]
-    public float sampleIdleResponse = 20f;
+    [Tooltip("ã»ã¼é™æ­¢æ™‚ã®MediaPipeã‚µãƒ³ãƒ—ãƒ«å¹³æ»‘åŒ–")]
+    [Range(1f, 300f)]
+    public float sampleIdleResponse = 120f;
 
-    [Tooltip("Šç‚ª“®‚¢‚Ä‚¢‚éB‘å‚«‚¢‚Ù‚Ç’á’x‰„")]
-    [Range(1f, 200f)]
-    public float sampleMovingResponse = 85f;
+    [Tooltip("é¡”ãŒå‹•ã„ã¦ã„ã‚‹æ™‚ã€‚å¤§ãã„ã»ã©ä½é…å»¶")]
+    [Range(1f, 400f)]
+    public float sampleMovingResponse = 240f;
 
-    [Tooltip("‚±‚Ì‘¬“x‚ÅMoving ResponseÅ‘å")]
+    [Tooltip("ã“ã®é€Ÿåº¦ã§Moving Responseæœ€å¤§")]
     [Range(0.05f, 3f)]
-    public float sampleMotionFullSpeed = 0.35f;
+    public float sampleMotionFullSpeed = 0.20f;
 
 
     // =========================================================
-    // š Soft Jitter Suppression
+    // â˜… Soft Jitter Suppression
     //
-    // DeadZone‚Æˆá‚¢A‹}‚ÉƒJƒNƒb‚Æ“®‚«o‚µ‚É‚­‚¢
+    // DeadZoneã¨é•ã„ã€æ€¥ã«ã‚«ã‚¯ãƒƒã¨å‹•ãå‡ºã—ã«ãã„
     // =========================================================
 
     [Header("Micro Jitter Suppression")]
 
-    [Tooltip("‚±‚Ì‹——£ˆÈ‰º‚Í‚©‚È‚è‹­‚­—}‚¦‚é")]
+    [Tooltip("ã“ã®è·é›¢ä»¥ä¸‹ã¯ã‹ãªã‚Šå¼·ãæŠ‘ãˆã‚‹")]
     [Range(0f, 0.003f)]
-    public float microJitterStart = 0.00015f;
+    public float microJitterStart = 0.00020f;
 
-    [Tooltip("‚±‚Ì‹——£ˆÈã‚È‚ç¶‚ÌˆÚ“®‚ğ‚Ù‚Ú’Ê‚·")]
+    [Tooltip("ã“ã®è·é›¢ä»¥ä¸Šãªã‚‰ç”Ÿã®ç§»å‹•ã‚’ã»ã¼é€šã™")]
     [Range(0.0002f, 0.01f)]
-    public float microJitterFull = 0.0015f;
+    public float microJitterFull = 0.0012f;
 
-    [Tooltip("”ñí‚É¬‚³‚¢“®‚«‚àŠ®‘S’â~‚³‚¹‚¸­‚µ‚¾‚¯’Ê‚·")]
+    [Tooltip("éå¸¸ã«å°ã•ã„å‹•ãã‚‚å®Œå…¨åœæ­¢ã•ã›ãšå°‘ã—ã ã‘é€šã™")]
     [Range(0f, 0.5f)]
-    public float microJitterMinimumGain = 0.08f;
+    public float microJitterMinimumGain = 0.12f;
 
 
     // =========================================================
     // Sample Size Stabilizer
     //
-    // Ø‚è”²‚«ƒTƒCƒY‚ÍˆÊ’u‚æ‚è‹­‚­•½ŠŠ‰»
+    // åˆ‡ã‚ŠæŠœãã‚µã‚¤ã‚ºã¯ä½ç½®ã‚ˆã‚Šå¼·ãå¹³æ»‘åŒ–
     // =========================================================
 
     [Header("Sample Size Stabilizer")]
 
-    [Range(1f, 50f)]
-    public float eyeSampleSizeResponse = 6f;
+    [Range(1f, 250f)]
+    public float eyeSampleSizeResponse = 80f;
 
-    [Range(1f, 50f)]
-    public float mouthSampleSizeResponse = 7f;
+    [Range(1f, 250f)]
+    public float mouthSampleSizeResponse = 90f;
 
 
     // =========================================================
     // Unity Render Interpolation
     //
-    // Sample FilterŒã‚ÌˆÊ’u‚ğ•`‰æfps‚ÅŠŠ‚ç‚©‚É‚Â‚È‚®
+    // Sample Filterå¾Œã®ä½ç½®ã‚’æç”»fpsã§æ»‘ã‚‰ã‹ã«ã¤ãªã
     // =========================================================
 
     [Header("Position Interpolation")]
 
-    [Tooltip("–Ú‚Ì•`‰æ’Ç]‘¬“x")]
+    [Tooltip("ç›®ã®æç”»è¿½å¾“é€Ÿåº¦")]
     [Range(1f, 250f)]
-    public float eyeRenderResponse = 110f;
+    public float eyeRenderResponse = 180f;
 
-    [Tooltip("Œû‚Ì•`‰æ’Ç]‘¬“x")]
+    [Tooltip("å£ã®æç”»è¿½å¾“é€Ÿåº¦")]
     [Range(1f, 250f)]
-    public float mouthRenderResponse = 120f;
+    public float mouthRenderResponse = 200f;
 
 
     [Header("Size Interpolation")]
 
-    [Range(1f, 100f)]
-    public float eyeRenderSizeResponse = 14f;
+    [Range(1f, 250f)]
+    public float eyeRenderSizeResponse = 70f;
 
-    [Range(1f, 100f)]
-    public float mouthRenderSizeResponse = 16f;
+    [Range(1f, 250f)]
+    public float mouthRenderSizeResponse = 80f;
 
 
     // =========================================================
@@ -184,9 +208,9 @@ public class FacePartCropper : MonoBehaviour
 
     [Header("Velocity Estimation")]
 
-    [Tooltip("‘¬“x„’è©‘Ì‚Ìƒvƒ‹ƒvƒ‹‚ğ—}‚¦‚é")]
-    [Range(1f, 100f)]
-    public float velocityResponse = 15f;
+    [Tooltip("é€Ÿåº¦æ¨å®šè‡ªä½“ã®ãƒ—ãƒ«ãƒ—ãƒ«ã‚’æŠ‘ãˆã‚‹")]
+    [Range(1f, 250f)]
+    public float velocityResponse = 120f;
 
     [Range(0.1f, 10f)]
     public float maxCenterVelocity = 2.5f;
@@ -195,25 +219,55 @@ public class FacePartCropper : MonoBehaviour
     // =========================================================
     // Prediction
     //
-    // FaceLandmarkListŠñ‚¹‚Å‚ÍOFF„§
+    // FaceLandmarkListå¯„ã›ã§ã¯OFFæ¨å¥¨
     // =========================================================
 
     [Header("Prediction")]
 
     [Tooltip(
-        "FaceLandmarkList‚ÌˆÀ’èŠ´‚É‹ß‚Ã‚¯‚é‚È‚çOFF„§B" +
-        "’x‰„‚ª‹C‚É‚È‚é‚¾‚¯ONB"
+        "FaceLandmarkListã®å®‰å®šæ„Ÿã«è¿‘ã¥ã‘ã‚‹ãªã‚‰OFFæ¨å¥¨ã€‚" +
+        "é…å»¶ãŒæ°—ã«ãªã‚‹æ™‚ã ã‘ONã€‚"
     )]
-    public bool enablePrediction = false;
+    public bool enablePrediction = true;
+
+    [Tooltip("Use the matched camera-frame submission time to compensate LandMarker inference age. This keeps the live camera texture aligned with its eye/mouth crops during translation.")]
+    public bool compensateMatchedFrameAge = true;
+
+    [Tooltip("During intentional motion, apply the compensated crop center directly. Rest motion still uses render-rate interpolation.")]
+    public bool directPositionDuringMotion = true;
+
+    [Range(0.02f, 1f)]
+    public float directPositionSpeed = 0.12f;
 
     [Range(0f, 0.02f)]
     public float predictionLeadSeconds = 0.001f;
 
-    [Range(0.005f, 0.05f)]
-    public float maxExtrapolationSeconds = 0.010f;
+    [Range(0.005f, 0.12f)]
+    public float maxExtrapolationSeconds = 0.090f;
 
     [Range(0f, 0.05f)]
     public float maxPredictionDistance = 0.004f;
+
+    [SerializeField]
+    private float debugMatchedFrameAgeMs = 0f;
+
+
+    [Header("Coherent Vertical Face Motion")]
+
+    [Tooltip("During coherent up/down head translation, gives both eyes and the mouth one shared Y delta and velocity. Local blink, speech and pose deformation still bypass this grouping.")]
+    public bool stabilizeCoherentVerticalMotion = true;
+
+    [Range(0.005f, 0.50f)]
+    public float coherentVerticalMotionMinSpeed = 0.025f;
+
+    [Range(0.0005f, 0.02f)]
+    public float coherentVerticalDeltaTolerance = 0.0030f;
+
+    [Tooltip("Uses one shared Y prediction and render phase for both eyes and the mouth. Local blink and speech crop changes remain independent before the final vertical phase lock.")]
+    public bool phaseLockVerticalPrediction = true;
+
+    [Range(30f, 250f)]
+    public float coherentVerticalRenderResponse = 200f;
 
 
     // =========================================================
@@ -222,13 +276,17 @@ public class FacePartCropper : MonoBehaviour
 
     [Header("Rest Stabilization")]
 
-    [Tooltip("‚±‚êˆÈ‰º‚È‚çÃ~•t‹ß")]
+    [Tooltip("ã“ã‚Œä»¥ä¸‹ãªã‚‰é™æ­¢ä»˜è¿‘")]
     [Range(0f, 0.1f)]
     public float restSpeed = 0.020f;
 
-    [Tooltip("Ã~‚Ì”÷¬‚È“®‚«‚ğ‚³‚ç‚É—}‚¦‚é")]
+    [Tooltip("é™æ­¢æ™‚ã®å¾®å°ãªå‹•ãã‚’ã•ã‚‰ã«æŠ‘ãˆã‚‹")]
     [Range(0f, 0.005f)]
-    public float restJitterThreshold = 0.00050f;
+    public float restJitterThreshold = 0.00075f;
+
+    [Tooltip("Holds sub-pixel crop width/height noise while the part center is at rest. Real mouth and blink deformation releases from the accumulated raw size change.")]
+    [Range(0f, 0.01f)]
+    public float restSizeJitterThreshold = 0.00120f;
 
 
     // =========================================================
@@ -240,24 +298,47 @@ public class FacePartCropper : MonoBehaviour
     [Range(0.05f, 2f)]
     public float lostTrackingResetTime = 0.20f;
 
-    public bool hidePartsWhenLost = true;
+    [Tooltip("ON hides all parts after a sustained tracking loss. OFF freezes the last valid crops, preventing brief MediaPipe dropouts from flashing the face off.")]
+    public bool hidePartsWhenLost = false;
+
+
+    [Header("Isolated Part Outlier Guard")]
+
+    [Tooltip("Rejects a mouth crop that jumps independently from both eyes for only one Landmarker result.")]
+    public bool rejectIsolatedMouthOutliers = true;
+
+    [Range(0.01f, 0.20f)]
+    public float mouthOutlierAbsoluteTolerance = 0.045f;
+
+    [Range(0.5f, 4f)]
+    public float mouthOutlierEyeSpanMultiplier = 1.25f;
+
+
+    [SerializeField]
+    private int debugRejectedMouthSamples = 0;
 
 
     // =========================================================
     // MediaPipe Landmark IDs
     // =========================================================
 
-    // ¶–Ú‚Ì¶‰E’[
+    // å·¦ç›®ã®å·¦å³ç«¯
     private const int LEFT_EYE_A = 362;
     private const int LEFT_EYE_B = 263;
 
-    // ‰E–Ú‚Ì¶‰E’[
+    // å³ç›®ã®å·¦å³ç«¯
     private const int RIGHT_EYE_A = 33;
     private const int RIGHT_EYE_B = 133;
 
-    // Œû‚Ì¶‰E’[
+    // å£ã®å·¦å³ç«¯
     private const int MOUTH_LEFT = 61;
     private const int MOUTH_RIGHT = 291;
+
+    private static readonly int[] MOUTH_OUTER_CONTOUR =
+    {
+        61, 185, 40, 39, 37, 0, 267, 269, 270, 409, 291,
+        375, 321, 405, 314, 17, 84, 181, 91, 146
+    };
 
 
     // =========================================================
@@ -277,6 +358,10 @@ public class FacePartCropper : MonoBehaviour
 
     private bool _trackingLost = true;
 
+    private bool _statesResetForLoss = true;
+
+    private float _matchedFrameAgeSeconds = -1f;
+
 
     // =========================================================
     // Part State
@@ -286,16 +371,16 @@ public class FacePartCropper : MonoBehaviour
     {
         public bool initialized;
 
-        // ÅV‚ÌˆÀ’è‰»Ï‚İMediaPipeƒTƒ“ƒvƒ‹
+        // æœ€æ–°ã®å®‰å®šåŒ–æ¸ˆã¿MediaPipeã‚µãƒ³ãƒ—ãƒ«
         public UnityEngine.Rect sampleRect;
 
-        // Œ»İ‰æ–Ê‚É•\¦‚µ‚Ä‚¢‚éRect
+        // ç¾åœ¨ç”»é¢ã«è¡¨ç¤ºã—ã¦ã„ã‚‹Rect
         public UnityEngine.Rect displayRect;
 
-        // ‘O‰ñ‚Ì¶Anchor’†S
+        // å‰å›ã®ç”ŸAnchorä¸­å¿ƒ
         public Vector2 lastRawCenter;
 
-        // ˆÀ’è‰»Œã‚ÌˆÚ“®‘¬“x
+        // å®‰å®šåŒ–å¾Œã®ç§»å‹•é€Ÿåº¦
         public Vector2 centerVelocity;
 
         public long sampleTimestamp = -1;
@@ -312,6 +397,49 @@ public class FacePartCropper : MonoBehaviour
 
     private readonly PartState _mouthState =
         new PartState();
+
+
+    private bool _hasCoherentRawHistory;
+    private Vector2 _lastCoherentLeftCenter;
+    private Vector2 _lastCoherentRightCenter;
+    private Vector2 _lastCoherentMouthCenter;
+    private Vector2 _coherentOutputLeftCenter;
+    private Vector2 _coherentOutputRightCenter;
+    private Vector2 _coherentOutputMouthCenter;
+    private long _lastCoherentTimestamp = -1;
+    private bool _coherentVerticalApplied;
+    private bool _hasSharedVerticalVelocity;
+    private float _sharedVerticalVelocity;
+
+
+    public bool TryGetSampleRect(
+        RawImage image,
+        out UnityEngine.Rect sampleRect)
+    {
+        sampleRect = default;
+
+        PartState state =
+            image == leftEyeImage
+                ? _leftEyeState
+                : image == rightEyeImage
+                    ? _rightEyeState
+                    : image == mouthImage
+                        ? _mouthState
+                        : null;
+
+        if (
+            state == null ||
+            !state.initialized ||
+            state.sampleRect.width <= 0.000001f ||
+            state.sampleRect.height <= 0.000001f
+        )
+        {
+            return false;
+        }
+
+        sampleRect = state.sampleRect;
+        return true;
+    }
 
 
     // =========================================================
@@ -354,7 +482,7 @@ public class FacePartCropper : MonoBehaviour
 
 
         // =====================================================
-        // ‚‰æ¿WebƒJƒƒ‰‰f‘œ
+        // é«˜ç”»è³ªWebã‚«ãƒ¡ãƒ©æ˜ åƒ
         // =====================================================
 
         leftEyeImage.texture =
@@ -368,62 +496,69 @@ public class FacePartCropper : MonoBehaviour
 
 
         // =====================================================
-        // ÅVMediaPipeƒ‰ƒ“ƒhƒ}[ƒN
+        // æœ€æ–°MediaPipeãƒ©ãƒ³ãƒ‰ãƒãƒ¼ã‚¯
         // =====================================================
 
-        bool hasFace =
-            runner.TryGetLatestLandmarks(
+        bool hasNewLandmarks =
+            runner.TryGetLatestLandmarksIfChanged(
                 ref _landmarkBuffer,
+                _lastProcessedTimestamp,
                 out int landmarkCount,
-                out long timestamp
+                out long timestamp,
+                out bool hasFace
             );
 
 
         if (
             hasFace &&
+            hasNewLandmarks &&
             _landmarkBuffer != null &&
             landmarkCount > 0
         )
         {
-            if (
-                timestamp !=
-                _lastProcessedTimestamp
-            )
+            if (_trackingLost)
             {
-                if (_trackingLost)
+                if (_statesResetForLoss)
                 {
                     ResetStates();
-
-                    SetPartsVisible(true);
                 }
 
-
-                ProcessSample(
-                    landmarkCount,
-                    timestamp
-                );
-
-
-                _lastProcessedTimestamp =
-                    timestamp;
-
-
-                _lastTrackingTime =
-                    Time.unscaledTime;
-
-
-                _trackingLost =
-                    false;
+                SetPartsVisible(true);
             }
+
+
+            ProcessSample(
+                landmarkCount,
+                timestamp
+            );
+
+
+            _lastProcessedTimestamp =
+                timestamp;
+
+
+            _lastTrackingTime =
+                Time.unscaledTime;
+
+
+            _trackingLost =
+                false;
+
+
+            _statesResetForLoss =
+                false;
         }
-        else
+        else if (!hasFace)
         {
             HandleTrackingLost();
         }
 
 
+        UpdateMatchedFrameAge();
+
+
         // =====================================================
-        // Unity•`‰æfps‚Å–ˆƒtƒŒ[ƒ€•âŠÔ
+        // Unityæç”»fpsã§æ¯ãƒ•ãƒ¬ãƒ¼ãƒ è£œé–“
         // =====================================================
 
         float dt =
@@ -508,6 +643,46 @@ public class FacePartCropper : MonoBehaviour
             );
 
 
+        if (
+            mouthOK &&
+            leftOK &&
+            rightOK &&
+            rejectIsolatedMouthOutliers &&
+            _leftEyeState.initialized &&
+            _rightEyeState.initialized &&
+            _mouthState.initialized &&
+            !KiwiFacePartContinuityMath.IsMouthSamplePlausible(
+                _leftEyeState.sampleRect.center,
+                _rightEyeState.sampleRect.center,
+                _mouthState.sampleRect.center,
+                leftRect.center,
+                rightRect.center,
+                mouthRect.center,
+                mouthOutlierAbsoluteTolerance,
+                mouthOutlierEyeSpanMultiplier
+            )
+        )
+        {
+            // Preserve the previous mouth crop only for the isolated outlier.
+            // Both eyes still update now, so normal head motion stays immediate.
+            mouthOK = false;
+            debugRejectedMouthSamples++;
+        }
+
+
+        _coherentVerticalApplied = false;
+
+        if (leftOK && rightOK && mouthOK)
+        {
+            StabilizeCoherentVerticalMotion(
+                ref leftRect,
+                ref rightRect,
+                ref mouthRect,
+                timestamp
+            );
+        }
+
+
         if (swapEyes)
         {
             if (leftOK)
@@ -570,14 +745,190 @@ public class FacePartCropper : MonoBehaviour
                 false
             );
         }
+
+
+        if (
+            _coherentVerticalApplied &&
+            !phaseLockVerticalPrediction
+        )
+        {
+            SynchronizeCoherentVerticalVelocities();
+        }
+
+
+        RefreshSharedVerticalVelocity();
+    }
+
+
+    private void StabilizeCoherentVerticalMotion(
+        ref UnityEngine.Rect leftRect,
+        ref UnityEngine.Rect rightRect,
+        ref UnityEngine.Rect mouthRect,
+        long timestamp)
+    {
+        Vector2 rawLeftCenter = leftRect.center;
+        Vector2 rawRightCenter = rightRect.center;
+        Vector2 rawMouthCenter = mouthRect.center;
+
+        if (!stabilizeCoherentVerticalMotion)
+        {
+            _hasCoherentRawHistory = false;
+            _lastCoherentTimestamp = -1;
+            return;
+        }
+
+        if (!_hasCoherentRawHistory || timestamp <= _lastCoherentTimestamp)
+        {
+            _hasCoherentRawHistory = true;
+            _lastCoherentLeftCenter = rawLeftCenter;
+            _lastCoherentRightCenter = rawRightCenter;
+            _lastCoherentMouthCenter = rawMouthCenter;
+            _coherentOutputLeftCenter = rawLeftCenter;
+            _coherentOutputRightCenter = rawRightCenter;
+            _coherentOutputMouthCenter = rawMouthCenter;
+            _lastCoherentTimestamp = timestamp;
+            return;
+        }
+
+        float sampleDt = Mathf.Clamp(
+            (timestamp - _lastCoherentTimestamp) / 1000f,
+            1f / 240f,
+            0.10f
+        );
+
+        float rawLeftDelta =
+            rawLeftCenter.y - _lastCoherentLeftCenter.y;
+        float rawRightDelta =
+            rawRightCenter.y - _lastCoherentRightCenter.y;
+        float rawMouthDelta =
+            rawMouthCenter.y - _lastCoherentMouthCenter.y;
+
+        bool coherent;
+        float resolvedLeftDelta;
+        float resolvedRightDelta;
+        float resolvedMouthDelta;
+
+        if (phaseLockVerticalPrediction)
+        {
+            coherent = KiwiFacePartCoherentMotionMath.TryResolvePhaseLockedVerticalDeltas(
+                rawLeftDelta,
+                rawRightDelta,
+                rawMouthDelta,
+                sampleDt,
+                coherentVerticalMotionMinSpeed,
+                coherentVerticalDeltaTolerance,
+                out resolvedLeftDelta,
+                out resolvedRightDelta,
+                out resolvedMouthDelta,
+                out _
+            );
+        }
+        else
+        {
+            coherent = KiwiFacePartCoherentMotionMath.TryResolveSharedVerticalDelta(
+                rawLeftDelta,
+                rawRightDelta,
+                rawMouthDelta,
+                sampleDt,
+                coherentVerticalMotionMinSpeed,
+                coherentVerticalDeltaTolerance,
+                out float sharedDelta,
+                out _
+            );
+            resolvedLeftDelta = sharedDelta;
+            resolvedRightDelta = sharedDelta;
+            resolvedMouthDelta = sharedDelta;
+        }
+
+        if (coherent)
+        {
+            _coherentOutputLeftCenter.y += resolvedLeftDelta;
+            _coherentOutputRightCenter.y += resolvedRightDelta;
+            _coherentOutputMouthCenter.y += resolvedMouthDelta;
+
+            Vector2 center = leftRect.center;
+            center.y = _coherentOutputLeftCenter.y;
+            leftRect.center = center;
+
+            center = rightRect.center;
+            center.y = _coherentOutputRightCenter.y;
+            rightRect.center = center;
+
+            center = mouthRect.center;
+            center.y = _coherentOutputMouthCenter.y;
+            mouthRect.center = center;
+
+            _coherentVerticalApplied = true;
+        }
+        else
+        {
+            // A blink, speech deformation, or pose change is local motion.
+            // Rebase immediately so expression centers are never rigidly held.
+            _coherentOutputLeftCenter = rawLeftCenter;
+            _coherentOutputRightCenter = rawRightCenter;
+            _coherentOutputMouthCenter = rawMouthCenter;
+        }
+
+        _lastCoherentLeftCenter = rawLeftCenter;
+        _lastCoherentRightCenter = rawRightCenter;
+        _lastCoherentMouthCenter = rawMouthCenter;
+        _lastCoherentTimestamp = timestamp;
+    }
+
+
+    private void SynchronizeCoherentVerticalVelocities()
+    {
+        float sharedVelocity = KiwiFacePartCoherentMotionMath.Median3(
+            _leftEyeState.centerVelocity.y,
+            _rightEyeState.centerVelocity.y,
+            _mouthState.centerVelocity.y
+        );
+
+        Vector2 velocity = _leftEyeState.centerVelocity;
+        velocity.y = sharedVelocity;
+        _leftEyeState.centerVelocity = velocity;
+
+        velocity = _rightEyeState.centerVelocity;
+        velocity.y = sharedVelocity;
+        _rightEyeState.centerVelocity = velocity;
+
+        velocity = _mouthState.centerVelocity;
+        velocity.y = sharedVelocity;
+        _mouthState.centerVelocity = velocity;
+    }
+
+
+    private void RefreshSharedVerticalVelocity()
+    {
+        if (
+            !_leftEyeState.initialized ||
+            !_rightEyeState.initialized ||
+            !_mouthState.initialized
+        )
+        {
+            _hasSharedVerticalVelocity = false;
+            _sharedVerticalVelocity = 0f;
+            return;
+        }
+
+        _sharedVerticalVelocity = Mathf.Clamp(
+            KiwiFacePartCoherentMotionMath.Median3(
+                _leftEyeState.centerVelocity.y,
+                _rightEyeState.centerVelocity.y,
+                _mouthState.centerVelocity.y
+            ),
+            -Mathf.Max(0.01f, maxCenterVelocity),
+            Mathf.Max(0.01f, maxCenterVelocity)
+        );
+        _hasSharedVerticalVelocity = true;
     }
 
 
     // =========================================================
     // Eye Rect
     //
-    // min/max‚Íg‚í‚È‚¢B
-    // ŒÅ’è‚µ‚½–ÚKE–Ú“ª‚Ì‚İ‚ğg—pB
+    // min/maxã¯ä½¿ã‚ãªã„ã€‚
+    // å›ºå®šã—ãŸç›®å°»ãƒ»ç›®é ­ã®ã¿ã‚’ä½¿ç”¨ã€‚
     // =========================================================
 
     private bool BuildEyeRect(
@@ -645,7 +996,8 @@ public class FacePartCropper : MonoBehaviour
             MakeUvRect(
                 center,
                 width,
-                height
+                height,
+                preserveEyeCenterAtTextureEdges
             );
 
 
@@ -656,10 +1008,10 @@ public class FacePartCropper : MonoBehaviour
     // =========================================================
     // Mouth Rect
     //
-    // Œû‚Ìã‰º“_‚ğƒTƒCƒYŒvZ‚Ég‚í‚È‚¢B
+    // å£ã®ä¸Šä¸‹ç‚¹ã‚’ã‚µã‚¤ã‚ºè¨ˆç®—ã«ä½¿ã‚ãªã„ã€‚
     //
-    // ‚±‚ê‚ªŒû‚ğŠJ•Â‚µ‚½‚Ì
-    // ƒTƒCƒYƒvƒ‹ƒvƒ‹’áŒ¸‚É‚©‚È‚èŒø‚­B
+    // ã“ã‚ŒãŒå£ã‚’é–‹é–‰ã—ãŸæ™‚ã®
+    // ã‚µã‚¤ã‚ºãƒ—ãƒ«ãƒ—ãƒ«ä½æ¸›ã«ã‹ãªã‚ŠåŠ¹ãã€‚
     // =========================================================
 
     private bool BuildMouthRect(
@@ -721,22 +1073,96 @@ public class FacePartCropper : MonoBehaviour
             mouthPaddingY * 2f;
 
 
+        if (
+            useMouthContourSafeCrop &&
+            TryGetMouthContourBounds(
+                landmarkCount,
+                out Vector2 contourMin,
+                out Vector2 contourMax
+            )
+        )
+        {
+            UnityEngine.Rect safeRect =
+                KiwiMouthCropMath.CalculateSafeRect(
+                    left,
+                    right,
+                    contourMin,
+                    contourMax,
+                    sourceAspect,
+                    mouthWidthScale,
+                    mouthHeightToWidth,
+                    mouthPaddingX,
+                    mouthPaddingY,
+                    mouthContourSafetyX,
+                    mouthContourSafetyY
+                );
+
+
+            center = safeRect.center;
+            width = safeRect.width;
+            height = safeRect.height;
+        }
+
+
         rect =
             MakeUvRect(
                 center,
                 width,
-                height
+                height,
+                preserveMouthCenterAtTextureEdges
             );
+
+
+        debugMouthUvOverscan = new Vector4(
+            Mathf.Max(0f, -rect.xMin),
+            Mathf.Max(0f, -rect.yMin),
+            Mathf.Max(0f, rect.xMax - 1f),
+            Mathf.Max(0f, rect.yMax - 1f)
+        );
 
 
         return true;
     }
 
 
+    private bool TryGetMouthContourBounds(
+        int landmarkCount,
+        out Vector2 minimum,
+        out Vector2 maximum)
+    {
+        minimum = new Vector2(float.MaxValue, float.MaxValue);
+        maximum = new Vector2(float.MinValue, float.MinValue);
+
+
+        for (int i = 0; i < MOUTH_OUTER_CONTOUR.Length; i++)
+        {
+            if (
+                !TryGetLandmark(
+                    MOUTH_OUTER_CONTOUR[i],
+                    landmarkCount,
+                    out Vector2 point
+                )
+            )
+            {
+                return false;
+            }
+
+
+            minimum = Vector2.Min(minimum, point);
+            maximum = Vector2.Max(maximum, point);
+        }
+
+
+        return
+            maximum.x > minimum.x &&
+            maximum.y > minimum.y;
+    }
+
+
     // =========================================================
     // Update Sample
     //
-    // š‚±‚±‚ª¡‰ñ‚Ì’†S
+    // â˜…ã“ã“ãŒä»Šå›ã®ä¸­å¿ƒ
     // =========================================================
 
     private void UpdateSample(
@@ -830,7 +1256,7 @@ public class FacePartCropper : MonoBehaviour
 
 
         // =====================================================
-        // ¶‚ÌˆÚ“®‘¬“x
+        // ç”Ÿã®ç§»å‹•é€Ÿåº¦
         // =====================================================
 
         Vector2 rawCenter =
@@ -855,13 +1281,13 @@ public class FacePartCropper : MonoBehaviour
 
 
         // =====================================================
-        // š Soft Micro Jitter Suppression
+        // â˜… Soft Micro Jitter Suppression
         //
-        // ¬‚³‚ÈƒuƒŒ
-        // ¨ ‹­‚­—}‚¦‚é
+        // å°ã•ãªãƒ–ãƒ¬
+        // â†’ å¼·ãæŠ‘ãˆã‚‹
         //
-        // –{“–‚É“®‚¢‚½
-        // ¨ ‚Ù‚Ú‚»‚Ì‚Ü‚Ü’Ê‚·
+        // æœ¬å½“ã«å‹•ã„ãŸ
+        // â†’ ã»ã¼ãã®ã¾ã¾é€šã™
         // =====================================================
 
         Vector2 previousCenter =
@@ -878,11 +1304,11 @@ public class FacePartCropper : MonoBehaviour
         // =====================================================
         // Adaptive Sample Response
         //
-        // Ã~
-        // ¨ ‹­‚¢•½ŠŠ‰»
+        // é™æ­¢
+        // â†’ å¼·ã„å¹³æ»‘åŒ–
         //
-        // ˆÚ“®
-        // ¨ ‚‘¬’Ç]
+        // ç§»å‹•
+        // â†’ é«˜é€Ÿè¿½å¾“
         // =====================================================
 
         float motionFactor =
@@ -920,7 +1346,7 @@ public class FacePartCropper : MonoBehaviour
         // =====================================================
         // Size
         //
-        // ƒTƒCƒY‚ÍˆÊ’u‚æ‚è‚©‚È‚è‹­‚­•½ŠŠ‰»
+        // ã‚µã‚¤ã‚ºã¯ä½ç½®ã‚ˆã‚Šã‹ãªã‚Šå¼·ãå¹³æ»‘åŒ–
         // =====================================================
 
         Vector2 currentSize =
@@ -929,6 +1355,20 @@ public class FacePartCropper : MonoBehaviour
 
         Vector2 rawSize =
             rawRect.size;
+
+
+        if (
+            KiwiFacePartRectStabilityMath.ShouldHoldSize(
+                currentSize,
+                rawSize,
+                rawSpeed,
+                restSpeed,
+                restSizeJitterThreshold
+            )
+        )
+        {
+            rawSize = currentSize;
+        }
 
 
         float sizeResponse =
@@ -954,7 +1394,7 @@ public class FacePartCropper : MonoBehaviour
 
 
         // =====================================================
-        // FilterŒã‚Ì‘¬“x
+        // Filterå¾Œã®é€Ÿåº¦
         // =====================================================
 
         Vector2 instantaneousVelocity =
@@ -1072,8 +1512,8 @@ public class FacePartCropper : MonoBehaviour
     // =========================================================
     // RenderPart
     //
-    // MediaPipeŒ‹‰Ê‚ª—ˆ‚Ä‚¢‚È‚¢ƒtƒŒ[ƒ€‚à
-    // Unity‘¤‚ÅŠŠ‚ç‚©‚É‚Â‚È‚®
+    // MediaPipeçµæœãŒæ¥ã¦ã„ãªã„ãƒ•ãƒ¬ãƒ¼ãƒ ã‚‚
+    // Unityå´ã§æ»‘ã‚‰ã‹ã«ã¤ãªã
     // =========================================================
 
     private void RenderPart(
@@ -1107,52 +1547,62 @@ public class FacePartCropper : MonoBehaviour
             state.centerVelocity.magnitude;
 
 
+        bool phaseLockVertical =
+            phaseLockVerticalPrediction &&
+            _hasSharedVerticalVelocity;
+
+
+        float sharedVerticalSpeed =
+            phaseLockVertical
+                ? Mathf.Abs(_sharedVerticalVelocity)
+                : 0f;
+
+
         // =====================================================
         // Prediction
         //
-        // ‰Šú’l‚ÍOFFB
-        // FaceLandmarkListŠñ‚¹‚È‚çOFF‚ªˆÀ’èB
+        // åˆæœŸå€¤ã¯OFFã€‚
+        // FaceLandmarkListå¯„ã›ãªã‚‰OFFãŒå®‰å®šã€‚
         // =====================================================
 
         if (
             enablePrediction &&
-            speed > restSpeed
+            (
+                speed > restSpeed ||
+                sharedVerticalSpeed > restSpeed
+            )
         )
         {
-            float elapsed =
-                Mathf.Max(
-                    0f,
-                    Time.unscaledTime -
-                    state.sampleArrivalTime
-                );
-
+            float elapsed = Mathf.Max(
+                0f,
+                Time.unscaledTime - state.sampleArrivalTime
+            );
 
             float predictionTime =
-                Mathf.Min(
-                    elapsed +
+                KiwiFacePartPredictionMath.CalculatePredictionTime(
+                    compensateMatchedFrameAge,
+                    _matchedFrameAgeSeconds,
+                    elapsed,
                     predictionLeadSeconds,
                     maxExtrapolationSeconds
                 );
 
 
-            Vector2 prediction =
-                state.centerVelocity *
-                predictionTime;
-
-
-            if (
-                prediction.magnitude >
-                maxPredictionDistance
-            )
-            {
-                prediction =
-                    prediction.normalized *
-                    maxPredictionDistance;
-            }
-
-
-            targetCenter +=
-                prediction;
+            targetCenter =
+                phaseLockVertical
+                    ? KiwiFacePartPredictionMath.PredictCenterPhaseLocked(
+                        targetCenter,
+                        state.centerVelocity.x,
+                        _sharedVerticalVelocity,
+                        predictionTime,
+                        maxPredictionDistance
+                    )
+                    : KiwiFacePartPredictionMath.PredictCenter(
+                        targetCenter,
+                        state.centerVelocity,
+                        predictionTime,
+                        maxPredictionDistance
+                    );
         }
 
 
@@ -1164,7 +1614,7 @@ public class FacePartCropper : MonoBehaviour
             state.displayRect.center;
 
 
-        if (speed < restSpeed)
+        if (Mathf.Max(speed, sharedVerticalSpeed) < restSpeed)
         {
             float distance =
                 Vector2.Distance(
@@ -1194,19 +1644,45 @@ public class FacePartCropper : MonoBehaviour
                 : mouthRenderResponse;
 
 
-        float positionT =
-            1f -
-            Mathf.Exp(
-                -renderResponse *
-                dt
-            );
+        float horizontalPositionT =
+            directPositionDuringMotion &&
+            enablePrediction &&
+            speed >= Mathf.Max(0.02f, directPositionSpeed)
+                ? 1f
+                : 1f -
+                    Mathf.Exp(
+                        -renderResponse *
+                        dt
+                    );
 
 
+        float verticalSpeed =
+            phaseLockVertical
+                ? sharedVerticalSpeed
+                : speed;
+
+
+        float verticalResponse =
+            phaseLockVertical
+                ? coherentVerticalRenderResponse
+                : renderResponse;
+
+
+        float verticalPositionT =
+            directPositionDuringMotion &&
+            enablePrediction &&
+            verticalSpeed >= Mathf.Max(0.02f, directPositionSpeed)
+                ? 1f
+                : 1f - Mathf.Exp(-verticalResponse * dt);
+
+
+        // X remains part-local. Y uses the same prediction velocity, direct-motion
+        // decision and response for both eyes and the mouth, preventing relative
+        // vertical phase shifts while the head is translating.
         Vector2 newCenter =
-            Vector2.Lerp(
-                displayCenter,
-                targetCenter,
-                positionT
+            new Vector2(
+                Mathf.Lerp(displayCenter.x, targetCenter.x, horizontalPositionT),
+                Mathf.Lerp(displayCenter.y, targetCenter.y, verticalPositionT)
             );
 
 
@@ -1253,7 +1729,10 @@ public class FacePartCropper : MonoBehaviour
 
         output =
             ClampUvRect(
-                output
+                output,
+                isEye
+                    ? !preserveEyeCenterAtTextureEdges
+                    : !preserveMouthCenterAtTextureEdges
             );
 
 
@@ -1263,6 +1742,58 @@ public class FacePartCropper : MonoBehaviour
 
         image.uvRect =
             output;
+    }
+
+
+    private void UpdateMatchedFrameAge()
+    {
+        _matchedFrameAgeSeconds = -1f;
+        debugMatchedFrameAgeMs = 0f;
+
+        if (
+            !compensateMatchedFrameAge ||
+            runner == null ||
+            _lastProcessedTimestamp < 0 ||
+            !runner.TryGetLatestPrecisionTrackingData(
+                out FacePrecisionTrackingData precision
+            ) ||
+            !precision.hasMatchedSubmissionTiming ||
+            precision.timestamp != _lastProcessedTimestamp ||
+            precision.submissionHostTicks <= 0L
+        )
+        {
+            return;
+        }
+
+        long nowTicks =
+            System.Diagnostics.Stopwatch.GetTimestamp();
+
+        if (nowTicks <= precision.submissionHostTicks)
+        {
+            return;
+        }
+
+        double age =
+            KiwiPrecisionTrackingMath.HostTicksToSeconds(
+                nowTicks - precision.submissionHostTicks
+            );
+
+        if (
+            double.IsNaN(age) ||
+            double.IsInfinity(age)
+        )
+        {
+            return;
+        }
+
+        _matchedFrameAgeSeconds = Mathf.Clamp(
+            (float)age,
+            0f,
+            Mathf.Max(0.005f, maxExtrapolationSeconds)
+        );
+
+        debugMatchedFrameAgeMs =
+            _matchedFrameAgeSeconds * 1000f;
     }
 
 
@@ -1341,7 +1872,8 @@ public class FacePartCropper : MonoBehaviour
     private UnityEngine.Rect MakeUvRect(
         Vector2 landmarkCenter,
         float width,
-        float height)
+        float height,
+        bool preserveCenterAtEdges = false)
     {
         width =
             Mathf.Clamp(
@@ -1371,21 +1903,19 @@ public class FacePartCropper : MonoBehaviour
 
 
         UnityEngine.Rect rect =
-            new UnityEngine.Rect(
-                centerX -
-                width * 0.5f,
-
-                centerY -
-                height * 0.5f,
-
+            KiwiMouthCropMath.CalculateCenteredUvRect(
+                new Vector2(
+                    centerX,
+                    centerY
+                ),
                 width,
-
                 height
             );
 
 
         return ClampUvRect(
-            rect
+            rect,
+            !preserveCenterAtEdges
         );
     }
 
@@ -1417,7 +1947,8 @@ public class FacePartCropper : MonoBehaviour
     // =========================================================
 
     private UnityEngine.Rect ClampUvRect(
-        UnityEngine.Rect rect)
+        UnityEngine.Rect rect,
+        bool clampPosition = true)
     {
         rect.width =
             Mathf.Clamp(
@@ -1433,6 +1964,12 @@ public class FacePartCropper : MonoBehaviour
                 0.001f,
                 1f
             );
+
+
+        if (!clampPosition)
+        {
+            return rect;
+        }
 
 
         rect.x =
@@ -1484,18 +2021,29 @@ public class FacePartCropper : MonoBehaviour
         }
 
 
-        ResetStates();
-
-
-        _lastProcessedTimestamp =
-            -1;
-
-
         if (hidePartsWhenLost)
         {
+            ResetStates();
+
+
+            _lastProcessedTimestamp =
+                -1;
+
+
             SetPartsVisible(
                 false
             );
+
+
+            _statesResetForLoss =
+                true;
+        }
+        else
+        {
+            // Freeze the last valid state. Empty asynchronous results are a
+            // tracking signal, not a request to blank the rendered face.
+            _statesResetForLoss =
+                false;
         }
 
 
@@ -1521,6 +2069,13 @@ public class FacePartCropper : MonoBehaviour
         ResetState(
             _mouthState
         );
+
+
+        _hasCoherentRawHistory = false;
+        _lastCoherentTimestamp = -1;
+        _coherentVerticalApplied = false;
+        _hasSharedVerticalVelocity = false;
+        _sharedVerticalVelocity = 0f;
     }
 
 
@@ -1600,5 +2155,377 @@ public class FacePartCropper : MonoBehaviour
 
         _trackingLost =
             true;
+
+
+        _statesResetForLoss =
+            true;
+    }
+}
+
+
+public static class KiwiFacePartCoherentMotionMath
+{
+    public static bool TryResolveSharedVerticalDelta(
+        float leftDelta,
+        float rightDelta,
+        float mouthDelta,
+        float sampleDt,
+        float minimumSpeed,
+        float deltaTolerance,
+        out float sharedDelta,
+        out float sharedSpeed)
+    {
+        sharedDelta = Median3(leftDelta, rightDelta, mouthDelta);
+        sharedSpeed = Mathf.Abs(sharedDelta) / Mathf.Max(0.0001f, sampleDt);
+
+        float maximumResidual = Mathf.Max(
+            Mathf.Abs(leftDelta - sharedDelta),
+            Mathf.Abs(rightDelta - sharedDelta),
+            Mathf.Abs(mouthDelta - sharedDelta)
+        );
+
+        return
+            IsFinite(leftDelta) &&
+            IsFinite(rightDelta) &&
+            IsFinite(mouthDelta) &&
+            sharedSpeed >= Mathf.Max(0f, minimumSpeed) &&
+            maximumResidual <= Mathf.Max(0f, deltaTolerance);
+    }
+
+
+    public static bool TryResolvePhaseLockedVerticalDeltas(
+        float leftDelta,
+        float rightDelta,
+        float mouthDelta,
+        float sampleDt,
+        float minimumSpeed,
+        float residualTolerance,
+        out float resolvedLeftDelta,
+        out float resolvedRightDelta,
+        out float resolvedMouthDelta,
+        out float sharedSpeed)
+    {
+        resolvedLeftDelta = leftDelta;
+        resolvedRightDelta = rightDelta;
+        resolvedMouthDelta = mouthDelta;
+        sharedSpeed = 0f;
+
+        if (
+            !IsFinite(leftDelta) ||
+            !IsFinite(rightDelta) ||
+            !IsFinite(mouthDelta)
+        )
+        {
+            return false;
+        }
+
+        float sharedDelta = Median3(leftDelta, rightDelta, mouthDelta);
+        sharedSpeed = Mathf.Abs(sharedDelta) / Mathf.Max(0.0001f, sampleDt);
+        if (sharedSpeed < Mathf.Max(0f, minimumSpeed))
+        {
+            return false;
+        }
+
+        float tolerance = Mathf.Max(0.000001f, residualTolerance);
+        resolvedLeftDelta = sharedDelta + FilterLocalResidual(
+            leftDelta - sharedDelta,
+            tolerance
+        );
+        resolvedRightDelta = sharedDelta + FilterLocalResidual(
+            rightDelta - sharedDelta,
+            tolerance
+        );
+        resolvedMouthDelta = sharedDelta + FilterLocalResidual(
+            mouthDelta - sharedDelta,
+            tolerance
+        );
+        return true;
+    }
+
+
+    private static float FilterLocalResidual(
+        float residual,
+        float tolerance)
+    {
+        float magnitude = Mathf.Abs(residual);
+        if (magnitude <= tolerance)
+        {
+            return 0f;
+        }
+
+        float release = Mathf.InverseLerp(
+            tolerance,
+            tolerance * 4f,
+            magnitude
+        );
+        release = Mathf.SmoothStep(0f, 1f, release);
+        return residual * release;
+    }
+
+
+    public static float Median3(float a, float b, float c)
+    {
+        return a + b + c - Mathf.Min(a, Mathf.Min(b, c)) - Mathf.Max(a, Mathf.Max(b, c));
+    }
+
+
+    private static bool IsFinite(float value)
+    {
+        return !float.IsNaN(value) && !float.IsInfinity(value);
+    }
+}
+
+
+public static class KiwiFacePartRectStabilityMath
+{
+    public static bool ShouldHoldSize(
+        Vector2 currentSize,
+        Vector2 rawSize,
+        float centerSpeed,
+        float restSpeed,
+        float sizeDeadZone)
+    {
+        if (
+            !IsFinite(currentSize) ||
+            !IsFinite(rawSize)
+        )
+        {
+            return false;
+        }
+
+
+        Vector2 accumulatedChange = rawSize - currentSize;
+
+
+        return
+            Mathf.Max(0f, centerSpeed) < Mathf.Max(0f, restSpeed) &&
+            Mathf.Abs(accumulatedChange.x) <= Mathf.Max(0f, sizeDeadZone) &&
+            Mathf.Abs(accumulatedChange.y) <= Mathf.Max(0f, sizeDeadZone);
+    }
+
+
+    private static bool IsFinite(Vector2 value)
+    {
+        return
+            !float.IsNaN(value.x) &&
+            !float.IsInfinity(value.x) &&
+            !float.IsNaN(value.y) &&
+            !float.IsInfinity(value.y);
+    }
+}
+
+
+public static class KiwiFacePartPredictionMath
+{
+    public static float CalculatePredictionTime(
+        bool useMatchedFrameAge,
+        float matchedFrameAgeSeconds,
+        float elapsedSinceResult,
+        float leadSeconds,
+        float maximumSeconds)
+    {
+        float age =
+            useMatchedFrameAge &&
+            IsFinite(matchedFrameAgeSeconds) &&
+            matchedFrameAgeSeconds >= 0f
+                ? matchedFrameAgeSeconds
+                : Mathf.Max(0f, elapsedSinceResult);
+
+        return Mathf.Clamp(
+            age + Mathf.Max(0f, leadSeconds),
+            0f,
+            Mathf.Max(0f, maximumSeconds)
+        );
+    }
+
+
+    public static Vector2 PredictCenter(
+        Vector2 center,
+        Vector2 velocity,
+        float predictionSeconds,
+        float maximumDistance)
+    {
+        if (
+            !IsFinite(center.x) ||
+            !IsFinite(center.y) ||
+            !IsFinite(velocity.x) ||
+            !IsFinite(velocity.y) ||
+            !IsFinite(predictionSeconds)
+        )
+        {
+            return center;
+        }
+
+        Vector2 displacement =
+            velocity * Mathf.Max(0f, predictionSeconds);
+
+        float distanceLimit =
+            Mathf.Max(0f, maximumDistance);
+
+        if (
+            distanceLimit > 0f &&
+            displacement.sqrMagnitude > distanceLimit * distanceLimit
+        )
+        {
+            displacement =
+                displacement.normalized * distanceLimit;
+        }
+
+        return center + displacement;
+    }
+
+
+    public static Vector2 PredictCenterPhaseLocked(
+        Vector2 center,
+        float horizontalVelocity,
+        float sharedVerticalVelocity,
+        float predictionSeconds,
+        float maximumAxisDistance)
+    {
+        if (
+            !IsFinite(center.x) ||
+            !IsFinite(center.y) ||
+            !IsFinite(horizontalVelocity) ||
+            !IsFinite(sharedVerticalVelocity) ||
+            !IsFinite(predictionSeconds)
+        )
+        {
+            return center;
+        }
+
+        float seconds = Mathf.Max(0f, predictionSeconds);
+        float distanceLimit = Mathf.Max(0f, maximumAxisDistance);
+        float horizontal = horizontalVelocity * seconds;
+        float vertical = sharedVerticalVelocity * seconds;
+
+        if (distanceLimit > 0f)
+        {
+            horizontal = Mathf.Clamp(horizontal, -distanceLimit, distanceLimit);
+            vertical = Mathf.Clamp(vertical, -distanceLimit, distanceLimit);
+        }
+
+        return center + new Vector2(horizontal, vertical);
+    }
+
+
+    private static bool IsFinite(float value)
+    {
+        return
+            !float.IsNaN(value) &&
+            !float.IsInfinity(value);
+    }
+}
+
+
+public static class KiwiFacePartContinuityMath
+{
+    public static bool IsMouthSamplePlausible(
+        Vector2 previousLeftEye,
+        Vector2 previousRightEye,
+        Vector2 previousMouth,
+        Vector2 currentLeftEye,
+        Vector2 currentRightEye,
+        Vector2 currentMouth,
+        float absoluteTolerance,
+        float eyeSpanMultiplier)
+    {
+        Vector2 previousEyeCenter =
+            (previousLeftEye + previousRightEye) * 0.5f;
+
+
+        Vector2 currentEyeCenter =
+            (currentLeftEye + currentRightEye) * 0.5f;
+
+
+        Vector2 expectedMouth =
+            previousMouth +
+            (currentEyeCenter - previousEyeCenter);
+
+
+        float eyeSpan =
+            Mathf.Max(
+                Vector2.Distance(previousLeftEye, previousRightEye),
+                Vector2.Distance(currentLeftEye, currentRightEye)
+            );
+
+
+        float tolerance =
+            Mathf.Max(
+                Mathf.Max(0f, absoluteTolerance),
+                eyeSpan * Mathf.Max(0f, eyeSpanMultiplier)
+            );
+
+
+        return Vector2.Distance(currentMouth, expectedMouth) <= tolerance;
+    }
+}
+
+
+public static class KiwiMouthCropMath
+{
+    public static UnityEngine.Rect CalculateCenteredUvRect(
+        Vector2 center,
+        float width,
+        float height)
+    {
+        float safeWidth = Mathf.Clamp(width, 0.001f, 1f);
+        float safeHeight = Mathf.Clamp(height, 0.001f, 1f);
+
+        return new UnityEngine.Rect(
+            center.x - safeWidth * 0.5f,
+            center.y - safeHeight * 0.5f,
+            safeWidth,
+            safeHeight
+        );
+    }
+
+
+    public static UnityEngine.Rect CalculateSafeRect(
+        Vector2 left,
+        Vector2 right,
+        Vector2 contourMin,
+        Vector2 contourMax,
+        float sourceAspect,
+        float widthScale,
+        float heightToWidth,
+        float paddingX,
+        float paddingY,
+        float safetyX,
+        float safetyY)
+    {
+        float safeAspect = Mathf.Max(0.01f, sourceAspect);
+        float dx = right.x - left.x;
+        float dy = (right.y - left.y) / safeAspect;
+        float baseWidth = Mathf.Sqrt(dx * dx + dy * dy);
+
+        float fixedWidth =
+            baseWidth * Mathf.Max(1f, widthScale) +
+            Mathf.Max(0f, paddingX) * 2f;
+
+        float fixedHeight =
+            baseWidth * safeAspect * Mathf.Max(0.01f, heightToWidth) +
+            Mathf.Max(0f, paddingY) * 2f;
+
+        float contourWidth = Mathf.Max(0f, contourMax.x - contourMin.x);
+        float contourHeight = Mathf.Max(0f, contourMax.y - contourMin.y);
+
+        float safeWidth = Mathf.Max(
+            fixedWidth,
+            contourWidth + baseWidth * Mathf.Max(0f, safetyX) * 2f
+        );
+
+        float safeHeight = Mathf.Max(
+            fixedHeight,
+            contourHeight + baseWidth * safeAspect * Mathf.Max(0f, safetyY) * 2f
+        );
+
+        Vector2 center = (contourMin + contourMax) * 0.5f;
+
+        return new UnityEngine.Rect(
+            center.x - safeWidth * 0.5f,
+            center.y - safeHeight * 0.5f,
+            safeWidth,
+            safeHeight
+        );
     }
 }

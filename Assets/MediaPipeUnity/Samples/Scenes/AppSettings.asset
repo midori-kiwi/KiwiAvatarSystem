@@ -19,7 +19,13 @@ MonoBehaviour:
   _glogMinloglevel: 0
   _glogStderrthreshold: 2
   _glogV: 0
-  _preferredDefaultWebCamWidth: 1280
+  _preferredDefaultWebCamWidth: 640
+  _preferredWebCamDeviceKeywords:
+  - CM831
+  - UGREEN
+  _preferredWebCamProfileWidth: 1280
+  _preferredWebCamProfileHeight: 720
+  _preferredWebCamProfileFrameRate: 60
   _defaultAvailableWebCamResolutions:
   - width: 176
     height: 144
@@ -44,13 +50,16 @@ MonoBehaviour:
     frameRate: 30
   - width: 1280
     height: 720
-    frameRate: 30
+    frameRate: 60
   - width: 1600
     height: 896
     frameRate: 30
   - width: 1920
     height: 1080
     frameRate: 30
+  - width: 1920
+    height: 1080
+    frameRate: 60
   _availableStaticImageSources: []
   _defaultAvailableStaticImageResolutions:
   - width: 512
