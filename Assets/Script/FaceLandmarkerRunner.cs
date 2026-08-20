@@ -357,6 +357,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
         private bool _sentisFlipHorizontally;
         private bool _sentisFlipVertically;
         private int _lastSentisProcessedGeneration = -1;
+        private long _latestSentisSourceFrameHostTicks;
+        // KIWI_ASYNC_INFERENCE_MAILBOX_V2_3
         private long _lastSentisAnchorTimestamp = -1L;
         private UnityEngine.Rect _latestSentisAnchorRegion;
         private float _latestSentisAnchorRollRadians;
@@ -584,13 +586,14 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             if (
                 !_acceptTrackingResults ||
                 _sentisTracker == null ||
-                _sentisSourceTexture == null ||
-                _freshWebCamGeneration == _lastSentisProcessedGeneration)
+                _sentisSourceTexture == null)
             {
                 return;
             }
 
-            _lastSentisProcessedGeneration = _freshWebCamGeneration;
+            bool hasFreshSentisSource =
+                _freshWebCamGeneration !=
+                _lastSentisProcessedGeneration;
 
             UnityEngine.Rect anchorRegion = default;
             float anchorRoll = 0f;
@@ -618,18 +621,29 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             }
 
             long sourceHostTicks =
-                _pendingSourceFrameHostTicks > 0L
-                    ? _pendingSourceFrameHostTicks
+                _latestSentisSourceFrameHostTicks > 0L
+                    ? _latestSentisSourceFrameHostTicks
                     : System.Diagnostics.Stopwatch.GetTimestamp();
 
-            if (
-                _sentisTracker.TryProcess(
+            bool hasCompletedSentisResult =
+                _sentisTracker.TryProcessAsync(
                     _sentisSourceTexture,
                     _sentisFlipHorizontally,
                     _sentisFlipVertically,
+                    sourceHostTicks,
+                    hasFreshSentisSource,
+                    out bool scheduledSentisSource,
                     out Vector3[] landmarks,
-                    out Quaternion geometricRotation)
-            )
+                    out Quaternion geometricRotation,
+                    out long completedSourceHostTicks);
+
+            if (scheduledSentisSource)
+            {
+                _lastSentisProcessedGeneration =
+                    _freshWebCamGeneration;
+            }
+
+            if (hasCompletedSentisResult)
             {
                 _latestSentisLatencyMs = _sentisTracker.LatestLatencyMs;
                 _latestSentisPresence = _sentisTracker.LatestPresence;
@@ -652,14 +666,37 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     ? _sentisRotationOffset * geometricRotation
                     : geometricRotation;
 
-                _sentisPrimaryActive = StoreSentisTrackingData(
+                bool sentisAcceptedForPublish = StoreSentisTrackingData(
                     landmarks,
                     NormalizeQuaternion(rotation),
                     GetCurrentTimestampMillisec(),
-                    sourceHostTicks,
+                    completedSourceHostTicks > 0L
+                        ? completedSourceHostTicks
+                        : sourceHostTicks,
                     System.Diagnostics.Stopwatch.GetTimestamp());
+
+                if (sentisAcceptedForPublish)
+                {
+                    _sentisPublishFailureStreak = 0;
+                    _sentisPrimaryActive = true;
+                }
+                else if (_sentisPrimaryActive)
+                {
+                    _sentisPublishFailureStreak++;
+
+                    if (
+                        _sentisPublishFailureStreak >=
+                        SentisPublishFailureGraceFrames)
+                    {
+                        _sentisPrimaryActive = false;
+                        _hasSentisRotationOffset = false;
+                        _sentisPublishFailureStreak = 0;
+                    }
+                }
             }
-            else if (!_sentisTracker.IsTracking)
+            else if (
+                !_sentisTracker.IsAsyncReadbackPending &&
+                !_sentisTracker.IsTracking)
             {
                 _sentisPrimaryActive = false;
                 _hasSentisRotationOffset = false;
@@ -668,6 +705,10 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
 
         private long _lastSentisAnchorTimestampApplied = -1L;
+
+        // KIWI_INFERENCE_BACKEND_HYSTERESIS_V2_7
+        private int _sentisPublishFailureStreak;
+        private const int SentisPublishFailureGraceFrames = 3;
 
 
         private void InitializeSentisTracker(
@@ -792,6 +833,7 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             _freshWebCamGeneration++;
             _pendingFreshWebCamFrame = true;
             _pendingSourceFrameHostTicks = hostTicks;
+            _latestSentisSourceFrameHostTicks = hostTicks;
             RecordFreshSourceFrame(hostTicks);
         }
 
@@ -2523,13 +2565,64 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     faceWidth2D,
                     faceHeight2D);
 
+            // KIWI_SENTIS_CONTINUITY_ADOPTION_V2_6
             if (
                 eyeSpan <= 0.0001f ||
                 faceWidth2D <= 0.0001f ||
-                geometryQuality <= 0f
-            )
+                faceHeight2D <= 0.0001f ||
+                float.IsNaN(eyeSpan) ||
+                float.IsInfinity(eyeSpan) ||
+                float.IsNaN(faceWidth2D) ||
+                float.IsInfinity(faceWidth2D) ||
+                float.IsNaN(faceHeight2D) ||
+                float.IsInfinity(faceHeight2D))
             {
                 return false;
+            }
+
+            if (geometryQuality <= 0f)
+            {
+                bool coherentWithPublishedFace = false;
+
+                lock (_trackingLock)
+                {
+                    if (
+                        _latestLandmarkCount > 362 &&
+                        _latestFaceEyeSpan > 0.0001f)
+                    {
+                        float spanRatio =
+                            eyeSpan /
+                            _latestFaceEyeSpan;
+
+                        float centerDistance =
+                            Vector2.Distance(
+                                center,
+                                _latestFaceCenter);
+
+                        float allowedCenterDistance =
+                            Mathf.Max(
+                                0.10f,
+                                _latestFaceEyeSpan * 5.0f);
+
+                        coherentWithPublishedFace =
+                            spanRatio >= 0.45f &&
+                            spanRatio <= 2.20f &&
+                            centerDistance <=
+                                allowedCenterDistance &&
+                            center.x > -0.20f &&
+                            center.x < 1.20f &&
+                            center.y > -0.25f &&
+                            center.y < 1.35f;
+                    }
+                }
+
+                if (!coherentWithPublishedFace)
+                {
+                    return false;
+                }
+
+                // Keep downstream quality-aware smoothing conservative.
+                geometryQuality = 0.10f;
             }
 
             rotation = NormalizeQuaternion(rotation);

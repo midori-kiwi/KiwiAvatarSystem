@@ -1,29 +1,46 @@
-KiwiAvatarSystem Human Motion v2 - Drag & Drop Overwrite
-========================================================
+KiwiAvatarSystem v3.0.2 - Compile Hotfix
+==========================================
 
-THIS REPLACES THE PREVIOUS OVERLAY CONTROLLER.
+This hotfix includes the previous v3.0.1 RigidCenter compile fix.
 
-1. Stop Play Mode and close Unity if possible.
-2. Extract this ZIP.
-3. Drag the included "Assets" folder onto:
+NEW FIX
+-------
+Assets\KiwiAvatarSystem\Editor\
+  KiwiInferenceBackendHysteresisInstaller.cs
+
+CAUSE
+-----
+The installer used:
+
+  string.Replace(oldValue, newValue, 1)
+
+C# `System.String.Replace` has no "replace only 1 occurrence" integer overload.
+Unity therefore resolved the third argument against another overload and produced:
+
+  CS1503: Argument 3: cannot convert from 'int' to 'System.StringComparison'
+
+FIX
+---
+v3.0.2 no longer uses the invalid overload.
+
+It now:
+1. finds the exact field with IndexOf(..., StringComparison.Ordinal),
+2. verifies that there is not a second matching field,
+3. replaces only that exact occurrence using Substring.
+
+No tracking thresholds or VTuber motion behavior were changed by this compile hotfix.
+
+INSTALL
+-------
+1. Stop Play Mode.
+2. Close Unity if possible.
+3. Extract this ZIP.
+4. Drag `Assets` onto:
+
    D:\KiwiAvatarSystem
-4. Choose merge/replace if Windows asks.
-5. The file that should be overwritten is:
 
-   Assets\KiwiAvatarSystem\Runtime\Optimization\
-   KiwiTrackingQuality10Controller.cs
+5. Merge / replace all files.
+6. Re-open Unity and wait for compilation.
 
-6. Open Unity 6000.0.80f1 and wait for compilation.
-7. Enter Play Mode and record a new 20-30 second test.
-
-No scene setup is required. The controller installs itself before scene Start,
-then applies the human-motion preset before the tracking pipeline initializes.
-
-ROLLBACK
---------
-Delete:
-Assets\KiwiAvatarSystem\Runtime\Optimization\
-KiwiTrackingQuality10Controller.cs
-
-The MediaPipe / Inference Engine tracking source files are not replaced by this
-overlay.
+Expected result:
+- the CS1503 error in KiwiInferenceBackendHysteresisInstaller.cs disappears.

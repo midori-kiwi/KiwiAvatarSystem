@@ -24,7 +24,7 @@ using Mediapipe.Unity.Sample.FaceLandmarkDetection;
 [DisallowMultipleComponent]
 public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
 {
-    public const string PresetVersion = "2.0.0-human-motion";
+    public const string PresetVersion = "3.0.0-provider-foundation";
 
     private const string RuntimeObjectName =
         "[Kiwi] Human Motion Presentation";
@@ -48,28 +48,28 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
     [Header("Prediction")]
     [Tooltip("Small display lead. The main compensation comes from measured sample age.")]
     [Range(0f, 0.030f)]
-    public float additionalDisplayLeadSeconds = 0.008f;
+    public float additionalDisplayLeadSeconds = 0.006f;
 
     [Tooltip("Prediction strength at normal tracking quality.")]
     [Range(0f, 1.2f)]
-    public float predictionStrength = 0.92f;
+    public float predictionStrength = 0.98f;
 
     [Tooltip("Absolute prediction cap. The effective cap also follows the measured sample interval.")]
     [Range(0.030f, 0.140f)]
-    public float maximumPredictionSeconds = 0.105f;
+    public float maximumPredictionSeconds = 0.115f;
 
     [Tooltip("When a result is older than the expected cadence, velocity decays smoothly instead of running away.")]
     [Range(2f, 40f)]
-    public float staleVelocityDecayResponse = 16f;
+    public float staleVelocityDecayResponse = 22f;
 
     [Header("Position continuity")]
     [Tooltip("Presentation response during intentional movement.")]
     [Range(0.008f, 0.080f)]
-    public float movingPositionSmoothTime = 0.020f;
+    public float movingPositionSmoothTime = 0.014f;
 
     [Tooltip("Presentation response close to rest.")]
     [Range(0.015f, 0.120f)]
-    public float restingPositionSmoothTime = 0.045f;
+    public float restingPositionSmoothTime = 0.030f;
 
     [Range(0.005f, 0.30f)]
     public float positionMotionFullSpeed = 0.060f;
@@ -85,10 +85,10 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
 
     [Header("Rotation continuity")]
     [Range(10f, 120f)]
-    public float movingRotationResponse = 52f;
+    public float movingRotationResponse = 64f;
 
     [Range(5f, 80f)]
-    public float restingRotationResponse = 28f;
+    public float restingRotationResponse = 36f;
 
     [Range(5f, 180f)]
     public float rotationMotionFullSpeed = 42f;
@@ -104,10 +104,10 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
 
     [Header("Depth / scale continuity")]
     [Range(0.008f, 0.100f)]
-    public float movingScaleSmoothTime = 0.025f;
+    public float movingScaleSmoothTime = 0.019f;
 
     [Range(0.015f, 0.140f)]
-    public float restingScaleSmoothTime = 0.055f;
+    public float restingScaleSmoothTime = 0.040f;
 
     [Range(0.02f, 2f)]
     public float scaleMotionFullSpeed = 0.25f;
@@ -141,14 +141,74 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
     [Range(0.05f, 2f)]
     public float scaleResetDistance = 0.65f;
 
+    [Header("Large-sample confirmation")]
+    [Tooltip("A single very large same-backend pose jump is held for confirmation instead of being snapped directly to the avatar.")]
+    public bool confirmLargeTrackingJumps = true;
+
+    [Range(1, 4)]
+    public int largeJumpConfirmationFrames = 2;
+
+    [Range(0.02f, 0.30f)]
+    public float confirmedJumpPositionTolerance = 0.10f;
+
+    [Range(5f, 60f)]
+    public float confirmedJumpRotationTolerance = 28f;
+
+    [Range(0.03f, 0.80f)]
+    public float confirmedJumpScaleTolerance = 0.22f;
+
+    [Range(0.05f, 0.50f)]
+    public float confirmedJumpMaximumAgeSeconds = 0.18f;
+
+    [Header("Mature VTuber sample reconciliation")]
+    [Tooltip("Blend only the correction created when a new tracking sample arrives. This is not a permanent movement buffer.")]
+    public bool enableSampleReconciliation = true;
+
+    [Tooltip("Correction window for high-quality tracking.")]
+    [Range(0.002f, 0.030f)]
+    public float highQualityReconciliationSeconds = 0.008f;
+
+    [Tooltip("Correction window for low-quality / soft-adopted tracking.")]
+    [Range(0.004f, 0.040f)]
+    public float lowQualityReconciliationSeconds = 0.018f;
+
+    [Tooltip("Extra causal smoothing used only when geometry quality is poor.")]
+    [Range(0f, 0.030f)]
+    public float maximumLowQualitySmoothBoost = 0.012f;
+
+    [Tooltip("Prediction multiplier at geometryQuality=0. High quality reaches 1.0.")]
+    [Range(0f, 1f)]
+    public float minimumLowQualityPredictionFactor = 0.25f;
+
     [Header("Tracking throughput preset")]
     [Tooltip("MediaPipe is auxiliary in hybrid mode. A smaller auxiliary input reduces DX11 readback pressure without reducing the visible eye/mouth texture resolution.")]
     [Range(320, 640)]
-    public int auxiliaryMediaPipeInputWidth = 384;
+    public int auxiliaryMediaPipeInputWidth = 320;
 
     [Tooltip("Periodic MediaPipe refresh while Inference Engine is primary.")]
     [Range(4f, 15f)]
-    public float auxiliaryMediaPipeRefreshHz = 8f;
+    public float auxiliaryMediaPipeRefreshHz = 6f;
+
+    [Header("Cadence-adaptive retiming")]
+    [Tooltip("Adds only a tiny amount of extra causal smoothing when tracking cadence is low or irregular. At stable high tracking rates the boost approaches zero.")]
+    public bool adaptiveCadenceSmoothing = true;
+
+    [Range(12f, 40f)]
+    public float cadenceLowRateHz = 22f;
+
+    [Range(20f, 60f)]
+    public float cadenceHighRateHz = 32f;
+
+    [Range(0.05f, 0.80f)]
+    public float cadenceJitterFullRatio = 0.32f;
+
+    [Range(0f, 0.040f)]
+    public float maximumCadenceSmoothBoost = 0.020f;
+
+    [Header("Inference Engine stability")]
+    [Tooltip("Lower than the old 0.45/0.50 threshold because the supplied recording shows valid-looking inference presence around 0.49. Geometry validation and four-failure hysteresis remain active.")]
+    [Range(0.20f, 0.60f)]
+    public float inferencePresenceThreshold = 0.32f;
 
     [Header("Diagnostics")]
     [SerializeField] private string debugBackend = "-";
@@ -157,8 +217,14 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
     [SerializeField] private float debugPredictionHorizonMs;
     [SerializeField] private float debugGeometryQuality;
     [SerializeField] private ulong debugFrameId;
+    [SerializeField] private float debugCadenceJitterRatio;
+    [SerializeField] private float debugFreshSourceHz;
+    [SerializeField] private float debugMediaPipeReadbackMs;
+    [SerializeField] private float debugInferencePresence;
+    [SerializeField] private bool debugInferencePrimary;
 
     private KiwiFaceMotion _faceMotion;
+    private KiwiTrackingProviderHub _trackingHub;
     private FaceLandmarkerRunner _runner;
     private FacePartCropper _cropper;
     private FacePartShapeMask[] _shapeMasks =
@@ -176,8 +242,16 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
     private ulong _lastFrameId;
     private KiwiTrackingBackend _lastBackend =
         KiwiTrackingBackend.Unknown;
+
+    private string _lastTrackingProviderId =
+        string.Empty;
+
+    private string _currentCaptureProviderId =
+        string.Empty;
     private long _lastSampleHostTicks;
     private float _sampleIntervalEma = 1f / 20f;
+    private float _sampleIntervalDeviationEma;
+    private double _nextInferenceThresholdApplyTime;
 
     private Vector3 _samplePosition;
     private Quaternion _sampleRotation = Quaternion.identity;
@@ -200,9 +274,26 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
 
     private double _lastPresentationRealtime;
 
+    private bool _sampleReconciliationActive;
+    private double _sampleReconciliationStartedRealtime;
+    private Vector3 _reconciliationStartPosition;
+    private Quaternion _reconciliationStartRotation =
+        Quaternion.identity;
+    private Vector3 _reconciliationStartScale =
+        Vector3.one;
+
     private bool _lastRuntimeBusy;
     private string _lastAvatarName = string.Empty;
     private int _pendingResetFrames;
+
+    private bool _hasLargeJumpCandidate;
+    private int _largeJumpCandidateCount;
+    private Vector3 _largeJumpCandidatePosition;
+    private Quaternion _largeJumpCandidateRotation =
+        Quaternion.identity;
+    private Vector3 _largeJumpCandidateScale =
+        Vector3.one;
+    private double _largeJumpCandidateRealtime;
 
     [RuntimeInitializeOnLoadMethod(
         RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -267,6 +358,8 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
         RefreshReferences(false);
         ApplyRecommendedPresetIfNeeded();
         UpdateAvatarSwapState();
+        ApplyLiveInferenceTuning();
+        UpdatePipelineDiagnostics();
 
         if (_pendingResetFrames > 0)
         {
@@ -303,6 +396,14 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
         {
             _faceMotion = FindFirstObjectByType<KiwiFaceMotion>(
                 FindObjectsInactive.Include);
+        }
+
+        if (force || _trackingHub == null)
+        {
+            _trackingHub =
+                FindFirstObjectByType<
+                    KiwiTrackingProviderHub>(
+                    FindObjectsInactive.Include);
         }
 
         if (force || _runner == null)
@@ -435,7 +536,7 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
         motion.strictLandmarkerTracking = true;
         motion.useBeforeRenderLateLatch = true;
         motion.useScreenSpacePositionMapping = true;
-        motion.avatarCentricHorizontalMovement = false;
+        motion.avatarCentricHorizontalMovement = true;
 
         motion.landMarkerSpeedMode = true;
         motion.enableUltraLowLatencyTracking = true;
@@ -483,16 +584,20 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
         runner.trackingInputMaxWidth =
             auxiliaryMediaPipeInputWidth;
 
-        runner.autoOptimizeCm831 = true;
-        runner.cm831TrackingInputWidth =
-            auxiliaryMediaPipeInputWidth;
+        // The 20:02 recording still showed input 480x270 because the CM831
+        // auto profile overwrote auxiliaryMediaPipeInputWidth. Disable that
+        // override so the requested 384px MediaPipe input is actually used.
+        runner.autoOptimizeCm831 = false;
 
         runner.enableSentisHybridTracking = true;
         runner.sentisMediaPipeRefreshRateHz =
             auxiliaryMediaPipeRefreshHz;
 
-        // Keep acquisition robust while avoiding unnecessary fallback churn.
-        runner.sentisMinimumPresence = 0.45f;
+        // Keep the GPU tracker alive through normal confidence variation.
+        // The tracker still requires finite landmarks, valid geometry and uses
+        // four consecutive failures before abandoning its ROI.
+        runner.sentisMinimumPresence =
+            inferencePresenceThreshold;
     }
 
     private static void ApplyCropperPreset(
@@ -505,8 +610,8 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
 
         // Lower sample-domain response slightly and let continuous render-domain
         // prediction do the work. This avoids visible eye/mouth sample steps.
-        cropper.sampleIdleResponse = 72f;
-        cropper.sampleMovingResponse = 155f;
+        cropper.sampleIdleResponse = 78f;
+        cropper.sampleMovingResponse = 175f;
         cropper.sampleMotionFullSpeed = 0.16f;
 
         cropper.microJitterStart = 0.00012f;
@@ -516,12 +621,12 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
         cropper.eyeSampleSizeResponse = 82f;
         cropper.mouthSampleSizeResponse = 92f;
 
-        cropper.eyeRenderResponse = 92f;
-        cropper.mouthRenderResponse = 105f;
-        cropper.eyeRenderSizeResponse = 68f;
-        cropper.mouthRenderSizeResponse = 78f;
+        cropper.eyeRenderResponse = 125f;
+        cropper.mouthRenderResponse = 138f;
+        cropper.eyeRenderSizeResponse = 78f;
+        cropper.mouthRenderSizeResponse = 88f;
 
-        cropper.velocityResponse = 82f;
+        cropper.velocityResponse = 96f;
         cropper.maxCenterVelocity = 2.5f;
 
         cropper.enablePrediction = true;
@@ -529,15 +634,15 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
 
         // Never expose accepted-sample stepping directly during motion.
         cropper.directPositionDuringMotion = false;
-        cropper.predictionLeadSeconds = 0.006f;
-        cropper.maxExtrapolationSeconds = 0.085f;
-        cropper.maxPredictionDistance = 0.0045f;
+        cropper.predictionLeadSeconds = 0.007f;
+        cropper.maxExtrapolationSeconds = 0.075f;
+        cropper.maxPredictionDistance = 0.0040f;
 
         cropper.stabilizeCoherentVerticalMotion = true;
         cropper.coherentVerticalMotionMinSpeed = 0.020f;
         cropper.coherentVerticalDeltaTolerance = 0.0025f;
         cropper.phaseLockVerticalPrediction = true;
-        cropper.coherentVerticalRenderResponse = 112f;
+        cropper.coherentVerticalRenderResponse = 125f;
 
         cropper.restSpeed = 0.014f;
         cropper.restJitterThreshold = 0.00045f;
@@ -614,6 +719,95 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
         }
     }
 
+    private void ApplyLiveInferenceTuning()
+    {
+        if (_runner == null)
+        {
+            return;
+        }
+
+        // Keep the serialized field and an already-created tracker in sync.
+        // This is intentionally a narrow compatibility bridge; no inference
+        // algorithm is replaced here.
+        _runner.sentisMinimumPresence =
+            inferencePresenceThreshold;
+
+        double now =
+            Time.realtimeSinceStartupAsDouble;
+
+        if (now < _nextInferenceThresholdApplyTime)
+        {
+            return;
+        }
+
+        _nextInferenceThresholdApplyTime =
+            now + 0.50;
+
+        try
+        {
+            System.Reflection.FieldInfo trackerField =
+                typeof(FaceLandmarkerRunner).GetField(
+                    "_sentisTracker",
+                    System.Reflection.BindingFlags.Instance |
+                    System.Reflection.BindingFlags.NonPublic);
+
+            object tracker =
+                trackerField != null
+                    ? trackerField.GetValue(_runner)
+                    : null;
+
+            if (tracker == null)
+            {
+                return;
+            }
+
+            System.Reflection.PropertyInfo minimumPresence =
+                tracker.GetType().GetProperty(
+                    "MinimumPresence",
+                    System.Reflection.BindingFlags.Instance |
+                    System.Reflection.BindingFlags.Public);
+
+            if (
+                minimumPresence != null &&
+                minimumPresence.CanWrite
+            )
+            {
+                minimumPresence.SetValue(
+                    tracker,
+                    inferencePresenceThreshold);
+            }
+        }
+        catch (Exception exception)
+        {
+            Debug.LogWarning(
+                "[Kiwi Human Motion] Could not synchronize the live inference " +
+                "presence threshold: " +
+                exception.Message,
+                this);
+        }
+    }
+
+    private void UpdatePipelineDiagnostics()
+    {
+        if (_runner == null)
+        {
+            return;
+        }
+
+        debugFreshSourceHz =
+            _runner.LatestFreshSourceRateHz;
+
+        debugMediaPipeReadbackMs =
+            _runner.LatestReadbackLatencyMs;
+
+        debugInferencePresence =
+            _runner.LatestInferenceEnginePresence;
+
+        debugInferencePrimary =
+            _runner.InferenceEnginePrimaryActive;
+    }
+
+
     private void UpdateAvatarSwapState()
     {
         if (_runtimeManager == null)
@@ -648,14 +842,44 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
 
     private void CaptureNewTrackingSample()
     {
-        if (_runner == null || _motionRoot == null)
+        if (_motionRoot == null)
         {
             return;
         }
 
+        FacePrecisionTrackingData data =
+            default;
+
+        string trackingProviderId =
+            string.Empty;
+
+        bool hasData =
+            _trackingHub != null &&
+            _trackingHub.TryGetLatestFrame(
+                out data,
+                out trackingProviderId);
+
         if (
-            !_runner.TryGetLatestPrecisionTrackingData(
-                out FacePrecisionTrackingData data) ||
+            !hasData &&
+            _runner != null
+        )
+        {
+            hasData =
+                _runner.TryGetLatestPrecisionTrackingData(
+                    out data);
+
+            if (hasData)
+            {
+                trackingProviderId =
+                    data.backend ==
+                        KiwiTrackingBackend.InferenceEngine
+                        ? "Runner/InferenceEngine"
+                        : "Runner/MediaPipe";
+            }
+        }
+
+        if (
+            !hasData ||
             !data.isValid ||
             data.frameId == 0UL ||
             data.frameId == _lastFrameId
@@ -663,6 +887,9 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
         {
             return;
         }
+
+        _currentCaptureProviderId =
+            trackingProviderId;
 
         long sampleHostTicks =
             ResolveSampleHostTicks(data);
@@ -674,10 +901,23 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
         Vector3 rawScale =
             _motionRoot.localScale;
 
+        bool providerChanged =
+            !string.IsNullOrEmpty(
+                _lastTrackingProviderId) &&
+            !string.IsNullOrEmpty(
+                trackingProviderId) &&
+            !string.Equals(
+                trackingProviderId,
+                _lastTrackingProviderId,
+                StringComparison.Ordinal);
+
         bool backendChanged =
-            _lastBackend != KiwiTrackingBackend.Unknown &&
-            data.backend != KiwiTrackingBackend.Unknown &&
-            data.backend != _lastBackend;
+            providerChanged ||
+            (
+                _lastBackend != KiwiTrackingBackend.Unknown &&
+                data.backend != KiwiTrackingBackend.Unknown &&
+                data.backend != _lastBackend
+            );
 
         float sampleDt =
             _lastSampleHostTicks > 0L &&
@@ -691,24 +931,90 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
             sampleDt <= 0f ||
             sampleDt > 0.250f;
 
-        if (
-            !_sampleInitialized ||
-            backendChanged ||
-            timingGap ||
-            IsLargeDiscontinuity(
-                rawPosition,
-                rawRotation,
-                rawScale)
-        )
+        if (!_sampleInitialized)
         {
+            ClearLargeJumpCandidate();
+
             InitializeSampleState(
                 rawPosition,
                 rawRotation,
                 rawScale,
                 data,
                 sampleHostTicks);
+
             return;
         }
+
+        if (timingGap)
+        {
+            ClearLargeJumpCandidate();
+
+            // A real reacquisition after a long timing gap is allowed to
+            // establish a new coordinate origin.
+            InitializeSampleState(
+                rawPosition,
+                rawRotation,
+                rawScale,
+                data,
+                sampleHostTicks);
+
+            return;
+        }
+
+        if (backendChanged)
+        {
+            ClearLargeJumpCandidate();
+
+            // Different backends can have a small coordinate bias. Do not snap
+            // the rendered avatar when ownership changes; reset prediction
+            // velocity and let the presentation layer converge continuously.
+            RebaseSampleWithoutRenderSnap(
+                rawPosition,
+                rawRotation,
+                rawScale,
+                data,
+                sampleHostTicks);
+
+            return;
+        }
+
+        if (
+            IsLargeDiscontinuity(
+                rawPosition,
+                rawRotation,
+                rawScale)
+        )
+        {
+            if (confirmLargeTrackingJumps)
+            {
+                if (
+                    !TryConfirmLargeJump(
+                        rawPosition,
+                        rawRotation,
+                        rawScale,
+                        data,
+                        sampleHostTicks)
+                )
+                {
+                    // Keep presenting the previous coherent sample. One bad
+                    // frame can no longer teleport or resize the avatar.
+                    return;
+                }
+
+                return;
+            }
+
+            RebaseSampleWithoutRenderSnap(
+                rawPosition,
+                rawRotation,
+                rawScale,
+                data,
+                sampleHostTicks);
+
+            return;
+        }
+
+        ClearLargeJumpCandidate();
 
         sampleDt =
             Mathf.Clamp(sampleDt, 1f / 240f, 0.200f);
@@ -837,6 +1143,8 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
                 measuredScaleVelocity,
                 scaleAlpha);
 
+        BeginSampleReconciliation();
+
         _previousSamplePosition = _samplePosition;
         _previousSampleRotation = _sampleRotation;
         _previousSampleScale = _sampleScale;
@@ -844,6 +1152,17 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
         _samplePosition = rawPosition;
         _sampleRotation = rawRotation;
         _sampleScale = rawScale;
+
+        float intervalDeviation =
+            Mathf.Abs(
+                sampleDt -
+                _sampleIntervalEma);
+
+        _sampleIntervalDeviationEma =
+            Mathf.Lerp(
+                _sampleIntervalDeviationEma,
+                intervalDeviation,
+                0.18f);
 
         _sampleIntervalEma =
             Mathf.Lerp(
@@ -853,10 +1172,213 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
 
         _lastFrameId = data.frameId;
         _lastBackend = data.backend;
+        _lastTrackingProviderId =
+            _currentCaptureProviderId;
         _lastSampleHostTicks = sampleHostTicks;
 
         UpdateDiagnostics(data, sampleHostTicks);
     }
+
+    private bool TryConfirmLargeJump(
+        Vector3 position,
+        Quaternion rotation,
+        Vector3 scale,
+        FacePrecisionTrackingData data,
+        long sampleHostTicks)
+    {
+        double now =
+            Time.realtimeSinceStartupAsDouble;
+
+        bool expired =
+            !_hasLargeJumpCandidate ||
+            now -
+            _largeJumpCandidateRealtime >
+            confirmedJumpMaximumAgeSeconds;
+
+        bool consistent =
+            !expired &&
+            Vector3.Distance(
+                position,
+                _largeJumpCandidatePosition) <=
+                confirmedJumpPositionTolerance &&
+            Quaternion.Angle(
+                rotation,
+                _largeJumpCandidateRotation) <=
+                confirmedJumpRotationTolerance &&
+            Vector3.Distance(
+                scale,
+                _largeJumpCandidateScale) <=
+                confirmedJumpScaleTolerance;
+
+        if (!consistent)
+        {
+            _hasLargeJumpCandidate =
+                true;
+
+            _largeJumpCandidateCount =
+                1;
+
+            _largeJumpCandidatePosition =
+                position;
+
+            _largeJumpCandidateRotation =
+                rotation;
+
+            _largeJumpCandidateScale =
+                scale;
+
+            _largeJumpCandidateRealtime =
+                now;
+
+            _lastFrameId =
+                data.frameId;
+
+            return false;
+        }
+
+        _largeJumpCandidateCount++;
+
+        _largeJumpCandidatePosition =
+            Vector3.Lerp(
+                _largeJumpCandidatePosition,
+                position,
+                0.50f);
+
+        _largeJumpCandidateRotation =
+            Quaternion.Slerp(
+                _largeJumpCandidateRotation,
+                rotation,
+                0.50f);
+
+        _largeJumpCandidateScale =
+            Vector3.Lerp(
+                _largeJumpCandidateScale,
+                scale,
+                0.50f);
+
+        _largeJumpCandidateRealtime =
+            now;
+
+        if (
+            _largeJumpCandidateCount <
+            Mathf.Max(
+                1,
+                largeJumpConfirmationFrames)
+        )
+        {
+            _lastFrameId =
+                data.frameId;
+
+            return false;
+        }
+
+        Vector3 adoptedPosition =
+            _largeJumpCandidatePosition;
+
+        Quaternion adoptedRotation =
+            _largeJumpCandidateRotation;
+
+        Vector3 adoptedScale =
+            _largeJumpCandidateScale;
+
+        ClearLargeJumpCandidate();
+
+        RebaseSampleWithoutRenderSnap(
+            adoptedPosition,
+            adoptedRotation,
+            adoptedScale,
+            data,
+            sampleHostTicks);
+
+        return true;
+    }
+
+    private void RebaseSampleWithoutRenderSnap(
+        Vector3 position,
+        Quaternion rotation,
+        Vector3 scale,
+        FacePrecisionTrackingData data,
+        long sampleHostTicks)
+    {
+        BeginSampleReconciliation();
+
+        _sampleInitialized =
+            true;
+
+        _previousSamplePosition =
+            position;
+
+        _samplePosition =
+            position;
+
+        _previousSampleRotation =
+            rotation;
+
+        _sampleRotation =
+            rotation;
+
+        _previousSampleScale =
+            scale;
+
+        _sampleScale =
+            scale;
+
+        _samplePositionVelocity =
+            Vector3.zero;
+
+        _sampleAngularVelocityDeg =
+            Vector3.zero;
+
+        _sampleScaleVelocity =
+            Vector3.zero;
+
+        _positionSmoothVelocity =
+            Vector3.zero;
+
+        _scaleSmoothVelocity =
+            Vector3.zero;
+
+        _lastFrameId =
+            data.frameId;
+
+        _lastBackend =
+            data.backend;
+
+        _lastTrackingProviderId =
+            _currentCaptureProviderId;
+
+        _lastSampleHostTicks =
+            sampleHostTicks;
+
+        _sampleIntervalDeviationEma =
+            0f;
+
+        UpdateDiagnostics(
+            data,
+            sampleHostTicks);
+    }
+
+    private void ClearLargeJumpCandidate()
+    {
+        _hasLargeJumpCandidate =
+            false;
+
+        _largeJumpCandidateCount =
+            0;
+
+        _largeJumpCandidatePosition =
+            Vector3.zero;
+
+        _largeJumpCandidateRotation =
+            Quaternion.identity;
+
+        _largeJumpCandidateScale =
+            Vector3.one;
+
+        _largeJumpCandidateRealtime =
+            0.0;
+    }
+
 
     private void InitializeSampleState(
         Vector3 position,
@@ -889,6 +1411,8 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
 
         _lastFrameId = data.frameId;
         _lastBackend = data.backend;
+        _lastTrackingProviderId =
+            _currentCaptureProviderId;
         _lastSampleHostTicks = sampleHostTicks;
 
         _sampleIntervalEma =
@@ -898,6 +1422,7 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
                 _runner != null
                     ? _runner.LatestTrackingResultRateHz
                     : 20f);
+        _sampleIntervalDeviationEma = 0f;
 
         _lastPresentationRealtime =
             Time.realtimeSinceStartupAsDouble;
@@ -910,6 +1435,10 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
         _sampleInitialized = false;
         _lastFrameId = 0UL;
         _lastBackend = KiwiTrackingBackend.Unknown;
+        _lastTrackingProviderId =
+            string.Empty;
+        _currentCaptureProviderId =
+            string.Empty;
         _lastSampleHostTicks = 0L;
 
         _samplePositionVelocity = Vector3.zero;
@@ -920,6 +1449,11 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
         _scaleSmoothVelocity = Vector3.zero;
 
         _sampleIntervalEma = 1f / 20f;
+        _sampleIntervalDeviationEma = 0f;
+
+        _sampleReconciliationActive = false;
+
+        ClearLargeJumpCandidate();
 
         if (_motionRoot != null)
         {
@@ -942,6 +1476,37 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
         _lastPresentationRealtime =
             Time.realtimeSinceStartupAsDouble;
     }
+
+    private void BeginSampleReconciliation()
+    {
+        if (
+            !enableSampleReconciliation ||
+            !_sampleInitialized)
+        {
+            _sampleReconciliationActive =
+                false;
+
+            return;
+        }
+
+        _sampleReconciliationActive =
+            true;
+
+        _sampleReconciliationStartedRealtime =
+            Time.realtimeSinceStartupAsDouble;
+
+        // Reconcile from what the viewer actually saw. This prevents the
+        // common prediction -> new-sample backward correction step.
+        _reconciliationStartPosition =
+            _renderPosition;
+
+        _reconciliationStartRotation =
+            _renderRotation;
+
+        _reconciliationStartScale =
+            _renderScale;
+    }
+
 
     private void PresentAtRenderTime()
     {
@@ -1012,15 +1577,23 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
                 -staleVelocityDecayResponse *
                 staleSeconds);
 
-        float qualityFactor =
+        float geometryQuality =
+            Mathf.Clamp01(
+                debugGeometryQuality);
+
+        float qualityCurve =
+            SmoothMotionWeight(
+                geometryQuality);
+
+        float qualityPredictionFactor =
             Mathf.Lerp(
-                0.72f,
+                minimumLowQualityPredictionFactor,
                 1f,
-                Mathf.Clamp01(debugGeometryQuality));
+                qualityCurve);
 
         float effectivePredictionStrength =
             predictionStrength *
-            qualityFactor;
+            qualityPredictionFactor;
 
         Vector3 predictedPosition =
             _samplePosition +
@@ -1048,6 +1621,58 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
                 effectivePredictionStrength *
                 velocityRetention,
                 maximumScalePrediction);
+
+        if (_sampleReconciliationActive)
+        {
+            float reconciliationSeconds =
+                Mathf.Lerp(
+                    lowQualityReconciliationSeconds,
+                    highQualityReconciliationSeconds,
+                    qualityCurve);
+
+            float elapsed =
+                Mathf.Max(
+                    0f,
+                    (float)(
+                        nowRealtime -
+                        _sampleReconciliationStartedRealtime));
+
+            if (
+                elapsed <
+                reconciliationSeconds)
+            {
+                float t =
+                    SmoothMotionWeight(
+                        Mathf.Clamp01(
+                            elapsed /
+                            Mathf.Max(
+                                0.0001f,
+                                reconciliationSeconds)));
+
+                predictedPosition =
+                    Vector3.Lerp(
+                        _reconciliationStartPosition,
+                        predictedPosition,
+                        t);
+
+                predictedRotation =
+                    Quaternion.Slerp(
+                        _reconciliationStartRotation,
+                        predictedRotation,
+                        t);
+
+                predictedScale =
+                    Vector3.Lerp(
+                        _reconciliationStartScale,
+                        predictedScale,
+                        t);
+            }
+            else
+            {
+                _sampleReconciliationActive =
+                    false;
+            }
+        }
 
         float positionMotion =
             Mathf.Clamp01(
@@ -1140,6 +1765,86 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
                 movingScaleSmoothTime,
                 SmoothMotionWeight(scaleMotion));
 
+        float sampleHz =
+            expectedInterval > 0.0001f
+                ? 1f / expectedInterval
+                : cadenceHighRateHz;
+
+        float cadenceJitterRatio =
+            expectedInterval > 0.0001f
+                ? _sampleIntervalDeviationEma /
+                  expectedInterval
+                : 0f;
+
+        debugCadenceJitterRatio =
+            cadenceJitterRatio;
+
+        float lowRateNeed =
+            1f -
+            Mathf.InverseLerp(
+                cadenceLowRateHz,
+                cadenceHighRateHz,
+                sampleHz);
+
+        float jitterNeed =
+            Mathf.InverseLerp(
+                0.04f,
+                cadenceJitterFullRatio,
+                cadenceJitterRatio);
+
+        float cadenceNeed =
+            adaptiveCadenceSmoothing
+                ? Mathf.Clamp01(
+                    Mathf.Max(
+                        lowRateNeed * 0.80f,
+                        jitterNeed))
+                : 0f;
+
+        float cadenceBoost =
+            maximumCadenceSmoothBoost *
+            cadenceNeed;
+
+        float lowQualityNeed =
+            1f -
+            qualityCurve;
+
+        float lowQualitySmoothBoost =
+            maximumLowQualitySmoothBoost *
+            lowQualityNeed *
+            lowQualityNeed;
+
+        // Keep intentional motion responsive: most of the extra smoothing is
+        // spent near rest / irregular cadence, not on fast head movement.
+        positionSmoothTime +=
+            cadenceBoost *
+            Mathf.Lerp(
+                1f,
+                0.35f,
+                SmoothMotionWeight(positionMotion));
+
+        positionSmoothTime +=
+            lowQualitySmoothBoost *
+            Mathf.Lerp(
+                1f,
+                0.30f,
+                SmoothMotionWeight(positionMotion));
+
+        scaleSmoothTime +=
+            cadenceBoost *
+            0.75f *
+            Mathf.Lerp(
+                1f,
+                0.40f,
+                SmoothMotionWeight(scaleMotion));
+
+        scaleSmoothTime +=
+            lowQualitySmoothBoost *
+            0.70f *
+            Mathf.Lerp(
+                1f,
+                0.35f,
+                SmoothMotionWeight(scaleMotion));
+
         _renderPosition =
             Vector3.SmoothDamp(
                 _renderPosition,
@@ -1153,6 +1858,25 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
             Mathf.Lerp(
                 restingRotationResponse,
                 movingRotationResponse,
+                SmoothMotionWeight(rotationMotion));
+
+        if (adaptiveCadenceSmoothing)
+        {
+            rotationResponse /=
+                1f +
+                cadenceNeed *
+                Mathf.Lerp(
+                    0.30f,
+                    0.10f,
+                    SmoothMotionWeight(rotationMotion));
+        }
+
+        rotationResponse /=
+            1f +
+            lowQualityNeed *
+            Mathf.Lerp(
+                0.34f,
+                0.10f,
                 SmoothMotionWeight(rotationMotion));
 
         _renderRotation =
