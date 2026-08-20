@@ -64,6 +64,27 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
     private string _activeFaceFitMethod = "Embedded";
     private float _activeFaceFitConfidence = 1f;
 
+    private struct ActiveAvatarState
+    {
+        public RuntimeGltfInstance instance;
+        public Transform model;
+        public Transform head;
+        public KiwiAvatarProfile profile;
+        public string modelPath;
+        public KiwiHeadGeometry geometry;
+        public string faceFitMethod;
+        public float faceFitConfidence;
+        public string avatarName;
+        public bool fallbackActive;
+        public Transform faceAnchorParent;
+        public Vector3 faceAnchorLocalPosition;
+        public Quaternion faceAnchorLocalRotation;
+        public Vector3 faceAnchorLocalScale;
+        public Transform fitterModelRoot;
+        public Transform fitterPartsRoot;
+        public SkinnedMeshRenderer fitterTargetRenderer;
+    }
+
     public IReadOnlyList<string> ModelFiles => _modelFiles;
     public string ModelsDirectory => KiwiAvatarStorage.ModelsDirectory;
     public bool IsBusy => busy;
@@ -266,6 +287,9 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
         busy = true;
         status = "Loading " + Path.GetFileName(path) + "...";
         RuntimeGltfInstance candidate = null;
+        ActiveAvatarState previousState = CaptureActiveAvatarState();
+        bool candidateBound = false;
+        bool swapCommitted = false;
 
         try
         {
@@ -294,24 +318,30 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
             }
 
             KiwiAvatarProfile profile = LoadProfile(path);
-            RuntimeGltfInstance previousInstance = _activeInstance;
-
             _activeInstance = candidate;
             _activeModel = candidateRoot;
             _activeHead = head;
             _activeModelPath = path;
             _activeProfile = profile;
-            candidate = null;
+            candidateBound = true;
 
+            // Configure while the previous instance is still alive. Candidate
+            // ownership is retained until every operation that can invalidate
+            // the visible avatar has completed, allowing a complete rollback.
             ApplyActiveProfile();
             if (fallbackModel != null)
             {
                 fallbackModel.gameObject.SetActive(false);
             }
 
-            if (previousInstance != null && previousInstance != _activeInstance)
+            swapCommitted = true;
+            candidate = null;
+
+            if (
+                previousState.instance != null &&
+                previousState.instance != _activeInstance)
             {
-                Destroy(previousInstance.Root);
+                Destroy(previousState.instance.Root);
             }
 
             currentAvatarName = string.IsNullOrWhiteSpace(profile.displayName)
@@ -324,6 +354,12 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
         }
         catch (Exception exception)
         {
+            if (candidateBound && !swapCommitted)
+            {
+                RestoreActiveAvatarState(previousState);
+                TryRestorePreviousAvatarPresentation(previousState);
+            }
+
             if (candidate != null && candidate.Root != null)
             {
                 Destroy(candidate.Root);
@@ -334,6 +370,108 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
         finally
         {
             busy = false;
+        }
+    }
+
+    private ActiveAvatarState CaptureActiveAvatarState()
+    {
+        ActiveAvatarState state = new ActiveAvatarState
+        {
+            instance = _activeInstance,
+            model = _activeModel,
+            head = _activeHead,
+            profile = _activeProfile,
+            modelPath = _activeModelPath,
+            geometry = _activeGeometry,
+            faceFitMethod = _activeFaceFitMethod,
+            faceFitConfidence = _activeFaceFitConfidence,
+            avatarName = currentAvatarName,
+            fallbackActive =
+                fallbackModel != null && fallbackModel.gameObject.activeSelf
+        };
+
+        if (faceAnchor != null)
+        {
+            state.faceAnchorParent = faceAnchor.parent;
+            state.faceAnchorLocalPosition = faceAnchor.localPosition;
+            state.faceAnchorLocalRotation = faceAnchor.localRotation;
+            state.faceAnchorLocalScale = faceAnchor.localScale;
+        }
+
+        if (surfaceFitter != null)
+        {
+            state.fitterModelRoot = surfaceFitter.modelRoot;
+            state.fitterPartsRoot = surfaceFitter.partsRoot;
+            state.fitterTargetRenderer = surfaceFitter.targetRenderer;
+        }
+
+        return state;
+    }
+
+    private void RestoreActiveAvatarState(ActiveAvatarState state)
+    {
+        _activeInstance = state.instance;
+        _activeModel = state.model;
+        _activeHead = state.head;
+        _activeProfile = state.profile;
+        _activeModelPath = state.modelPath;
+        _activeGeometry = state.geometry;
+        _activeFaceFitMethod = state.faceFitMethod;
+        _activeFaceFitConfidence = state.faceFitConfidence;
+        currentAvatarName = state.avatarName;
+
+        if (fallbackModel != null)
+        {
+            fallbackModel.gameObject.SetActive(state.fallbackActive);
+        }
+
+        if (faceAnchor != null)
+        {
+            faceAnchor.SetParent(state.faceAnchorParent, false);
+            faceAnchor.localPosition = state.faceAnchorLocalPosition;
+            faceAnchor.localRotation = state.faceAnchorLocalRotation;
+            faceAnchor.localScale = state.faceAnchorLocalScale;
+        }
+
+        if (surfaceFitter != null)
+        {
+            surfaceFitter.modelRoot = state.fitterModelRoot;
+            surfaceFitter.partsRoot = state.fitterPartsRoot;
+            surfaceFitter.targetRenderer = state.fitterTargetRenderer;
+        }
+    }
+
+    private void TryRestorePreviousAvatarPresentation(ActiveAvatarState state)
+    {
+        try
+        {
+            if (
+                state.model != null &&
+                state.head != null &&
+                state.profile != null)
+            {
+                ApplyActiveProfile();
+            }
+            else
+            {
+                RestoreFallbackFaceAnchor();
+                ApplySurfaceFit(fallbackModel, fallbackHead, "Embedded");
+                if (faceMotion != null && motionRoot != null)
+                {
+                    faceMotion.kiwiRoot = motionRoot;
+                    faceMotion.RecenterTracking();
+                }
+            }
+        }
+        catch (Exception rollbackException)
+        {
+            // The captured parent/transform and active references are already
+            // restored above, so the previous avatar remains owned and valid
+            // even if optional refitting itself fails.
+            Debug.LogWarning(
+                "[KiwiAvatarSystem] Avatar rollback refit failed: " +
+                rollbackException.Message,
+                this);
         }
     }
 

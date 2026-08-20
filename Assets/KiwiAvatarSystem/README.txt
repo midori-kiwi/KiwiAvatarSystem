@@ -33,7 +33,8 @@ V5.3 LOW-LATENCY EYE / MOUTH STABILITY
 - the persistent downscaled RenderTexture no longer waits for EndOfFrame before
   its required synchronous readback, removing up to one additional render frame,
 - crop position/size, mask contour, counter-rotation, and blink visibility are
-  resampled at render rate with 180-200 response instead of jumping at 16-19 Hz,
+  resampled at render rate with signal-specific 110-200 response instead of
+  jumping at 16-19 Hz (the contour default is the validated 110),
 - binary Canvas eye hiding is replaced by short render-rate material fades,
 - mouth crop prediction and mouth-height calibration default OFF to prevent
   camera-pixel shimmer, reversal overshoot, and the former downward mouth drift,

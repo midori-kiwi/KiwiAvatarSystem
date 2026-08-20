@@ -133,6 +133,97 @@ public static class KiwiOptimizationValidator
             );
         });
 
+        Check("portable MediaPipe package dependency", failures, ref checks, () =>
+        {
+            string manifest = File.ReadAllText(ToFullPath("Packages/manifest.json"));
+            string lockFile = File.ReadAllText(ToFullPath("Packages/packages-lock.json"));
+            const string portableReference =
+                "file:com.github.homuler.mediapipe-0.16.3.tgz";
+            Require(
+                manifest.Contains(portableReference) &&
+                lockFile.Contains(portableReference),
+                "MediaPipe tarball must use a Packages-relative reference"
+            );
+            Require(
+                !manifest.Contains("file:D:") &&
+                !lockFile.Contains("file:D:") &&
+                File.Exists(ToFullPath(
+                    "Packages/com.github.homuler.mediapipe-0.16.3.tgz"
+                )),
+                "MediaPipe dependency is machine-specific or its tarball is missing"
+            );
+        });
+
+        Check("transactional avatar hot swap", failures, ref checks, () =>
+        {
+            string manager = File.ReadAllText(ToFullPath(
+                "Assets/KiwiAvatarSystem/Runtime/KiwiAvatarRuntimeManager.cs"
+            ));
+            int configureIndex = manager.IndexOf(
+                "ApplyActiveProfile();",
+                manager.IndexOf("public async void SwitchToModel", StringComparison.Ordinal),
+                StringComparison.Ordinal
+            );
+            int commitIndex = manager.IndexOf(
+                "swapCommitted = true;",
+                StringComparison.Ordinal
+            );
+            int releaseCandidateIndex = manager.IndexOf(
+                "candidate = null;",
+                commitIndex,
+                StringComparison.Ordinal
+            );
+            Require(
+                manager.Contains("private struct ActiveAvatarState") &&
+                manager.Contains("CaptureActiveAvatarState()") &&
+                manager.Contains("RestoreActiveAvatarState(previousState)") &&
+                manager.Contains("TryRestorePreviousAvatarPresentation(previousState)") &&
+                manager.Contains("candidateBound && !swapCommitted") &&
+                configureIndex >= 0 &&
+                commitIndex > configureIndex &&
+                releaseCandidateIndex > commitIndex,
+                "avatar candidate must remain rollback-owned until configuration succeeds"
+            );
+        });
+
+        Check("atomic tracking frame identity", failures, ref checks, () =>
+        {
+            string runner = File.ReadAllText(ToFullPath(FaceRunnerPath));
+            string motion = File.ReadAllText(ToFullPath(MotionPath));
+            Require(
+                runner.Contains("public ulong frameId") &&
+                runner.Contains("public KiwiTrackingBackend backend") &&
+                runner.Contains("++_nextPublishedTrackingFrameId") &&
+                runner.Contains("KiwiTrackingBackend.MediaPipe") &&
+                runner.Contains("KiwiTrackingBackend.InferenceEngine") &&
+                runner.Contains("lock (_trackingLock)") &&
+                runner.Contains("_latestPrecisionData =") &&
+                motion.Contains("IsNewPrecisionFrame") &&
+                motion.Contains("_lastObservedFrameId") &&
+                motion.Contains("bool backendChanged") &&
+                motion.Contains("_lastAcceptedBackend"),
+                "pose snapshots need one atomic frame ID and an explicit backend"
+            );
+        });
+
+        Check("face-part response documentation alignment", failures, ref checks, () =>
+        {
+            string mask = File.ReadAllText(ToFullPath(
+                "Assets/Script/FacePartShapeMask.cs"
+            ));
+            string readme = File.ReadAllText(ToFullPath(
+                "Assets/KiwiAvatarSystem/README.txt"
+            ));
+            Require(
+                mask.Contains("validated 110 default") &&
+                mask.Contains("contourRenderResponse =") &&
+                mask.Contains("110f;") &&
+                readme.Contains("signal-specific 110-200 response") &&
+                readme.Contains("contour default is the validated 110"),
+                "contour response tooltip, README, and runtime default disagree"
+            );
+        });
+
         Check("Inference Engine hybrid tracking architecture", failures, ref checks, () =>
         {
             const string sentisTrackerPath =

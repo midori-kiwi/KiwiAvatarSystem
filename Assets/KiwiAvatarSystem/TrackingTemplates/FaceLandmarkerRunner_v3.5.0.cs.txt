@@ -6,9 +6,18 @@ using UnityEngine.Rendering;
 
 namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 {
+    public enum KiwiTrackingBackend
+    {
+        Unknown = 0,
+        MediaPipe = 1,
+        InferenceEngine = 2
+    }
+
     public struct FacePrecisionTrackingData
     {
         public bool isValid;
+        public ulong frameId;
+        public KiwiTrackingBackend backend;
 
         public Vector2 faceCenter;
         public float eyeSpan2D;
@@ -460,6 +469,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
         private FacePrecisionTrackingData
             _latestPrecisionData;
+
+        private ulong _nextPublishedTrackingFrameId;
 
         private long _previousPublishedArrivalHostTicks;
         private float _latestTrackingResultRateHz;
@@ -2415,6 +2426,14 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                         timestamp;
 
 
+                    precisionData.frameId =
+                        ++_nextPublishedTrackingFrameId;
+
+
+                    precisionData.backend =
+                        KiwiTrackingBackend.MediaPipe;
+
+
                     _latestPrecisionData =
                         precisionData;
 
@@ -2604,6 +2623,10 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     _latestFaceRotation = rotation;
                     _hasLatestFaceRotation = true;
                     _latestMotionTimestamp = timestamp;
+                    precisionData.frameId =
+                        ++_nextPublishedTrackingFrameId;
+                    precisionData.backend =
+                        KiwiTrackingBackend.InferenceEngine;
                     _latestPrecisionData = precisionData;
 
                     // Preserve MediaPipe's learned 52-coefficient result while it

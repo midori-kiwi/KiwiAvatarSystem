@@ -204,7 +204,7 @@ public class FacePartShapeMask : MonoBehaviour
         0.00055f;
 
 
-    [Tooltip("Render-rate contour response. 180 blends a 16-20 Hz landmark step across roughly two display frames without visible lag.")]
+    [Tooltip("Render-rate contour response. The validated 110 default blends a 16-20 Hz landmark step across roughly two 60 Hz display frames without visible lag.")]
     [Range(30f, 400f)]
     public float contourRenderResponse =
         110f;

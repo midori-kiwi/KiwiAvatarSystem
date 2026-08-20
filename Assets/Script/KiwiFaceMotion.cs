@@ -810,13 +810,20 @@ public class KiwiFaceMotion : MonoBehaviour
     // Tracking
     // =========================================================
 
-    // Observed timestamp is used only to avoid processing the same callback twice.
+    // Observed frame ID is used to avoid processing the same atomic snapshot
+    // twice. Timestamp remains the timing source for velocity and prediction.
+    private ulong _lastObservedFrameId;
+
+    // Observed timestamp is retained as a compatibility fallback for snapshots
+    // produced before frame IDs were introduced.
     // Accepted timestamp is used for velocity/dt. Keeping them separate prevents a
     // rejected spike from shortening the next accepted sample interval.
     private long _lastObservedTimestamp = -1;
     private long _lastAcceptedTimestamp = -1;
     private long _lastAcceptedSampleHostTicks;
     private bool _lastAcceptedUsedMatchedSubmissionTiming;
+    private KiwiTrackingBackend _lastAcceptedBackend =
+        KiwiTrackingBackend.Unknown;
 
     private float _lastSeenTime = -100f;
 
@@ -1195,7 +1202,7 @@ public class KiwiFaceMotion : MonoBehaviour
 
         if (
             hasTracking &&
-            precisionData.timestamp != _lastObservedTimestamp
+            IsNewPrecisionFrame(precisionData)
         )
         {
             bool hasPositionGeometry =
@@ -1235,6 +1242,9 @@ public class KiwiFaceMotion : MonoBehaviour
 
             _lastObservedTimestamp =
                 precisionData.timestamp;
+
+            _lastObservedFrameId =
+                precisionData.frameId;
 
 
             if (accepted)
@@ -1344,6 +1354,9 @@ public class KiwiFaceMotion : MonoBehaviour
             _lastAcceptedUsedMatchedSubmissionTiming =
                 sampleUsesMatchedSubmissionTiming;
 
+            _lastAcceptedBackend =
+                precisionData.backend;
+
             return true;
         }
 
@@ -1385,7 +1398,14 @@ public class KiwiFaceMotion : MonoBehaviour
         }
 
 
+        bool backendChanged =
+            _lastAcceptedBackend != KiwiTrackingBackend.Unknown &&
+            precisionData.backend != KiwiTrackingBackend.Unknown &&
+            precisionData.backend != _lastAcceptedBackend;
+
+
         bool predictionGap =
+            backendChanged ||
             sampleInterval >
             Mathf.Max(
                 0.10f,
@@ -1555,6 +1575,9 @@ public class KiwiFaceMotion : MonoBehaviour
         _lastAcceptedUsedMatchedSubmissionTiming =
             sampleUsesMatchedSubmissionTiming;
 
+        _lastAcceptedBackend =
+            precisionData.backend;
+
 
         _lastMotionSampleTime =
             Time.unscaledTime;
@@ -1588,6 +1611,14 @@ public class KiwiFaceMotion : MonoBehaviour
 
 
         return 0L;
+    }
+
+
+    private bool IsNewPrecisionFrame(FacePrecisionTrackingData data)
+    {
+        return data.frameId > 0UL
+            ? data.frameId != _lastObservedFrameId
+            : data.timestamp != _lastObservedTimestamp;
     }
 
     // =========================================================
@@ -3529,7 +3560,7 @@ public class KiwiFaceMotion : MonoBehaviour
         if (enableUltraLowLatencyTracking && ultraConsumeLatestSampleBeforeRender && runner != null)
         {
             if (runner.TryGetLatestPrecisionTrackingData(out FacePrecisionTrackingData latestData) &&
-                latestData.timestamp != _lastObservedTimestamp)
+                IsNewPrecisionFrame(latestData))
             {
                 bool hasPositionGeometry = TryGetPositionGeometry(
                     latestData,
@@ -3554,6 +3585,7 @@ public class KiwiFaceMotion : MonoBehaviour
                 );
 
                 _lastObservedTimestamp = latestData.timestamp;
+                _lastObservedFrameId = latestData.frameId;
 
                 if (accepted)
                 {
@@ -5693,6 +5725,9 @@ public class KiwiFaceMotion : MonoBehaviour
         _lastObservedTimestamp =
             -1;
 
+        _lastObservedFrameId =
+            0UL;
+
         _lastAcceptedTimestamp =
             -1;
 
@@ -5701,6 +5736,9 @@ public class KiwiFaceMotion : MonoBehaviour
 
         _lastAcceptedUsedMatchedSubmissionTiming =
             false;
+
+        _lastAcceptedBackend =
+            KiwiTrackingBackend.Unknown;
 
         _lastBoundedCorrectionChannels =
             0;

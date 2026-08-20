@@ -74,10 +74,10 @@ public static class KiwiPrecisionTrackingInstaller
     };
 
     private const string FaceRunnerTargetSha256 =
-        "AB4DB928A22C83ECF8ABB27630E3AE7E94AEBCD049D807B0D5303CA8D431454B";
+        "A682BAE9E08362FAFFADBEA296A1DA7D1CE87480A0B8E866C2A501F860A7908C";
 
     private const string KiwiMotionTargetSha256 =
-        "5B8A057B7854F0D1129BD569545C4D49B40DB68D43502D335B7C736DF3192870";
+        "CE46B434BF031089284182537094E5A0C027D754665ED8CCC9C0B3626EBE3285";
 
     private const string SessionKey =
         "KiwiPrecisionTrackingInstaller.v1.0.0.AutoChecked";
