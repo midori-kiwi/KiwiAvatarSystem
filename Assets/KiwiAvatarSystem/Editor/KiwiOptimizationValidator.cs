@@ -145,8 +145,8 @@ public static class KiwiOptimizationValidator
                 "MediaPipe tarball must use a Packages-relative reference"
             );
             Require(
-                !manifest.Contains("file:D:") &&
-                !lockFile.Contains("file:D:") &&
+!manifest.Contains("file:D:") &&
+!lockFile.Contains("file:D:") &&
                 File.Exists(ToFullPath(
                     "Packages/com.github.homuler.mediapipe-0.16.3.tgz"
                 )),

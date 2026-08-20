@@ -1,0 +1,29 @@
+KiwiAvatarSystem Human Motion v2 - Drag & Drop Overwrite
+========================================================
+
+THIS REPLACES THE PREVIOUS OVERLAY CONTROLLER.
+
+1. Stop Play Mode and close Unity if possible.
+2. Extract this ZIP.
+3. Drag the included "Assets" folder onto:
+   D:\KiwiAvatarSystem
+4. Choose merge/replace if Windows asks.
+5. The file that should be overwritten is:
+
+   Assets\KiwiAvatarSystem\Runtime\Optimization\
+   KiwiTrackingQuality10Controller.cs
+
+6. Open Unity 6000.0.80f1 and wait for compilation.
+7. Enter Play Mode and record a new 20-30 second test.
+
+No scene setup is required. The controller installs itself before scene Start,
+then applies the human-motion preset before the tracking pipeline initializes.
+
+ROLLBACK
+--------
+Delete:
+Assets\KiwiAvatarSystem\Runtime\Optimization\
+KiwiTrackingQuality10Controller.cs
+
+The MediaPipe / Inference Engine tracking source files are not replaced by this
+overlay.

@@ -11,6 +11,18 @@ UniVRM 0.130.1 / VRM 0.x
 Windows primary / Android + iOS runtime support
 (iOS physical-device verification is intentionally out of scope.)
 
+LOCAL MEDIAPIPE PACKAGE
+-----------------------
+- com.github.homuler.mediapipe-0.16.3.tgz is intentionally excluded from Git
+  because of its file size.
+- Before opening a fresh clone in Unity, place the MediaPipeUnityPlugin v0.16.3
+  package archive at:
+  Packages/com.github.homuler.mediapipe-0.16.3.tgz
+- Packages/manifest.json and Packages/packages-lock.json use this
+  Packages-relative path; no drive-letter-specific path is required.
+- The optimization validator checks that the local tarball is present before
+  validating the project.
+
 UNITY 6 / INFERENCE ENGINE HYBRID TRACKING
 -------------------------------------------
 - migrated from Unity 2022.3 / Sentis 1.6 to Unity 6000.0.80f1 and
