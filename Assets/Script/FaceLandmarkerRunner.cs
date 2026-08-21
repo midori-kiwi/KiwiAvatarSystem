@@ -2260,30 +2260,199 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 );
 
 
-            UnityEngine.Rect sentisAnchorRegion = default;
-            float sentisAnchorRollRadians = 0f;
+            // KIWI_MEDIAPIPE_ROI_PARITY_V3_5
+            // Match MediaPipe FaceLandmarkLandmarksToRoi:
+            // full landmark bounds -> 33/263 roll -> 1.5x pixel-square long side.
+            UnityEngine.Rect sentisAnchorRegion =
+                default;
+
+            float sentisAnchorRollRadians =
+                0f;
+
             bool hasSentisAnchor =
-                count > 454 &&
-                faceWidth2D > 0.0001f &&
-                faceHeight2D > 0.0001f;
+                count >
+                    454 &&
+                _sourceTextureWidth >
+                    0 &&
+                _sourceTextureHeight >
+                    0;
 
             if (hasSentisAnchor)
             {
-                float anchorSize = Mathf.Clamp(
-                    Mathf.Max(faceWidth2D, faceHeight2D) * 1.50f,
-                    0.08f,
-                    1.40f);
-                Vector2 anchorCenter = new Vector2(
-                    cheekCenter.x,
-                    (forehead.y + chin.y) * 0.5f);
-                sentisAnchorRegion = new UnityEngine.Rect(
-                    anchorCenter.x - anchorSize * 0.5f,
-                    anchorCenter.y - anchorSize * 0.5f,
-                    anchorSize,
-                    anchorSize);
-                sentisAnchorRollRadians = -Mathf.Atan2(
-                    leftEyeCenter.y - rightEyeCenter.y,
-                    leftEyeCenter.x - rightEyeCenter.x);
+                float minX =
+                    float.PositiveInfinity;
+
+                float minY =
+                    float.PositiveInfinity;
+
+                float maxX =
+                    float.NegativeInfinity;
+
+                float maxY =
+                    float.NegativeInfinity;
+
+                for (
+                    int i = 0;
+                    i < count;
+                    i++
+                )
+                {
+                    float x =
+                        landmarks[i].x;
+
+                    float y =
+                        landmarks[i].y;
+
+                    if (
+                        float.IsNaN(x) ||
+                        float.IsInfinity(x) ||
+                        float.IsNaN(y) ||
+                        float.IsInfinity(y)
+                    )
+                    {
+                        hasSentisAnchor =
+                            false;
+
+                        break;
+                    }
+
+                    minX =
+                        Mathf.Min(
+                            minX,
+                            x);
+
+                    minY =
+                        Mathf.Min(
+                            minY,
+                            y);
+
+                    maxX =
+                        Mathf.Max(
+                            maxX,
+                            x);
+
+                    maxY =
+                        Mathf.Max(
+                            maxY,
+                            y);
+                }
+
+                if (hasSentisAnchor)
+                {
+                    float imageWidth =
+                        Mathf.Max(
+                            1f,
+                            _sourceTextureWidth);
+
+                    float imageHeight =
+                        Mathf.Max(
+                            1f,
+                            _sourceTextureHeight);
+
+                    float boxWidthPixels =
+                        (
+                            maxX -
+                            minX
+                        ) *
+                        imageWidth;
+
+                    float boxHeightPixels =
+                        (
+                            maxY -
+                            minY
+                        ) *
+                        imageHeight;
+
+                    float squareSidePixels =
+                        Mathf.Max(
+                            boxWidthPixels,
+                            boxHeightPixels) *
+                        1.50f;
+
+                    if (
+                        squareSidePixels <=
+                            1f
+                    )
+                    {
+                        hasSentisAnchor =
+                            false;
+                    }
+                    else
+                    {
+                        float anchorWidth =
+                            Mathf.Clamp(
+                                squareSidePixels /
+                                imageWidth,
+                                0.04f,
+                                2.50f);
+
+                        float anchorHeight =
+                            Mathf.Clamp(
+                                squareSidePixels /
+                                imageHeight,
+                                0.04f,
+                                2.50f);
+
+                        Vector2 anchorCenter =
+                            new Vector2(
+                                (
+                                    minX +
+                                    maxX
+                                ) *
+                                0.5f,
+                                (
+                                    minY +
+                                    maxY
+                                ) *
+                                0.5f);
+
+                        sentisAnchorRegion =
+                            new UnityEngine.Rect(
+                                anchorCenter.x -
+                                    anchorWidth *
+                                    0.5f,
+                                anchorCenter.y -
+                                    anchorHeight *
+                                    0.5f,
+                                anchorWidth,
+                                anchorHeight);
+
+                        float eyeDxPixels =
+                            (
+                                landmarks[263].x -
+                                landmarks[33].x
+                            ) *
+                            imageWidth;
+
+                        float eyeDyPixels =
+                            (
+                                landmarks[263].y -
+                                landmarks[33].y
+                            ) *
+                            imageHeight;
+
+                        if (
+                            eyeDxPixels *
+                                eyeDxPixels +
+                            eyeDyPixels *
+                                eyeDyPixels <=
+                                0.000001f
+                        )
+                        {
+                            hasSentisAnchor =
+                                false;
+                        }
+                        else
+                        {
+                            // Runner landmarks use top-left Y; the tracker crop
+                            // transform uses bottom-left Y.
+                            sentisAnchorRollRadians =
+                                -Mathf.Atan2(
+                                    eyeDyPixels,
+                                    eyeDxPixels);
+                        }
+                    }
+                }
             }
 
 

@@ -446,13 +446,11 @@ public class FacePartCropper : MonoBehaviour
     // Start
     // =========================================================
 
+    // KIWI_PRESENTATION_FPS_OWNER_V3_7
+    // Global presentation cadence is owned by
+    // KiwiTrackingQuality10Controller. FacePartCropper follows render time.
     private void Start()
     {
-        if (request120Fps)
-        {
-            Application.targetFrameRate =
-                targetRenderFrameRate;
-        }
     }
 
 
@@ -509,9 +507,20 @@ public class FacePartCropper : MonoBehaviour
             );
 
 
+        // KIWI_V4_8_SEMANTIC_FRESHNESS_GATE
+        // A just-arrived ML result can still describe an old
+        // camera frame. Hold the previous trusted crop instead
+        // of replacing it with source-age-expired geometry.
+        bool semanticSampleFresh =
+            !hasNewLandmarks ||
+            KiwiCommercialFacePartPolicy.IsSemanticSampleAdoptable(
+                runner,
+                timestamp);
+
         if (
             hasFace &&
             hasNewLandmarks &&
+            semanticSampleFresh &&
             _landmarkBuffer != null &&
             landmarkCount > 0
         )
@@ -670,6 +679,42 @@ public class FacePartCropper : MonoBehaviour
         }
 
 
+        // KIWI_V4_9_ISOLATED_EYE_CROP_GUARD
+        // The dense v4.8 recording contained a one-eye source
+        // crop jump while the companion eye and mouth remained
+        // coherent. Reject only that catastrophic isolated eye;
+        // shared translation/yaw/roll remains untouched.
+        if (
+            leftOK &&
+            rightOK &&
+            mouthOK &&
+            _leftEyeState.initialized &&
+            _rightEyeState.initialized &&
+            _mouthState.initialized
+        )
+        {
+            Rect previousLandmarkLeft =
+                swapEyes
+                    ? _rightEyeState.sampleRect
+                    : _leftEyeState.sampleRect;
+
+            Rect previousLandmarkRight =
+                swapEyes
+                    ? _leftEyeState.sampleRect
+                    : _rightEyeState.sampleRect;
+
+            KiwiCommercialFacePartPolicy.
+                ResolveIsolatedEyeCropOutliers(
+                    previousLandmarkLeft,
+                    previousLandmarkRight,
+                    _mouthState.sampleRect,
+                    leftRect,
+                    rightRect,
+                    mouthRect,
+                    ref leftOK,
+                    ref rightOK);
+        }
+
         _coherentVerticalApplied = false;
 
         if (leftOK && rightOK && mouthOK)
@@ -682,6 +727,26 @@ public class FacePartCropper : MonoBehaviour
             );
         }
 
+
+        // KIWI_V4_9_PART_TRANSACTION_REPORT
+        // Report decisions in output-image space. ShapeMask
+        // runs later and must hold exactly the part whose crop
+        // was held for this semantic timestamp.
+        bool outputLeftEyeAccepted =
+            swapEyes
+                ? rightOK
+                : leftOK;
+
+        bool outputRightEyeAccepted =
+            swapEyes
+                ? leftOK
+                : rightOK;
+
+        KiwiCommercialFacePartPolicy.ReportPartSampleDecision(
+            timestamp,
+            outputLeftEyeAccepted,
+            outputRightEyeAccepted,
+            mouthOK);
 
         if (swapEyes)
         {
@@ -1786,10 +1851,16 @@ public class FacePartCropper : MonoBehaviour
             return;
         }
 
+        // KIWI_V4_8_MATCHED_AGE_DIAGNOSTIC_RANGE
+        // Keep the real source age long enough for the
+        // prediction lifetime gate to observe a semantic
+        // stall. Extrapolation itself remains separately
+        // capped by maxExtrapolationSeconds.
         _matchedFrameAgeSeconds = Mathf.Clamp(
             (float)age,
             0f,
-            Mathf.Max(0.005f, maxExtrapolationSeconds)
+            KiwiCommercialFacePartPolicy.
+                MaximumSemanticSourceAgeSeconds * 2f
         );
 
         debugMatchedFrameAgeMs =
@@ -2324,18 +2395,52 @@ public static class KiwiFacePartPredictionMath
         float leadSeconds,
         float maximumSeconds)
     {
+        // KIWI_V4_8_SEMANTIC_PREDICTION_LIFETIME
+        // Prediction compensates a fresh result; it is not a
+        // pose that may remain extrapolated forever after the
+        // semantic stream stalls.
+        float elapsed =
+            Mathf.Max(0f, elapsedSinceResult);
+
         float age =
             useMatchedFrameAge &&
             IsFinite(matchedFrameAgeSeconds) &&
             matchedFrameAgeSeconds >= 0f
-                ? matchedFrameAgeSeconds
-                : Mathf.Max(0f, elapsedSinceResult);
+                ? Mathf.Max(matchedFrameAgeSeconds, elapsed)
+                : elapsed;
 
-        return Mathf.Clamp(
-            age + Mathf.Max(0f, leadSeconds),
-            0f,
-            Mathf.Max(0f, maximumSeconds)
-        );
+        if (
+            age >
+                KiwiCommercialFacePartPolicy.MaximumSemanticSourceAgeSeconds
+        )
+        {
+            return 0f;
+        }
+
+        float liveCap =
+            Mathf.Min(
+                Mathf.Max(0f, maximumSeconds),
+                0.050f);
+
+        float freshness =
+            1f -
+            Mathf.InverseLerp(
+                0.120f,
+                KiwiCommercialFacePartPolicy.MaximumSemanticSourceAgeSeconds,
+                age);
+
+        float predictionStrength =
+            Mathf.Lerp(
+                0.35f,
+                1f,
+                Mathf.Clamp01(freshness));
+
+        return
+            Mathf.Clamp(
+                age + Mathf.Max(0f, leadSeconds),
+                0f,
+                liveCap) *
+            predictionStrength;
     }
 
 

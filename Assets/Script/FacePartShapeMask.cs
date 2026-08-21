@@ -1153,6 +1153,60 @@ public class FacePartShapeMask : MonoBehaviour
             return;
         }
 
+        // KIWI_V4_8_MASK_SEMANTIC_FRESHNESS_GATE
+        // Cropper and ShapeMask must accept/reject the same
+        // semantic timestamp or their coordinate bases diverge.
+        if (
+            !KiwiCommercialFacePartPolicy.IsSemanticSampleAdoptable(
+                runner,
+                timestamp)
+        )
+        {
+            RenderFrameState(resolvedPart);
+            return;
+        }
+
+
+        // KIWI_V4_9_PART_TRANSACTION_GATE
+        // Crop and tight mask form one semantic transaction. If
+        // Cropper rejected only this part, consume the timestamp
+        // while retaining the previous complete contour.
+        bool hasSemanticPartMapping =
+            false;
+
+        KiwiCommercialFacePartPolicy.SemanticPart semanticPart =
+            KiwiCommercialFacePartPolicy.SemanticPart.Mouth;
+
+        if (resolvedPart == FacePartType.Mouth)
+        {
+            semanticPart =
+                KiwiCommercialFacePartPolicy.SemanticPart.Mouth;
+            hasSemanticPartMapping = true;
+        }
+        else if (cropper != null && _image == cropper.leftEyeImage)
+        {
+            semanticPart =
+                KiwiCommercialFacePartPolicy.SemanticPart.LeftEye;
+            hasSemanticPartMapping = true;
+        }
+        else if (cropper != null && _image == cropper.rightEyeImage)
+        {
+            semanticPart =
+                KiwiCommercialFacePartPolicy.SemanticPart.RightEye;
+            hasSemanticPartMapping = true;
+        }
+
+        if (
+            hasSemanticPartMapping &&
+            !KiwiCommercialFacePartPolicy.IsPartSampleAdoptable(
+                timestamp,
+                semanticPart)
+        )
+        {
+            _lastTimestamp = timestamp;
+            RenderFrameState(resolvedPart);
+            return;
+        }
 
         FaceExpressionData expression =
             default;
@@ -1182,17 +1236,17 @@ public class FacePartShapeMask : MonoBehaviour
             _image.uvRect;
 
 
+        // KIWI_V4_8_PRESENTATION_CROP_MASK_BASIS
+        // Normalize the semantic contour against the crop that
+        // is actually being rendered now. Using the future
+        // sampleRect here while decoding against display uvRect
+        // made low-cadence masks expand toward the ROI edges.
         Rect contourReferenceRect =
             uvRect;
 
-
         bool useCropLocalContour =
             lockContourToMovingCrop &&
-            cropper != null &&
-            cropper.TryGetSampleRect(
-                _image,
-                out contourReferenceRect
-            );
+            cropper != null;
 
 
         int[] contourIndices;
@@ -1564,41 +1618,73 @@ public class FacePartShapeMask : MonoBehaviour
         Rect referenceRect,
         bool cropLocal)
     {
+        // KIWI_V4_8_TIGHT_MASK_CANDIDATE_GUARD
+        // Build into the upload scratch buffer first. A bad
+        // semantic/crop pairing holds the previous complete
+        // contour; it never partially overwrites the target.
         bool coordinateModeChanged =
             _maskPointsAreCropLocal != cropLocal;
 
-
-        _maskPointsAreCropLocal =
-            cropLocal;
-
-
-        _targetPointCount =
+        int candidateCount =
             Mathf.Clamp(count, 0, MaxPoints);
 
+        float localEnvelope =
+            Mathf.Clamp(
+                0.12f + Mathf.Max(0f, cropLocalSafetyMargin),
+                0.12f,
+                0.24f);
 
-        for (int i = 0; i < _targetPointCount; i++)
+        for (int i = 0; i < candidateCount; i++)
         {
             Vector2 point =
                 cropLocal
                     ? KiwiFacePartMaskCoherenceMath.ToCropLocal(
                         _smoothContour[i],
                         referenceRect,
-                        cropLocalSafetyMargin
-                    )
+                        cropLocalSafetyMargin)
                     : _smoothContour[i];
 
+            bool finite =
+                !float.IsNaN(point.x) &&
+                !float.IsInfinity(point.x) &&
+                !float.IsNaN(point.y) &&
+                !float.IsInfinity(point.y);
 
-            _targetShaderPoints[i] =
+            bool plausible =
+                !cropLocal ||
+                (
+                    point.x >= -localEnvelope &&
+                    point.x <= 1f + localEnvelope &&
+                    point.y >= -localEnvelope &&
+                    point.y <= 1f + localEnvelope
+                );
+
+            if (!finite || !plausible)
+            {
+                return;
+            }
+
+            _uploadShaderPoints[i] =
                 new Vector4(point.x, point.y, 0f, 0f);
         }
 
-
-        for (int i = _targetPointCount; i < MaxPoints; i++)
+        for (int i = candidateCount; i < MaxPoints; i++)
         {
-            _targetShaderPoints[i] =
+            _uploadShaderPoints[i] =
                 Vector4.zero;
         }
 
+        _maskPointsAreCropLocal =
+            cropLocal;
+
+        _targetPointCount =
+            candidateCount;
+
+        for (int i = 0; i < MaxPoints; i++)
+        {
+            _targetShaderPoints[i] =
+                _uploadShaderPoints[i];
+        }
 
         if (
             strictLandmarkerTracking ||
@@ -4481,28 +4567,22 @@ public static class KiwiFacePartMaskCoherenceMath
         Rect cropRect,
         float safetyMargin)
     {
+        // KIWI_V4_8_UNCLAMPED_SEMANTIC_LOCAL
+        // Tight semantic contours must remain semantic.
+        // Clamping every out-of-crop point to the ROI edge can
+        // convert a small eye into an almost full-crop polygon.
+        // Catastrophic local coordinates are rejected atomically
+        // by SetContourTarget instead.
         float safeWidth =
             Mathf.Max(0.000001f, Mathf.Abs(cropRect.width));
 
         float safeHeight =
             Mathf.Max(0.000001f, Mathf.Abs(cropRect.height));
 
-        Vector2 local =
-            new Vector2(
-                (point.x - cropRect.xMin) / safeWidth,
-                (point.y - cropRect.yMin) / safeHeight
-            );
-
-        float margin =
-            Mathf.Clamp(safetyMargin, 0f, 0.49f);
-
-        local.x =
-            Mathf.Clamp(local.x, margin, 1f - margin);
-
-        local.y =
-            Mathf.Clamp(local.y, margin, 1f - margin);
-
-        return local;
+        return new Vector2(
+            (point.x - cropRect.xMin) / safeWidth,
+            (point.y - cropRect.yMin) / safeHeight
+        );
     }
 
 

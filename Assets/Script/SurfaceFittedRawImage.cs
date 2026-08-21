@@ -60,6 +60,25 @@ public class SurfaceFittedRawImage : RawImage
     private float _visualZoomY = 1f;
 
 
+    // KIWI_V5_0_1_HEAD_LOCAL_SAMPLE_FRAME
+    // Camera eye/mouth crops contain the actor's rigid head Roll. The fitted
+    // 3D surface already receives that rigid Roll from KiwiFaceMotion, so the
+    // source texture and semantic mask must be sampled in a de-rolled local
+    // frame or Roll is visually applied twice. This rotates sampling only; it
+    // never changes RectTransform, fitted geometry, or Avatar Root authority.
+    private float _sampleFrameRotationDegrees = 0f;
+
+
+    // KIWI_SURFACE_CONSTRAINT_API_V4_0
+    // Local one-way surface attachment correction.
+    //
+    // This changes only which already-fitted surface coordinates the face-part
+    // patch samples. It never writes the avatar/root transform and it never
+    // changes the source camera crop.
+    private Vector2 _surfaceConstraintOffsetNormalized =
+        Vector2.zero;
+
+
     public int XSegments
     {
         get
@@ -108,6 +127,12 @@ public class SurfaceFittedRawImage : RawImage
     public float VisualZoomX => _visualZoomX;
 
     public float VisualZoomY => _visualZoomY;
+
+    public float SampleFrameRotationDegrees =>
+        _sampleFrameRotationDegrees;
+
+    public Vector2 SurfaceConstraintOffsetNormalized =>
+        _surfaceConstraintOffsetNormalized;
 
 
     // =========================================================
@@ -172,6 +197,89 @@ public class SurfaceFittedRawImage : RawImage
             1f,
             1f
         );
+    }
+
+
+    // =========================================================
+    // Head-local camera sample frame API
+    // =========================================================
+
+    public void SetSampleFrameRotationDegrees(
+        float degrees)
+    {
+        if (float.IsNaN(degrees) || float.IsInfinity(degrees))
+        {
+            degrees = 0f;
+        }
+
+        degrees =
+            Mathf.Clamp(
+                Mathf.DeltaAngle(0f, degrees),
+                -60f,
+                60f);
+
+        if (Mathf.Abs(
+                Mathf.DeltaAngle(
+                    _sampleFrameRotationDegrees,
+                    degrees)) <= 0.0001f)
+        {
+            return;
+        }
+
+        _sampleFrameRotationDegrees =
+            degrees;
+
+        SetVerticesDirty();
+    }
+
+
+    public void ResetSampleFrameRotation()
+    {
+        SetSampleFrameRotationDegrees(0f);
+    }
+
+
+    // =========================================================
+    // Local Surface Constraint API
+    // =========================================================
+
+    public void SetSurfaceConstraintOffsetNormalized(
+        Vector2 offset)
+    {
+        offset.x =
+            Mathf.Clamp(
+                offset.x,
+                -0.35f,
+                0.35f);
+
+        offset.y =
+            Mathf.Clamp(
+                offset.y,
+                -0.35f,
+                0.35f);
+
+        if (
+            (
+                offset -
+                _surfaceConstraintOffsetNormalized
+            ).sqrMagnitude <
+            0.00000001f
+        )
+        {
+            return;
+        }
+
+        _surfaceConstraintOffsetNormalized =
+            offset;
+
+        SetVerticesDirty();
+    }
+
+
+    public void ResetSurfaceConstraintOffset()
+    {
+        SetSurfaceConstraintOffsetNormalized(
+            Vector2.zero);
     }
 
 
@@ -241,47 +349,170 @@ public class SurfaceFittedRawImage : RawImage
         Vector2 normalizedPosition,
         out Vector3 localPosition)
     {
-        float u = Mathf.Clamp01(normalizedPosition.x);
-        float v = Mathf.Clamp01(normalizedPosition.y);
-        int xCount = XSegments;
-        int yCount = YSegments;
+        localPosition =
+            GetConstrainedSurfacePosition(
+                normalizedPosition.x,
+                normalizedPosition.y);
 
-        float gridX = u * xCount;
-        float gridY = v * yCount;
-        int x0 = Mathf.Clamp(Mathf.FloorToInt(gridX), 0, xCount);
-        int y0 = Mathf.Clamp(Mathf.FloorToInt(gridY), 0, yCount);
-        int x1 = Mathf.Min(x0 + 1, xCount);
-        int y1 = Mathf.Min(y0 + 1, yCount);
-        float tx = gridX - x0;
-        float ty = gridY - y0;
-
-        Vector3 p00 = GetSurfaceGridPosition(x0, y0);
-        Vector3 p10 = GetSurfaceGridPosition(x1, y0);
-        Vector3 p01 = GetSurfaceGridPosition(x0, y1);
-        Vector3 p11 = GetSurfaceGridPosition(x1, y1);
-
-        localPosition = Vector3.Lerp(
-            Vector3.Lerp(p00, p10, tx),
-            Vector3.Lerp(p01, p11, tx),
-            ty
-        );
         return true;
     }
 
 
-    private Vector3 GetSurfaceGridPosition(int x, int y)
+    private Vector3 GetConstrainedSurfacePosition(
+        float u,
+        float v)
     {
-        int expectedCount = (XSegments + 1) * (YSegments + 1);
+        u =
+            Mathf.Clamp01(
+                u +
+                _surfaceConstraintOffsetNormalized.x);
+
+        v =
+            Mathf.Clamp01(
+                v +
+                _surfaceConstraintOffsetNormalized.y);
+
+        int xCount =
+            XSegments;
+
+        int yCount =
+            YSegments;
+
+        float gridX =
+            u *
+            xCount;
+
+        float gridY =
+            v *
+            yCount;
+
+        int x0 =
+            Mathf.Clamp(
+                Mathf.FloorToInt(
+                    gridX),
+                0,
+                xCount);
+
+        int y0 =
+            Mathf.Clamp(
+                Mathf.FloorToInt(
+                    gridY),
+                0,
+                yCount);
+
+        int x1 =
+            Mathf.Min(
+                x0 + 1,
+                xCount);
+
+        int y1 =
+            Mathf.Min(
+                y0 + 1,
+                yCount);
+
+        float tx =
+            gridX -
+            x0;
+
+        float ty =
+            gridY -
+            y0;
+
+        Vector3 p00 =
+            GetSurfaceGridPosition(
+                x0,
+                y0);
+
+        Vector3 p10 =
+            GetSurfaceGridPosition(
+                x1,
+                y0);
+
+        Vector3 p01 =
+            GetSurfaceGridPosition(
+                x0,
+                y1);
+
+        Vector3 p11 =
+            GetSurfaceGridPosition(
+                x1,
+                y1);
+
+        return
+            Vector3.Lerp(
+                Vector3.Lerp(
+                    p00,
+                    p10,
+                    tx),
+                Vector3.Lerp(
+                    p01,
+                    p11,
+                    tx),
+                ty);
+    }
+
+
+    private Vector3 GetSurfaceGridPosition(
+        int x,
+        int y)
+    {
+        int expectedCount =
+            (XSegments + 1) *
+            (YSegments + 1);
+
         if (
             _hasSurfaceFit &&
             _fittedLocalPositions != null &&
-            _fittedLocalPositions.Length == expectedCount
+            _fittedLocalPositions.Length ==
+                expectedCount
         )
         {
-            return _fittedLocalPositions[y * (XSegments + 1) + x];
+            return
+                _fittedLocalPositions[
+                    y *
+                    (XSegments + 1) +
+                    x
+                ];
         }
 
-        return GetFlatLocalPosition(x, y);
+        return
+            GetFlatLocalPosition(
+                x,
+                y);
+    }
+
+
+    // =========================================================
+    // Head-local sample-frame math
+    // =========================================================
+
+    private static Vector2 RotateCropLocalCoordinate(
+        Vector2 coordinate,
+        float sine,
+        float cosine,
+        float cropPixelAspect)
+    {
+        Vector2 delta =
+            coordinate -
+            new Vector2(0.5f, 0.5f);
+
+        delta.x *=
+            cropPixelAspect;
+
+        Vector2 rotated =
+            new Vector2(
+                cosine * delta.x -
+                sine * delta.y,
+                sine * delta.x +
+                cosine * delta.y
+            );
+
+        rotated.x /=
+            cropPixelAspect;
+
+        return
+            new Vector2(0.5f, 0.5f) +
+            rotated;
     }
 
 
@@ -306,6 +537,7 @@ public class SurfaceFittedRawImage : RawImage
 
 
             ClearSurfaceFit();
+
 
             return;
         }
@@ -348,6 +580,10 @@ public class SurfaceFittedRawImage : RawImage
 
         _fittedLocalPositions =
             null;
+
+
+        _surfaceConstraintOffsetNormalized =
+            Vector2.zero;
 
 
         SetVerticesDirty();
@@ -434,8 +670,53 @@ public class SurfaceFittedRawImage : RawImage
             expectedCount;
 
 
-        int index =
-            0;
+        // Precompute the head-local sample-frame transform once per mesh
+        // rebuild. Do not repeat texture aspect lookup or Sin/Cos per vertex.
+        bool rotateSampleFrame =
+            Mathf.Abs(_sampleFrameRotationDegrees) > 0.0001f;
+
+        float sampleFrameSine = 0f;
+        float sampleFrameCosine = 1f;
+        float sampleFrameCropPixelAspect = 1f;
+
+        if (rotateSampleFrame)
+        {
+            float radians =
+                _sampleFrameRotationDegrees *
+                Mathf.Deg2Rad;
+
+            sampleFrameSine =
+                Mathf.Sin(radians);
+
+            sampleFrameCosine =
+                Mathf.Cos(radians);
+
+            Texture sourceTexture =
+                texture != null
+                    ? texture
+                    : mainTexture;
+
+            float textureAspect =
+                sourceTexture != null &&
+                sourceTexture.width > 0 &&
+                sourceTexture.height > 0
+                    ? sourceTexture.width /
+                        (float)sourceTexture.height
+                    : 1f;
+
+            sampleFrameCropPixelAspect =
+                Mathf.Abs(uvRect.height) > 0.000001f
+                    ? Mathf.Abs(uvRect.width) *
+                        textureAspect /
+                        Mathf.Abs(uvRect.height)
+                    : 1f;
+
+            sampleFrameCropPixelAspect =
+                Mathf.Clamp(
+                    sampleFrameCropPixelAspect,
+                    0.05f,
+                    20f);
+        }
 
 
         for (
@@ -479,9 +760,9 @@ public class SurfaceFittedRawImage : RawImage
                 Vector3 position =
                     useSurface
                         ?
-                        _fittedLocalPositions[
-                            index
-                        ]
+                        GetConstrainedSurfacePosition(
+                            u,
+                            v)
                         :
                         new Vector3(
                             localX,
@@ -494,48 +775,55 @@ public class SurfaceFittedRawImage : RawImage
                 // Expression UV Zoom
                 // =============================================
 
-                float sampleU =
-                    0.5f
-                    +
-                    (
-                        u -
-                        0.5f
-                    )
-                    /
-                    _visualZoomX;
+                Vector2 sampleLocal =
+                    new Vector2(
+                        0.5f +
+                        (u - 0.5f) /
+                        _visualZoomX,
+                        0.5f +
+                        (v - 0.5f) /
+                        _visualZoomY
+                    );
 
 
-                float sampleV =
-                    0.5f
-                    +
-                    (
-                        v -
-                        0.5f
-                    )
-                    /
-                    _visualZoomY;
-
+                // KIWI_V5_0_1_HEAD_LOCAL_SAMPLE_FRAME
+                // Rotate both texture sampling and the mask-evaluation UV by
+                // the same rigid camera-frame angle. Polygon points remain in
+                // source/crop coordinates, while the fitted 3D surface owns the
+                // visible head Roll exactly once.
+                if (rotateSampleFrame)
+                {
+                    sampleLocal =
+                        RotateCropLocalCoordinate(
+                            sampleLocal,
+                            sampleFrameSine,
+                            sampleFrameCosine,
+                            sampleFrameCropPixelAspect);
+                }
 
                 Vector2 textureUV =
                     new Vector2(
                         Mathf.Lerp(
                             uvRect.xMin,
                             uvRect.xMax,
-                            sampleU
+                            sampleLocal.x
                         ),
                         Mathf.Lerp(
                             uvRect.yMin,
                             uvRect.yMax,
-                            sampleV
+                            sampleLocal.y
                         )
                     );
 
 
                 Vector2 maskUV =
-                    new Vector2(
-                        u,
-                        v
-                    );
+                    rotateSampleFrame
+                        ? RotateCropLocalCoordinate(
+                            new Vector2(u, v),
+                            sampleFrameSine,
+                            sampleFrameCosine,
+                            sampleFrameCropPixelAspect)
+                        : new Vector2(u, v);
 
 
                 UIVertex vertex =
@@ -561,9 +849,6 @@ public class SurfaceFittedRawImage : RawImage
                 vh.AddVert(
                     vertex
                 );
-
-
-                index++;
             }
         }
 
@@ -641,6 +926,10 @@ public class SurfaceFittedRawImage : RawImage
 
             _fittedLocalPositions =
                 null;
+
+
+            _surfaceConstraintOffsetNormalized =
+                Vector2.zero;
         }
 
 

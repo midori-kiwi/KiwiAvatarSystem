@@ -1,22 +1,29 @@
 using System;
+using System.Collections.Generic;
 using Unity.InferenceEngine;
 using UnityEngine;
 
 namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 {
     /// <summary>
-    /// Low-latency GPU landmark path.
+    /// KiwiAvatarSystem v3.6 MediaPipe-input-parity pipelined GPU face-landmark tracker.
     ///
-    /// v2.3 changes the GPU -> CPU boundary from a synchronous
-    /// ReadbackAndClone() to a one-in-flight asynchronous readback mailbox.
+    /// Design goals:
+    /// - keep the exact public API used by FaceLandmarkerRunner;
+    /// - overlap GPU inference/readback using independent workers;
+    /// - never queue an unbounded history of camera frames;
+    /// - publish only the newest valid completed source frame;
+    /// - keep the exact crop matrix, source timestamp and anchor revision that
+    ///   belonged to each scheduled frame;
+    /// - discard stale-anchor completions rather than letting an old ROI snap
+    ///   the avatar after reacquisition.
     ///
-    /// Important timing rule:
-    /// the crop matrix and source host timestamp are captured when the frame is
-    /// actually scheduled. When readback completes later, that exact matrix and
-    /// timestamp are used for the returned landmarks.
-    ///
-    /// MediaPipe remains responsible for initial acquisition, periodic
-    /// correction, blendshapes and fail-safe fallback.
+    /// v5.0 keeps three preallocated desktop lanes and adapts the scheduling
+    /// budget between one, two, and three lanes. Sustained severe GPU latency
+    /// reduces the queue to one lane, two lanes are the normal operating point,
+    /// and the third lane is enabled only after a sustained low-latency streak.
+    /// This favors low end-to-end latency over backlog depth without reallocating
+    /// runtime buffers.
     /// </summary>
     public sealed class KiwiInferenceFaceTracker : IDisposable
     {
@@ -24,6 +31,7 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
         public const int CompatibleLandmarkCount = 478;
 
         private const int InputSize = 192;
+
         private const int PackedOutputLength =
             BaseLandmarkCount * 3 + 1;
 
@@ -33,60 +41,368 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
         private const string PresenceOutputName =
             "conv2d_30";
 
-        private readonly Worker _worker;
-        private readonly Tensor<float> _input;
-        private readonly RenderTexture _cropTexture;
-        private readonly Material _cropMaterial;
-        private readonly TextureTransform _textureTransform;
+        private static readonly int InputIsSrgbId =
+            Shader.PropertyToID(
+                "_InputIsSRGB");
+
+        private const string PresenceSigmoidMarker =
+            "KIWI_FACE_FLAG_SIGMOID_V3_2";
+
+        private enum DecodeStatus
+        {
+            None = 0,
+            Valid = 1,
+            InvalidOutput = 2,
+            PresenceLow = 3,
+            NonFiniteLandmark = 4,
+            StaleAnchor = 5,
+            StaleGeneration = 6,
+            StaleSource = 7,
+            Exception = 8
+        }
+
+        private sealed class Lane : IDisposable
+        {
+            public readonly Worker worker;
+            public readonly Tensor<float> input;
+            public readonly RenderTexture cropTexture;
+            public readonly Material cropMaterial;
+            public readonly TextureTransform textureTransform;
+
+            public readonly Vector3[] decodedLandmarks =
+                new Vector3[CompatibleLandmarkCount];
+
+            public Tensor<float> pendingOutput;
+            public bool readbackPending;
+
+            public Matrix4x4 pendingCropMatrix =
+                Matrix4x4.identity;
+
+            public long pendingSourceHostTicks;
+            public long pendingStartedHostTicks;
+            public int pendingAnchorRevision;
+            public int pendingTrackerGeneration;
+
+            public Lane(
+                Model model,
+                Shader cropShader,
+                int index)
+            {
+                worker =
+                    new Worker(
+                        model,
+                        BackendType.GPUCompute);
+
+                input =
+                    new Tensor<float>(
+                        new TensorShape(
+                            1,
+                            3,
+                            InputSize,
+                            InputSize));
+
+                cropTexture =
+                    new RenderTexture(
+                        InputSize,
+                        InputSize,
+                        0,
+                        RenderTextureFormat.ARGB32,
+                        RenderTextureReadWrite.Linear)
+                    {
+                        name =
+                            "Kiwi Inference Face Crop Lane " +
+                            index,
+                        filterMode =
+                            FilterMode.Bilinear,
+                        wrapMode =
+                            TextureWrapMode.Clamp,
+                        useMipMap =
+                            false,
+                        autoGenerateMips =
+                            false,
+                        hideFlags =
+                            HideFlags.DontSave
+                    };
+
+                cropTexture.Create();
+
+                cropMaterial =
+                    new Material(
+                        cropShader)
+                    {
+                        name =
+                            "Kiwi Inference Crop Material Lane " +
+                            index,
+                        hideFlags =
+                            HideFlags.DontSave
+                    };
+
+                textureTransform =
+                    new TextureTransform()
+                        .SetTensorLayout(
+                            TensorLayout.NCHW)
+                        .SetCoordOrigin(
+                            CoordOrigin.TopLeft);
+            }
+
+            public void Dispose()
+            {
+                readbackPending =
+                    false;
+
+                pendingOutput =
+                    null;
+
+                worker?.Dispose();
+                input?.Dispose();
+
+                if (cropTexture != null)
+                {
+                    if (cropTexture.IsCreated())
+                    {
+                        cropTexture.Release();
+                    }
+
+                    UnityEngine.Object.Destroy(
+                        cropTexture);
+                }
+
+                if (cropMaterial != null)
+                {
+                    UnityEngine.Object.Destroy(
+                        cropMaterial);
+                }
+            }
+        }
+
+        private struct Completion
+        {
+            public bool exists;
+            public bool valid;
+            public int laneIndex;
+            public DecodeStatus status;
+            public long sourceHostTicks;
+            public long arrivalHostTicks;
+            public long startedHostTicks;
+            public int anchorRevision;
+            public int trackerGeneration;
+            public float rawPresence;
+            public float presence;
+            public Quaternion rotation;
+        }
+
+        private readonly Lane[] _lanes;
+
+        // KIWI_V5_0_ADAPTIVE_LANE_BUDGET
+        // All workers are allocated once. Runtime only changes how many lanes
+        // may receive new work, so no GC/reallocation is introduced.
+        private int _schedulingLaneLimit = 1;
+        private int _lowLatencyCompletionStreak;
+        private int _highLatencyCompletionStreak;
+        private int _severeLatencyCompletionStreak;
+        private int _recoveryLatencyCompletionStreak;
+
+        private const float EnableThirdLaneBelowMs = 48f;
+        private const float DisableThirdLaneAboveMs = 62f;
+        private const float ReduceToSingleLaneAboveMs = 92f;
+        private const float RecoverSecondLaneBelowMs = 68f;
+        private const int EnableThirdLaneStreak = 24;
+        private const int DisableThirdLaneStreak = 4;
+        private const int ReduceToSingleLaneStreak = 6;
+        private const int RecoverSecondLaneStreak = 14;
 
         private readonly Vector3[] _landmarks =
             new Vector3[CompatibleLandmarkCount];
 
         private Vector2 _regionCenter;
-        private float _regionSize;
+        private float _regionWidth;
+        private float _regionHeight;
         private float _regionRollRadians;
         private bool _hasRegion;
-        private int _consecutiveFailures;
 
-        // ---------------------------------------------------------
-        // Async output mailbox
-        // ---------------------------------------------------------
+        // The MediaPipe ROI is square in PIXELS, not in normalized UV space.
+        // Source dimensions are therefore part of the transform.
+        private int _sourceWidth = 1;
+        private int _sourceHeight = 1;
+        private bool _inputGammaPreservationActive;
 
-        private Tensor<float> _pendingOutput;
-        private bool _readbackPending;
-
-        private Matrix4x4 _pendingCropMatrix =
-            Matrix4x4.identity;
-
-        private long _pendingSourceHostTicks;
-        private long _pendingStartedHostTicks;
-        private int _pendingAnchorRevision;
         private int _anchorRevision;
+        private int _trackerGeneration;
+        private int _consecutiveFailures;
+        private int _nextLaneIndex;
 
         private long _latestCompletedSourceHostTicks;
         private long _latestCompletedArrivalHostTicks;
 
         private int _scheduledFrameCount;
+        private int _readbackCompletedFrameCount;
         private int _completedFrameCount;
         private int _droppedFreshFrameCount;
+        private int _rejectedPresenceFrameCount;
+        private int _rejectedInvalidFrameCount;
+        private int _discardedStaleFrameCount;
 
-        public float MinimumPresence { get; set; } = 0.5f;
+        public float MinimumPresence { get; set; } =
+            0.5f;
 
-        public bool HasRegion => _hasRegion;
+        public bool HasRegion =>
+            _hasRegion;
 
         public bool IsTracking =>
             _hasRegion &&
             _consecutiveFailures < 4;
 
         public bool IsAsyncReadbackPending =>
-            _readbackPending;
+            ActiveLaneCount > 0;
+
+        public float RegionWidthNormalized =>
+            _regionWidth;
+
+        public float RegionHeightNormalized =>
+            _regionHeight;
+
+        public bool InputGammaPreservationActive =>
+            _inputGammaPreservationActive;
+
+        public float RegionPixelAspectError
+        {
+            get
+            {
+                float pixelWidth =
+                    _regionWidth *
+                    Mathf.Max(
+                        1,
+                        _sourceWidth);
+
+                float pixelHeight =
+                    _regionHeight *
+                    Mathf.Max(
+                        1,
+                        _sourceHeight);
+
+                if (
+                    pixelWidth <= 0.000001f ||
+                    pixelHeight <= 0.000001f
+                )
+                {
+                    return 0f;
+                }
+
+                return
+                    Mathf.Abs(
+                        pixelWidth /
+                        pixelHeight -
+                        1f);
+            }
+        }
+
+        public int PipelineDepth =>
+            _lanes != null
+                ? _lanes.Length
+                : 0;
+
+        public int SchedulingLaneLimit =>
+            _schedulingLaneLimit;
+
+        public int ActiveLaneCount
+        {
+            get
+            {
+                if (_lanes == null)
+                {
+                    return 0;
+                }
+
+                int count = 0;
+
+                for (
+                    int i = 0;
+                    i < _lanes.Length;
+                    i++
+                )
+                {
+                    if (
+                        _lanes[i] != null &&
+                        _lanes[i].readbackPending
+                    )
+                    {
+                        count++;
+                    }
+                }
+
+                return count;
+            }
+        }
+
+        public float OldestPendingAgeMs
+        {
+            get
+            {
+                if (_lanes == null)
+                {
+                    return 0f;
+                }
+
+                long now =
+                    System.Diagnostics.Stopwatch
+                        .GetTimestamp();
+
+                long oldestStarted =
+                    0L;
+
+                for (
+                    int i = 0;
+                    i < _lanes.Length;
+                    i++
+                )
+                {
+                    Lane lane =
+                        _lanes[i];
+
+                    if (
+                        lane == null ||
+                        !lane.readbackPending ||
+                        lane.pendingStartedHostTicks <= 0L
+                    )
+                    {
+                        continue;
+                    }
+
+                    if (
+                        oldestStarted <= 0L ||
+                        lane.pendingStartedHostTicks <
+                            oldestStarted
+                    )
+                    {
+                        oldestStarted =
+                            lane.pendingStartedHostTicks;
+                    }
+                }
+
+                if (
+                    oldestStarted <= 0L ||
+                    now <= oldestStarted
+                )
+                {
+                    return 0f;
+                }
+
+                return
+                    (float)(
+                        (now - oldestStarted) *
+                        1000.0 /
+                        System.Diagnostics.Stopwatch
+                            .Frequency);
+            }
+        }
 
         public float LatestPresence { get; private set; }
 
-        /// <summary>
-        /// Schedule-to-readback-completion latency for the latest completed
-        /// inference result. It no longer contains a forced main-thread stall.
-        /// </summary>
+        public float LatestRawPresenceLogit { get; private set; }
+
+        public string LatestRejectionReason { get; private set; } =
+            "-";
+
         public float LatestLatencyMs { get; private set; }
 
         public long LatestCompletedSourceHostTicks =>
@@ -98,11 +414,30 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
         public int ScheduledFrameCount =>
             _scheduledFrameCount;
 
+        /// <summary>
+        /// Number of GPU readbacks that reached CPU, whether accepted or rejected.
+        /// </summary>
+        public int ReadbackCompletedFrameCount =>
+            _readbackCompletedFrameCount;
+
+        /// <summary>
+        /// Kept for compatibility: number of valid inference frames accepted by
+        /// this tracker before Runner-level geometry adoption.
+        /// </summary>
         public int CompletedFrameCount =>
             _completedFrameCount;
 
         public int DroppedFreshFrameCount =>
             _droppedFreshFrameCount;
+
+        public int RejectedPresenceFrameCount =>
+            _rejectedPresenceFrameCount;
+
+        public int RejectedInvalidFrameCount =>
+            _rejectedInvalidFrameCount;
+
+        public int DiscardedStaleFrameCount =>
+            _discardedStaleFrameCount;
 
         public KiwiInferenceFaceTracker(
             ModelAsset modelAsset,
@@ -120,107 +455,145 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     nameof(cropShader));
             }
 
-            Model model =
-                BuildSingleReadbackModel(
-                    ModelLoader.Load(modelAsset));
+            int requestedDepth =
+                Application.isMobilePlatform
+                    ? 2
+                    : 3;
 
-            _worker =
-                new Worker(
-                    model,
-                    BackendType.GPUCompute);
+            List<Lane> lanes =
+                new List<Lane>(
+                    requestedDepth);
 
-            _input =
-                new Tensor<float>(
-                    new TensorShape(
+            for (
+                int i = 0;
+                i < requestedDepth;
+                i++
+            )
+            {
+                try
+                {
+                    // Give each lane its own model/worker state. This avoids
+                    // reusing a worker output tensor while its async readback is
+                    // still in flight.
+                    Model model =
+                        BuildSingleReadbackModel(
+                            ModelLoader.Load(
+                                modelAsset));
+
+                    lanes.Add(
+                        new Lane(
+                            model,
+                            cropShader,
+                            i));
+                }
+                catch
+                {
+                    if (lanes.Count == 0)
+                    {
+                        throw;
+                    }
+
+                    // A secondary lane is an optimization, not a requirement.
+                    // If resource allocation fails, continue with the lanes that
+                    // were created successfully.
+                    break;
+                }
+            }
+
+            _lanes =
+                lanes.ToArray();
+
+            _schedulingLaneLimit =
+                Mathf.Clamp(
+                    Application.isMobilePlatform
+                        ? 2
+                        : 2,
+                    1,
+                    Mathf.Max(
                         1,
-                        3,
-                        InputSize,
-                        InputSize));
-
-            _cropTexture =
-                new RenderTexture(
-                    InputSize,
-                    InputSize,
-                    0,
-                    RenderTextureFormat.ARGB32,
-                    RenderTextureReadWrite.Linear)
-                {
-                    name =
-                        "Kiwi Inference Face Crop",
-                    filterMode =
-                        FilterMode.Bilinear,
-                    wrapMode =
-                        TextureWrapMode.Clamp,
-                    useMipMap =
-                        false,
-                    autoGenerateMips =
-                        false,
-                    hideFlags =
-                        HideFlags.DontSave
-                };
-
-            _cropTexture.Create();
-
-            _cropMaterial =
-                new Material(cropShader)
-                {
-                    name =
-                        "Kiwi Inference Face Crop Material",
-                    hideFlags =
-                        HideFlags.DontSave
-                };
-
-            _textureTransform =
-                new TextureTransform()
-                    .SetTensorLayout(
-                        TensorLayout.NCHW)
-                    .SetCoordOrigin(
-                        CoordOrigin.TopLeft);
+                        _lanes.Length));
         }
 
         public void Dispose()
         {
-            _readbackPending = false;
-            _pendingOutput = null;
-
-            _worker?.Dispose();
-            _input?.Dispose();
-
-            if (_cropTexture != null)
+            if (_lanes == null)
             {
-                if (_cropTexture.IsCreated())
-                {
-                    _cropTexture.Release();
-                }
-
-                UnityEngine.Object.Destroy(
-                    _cropTexture);
+                return;
             }
 
-            if (_cropMaterial != null)
+            for (
+                int i = 0;
+                i < _lanes.Length;
+                i++
+            )
             {
-                UnityEngine.Object.Destroy(
-                    _cropMaterial);
+                _lanes[i]?.Dispose();
             }
         }
 
         public void Reset()
         {
-            _hasRegion = false;
-            _consecutiveFailures = 0;
+            _trackerGeneration++;
 
-            LatestPresence = 0f;
-            LatestLatencyMs = 0f;
+            _hasRegion =
+                false;
 
-            _readbackPending = false;
-            _pendingOutput = null;
+            _regionWidth =
+                0f;
 
-            _pendingSourceHostTicks = 0L;
-            _pendingStartedHostTicks = 0L;
-            _pendingAnchorRevision = 0;
-            _anchorRevision = 0;
-            _latestCompletedSourceHostTicks = 0L;
-            _latestCompletedArrivalHostTicks = 0L;
+            _regionHeight =
+                0f;
+
+            _inputGammaPreservationActive =
+                false;
+
+            _consecutiveFailures =
+                0;
+
+            _lowLatencyCompletionStreak =
+                0;
+
+            _highLatencyCompletionStreak =
+                0;
+
+            _severeLatencyCompletionStreak =
+                0;
+
+            _recoveryLatencyCompletionStreak =
+                0;
+
+            _schedulingLaneLimit =
+                Mathf.Clamp(
+                    Application.isMobilePlatform
+                        ? 2
+                        : 2,
+                    1,
+                    Mathf.Max(
+                        1,
+                        _lanes != null
+                            ? _lanes.Length
+                            : 1));
+
+            LatestPresence =
+                0f;
+
+            LatestRawPresenceLogit =
+                0f;
+
+            LatestRejectionReason =
+                "-";
+
+            LatestLatencyMs =
+                0f;
+
+            _latestCompletedSourceHostTicks =
+                0L;
+
+            _latestCompletedArrivalHostTicks =
+                0L;
+
+            // Existing GPU requests cannot be cancelled. Keep each occupied
+            // lane pending and discard it later by trackerGeneration.
         }
 
         public void ApplyExternalAnchor(
@@ -228,13 +601,19 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             float rollRadiansBottomLeft,
             bool force)
         {
-            float size =
+            float width =
                 Mathf.Clamp(
-                    Mathf.Max(
-                        regionTopLeft.width,
+                    Mathf.Abs(
+                        regionTopLeft.width),
+                    0.04f,
+                    2.50f);
+
+            float height =
+                Mathf.Clamp(
+                    Mathf.Abs(
                         regionTopLeft.height),
-                    0.08f,
-                    1.40f);
+                    0.04f,
+                    2.50f);
 
             Vector2 centerTopLeft =
                 regionTopLeft.center;
@@ -242,65 +621,146 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             Vector2 centerBottomLeft =
                 new Vector2(
                     centerTopLeft.x,
-                    1f - centerTopLeft.y);
+                    1f -
+                    centerTopLeft.y);
 
-            if (!_hasRegion || force)
+            if (
+                !_hasRegion ||
+                force
+            )
             {
-                _regionCenter =
-                    centerBottomLeft;
-
-                _regionSize =
-                    size;
-
-                _regionRollRadians =
-                    rollRadiansBottomLeft;
-
-                _hasRegion =
-                    true;
-
-                _consecutiveFailures =
-                    0;
-
-                _anchorRevision++;
+                AdoptExternalAnchor(
+                    centerBottomLeft,
+                    width,
+                    height,
+                    rollRadiansBottomLeft);
 
                 return;
             }
 
-            float distance =
-                Vector2.Distance(
-                    _regionCenter,
-                    centerBottomLeft);
-
-            // A current Inference Engine ROI is newer than asynchronous
-            // MediaPipe correction. Accept only material drift/loss.
-            if (
-                distance >
+            float imageWidth =
                 Mathf.Max(
-                    0.025f,
-                    _regionSize * 0.35f)
+                    1f,
+                    _sourceWidth);
+
+            float imageHeight =
+                Mathf.Max(
+                    1f,
+                    _sourceHeight);
+
+            float centerDxPixels =
+                (
+                    centerBottomLeft.x -
+                    _regionCenter.x
+                ) *
+                imageWidth;
+
+            float centerDyPixels =
+                (
+                    centerBottomLeft.y -
+                    _regionCenter.y
+                ) *
+                imageHeight;
+
+            float centerDistancePixels =
+                Mathf.Sqrt(
+                    centerDxPixels *
+                        centerDxPixels +
+                    centerDyPixels *
+                        centerDyPixels);
+
+            float regionSidePixels =
+                Mathf.Max(
+                    _regionWidth *
+                        imageWidth,
+                    _regionHeight *
+                        imageHeight);
+
+            float widthRatioDelta =
+                Mathf.Abs(
+                    width -
+                    _regionWidth) /
+                Mathf.Max(
+                    0.001f,
+                    _regionWidth);
+
+            float heightRatioDelta =
+                Mathf.Abs(
+                    height -
+                    _regionHeight) /
+                Mathf.Max(
+                    0.001f,
+                    _regionHeight);
+
+            float rollDelta =
+                Mathf.Abs(
+                    Mathf.DeltaAngle(
+                        _regionRollRadians *
+                            Mathf.Rad2Deg,
+                        rollRadiansBottomLeft *
+                            Mathf.Rad2Deg));
+
+            // MediaPipe correction is asynchronous. Keep the current fresh
+            // inference ROI unless the auxiliary result indicates material
+            // translation, size or roll drift. Translation is compared in
+            // pixel space so a 16:9 source cannot bias vertical corrections.
+            if (
+                centerDistancePixels >
+                    Mathf.Max(
+                        12f,
+                        regionSidePixels *
+                        0.20f) ||
+                widthRatioDelta >
+                    0.22f ||
+                heightRatioDelta >
+                    0.22f ||
+                rollDelta >
+                    18f
             )
             {
-                _regionCenter =
-                    centerBottomLeft;
-
-                _regionSize =
-                    size;
-
-                _regionRollRadians =
-                    rollRadiansBottomLeft;
-
-                _consecutiveFailures =
-                    0;
-
-                _anchorRevision++;
+                AdoptExternalAnchor(
+                    centerBottomLeft,
+                    width,
+                    height,
+                    rollRadiansBottomLeft);
             }
+        }
+
+        private void AdoptExternalAnchor(
+            Vector2 centerBottomLeft,
+            float width,
+            float height,
+            float rollRadiansBottomLeft)
+        {
+            _regionCenter =
+                centerBottomLeft;
+
+            _regionWidth =
+                Mathf.Clamp(
+                    width,
+                    0.04f,
+                    2.50f);
+
+            _regionHeight =
+                Mathf.Clamp(
+                    height,
+                    0.04f,
+                    2.50f);
+
+            _regionRollRadians =
+                rollRadiansBottomLeft;
+
+            _hasRegion =
+                true;
+
+            _consecutiveFailures =
+                0;
+
+            _anchorRevision++;
         }
 
         /// <summary>
         /// Compatibility synchronous path.
-        ///
-        /// Kept so older callers still compile. The v2.3 Runner installer moves
-        /// the live hybrid path to TryProcessAsync().
         /// </summary>
         public bool TryProcess(
             Texture source,
@@ -309,67 +769,129 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             out Vector3[] landmarks,
             out Quaternion geometricRotation)
         {
-            landmarks = null;
+            landmarks =
+                null;
+
             geometricRotation =
                 Quaternion.identity;
 
-            if (!_hasRegion || source == null)
+            if (
+                !_hasRegion ||
+                source == null ||
+                _lanes == null ||
+                _lanes.Length == 0 ||
+                _lanes[0].readbackPending
+            )
             {
                 return false;
             }
+
+            Lane lane =
+                _lanes[0];
 
             long started =
                 System.Diagnostics.Stopwatch
                     .GetTimestamp();
 
+            UpdateSourceDimensions(
+                source);
+
             Matrix4x4 cropMatrix =
                 BuildCropMatrix();
 
-            ScheduleModel(
-                source,
-                flipHorizontally,
-                flipVertically,
-                cropMatrix);
-
-            Tensor<float> packedOutput =
-                _worker.PeekOutput(0)
-                as Tensor<float>;
-
-            if (
-                packedOutput == null ||
-                packedOutput.shape.length !=
-                    PackedOutputLength
-            )
+            try
             {
-                RegisterFailure();
+                ScheduleModel(
+                    lane,
+                    source,
+                    flipHorizontally,
+                    flipVertically,
+                    cropMatrix);
+
+                Tensor<float> packedOutput =
+                    lane.worker.PeekOutput(0)
+                    as Tensor<float>;
+
+                if (
+                    packedOutput == null ||
+                    packedOutput.shape.length !=
+                        PackedOutputLength
+                )
+                {
+                    RegisterFailure();
+                    LatestRejectionReason =
+                        DecodeStatus.InvalidOutput.ToString();
+                    return false;
+                }
+
+                using Tensor<float> readableOutput =
+                    packedOutput.ReadbackAndClone();
+
+                DecodeStatus status =
+                    DecodeReadableOutput(
+                        readableOutput,
+                        cropMatrix,
+                        lane.decodedLandmarks,
+                        out float rawPresence,
+                        out float presence,
+                        out geometricRotation);
+
+                LatestRawPresenceLogit =
+                    rawPresence;
+
+                LatestPresence =
+                    presence;
+
+                RecordLatency(
+                    started,
+                    System.Diagnostics.Stopwatch
+                        .GetTimestamp());
+
+                if (status != DecodeStatus.Valid)
+                {
+                    RegisterDecodeFailure(
+                        status);
+
+                    return false;
+                }
+
+                Array.Copy(
+                    lane.decodedLandmarks,
+                    _landmarks,
+                    CompatibleLandmarkCount);
+
+                UpdateRegionFromLandmarks(
+                    _landmarks);
+
+                _consecutiveFailures =
+                    0;
+
+                _completedFrameCount++;
+
+                LatestRejectionReason =
+                    "-";
+
+                landmarks =
+                    _landmarks;
+
+                return true;
+            }
+            catch
+            {
+                RegisterDecodeFailure(
+                    DecodeStatus.Exception);
+
                 return false;
             }
-
-            using Tensor<float> readableOutput =
-                packedOutput.ReadbackAndClone();
-
-            bool valid =
-                DecodeReadableOutput(
-                    readableOutput,
-                    cropMatrix,
-                    true,
-                    out landmarks,
-                    out geometricRotation);
-
-            RecordLatency(started);
-
-            return valid;
         }
 
         /// <summary>
-        /// Non-blocking live path.
+        /// Multi-lane non-blocking live path.
         ///
-        /// One inference/readback is allowed in flight. While it is pending,
-        /// the Runner keeps only its newest camera generation as a one-slot
-        /// mailbox. No old inference queue is allowed to accumulate.
-        ///
-        /// A completed result returns the exact host timestamp belonging to the
-        /// source frame that was scheduled for that inference.
+        /// Each camera generation is scheduled into one free lane. While GPU
+        /// work/readback is in flight, other independent lanes may accept newer
+        /// camera frames. On completion, the newest valid source frame wins.
+        /// Older completed results are consumed but not published.
         /// </summary>
         public bool TryProcessAsync(
             Texture source,
@@ -394,251 +916,418 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             completedSourceHostTicks =
                 0L;
 
-            bool completedValidResult =
+            Completion newestCompletion =
+                default;
+
+            Completion newestValidCompletion =
+                default;
+
+            bool anyNonStaleFailure =
                 false;
 
-            // -------------------------------------------------
-            // Consume first, without blocking.
-            // -------------------------------------------------
+            PollCompletedLanes(
+                ref newestCompletion,
+                ref newestValidCompletion,
+                ref anyNonStaleFailure);
 
-            if (_readbackPending)
+            bool hasValidResult =
+                newestValidCompletion.exists &&
+                newestValidCompletion.valid;
+
+            if (hasValidResult)
             {
+                Lane winner =
+                    _lanes[
+                        newestValidCompletion.laneIndex];
+
+                Array.Copy(
+                    winner.decodedLandmarks,
+                    _landmarks,
+                    CompatibleLandmarkCount);
+
+                geometricRotation =
+                    newestValidCompletion.rotation;
+
+                completedSourceHostTicks =
+                    newestValidCompletion.sourceHostTicks;
+
+                _latestCompletedSourceHostTicks =
+                    newestValidCompletion.sourceHostTicks;
+
+                _latestCompletedArrivalHostTicks =
+                    newestValidCompletion.arrivalHostTicks;
+
+                // Only the newest accepted result from the current anchor may
+                // advance the ROI. Old in-flight crops are never allowed to
+                // pull the current ROI backwards.
+                UpdateRegionFromLandmarks(
+                    _landmarks);
+
+                _consecutiveFailures =
+                    0;
+
+                _completedFrameCount++;
+
+                LatestRejectionReason =
+                    "-";
+
+                landmarks =
+                    _landmarks;
+            }
+            else if (anyNonStaleFailure)
+            {
+                RegisterFailure();
+            }
+
+            if (newestCompletion.exists)
+            {
+                LatestRawPresenceLogit =
+                    newestCompletion.rawPresence;
+
+                LatestPresence =
+                    newestCompletion.presence;
+
                 if (
-                    _pendingOutput != null &&
-                    _pendingOutput.IsReadbackRequestDone()
+                    !hasValidResult &&
+                    newestCompletion.status !=
+                        DecodeStatus.StaleAnchor &&
+                    newestCompletion.status !=
+                        DecodeStatus.StaleGeneration &&
+                    newestCompletion.status !=
+                        DecodeStatus.StaleSource
                 )
                 {
-                    long arrivalHostTicks =
-                        System.Diagnostics.Stopwatch
-                            .GetTimestamp();
-
-                    Matrix4x4 completedCropMatrix =
-                        _pendingCropMatrix;
-
-                    long completedTicks =
-                        _pendingSourceHostTicks;
-
-                    long startedTicks =
-                        _pendingStartedHostTicks;
-
-                    int completedAnchorRevision =
-                        _pendingAnchorRevision;
-
-                    Tensor<float> completedOutput =
-                        _pendingOutput;
-
-                    _readbackPending =
-                        false;
-
-                    _pendingOutput =
-                        null;
-
-                    _pendingSourceHostTicks =
-                        0L;
-
-                    _pendingStartedHostTicks =
-                        0L;
-
-                    _pendingAnchorRevision =
-                        0;
-
-                    try
-                    {
-                        // ReadbackRequest() is already complete, so this copy
-                        // should not wait for GPU execution.
-                        using Tensor<float> readableOutput =
-                            completedOutput
-                                .ReadbackAndClone();
-
-                        completedValidResult =
-                            DecodeReadableOutput(
-                                readableOutput,
-                                completedCropMatrix,
-                                completedAnchorRevision ==
-                                    _anchorRevision,
-                                out landmarks,
-                                out geometricRotation);
-
-                        if (completedValidResult)
-                        {
-                            _latestCompletedSourceHostTicks =
-                                completedTicks;
-
-                            _latestCompletedArrivalHostTicks =
-                                arrivalHostTicks;
-
-                            completedSourceHostTicks =
-                                completedTicks;
-
-                            _completedFrameCount++;
-                        }
-                    }
-                    catch
-                    {
-                        RegisterFailure();
-                        completedValidResult =
-                            false;
-                    }
-
-                    RecordLatency(
-                        startedTicks,
-                        arrivalHostTicks);
-                }
-                else
-                {
-                    if (scheduleLatestSource)
-                    {
-                        _droppedFreshFrameCount++;
-                    }
-
-                    return false;
+                    LatestRejectionReason =
+                        newestCompletion.status.ToString();
                 }
             }
 
-            // -------------------------------------------------
-            // Schedule newest mailbox frame after the previous
-            // output has been consumed.
-            // -------------------------------------------------
-
             if (
                 scheduleLatestSource &&
-                !_readbackPending &&
                 _hasRegion &&
                 source != null
             )
             {
                 scheduledLatestSource =
-                    TryScheduleAsync(
+                    TryScheduleNewestSource(
                         source,
                         flipHorizontally,
                         flipVertically,
                         latestSourceHostTicks);
-            }
 
-            return completedValidResult;
-        }
-
-        /// <summary>
-        /// Packs landmarks and presence on the GPU so the live path crosses the
-        /// GPU/CPU boundary only once.
-        ///
-        /// Output layout:
-        /// 1404 landmark floats followed by one presence float.
-        /// </summary>
-        public static Model BuildSingleReadbackModel(
-            Model source)
-        {
-            if (source == null)
-            {
-                throw new ArgumentNullException(
-                    nameof(source));
-            }
-
-            int landmarkIndex =
-                FindOutputIndex(
-                    source,
-                    LandmarkOutputName);
-
-            int presenceIndex =
-                FindOutputIndex(
-                    source,
-                    PresenceOutputName);
-
-            if (
-                landmarkIndex < 0 ||
-                presenceIndex < 0
-            )
-            {
-                throw new InvalidOperationException(
-                    "Face landmark model does not expose the expected outputs.");
-            }
-
-            FunctionalGraph graph =
-                new FunctionalGraph();
-
-            FunctionalTensor[] inputs =
-                graph.AddInputs(source);
-
-            FunctionalTensor[] outputs =
-                Functional.Forward(
-                    source,
-                    inputs);
-
-            FunctionalTensor landmarks =
-                outputs[landmarkIndex]
-                    .Reshape(
-                        new[]
-                        {
-                            BaseLandmarkCount * 3
-                        });
-
-            FunctionalTensor presence =
-                outputs[presenceIndex]
-                    .Reshape(
-                        new[] { 1 });
-
-            FunctionalTensor packed =
-                Functional.Concat(
-                    new[]
-                    {
-                        landmarks,
-                        presence
-                    },
-                    0);
-
-            return graph.Compile(packed);
-        }
-
-        private static int FindOutputIndex(
-            Model model,
-            string outputName)
-        {
-            for (
-                int i = 0;
-                i < model.outputs.Count;
-                i++
-            )
-            {
-                if (
-                    model.outputs[i].name ==
-                    outputName
-                )
+                if (!scheduledLatestSource)
                 {
-                    return i;
+                    _droppedFreshFrameCount++;
                 }
             }
 
-            return -1;
+            return
+                hasValidResult;
         }
 
-        private bool TryScheduleAsync(
+        private void PollCompletedLanes(
+            ref Completion newestCompletion,
+            ref Completion newestValidCompletion,
+            ref bool anyNonStaleFailure)
+        {
+            if (_lanes == null)
+            {
+                return;
+            }
+
+            for (
+                int i = 0;
+                i < _lanes.Length;
+                i++
+            )
+            {
+                Lane lane =
+                    _lanes[i];
+
+                if (
+                    lane == null ||
+                    !lane.readbackPending ||
+                    lane.pendingOutput == null ||
+                    !lane.pendingOutput.IsReadbackRequestDone()
+                )
+                {
+                    continue;
+                }
+
+                long arrivalHostTicks =
+                    System.Diagnostics.Stopwatch
+                        .GetTimestamp();
+
+                Tensor<float> completedOutput =
+                    lane.pendingOutput;
+
+                Matrix4x4 completedCropMatrix =
+                    lane.pendingCropMatrix;
+
+                long completedSourceTicks =
+                    lane.pendingSourceHostTicks;
+
+                long startedTicks =
+                    lane.pendingStartedHostTicks;
+
+                int completedAnchorRevision =
+                    lane.pendingAnchorRevision;
+
+                int completedGeneration =
+                    lane.pendingTrackerGeneration;
+
+                lane.readbackPending =
+                    false;
+
+                lane.pendingOutput =
+                    null;
+
+                lane.pendingSourceHostTicks =
+                    0L;
+
+                lane.pendingStartedHostTicks =
+                    0L;
+
+                lane.pendingAnchorRevision =
+                    0;
+
+                lane.pendingTrackerGeneration =
+                    0;
+
+                _readbackCompletedFrameCount++;
+
+                Completion completion =
+                    new Completion
+                    {
+                        exists =
+                            true,
+                        laneIndex =
+                            i,
+                        sourceHostTicks =
+                            completedSourceTicks,
+                        arrivalHostTicks =
+                            arrivalHostTicks,
+                        startedHostTicks =
+                            startedTicks,
+                        anchorRevision =
+                            completedAnchorRevision,
+                        trackerGeneration =
+                            completedGeneration
+                    };
+
+                try
+                {
+                    using Tensor<float> readableOutput =
+                        completedOutput
+                            .ReadbackAndClone();
+
+                    DecodeStatus status =
+                        DecodeReadableOutput(
+                            readableOutput,
+                            completedCropMatrix,
+                            lane.decodedLandmarks,
+                            out float rawPresence,
+                            out float presence,
+                            out Quaternion rotation);
+
+                    completion.rawPresence =
+                        rawPresence;
+
+                    completion.presence =
+                        presence;
+
+                    completion.rotation =
+                        rotation;
+
+                    if (
+                        completedGeneration !=
+                            _trackerGeneration
+                    )
+                    {
+                        status =
+                            DecodeStatus.StaleGeneration;
+
+                        _discardedStaleFrameCount++;
+                    }
+                    else if (
+                        completedAnchorRevision !=
+                            _anchorRevision
+                    )
+                    {
+                        status =
+                            DecodeStatus.StaleAnchor;
+
+                        _discardedStaleFrameCount++;
+                    }
+                    else if (
+                        status ==
+                            DecodeStatus.Valid &&
+                        completedSourceTicks >
+                            0L &&
+                        _latestCompletedSourceHostTicks >
+                            0L &&
+                        completedSourceTicks <=
+                            _latestCompletedSourceHostTicks
+                    )
+                    {
+                        // Multi-lane GPU jobs may complete out of order.
+                        // A result older than the latest already-published
+                        // source frame is consumed but never allowed to move
+                        // the avatar backwards in time.
+                        status =
+                            DecodeStatus.StaleSource;
+
+                        _discardedStaleFrameCount++;
+                    }
+
+                    completion.status =
+                        status;
+
+                    completion.valid =
+                        status ==
+                        DecodeStatus.Valid;
+
+                    if (
+                        status ==
+                        DecodeStatus.PresenceLow
+                    )
+                    {
+                        _rejectedPresenceFrameCount++;
+                    }
+                    else if (
+                        status ==
+                            DecodeStatus.InvalidOutput ||
+                        status ==
+                            DecodeStatus.NonFiniteLandmark
+                    )
+                    {
+                        _rejectedInvalidFrameCount++;
+                    }
+
+                    if (
+                        status !=
+                            DecodeStatus.Valid &&
+                        status !=
+                            DecodeStatus.StaleAnchor &&
+                        status !=
+                            DecodeStatus.StaleGeneration &&
+                        status !=
+                            DecodeStatus.StaleSource
+                    )
+                    {
+                        anyNonStaleFailure =
+                            true;
+                    }
+                }
+                catch
+                {
+                    completion.status =
+                        DecodeStatus.Exception;
+
+                    completion.valid =
+                        false;
+
+                    _rejectedInvalidFrameCount++;
+
+                    anyNonStaleFailure =
+                        true;
+                }
+
+                RecordLatency(
+                    startedTicks,
+                    arrivalHostTicks);
+
+                if (
+                    !newestCompletion.exists ||
+                    IsCompletionNewer(
+                        completion,
+                        newestCompletion)
+                )
+                {
+                    newestCompletion =
+                        completion;
+                }
+
+                if (
+                    completion.valid &&
+                    (
+                        !newestValidCompletion.exists ||
+                        IsCompletionNewer(
+                            completion,
+                            newestValidCompletion)
+                    )
+                )
+                {
+                    newestValidCompletion =
+                        completion;
+                }
+            }
+        }
+
+        private static bool IsCompletionNewer(
+            Completion candidate,
+            Completion current)
+        {
+            if (!current.exists)
+            {
+                return true;
+            }
+
+            if (
+                candidate.sourceHostTicks >
+                current.sourceHostTicks
+            )
+            {
+                return true;
+            }
+
+            if (
+                candidate.sourceHostTicks ==
+                    current.sourceHostTicks &&
+                candidate.arrivalHostTicks >
+                    current.arrivalHostTicks
+            )
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool TryScheduleNewestSource(
             Texture source,
             bool flipHorizontally,
             bool flipVertically,
             long sourceHostTicks)
         {
-            if (
-                _readbackPending ||
-                !_hasRegion ||
-                source == null
-            )
+            int laneIndex =
+                FindFreeLane();
+
+            if (laneIndex < 0)
             {
                 return false;
             }
 
+            Lane lane =
+                _lanes[laneIndex];
+
             try
             {
+                UpdateSourceDimensions(
+                    source);
+
                 Matrix4x4 cropMatrix =
                     BuildCropMatrix();
 
                 ScheduleModel(
+                    lane,
                     source,
                     flipHorizontally,
                     flipVertically,
                     cropMatrix);
 
                 Tensor<float> packedOutput =
-                    _worker.PeekOutput(0)
+                    lane.worker.PeekOutput(0)
                     as Tensor<float>;
 
                 if (
@@ -647,55 +1336,75 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                         PackedOutputLength
                 )
                 {
+                    _rejectedInvalidFrameCount++;
                     RegisterFailure();
                     return false;
                 }
 
-                _pendingCropMatrix =
+                lane.pendingCropMatrix =
                     cropMatrix;
 
-                _pendingSourceHostTicks =
+                lane.pendingSourceHostTicks =
                     sourceHostTicks > 0L
                         ? sourceHostTicks
                         : System.Diagnostics.Stopwatch
                             .GetTimestamp();
 
-                _pendingStartedHostTicks =
+                lane.pendingStartedHostTicks =
                     System.Diagnostics.Stopwatch
                         .GetTimestamp();
 
-                _pendingAnchorRevision =
+                lane.pendingAnchorRevision =
                     _anchorRevision;
 
-                _pendingOutput =
+                lane.pendingTrackerGeneration =
+                    _trackerGeneration;
+
+                lane.pendingOutput =
                     packedOutput;
 
-                // This call schedules the GPU->CPU transfer and returns.
-                _pendingOutput.ReadbackRequest();
+                lane.pendingOutput
+                    .ReadbackRequest();
 
-                _readbackPending =
+                lane.readbackPending =
                     true;
 
                 _scheduledFrameCount++;
+
+                _nextLaneIndex =
+                    (
+                        laneIndex +
+                        1
+                    ) %
+                    Mathf.Max(
+                        1,
+                        Mathf.Min(
+                            _schedulingLaneLimit,
+                            _lanes.Length));
 
                 return true;
             }
             catch
             {
-                _pendingOutput =
+                lane.pendingOutput =
                     null;
 
-                _readbackPending =
+                lane.readbackPending =
                     false;
 
-                _pendingSourceHostTicks =
+                lane.pendingSourceHostTicks =
                     0L;
 
-                _pendingStartedHostTicks =
+                lane.pendingStartedHostTicks =
                     0L;
 
-                _pendingAnchorRevision =
+                lane.pendingAnchorRevision =
                     0;
+
+                lane.pendingTrackerGeneration =
+                    0;
+
+                _rejectedInvalidFrameCount++;
 
                 RegisterFailure();
 
@@ -703,7 +1412,52 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             }
         }
 
+        private int FindFreeLane()
+        {
+            if (
+                _lanes == null ||
+                _lanes.Length == 0
+            )
+            {
+                return -1;
+            }
+
+            int laneLimit =
+                Mathf.Clamp(
+                    _schedulingLaneLimit,
+                    1,
+                    _lanes.Length);
+
+            for (
+                int offset = 0;
+                offset < laneLimit;
+                offset++
+            )
+            {
+                int index =
+                    (
+                        _nextLaneIndex +
+                        offset
+                    ) %
+                    laneLimit;
+
+                Lane lane =
+                    _lanes[index];
+
+                if (
+                    lane != null &&
+                    !lane.readbackPending
+                )
+                {
+                    return index;
+                }
+            }
+
+            return -1;
+        }
+
         private void ScheduleModel(
+            Lane lane,
             Texture source,
             bool flipHorizontally,
             bool flipVertically,
@@ -715,65 +1469,94 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     flipVertically) *
                 cropMatrix;
 
-            _cropMaterial.SetMatrix(
+            lane.cropMaterial.SetMatrix(
                 "_Xform",
                 samplingMatrix);
 
+            bool preserveStoredSrgb =
+                QualitySettings.activeColorSpace ==
+                    ColorSpace.Linear &&
+                source.isDataSRGB;
+
+            _inputGammaPreservationActive =
+                preserveStoredSrgb;
+
+            lane.cropMaterial.SetFloat(
+                InputIsSrgbId,
+                preserveStoredSrgb
+                    ? 1f
+                    : 0f);
+
             Graphics.Blit(
                 source,
-                _cropTexture,
-                _cropMaterial,
+                lane.cropTexture,
+                lane.cropMaterial,
                 0);
 
             TextureConverter.ToTensor(
-                _cropTexture,
-                _input,
-                _textureTransform);
+                lane.cropTexture,
+                lane.input,
+                lane.textureTransform);
 
-            _worker.Schedule(_input);
+            lane.worker.Schedule(
+                lane.input);
         }
 
-        private bool DecodeReadableOutput(
+        private DecodeStatus DecodeReadableOutput(
             Tensor<float> readableOutput,
             Matrix4x4 cropMatrix,
-            bool updateRegionFromResult,
-            out Vector3[] landmarks,
+            Vector3[] destination,
+            out float rawPresence,
+            out float presence,
             out Quaternion geometricRotation)
         {
-            landmarks =
-                null;
+            rawPresence =
+                0f;
+
+            presence =
+                0f;
 
             geometricRotation =
                 Quaternion.identity;
 
             if (
                 readableOutput == null ||
+                destination == null ||
+                destination.Length <
+                    CompatibleLandmarkCount ||
                 readableOutput.shape.length !=
                     PackedOutputLength
             )
             {
-                RegisterFailure();
-                return false;
+                return
+                    DecodeStatus.InvalidOutput;
             }
 
-            float rawPresence =
+            rawPresence =
                 readableOutput[
                     BaseLandmarkCount * 3];
 
-            LatestPresence =
+            // KIWI_FACE_FLAG_SIGMOID_V3_2
+            // The face flag is a raw logit. Apply sigmoid unconditionally even
+            // when the raw numeric value happens to lie inside [0, 1].
+            presence =
                 NormalizePresence(
                     rawPresence);
 
             if (
-                !IsFinite(LatestPresence) ||
-                LatestPresence <
+                !IsFinite(presence) ||
+                presence <
                     Mathf.Clamp01(
                         MinimumPresence)
             )
             {
-                RegisterFailure();
-                return false;
+                return
+                    DecodeStatus.PresenceLow;
             }
+
+            float regionZScale =
+                ExtractRegionZScale(
+                    cropMatrix);
 
             for (
                 int i = 0;
@@ -808,88 +1591,230 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 Vector3 point =
                     new Vector3(
                         sourceBottom.x,
-                        1f - sourceBottom.y,
+                        1f -
+                        sourceBottom.y,
                         cropZ *
-                        ExtractRegionSize(
-                            cropMatrix));
+                        regionZScale);
 
                 if (!IsFinite(point))
                 {
-                    RegisterFailure();
-                    return false;
+                    return
+                        DecodeStatus.NonFiniteLandmark;
                 }
 
-                _landmarks[i] =
+                destination[i] =
                     point;
             }
 
             SynthesizeIrisLandmarks(
-                _landmarks);
-
-            if (updateRegionFromResult)
-            {
-                UpdateRegionFromLandmarks(
-                    _landmarks);
-            }
+                destination);
 
             geometricRotation =
                 CalculateGeometricRotation(
-                    _landmarks);
+                    destination);
 
-            _consecutiveFailures =
-                0;
+            if (!IsFinite(geometricRotation))
+            {
+                return
+                    DecodeStatus.InvalidOutput;
+            }
 
-            landmarks =
-                _landmarks;
-
-            return true;
+            return
+                DecodeStatus.Valid;
         }
 
         /// <summary>
-        /// Recover scheduled ROI scale from the affine crop matrix instead of
-        /// using the current ROI, because the current ROI can be updated after a
-        /// later MediaPipe anchor arrives while this async result is in flight.
+        /// Packs landmarks and face-flag logit into one GPU output so each lane
+        /// performs only one GPU-to-CPU readback.
         /// </summary>
-        private static float ExtractRegionSize(
+        public static Model BuildSingleReadbackModel(
+            Model source)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException(
+                    nameof(source));
+            }
+
+            int landmarkIndex =
+                FindOutputIndex(
+                    source,
+                    LandmarkOutputName);
+
+            int presenceIndex =
+                FindOutputIndex(
+                    source,
+                    PresenceOutputName);
+
+            if (
+                landmarkIndex < 0 ||
+                presenceIndex < 0
+            )
+            {
+                throw new InvalidOperationException(
+                    "Face landmark model does not expose the expected outputs.");
+            }
+
+            FunctionalGraph graph =
+                new FunctionalGraph();
+
+            FunctionalTensor[] inputs =
+                graph.AddInputs(
+                    source);
+
+            FunctionalTensor[] outputs =
+                Functional.Forward(
+                    source,
+                    inputs);
+
+            FunctionalTensor landmarks =
+                outputs[
+                    landmarkIndex]
+                    .Reshape(
+                        new[]
+                        {
+                            BaseLandmarkCount *
+                            3
+                        });
+
+            FunctionalTensor presence =
+                outputs[
+                    presenceIndex]
+                    .Reshape(
+                        new[] { 1 });
+
+            FunctionalTensor packed =
+                Functional.Concat(
+                    new[]
+                    {
+                        landmarks,
+                        presence
+                    },
+                    0);
+
+            return
+                graph.Compile(
+                    packed);
+        }
+
+        private static int FindOutputIndex(
+            Model model,
+            string outputName)
+        {
+            for (
+                int i = 0;
+                i < model.outputs.Count;
+                i++
+            )
+            {
+                if (
+                    model.outputs[i].name ==
+                    outputName
+                )
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        /// <summary>
+        /// MediaPipe LandmarkProjectionCalculator scales Z by the projected
+        /// crop X-axis length. Do the same instead of using max(X,Y).
+        /// </summary>
+        private static float ExtractRegionZScale(
             Matrix4x4 cropMatrix)
         {
             Vector3 xAxis =
                 cropMatrix.MultiplyVector(
                     Vector3.right);
 
-            Vector3 yAxis =
-                cropMatrix.MultiplyVector(
-                    Vector3.up);
+            float scale =
+                xAxis.magnitude;
 
-            float size =
-                Mathf.Max(
-                    xAxis.magnitude,
-                    yAxis.magnitude);
-
-            return Mathf.Clamp(
-                size,
-                0.08f,
-                1.40f);
+            return
+                Mathf.Clamp(
+                    scale,
+                    0.02f,
+                    3.0f);
         }
 
+        private void UpdateSourceDimensions(
+            Texture source)
+        {
+            if (source == null)
+            {
+                return;
+            }
+
+            _sourceWidth =
+                Mathf.Max(
+                    1,
+                    source.width);
+
+            _sourceHeight =
+                Mathf.Max(
+                    1,
+                    source.height);
+        }
+
+        /// <summary>
+        /// Crop-local UV -> original source UV.
+        ///
+        /// Rotation is performed in PIXEL space. A rotation performed directly
+        /// in normalized UV space is geometrically wrong on a 16:9 camera and
+        /// turns a pixel-square MediaPipe ROI into a skewed crop.
+        /// </summary>
         private Matrix4x4 BuildCropMatrix()
         {
+            float imageWidth =
+                Mathf.Max(
+                    1f,
+                    _sourceWidth);
+
+            float imageHeight =
+                Mathf.Max(
+                    1f,
+                    _sourceHeight);
+
+            Vector2 centerPixels =
+                new Vector2(
+                    _regionCenter.x *
+                        imageWidth,
+                    _regionCenter.y *
+                        imageHeight);
+
+            Vector2 sizePixels =
+                new Vector2(
+                    _regionWidth *
+                        imageWidth,
+                    _regionHeight *
+                        imageHeight);
+
             return
+                Matrix4x4.Scale(
+                    new Vector3(
+                        1f /
+                            imageWidth,
+                        1f /
+                            imageHeight,
+                        1f)) *
                 Matrix4x4.Translate(
                     new Vector3(
-                        _regionCenter.x,
-                        _regionCenter.y,
+                        centerPixels.x,
+                        centerPixels.y,
                         0f)) *
                 Matrix4x4.Rotate(
                     Quaternion.Euler(
                         0f,
                         0f,
                         _regionRollRadians *
-                        Mathf.Rad2Deg)) *
+                            Mathf.Rad2Deg)) *
                 Matrix4x4.Scale(
                     new Vector3(
-                        _regionSize,
-                        _regionSize,
+                        sizePixels.x,
+                        sizePixels.y,
                         1f)) *
                 Matrix4x4.Translate(
                     new Vector3(
@@ -940,19 +1865,43 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             return matrix;
         }
 
+        /// <summary>
+        /// Recreates MediaPipe's landmark -> ROI policy:
+        /// tight full-landmark bounds -> eye-line rotation -> 1.5x
+        /// square_long in PIXELS.
+        /// </summary>
         private void UpdateRegionFromLandmarks(
             Vector3[] points)
         {
-            float minX =
+            if (
+                points == null ||
+                points.Length <
+                    BaseLandmarkCount
+            )
+            {
+                return;
+            }
+
+            float imageWidth =
+                Mathf.Max(
+                    1f,
+                    _sourceWidth);
+
+            float imageHeight =
+                Mathf.Max(
+                    1f,
+                    _sourceHeight);
+
+            float minXPixels =
                 float.PositiveInfinity;
 
-            float minYBottom =
+            float minYPixelsBottom =
                 float.PositiveInfinity;
 
-            float maxX =
+            float maxXPixels =
                 float.NegativeInfinity;
 
-            float maxYBottom =
+            float maxYPixelsBottom =
                 float.NegativeInfinity;
 
             for (
@@ -964,99 +1913,133 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 Vector3 point =
                     points[i];
 
-                float yBottom =
-                    1f - point.y;
+                if (!IsFinite(point))
+                {
+                    return;
+                }
 
-                minX =
+                float xPixels =
+                    point.x *
+                    imageWidth;
+
+                float yPixelsBottom =
+                    (
+                        1f -
+                        point.y
+                    ) *
+                    imageHeight;
+
+                minXPixels =
                     Mathf.Min(
-                        minX,
-                        point.x);
+                        minXPixels,
+                        xPixels);
 
-                maxX =
+                maxXPixels =
                     Mathf.Max(
-                        maxX,
-                        point.x);
+                        maxXPixels,
+                        xPixels);
 
-                minYBottom =
+                minYPixelsBottom =
                     Mathf.Min(
-                        minYBottom,
-                        yBottom);
+                        minYPixelsBottom,
+                        yPixelsBottom);
 
-                maxYBottom =
+                maxYPixelsBottom =
                     Mathf.Max(
-                        maxYBottom,
-                        yBottom);
+                        maxYPixelsBottom,
+                        yPixelsBottom);
+            }
+
+            float boxWidthPixels =
+                maxXPixels -
+                minXPixels;
+
+            float boxHeightPixels =
+                maxYPixelsBottom -
+                minYPixelsBottom;
+
+            if (
+                boxWidthPixels <=
+                    1f ||
+                boxHeightPixels <=
+                    1f
+            )
+            {
+                return;
             }
 
             Vector2 targetCenter =
                 new Vector2(
-                    (minX + maxX) * 0.5f,
-                    (minYBottom + maxYBottom) * 0.5f);
+                    (
+                        minXPixels +
+                        maxXPixels
+                    ) *
+                    0.5f /
+                    imageWidth,
+                    (
+                        minYPixelsBottom +
+                        maxYPixelsBottom
+                    ) *
+                    0.5f /
+                    imageHeight);
 
-            float targetSize =
+            // MediaPipe RectTransformationCalculator:
+            // scale_x=1.5, scale_y=1.5, square_long=true.
+            float squareSidePixels =
+                Mathf.Max(
+                    boxWidthPixels,
+                    boxHeightPixels) *
+                1.50f;
+
+            float targetWidth =
                 Mathf.Clamp(
-                    Mathf.Max(
-                        maxX - minX,
-                        maxYBottom - minYBottom) *
-                    1.50f,
-                    0.08f,
-                    1.40f);
+                    squareSidePixels /
+                    imageWidth,
+                    0.04f,
+                    2.50f);
 
-            Vector3 eyeA =
-                (
-                    points[33] +
-                    points[133]
-                ) *
-                0.5f;
+            float targetHeight =
+                Mathf.Clamp(
+                    squareSidePixels /
+                    imageHeight,
+                    0.04f,
+                    2.50f);
 
-            Vector3 eyeB =
+            // MediaPipe uses landmark 33 -> 263 as the rotation vector.
+            // Convert the top-left landmark Y convention to the bottom-left
+            // convention used by the Unity crop matrix.
+            float eyeDxPixels =
                 (
-                    points[362] +
-                    points[263]
+                    points[263].x -
+                    points[33].x
                 ) *
-                0.5f;
+                imageWidth;
+
+            float eyeDyPixelsTop =
+                (
+                    points[263].y -
+                    points[33].y
+                ) *
+                imageHeight;
 
             float targetRoll =
                 Mathf.Atan2(
-                    -(eyeB.y - eyeA.y),
-                    eyeB.x - eyeA.x);
+                    -eyeDyPixelsTop,
+                    eyeDxPixels);
 
-            float displacement =
-                Vector2.Distance(
-                    _regionCenter,
-                    targetCenter);
-
-            float response =
-                Mathf.Lerp(
-                    0.38f,
-                    0.94f,
-                    Mathf.InverseLerp(
-                        0.0015f,
-                        0.025f,
-                        displacement));
-
+            // Advance the ROI from the newest accepted source timestamp only.
+            // The multi-lane stale-source guard already prevents time reversal.
             _regionCenter =
-                Vector2.Lerp(
-                    _regionCenter,
-                    targetCenter,
-                    response);
+                targetCenter;
 
-            _regionSize =
-                Mathf.Lerp(
-                    _regionSize,
-                    targetSize,
-                    Mathf.Max(
-                        0.50f,
-                        response));
+            _regionWidth =
+                targetWidth;
+
+            _regionHeight =
+                targetHeight;
 
             _regionRollRadians =
-                Mathf.LerpAngle(
-                    _regionRollRadians *
-                        Mathf.Rad2Deg,
-                    targetRoll *
-                        Mathf.Rad2Deg,
-                    response) *
-                Mathf.Deg2Rad;
+                targetRoll;
         }
 
         private static Quaternion
@@ -1088,10 +2071,12 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     points[152]);
 
             Vector3 right =
-                eyeB - eyeA;
+                eyeB -
+                eyeA;
 
             Vector3 upHint =
-                forehead - chin;
+                forehead -
+                chin;
 
             if (
                 right.sqrMagnitude <
@@ -1100,7 +2085,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     0.0000001f
             )
             {
-                return Quaternion.identity;
+                return
+                    Quaternion.identity;
             }
 
             right.Normalize();
@@ -1116,7 +2102,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     0.0000001f
             )
             {
-                return Quaternion.identity;
+                return
+                    Quaternion.identity;
             }
 
             forward.Normalize();
@@ -1148,9 +2135,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     -point.z);
         }
 
-        private static void
-            SynthesizeIrisLandmarks(
-                Vector3[] points)
+        private static void SynthesizeIrisLandmarks(
+            Vector3[] points)
         {
             Vector3 irisA =
                 (
@@ -1161,11 +2147,20 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 ) *
                 0.25f;
 
-            points[468] = irisA;
-            points[469] = points[33];
-            points[470] = points[159];
-            points[471] = points[133];
-            points[472] = points[145];
+            points[468] =
+                irisA;
+
+            points[469] =
+                points[33];
+
+            points[470] =
+                points[159];
+
+            points[471] =
+                points[133];
+
+            points[472] =
+                points[145];
 
             Vector3 irisB =
                 (
@@ -1176,11 +2171,41 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 ) *
                 0.25f;
 
-            points[473] = irisB;
-            points[474] = points[362];
-            points[475] = points[386];
-            points[476] = points[263];
-            points[477] = points[374];
+            points[473] =
+                irisB;
+
+            points[474] =
+                points[362];
+
+            points[475] =
+                points[386];
+
+            points[476] =
+                points[263];
+
+            points[477] =
+                points[374];
+        }
+
+        private void RegisterDecodeFailure(
+            DecodeStatus status)
+        {
+            LatestRejectionReason =
+                status.ToString();
+
+            if (
+                status ==
+                DecodeStatus.PresenceLow
+            )
+            {
+                _rejectedPresenceFrameCount++;
+            }
+            else
+            {
+                _rejectedInvalidFrameCount++;
+            }
+
+            RegisterFailure();
         }
 
         private void RegisterFailure()
@@ -1188,23 +2213,13 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             _consecutiveFailures++;
 
             if (
-                _consecutiveFailures >= 4
+                _consecutiveFailures >=
+                    4
             )
             {
-                _hasRegion = false;
+                _hasRegion =
+                    false;
             }
-        }
-
-        private void RecordLatency(
-            long started)
-        {
-            long finished =
-                System.Diagnostics.Stopwatch
-                    .GetTimestamp();
-
-            RecordLatency(
-                started,
-                finished);
         }
 
         private void RecordLatency(
@@ -1221,29 +2236,178 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
             float milliseconds =
                 (float)(
-                    (finished - started) *
+                    (
+                        finished -
+                        started
+                    ) *
                     1000.0 /
                     System.Diagnostics.Stopwatch
                         .Frequency);
 
             LatestLatencyMs =
-                LatestLatencyMs > 0f
+                LatestLatencyMs >
+                    0f
                     ? Mathf.Lerp(
                         LatestLatencyMs,
                         milliseconds,
-                        0.20f)
+                        0.16f)
                     : milliseconds;
+
+            UpdateSchedulingLaneBudget();
+        }
+
+        private void UpdateSchedulingLaneBudget()
+        {
+            if (
+                Application.isMobilePlatform ||
+                _lanes == null ||
+                _lanes.Length <= 1 ||
+                LatestLatencyMs <= 0f
+            )
+            {
+                return;
+            }
+
+            // KIWI_V5_0_ADAPTIVE_1_2_3_LANE_BUDGET
+            // Commercial realtime trackers prefer a lower-latency stable cadence
+            // over a deeper queue. One lane is therefore allowed under sustained
+            // severe GPU latency, two lanes are the normal desktop operating
+            // point, and the third preallocated lane is used only after a long
+            // low-latency streak. No buffer is allocated or destroyed here.
+            if (
+                _schedulingLaneLimit >= 2 &&
+                LatestLatencyMs >= ReduceToSingleLaneAboveMs
+            )
+            {
+                _severeLatencyCompletionStreak =
+                    Mathf.Min(
+                        _severeLatencyCompletionStreak + 1,
+                        ReduceToSingleLaneStreak);
+
+                _recoveryLatencyCompletionStreak = 0;
+                _lowLatencyCompletionStreak = 0;
+
+                if (
+                    _severeLatencyCompletionStreak >=
+                        ReduceToSingleLaneStreak
+                )
+                {
+                    _schedulingLaneLimit = 1;
+                    _nextLaneIndex = 0;
+                    _highLatencyCompletionStreak = 0;
+                }
+
+                return;
+            }
+
+            _severeLatencyCompletionStreak = 0;
+
+            if (_schedulingLaneLimit <= 1)
+            {
+                if (LatestLatencyMs <= RecoverSecondLaneBelowMs)
+                {
+                    _recoveryLatencyCompletionStreak =
+                        Mathf.Min(
+                            _recoveryLatencyCompletionStreak + 1,
+                            RecoverSecondLaneStreak);
+
+                    if (
+                        _recoveryLatencyCompletionStreak >=
+                            RecoverSecondLaneStreak
+                    )
+                    {
+                        _schedulingLaneLimit =
+                            Mathf.Min(
+                                2,
+                                _lanes.Length);
+
+                        _recoveryLatencyCompletionStreak = 0;
+                    }
+                }
+                else
+                {
+                    _recoveryLatencyCompletionStreak = 0;
+                }
+
+                return;
+            }
+
+            _recoveryLatencyCompletionStreak = 0;
+
+            if (
+                _schedulingLaneLimit >= 3 &&
+                LatestLatencyMs >= DisableThirdLaneAboveMs
+            )
+            {
+                _highLatencyCompletionStreak =
+                    Mathf.Min(
+                        _highLatencyCompletionStreak + 1,
+                        DisableThirdLaneStreak);
+
+                _lowLatencyCompletionStreak = 0;
+
+                if (
+                    _highLatencyCompletionStreak >=
+                        DisableThirdLaneStreak
+                )
+                {
+                    // Pending work in lane 2 is allowed to finish. We only stop
+                    // assigning new frames to it, so buffers are never reused
+                    // while a GPU readback still owns them.
+                    _schedulingLaneLimit =
+                        Mathf.Min(
+                            2,
+                            _lanes.Length);
+
+                    _nextLaneIndex =
+                        _nextLaneIndex %
+                        Mathf.Max(
+                            1,
+                            _schedulingLaneLimit);
+
+                    _highLatencyCompletionStreak = 0;
+                }
+
+                return;
+            }
+
+            _highLatencyCompletionStreak = 0;
+
+            if (
+                _schedulingLaneLimit == 2 &&
+                _lanes.Length >= 3 &&
+                LatestLatencyMs <= EnableThirdLaneBelowMs
+            )
+            {
+                _lowLatencyCompletionStreak =
+                    Mathf.Min(
+                        _lowLatencyCompletionStreak + 1,
+                        EnableThirdLaneStreak);
+
+                if (
+                    _lowLatencyCompletionStreak >=
+                        EnableThirdLaneStreak
+                )
+                {
+                    _schedulingLaneLimit = 3;
+                    _lowLatencyCompletionStreak = 0;
+                }
+            }
+            else
+            {
+                _lowLatencyCompletionStreak = 0;
+            }
         }
 
         private static float NormalizePresence(
             float value)
         {
             if (
-                value >= 0f &&
-                value <= 1f
+                float.IsNaN(value) ||
+                float.IsInfinity(value)
             )
             {
-                return value;
+                return 0f;
             }
 
             return

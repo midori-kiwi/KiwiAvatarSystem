@@ -1194,10 +1194,16 @@ public class KiwiFaceMotion : MonoBehaviour
         }
 
 
+        // KIWI_V4_7_COMMERCIAL_RIGID_PHASE_AUTHORITY
+        // LateUpdate and onBeforeRender must consume the same
+        // canonical provider selection. Runner-direct access is
+        // compatibility-only when the Hub is not installed.
+        FacePrecisionTrackingData precisionData;
+
         bool hasTracking =
-            runner.TryGetLatestPrecisionTrackingData(
-                out FacePrecisionTrackingData precisionData
-            );
+            KiwiCommercialRigidMotionPolicy.TryGetAuthoritativeFrame(
+                runner,
+                out precisionData);
 
 
         if (
@@ -1272,12 +1278,28 @@ public class KiwiFaceMotion : MonoBehaviour
         }
 
 
-        bool trackingLost =
+        // KIWI_V4_7_CONTINUITY_HOLD_POLICY
+        // A short inference/GPU stall holds the last trusted rigid
+        // pose. Only continuity Lost returns the avatar to neutral.
+        bool fallbackTrackingLost =
             Time.unscaledTime -
             _lastSeenTime
             >
             trackingLostTime;
 
+        KiwiCommercialRigidMotionPolicy.ResolveLossPolicy(
+            fallbackTrackingLost,
+            out bool holdRigidPose,
+            out bool trackingLost);
+
+        if (holdRigidPose)
+        {
+            // Stop extrapolation immediately, but keep the last
+            // rendered root pose. No neutral-return oscillation.
+            ResetPredictionHistory();
+            RenderDisplayPose();
+            return;
+        }
 
         if (trackingLost)
         {
@@ -1292,11 +1314,9 @@ public class KiwiFaceMotion : MonoBehaviour
                 _trackingWasLost = true;
             }
 
-
             ReturnToNeutral(
                 dt
             );
-
 
             return;
         }
@@ -2117,6 +2137,14 @@ public class KiwiFaceMotion : MonoBehaviour
             );
 
 
+        // KIWI_V4_7_HEAD_TRANSLATION_STABILIZATION
+        // Adapt the EXISTING static position corridor from measured
+        // source/cadence quality. No second filter is stacked.
+        float effectiveUltraPositionDeadZone =
+            KiwiCommercialRigidMotionPolicy.GetAdaptivePositionDeadZone(
+                ultraPositionDeadZone,
+                quality);
+
         if (enableUltraLowLatencyTracking && ultraAdaptiveMicroFilter)
         {
             float safeHeight = Mathf.Max(_modelHeight, 0.0001f);
@@ -2128,12 +2156,12 @@ public class KiwiFaceMotion : MonoBehaviour
             if (ultraStaticPoseLock)
             {
                 float lockReleaseError = Mathf.Max(
-                    ultraPositionDeadZone * 2.0f,
-                    ultraPositionDeadZone + 0.000001f
+                    effectiveUltraPositionDeadZone * 2.0f,
+                    effectiveUltraPositionDeadZone + 0.000001f
                 );
                 float candidateRadius = Mathf.Max(
-                    ultraPositionDeadZone * 1.5f,
-                    ultraPositionDeadZone + 0.000001f
+                    effectiveUltraPositionDeadZone * 1.5f,
+                    effectiveUltraPositionDeadZone + 0.000001f
                 );
 
                 if (_ultraPositionStaticLocked)
@@ -2185,7 +2213,7 @@ public class KiwiFaceMotion : MonoBehaviour
 
             bool staticNoise =
                 _rawPositionSpeed < ultraPositionStaticReleaseSpeed &&
-                positionError < ultraPositionDeadZone;
+                positionError < effectiveUltraPositionDeadZone;
 
             if (staticNoise)
             {
@@ -3329,16 +3357,18 @@ public class KiwiFaceMotion : MonoBehaviour
         }
         else
         {
-            // Allow a small amount of useful lead on the second accepted
-            // sample, then use measured direction consistency thereafter.
+            // KIWI_V4_7_PREDICTION_CONSISTENCY_WARMUP
+            // One velocity observation does not establish a motion
+            // direction. Wait for the next accepted sample before
+            // granting extrapolation after startup/reacquisition.
             _predictionRotationConsistency =
-                0.70f;
+                0f;
 
             _predictionPositionConsistency =
-                0.70f;
+                0f;
 
             _predictionScaleConsistency =
-                0.65f;
+                0f;
 
             _hasPredictionRawVelocityHistory =
                 true;
@@ -3557,9 +3587,13 @@ public class KiwiFaceMotion : MonoBehaviour
         }
 
         // Prefer a genuinely newer accepted LandMarker result over prediction.
+        // KIWI_V4_7_BEFORE_RENDER_RIGID_AUTHORITY
+        // Never bypass the Provider Hub at the render boundary.
         if (enableUltraLowLatencyTracking && ultraConsumeLatestSampleBeforeRender && runner != null)
         {
-            if (runner.TryGetLatestPrecisionTrackingData(out FacePrecisionTrackingData latestData) &&
+            if (KiwiCommercialRigidMotionPolicy.TryGetAuthoritativeFrame(
+                    runner,
+                    out FacePrecisionTrackingData latestData) &&
                 IsNewPrecisionFrame(latestData))
             {
                 bool hasPositionGeometry = TryGetPositionGeometry(
@@ -3723,6 +3757,15 @@ public class KiwiFaceMotion : MonoBehaviour
             age + captureAgeCompensation,
             intervalBound
         ) * configuredStrength * qualityWeight;
+
+        // KIWI_V4_7_MEASURED_PREDICTION_GATE
+        // Prediction is a latency-compensation privilege, not a
+        // permanent filter stage. Stale/irregular cadence drives
+        // this allowance toward zero.
+        baseLead *=
+            KiwiCommercialRigidMotionPolicy.GetPredictionAllowance(
+                age);
+
         if (baseLead <= 0.00001f)
         {
             return;

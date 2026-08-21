@@ -1,0 +1,249 @@
+#pragma kernel Match
+
+Texture2D<float4> _Previous;
+Texture2D<float4> _Current;
+
+RWStructuredBuffer<float> _Costs;
+
+int _Width;
+int _Height;
+int _SearchRadius;
+int _GridSize;
+int _PatchStride;
+
+float _ShiftPenalty;
+
+float4 _PrevCenters[3];
+float4 _CurrCenters[3];
+float4 _PatchHalfSizes[3];
+
+
+float KiwiLuma(float3 rgb)
+{
+    return
+        dot(
+            rgb,
+            float3(
+                0.299,
+                0.587,
+                0.114));
+}
+
+
+[numthreads(8, 8, 1)]
+void Match(
+    uint3 id : SV_DispatchThreadID)
+{
+    int part =
+        (int)id.z;
+
+    if (
+        part >= 3 ||
+        id.x >=
+            (uint)_GridSize ||
+        id.y >=
+            (uint)_GridSize
+    )
+    {
+        return;
+    }
+
+    int halfX =
+        (int)round(
+            _PatchHalfSizes[
+                part].x);
+
+    int halfY =
+        (int)round(
+            _PatchHalfSizes[
+                part].y);
+
+    int costIndex =
+        part *
+            _GridSize *
+            _GridSize +
+        (int)id.y *
+            _GridSize +
+        (int)id.x;
+
+    if (
+        halfX < 2 ||
+        halfY < 2
+    )
+    {
+        _Costs[costIndex] =
+            1000000.0;
+
+        return;
+    }
+
+    int shiftX =
+        (int)id.x -
+        _SearchRadius;
+
+    int shiftY =
+        (int)id.y -
+        _SearchRadius;
+
+    float2 imageSize =
+        float2(
+            max(
+                1,
+                _Width - 1),
+            max(
+                1,
+                _Height - 1));
+
+    float2 previousCenter =
+        _PrevCenters[
+            part].xy *
+        imageSize;
+
+    float2 currentCenter =
+        _CurrCenters[
+            part].xy *
+        imageSize;
+
+    int2 previousCenterInt =
+        int2(
+            round(
+                previousCenter));
+
+    int2 currentCenterInt =
+        int2(
+            round(
+                currentCenter));
+
+    int stride =
+        max(
+            1,
+            _PatchStride);
+
+    float cost =
+        0.0;
+
+    float weightSum =
+        0.0;
+
+    for (
+        int y = -halfY;
+        y <= halfY;
+        y += stride
+    )
+    {
+        for (
+            int x = -halfX;
+            x <= halfX;
+            x += stride
+        )
+        {
+            int2 previousPixel =
+                clamp(
+                    previousCenterInt +
+                        int2(
+                            x,
+                            y),
+                    int2(
+                        0,
+                        0),
+                    int2(
+                        _Width - 1,
+                        _Height - 1));
+
+            int2 currentPixel =
+                clamp(
+                    currentCenterInt +
+                        int2(
+                            x +
+                                shiftX,
+                            y +
+                                shiftY),
+                    int2(
+                        0,
+                        0),
+                    int2(
+                        _Width - 1,
+                        _Height - 1));
+
+            float previousLuma =
+                KiwiLuma(
+                    _Previous.Load(
+                        int3(
+                            previousPixel,
+                            0))
+                        .rgb);
+
+            float currentLuma =
+                KiwiLuma(
+                    _Current.Load(
+                        int3(
+                            currentPixel,
+                            0))
+                        .rgb);
+
+            float normalizedX =
+                halfX > 0
+                    ? abs(
+                        (float)x /
+                        (float)halfX)
+                    : 0.0;
+
+            float normalizedY =
+                halfY > 0
+                    ? abs(
+                        (float)y /
+                        (float)halfY)
+                    : 0.0;
+
+            // Keep some surrounding skin/corner information while reducing
+            // the influence of the patch boundary.
+            float weight =
+                1.0 -
+                0.28 *
+                saturate(
+                    max(
+                        normalizedX,
+                        normalizedY));
+
+            // Robust truncated SAD tolerates blinking, lip deformation and
+            // modest exposure changes better than raw pixel difference.
+            float difference =
+                min(
+                    abs(
+                        previousLuma -
+                        currentLuma),
+                    0.20);
+
+            cost +=
+                difference *
+                weight;
+
+            weightSum +=
+                weight;
+        }
+    }
+
+    cost /=
+        max(
+            0.0001,
+            weightSum);
+
+    float shiftLength =
+        length(
+            float2(
+                shiftX,
+                shiftY));
+
+    cost +=
+        _ShiftPenalty *
+        (
+            shiftLength /
+            max(
+                1.0,
+                (float)_SearchRadius)
+        );
+
+    _Costs[
+        costIndex] =
+        cost;
+}

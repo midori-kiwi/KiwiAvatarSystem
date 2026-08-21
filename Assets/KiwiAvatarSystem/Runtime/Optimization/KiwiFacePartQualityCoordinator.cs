@@ -1007,6 +1007,9 @@ public sealed class KiwiFacePartQualityCoordinator : MonoBehaviour
                 current.w));
     }
 
+    // KIWI_FACE_PART_VISIBILITY_LATCH_FIX_V3_3
+    // Side-view visibility belongs to CanvasRenderer alpha only.
+    // Semantic/blink material visibility remains owned by FacePartShapeMask.
     private static void ApplyPartVisibility(
         RawImage image,
         float guardVisibility)
@@ -1016,35 +1019,9 @@ public sealed class KiwiFacePartQualityCoordinator : MonoBehaviour
             return;
         }
 
-        float visibility =
-            Mathf.Clamp01(
-                guardVisibility);
-
-        // Guaranteed final renderer gate.
         image.canvasRenderer.SetAlpha(
-            visibility);
-
-        Material material =
-            image.material;
-
-        if (
-            material == null ||
-            !material.HasProperty(
-                PoseVisibilityId)
-        )
-        {
-            return;
-        }
-
-        float existing =
-            material.GetFloat(
-                PoseVisibilityId);
-
-        material.SetFloat(
-            PoseVisibilityId,
-            Mathf.Min(
-                existing,
-                visibility));
+            Mathf.Clamp01(
+                guardVisibility));
     }
 
     private float FilterVisibility(

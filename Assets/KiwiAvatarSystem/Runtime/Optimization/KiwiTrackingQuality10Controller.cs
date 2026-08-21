@@ -208,7 +208,7 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
     [Header("Inference Engine stability")]
     [Tooltip("Lower than the old 0.45/0.50 threshold because the supplied recording shows valid-looking inference presence around 0.49. Geometry validation and four-failure hysteresis remain active.")]
     [Range(0.20f, 0.60f)]
-    public float inferencePresenceThreshold = 0.32f;
+    public float inferencePresenceThreshold = 0.50f;
 
     [Header("Diagnostics")]
     [SerializeField] private string debugBackend = "-";

@@ -117,7 +117,8 @@ public sealed class KiwiAvatarRuntimePanel : MonoBehaviour
         }
 
         TryLoadTrackingSettings();
-        RefreshTrackingDiagnostics();
+        // KiwiAvatarSystem v4.5.4: compatibility load restored; legacy tracking UI retired
+        // Legacy diagnostics are retired with the legacy tracking UI.
 
         if (!IsMobileRuntime && Input.GetKeyDown(toggleKey))
         {
@@ -317,7 +318,8 @@ public sealed class KiwiAvatarRuntimePanel : MonoBehaviour
         }
         GUILayout.EndScrollView();
 
-        DrawTrackingControls(buttonHeight);
+        // KiwiAvatarSystem v4.5.4: compatibility load restored; legacy tracking UI retired
+        // Legacy Tracking / latency / jitter controls intentionally not rendered.
 
         if (manager.IsExternalAvatarActive)
         {

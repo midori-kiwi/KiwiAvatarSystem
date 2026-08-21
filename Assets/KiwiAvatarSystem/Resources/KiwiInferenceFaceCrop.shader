@@ -3,6 +3,7 @@ Shader "Hidden/KiwiAvatar/InferenceFaceCrop"
     Properties
     {
         _MainTex("Source", 2D) = "black" {}
+        _InputIsSRGB("Input Is sRGB", Float) = 0
     }
 
     SubShader
@@ -20,6 +21,7 @@ Shader "Hidden/KiwiAvatar/InferenceFaceCrop"
 
             sampler2D _MainTex;
             float4x4 _Xform;
+            float _InputIsSRGB;
 
             struct Attributes
             {
@@ -43,8 +45,41 @@ Shader "Hidden/KiwiAvatar/InferenceFaceCrop"
 
             fixed4 frag(Varyings input) : SV_Target
             {
-                float2 sourceUv = mul(_Xform, float4(input.uv, 0, 1)).xy;
-                return tex2D(_MainTex, sourceUv);
+                float2 sourceUv =
+                    mul(
+                        _Xform,
+                        float4(
+                            input.uv,
+                            0,
+                            1))
+                    .xy;
+
+                // MediaPipe ImageToTensorCalculator uses BORDER_REPLICATE by
+                // default. Do not rely on the runtime WebCamTexture wrap mode.
+                sourceUv =
+                    saturate(
+                        sourceUv);
+
+                fixed4 color =
+                    tex2D(
+                        _MainTex,
+                        sourceUv);
+
+                #if !defined(UNITY_COLORSPACE_GAMMA)
+                // In Linear projects, sampling an sRGB source converts it to
+                // linear light before this fragment. The face-landmark model
+                // expects normalized image RGB values, not linearized lighting
+                // values. The destination RT is deliberately Linear, so encode
+                // back to the source's stored sRGB values before ToTensor().
+                if (_InputIsSRGB > 0.5)
+                {
+                    color.rgb =
+                        LinearToGammaSpace(
+                            color.rgb);
+                }
+                #endif
+
+                return color;
             }
             ENDCG
         }

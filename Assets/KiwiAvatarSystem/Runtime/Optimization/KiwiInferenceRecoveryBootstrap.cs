@@ -8,15 +8,16 @@ using UnityEngine.SceneManagement;
 using Mediapipe.Unity.Sample.FaceLandmarkDetection;
 
 /// <summary>
-/// Early hybrid bootstrap and bounded self-recovery.
+/// KiwiAvatarSystem v4.4 Inference Engine health policy.
 ///
-/// v2.6 specifically handles the failure visible in the 21:47 recording:
-/// a tracker object can exist while Inference remains p=0.00 for tens of
-/// seconds. v2.5 treated "tracker exists" as healthy and therefore did not
-/// restart it.
+/// The previous watchdog used changes in accepted presence as its main progress
+/// signal. A tracker can still schedule and complete GPU work while every result
+/// is rejected by the presence/geometry gate, so "p=0.00" did not distinguish
+/// "not running" from "running but rejected".
 ///
-/// v2.6 requires actual inference progress. A stalled tracker is rebuilt and
-/// immediately seeded with the newest MediaPipe anchor.
+/// v3.1 observes scheduled/completed counters from KiwiInferenceFaceTracker,
+/// detects a stuck async readback, and adapts the presence gate only when a
+/// high-quality MediaPipe anchor confirms that a face is actually present.
 /// </summary>
 [DefaultExecutionOrder(-32000)]
 [DisallowMultipleComponent]
@@ -32,49 +33,89 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
     public int mediaPipeInputWidth = 320;
 
     [Range(2f, 15f)]
-    public float mediaPipeAuxRefreshHz = 6f;
+    public float mediaPipeAuxRefreshHz = 5f;
+
+    [Tooltip("After startup, KiwiMatureVTuberSupervisor owns the runtime auxiliary MediaPipe cadence. This bootstrap keeps only the startup fallback value.")]
+    public bool deferRuntimeAuxCadenceToMatureSupervisor = true;
 
     [Range(0.10f, 0.70f)]
-    public float inferencePresenceThreshold = 0.30f;
+    public float inferencePresenceThreshold = 0.50f;
+
+    [Header("Adaptive presence calibration")]
+    public bool adaptPresenceThreshold = true;
+
+    [Range(0.10f, 0.70f)]
+    public float minimumAdaptivePresenceThreshold = 0.45f;
+
+    [Range(0.40f, 1f)]
+    public float minimumMediaPipeQualityForAdaptation = 0.72f;
+
+    [Range(4, 40)]
+    public int completedFramesBeforeAdaptation = 10;
+
+    [Range(0.01f, 0.20f)]
+    public float adaptiveThresholdSafetyMargin = 0.025f;
 
     [Header("Progress watchdog")]
     public bool enableRuntimeRecovery = true;
 
-    [Tooltip("No p>0 result by this time means initialization is stalled even when the tracker object exists.")]
+    [Tooltip("No tracker or no scheduled GPU work after this delay is considered unhealthy.")]
     [Range(1f, 10f)]
-    public float noProgressRestartSeconds = 2.5f;
+    public float noProgressRestartSeconds = 2.0f;
 
-    [Tooltip("A non-primary tracker with unchanged presence for this long is rebuilt once more.")]
-    [Range(2f, 20f)]
-    public float staleProgressRestartSeconds = 6f;
+    [Tooltip("One async readback may not remain pending this long.")]
+    [Range(0.20f, 2f)]
+    public float maximumPendingReadbackSeconds = 0.75f;
 
-    [Tooltip("If Inference is marked primary but its last atomic result is this old, release ownership and recover.")]
-    [Range(0.15f, 1.0f)]
+    [Tooltip("A primary Inference snapshot older than this releases ownership.")]
+    [Range(0.15f, 1f)]
     public float stalePrimaryTimeoutSeconds = 0.35f;
 
-    [Range(2f, 20f)]
-    public float retryIntervalSeconds = 4f;
+    [Range(1f, 20f)]
+    public float retryIntervalSeconds = 3.5f;
 
-    [Range(1, 4)]
-    public int maximumRecoveryAttempts = 3;
+    [Range(1, 6)]
+    public int maximumRecoveryAttempts = 4;
 
     [Header("Diagnostics")]
     [SerializeField] private bool debugModelAssetLoaded;
     [SerializeField] private bool debugCropShaderLoaded;
     [SerializeField] private bool debugTrackerObjectExists;
     [SerializeField] private bool debugAnchorAvailable;
+    [SerializeField] private int debugScheduledFrames;
+    [SerializeField] private int debugReadbackCompletedFrames;
+    [SerializeField] private int debugCompletedFrames;
+    [SerializeField] private int debugDroppedFreshFrames;
+    [SerializeField] private int debugPipelineDepth;
+    [SerializeField] private int debugActiveLanes;
+    [SerializeField] private float debugOldestPendingMs;
+    [SerializeField] private float debugRawPresenceLogit;
+    [SerializeField] private float debugRawPresence;
+    [SerializeField] private float debugLivePresenceThreshold;
+    [SerializeField] private float debugTrackerLatencyMs;
+    [SerializeField] private float debugSecondsSinceCompletion;
     [SerializeField] private int debugRecoveryAttempts;
-    [SerializeField] private float debugLastPresence;
-    [SerializeField] private float debugSecondsWithoutProgress;
     [SerializeField] private string debugStatus = "Waiting";
 
     private FaceLandmarkerRunner _runner;
+    private KiwiTrackingQuality10Controller _motionController;
+    private KiwiMatureVTuberSupervisor _matureSupervisor;
 
     private double _watchStartedRealtime;
-    private double _lastProgressRealtime;
+    private double _lastScheduleProgressRealtime;
+    private double _lastCompletionProgressRealtime;
+    private double _pendingStartedRealtime;
     private double _nextRecoveryRealtime;
+    private double _nextSettingsApplyRealtime;
+    private double _nextRunnerSearchRealtime;
 
-    private float _lastObservedPresence = -1f;
+    private int _lastScheduledFrames = -1;
+    private int _lastCompletedFrames = -1;
+    private int _completedSinceReset;
+
+    private float _presenceEma;
+    private bool _hasPresenceEma;
+
     private int _recoveryAttempts;
 
     private bool _reportedMissingModel;
@@ -96,28 +137,22 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
             new GameObject(RuntimeObjectName);
 
         DontDestroyOnLoad(host);
-
-        host.AddComponent<
-            KiwiInferenceRecoveryBootstrap>();
+        host.AddComponent<KiwiInferenceRecoveryBootstrap>();
     }
 
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
 
-        SceneManager.sceneLoaded -=
-            HandleSceneLoaded;
-
-        SceneManager.sceneLoaded +=
-            HandleSceneLoaded;
+        SceneManager.sceneLoaded -= HandleSceneLoaded;
+        SceneManager.sceneLoaded += HandleSceneLoaded;
 
         ResetWatchdog();
     }
 
     private void OnDestroy()
     {
-        SceneManager.sceneLoaded -=
-            HandleSceneLoaded;
+        SceneManager.sceneLoaded -= HandleSceneLoaded;
     }
 
     private void HandleSceneLoaded(
@@ -128,89 +163,119 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
         _recoveryAttempts = 0;
         _reportedMissingModel = false;
         _reportedMissingShader = false;
+        _nextRunnerSearchRealtime = 0.0;
 
         ResetWatchdog();
-        ApplyEarlySettings();
+        ApplyEarlySettings(true);
     }
 
     private void Start()
     {
         ResetWatchdog();
-        ApplyEarlySettings();
+        ApplyEarlySettings(true);
     }
 
     private void Update()
     {
+        double now =
+            Time.realtimeSinceStartupAsDouble;
+
         if (_runner == null)
         {
-            ApplyEarlySettings();
-
-            if (_runner == null)
+            // Missing dependencies must not trigger a scene-wide object search
+            // every render frame. Retry at a low cadence until the scene has
+            // finished constructing the MediaPipe runner.
+            if (now < _nextRunnerSearchRealtime)
             {
                 return;
             }
+
+            _nextRunnerSearchRealtime =
+                now + 0.25;
+
+            _runner =
+                FindFirstObjectByType<FaceLandmarkerRunner>(
+                    FindObjectsInactive.Include);
+
+            if (_runner == null)
+            {
+                debugStatus =
+                    "Runner not found yet";
+
+                return;
+            }
+
+            _nextRunnerSearchRealtime = 0.0;
         }
 
-        ApplyEarlySettings();
-        UpdateAssetDiagnostics();
-        ObserveInferenceProgress();
+        bool settingsTick =
+            now >=
+            _nextSettingsApplyRealtime;
+
+        if (settingsTick)
+        {
+            _nextSettingsApplyRealtime =
+                now + 0.50;
+
+            ApplyEarlySettings(false);
+        }
+
+        object tracker =
+            GetPrivateField(
+                _runner,
+                "_sentisTracker");
+
+        if (settingsTick)
+        {
+            UpdateAssetDiagnostics(
+                tracker);
+        }
+
+        ObserveTrackerProgress(
+            tracker,
+            now);
+
+        ApplyAdaptivePresenceThreshold(
+            tracker);
 
         if (!enableRuntimeRecovery)
         {
             return;
         }
 
-        double now =
-            Time.realtimeSinceStartupAsDouble;
-
-        if (_runner.InferenceEnginePrimaryActive)
-        {
-            if (!IsPrimaryInferenceStale())
-            {
-                debugStatus =
-                    "Inference Engine primary";
-
-                return;
-            }
-
-            debugStatus =
-                "Primary Inference stale - recovering";
-
-            SetPrivateField(
-                _runner,
-                "_sentisPrimaryActive",
-                false);
-        }
-
-        double noProgressSeconds =
-            now -
-            _lastProgressRealtime;
-
-        debugSecondsWithoutProgress =
-            (float)noProgressSeconds;
-
-        bool neverProducedPresence =
-            _runner.LatestInferenceEnginePresence <=
-                0.001f &&
-            now -
-            _watchStartedRealtime >=
-                noProgressRestartSeconds;
-
-        bool staleNonPrimary =
-            _runner.LatestInferenceEnginePresence >
-                0.001f &&
-            noProgressSeconds >=
-                staleProgressRestartSeconds;
-
         if (
-            !neverProducedPresence &&
-            !staleNonPrimary
+            _runner.InferenceEnginePrimaryActive &&
+            IsPrimaryInferenceFresh()
         )
         {
+            debugStatus =
+                "Inference Engine primary";
+
             return;
         }
 
         if (
+            _runner.InferenceEnginePrimaryActive &&
+            !IsPrimaryInferenceFresh()
+        )
+        {
+            SetPrivateField(
+                _runner,
+                "_sentisPrimaryActive",
+                false);
+
+            debugStatus =
+                "Primary Inference stale";
+        }
+
+        string recoveryReason =
+            GetRecoveryReason(
+                tracker,
+                now);
+
+        if (
+            string.IsNullOrEmpty(
+                recoveryReason) ||
             now <
                 _nextRecoveryRealtime ||
             _recoveryAttempts >=
@@ -227,9 +292,7 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
             retryIntervalSeconds;
 
         TryRecoverInferenceTracker(
-            staleNonPrimary
-                ? "stale non-primary"
-                : "no inference progress");
+            recoveryReason);
     }
 
     private void ResetWatchdog()
@@ -240,36 +303,67 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
         _watchStartedRealtime =
             now;
 
-        _lastProgressRealtime =
+        _lastScheduleProgressRealtime =
             now;
+
+        _lastCompletionProgressRealtime =
+            now;
+
+        _pendingStartedRealtime =
+            0.0;
 
         _nextRecoveryRealtime =
             now +
             noProgressRestartSeconds;
 
-        _lastObservedPresence =
-            -1f;
+        _nextSettingsApplyRealtime =
+            now;
 
-        debugSecondsWithoutProgress =
+        _lastScheduledFrames =
+            -1;
+
+        _lastCompletedFrames =
+            -1;
+
+        _completedSinceReset =
+            0;
+
+        _presenceEma =
             0f;
+
+        _hasPresenceEma =
+            false;
     }
 
-    private void ApplyEarlySettings()
+    private void ApplyEarlySettings(
+        bool force)
     {
         if (_runner == null)
         {
             _runner =
-                FindFirstObjectByType<
-                    FaceLandmarkerRunner>(
+                FindFirstObjectByType<FaceLandmarkerRunner>(
                     FindObjectsInactive.Include);
         }
 
         if (_runner == null)
         {
-            debugStatus =
-                "Runner not found yet";
-
             return;
+        }
+
+        if (_motionController == null)
+        {
+            _motionController =
+                FindFirstObjectByType<
+                    KiwiTrackingQuality10Controller>(
+                    FindObjectsInactive.Include);
+        }
+
+        if (_matureSupervisor == null)
+        {
+            _matureSupervisor =
+                FindFirstObjectByType<
+                    KiwiMatureVTuberSupervisor>(
+                    FindObjectsInactive.Include);
         }
 
         _runner.enableSentisHybridTracking =
@@ -290,115 +384,451 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
         _runner.trackingInputMaxWidth =
             mediaPipeInputWidth;
 
+        // Do not let a camera-specific 480px profile override the measured
+        // 320px auxiliary path from the supplied recording.
         _runner.autoOptimizeCm831 =
             false;
 
-        _runner.sentisMediaPipeRefreshRateHz =
-            mediaPipeAuxRefreshHz;
-
-        _runner.sentisMinimumPresence =
-            inferencePresenceThreshold;
-
-        SynchronizeLiveTrackerThreshold();
-
         if (
-            string.IsNullOrEmpty(
-                debugStatus) ||
-            debugStatus == "Waiting" ||
-            debugStatus ==
-                "Runner not found yet"
+            force ||
+            !deferRuntimeAuxCadenceToMatureSupervisor ||
+            _matureSupervisor == null
         )
         {
-            debugStatus =
-                "Hybrid preset active";
+            _runner.sentisMediaPipeRefreshRateHz =
+                mediaPipeAuxRefreshHz;
         }
-    }
 
-    private void SynchronizeLiveTrackerThreshold()
-    {
-        object tracker =
+        if (
+            force ||
+            !adaptPresenceThreshold
+        )
+        {
+            _runner.sentisMinimumPresence =
+                inferencePresenceThreshold;
+
+            if (_motionController != null)
+            {
+                _motionController.inferencePresenceThreshold =
+                    inferencePresenceThreshold;
+            }
+        }
+        else if (_motionController != null)
+        {
+            // KiwiTrackingQuality10Controller mirrors its serialized threshold
+            // into the live tracker every LateUpdate. Keep both owners on the
+            // same adaptive value so the recovery policy is not undone later
+            // in the frame.
+            _motionController.inferencePresenceThreshold =
+                _runner.sentisMinimumPresence;
+        }
+
+        SynchronizeLiveTrackerThreshold(
             GetPrivateField(
                 _runner,
-                "_sentisTracker");
+                "_sentisTracker"),
+            _runner.sentisMinimumPresence);
+    }
 
+    private void ObserveTrackerProgress(
+        object tracker,
+        double now)
+    {
         if (tracker == null)
+        {
+            debugTrackerObjectExists =
+                false;
+
+            return;
+        }
+
+        debugTrackerObjectExists =
+            true;
+
+        int scheduled =
+            GetPublicIntProperty(
+                tracker,
+                "ScheduledFrameCount");
+
+        int readbackCompleted =
+            GetPublicIntProperty(
+                tracker,
+                "ReadbackCompletedFrameCount");
+
+        // Compatibility fallback for a pre-v3.4 tracker.
+        if (readbackCompleted <= 0)
+        {
+            readbackCompleted =
+                GetPublicIntProperty(
+                    tracker,
+                    "CompletedFrameCount");
+        }
+
+        int completed =
+            GetPublicIntProperty(
+                tracker,
+                "CompletedFrameCount");
+
+        int dropped =
+            GetPublicIntProperty(
+                tracker,
+                "DroppedFreshFrameCount");
+
+        int pipelineDepth =
+            GetPublicIntProperty(
+                tracker,
+                "PipelineDepth");
+
+        int activeLanes =
+            GetPublicIntProperty(
+                tracker,
+                "ActiveLaneCount");
+
+        float oldestPendingMs =
+            GetPublicFloatProperty(
+                tracker,
+                "OldestPendingAgeMs");
+
+        float rawPresenceLogit =
+            GetPublicFloatProperty(
+                tracker,
+                "LatestRawPresenceLogit");
+
+        float presence =
+            GetPublicFloatProperty(
+                tracker,
+                "LatestPresence");
+
+        float latency =
+            GetPublicFloatProperty(
+                tracker,
+                "LatestLatencyMs");
+
+        bool pending =
+            GetPublicBoolProperty(
+                tracker,
+                "IsAsyncReadbackPending");
+
+        debugScheduledFrames =
+            scheduled;
+
+        debugReadbackCompletedFrames =
+            readbackCompleted;
+
+        debugCompletedFrames =
+            completed;
+
+        debugDroppedFreshFrames =
+            dropped;
+
+        debugPipelineDepth =
+            pipelineDepth;
+
+        debugActiveLanes =
+            activeLanes;
+
+        debugOldestPendingMs =
+            oldestPendingMs;
+
+        debugRawPresenceLogit =
+            rawPresenceLogit;
+
+        debugRawPresence =
+            presence;
+
+        debugTrackerLatencyMs =
+            latency;
+
+        if (
+            scheduled !=
+            _lastScheduledFrames
+        )
+        {
+            _lastScheduledFrames =
+                scheduled;
+
+            _lastScheduleProgressRealtime =
+                now;
+        }
+
+        if (
+            readbackCompleted !=
+            _lastCompletedFrames
+        )
+        {
+            if (
+                _lastCompletedFrames >=
+                    0 &&
+                readbackCompleted >
+                    _lastCompletedFrames
+            )
+            {
+                int delta =
+                    readbackCompleted -
+                    _lastCompletedFrames;
+
+                _completedSinceReset +=
+                    delta;
+            }
+
+            _lastCompletedFrames =
+                readbackCompleted;
+
+            _lastCompletionProgressRealtime =
+                now;
+
+            if (
+                IsFinite(presence) &&
+                presence >
+                    0.001f
+            )
+            {
+                _presenceEma =
+                    _hasPresenceEma
+                        ? Mathf.Lerp(
+                            _presenceEma,
+                            presence,
+                            0.16f)
+                        : presence;
+
+                _hasPresenceEma =
+                    true;
+            }
+
+            if (
+                _completedSinceReset >=
+                    12
+            )
+            {
+                _recoveryAttempts =
+                    0;
+            }
+        }
+
+        _pendingStartedRealtime =
+            pending
+                ? now
+                : 0.0;
+
+        debugSecondsSinceCompletion =
+            (float)(
+                now -
+                _lastCompletionProgressRealtime);
+    }
+
+    private void ApplyAdaptivePresenceThreshold(
+        object tracker)
+    {
+        if (
+            !adaptPresenceThreshold ||
+            _runner == null ||
+            tracker == null ||
+            !_hasPresenceEma ||
+            _completedSinceReset <
+                Mathf.Max(
+                    1,
+                    completedFramesBeforeAdaptation)
+        )
+        {
+            debugLivePresenceThreshold =
+                _runner != null
+                    ? _runner.sentisMinimumPresence
+                    : inferencePresenceThreshold;
+
+            return;
+        }
+
+        if (
+            !_runner.TryGetLatestPrecisionTrackingData(
+                out FacePrecisionTrackingData mediaPipeOrCurrent) ||
+            mediaPipeOrCurrent.geometryQuality <
+                minimumMediaPipeQualityForAdaptation
+        )
         {
             return;
         }
 
-        PropertyInfo property =
-            tracker.GetType()
-                .GetProperty(
-                    "MinimumPresence",
-                    BindingFlags.Instance |
-                    BindingFlags.Public);
+        float target =
+            Mathf.Clamp(
+                _presenceEma -
+                adaptiveThresholdSafetyMargin,
+                minimumAdaptivePresenceThreshold,
+                inferencePresenceThreshold);
 
+        // After the v3.2 sigmoid correction this is a true probability.
+        // Never adapt from a stream that is already below the allowed floor.
         if (
-            property != null &&
-            property.CanWrite
+            _presenceEma <
+                minimumAdaptivePresenceThreshold
         )
         {
-            property.SetValue(
-                tracker,
-                inferencePresenceThreshold);
+            target =
+                inferencePresenceThreshold;
         }
-    }
 
-    private void UpdateAssetDiagnostics()
-    {
-        ModelAsset model =
-            Resources.Load<ModelAsset>(
-                "KiwiFaceLandmarkInference");
+        float current =
+            _runner.sentisMinimumPresence;
 
-        Shader shader =
-            Resources.Load<Shader>(
-                "KiwiInferenceFaceCrop");
+        float next =
+            target <
+                current
+                ? Mathf.MoveTowards(
+                    current,
+                    target,
+                    0.015f)
+                : Mathf.MoveTowards(
+                    current,
+                    target,
+                    0.004f);
 
-        debugModelAssetLoaded =
-            model != null;
+        _runner.sentisMinimumPresence =
+            next;
 
-        debugCropShaderLoaded =
-            shader != null;
-
-        debugTrackerObjectExists =
-            GetPrivateField(
-                _runner,
-                "_sentisTracker") != null;
-
-        debugAnchorAvailable =
-            GetPrivateBool(
-                _runner,
-                "_hasLatestSentisAnchor");
-    }
-
-    private void ObserveInferenceProgress()
-    {
-        float presence =
-            _runner != null
-                ? _runner.LatestInferenceEnginePresence
-                : 0f;
-
-        debugLastPresence =
-            presence;
-
-        bool newProgress =
-            presence > 0.001f &&
-            (
-                _lastObservedPresence < 0f ||
-                Mathf.Abs(
-                    presence -
-                    _lastObservedPresence) >
-                    0.002f
-            );
-
-        if (newProgress)
+        if (_motionController != null)
         {
-            _lastProgressRealtime =
-                Time.realtimeSinceStartupAsDouble;
-
-            _lastObservedPresence =
-                presence;
+            _motionController.inferencePresenceThreshold =
+                next;
         }
+
+        SynchronizeLiveTrackerThreshold(
+            tracker,
+            next);
+
+        debugLivePresenceThreshold =
+            next;
+    }
+
+    private string GetRecoveryReason(
+        object tracker,
+        double now)
+    {
+        if (
+            _runner == null ||
+            _runner.LatestFreshSourceRateHz <
+                10f
+        )
+        {
+            return string.Empty;
+        }
+
+        if (tracker == null)
+        {
+            if (
+                now -
+                _watchStartedRealtime >=
+                noProgressRestartSeconds
+            )
+            {
+                return
+                    "tracker missing";
+            }
+
+            return string.Empty;
+        }
+
+        bool hasRegion =
+            GetPublicBoolProperty(
+                tracker,
+                "HasRegion");
+
+        if (!hasRegion)
+        {
+            // MediaPipe has not supplied a trustworthy ROI yet.
+            return string.Empty;
+        }
+
+        if (
+            debugScheduledFrames <=
+                0 &&
+            now -
+                _watchStartedRealtime >=
+                noProgressRestartSeconds
+        )
+        {
+            return
+                "no GPU schedule progress";
+        }
+
+        if (
+            debugScheduledFrames >
+                0 &&
+            now -
+                _lastScheduleProgressRealtime >=
+                noProgressRestartSeconds
+        )
+        {
+            return
+                "GPU scheduling stalled";
+        }
+
+        bool pending =
+            GetPublicBoolProperty(
+                tracker,
+                "IsAsyncReadbackPending");
+
+        float oldestPendingMs =
+            GetPublicFloatProperty(
+                tracker,
+                "OldestPendingAgeMs");
+
+        if (
+            pending &&
+            oldestPendingMs >
+                maximumPendingReadbackSeconds *
+                1000f
+        )
+        {
+            return
+                "async pipeline lane stalled";
+        }
+
+        if (
+            debugScheduledFrames >
+                0 &&
+            debugReadbackCompletedFrames <=
+                0 &&
+            now -
+                _watchStartedRealtime >=
+                noProgressRestartSeconds
+        )
+        {
+            return
+                "no GPU readback completion";
+        }
+
+        return string.Empty;
+    }
+
+    private bool IsPrimaryInferenceFresh()
+    {
+        if (
+            _runner == null ||
+            !_runner.TryGetLatestPrecisionTrackingData(
+                out FacePrecisionTrackingData data) ||
+            !data.isValid ||
+            data.backend !=
+                KiwiTrackingBackend.InferenceEngine ||
+            data.arrivalHostTicks <=
+                0L
+        )
+        {
+            return false;
+        }
+
+        long now =
+            System.Diagnostics.Stopwatch
+                .GetTimestamp();
+
+        double age =
+            (now -
+             data.arrivalHostTicks) /
+            (double)
+            System.Diagnostics.Stopwatch
+                .Frequency;
+
+        return
+            age <=
+            stalePrimaryTimeoutSeconds;
     }
 
     private void TryRecoverInferenceTracker(
@@ -429,7 +859,6 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
                 "Inference model not loaded";
 
             ReportMissingModelOnce();
-
             return;
         }
 
@@ -440,11 +869,12 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
 
             if (!_reportedMissingShader)
             {
-                _reportedMissingShader = true;
+                _reportedMissingShader =
+                    true;
 
                 Debug.LogError(
                     "[Kiwi Inference Recovery] " +
-                    "Resources.Load<Shader>(\"KiwiInferenceFaceCrop\") failed.",
+                    "KiwiInferenceFaceCrop shader could not be loaded.",
                     this);
             }
 
@@ -460,20 +890,10 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
         if (source == null)
         {
             debugStatus =
-                "Waiting for Runner source texture";
+                "Waiting for source texture";
 
             return;
         }
-
-        bool flipX =
-            GetPrivateBool(
-                _runner,
-                "_sentisFlipHorizontally");
-
-        bool flipY =
-            GetPrivateBool(
-                _runner,
-                "_sentisFlipVertically");
 
         MethodInfo initialize =
             typeof(FaceLandmarkerRunner)
@@ -485,20 +905,28 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
         if (initialize == null)
         {
             debugStatus =
-                "InitializeSentisTracker missing";
+                "Runner API mismatch";
 
             Debug.LogError(
                 "[Kiwi Inference Recovery] " +
-                "Runner API is incompatible with the v2.6 recovery layer.",
+                "InitializeSentisTracker was not found.",
                 this);
 
             _recoveryAttempts =
-                Mathf.Max(
-                    _recoveryAttempts,
-                    maximumRecoveryAttempts);
+                maximumRecoveryAttempts;
 
             return;
         }
+
+        bool flipX =
+            GetPrivateBoolField(
+                _runner,
+                "_sentisFlipHorizontally");
+
+        bool flipY =
+            GetPrivateBoolField(
+                _runner,
+                "_sentisFlipVertically");
 
         try
         {
@@ -516,47 +944,44 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
                     flipY
                 });
 
-            SetPrivateField(
-                _runner,
-                "_sentisPublishFailureStreak",
-                0);
-
             ApplyLatestMediaPipeAnchorImmediately();
 
-            _lastObservedPresence =
-                -1f;
+            _lastScheduledFrames =
+                -1;
 
-            _lastProgressRealtime =
+            _lastCompletedFrames =
+                -1;
+
+            _completedSinceReset =
+                0;
+
+            _pendingStartedRealtime =
+                0.0;
+
+            _lastScheduleProgressRealtime =
                 Time.realtimeSinceStartupAsDouble;
 
-            debugTrackerObjectExists =
-                GetPrivateField(
-                    _runner,
-                    "_sentisTracker") != null;
+            _lastCompletionProgressRealtime =
+                _lastScheduleProgressRealtime;
 
             debugStatus =
-                debugTrackerObjectExists
-                    ? "Tracker restarted: " +
-                      reason
-                    : "Restart returned no tracker";
+                "Tracker restarted: " +
+                reason;
 
             Debug.Log(
-                "[Kiwi Inference Recovery] " +
-                "Restarted the Inference Engine tracker (" +
+                "[Kiwi Inference Recovery] Restarted Inference Engine (" +
                 reason +
-                ") and seeded the newest MediaPipe ROI. " +
-                "Inference ms / p= should update within a few camera frames.",
+                ").",
                 this);
         }
         catch (Exception exception)
         {
             debugStatus =
-                "Recovery threw: " +
+                "Recovery failed: " +
                 exception.GetType().Name;
 
             Debug.LogError(
                 "[Kiwi Inference Recovery] " +
-                "Failed to restart tracker: " +
                 exception,
                 this);
         }
@@ -569,13 +994,9 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
                 _runner,
                 "_sentisTracker");
 
-        if (tracker == null)
-        {
-            return;
-        }
-
         if (
-            !GetPrivateBool(
+            tracker == null ||
+            !GetPrivateBoolField(
                 _runner,
                 "_hasLatestSentisAnchor")
         )
@@ -622,7 +1043,6 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
                 true
             });
 
-        // Keep the Runner's "already applied" stamp coherent with the seed.
         object timestamp =
             GetPrivateField(
                 _runner,
@@ -637,39 +1057,54 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
             true;
     }
 
-    private bool IsPrimaryInferenceStale()
+    private void UpdateAssetDiagnostics(
+        object tracker)
     {
-        if (
-            _runner == null ||
-            !_runner.TryGetLatestPrecisionTrackingData(
-                out FacePrecisionTrackingData data))
-        {
-            return true;
-        }
+        debugModelAssetLoaded =
+            Resources.Load<ModelAsset>(
+                "KiwiFaceLandmarkInference") !=
+            null;
 
-        if (
-            data.backend !=
-                KiwiTrackingBackend.InferenceEngine ||
-            data.arrivalHostTicks <= 0L)
-        {
-            return true;
-        }
+        debugCropShaderLoaded =
+            Resources.Load<Shader>(
+                "KiwiInferenceFaceCrop") !=
+            null;
 
-        long nowTicks =
-            System.Diagnostics.Stopwatch
-                .GetTimestamp();
+        debugTrackerObjectExists =
+            tracker != null;
 
-        double ageSeconds =
-            (nowTicks -
-             data.arrivalHostTicks) /
-            (double)
-            System.Diagnostics.Stopwatch.Frequency;
-
-        return
-            ageSeconds >
-            stalePrimaryTimeoutSeconds;
+        debugAnchorAvailable =
+            GetPrivateBoolField(
+                _runner,
+                "_hasLatestSentisAnchor");
     }
 
+    private void SynchronizeLiveTrackerThreshold(
+        object tracker,
+        float threshold)
+    {
+        if (tracker == null)
+        {
+            return;
+        }
+
+        PropertyInfo property =
+            tracker.GetType()
+                .GetProperty(
+                    "MinimumPresence",
+                    BindingFlags.Instance |
+                    BindingFlags.Public);
+
+        if (
+            property != null &&
+            property.CanWrite
+        )
+        {
+            property.SetValue(
+                tracker,
+                threshold);
+        }
+    }
 
     private void ReportMissingModelOnce()
     {
@@ -704,8 +1139,8 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
                     extra =
                         " The ONNX file is only " +
                         bytes +
-                        " bytes, which looks like a Git LFS pointer. " +
-                        "Run `git lfs pull` in the repository and let Unity reimport it.";
+                        " bytes and appears to be a Git LFS pointer. " +
+                        "Run `git lfs pull` in the repository, then let Unity reimport it.";
                 }
                 else
                 {
@@ -728,7 +1163,7 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
 
         Debug.LogError(
             "[Kiwi Inference Recovery] " +
-            "Resources.Load<ModelAsset>(\"KiwiFaceLandmarkInference\") failed." +
+            "KiwiFaceLandmarkInference ModelAsset could not be loaded." +
             extra,
             this);
     }
@@ -755,7 +1190,7 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
                 : null;
     }
 
-    private static bool GetPrivateBool(
+    private static bool GetPrivateBoolField(
         object target,
         string fieldName)
     {
@@ -786,13 +1221,85 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
                     BindingFlags.Instance |
                     BindingFlags.NonPublic);
 
-        if (field == null)
+        if (field != null)
         {
-            return;
+            field.SetValue(
+                target,
+                value);
+        }
+    }
+
+    private static int GetPublicIntProperty(
+        object target,
+        string propertyName)
+    {
+        object value =
+            GetPublicProperty(
+                target,
+                propertyName);
+
+        return
+            value is int integer
+                ? integer
+                : 0;
+    }
+
+    private static float GetPublicFloatProperty(
+        object target,
+        string propertyName)
+    {
+        object value =
+            GetPublicProperty(
+                target,
+                propertyName);
+
+        return
+            value is float number
+                ? number
+                : 0f;
+    }
+
+    private static bool GetPublicBoolProperty(
+        object target,
+        string propertyName)
+    {
+        object value =
+            GetPublicProperty(
+                target,
+                propertyName);
+
+        return
+            value is bool boolean &&
+            boolean;
+    }
+
+    private static object GetPublicProperty(
+        object target,
+        string propertyName)
+    {
+        if (target == null)
+        {
+            return null;
         }
 
-        field.SetValue(
-            target,
-            value);
+        PropertyInfo property =
+            target.GetType()
+                .GetProperty(
+                    propertyName,
+                    BindingFlags.Instance |
+                    BindingFlags.Public);
+
+        return
+            property != null
+                ? property.GetValue(target)
+                : null;
+    }
+
+    private static bool IsFinite(
+        float value)
+    {
+        return
+            !float.IsNaN(value) &&
+            !float.IsInfinity(value);
     }
 }
