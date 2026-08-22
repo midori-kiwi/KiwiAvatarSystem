@@ -173,6 +173,8 @@ public sealed class KiwiModelPrimaryFacePartConstraint : MonoBehaviour
     [SerializeField] private Vector2 debugMouthOffset;
     [SerializeField] private string debugState = "-";
     [SerializeField] private float debugObservationAgeMs;
+    [SerializeField] private int debugCalibrationGeneration;
+    [SerializeField] private int debugProfileGeneration;
 
     private Mediapipe.Unity.Sample.FaceLandmarkDetection.FaceLandmarkerRunner _runner;
     private KiwiDualDomainFaceQuality _dualDomain;
@@ -226,6 +228,11 @@ public sealed class KiwiModelPrimaryFacePartConstraint : MonoBehaviour
     private Vector2 _sumMouth;
     private float _sumCalibrationQuality;
 
+    // v5.1 Phase 7: the neutral solve is model-specific. Partial samples may
+    // never survive a newer ModelFaceParts calibration generation.
+    private int _collectionCalibrationGeneration;
+    private int _profileCalibrationGeneration;
+
     private Vector2 _leftEyeOffset;
     private Vector2 _rightEyeOffset;
     private Vector2 _mouthOffset;
@@ -240,6 +247,12 @@ public sealed class KiwiModelPrimaryFacePartConstraint : MonoBehaviour
 
     public int CalibrationSamples =>
         _calibrationSamples;
+
+    public int ProfileCalibrationGeneration =>
+        _profileCalibrationGeneration;
+
+    public int CollectionCalibrationGeneration =>
+        _collectionCalibrationGeneration;
 
     public bool SurfaceApiAvailable =>
         _surfaceSetter != null;
@@ -532,10 +545,22 @@ public sealed class KiwiModelPrimaryFacePartConstraint : MonoBehaviour
         "Recalibrate Model-Primary Face-Part Constraint")]
     public void Recalibrate()
     {
+        int generation =
+            KiwiCalibrationGeneration.BeginOrJoin(
+                KiwiCalibrationScope.ModelFaceParts,
+                "ModelFacePartsManual");
+
         _profile =
             null;
 
+        _profileCalibrationGeneration =
+            0;
+
+        _collectionCalibrationGeneration =
+            Mathf.Max(1, generation);
+
         ResetCalibrationCollection();
+        ResetSurfaceOffsetsImmediate();
 
         PlayerPrefs.DeleteKey(
             BuildProfileKey());
@@ -550,8 +575,13 @@ public sealed class KiwiModelPrimaryFacePartConstraint : MonoBehaviour
             return false;
         }
 
+        // KIWI_V5_1_PHASE5_CANONICAL_MODEL_PRIMARY_SEMANTIC
+        // Model-primary face-part constraints consume the same semantic snapshot
+        // as Cropper/ShapeMask instead of observing a callback that arrived after
+        // the display-cycle latch.
         bool changed =
-            _runner.TryGetLatestLandmarksIfChanged(
+            KiwiCanonicalTrackingFrame.TryGetSemanticLandmarksIfChanged(
+                _runner,
                 ref _landmarks,
                 _lastTimestamp,
                 out int count,
@@ -894,6 +924,23 @@ public sealed class KiwiModelPrimaryFacePartConstraint : MonoBehaviour
             return;
         }
 
+        if (_collectionCalibrationGeneration <= 0)
+        {
+            _collectionCalibrationGeneration =
+                KiwiCalibrationGeneration.BeginOrJoin(
+                    KiwiCalibrationScope.ModelFaceParts,
+                    "ModelFacePartsAuto");
+        }
+        else if (
+            KiwiCalibrationGeneration.HasScopeChangedSince(
+                _collectionCalibrationGeneration,
+                KiwiCalibrationScope.ModelFaceParts))
+        {
+            ResetCalibrationCollection();
+            _collectionCalibrationGeneration =
+                KiwiCalibrationGeneration.CurrentGeneration;
+        }
+
         if (_calibrationSamples == 0)
         {
             _calibrationStartedRealtime =
@@ -960,6 +1007,17 @@ public sealed class KiwiModelPrimaryFacePartConstraint : MonoBehaviour
             _sumMouth *
             inv;
 
+        if (
+            KiwiCalibrationGeneration.HasScopeChangedSince(
+                _collectionCalibrationGeneration,
+                KiwiCalibrationScope.ModelFaceParts))
+        {
+            ResetCalibrationCollection();
+            _collectionCalibrationGeneration =
+                KiwiCalibrationGeneration.CurrentGeneration;
+            return;
+        }
+
         _profile =
             new ConstraintProfile
             {
@@ -980,6 +1038,23 @@ public sealed class KiwiModelPrimaryFacePartConstraint : MonoBehaviour
                         _sumCalibrationQuality *
                         inv)
             };
+
+        _profileCalibrationGeneration =
+            _collectionCalibrationGeneration;
+
+        if (
+            !KiwiCalibrationGeneration.TryRecordCommit(
+                nameof(KiwiModelPrimaryFacePartConstraint),
+                _profileCalibrationGeneration,
+                KiwiCalibrationScope.ModelFaceParts))
+        {
+            _profile = null;
+            _profileCalibrationGeneration = 0;
+            ResetCalibrationCollection();
+            _collectionCalibrationGeneration =
+                KiwiCalibrationGeneration.CurrentGeneration;
+            return;
+        }
 
         if (saveProfile)
         {
@@ -1635,12 +1710,18 @@ public sealed class KiwiModelPrimaryFacePartConstraint : MonoBehaviour
             {
                 _profile =
                     loaded;
+
+                _profileCalibrationGeneration =
+                    KiwiCalibrationGeneration.CurrentGeneration;
             }
         }
         catch
         {
             _profile =
                 null;
+
+            _profileCalibrationGeneration =
+                0;
         }
     }
 
@@ -1726,6 +1807,12 @@ public sealed class KiwiModelPrimaryFacePartConstraint : MonoBehaviour
 
         debugMouthOffset =
             _mouthOffset;
+
+        debugCalibrationGeneration =
+            KiwiRuntimeGenerationContext.CalibrationGeneration;
+
+        debugProfileGeneration =
+            _profileCalibrationGeneration;
 
         debugObservationAgeMs =
             Mathf.Max(

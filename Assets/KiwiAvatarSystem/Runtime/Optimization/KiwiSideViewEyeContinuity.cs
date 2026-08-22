@@ -42,6 +42,7 @@ public sealed class KiwiSideViewEyeContinuity : MonoBehaviour
     private KiwiFaceMotion _faceMotion;
     private KiwiTrackingProviderHub _trackingHub;
     private FaceLandmarkerRunner _runner;
+    private KiwiAvatarRuntimeManager _runtimeManager;
     private Camera _camera;
 
     [RuntimeInitializeOnLoadMethod(
@@ -95,6 +96,7 @@ public sealed class KiwiSideViewEyeContinuity : MonoBehaviour
         _faceMotion = null;
         _trackingHub = null;
         _runner = null;
+        _runtimeManager = null;
         _camera = null;
 
         RefreshReferences(true);
@@ -107,6 +109,10 @@ public sealed class KiwiSideViewEyeContinuity : MonoBehaviour
         if (
             _cropper == null ||
             _faceMotion == null ||
+            (
+                _runtimeManager != null &&
+                _runtimeManager.IsBusy
+            ) ||
             !HasUsableTracking()
         )
         {
@@ -197,8 +203,12 @@ public sealed class KiwiSideViewEyeContinuity : MonoBehaviour
                     -recoveryResponse *
                     dt));
 
-        protectedEye.canvasRenderer
-            .SetAlpha(
+        // KIWI_V5_1_PHASE4_PRESENTATION_ARBITRATION
+        // Side-view continuity proposes only a near-eye floor. The final
+        // resolver owns CanvasRenderer alpha and hard safety hides still win.
+        KiwiFacePartPresentationResolver
+            .SubmitNearEyeFloor(
+                protectedEye,
                 Mathf.Max(
                     current,
                     next));
@@ -300,36 +310,16 @@ public sealed class KiwiSideViewEyeContinuity : MonoBehaviour
 
     private bool HasUsableTracking()
     {
-        FacePrecisionTrackingData data =
-            default;
-
-        if (_trackingHub != null)
-        {
-            if (
-                _trackingHub.TryGetLatestFrame(
-                    out data,
-                    out _)
-            )
-            {
-                return
-                    data.isValid &&
-                    data.frameId >
-                        0UL;
-            }
-
-            // Side-view visibility must freeze with the authoritative rigid
-            // stream during a short stall. Reading a newer-but-rejected Runner
-            // sample here makes the far eye move while the head itself is held.
-            return false;
-        }
-
+        // KIWI_V5_1_PHASE5_CANONICAL_SIDEVIEW_RIGID
+        // Side-view presentation follows the display-cycle rigid authority. A
+        // callback arriving after the latch cannot move eye visibility alone.
         return
             _runner != null &&
-            _runner.TryGetLatestPrecisionTrackingData(
-                out data) &&
+            KiwiCommercialRigidMotionPolicy.TryGetAuthoritativeFrame(
+                _runner,
+                out FacePrecisionTrackingData data) &&
             data.isValid &&
-            data.frameId >
-                0UL;
+            data.frameId > 0UL;
     }
 
     private void RefreshReferences(
@@ -376,6 +366,17 @@ public sealed class KiwiSideViewEyeContinuity : MonoBehaviour
             _runner =
                 FindFirstObjectByType<
                     FaceLandmarkerRunner>(
+                    FindObjectsInactive.Include);
+        }
+
+        if (
+            force ||
+            _runtimeManager == null
+        )
+        {
+            _runtimeManager =
+                FindFirstObjectByType<
+                    KiwiAvatarRuntimeManager>(
                     FindObjectsInactive.Include);
         }
 

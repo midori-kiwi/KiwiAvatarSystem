@@ -779,6 +779,36 @@ public sealed class KiwiFacePartAnatomyGuard : MonoBehaviour
         debugMouthScaleFactor =
             mouthScaleFactor;
 
+        // KIWI_V5_1_PHASE4_PRESENTATION_ARBITRATION
+        // Anatomy remains the owner of its local surface/scale constraint only.
+        // Report the active reason to the presentation resolver for diagnostics
+        // without taking CanvasRenderer alpha ownership.
+        if (severity > 0.001f && cropper != null)
+        {
+            KiwiFacePartPresentationResolver
+                .SubmitAdvisoryReason(
+                    cropper.mouthImage,
+                    KiwiFacePartPresentationResolver
+                        .Reason.AnatomyConstraint);
+
+            if (debugSurfaceOutlierEye == "Left")
+            {
+                KiwiFacePartPresentationResolver
+                    .SubmitAdvisoryReason(
+                        cropper.leftEyeImage,
+                        KiwiFacePartPresentationResolver
+                            .Reason.AnatomyConstraint);
+            }
+            else if (debugSurfaceOutlierEye == "Right")
+            {
+                KiwiFacePartPresentationResolver
+                    .SubmitAdvisoryReason(
+                        cropper.rightEyeImage,
+                        KiwiFacePartPresentationResolver
+                            .Reason.AnatomyConstraint);
+            }
+        }
+
         if (_mouthMask != null)
         {
             float baseWidth =

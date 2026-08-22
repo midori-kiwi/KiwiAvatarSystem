@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -14,7 +11,7 @@ using Mediapipe.Unity.Sample.FaceLandmarkDetection;
 /// - legacy _PoseVisibility latch values are released;
 /// - a valid near-frontal pose fails open instead of leaving a part hidden;
 /// - blink/semantic opacity is not forced open;
-/// - cached coordinator visibility/surface-normal state is reset on recovery.
+/// - semantic repair is isolated from global/provider/root recovery state.
 /// </summary>
 [DefaultExecutionOrder(1250)]
 [DisallowMultipleComponent]
@@ -79,11 +76,8 @@ public sealed class KiwiFacePartVisibilityRecovery : MonoBehaviour
     private FacePartCropper _cropper;
     private KiwiFaceMotion _faceMotion;
     private KiwiAvatarRuntimeManager _runtimeManager;
-    private KiwiFacePartQualityCoordinator _coordinator;
-    private KiwiTrackingProviderHub _trackingHub;
     private FaceLandmarkerRunner _runner;
 
-    private bool _wasFrontRecoveryActive;
     private int _recoveryCount;
     private FacePartShapeMask[] _shapeMasks;
     private double _allPartsMissingSince = -1.0;
@@ -96,11 +90,6 @@ public sealed class KiwiFacePartVisibilityRecovery : MonoBehaviour
     private bool _leftMaskReady;
     private bool _rightMaskReady;
     private bool _mouthMaskReady;
-
-    private FieldInfo _leftStateField;
-    private FieldInfo _rightStateField;
-    private FieldInfo _mouthStateField;
-    private FieldInfo _surfaceSignsField;
 
     public int RecoveryCount =>
         _recoveryCount;
@@ -207,12 +196,7 @@ public sealed class KiwiFacePartVisibilityRecovery : MonoBehaviour
         _cropper = null;
         _faceMotion = null;
         _runtimeManager = null;
-        _coordinator = null;
-        _trackingHub = null;
         _runner = null;
-
-        _wasFrontRecoveryActive =
-            false;
 
         _allPartsMissingSince = -1.0;
         _nextAllPartsRecoveryRealtime = 0.0;
@@ -261,11 +245,15 @@ public sealed class KiwiFacePartVisibilityRecovery : MonoBehaviour
 
         if (frontRecovery)
         {
-            bool hardHidden =
+            bool leftHardHidden =
                 IsHardHidden(
-                    _cropper.leftEyeImage) ||
+                    _cropper.leftEyeImage);
+
+            bool rightHardHidden =
                 IsHardHidden(
-                    _cropper.rightEyeImage) ||
+                    _cropper.rightEyeImage);
+
+            bool mouthHardHidden =
                 IsHardHidden(
                     _cropper.mouthImage);
 
@@ -278,17 +266,41 @@ public sealed class KiwiFacePartVisibilityRecovery : MonoBehaviour
             RecoverCanvasAlpha(
                 _cropper.mouthImage);
 
+            KiwiRecoveryDomainCoordinator.SemanticComponent
+                recoveredComponents =
+                    KiwiRecoveryDomainCoordinator.SemanticComponent.None;
+
+            if (leftHardHidden)
+            {
+                recoveredComponents |=
+                    KiwiRecoveryDomainCoordinator.SemanticComponent.LeftEye;
+            }
+
+            if (rightHardHidden)
+            {
+                recoveredComponents |=
+                    KiwiRecoveryDomainCoordinator.SemanticComponent.RightEye;
+            }
+
+            if (mouthHardHidden)
+            {
+                recoveredComponents |=
+                    KiwiRecoveryDomainCoordinator.SemanticComponent.Mouth;
+            }
+
             if (
-                hardHidden ||
-                !_wasFrontRecoveryActive
+                recoveredComponents !=
+                    KiwiRecoveryDomainCoordinator.SemanticComponent.None
             )
             {
-                ResetCoordinatorRecoveryState();
+                KiwiRecoveryDomainCoordinator.PulseSemanticRecovery(
+                    recoveredComponents,
+                    KiwiRecoveryDomainCoordinator.SemanticRecoveryReason
+                        .VisibilityLatch,
+                    nameof(KiwiFacePartVisibilityRecovery),
+                    0.35f);
 
-                if (hardHidden)
-                {
-                    _recoveryCount++;
-                }
+                _recoveryCount++;
             }
 
             if (MaskReadinessComplete)
@@ -306,9 +318,6 @@ public sealed class KiwiFacePartVisibilityRecovery : MonoBehaviour
             _allPartsMissingSince = -1.0;
             debugAllPartsMissingRecovery = false;
         }
-
-        _wasFrontRecoveryActive =
-            frontRecovery;
 
         debugMaskReadinessComplete =
             MaskReadinessComplete;
@@ -403,7 +412,15 @@ public sealed class KiwiFacePartVisibilityRecovery : MonoBehaviour
         ReleaseMaskVisibility(_cropper.rightEyeImage);
         ReleaseMaskVisibility(_cropper.mouthImage);
 
-        ResetCoordinatorRecoveryState();
+        KiwiRecoveryDomainCoordinator.PulseSemanticRecovery(
+            KiwiRecoveryDomainCoordinator.SemanticComponent.AllFaceParts |
+            KiwiRecoveryDomainCoordinator.SemanticComponent.Mask,
+            KiwiRecoveryDomainCoordinator.SemanticRecoveryReason
+                .AllPartsMissing |
+            KiwiRecoveryDomainCoordinator.SemanticRecoveryReason
+                .MaskInvalid,
+            nameof(KiwiFacePartVisibilityRecovery),
+            0.75f);
 
         _recoveryCount++;
         debugAllPartsMissingRecovery = true;
@@ -551,10 +568,16 @@ public sealed class KiwiFacePartVisibilityRecovery : MonoBehaviour
             return;
         }
 
+        // KIWI_V5_1_PHASE4_PRESENTATION_ARBITRATION
         // Hide only the presentation renderer. Do not disable the component:
         // Cropper/ShapeMask must keep running so the first valid contour can
-        // automatically reopen the part.
-        image.canvasRenderer.SetAlpha(0f);
+        // automatically reopen the part. The final resolver is the sole
+        // CanvasRenderer alpha writer.
+        KiwiFacePartPresentationResolver
+            .SubmitHardHide(
+                image,
+                KiwiFacePartPresentationResolver
+                    .Reason.MaskNotReady);
     }
 
     private bool IsMaskReady(
@@ -610,41 +633,16 @@ public sealed class KiwiFacePartVisibilityRecovery : MonoBehaviour
 
     private bool HasUsableTracking()
     {
-        FacePrecisionTrackingData data =
-            default;
-
-        if (_trackingHub != null)
-        {
-            if (
-                _trackingHub.TryGetLatestFrame(
-                    out data,
-                    out _)
-            )
-            {
-                return
-                    data.isValid &&
-                    data.frameId > 0UL;
-            }
-
-            // The Hub is the rigid freshness authority. Do not bypass a stale
-            // Hub decision with a direct Runner read just to trigger a visual
-            // recovery; that can reset otherwise-correct held masks during a
-            // short semantic/ML stall.
-            return false;
-        }
-
-        if (
+        // KIWI_V5_1_PHASE5_CANONICAL_RECOVERY_RIGID
+        // Recovery is presentation-only and must never react to a Runner sample
+        // newer than the Root frame latched for this display cycle.
+        return
             _runner != null &&
-            _runner.TryGetLatestPrecisionTrackingData(
-                out data)
-        )
-        {
-            return
-                data.isValid &&
-                data.frameId > 0UL;
-        }
-
-        return false;
+            KiwiCommercialRigidMotionPolicy.TryGetAuthoritativeFrame(
+                _runner,
+                out FacePrecisionTrackingData data) &&
+            data.isValid &&
+            data.frameId > 0UL;
     }
 
     private void RecoverCanvasAlpha(
@@ -683,8 +681,13 @@ public sealed class KiwiFacePartVisibilityRecovery : MonoBehaviour
             next = 1f;
         }
 
-        image.canvasRenderer.SetAlpha(
-            next);
+        // Front recovery is a floor request, not an unconditional show. The
+        // resolver applies it only when no intentional quality/far-eye cap is
+        // suppressing this part.
+        KiwiFacePartPresentationResolver
+            .SubmitRecoveryFloor(
+                image,
+                next);
     }
 
     private bool IsHardHidden(
@@ -731,77 +734,6 @@ public sealed class KiwiFacePartVisibilityRecovery : MonoBehaviour
             1f);
     }
 
-    private void ResetCoordinatorRecoveryState()
-    {
-        if (_coordinator == null)
-        {
-            return;
-        }
-
-        CacheCoordinatorReflection();
-
-        _leftStateField?.SetValue(
-            _coordinator,
-            1f);
-
-        _rightStateField?.SetValue(
-            _coordinator,
-            1f);
-
-        _mouthStateField?.SetValue(
-            _coordinator,
-            1f);
-
-        object signs =
-            _surfaceSignsField != null
-                ? _surfaceSignsField.GetValue(
-                    _coordinator)
-                : null;
-
-        if (signs is IDictionary dictionary)
-        {
-            dictionary.Clear();
-        }
-    }
-
-    private void CacheCoordinatorReflection()
-    {
-        if (
-            _coordinator == null ||
-            _leftStateField != null
-        )
-        {
-            return;
-        }
-
-        Type type =
-            _coordinator.GetType();
-
-        const BindingFlags flags =
-            BindingFlags.Instance |
-            BindingFlags.NonPublic;
-
-        _leftStateField =
-            type.GetField(
-                "_leftEyeVisibilityState",
-                flags);
-
-        _rightStateField =
-            type.GetField(
-                "_rightEyeVisibilityState",
-                flags);
-
-        _mouthStateField =
-            type.GetField(
-                "_mouthVisibilityState",
-                flags);
-
-        _surfaceSignsField =
-            type.GetField(
-                "_surfaceNormalSigns",
-                flags);
-    }
-
     private void RestoreRendererOwnership()
     {
         if (_cropper == null)
@@ -827,9 +759,9 @@ public sealed class KiwiFacePartVisibilityRecovery : MonoBehaviour
             return;
         }
 
-        image.canvasRenderer.SetAlpha(
-            1f);
-
+        // Renderer alpha is intentionally not restored here. Requests are
+        // frame-scoped, so disabling this watchdog automatically relinquishes
+        // its influence while the presentation resolver keeps final ownership.
         ReleasePoseVisibility(
             image);
     }
@@ -891,33 +823,6 @@ public sealed class KiwiFacePartVisibilityRecovery : MonoBehaviour
             _runtimeManager =
                 FindFirstObjectByType<
                     KiwiAvatarRuntimeManager>(
-                    FindObjectsInactive.Include);
-        }
-
-        if (
-            force ||
-            _coordinator == null
-        )
-        {
-            _coordinator =
-                FindFirstObjectByType<
-                    KiwiFacePartQualityCoordinator>(
-                    FindObjectsInactive.Include);
-
-            _leftStateField = null;
-            _rightStateField = null;
-            _mouthStateField = null;
-            _surfaceSignsField = null;
-        }
-
-        if (
-            force ||
-            _trackingHub == null
-        )
-        {
-            _trackingHub =
-                FindFirstObjectByType<
-                    KiwiTrackingProviderHub>(
                     FindObjectsInactive.Include);
         }
 

@@ -209,11 +209,7 @@ public sealed class KiwiCommercialSetupPanel : MonoBehaviour
         }
 
         Rect panel =
-            new Rect(
-                18f,
-                18f,
-                panelWidth,
-                612f);
+            CalculateSetupPanelRect();
 
         GUI.Box(
             panel,
@@ -601,6 +597,100 @@ public sealed class KiwiCommercialSetupPanel : MonoBehaviour
             "Use the on-screen Setup / Telemetry buttons to show or hide panels.\n" +
             "Profiles change existing owners; no extra pose filter is added.",
             _labelStyle);
+    }
+
+    private Rect CalculateSetupPanelRect()
+    {
+        const float margin = 18f;
+        const float panelHeight = 612f;
+        const float topDockClearance = 58f;
+
+        // The runtime model/import controls occupy the left lane in the shipped
+        // scene. Telemetry/comparison diagnostics own the right lane. Setup is
+        // therefore a middle-lane surface instead of another top-left panel.
+        const float leftRuntimeReserve = 500f;
+        const float laneGap = 12f;
+
+        float middleLeft =
+            leftRuntimeReserve + laneGap;
+
+        float rightBoundary =
+            Screen.width - margin;
+
+        if (
+            _telemetry != null &&
+            _telemetry.IsOverlayVisible
+        )
+        {
+            rightBoundary = Mathf.Min(
+                rightBoundary,
+                _telemetry.OverlayRect.x - laneGap);
+        }
+
+        KiwiFrameComparisonOverlay comparison =
+            KiwiFrameComparisonOverlay.Instance;
+
+        if (
+            comparison != null &&
+            comparison.visible
+        )
+        {
+            float comparisonWidth =
+                Mathf.Clamp(comparison.previewWidth, 260f, 560f) + 8f;
+            float comparisonLeft =
+                Screen.width - comparisonWidth - 18f;
+
+            // When telemetry is visible the comparator is vertically stacked,
+            // so the wider/leftmost of the two right-column owners wins.
+            rightBoundary = Mathf.Min(
+                rightBoundary,
+                comparisonLeft - laneGap);
+        }
+
+        float middleWidth =
+            Mathf.Max(1f, rightBoundary - middleLeft);
+
+        float width =
+            Mathf.Min(
+                panelWidth,
+                middleWidth);
+
+        float height =
+            Mathf.Min(
+                panelHeight,
+                Mathf.Max(1f, Screen.height - topDockClearance - margin));
+
+        float x;
+        float y = topDockClearance;
+
+        if (middleWidth >= 220f)
+        {
+            x = middleLeft;
+        }
+        else
+        {
+            // Extremely narrow Game views cannot preserve all three full-width
+            // lanes. Keep Setup inside the available screen and below the dock;
+            // production 1920/2560-wide views always use the middle lane above.
+            width = Mathf.Min(
+                panelWidth,
+                Mathf.Max(1f, Screen.width - margin * 2f));
+            x = Mathf.Clamp(
+                (Screen.width - width) * 0.5f,
+                margin,
+                Mathf.Max(margin, Screen.width - width - margin));
+        }
+
+        y = Mathf.Clamp(
+            y,
+            margin,
+            Mathf.Max(margin, Screen.height - height - margin));
+
+        return new Rect(
+            x,
+            y,
+            width,
+            height);
     }
 
     private void DrawControlDock()

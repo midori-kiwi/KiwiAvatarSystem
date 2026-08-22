@@ -1008,20 +1008,16 @@ public sealed class KiwiFacePartQualityCoordinator : MonoBehaviour
     }
 
     // KIWI_FACE_PART_VISIBILITY_LATCH_FIX_V3_3
-    // Side-view visibility belongs to CanvasRenderer alpha only.
-    // Semantic/blink material visibility remains owned by FacePartShapeMask.
+    // KIWI_V5_1_PHASE4_PRESENTATION_ARBITRATION
+    // Geometry/depth/yaw/swap still resolve here, but CanvasRenderer alpha has
+    // one final writer: KiwiFacePartPresentationResolver.
     private static void ApplyPartVisibility(
         RawImage image,
         float guardVisibility)
     {
-        if (image == null)
-        {
-            return;
-        }
-
-        image.canvasRenderer.SetAlpha(
-            Mathf.Clamp01(
-                guardVisibility));
+        KiwiFacePartPresentationResolver.SubmitQualityCap(
+            image,
+            guardVisibility);
     }
 
     private float FilterVisibility(

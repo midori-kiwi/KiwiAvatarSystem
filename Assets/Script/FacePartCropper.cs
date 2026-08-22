@@ -497,8 +497,12 @@ public class FacePartCropper : MonoBehaviour
         // 最新MediaPipeランドマーク
         // =====================================================
 
+        // KIWI_V5_1_PHASE5_CANONICAL_CROPPER_FRAME
+        // Crop geometry is copied from the same immutable display-cycle
+        // snapshot that KiwiFaceMotion consumes for Root.
         bool hasNewLandmarks =
-            runner.TryGetLatestLandmarksIfChanged(
+            KiwiCanonicalTrackingFrame.TryGetSemanticLandmarksIfChanged(
+                runner,
                 ref _landmarkBuffer,
                 _lastProcessedTimestamp,
                 out int landmarkCount,
@@ -1819,7 +1823,8 @@ public class FacePartCropper : MonoBehaviour
             !compensateMatchedFrameAge ||
             runner == null ||
             _lastProcessedTimestamp < 0 ||
-            !runner.TryGetLatestPrecisionTrackingData(
+            !KiwiCommercialRigidMotionPolicy.TryGetAuthoritativeFrame(
+                runner,
                 out FacePrecisionTrackingData precision
             ) ||
             !precision.hasMatchedSubmissionTiming ||

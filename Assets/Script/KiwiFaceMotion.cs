@@ -239,6 +239,32 @@ public class KiwiFaceMotion : MonoBehaviour
     [Tooltip("Fast correction used only when velocity loses consistency at a stop, acceleration, or reversal.")]
     [Range(45f, 400f)] public float ultraPositionRecoveryResponse = 180f;
 
+    // KIWI_V5_1_PHASE16_FRAME_CONTINUITY_GUARD
+    [Header("Frame-Accurate Sparse-Cadence Continuity")]
+    [Tooltip("Keep accepted samples raw, but prevent one-render pose teleports when tracking cadence is sparse or the provider/timebase just changed.")]
+    public bool enableUltraFrameContinuityGuard = true;
+
+    [Tooltip("Below this measured tracking rate, the existing zero-lag direct display bypass is suppressed and the existing display resampler is used instead.")]
+    [Range(8f, 30f)] public float ultraDirectBypassMinimumTrackingRateHz = 18f;
+
+    [Tooltip("Fraction of a newly accepted correction the display should close before the next expected accepted sample.")]
+    [Range(0.70f, 0.98f)] public float ultraFrameContinuityConvergencePerSample = 0.90f;
+
+    [Tooltip("Render frames that remain protected after a provider/timebase/stale-gap discontinuity.")]
+    [Range(1, 6)] public int ultraFrameContinuityDiscontinuityFrames = 3;
+
+    [Tooltip("Maximum display response while the explicit discontinuity guard is active.")]
+    [Range(8f, 60f)] public float ultraFrameContinuityDiscontinuityResponseCap = 18f;
+
+    [Tooltip("Maximum Root position correction speed while sparse/discontinuous, in avatar body heights per second. High enough for intentional motion, low enough to make one-render teleports impossible.")]
+    [Range(1f, 12f)] public float ultraFrameContinuityMaxPositionSpeedHeightsPerSecond = 6f;
+
+    [Tooltip("Maximum Root angular correction speed while sparse/discontinuous.")]
+    [Range(90f, 720f)] public float ultraFrameContinuityMaxRotationSpeedDegreesPerSecond = 420f;
+
+    [Tooltip("Maximum uniform scale-factor correction speed while sparse/discontinuous.")]
+    [Range(0.25f, 5f)] public float ultraFrameContinuityMaxScaleSpeedPerSecond = 2f;
+
 
     // =========================================================
     // Landmarker Primary Hybrid Precision Tracking
@@ -247,6 +273,19 @@ public class KiwiFaceMotion : MonoBehaviour
     // 同一Timestamp取得 / 低信頼スパイク除外 / 深度融合 /
     // 描画時刻までの短時間Late Predictionだけを追加する。
     // =========================================================
+
+    // KIWI_V5_1_PHASE16_2_MEASURED_CONTINUITY_GUARD
+    // KIWI_V5_1_PHASE16_3_CONTINUITY_APPLY_CONFIRMED
+    [Header("Measured Continuity Emergency Guard")]
+    [Tooltip("If the pending Root target differs by at least this many body heights, route it through the existing continuity resampler instead of allowing a one-render correction.")]
+    [Range(0.05f, 1f)] public float ultraFrameContinuityEmergencyPositionErrorHeights = 0.20f;
+
+    [Tooltip("Angular target error that arms the short continuity guard even when cadence telemetry is temporarily unavailable.")]
+    [Range(5f, 90f)] public float ultraFrameContinuityEmergencyRotationErrorDegrees = 24f;
+
+    [Tooltip("Uniform scale-factor target error that arms the short continuity guard.")]
+    [Range(0.02f, 0.50f)] public float ultraFrameContinuityEmergencyScaleError = 0.10f;
+
 
     [Header("Landmarker Primary Hybrid Precision Tracking")]
 
@@ -770,6 +809,18 @@ public class KiwiFaceMotion : MonoBehaviour
     private bool _calibrated;
     private bool _calibrationStarted;
 
+    // KIWI_V5_1_PHASE7_ROOT_CALIBRATION_GENERATION
+    // The existing Root neutral collection is generation-tagged;
+    // no second pose/calibration owner is introduced.
+    private int _kiwiCalibrationGeneration;
+    private bool _kiwiSuppressCalibrationGenerationAdvance;
+
+    public int RuntimeCalibrationGeneration =>
+        _kiwiCalibrationGeneration;
+
+    public bool IsRuntimeCalibrated =>
+        _calibrated;
+
     private float _calibrationStartTime;
     private int _calibrationSamples;
 
@@ -825,6 +876,16 @@ public class KiwiFaceMotion : MonoBehaviour
     private KiwiTrackingBackend _lastAcceptedBackend =
         KiwiTrackingBackend.Unknown;
 
+    // KIWI_V5_1_PHASE9_PROVIDER_TIMEBASE_GAP
+    // ProviderGeneration catches External->External authority
+    // changes even when backend == Unknown. The timebase epoch and
+    // quality prevent velocity from bridging a clock remap/fallback.
+    private int _kiwiLastAcceptedProviderGeneration;
+    private int _kiwiLastAcceptedTimebaseResetCount;
+    private KiwiTrackingTimestampQuality
+        _kiwiLastAcceptedTimestampQuality =
+            KiwiTrackingTimestampQuality.ArrivalFallback;
+
     private float _lastSeenTime = -100f;
 
     private bool _trackingWasLost = true;
@@ -851,6 +912,16 @@ public class KiwiFaceMotion : MonoBehaviour
     private Vector3 _displayScale = Vector3.one;
     private long _lastDisplayAdvanceHostTicks;
     private Vector3 _renderPositionVelocity;
+
+    // Phase 16: this is a short render-boundary privilege guard,
+    // not a buffered pose history. It only prevents the existing
+    // direct bypass from turning a discontinuity into one-frame Root motion.
+    private int _kiwiFrameContinuityGuardUntilFrame = -1;
+
+    // Phase 16.2 observes accepted-sample arrival cadence locally.
+    // This is timing telemetry only; no pose/sample history is added.
+    private double _kiwiFrameContinuityLastAcceptedRealtime = -1.0;
+    private float _kiwiFrameContinuityObservedAcceptedInterval;
 
 
     // =========================================================
@@ -1292,12 +1363,17 @@ public class KiwiFaceMotion : MonoBehaviour
             out bool holdRigidPose,
             out bool trackingLost);
 
-        if (holdRigidPose)
+                if (holdRigidPose)
         {
-            // Stop extrapolation immediately, but keep the last
-            // rendered root pose. No neutral-return oscillation.
+            // KIWI_V5_1_PHASE16_4_PRESENTATION_HOLD_RESAMPLING
+            // Tracking authority remains held and prediction is reset to zero,
+            // but presentation must keep converging toward the last already-accepted
+            // rigid pose. Freezing the display here created sparse-cadence stair steps.
             ResetPredictionHistory();
-            RenderDisplayPose();
+
+            // No prediction is possible after ResetPredictionHistory(). This only
+            // advances the existing Phase 16 display resampler toward _sample.
+            UpdateAndRenderDisplayPose(dt);
             return;
         }
 
@@ -1355,6 +1431,11 @@ public class KiwiFaceMotion : MonoBehaviour
                 out sampleUsesMatchedSubmissionTiming
             );
 
+        KiwiCommercialRigidMotionPolicy.GetAuthoritativeTimingIdentity(
+            out int kiwiProviderGeneration,
+            out int kiwiTimebaseResetCount,
+            out KiwiTrackingTimestampQuality kiwiTimestampQuality);
+
 
         if (!_calibrated)
         {
@@ -1376,6 +1457,15 @@ public class KiwiFaceMotion : MonoBehaviour
 
             _lastAcceptedBackend =
                 precisionData.backend;
+
+            RecordFrameContinuityAcceptedRealtime();
+
+            _kiwiLastAcceptedProviderGeneration =
+                kiwiProviderGeneration;
+            _kiwiLastAcceptedTimebaseResetCount =
+                kiwiTimebaseResetCount;
+            _kiwiLastAcceptedTimestampQuality =
+                kiwiTimestampQuality;
 
             return true;
         }
@@ -1423,9 +1513,29 @@ public class KiwiFaceMotion : MonoBehaviour
             precisionData.backend != KiwiTrackingBackend.Unknown &&
             precisionData.backend != _lastAcceptedBackend;
 
+        bool timingIdentityChanged =
+            _kiwiLastAcceptedProviderGeneration > 0 &&
+            (
+                kiwiProviderGeneration !=
+                    _kiwiLastAcceptedProviderGeneration ||
+                kiwiTimebaseResetCount !=
+                    _kiwiLastAcceptedTimebaseResetCount ||
+                kiwiTimestampQuality !=
+                    _kiwiLastAcceptedTimestampQuality
+            );
+
+        if (timingIdentityChanged)
+        {
+            // Never calculate velocity across unrelated clocks.
+            // One nominal interval seeds the new identity; the
+            // following real sample restores measured cadence.
+            sampleInterval = 1f / 30f;
+        }
+
 
         bool predictionGap =
             backendChanged ||
+            timingIdentityChanged ||
             sampleInterval >
             Mathf.Max(
                 0.10f,
@@ -1529,6 +1639,15 @@ public class KiwiFaceMotion : MonoBehaviour
 
         if (predictionGap)
         {
+            if (enableUltraFrameContinuityGuard)
+            {
+                _kiwiFrameContinuityGuardUntilFrame =
+                    Mathf.Max(
+                        _kiwiFrameContinuityGuardUntilFrame,
+                        Time.frameCount +
+                        Mathf.Max(1, ultraFrameContinuityDiscontinuityFrames));
+            }
+
             ResetPredictionHistory();
         }
 
@@ -1597,6 +1716,15 @@ public class KiwiFaceMotion : MonoBehaviour
 
         _lastAcceptedBackend =
             precisionData.backend;
+
+        RecordFrameContinuityAcceptedRealtime();
+
+        _kiwiLastAcceptedProviderGeneration =
+            kiwiProviderGeneration;
+        _kiwiLastAcceptedTimebaseResetCount =
+            kiwiTimebaseResetCount;
+        _kiwiLastAcceptedTimestampQuality =
+            kiwiTimestampQuality;
 
 
         _lastMotionSampleTime =
@@ -3881,9 +4009,48 @@ public class KiwiFaceMotion : MonoBehaviour
         Vector3 targetScale,
         float dt)
     {
+        bool kiwiContinuityProtectionReady =
+            enableUltraFrameContinuityGuard &&
+            _displayPoseInitialized &&
+            enableUltraLowLatencyTracking;
+
+        if (kiwiContinuityProtectionReady)
+        {
+            ArmFrameContinuityMagnitudeGuard(
+                targetRotation,
+                targetPosition,
+                targetScale);
+        }
+
+        bool kiwiForceContinuityResampling =
+            kiwiContinuityProtectionReady &&
+            IsFrameContinuityDirectBypassSuppressed();
+
+        if (
+            enableUltraFrameContinuityGuard &&
+            !ultraDisplayRateSmoothing &&
+            !kiwiForceContinuityResampling
+        )
+        {
+            float directTrackingRateHz =
+                GetFrameContinuityMeasuredTrackingRateHz();
+            float directInterval =
+                KiwiFrameContinuityMath.ResolveEffectiveSampleInterval(
+                    _lastAcceptedSampleInterval,
+                    directTrackingRateHz);
+
+            KiwiFrameContinuityDiagnostics.Report(
+                true,
+                false,
+                false,
+                directTrackingRateHz,
+                directInterval,
+                0f);
+        }
+
         if (!_displayPoseInitialized ||
             !enableUltraLowLatencyTracking ||
-            !ultraDisplayRateSmoothing)
+            (!ultraDisplayRateSmoothing && !kiwiForceContinuityResampling))
         {
             _displayRotation = targetRotation;
             _displayPosition = targetPosition;
@@ -3894,6 +4061,10 @@ public class KiwiFaceMotion : MonoBehaviour
 
         dt = Mathf.Clamp(dt, 0f, 0.05f);
 
+        Quaternion kiwiPreviousDisplayRotation = _displayRotation;
+        Vector3 kiwiPreviousDisplayPosition = _displayPosition;
+        Vector3 kiwiPreviousDisplayScale = _displayScale;
+
         bool positionHandled = ApplyZeroLagMotionTarget(
             targetRotation,
             targetPosition,
@@ -3903,6 +4074,49 @@ public class KiwiFaceMotion : MonoBehaviour
 
         float baseResponse = Mathf.Max(1f, ultraDisplaySmoothingResponse);
         float fastResponse = Mathf.Max(baseResponse, ultraDisplayFastResponse);
+
+        float kiwiTrackingRateHz = GetFrameContinuityMeasuredTrackingRateHz();
+        float kiwiContinuityInterval =
+            KiwiFrameContinuityMath.ResolveEffectiveSampleInterval(
+                _lastAcceptedSampleInterval,
+                kiwiTrackingRateHz);
+
+        bool kiwiDiscontinuityGuard =
+            enableUltraFrameContinuityGuard &&
+            Time.frameCount <= _kiwiFrameContinuityGuardUntilFrame;
+
+        bool kiwiSparseCadence =
+            enableUltraFrameContinuityGuard &&
+            KiwiFrameContinuityMath.IsSparseCadence(
+                kiwiContinuityInterval,
+                ultraDirectBypassMinimumTrackingRateHz);
+
+        bool kiwiSuppressDirectBypass =
+            kiwiDiscontinuityGuard ||
+            kiwiSparseCadence;
+
+        float kiwiResponseCap = 0f;
+
+        if (kiwiSuppressDirectBypass)
+        {
+            kiwiResponseCap =
+                KiwiFrameContinuityMath.CalculateResponseCap(
+                    kiwiContinuityInterval,
+                    ultraFrameContinuityConvergencePerSample,
+                    kiwiDiscontinuityGuard,
+                    ultraFrameContinuityDiscontinuityResponseCap);
+
+            baseResponse = Mathf.Min(baseResponse, kiwiResponseCap);
+            fastResponse = Mathf.Min(fastResponse, kiwiResponseCap);
+        }
+
+        KiwiFrameContinuityDiagnostics.Report(
+            enableUltraFrameContinuityGuard,
+            kiwiSuppressDirectBypass,
+            kiwiDiscontinuityGuard,
+            kiwiTrackingRateHz,
+            kiwiContinuityInterval,
+            kiwiResponseCap);
 
         float rotationError = Quaternion.Angle(_displayRotation, targetRotation);
         float rotationWeight = Mathf.Sqrt(Mathf.InverseLerp(0.15f, 12f, rotationError));
@@ -3944,6 +4158,15 @@ public class KiwiFaceMotion : MonoBehaviour
             targetScale,
             ExpFactor(scaleResponse, dt)
         );
+
+        if (kiwiSuppressDirectBypass)
+        {
+            ApplyFrameContinuityStepCaps(
+                kiwiPreviousDisplayRotation,
+                kiwiPreviousDisplayPosition,
+                kiwiPreviousDisplayScale,
+                dt);
+        }
     }
 
     private bool ApplyZeroLagMotionTarget(
@@ -3954,7 +4177,8 @@ public class KiwiFaceMotion : MonoBehaviour
     {
         if (
             !ultraDirectDisplayDuringMotion ||
-            !_displayPoseInitialized
+            !_displayPoseInitialized ||
+            IsFrameContinuityDirectBypassSuppressed()
         )
         {
             return false;
@@ -4054,6 +4278,164 @@ public class KiwiFaceMotion : MonoBehaviour
         }
 
         return positionHandled;
+    }
+
+    private float GetFrameContinuityMeasuredTrackingRateHz()
+    {
+        float acceptedInterval = Mathf.Max(
+            _lastAcceptedSampleInterval,
+            _kiwiFrameContinuityObservedAcceptedInterval);
+
+        float acceptedRateHz =
+            acceptedInterval > 0.0001f
+                ? 1f / acceptedInterval
+                : 0f;
+
+        if (_lastAcceptedBackend != KiwiTrackingBackend.Unknown)
+        {
+            float runnerRateHz = PrecisionTrackingRateHz;
+            if (runnerRateHz > 0.5f && acceptedRateHz > 0.5f)
+            {
+                return Mathf.Min(runnerRateHz, acceptedRateHz);
+            }
+
+            if (runnerRateHz > 0.5f)
+            {
+                return runnerRateHz;
+            }
+        }
+
+        return acceptedRateHz;
+    }
+
+    private void RecordFrameContinuityAcceptedRealtime()
+    {
+        if (!enableUltraFrameContinuityGuard)
+        {
+            return;
+        }
+
+        double now = Time.realtimeSinceStartupAsDouble;
+
+        if (
+            _kiwiFrameContinuityLastAcceptedRealtime >= 0.0 &&
+            now > _kiwiFrameContinuityLastAcceptedRealtime
+        )
+        {
+            float interval = (float)(
+                now - _kiwiFrameContinuityLastAcceptedRealtime);
+
+            if (interval >= 1f / 240f && interval <= 0.75f)
+            {
+                _kiwiFrameContinuityObservedAcceptedInterval =
+                    Mathf.Clamp(interval, 1f / 240f, 0.50f);
+            }
+        }
+
+        _kiwiFrameContinuityLastAcceptedRealtime = now;
+    }
+
+    private void ArmFrameContinuityMagnitudeGuard(
+        Quaternion targetRotation,
+        Vector3 targetPosition,
+        Vector3 targetScale)
+    {
+        if (
+            !enableUltraFrameContinuityGuard ||
+            !_displayPoseInitialized
+        )
+        {
+            return;
+        }
+
+        float safeHeight = Mathf.Max(_modelHeight, 0.0001f);
+        float positionErrorHeights =
+            Vector3.Distance(_displayPosition, targetPosition) / safeHeight;
+        float rotationErrorDegrees =
+            Quaternion.Angle(_displayRotation, targetRotation);
+        float displayScaleFactor = SafeScaleRatio(
+            _displayScale.x,
+            _baseScale.x);
+        float targetScaleFactor = SafeScaleRatio(
+            targetScale.x,
+            _baseScale.x);
+        float scaleError = Mathf.Abs(
+            displayScaleFactor - targetScaleFactor);
+
+        bool largeCorrection =
+            positionErrorHeights >=
+                Mathf.Max(0.01f, ultraFrameContinuityEmergencyPositionErrorHeights) ||
+            rotationErrorDegrees >=
+                Mathf.Max(1f, ultraFrameContinuityEmergencyRotationErrorDegrees) ||
+            scaleError >=
+                Mathf.Max(0.005f, ultraFrameContinuityEmergencyScaleError);
+
+        if (!largeCorrection)
+        {
+            return;
+        }
+
+        _kiwiFrameContinuityGuardUntilFrame =
+            Mathf.Max(
+                _kiwiFrameContinuityGuardUntilFrame,
+                Time.frameCount +
+                Mathf.Max(1, ultraFrameContinuityDiscontinuityFrames));
+    }
+
+    private void ApplyFrameContinuityStepCaps(
+        Quaternion previousRotation,
+        Vector3 previousPosition,
+        Vector3 previousScale,
+        float dt)
+    {
+        float safeDt = Mathf.Clamp(dt, 0f, 0.05f);
+        float safeHeight = Mathf.Max(_modelHeight, 0.0001f);
+
+        _displayRotation = Quaternion.RotateTowards(
+            previousRotation,
+            _displayRotation,
+            Mathf.Max(0f, ultraFrameContinuityMaxRotationSpeedDegreesPerSecond) * safeDt);
+
+        _displayPosition = Vector3.MoveTowards(
+            previousPosition,
+            _displayPosition,
+            safeHeight *
+            Mathf.Max(0f, ultraFrameContinuityMaxPositionSpeedHeightsPerSecond) *
+            safeDt);
+
+        float previousScaleFactor = SafeScaleRatio(
+            previousScale.x,
+            _baseScale.x);
+        float nextScaleFactor = SafeScaleRatio(
+            _displayScale.x,
+            _baseScale.x);
+        float boundedScaleFactor = Mathf.MoveTowards(
+            previousScaleFactor,
+            nextScaleFactor,
+            Mathf.Max(0f, ultraFrameContinuityMaxScaleSpeedPerSecond) * safeDt);
+        _displayScale = _baseScale * boundedScaleFactor;
+    }
+
+    private bool IsFrameContinuityDirectBypassSuppressed()
+    {
+        if (!enableUltraFrameContinuityGuard)
+        {
+            return false;
+        }
+
+        float interval =
+            KiwiFrameContinuityMath.ResolveEffectiveSampleInterval(
+                _lastAcceptedSampleInterval,
+                GetFrameContinuityMeasuredTrackingRateHz());
+
+        bool discontinuityGuard =
+            Time.frameCount <= _kiwiFrameContinuityGuardUntilFrame;
+
+        return
+            discontinuityGuard ||
+            KiwiFrameContinuityMath.IsSparseCadence(
+                interval,
+                ultraDirectBypassMinimumTrackingRateHz);
     }
 
     private void RenderDisplayPose()
@@ -5708,6 +6090,13 @@ public class KiwiFaceMotion : MonoBehaviour
     [ContextMenu("Recalibrate")]
     public void BeginCalibration()
     {
+        _kiwiCalibrationGeneration =
+            _kiwiSuppressCalibrationGenerationAdvance
+                ? KiwiCalibrationGeneration.CurrentGeneration
+                : KiwiCalibrationGeneration.BeginOrJoin(
+                    KiwiCalibrationScope.RootPose,
+                    "RootPose");
+
         _calibrated =
             false;
 
@@ -5822,12 +6211,44 @@ public class KiwiFaceMotion : MonoBehaviour
     }
 
 
+    private void RestartCalibrationForCurrentGeneration()
+    {
+        _kiwiSuppressCalibrationGenerationAdvance = true;
+
+        try
+        {
+            BeginCalibration();
+        }
+        finally
+        {
+            _kiwiSuppressCalibrationGenerationAdvance = false;
+        }
+
+        _kiwiCalibrationGeneration =
+            KiwiCalibrationGeneration.CurrentGeneration;
+    }
+
+
     private void AddCalibrationSample(
         Vector2 center,
         FacePrecisionTrackingData precisionData,
         bool hasPositionGeometry,
         PositionGeometry positionGeometry)
     {
+        if (_kiwiCalibrationGeneration <= 0)
+        {
+            _kiwiCalibrationGeneration =
+                KiwiCalibrationGeneration.CurrentGeneration;
+        }
+        else if (
+            KiwiCalibrationGeneration.HasScopeChangedSince(
+                _kiwiCalibrationGeneration,
+                KiwiCalibrationScope.RootPose))
+        {
+            RestartCalibrationForCurrentGeneration();
+            return;
+        }
+
         float eyeSpan =
             precisionData.eyeSpan2D;
 
@@ -6027,6 +6448,15 @@ public class KiwiFaceMotion : MonoBehaviour
 
     private void FinishCalibration()
     {
+        if (
+            KiwiCalibrationGeneration.HasScopeChangedSince(
+                _kiwiCalibrationGeneration,
+                KiwiCalibrationScope.RootPose))
+        {
+            RestartCalibrationForCurrentGeneration();
+            return;
+        }
+
         _hasNeutralPositionGeometry =
             _positionGeometrySamples >= 3
             &&
@@ -6049,6 +6479,16 @@ public class KiwiFaceMotion : MonoBehaviour
                 virtualNeckExtension;
         }
 
+
+        if (
+            !KiwiCalibrationGeneration.TryRecordCommit(
+                nameof(KiwiFaceMotion),
+                _kiwiCalibrationGeneration,
+                KiwiCalibrationScope.RootPose))
+        {
+            RestartCalibrationForCurrentGeneration();
+            return;
+        }
 
         _calibrated =
             true;

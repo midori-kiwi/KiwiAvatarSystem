@@ -77,6 +77,8 @@ public sealed class KiwiActorFaceCalibration : MonoBehaviour
     [SerializeField] private float debugSuggestedCloseStart;
     [SerializeField] private float debugSuggestedCloseFull;
     [SerializeField] private float debugCalibrationQuality;
+    [SerializeField] private int debugCalibrationGeneration;
+    [SerializeField] private int debugProfileGeneration;
 
     private KiwiDualDomainFaceQuality _dualDomain;
     private KiwiTrackingContinuityState _continuity;
@@ -95,7 +97,19 @@ public sealed class KiwiActorFaceCalibration : MonoBehaviour
     private float _sumFaceWidth;
     private float _sumQuality;
 
+    // v5.1 Phase 7: sample collections are tagged with the calibration
+    // generation that started them. Unrelated scopes do not invalidate actor
+    // neutral, but a newer ActorFace event can never inherit old samples.
+    private int _collectionCalibrationGeneration;
+    private int _profileCalibrationGeneration;
+
     public bool IsCalibrated => _profile != null;
+
+    public int ProfileCalibrationGeneration =>
+        _profileCalibrationGeneration;
+
+    public int CollectionCalibrationGeneration =>
+        _collectionCalibrationGeneration;
 
     public bool IsCollecting =>
         _samples > 0 &&
@@ -248,11 +262,31 @@ public sealed class KiwiActorFaceCalibration : MonoBehaviour
     [ContextMenu("Recalibrate Actor Face")]
     public void Recalibrate()
     {
+        int generation =
+            KiwiCalibrationGeneration.BeginOrJoin(
+                KiwiCalibrationScope.ActorFace,
+                "ActorFaceManual");
+
+        BeginRecalibrationAtGeneration(
+            generation,
+            true);
+    }
+
+    private void BeginRecalibrationAtGeneration(
+        int generation,
+        bool deleteSavedProfile)
+    {
         _profile = null;
+        _profileCalibrationGeneration = 0;
+        _collectionCalibrationGeneration =
+            Mathf.Max(1, generation);
         ResetCollection();
 
-        PlayerPrefs.DeleteKey(BuildKey());
-        PlayerPrefs.Save();
+        if (deleteSavedProfile)
+        {
+            PlayerPrefs.DeleteKey(BuildKey());
+            PlayerPrefs.Save();
+        }
     }
 
     [ContextMenu("Save Actor Face Profile")]
@@ -350,6 +384,25 @@ public sealed class KiwiActorFaceCalibration : MonoBehaviour
             return;
         }
 
+        if (_collectionCalibrationGeneration <= 0)
+        {
+            _collectionCalibrationGeneration =
+                KiwiCalibrationGeneration.BeginOrJoin(
+                    KiwiCalibrationScope.ActorFace,
+                    "ActorFaceAuto");
+        }
+        else if (
+            KiwiCalibrationGeneration.HasScopeChangedSince(
+                _collectionCalibrationGeneration,
+                KiwiCalibrationScope.ActorFace))
+        {
+            // A newer actor calibration request started while this neutral
+            // collection was in flight. Discard every old partial sample.
+            ResetCollection();
+            _collectionCalibrationGeneration =
+                KiwiCalibrationGeneration.CurrentGeneration;
+        }
+
         _lastObserved2dTimestamp = timestamp;
 
         if (_samples == 0)
@@ -403,6 +456,17 @@ public sealed class KiwiActorFaceCalibration : MonoBehaviour
                 1,
                 _samples);
 
+        if (
+            KiwiCalibrationGeneration.HasScopeChangedSince(
+                _collectionCalibrationGeneration,
+                KiwiCalibrationScope.ActorFace))
+        {
+            ResetCollection();
+            _collectionCalibrationGeneration =
+                KiwiCalibrationGeneration.CurrentGeneration;
+            return;
+        }
+
         _profile =
             new PersistedProfile
             {
@@ -420,6 +484,25 @@ public sealed class KiwiActorFaceCalibration : MonoBehaviour
                     Mathf.Clamp01(
                         _sumQuality * inv)
             };
+
+        _profileCalibrationGeneration =
+            _collectionCalibrationGeneration;
+
+        if (
+            !KiwiCalibrationGeneration.TryRecordCommit(
+                nameof(KiwiActorFaceCalibration),
+                _profileCalibrationGeneration,
+                KiwiCalibrationScope.ActorFace))
+        {
+            // This should be rare because the pre-commit guard above is run in
+            // the same Update. Fail closed rather than publish a stale neutral.
+            _profile = null;
+            _profileCalibrationGeneration = 0;
+            ResetCollection();
+            _collectionCalibrationGeneration =
+                KiwiCalibrationGeneration.CurrentGeneration;
+            return;
+        }
 
         if (saveProfile)
         {
@@ -475,11 +558,14 @@ public sealed class KiwiActorFaceCalibration : MonoBehaviour
             )
             {
                 _profile = loaded;
+                _profileCalibrationGeneration =
+                    KiwiCalibrationGeneration.CurrentGeneration;
             }
         }
         catch
         {
             _profile = null;
+            _profileCalibrationGeneration = 0;
         }
     }
 
@@ -546,5 +632,9 @@ public sealed class KiwiActorFaceCalibration : MonoBehaviour
         debugSuggestedCloseStart = SuggestedGeometryCloseStart;
         debugSuggestedCloseFull = SuggestedGeometryCloseFull;
         debugCalibrationQuality = CalibrationQuality;
+        debugCalibrationGeneration =
+            KiwiRuntimeGenerationContext.CalibrationGeneration;
+        debugProfileGeneration =
+            _profileCalibrationGeneration;
     }
 }

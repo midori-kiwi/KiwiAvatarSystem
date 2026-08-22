@@ -37,6 +37,8 @@ public sealed class KiwiCommercialStartupReconciler : MonoBehaviour
     private KiwiFaceMotion _faceMotion;
     private KiwiTrackingProviderHub _trackingHub;
     private KiwiTrackingContinuityState _trackingContinuity;
+    private KiwiMatureVTuberSupervisor _matureSupervisor;
+    private KiwiFaceAttachmentRecalibration _attachmentRecalibration;
     private FacePartCropper _facePartCropper;
     private FacePartShapeMask[] _facePartShapeMasks;
 
@@ -103,6 +105,8 @@ public sealed class KiwiCommercialStartupReconciler : MonoBehaviour
         _faceMotion = null;
         _trackingHub = null;
         _trackingContinuity = null;
+        _matureSupervisor = null;
+        _attachmentRecalibration = null;
         _facePartCropper = null;
         _facePartShapeMasks = null;
         _reconciled = false;
@@ -223,8 +227,9 @@ public sealed class KiwiCommercialStartupReconciler : MonoBehaviour
             // delivering frames. End-to-end latency lowers quality/prediction,
             // but only result-arrival silence is treated as a short dropout.
             _trackingHub.maximumProviderFrameAge = 0.45f;
-            _trackingHub.resumeHandoffMaximumGapSeconds = 0.22f;
-            _trackingHub.resumeHandoffReleaseFrames = 2;
+            _trackingHub.handoffReferenceMaximumAge = 0.45f;
+            _trackingHub.resumeHandoffMaximumGapSeconds = 0.45f;
+            _trackingHub.resumeHandoffReleaseFrames = 3;
             _trackingHub.minimumArrivalFreshnessSeconds = 0.10f;
             _trackingHub.arrivalFreshnessIntervalMultiplier = 2.8f;
             _trackingHub.maximumArrivalFreshnessSeconds = 0.22f;
@@ -235,6 +240,16 @@ public sealed class KiwiCommercialStartupReconciler : MonoBehaviour
             _trackingHub.minimumProviderHoldSeconds = 0.45f;
             _trackingHub.freshnessScoreWeight = 0.18f;
             _trackingHub.cadenceScoreWeight = 0.12f;
+
+            // KIWI_V5_1_PHASE16_8_COMMERCIAL_STICKY_RIGID_AUTHORITY
+            // A short inference cadence miss becomes Holding instead of a
+            // backend switch. This preserves one rigid coordinate authority
+            // while still refusing to publish stale observations.
+            _trackingHub.enableCommercialStickyRigidAuthority = true;
+            _trackingHub.commercialTransientFailoverGraceSeconds = 0.60f;
+            _trackingHub.commercialFailoverSourceAgeCeilingSeconds = 0.80f;
+            _trackingHub.commercialMinimumAuthorityDwellSeconds = 1.00f;
+            _trackingHub.commercialPrimaryRecoveryConfirmationFrames = 4;
         }
 
         if (_trackingContinuity == null)
@@ -242,6 +257,35 @@ public sealed class KiwiCommercialStartupReconciler : MonoBehaviour
             _trackingContinuity =
                 FindFirstObjectByType<KiwiTrackingContinuityState>(
                     FindObjectsInactive.Include);
+        }
+
+        if (_matureSupervisor == null)
+        {
+            _matureSupervisor =
+                FindFirstObjectByType<KiwiMatureVTuberSupervisor>(
+                    FindObjectsInactive.Include);
+        }
+
+        if (_matureSupervisor != null)
+        {
+            _matureSupervisor.enableCommercialCadenceBoost = true;
+            _matureSupervisor.commercialCadenceMinimumRenderFps = 34f;
+            _matureSupervisor.commercialCadenceDisableRenderFps = 30f;
+            _matureSupervisor.commercialCadenceHealthyTargetHz = 12f;
+            _matureSupervisor.commercialCadenceAgedTargetHz = 15f;
+        }
+
+        if (_attachmentRecalibration == null)
+        {
+            _attachmentRecalibration =
+                FindFirstObjectByType<KiwiFaceAttachmentRecalibration>(
+                    FindObjectsInactive.Include);
+        }
+
+        if (_attachmentRecalibration != null)
+        {
+            _attachmentRecalibration.ignoreBuiltInProviderSwitchForAttachmentCalibration = true;
+            _attachmentRecalibration.minimumLossSecondsForAttachmentRecalibration = 0.60f;
         }
 
         if (_trackingContinuity != null)

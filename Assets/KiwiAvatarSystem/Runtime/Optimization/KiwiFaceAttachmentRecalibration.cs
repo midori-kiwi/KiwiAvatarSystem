@@ -11,8 +11,19 @@ public sealed class KiwiFaceAttachmentRecalibration : MonoBehaviour
     private const string RuntimeObjectName =
         "[Kiwi] Face Attachment Recalibration";
 
+    private const string RecoveryDomainSource =
+        "FaceAttachmentRecalibration";
+
     public bool recalibrateAfterProviderChange = true;
     public bool recalibrateAfterTrackingLoss = true;
+
+    // KIWI_V5_1_PHASE16_8_ATTACHMENT_STABILITY
+    [Tooltip("Built-in MediaPipe/InferenceEngine handoffs are normalized into one canonical solve space, so they must not recalibrate model attachments by themselves.")]
+    public bool ignoreBuiltInProviderSwitchForAttachmentCalibration = true;
+
+    [Tooltip("A short Holding gap freezes presentation but does not redefine anatomy. Recalibrate after tracking loss only when the gap persisted for at least this long.")]
+    [Range(0.20f, 1.50f)]
+    public float minimumLossSecondsForAttachmentRecalibration = 0.60f;
 
     [Range(1, 8)]
     public int stableFreshFramesRequired = 3;
@@ -30,6 +41,8 @@ public sealed class KiwiFaceAttachmentRecalibration : MonoBehaviour
     [SerializeField] private string debugReason = "-";
     [SerializeField] private int debugStableFreshFrames;
     [SerializeField] private int debugRecalibrationCount;
+    [SerializeField] private int debugCalibrationGeneration;
+    [SerializeField] private int debugPendingCalibrationGeneration;
 
     private KiwiTrackingContinuityState _continuity;
     private KiwiTrackingProviderHub _hub;
@@ -47,17 +60,23 @@ public sealed class KiwiFaceAttachmentRecalibration : MonoBehaviour
     private string _pendingReason =
         string.Empty;
 
+    private int _pendingCalibrationGeneration;
+
     private ulong _lastObservedFrameId;
     private int _stableFreshFrames;
     private double _stableStartedRealtime;
     private double _lastRecalibrationRealtime =
         -1000.0;
+    private double _lossStartedRealtime = -1.0;
 
     public bool IsPending =>
         _pending;
 
     public int RecalibrationCount =>
         debugRecalibrationCount;
+
+    public int PendingCalibrationGeneration =>
+        _pendingCalibrationGeneration;
 
     public string PendingReason =>
         string.IsNullOrEmpty(
@@ -106,6 +125,10 @@ public sealed class KiwiFaceAttachmentRecalibration : MonoBehaviour
     {
         SceneManager.sceneLoaded -=
             HandleSceneLoaded;
+
+        KiwiRecoveryDomainCoordinator.CompleteSemanticRecovery(
+            KiwiRecoveryDomainCoordinator.SemanticComponent.Attachment,
+            RecoveryDomainSource);
     }
 
     private void HandleSceneLoaded(
@@ -124,11 +147,18 @@ public sealed class KiwiFaceAttachmentRecalibration : MonoBehaviour
         _lastContinuity =
             KiwiTrackingContinuityState.ContinuityState.Starting;
 
+        KiwiRecoveryDomainCoordinator.CompleteSemanticRecovery(
+            KiwiRecoveryDomainCoordinator.SemanticComponent.Attachment,
+            RecoveryDomainSource);
+
         _pending =
             false;
 
         _pendingReason =
             string.Empty;
+
+        _pendingCalibrationGeneration =
+            0;
 
         _lastObservedFrameId =
             0UL;
@@ -138,6 +168,8 @@ public sealed class KiwiFaceAttachmentRecalibration : MonoBehaviour
 
         _stableStartedRealtime =
             0.0;
+
+        _lossStartedRealtime = -1.0;
 
         RefreshReferences(true);
     }
@@ -172,6 +204,12 @@ public sealed class KiwiFaceAttachmentRecalibration : MonoBehaviour
 
         debugStableFreshFrames =
             _stableFreshFrames;
+
+        debugCalibrationGeneration =
+            KiwiRuntimeGenerationContext.CalibrationGeneration;
+
+        debugPendingCalibrationGeneration =
+            _pendingCalibrationGeneration;
     }
 
     private void ObserveDiscontinuities()
@@ -189,9 +227,18 @@ public sealed class KiwiFaceAttachmentRecalibration : MonoBehaviour
                 provider,
                 StringComparison.Ordinal);
 
+        bool builtInProviderSwitch =
+            providerChanged &&
+            IsBuiltInRunnerProvider(_lastProvider) &&
+            IsBuiltInRunnerProvider(provider);
+
         if (
             providerChanged &&
-            recalibrateAfterProviderChange
+            recalibrateAfterProviderChange &&
+            !(
+                ignoreBuiltInProviderSwitchForAttachmentCalibration &&
+                builtInProviderSwitch
+            )
         )
         {
             RequestRecalibration(
@@ -200,6 +247,21 @@ public sealed class KiwiFaceAttachmentRecalibration : MonoBehaviour
 
         KiwiTrackingContinuityState.ContinuityState current =
             _continuity.State;
+
+        bool currentlyMissing =
+            current ==
+                KiwiTrackingContinuityState.ContinuityState.Holding ||
+            current ==
+                KiwiTrackingContinuityState.ContinuityState.Lost;
+
+        if (currentlyMissing)
+        {
+            if (_lossStartedRealtime < 0.0)
+            {
+                _lossStartedRealtime =
+                    Time.realtimeSinceStartupAsDouble;
+            }
+        }
 
         bool recoveredFromLoss =
             (
@@ -215,13 +277,31 @@ public sealed class KiwiFaceAttachmentRecalibration : MonoBehaviour
                     KiwiTrackingContinuityState.ContinuityState.Stable
             );
 
-        if (
-            recoveredFromLoss &&
-            recalibrateAfterTrackingLoss
-        )
+        if (recoveredFromLoss)
         {
-            RequestRecalibration(
-                "Reacquisition");
+            double lossSeconds =
+                _lossStartedRealtime >= 0.0
+                    ? Time.realtimeSinceStartupAsDouble -
+                        _lossStartedRealtime
+                    : 0.0;
+
+            if (
+                recalibrateAfterTrackingLoss &&
+                lossSeconds >=
+                    Mathf.Max(
+                        0.20f,
+                        minimumLossSecondsForAttachmentRecalibration)
+            )
+            {
+                RequestRecalibration(
+                    "Reacquisition");
+            }
+
+            _lossStartedRealtime = -1.0;
+        }
+        else if (!currentlyMissing)
+        {
+            _lossStartedRealtime = -1.0;
         }
 
         if (!string.IsNullOrEmpty(provider))
@@ -234,10 +314,76 @@ public sealed class KiwiFaceAttachmentRecalibration : MonoBehaviour
             current;
     }
 
-    private void RequestRecalibration(
-        string reason)
+    private static bool IsBuiltInRunnerProvider(string providerId)
     {
+        return
+            string.Equals(
+                providerId,
+                "Runner/MediaPipe",
+                StringComparison.Ordinal) ||
+            string.Equals(
+                providerId,
+                "Runner/InferenceEngine",
+                StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Model/provider lifecycle owners can request attachment recalibration
+    /// without becoming a second Transform owner. When called inside a parent
+    /// calibration transaction this component joins the existing generation.
+    /// </summary>
+    public void RequestLifecycleRecalibration(
+        string reason,
+        bool ignoreCooldown = false)
+    {
+        RequestRecalibration(
+            reason,
+            ignoreCooldown);
+    }
+
+    private void RequestRecalibration(
+        string reason,
+        bool ignoreCooldown = false)
+    {
+        if (_pending)
+        {
+            // A newer attachment-domain generation supersedes the pending
+            // collection. Keep one pending operation and restart its evidence.
+            if (
+                KiwiCalibrationGeneration.HasScopeChangedSince(
+                    _pendingCalibrationGeneration,
+                    KiwiCalibrationScope.Attachments))
+            {
+                _pendingCalibrationGeneration =
+                    KiwiCalibrationGeneration.CurrentGeneration;
+                _stableFreshFrames = 0;
+                _stableStartedRealtime = 0.0;
+                _lastObservedFrameId = 0UL;
+            }
+
+            if (
+                !string.IsNullOrEmpty(reason) &&
+                _pendingReason.IndexOf(
+                    reason,
+                    StringComparison.Ordinal) < 0)
+            {
+                _pendingReason =
+                    string.IsNullOrEmpty(_pendingReason)
+                        ? reason
+                        : _pendingReason + "+" + reason;
+            }
+
+            KiwiRecoveryDomainCoordinator.BeginSemanticRecovery(
+                KiwiRecoveryDomainCoordinator.SemanticComponent.Attachment,
+                KiwiRecoveryDomainCoordinator.SemanticRecoveryReason
+                    .AttachmentRebind,
+                RecoveryDomainSource);
+
+            return;
+        }
+
         if (
+            !ignoreCooldown &&
             Time.realtimeSinceStartupAsDouble -
                 _lastRecalibrationRealtime <
             minimumSecondsBetweenRecalibrations
@@ -246,8 +392,19 @@ public sealed class KiwiFaceAttachmentRecalibration : MonoBehaviour
             return;
         }
 
+        _pendingCalibrationGeneration =
+            KiwiCalibrationGeneration.BeginOrJoin(
+                KiwiCalibrationScope.Attachments,
+                "Attachment:" + reason);
+
         _pending =
             true;
+
+        KiwiRecoveryDomainCoordinator.BeginSemanticRecovery(
+            KiwiRecoveryDomainCoordinator.SemanticComponent.Attachment,
+            KiwiRecoveryDomainCoordinator.SemanticRecoveryReason
+                .AttachmentRebind,
+            RecoveryDomainSource);
 
         _pendingReason =
             reason;
@@ -264,6 +421,26 @@ public sealed class KiwiFaceAttachmentRecalibration : MonoBehaviour
 
     private void TryCompletePendingRecalibration()
     {
+        if (_pendingCalibrationGeneration <= 0)
+        {
+            _pendingCalibrationGeneration =
+                KiwiCalibrationGeneration.BeginOrJoin(
+                    KiwiCalibrationScope.Attachments,
+                    "Attachment:" + _pendingReason);
+        }
+        else if (
+            KiwiCalibrationGeneration.HasScopeChangedSince(
+                _pendingCalibrationGeneration,
+                KiwiCalibrationScope.Attachments))
+        {
+            _pendingCalibrationGeneration =
+                KiwiCalibrationGeneration.CurrentGeneration;
+            _stableFreshFrames = 0;
+            _stableStartedRealtime = 0.0;
+            _lastObservedFrameId = 0UL;
+            return;
+        }
+
         if (
             _continuity.State !=
                 KiwiTrackingContinuityState.ContinuityState.Stable
@@ -344,6 +521,20 @@ public sealed class KiwiFaceAttachmentRecalibration : MonoBehaviour
             return;
         }
 
+        if (
+            !KiwiCalibrationGeneration.TryRecordCommit(
+                nameof(KiwiFaceAttachmentRecalibration),
+                _pendingCalibrationGeneration,
+                KiwiCalibrationScope.Attachments))
+        {
+            _pendingCalibrationGeneration =
+                KiwiCalibrationGeneration.CurrentGeneration;
+            _stableFreshFrames = 0;
+            _stableStartedRealtime = 0.0;
+            _lastObservedFrameId = 0UL;
+            return;
+        }
+
         if (_tiltLock != null)
         {
             _tiltLock.Recalibrate();
@@ -356,6 +547,13 @@ public sealed class KiwiFaceAttachmentRecalibration : MonoBehaviour
 
         _pending =
             false;
+
+        KiwiRecoveryDomainCoordinator.CompleteSemanticRecovery(
+            KiwiRecoveryDomainCoordinator.SemanticComponent.Attachment,
+            RecoveryDomainSource);
+
+        _pendingCalibrationGeneration =
+            0;
 
         _lastRecalibrationRealtime =
             Time.realtimeSinceStartupAsDouble;

@@ -1,0 +1,1251 @@
+using System;
+using System.Globalization;
+using System.IO;
+using System.Text;
+using UnityEngine;
+
+using Mediapipe.Unity.Sample.FaceLandmarkDetection;
+
+/// <summary>
+/// v5.1 Phase 16 diagnostic-only camera / landmark / avatar comparator.
+///
+/// The overlay observes the same canonical snapshot used by Root / FaceParts.
+/// It never submits tracking data, advances generations, mutates recovery,
+/// changes Canvas alpha, or writes the avatar Transform. Its only purposes are:
+/// 1) show the live camera image with the canonical semantic landmarks overlaid;
+/// 2) expose source/semantic/rigid identity on the recorded Game view; and
+/// 3) optionally write one CSV row per Unity render frame so camera freshness,
+///    landmark movement, canonical identity and final rendered Root motion can
+///    be correlated after a capture.
+/// </summary>
+[DefaultExecutionOrder(36500)]
+[DisallowMultipleComponent]
+public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
+{
+    private const string RuntimeObjectName =
+        "[Kiwi] Frame Comparison Overlay";
+
+    private const int LandmarkTextureSize = 384;
+    private const int CsvFlushIntervalFrames = 60;
+
+    private static readonly CultureInfo Invariant =
+        CultureInfo.InvariantCulture;
+
+    public static KiwiFrameComparisonOverlay Instance { get; private set; }
+
+    [Header("Camera / Landmark comparison")]
+    public bool visible = true;
+    public bool drawAllLandmarks = true;
+    public bool drawRigidAnchors = true;
+    public bool showHelp = true;
+
+    [Range(260f, 560f)]
+    public float previewWidth = 420f;
+
+    [Header("Frame CSV")]
+    public bool recordCsvOnStart = false;
+
+    [SerializeField] private string currentCsvPath = string.Empty;
+    [SerializeField] private int recordedFrameCount;
+    [SerializeField] private long debugSemanticTimestamp = -1L;
+    [SerializeField] private long debugRigidTimestamp = -1L;
+    [SerializeField] private string debugProvider = string.Empty;
+    [SerializeField] private float debugLandmarkMaxStep;
+    [SerializeField] private float debugLandmarkMeanStep;
+    [SerializeField] private float debugRootRotationStep;
+    [SerializeField] private float debugRootPositionStep;
+    [SerializeField] private float debugRootScaleStep;
+
+    private FaceLandmarkerRunner _runner;
+    private FacePartCropper _cropper;
+    private KiwiFaceMotion _faceMotion;
+    private KiwiMatureTrackingTelemetry _telemetry;
+    private KiwiTrackingProviderHub _trackingHub;
+    private KiwiMatureVTuberSupervisor _supervisor;
+
+    private Vector2[] _landmarks;
+    private Vector2[] _previousSemanticLandmarks;
+    private int _landmarkCount;
+    private long _lastSemanticTimestamp = long.MinValue;
+    private bool _semanticChangedThisFrame;
+    private bool _hasFace;
+
+    private Texture2D _landmarkOverlayTexture;
+    private Color32[] _landmarkPixels;
+
+    private bool _hasCanonicalFrame;
+    private KiwiTrackingFrame _canonicalFrame;
+    private ulong _lastOverlayRigidFrameId;
+    private bool _cameraFreshThisFrame;
+
+    private bool _hasPreviousRoot;
+    private Vector3 _previousRootPosition;
+    private Quaternion _previousRootRotation = Quaternion.identity;
+    private Vector3 _previousRootScale = Vector3.one;
+
+    private StreamWriter _csvWriter;
+    private int _framesSinceCsvFlush;
+
+    private GUIStyle _headerStyle;
+    private GUIStyle _bodyStyle;
+    private GUIStyle _smallStyle;
+    private float _overlayStartUnscaledTime;
+
+    public bool IsCsvRecording => _csvWriter != null;
+    public string CurrentCsvPath => currentCsvPath;
+    public int RecordedFrameCount => recordedFrameCount;
+
+    /// <summary>
+    /// Height this diagnostic panel wants at the current camera aspect. The
+    /// telemetry panel reserves this space so the right diagnostic column can
+    /// stack cleanly even in shorter Game views.
+    /// </summary>
+    public float PreferredPanelHeight
+    {
+        get
+        {
+            Texture sourceTexture = GetSourceTexture();
+            float width = Mathf.Clamp(previewWidth, 260f, 560f);
+            float sourceAspect =
+                sourceTexture != null && sourceTexture.height > 0
+                    ? sourceTexture.width / (float)sourceTexture.height
+                    : 16f / 9f;
+
+            float preferredPreviewHeight = Mathf.Clamp(
+                width / Mathf.Max(0.25f, sourceAspect),
+                150f,
+                330f);
+
+            return preferredPreviewHeight + (showHelp ? 142f : 120f);
+        }
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    private static void AutoInstall()
+    {
+        if (!Application.isEditor && !Debug.isDebugBuild)
+        {
+            return;
+        }
+
+        EnsureInstance();
+    }
+
+    public static KiwiFrameComparisonOverlay EnsureInstance()
+    {
+        KiwiFrameComparisonOverlay existing =
+            FindFirstObjectByType<KiwiFrameComparisonOverlay>();
+
+        if (existing != null)
+        {
+            Instance = existing;
+            return existing;
+        }
+
+        GameObject host = new GameObject(RuntimeObjectName);
+        DontDestroyOnLoad(host);
+        return host.AddComponent<KiwiFrameComparisonOverlay>();
+    }
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+        _overlayStartUnscaledTime = Time.unscaledTime;
+        EnsureLandmarkTexture();
+    }
+
+    private void Start()
+    {
+        RefreshReferences(true);
+
+        if (recordCsvOnStart)
+        {
+            StartCsvRecording();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        StopCsvRecording();
+
+        if (_landmarkOverlayTexture != null)
+        {
+            Destroy(_landmarkOverlayTexture);
+            _landmarkOverlayTexture = null;
+        }
+
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+    }
+
+    private void Update()
+    {
+#if ENABLE_LEGACY_INPUT_MANAGER
+        if (Input.GetKeyDown(KeyCode.F8))
+        {
+            visible = !visible;
+        }
+
+        if (Input.GetKeyDown(KeyCode.F9))
+        {
+            ToggleCsvRecording();
+        }
+#endif
+    }
+
+    private void LateUpdate()
+    {
+        RefreshReferences(false);
+        CaptureFrameComparisonState();
+
+        if (_csvWriter != null)
+        {
+            WriteCsvRow();
+        }
+    }
+
+    public void ToggleOverlay()
+    {
+        visible = !visible;
+    }
+
+    public void ToggleCsvRecording()
+    {
+        if (_csvWriter == null)
+        {
+            StartCsvRecording();
+        }
+        else
+        {
+            StopCsvRecording();
+        }
+    }
+
+    public void StartCsvRecording()
+    {
+        if (_csvWriter != null)
+        {
+            return;
+        }
+
+        try
+        {
+            string directory = Path.Combine(
+                Application.persistentDataPath,
+                "KiwiFrameComparison");
+
+            Directory.CreateDirectory(directory);
+
+            currentCsvPath = Path.Combine(
+                directory,
+                "KiwiFrameComparison_" +
+                DateTime.Now.ToString("yyyyMMdd_HHmmss", Invariant) +
+                ".csv");
+
+            _csvWriter = new StreamWriter(
+                currentCsvPath,
+                false,
+                new UTF8Encoding(false));
+
+            // KIWI_V5_1_PHASE16_8_COMMERCIAL_GAP_DIAGNOSTICS
+            _csvWriter.WriteLine(
+                "unityFrame,realtimeSeconds,cameraFresh,sourceTextureId,sourceWidth,sourceHeight," +
+                "cameraGeneration,providerGeneration,trackingSessionGeneration,providerId,canonicalFrameId," +
+                "rigidFrameId,rigidTimestamp,semanticTimestamp,semanticMatched,semanticChanged,landmarkCount," +
+                "landmarkMeanStepNorm,landmarkMaxStepNorm,rigidFaceCenterX,rigidFaceCenterY," +
+                "rigidLeftEyeX,rigidLeftEyeY,rigidRightEyeX,rigidRightEyeY,rigidNoseX,rigidNoseY," +
+                "rigidChinX,rigidChinY,observationAgeMs,arrivalAgeMs," +
+                "rootLocalX,rootLocalY,rootLocalZ,rootEulerX,rootEulerY,rootEulerZ," +
+                "rootScaleX,rootScaleY,rootScaleZ,rootPositionDelta,rootRotationDeltaDeg,rootScaleDelta," +
+                "continuityEnabled,directBypassSuppressed,discontinuityGuard,trackingRateHz,effectiveIntervalMs,responseCap," +
+                "handoffActive,handoffWeight,handoffTargetWeight,handoffReleaseStep,handoffCenterOffset,handoffRotationOffsetDeg,handoffScaleRatio,handoffCount," +
+                "commercialCadenceBoost,renderFps,auxMediaPipeHz," +
+                "commercialRigidShockCount,commercialRigidCenterResidualEyeSpans,commercialRigidRotationDelta,commercialRigidDepthLogDelta," +
+                "semanticTopologyRejectCount,semanticTransactionCanonicalFrameId,semanticTransactionSequence," +
+                "landmarkRefinedPointCount,landmarkIsolatedRejectCount,landmarkIsolatedCandidateCount,landmarkMassRejectBypass,landmarkMassRejectBypassCount,landmarkMeanAdjustmentEyeSpans,landmarkMaxAdjustmentEyeSpans,landmarkGeometryQuality,landmarkRefinerTimestamp," +
+                "commercialFailoverDeferred,commercialFailoverGraceRemainingMs,commercialDeferredFailoverCount," +
+                "writerAuditFrame,rootUpdateToLatePosDelta,rootUpdateToLateRotDelta,rootUpdateToLateScaleDelta,rootLateToRenderPosDelta,rootLateToRenderRotDelta,rootLateToRenderScaleDelta," +
+                "visualRelativeUpdateToLatePosDelta,visualRelativeUpdateToLateRotDelta,visualRelativeUpdateToLateScaleDelta,visualRelativeLateToRenderPosDelta,visualRelativeLateToRenderRotDelta,visualRelativeLateToRenderScaleDelta," +
+                "visualMovedWithoutRoot,rootMovedAfterLate,visualMovedWithoutRootCount,rootMovedAfterLateCount,liveTextureAdvancedWhileSemanticHeld");
+
+            recordedFrameCount = 0;
+            _framesSinceCsvFlush = 0;
+
+            Debug.Log(
+                "[KiwiAvatarSystem] Frame comparison CSV recording started: " +
+                currentCsvPath);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError(
+                "[KiwiAvatarSystem] Could not start frame comparison CSV: " +
+                ex.Message);
+
+            _csvWriter = null;
+            currentCsvPath = string.Empty;
+        }
+    }
+
+    public void StopCsvRecording()
+    {
+        if (_csvWriter == null)
+        {
+            return;
+        }
+
+        try
+        {
+            _csvWriter.Flush();
+            _csvWriter.Dispose();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning(
+                "[KiwiAvatarSystem] Frame comparison CSV close warning: " +
+                ex.Message);
+        }
+        finally
+        {
+            _csvWriter = null;
+        }
+
+        Debug.Log(
+            "[KiwiAvatarSystem] Frame comparison CSV recording stopped. rows=" +
+            recordedFrameCount +
+            " path=" +
+            currentCsvPath);
+    }
+
+    public string BuildStatusLine()
+    {
+        return
+            "visible=" + visible +
+            " csv=" + IsCsvRecording +
+            " provider=" + debugProvider +
+            " rigid=" + debugRigidTimestamp +
+            " semantic=" + debugSemanticTimestamp +
+            " landmarkStep(max/mean)=" +
+            debugLandmarkMaxStep.ToString("F5", Invariant) +
+            "/" +
+            debugLandmarkMeanStep.ToString("F5", Invariant) +
+            " rootStep(pos/deg)=" +
+            debugRootPositionStep.ToString("F6", Invariant) +
+            "/" +
+            debugRootRotationStep.ToString("F3", Invariant);
+    }
+
+    private void RefreshReferences(bool force)
+    {
+        if (force || _runner == null)
+        {
+            _runner = FindFirstObjectByType<FaceLandmarkerRunner>();
+        }
+
+        if (force || _cropper == null)
+        {
+            _cropper = FindFirstObjectByType<FacePartCropper>();
+        }
+
+        if (force || _faceMotion == null)
+        {
+            _faceMotion = FindFirstObjectByType<KiwiFaceMotion>();
+        }
+
+        if (force || _telemetry == null)
+        {
+            _telemetry = FindFirstObjectByType<KiwiMatureTrackingTelemetry>();
+        }
+
+        if (force || _trackingHub == null)
+        {
+            _trackingHub = FindFirstObjectByType<KiwiTrackingProviderHub>();
+        }
+
+        if (force || _supervisor == null)
+        {
+            _supervisor = FindFirstObjectByType<KiwiMatureVTuberSupervisor>();
+        }
+    }
+
+    private void CaptureFrameComparisonState()
+    {
+        _semanticChangedThisFrame = false;
+        _hasCanonicalFrame =
+            KiwiCanonicalTrackingFrame.TryGetFrame(
+                out _canonicalFrame);
+
+        if (_hasCanonicalFrame)
+        {
+            debugProvider = _canonicalFrame.providerId ?? string.Empty;
+            debugRigidTimestamp = _canonicalFrame.rigid.timestamp;
+        }
+        else
+        {
+            debugProvider = string.Empty;
+            debugRigidTimestamp = -1L;
+        }
+
+        bool semanticChanged =
+            KiwiCanonicalTrackingFrame.TryGetSemanticLandmarksIfChanged(
+                _runner,
+                ref _landmarks,
+                _lastSemanticTimestamp,
+                out int count,
+                out long timestamp,
+                out bool hasFace);
+
+        _hasFace = hasFace;
+
+        bool rigidChangedForOverlay =
+            _hasCanonicalFrame &&
+            _canonicalFrame.rigid.frameId != _lastOverlayRigidFrameId;
+
+        if (semanticChanged)
+        {
+            _semanticChangedThisFrame = true;
+            _landmarkCount = count;
+            debugSemanticTimestamp = timestamp;
+
+            UpdateLandmarkStepMetrics(count);
+            _lastSemanticTimestamp = timestamp;
+            RebuildLandmarkOverlay();
+            _lastOverlayRigidFrameId =
+                _hasCanonicalFrame
+                    ? _canonicalFrame.rigid.frameId
+                    : 0UL;
+        }
+        else if (_hasCanonicalFrame)
+        {
+            debugSemanticTimestamp =
+                _canonicalFrame.hasSemanticLandmarks
+                    ? _canonicalFrame.semanticTimestamp
+                    : -1L;
+
+            if (rigidChangedForOverlay)
+            {
+                RebuildLandmarkOverlay();
+                _lastOverlayRigidFrameId = _canonicalFrame.rigid.frameId;
+            }
+        }
+
+        Texture sourceTexture = GetSourceTexture();
+        WebCamTexture webCam = sourceTexture as WebCamTexture;
+        _cameraFreshThisFrame =
+            webCam != null && webCam.didUpdateThisFrame;
+
+        CaptureRootStepMetrics();
+    }
+
+    private void CaptureRootStepMetrics()
+    {
+        Transform root =
+            _faceMotion != null
+                ? _faceMotion.kiwiRoot
+                : null;
+
+        if (root == null)
+        {
+            debugRootPositionStep = 0f;
+            debugRootRotationStep = 0f;
+            debugRootScaleStep = 0f;
+            _hasPreviousRoot = false;
+            return;
+        }
+
+        Vector3 position = root.localPosition;
+        Quaternion rotation = root.localRotation;
+        Vector3 scale = root.localScale;
+
+        if (_hasPreviousRoot)
+        {
+            debugRootPositionStep =
+                Vector3.Distance(_previousRootPosition, position);
+            debugRootRotationStep =
+                Quaternion.Angle(_previousRootRotation, rotation);
+            debugRootScaleStep =
+                Vector3.Distance(_previousRootScale, scale);
+        }
+        else
+        {
+            debugRootPositionStep = 0f;
+            debugRootRotationStep = 0f;
+            debugRootScaleStep = 0f;
+        }
+
+        _previousRootPosition = position;
+        _previousRootRotation = rotation;
+        _previousRootScale = scale;
+        _hasPreviousRoot = true;
+    }
+
+    private void UpdateLandmarkStepMetrics(int count)
+    {
+        debugLandmarkMeanStep = 0f;
+        debugLandmarkMaxStep = 0f;
+
+        if (_landmarks == null || count <= 0)
+        {
+            return;
+        }
+
+        if (
+            _previousSemanticLandmarks != null &&
+            _previousSemanticLandmarks.Length >= count)
+        {
+            float sum = 0f;
+            float maximum = 0f;
+
+            for (int i = 0; i < count; i++)
+            {
+                float distance =
+                    Vector2.Distance(
+                        _previousSemanticLandmarks[i],
+                        _landmarks[i]);
+
+                sum += distance;
+                maximum = Mathf.Max(maximum, distance);
+            }
+
+            debugLandmarkMeanStep = sum / Mathf.Max(1, count);
+            debugLandmarkMaxStep = maximum;
+        }
+
+        if (
+            _previousSemanticLandmarks == null ||
+            _previousSemanticLandmarks.Length < count)
+        {
+            _previousSemanticLandmarks = new Vector2[count];
+        }
+
+        Array.Copy(
+            _landmarks,
+            _previousSemanticLandmarks,
+            count);
+    }
+
+    private void EnsureLandmarkTexture()
+    {
+        if (_landmarkOverlayTexture != null)
+        {
+            return;
+        }
+
+        _landmarkOverlayTexture = new Texture2D(
+            LandmarkTextureSize,
+            LandmarkTextureSize,
+            TextureFormat.RGBA32,
+            false,
+            true)
+        {
+            name = "Kiwi Frame Comparison Landmarks",
+            filterMode = FilterMode.Point,
+            wrapMode = TextureWrapMode.Clamp,
+            hideFlags = HideFlags.DontSave
+        };
+
+        _landmarkPixels =
+            new Color32[LandmarkTextureSize * LandmarkTextureSize];
+
+        ClearLandmarkPixels();
+        _landmarkOverlayTexture.SetPixels32(_landmarkPixels);
+        _landmarkOverlayTexture.Apply(false, false);
+    }
+
+    private void RebuildLandmarkOverlay()
+    {
+        EnsureLandmarkTexture();
+        ClearLandmarkPixels();
+
+        bool mirrorX =
+            _cropper != null &&
+            _cropper.mirrorX;
+
+        if (drawAllLandmarks && _landmarks != null)
+        {
+            Color32 landmarkColor =
+                new Color32(50, 235, 255, 235);
+
+            for (int i = 0; i < _landmarkCount; i++)
+            {
+                DrawNormalizedPoint(
+                    _landmarks[i],
+                    mirrorX,
+                    landmarkColor,
+                    1);
+            }
+        }
+
+        if (drawRigidAnchors && _hasCanonicalFrame)
+        {
+            FacePrecisionTrackingData rigid =
+                _canonicalFrame.rigid;
+
+            DrawNormalizedPoint(
+                rigid.faceCenter,
+                mirrorX,
+                new Color32(255, 70, 70, 255),
+                4);
+
+            DrawNormalizedPoint(
+                rigid.leftEyeCenter,
+                mirrorX,
+                new Color32(70, 255, 90, 255),
+                3);
+
+            DrawNormalizedPoint(
+                rigid.rightEyeCenter,
+                mirrorX,
+                new Color32(70, 255, 90, 255),
+                3);
+
+            DrawNormalizedPoint(
+                rigid.nose,
+                mirrorX,
+                new Color32(255, 230, 60, 255),
+                3);
+
+            DrawNormalizedPoint(
+                rigid.chin,
+                mirrorX,
+                new Color32(255, 90, 235, 255),
+                3);
+        }
+
+        _landmarkOverlayTexture.SetPixels32(_landmarkPixels);
+        _landmarkOverlayTexture.Apply(false, false);
+    }
+
+    private void ClearLandmarkPixels()
+    {
+        if (_landmarkPixels == null)
+        {
+            return;
+        }
+
+        Array.Clear(
+            _landmarkPixels,
+            0,
+            _landmarkPixels.Length);
+    }
+
+    private void DrawNormalizedPoint(
+        Vector2 point,
+        bool mirrorX,
+        Color32 color,
+        int radius)
+    {
+        if (
+            float.IsNaN(point.x) ||
+            float.IsNaN(point.y) ||
+            float.IsInfinity(point.x) ||
+            float.IsInfinity(point.y)
+        )
+        {
+            return;
+        }
+
+        float x = mirrorX ? 1f - point.x : point.x;
+        float y = 1f - point.y;
+
+        int pixelX = Mathf.RoundToInt(
+            Mathf.Clamp01(x) *
+            (LandmarkTextureSize - 1));
+
+        int pixelY = Mathf.RoundToInt(
+            Mathf.Clamp01(y) *
+            (LandmarkTextureSize - 1));
+
+        int safeRadius = Mathf.Clamp(radius, 0, 6);
+
+        for (int yy = -safeRadius; yy <= safeRadius; yy++)
+        {
+            int py = pixelY + yy;
+            if (py < 0 || py >= LandmarkTextureSize)
+            {
+                continue;
+            }
+
+            for (int xx = -safeRadius; xx <= safeRadius; xx++)
+            {
+                int px = pixelX + xx;
+                if (px < 0 || px >= LandmarkTextureSize)
+                {
+                    continue;
+                }
+
+                if (
+                    safeRadius > 1 &&
+                    xx * xx + yy * yy > safeRadius * safeRadius)
+                {
+                    continue;
+                }
+
+                _landmarkPixels[
+                    py * LandmarkTextureSize + px] = color;
+            }
+        }
+    }
+
+    private Texture GetSourceTexture()
+    {
+        return
+            _cropper != null &&
+            _cropper.sourceImage != null
+                ? _cropper.sourceImage.texture
+                : null;
+    }
+
+    private void OnGUI()
+    {
+        if (!visible)
+        {
+            return;
+        }
+
+        EnsureGuiStyles();
+
+        Texture sourceTexture = GetSourceTexture();
+        float width = Mathf.Clamp(previewWidth, 260f, 560f);
+        float sourceAspect =
+            sourceTexture != null && sourceTexture.height > 0
+                ? sourceTexture.width / (float)sourceTexture.height
+                : 16f / 9f;
+
+        float previewHeight = Mathf.Clamp(
+            width / Mathf.Max(0.25f, sourceAspect),
+            150f,
+            330f);
+
+        float panelHeight = previewHeight + (showHelp ? 142f : 120f);
+        Rect panel = CalculateNonOverlappingPanelRect(
+            width + 8f,
+            panelHeight);
+
+        // The emergency small-window fallback may narrow the panel to preserve
+        // non-overlap. Keep every child rectangle inside the owned panel too.
+        width = Mathf.Max(1f, panel.width - 8f);
+        previewHeight = Mathf.Min(
+            previewHeight,
+            Mathf.Max(1f, panel.height - (showHelp ? 142f : 120f)));
+
+        Color oldColor = GUI.color;
+        GUI.color = new Color(0f, 0f, 0f, 0.76f);
+        GUI.Box(panel, GUIContent.none);
+        GUI.color = oldColor;
+
+        Rect titleRect = new Rect(
+            panel.x + 8f,
+            panel.y + 5f,
+            width - 8f,
+            22f);
+
+        GUI.Label(
+            titleRect,
+            "CAMERA + CANONICAL LANDMARKS",
+            _headerStyle);
+
+        Rect previewRect = new Rect(
+            panel.x + 8f,
+            panel.y + 28f,
+            width - 8f,
+            previewHeight);
+
+        if (sourceTexture != null)
+        {
+            bool mirrorX =
+                _cropper != null &&
+                _cropper.mirrorX;
+
+            Rect texCoords =
+                mirrorX
+                    ? new Rect(1f, 0f, -1f, 1f)
+                    : new Rect(0f, 0f, 1f, 1f);
+
+            GUI.DrawTextureWithTexCoords(
+                previewRect,
+                sourceTexture,
+                texCoords,
+                true);
+
+            if (_landmarkOverlayTexture != null)
+            {
+                GUI.DrawTexture(
+                    previewRect,
+                    _landmarkOverlayTexture,
+                    ScaleMode.StretchToFill,
+                    true);
+            }
+        }
+        else
+        {
+            GUI.Label(
+                previewRect,
+                "Camera texture unavailable",
+                _bodyStyle);
+        }
+
+        float textY = previewRect.yMax + 5f;
+        bool semanticMatched =
+            _hasCanonicalFrame &&
+            _canonicalFrame.hasSemanticLandmarks &&
+            _canonicalFrame.rigid.timestamp ==
+                _canonicalFrame.semanticTimestamp;
+
+        string line1 =
+            "provider=" +
+            (string.IsNullOrEmpty(debugProvider) ? "-" : debugProvider) +
+            "  cam=" +
+            (_cameraFreshThisFrame ? "NEW" : "hold") +
+            "  landmark=" +
+            (_semanticChangedThisFrame ? "NEW" : "hold") +
+            "  same=" +
+            semanticMatched;
+
+        GUI.Label(
+            new Rect(panel.x + 8f, textY, width - 8f, 20f),
+            line1,
+            _bodyStyle);
+
+        float observationAgeMs = GetCanonicalObservationAgeMs();
+
+        string line2 =
+            "rigid=" + debugRigidTimestamp +
+            "  semantic=" + debugSemanticTimestamp +
+            "  pts=" + _landmarkCount +
+            "  age=" +
+            (observationAgeMs >= 0f
+                ? observationAgeMs.ToString("F0", Invariant) + "ms"
+                : "-") +
+            "  gen=" +
+            KiwiRuntimeGenerationContext.CameraGeneration +
+            "/" +
+            KiwiRuntimeGenerationContext.ProviderGeneration;
+
+        GUI.Label(
+            new Rect(panel.x + 8f, textY + 19f, width - 8f, 20f),
+            line2,
+            _smallStyle);
+
+        string line3 =
+            "landmark step mean/max=" +
+            debugLandmarkMeanStep.ToString("F5", Invariant) +
+            "/" +
+            debugLandmarkMaxStep.ToString("F5", Invariant) +
+            "  avatar frame step pos/deg=" +
+            debugRootPositionStep.ToString("F5", Invariant) +
+            "/" +
+            debugRootRotationStep.ToString("F2", Invariant);
+
+        GUI.Label(
+            new Rect(panel.x + 8f, textY + 38f, width - 8f, 20f),
+            line3,
+            _smallStyle);
+
+        string line4 =
+            "continuity active=" +
+            KiwiFrameContinuityDiagnostics.Enabled +
+            " suppress=" +
+            KiwiFrameContinuityDiagnostics.DirectBypassSuppressed +
+            " guard=" +
+            KiwiFrameContinuityDiagnostics.DiscontinuityGuardActive +
+            " rate=" +
+            KiwiFrameContinuityDiagnostics.TrackingRateHz.ToString("F1", Invariant) +
+            "Hz cap=" +
+            KiwiFrameContinuityDiagnostics.ResponseCap.ToString("F1", Invariant);
+
+        Color continuityColor = GUI.color;
+        if (Time.unscaledTime - _overlayStartUnscaledTime > 2f &&
+            _faceMotion != null &&
+            !KiwiFrameContinuityDiagnostics.Enabled)
+        {
+            GUI.color = new Color(1f, 0.38f, 0.30f, 1f);
+        }
+
+        GUI.Label(
+            new Rect(panel.x + 8f, textY + 57f, width - 8f, 20f),
+            line4,
+            _smallStyle);
+
+        GUI.color = continuityColor;
+
+        string line5 =
+            IsCsvRecording
+                ? "CSV REC  rows=" + recordedFrameCount
+                : "CSV off";
+
+        GUI.Label(
+            new Rect(panel.x + 8f, textY + 76f, width - 8f, 20f),
+            line5,
+            _smallStyle);
+
+        if (showHelp)
+        {
+            GUI.Label(
+                new Rect(panel.x + 8f, textY + 95f, width - 8f, 20f),
+                "Tools > Kiwi Avatar System > Frame Comparison | F8/F9 when legacy input is enabled",
+                _smallStyle);
+        }
+    }
+
+
+    private Rect CalculateNonOverlappingPanelRect(
+        float panelWidth,
+        float panelHeight)
+    {
+        const float margin = 10f;
+        const float gap = 10f;
+
+        panelWidth = Mathf.Min(
+            panelWidth,
+            Mathf.Max(220f, Screen.width - margin * 2f));
+
+        panelHeight = Mathf.Min(
+            panelHeight,
+            Mathf.Max(160f, Screen.height - margin * 2f));
+
+        Rect preferred = new Rect(
+            Mathf.Max(8f, Screen.width - panelWidth - 18f),
+            margin,
+            panelWidth,
+            panelHeight);
+
+        if (
+            _telemetry == null ||
+            !_telemetry.IsOverlayVisible
+        )
+        {
+            return preferred;
+        }
+
+        Rect telemetryRect =
+            _telemetry.OverlayRect;
+
+        // First choice: keep all right-side diagnostics in one clean vertical
+        // column. At 1920x1080 and the 2560x1352 capture resolution, the frame
+        // comparator fits directly under the 666px telemetry panel.
+        float belowY =
+            telemetryRect.yMax + gap;
+
+        if (belowY + panelHeight <= Screen.height - margin)
+        {
+            return new Rect(
+                Mathf.Max(margin, Screen.width - panelWidth - 18f),
+                belowY,
+                panelWidth,
+                panelHeight);
+        }
+
+        // Short screens cannot stack vertically. Move the comparator completely
+        // to the left of telemetry instead of drawing both into the same pixels.
+        float leftOfTelemetryX =
+            telemetryRect.x - gap - panelWidth;
+
+        if (leftOfTelemetryX >= margin)
+        {
+            return new Rect(
+                margin,
+                margin,
+                panelWidth,
+                panelHeight);
+        }
+
+        // Extremely small windows cannot physically host both full panels.
+        // Keep the comparator out of telemetry's rectangle by using the largest
+        // left lane that exists. This is diagnostic-only and deliberately clips
+        // before it overlaps another Kiwi-owned panel.
+        float availableLeftWidth =
+            Mathf.Max(0f, telemetryRect.x - gap - margin);
+
+        return new Rect(
+            margin,
+            margin,
+            Mathf.Max(1f, Mathf.Min(panelWidth, availableLeftWidth)),
+            panelHeight);
+    }
+
+
+    private float GetCanonicalObservationAgeMs()
+    {
+        if (
+            !_hasCanonicalFrame ||
+            !_canonicalFrame.normalization.valid ||
+            _canonicalFrame.normalization.observationHostTicks <= 0L
+        )
+        {
+            return -1f;
+        }
+
+        long nowTicks =
+            System.Diagnostics.Stopwatch.GetTimestamp();
+
+        if (nowTicks < _canonicalFrame.normalization.observationHostTicks)
+        {
+            return -1f;
+        }
+
+        return
+            (float)KiwiPrecisionTrackingMath.HostTicksToSeconds(
+                nowTicks -
+                _canonicalFrame.normalization.observationHostTicks) *
+            1000f;
+    }
+
+    private void EnsureGuiStyles()
+    {
+        if (_headerStyle != null)
+        {
+            return;
+        }
+
+        _headerStyle = new GUIStyle(GUI.skin.label);
+        _headerStyle.fontSize = 13;
+        _headerStyle.fontStyle = FontStyle.Bold;
+        _headerStyle.normal.textColor = Color.white;
+
+        _bodyStyle = new GUIStyle(GUI.skin.label);
+        _bodyStyle.fontSize = 12;
+        _bodyStyle.normal.textColor = Color.white;
+
+        _smallStyle = new GUIStyle(GUI.skin.label);
+        _smallStyle.fontSize = 10;
+        _smallStyle.normal.textColor =
+            new Color(0.92f, 0.92f, 0.92f, 1f);
+    }
+
+    private void WriteCsvRow()
+    {
+        if (_csvWriter == null)
+        {
+            return;
+        }
+
+        try
+        {
+            Texture sourceTexture = GetSourceTexture();
+            int sourceId =
+                sourceTexture != null
+                    ? sourceTexture.GetInstanceID()
+                    : 0;
+            int sourceWidth = sourceTexture != null ? sourceTexture.width : 0;
+            int sourceHeight = sourceTexture != null ? sourceTexture.height : 0;
+
+            KiwiRuntimeGenerationContext.Snapshot generation =
+                _hasCanonicalFrame
+                    ? _canonicalFrame.generation
+                    : KiwiRuntimeGenerationContext.Capture();
+
+            FacePrecisionTrackingData rigid =
+                _hasCanonicalFrame
+                    ? _canonicalFrame.rigid
+                    : default;
+
+            long nowTicks =
+                System.Diagnostics.Stopwatch.GetTimestamp();
+
+            float observationAgeMs =
+                _hasCanonicalFrame &&
+                _canonicalFrame.normalization.valid &&
+                _canonicalFrame.normalization.observationHostTicks > 0L
+                    ? (float)KiwiPrecisionTrackingMath.HostTicksToSeconds(
+                        nowTicks -
+                        _canonicalFrame.normalization.observationHostTicks) * 1000f
+                    : -1f;
+
+            float arrivalAgeMs =
+                _hasCanonicalFrame &&
+                _canonicalFrame.normalization.valid &&
+                _canonicalFrame.normalization.arrivalHostTicks > 0L
+                    ? (float)KiwiPrecisionTrackingMath.HostTicksToSeconds(
+                        nowTicks -
+                        _canonicalFrame.normalization.arrivalHostTicks) * 1000f
+                    : -1f;
+
+            Transform root =
+                _faceMotion != null
+                    ? _faceMotion.kiwiRoot
+                    : null;
+
+            Vector3 rootPosition = root != null ? root.localPosition : Vector3.zero;
+            Vector3 rootEuler = root != null ? root.localRotation.eulerAngles : Vector3.zero;
+            Vector3 rootScale = root != null ? root.localScale : Vector3.zero;
+
+            float rootScaleDelta = debugRootScaleStep;
+
+            StringBuilder row = new StringBuilder(768);
+
+            Append(row, Time.frameCount); Sep(row);
+            Append(row, Time.realtimeSinceStartupAsDouble); Sep(row);
+            Append(row, _cameraFreshThisFrame); Sep(row);
+            Append(row, sourceId); Sep(row);
+            Append(row, sourceWidth); Sep(row);
+            Append(row, sourceHeight); Sep(row);
+            Append(row, generation.cameraGeneration); Sep(row);
+            Append(row, generation.providerGeneration); Sep(row);
+            Append(row, generation.trackingSessionGeneration); Sep(row);
+            AppendCsvString(row, _hasCanonicalFrame ? _canonicalFrame.providerId : string.Empty); Sep(row);
+            Append(row, _hasCanonicalFrame ? _canonicalFrame.canonicalFrameId : 0UL); Sep(row);
+            Append(row, rigid.frameId); Sep(row);
+            Append(row, _hasCanonicalFrame ? rigid.timestamp : -1L); Sep(row);
+            Append(row, _hasCanonicalFrame && _canonicalFrame.hasSemanticLandmarks ? _canonicalFrame.semanticTimestamp : -1L); Sep(row);
+            Append(row, _hasCanonicalFrame && _canonicalFrame.hasSemanticLandmarks && _canonicalFrame.semanticTimestamp == rigid.timestamp); Sep(row);
+            Append(row, _semanticChangedThisFrame); Sep(row);
+            Append(row, _landmarkCount); Sep(row);
+            Append(row, debugLandmarkMeanStep); Sep(row);
+            Append(row, debugLandmarkMaxStep); Sep(row);
+            Append(row, rigid.faceCenter.x); Sep(row);
+            Append(row, rigid.faceCenter.y); Sep(row);
+            Append(row, rigid.leftEyeCenter.x); Sep(row);
+            Append(row, rigid.leftEyeCenter.y); Sep(row);
+            Append(row, rigid.rightEyeCenter.x); Sep(row);
+            Append(row, rigid.rightEyeCenter.y); Sep(row);
+            Append(row, rigid.nose.x); Sep(row);
+            Append(row, rigid.nose.y); Sep(row);
+            Append(row, rigid.chin.x); Sep(row);
+            Append(row, rigid.chin.y); Sep(row);
+            Append(row, observationAgeMs); Sep(row);
+            Append(row, arrivalAgeMs); Sep(row);
+            Append(row, rootPosition.x); Sep(row);
+            Append(row, rootPosition.y); Sep(row);
+            Append(row, rootPosition.z); Sep(row);
+            Append(row, rootEuler.x); Sep(row);
+            Append(row, rootEuler.y); Sep(row);
+            Append(row, rootEuler.z); Sep(row);
+            Append(row, rootScale.x); Sep(row);
+            Append(row, rootScale.y); Sep(row);
+            Append(row, rootScale.z); Sep(row);
+            Append(row, debugRootPositionStep); Sep(row);
+            Append(row, debugRootRotationStep); Sep(row);
+            Append(row, rootScaleDelta); Sep(row);
+            Append(row, KiwiFrameContinuityDiagnostics.Enabled); Sep(row);
+            Append(row, KiwiFrameContinuityDiagnostics.DirectBypassSuppressed); Sep(row);
+            Append(row, KiwiFrameContinuityDiagnostics.DiscontinuityGuardActive); Sep(row);
+            Append(row, KiwiFrameContinuityDiagnostics.TrackingRateHz); Sep(row);
+            Append(row, KiwiFrameContinuityDiagnostics.EffectiveSampleInterval * 1000f); Sep(row);
+            Append(row, KiwiFrameContinuityDiagnostics.ResponseCap); Sep(row);
+            Append(row, _trackingHub != null && _trackingHub.HandoffActive); Sep(row);
+            Append(row, _trackingHub != null ? _trackingHub.HandoffWeight : 0f); Sep(row);
+            Append(row, _trackingHub != null ? _trackingHub.HandoffTargetWeight : 0f); Sep(row);
+            Append(row, _trackingHub != null ? _trackingHub.HandoffReleaseStep : 0f); Sep(row);
+            Append(row, _trackingHub != null ? _trackingHub.HandoffCenterOffsetMagnitude : 0f); Sep(row);
+            Append(row, _trackingHub != null ? _trackingHub.HandoffRotationOffsetDegrees : 0f); Sep(row);
+            Append(row, _trackingHub != null ? _trackingHub.HandoffScaleRatio : 1f); Sep(row);
+            Append(row, _trackingHub != null ? _trackingHub.HandoffCount : 0); Sep(row);
+            Append(row, _supervisor != null && _supervisor.CommercialCadenceBoostActive); Sep(row);
+            Append(row, _supervisor != null ? _supervisor.CurrentRenderFps : 0f); Sep(row);
+            Append(row, _supervisor != null ? _supervisor.CurrentAuxiliaryMediaPipeHz : 0f); Sep(row);
+            Append(row, _trackingHub != null ? _trackingHub.CommercialRigidShockCount : 0); Sep(row);
+            Append(row, _trackingHub != null ? _trackingHub.CommercialRigidLastCenterResidualEyeSpans : 0f); Sep(row);
+            Append(row, _trackingHub != null ? _trackingHub.CommercialRigidLastRotationDelta : 0f); Sep(row);
+            Append(row, _trackingHub != null ? _trackingHub.CommercialRigidLastDepthLogDelta : 0f); Sep(row);
+            Append(row, KiwiCommercialFacePartPolicy.SemanticTopologyRejectCount); Sep(row);
+            Append(row, KiwiCommercialFacePartPolicy.TransactionCanonicalFrameId); Sep(row);
+            Append(row, KiwiRuntimeGenerationContext.SemanticTransactionSequence); Sep(row);
+            Append(row, KiwiCommercialLandmarkRefiner.LastRefinedPointCount); Sep(row);
+            Append(row, KiwiCommercialLandmarkRefiner.LastIsolatedPointRejectCount); Sep(row);
+            Append(row, KiwiCommercialLandmarkRefiner.LastIsolatedCandidateCount); Sep(row);
+            Append(row, KiwiCommercialLandmarkRefiner.LastMassRejectBypass); Sep(row);
+            Append(row, KiwiCommercialLandmarkRefiner.TotalMassRejectBypasses); Sep(row);
+            Append(row, KiwiCommercialLandmarkRefiner.LastMeanAdjustmentEyeSpans); Sep(row);
+            Append(row, KiwiCommercialLandmarkRefiner.LastMaxAdjustmentEyeSpans); Sep(row);
+            Append(row, KiwiCommercialLandmarkRefiner.LastGeometryQuality); Sep(row);
+            Append(row, KiwiCommercialLandmarkRefiner.LastRefinedTimestamp); Sep(row);
+            Append(row, _trackingHub != null && _trackingHub.CommercialFailoverDeferred); Sep(row);
+            Append(row, _trackingHub != null ? _trackingHub.CommercialFailoverGraceRemainingMilliseconds : 0f); Sep(row);
+            Append(row, _trackingHub != null ? _trackingHub.CommercialDeferredFailoverCount : 0); Sep(row);
+            Append(row, KiwiCommercialTransformWriterAudit.LastCompletedFrame); Sep(row);
+            Append(row, KiwiCommercialTransformWriterAudit.RootUpdateToLatePositionDelta); Sep(row);
+            Append(row, KiwiCommercialTransformWriterAudit.RootUpdateToLateRotationDelta); Sep(row);
+            Append(row, KiwiCommercialTransformWriterAudit.RootUpdateToLateScaleDelta); Sep(row);
+            Append(row, KiwiCommercialTransformWriterAudit.RootLateToRenderPositionDelta); Sep(row);
+            Append(row, KiwiCommercialTransformWriterAudit.RootLateToRenderRotationDelta); Sep(row);
+            Append(row, KiwiCommercialTransformWriterAudit.RootLateToRenderScaleDelta); Sep(row);
+            Append(row, KiwiCommercialTransformWriterAudit.VisualRelativeUpdateToLatePositionDelta); Sep(row);
+            Append(row, KiwiCommercialTransformWriterAudit.VisualRelativeUpdateToLateRotationDelta); Sep(row);
+            Append(row, KiwiCommercialTransformWriterAudit.VisualRelativeUpdateToLateScaleDelta); Sep(row);
+            Append(row, KiwiCommercialTransformWriterAudit.VisualRelativeLateToRenderPositionDelta); Sep(row);
+            Append(row, KiwiCommercialTransformWriterAudit.VisualRelativeLateToRenderRotationDelta); Sep(row);
+            Append(row, KiwiCommercialTransformWriterAudit.VisualRelativeLateToRenderScaleDelta); Sep(row);
+            Append(row, KiwiCommercialTransformWriterAudit.VisualMovedWithoutRoot); Sep(row);
+            Append(row, KiwiCommercialTransformWriterAudit.RootMovedAfterLate); Sep(row);
+            Append(row, KiwiCommercialTransformWriterAudit.VisualMovedWithoutRootCount); Sep(row);
+            Append(row, KiwiCommercialTransformWriterAudit.RootMovedAfterLateCount); Sep(row);
+            Append(
+                row,
+                _cameraFreshThisFrame &&
+                !_semanticChangedThisFrame &&
+                _cropper != null &&
+                _cropper.sourceImage != null &&
+                _cropper.sourceImage.texture is WebCamTexture);
+
+            _csvWriter.WriteLine(row.ToString());
+            recordedFrameCount++;
+            _framesSinceCsvFlush++;
+
+            if (_framesSinceCsvFlush >= CsvFlushIntervalFrames)
+            {
+                _csvWriter.Flush();
+                _framesSinceCsvFlush = 0;
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError(
+                "[KiwiAvatarSystem] Frame comparison CSV write failed; " +
+                "recording was stopped. " +
+                ex.Message);
+            StopCsvRecording();
+        }
+    }
+
+    private static void Sep(StringBuilder b)
+    {
+        b.Append(',');
+    }
+
+    private static void Append(StringBuilder b, bool value)
+    {
+        b.Append(value ? "1" : "0");
+    }
+
+    private static void Append(StringBuilder b, int value)
+    {
+        b.Append(value.ToString(Invariant));
+    }
+
+    private static void Append(StringBuilder b, long value)
+    {
+        b.Append(value.ToString(Invariant));
+    }
+
+    private static void Append(StringBuilder b, ulong value)
+    {
+        b.Append(value.ToString(Invariant));
+    }
+
+    private static void Append(StringBuilder b, float value)
+    {
+        b.Append(value.ToString("R", Invariant));
+    }
+
+    private static void Append(StringBuilder b, double value)
+    {
+        b.Append(value.ToString("R", Invariant));
+    }
+
+    private static void AppendCsvString(StringBuilder b, string value)
+    {
+        string safe = value ?? string.Empty;
+        b.Append('"');
+        b.Append(safe.Replace("\"", "\"\""));
+        b.Append('"');
+    }
+}

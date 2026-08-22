@@ -8,7 +8,7 @@ using UnityEngine.UI;
 using Mediapipe.Unity.Sample.FaceLandmarkDetection;
 
 /// <summary>
-/// v4.5.3 commercial live camera-frame tracker with source-age-safe GPU mailbox and adaptive search budget.
+/// v5.1 Phase 6 commercial live camera-frame local-residual tracker.
 ///
 /// Commercial AR/filter systems commonly combine a slower semantic detector
 /// with a lightweight local tracker between detector updates. Kiwi uses the
@@ -120,9 +120,9 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
     [Range(0f, 0.10f)]
     public float correctionDeadZoneCropFraction = 0.006f;
 
-    [Header("Bilateral Eye Rigid Coherence")]
+    [Header("Bilateral Eye Common-Mode Rejection")]
 
-    [Tooltip("Solve the two eyes as one short-baseline similarity transform, then allow only a bounded eye-local residual. This prevents one eye from flying away during roll while still preserving genuine roll/scale motion.")]
+    [Tooltip("Serialized compatibility name retained. ON now fits the shared eye-pair residual only to REMOVE common translation/rotation/scale, leaving bounded eye-local residual for presentation.")]
     public bool enableBilateralEyeRigidSolve = true;
 
     [Range(0f, 1f)]
@@ -149,9 +149,17 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
     [Range(5f, 70f)]
     public float tiltTighteningFullDegrees = 32f;
 
+    [Header("Rigid / Local Residual Separation")]
+
+    [Tooltip("Explicitly separates expected rigid image motion from semantic-local motion and GPU residual motion. The final Live2D correction contains only the residual left after both expected components are removed.")]
+    public bool enableExplicitRigidPixelSeparation = true;
+
+    [Tooltip("Reject the shared eye-pair translation/rotation/scale that remains after expected rigid motion. Shared residual is treated as rigid-prediction error, not as an Eye/Mouth-local deformation.")]
+    public bool rejectResidualCommonMode = true;
+
     [Header("Eye / Mouth Anatomical Layout")]
 
-    [Tooltip("The eye pair owns rigid 2D face motion. Mouth tracking is treated as a local residual around that rigid motion so the mouth cannot jump into an eye region.")]
+    [Tooltip("The eye pair defines the common residual that is rejected. Mouth tracking keeps only motion relative to that common mode so it cannot become a second rigid tracker or jump into an eye region.")]
     public bool constrainMouthToEyePair = true;
 
     [Range(0f, 0.40f)]
@@ -192,6 +200,14 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
     [SerializeField] private float debugCorrectionAgeMs;
     [SerializeField] private int debugMaximumConcurrentReadbacks = 1;
     [SerializeField] private int debugStaleReadbackDrops;
+    [SerializeField] private int debugGenerationReadbackDrops;
+    [SerializeField] private int debugCalibrationGenerationReadbackDrops;
+    [SerializeField] private int debugRuntimeSuppressionInvalidations;
+    [SerializeField] private int debugSourceIdentityInvalidations;
+    [SerializeField] private int debugConfigEpoch;
+    [SerializeField] private int debugCameraGeneration;
+    [SerializeField] private int debugModelGeneration;
+    [SerializeField] private long debugSemanticTransactionSequence;
     [SerializeField] private bool debugOverloadSuspended;
     [SerializeField] private int debugOverloadSuspensions;
     [SerializeField] private int debugConsecutiveStaleReadbacks;
@@ -207,6 +223,10 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
     [SerializeField] private bool debugEyePairFallback;
     [SerializeField] private bool debugMouthAnatomyClamped;
     [SerializeField] private float debugMouthSeparationRatio = 1f;
+    [SerializeField] private Vector2 debugExpectedRigidPixelDelta;
+    [SerializeField] private Vector2 debugRejectedCommonModePixels;
+    [SerializeField] private Vector3 debugLocalResidualPixelMagnitude;
+    [SerializeField] private bool debugCanonicalSemanticAligned;
 
     private sealed class ReadbackSlot
     {
@@ -217,6 +237,14 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
         public bool completedReady;
         public int sequence;
         public int generation;
+        public int cameraGeneration;
+        public int providerGeneration;
+        public int modelGeneration;
+        public int configEpoch;
+        public int calibrationGeneration;
+        public int trackingSessionGeneration;
+        public long semanticTransactionSequence;
+        public long semanticTimestamp;
         public int searchRadius;
         public int gridSize;
         public long startedHostTicks;
@@ -227,6 +255,16 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
 
         public readonly bool[] partEnabled =
             new bool[PartCount];
+
+        // Phase 6 explicit motion ownership. expectedRigidPixelDelta is the
+        // eye-pair similarity motion; expectedSemanticLocalPixelDelta is the
+        // remaining movement already owned by the semantic crop. GPU block
+        // matching is decoded only as the residual after both components.
+        public readonly Vector2[] expectedRigidPixelDelta =
+            new Vector2[PartCount];
+
+        public readonly Vector2[] expectedSemanticLocalPixelDelta =
+            new Vector2[PartCount];
     }
 
     private ComputeShader _matcher;
@@ -269,6 +307,17 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
     private readonly Vector2[] _currentBaseCenters =
         new Vector2[PartCount];
 
+    private readonly Vector2[] _latestExpectedRigidPixelDelta =
+        new Vector2[PartCount];
+
+    private readonly Vector2[] _latestMeasuredPixelDelta =
+        new Vector2[PartCount];
+
+    private readonly Vector2[] _latestLocalResidualPixelDelta =
+        new Vector2[PartCount];
+
+    private Vector2 _latestRejectedCommonModePixels;
+
     private readonly Vector2[] _decodedCorrection =
         new Vector2[PartCount];
 
@@ -293,6 +342,13 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
     private int _sequence;
     private int _generation;
 
+    private int _lastSourceTextureId;
+    private int _lastSourceTextureWidth;
+    private int _lastSourceTextureHeight;
+    private int _lastGenerationConfigHash;
+    private bool _hasGenerationConfigHash;
+    private int _lastObservedConfigEpoch;
+
     private int _latestCompletedSequence = -1;
 
     private long _latestCorrectionHostTicks;
@@ -301,6 +357,11 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
     private float _matchRateHz;
     private float _readbackLatencyMs;
     private int _staleReadbackDrops;
+    private int _generationReadbackDrops;
+    private int _calibrationGenerationReadbackDrops;
+    private int _runtimeSuppressionInvalidations;
+    private int _sourceIdentityInvalidations;
+    private bool _runtimeSuppressed;
     private int _consecutiveStaleReadbacks;
     private int _overloadSuspensions;
     private double _overloadSuspendUntilRealtime;
@@ -324,6 +385,18 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
 
     public int StaleReadbackDrops =>
         _staleReadbackDrops;
+
+    public int GenerationReadbackDrops =>
+        _generationReadbackDrops;
+
+    public int CalibrationGenerationReadbackDrops =>
+        _calibrationGenerationReadbackDrops;
+
+    public int RuntimeSuppressionInvalidations =>
+        _runtimeSuppressionInvalidations;
+
+    public int SourceIdentityInvalidations =>
+        _sourceIdentityInvalidations;
 
     public bool IsOverloadSuspended =>
         enableReadbackOverloadCircuitBreaker &&
@@ -371,6 +444,18 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
 
     public float MouthSeparationRatio =>
         debugMouthSeparationRatio;
+
+    public Vector2 ExpectedRigidPixelDelta =>
+        debugExpectedRigidPixelDelta;
+
+    public Vector2 RejectedCommonModePixels =>
+        _latestRejectedCommonModePixels;
+
+    public Vector3 LocalResidualPixelMagnitude =>
+        debugLocalResidualPixelMagnitude;
+
+    public bool CanonicalSemanticAligned =>
+        debugCanonicalSemanticAligned;
 
     public float CorrectionAgeSeconds
     {
@@ -486,6 +571,7 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
 
         ResetCorrections();
 
+        _runtimeSuppressed = true;
         _consecutiveStaleReadbacks = 0;
         _overloadSuspendUntilRealtime = 0.0;
     }
@@ -506,7 +592,13 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
 
         _hasPreviousFrame = false;
         _hasPreviousCenters = false;
+        _lastSourceTextureId = 0;
+        _lastSourceTextureWidth = 0;
+        _lastSourceTextureHeight = 0;
+        _hasGenerationConfigHash = false;
+        _lastObservedConfigEpoch = 0;
 
+        _runtimeSuppressed = false;
         _consecutiveStaleReadbacks = 0;
         _overloadSuspendUntilRealtime = 0.0;
 
@@ -520,8 +612,22 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
     {
         RefreshReferences(false);
 
-        if (!CanRun())
+        bool canRun =
+            CanRun();
+
+        if (!canRun)
         {
+            // KIWI_V5_1_PHASE2_RUNTIME_SUPPRESSION_INVALIDATION
+            // Holding/Lost, explicit feature suppression, or a temporarily
+            // unavailable source must not leave a pre-gap GPU result waiting
+            // to be adopted after recovery. Invalidate once per suppression
+            // episode; pending requests are not cancelled or force-waited.
+            if (!_runtimeSuppressed)
+            {
+                InvalidateAsyncWorkForRuntimeSuppression();
+                _runtimeSuppressed = true;
+            }
+
             DecayCorrectionsToZero(
                 Time.unscaledDeltaTime);
 
@@ -531,8 +637,23 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
             return;
         }
 
+        if (_runtimeSuppressed)
+        {
+            // Reacquire from a current camera pair instead of matching across
+            // the suppressed/lost interval. Existing render correction is
+            // allowed to decay naturally; only stale decode/reference state is
+            // cleared here.
+            _runtimeSuppressed = false;
+            _hasPreviousFrame = false;
+            _hasPreviousCenters = false;
+            RejectDecodedCorrection();
+        }
+
         Texture source =
             cropper.sourceImage.texture;
+
+        RefreshCrossSystemGenerationContract(
+            source);
 
         EnsureFrameResources(
             source);
@@ -573,6 +694,32 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
         UpdateDiagnostics();
     }
 
+    private void InvalidateAsyncWorkForRuntimeSuppression()
+    {
+        _generation++;
+        _runtimeSuppressionInvalidations++;
+
+        lock (_readbackMailboxLock)
+        {
+            for (
+                int i = 0;
+                i < _slots.Length;
+                i++
+            )
+            {
+                // Do not clear pending. The GPU still owns that request/buffer
+                // until its callback retires it. Only completed mailbox work is
+                // immediately made unavailable to presentation.
+                _slots[i].completedReady =
+                    false;
+            }
+        }
+
+        _hasPreviousFrame = false;
+        _hasPreviousCenters = false;
+        RejectDecodedCorrection();
+    }
+
     private bool CanRun()
     {
         if (
@@ -604,6 +751,40 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
         )
         {
             return false;
+        }
+
+        // KIWI_V5_1_PHASE10_SEMANTIC_RECOVERY_ISOLATION
+        // Local semantic baseline changes invalidate only the local optical
+        // tracker. They must never escalate into Provider/Root/Inference
+        // recovery. Phase 2 suppression invalidation retires any pre-recovery
+        // GPU mailbox naturally without a global GPU wait.
+        if (
+            KiwiRecoveryDomainCoordinator.IsSemanticRecoveryActive(
+                KiwiRecoveryDomainCoordinator.SemanticComponent.Mask |
+                KiwiRecoveryDomainCoordinator.SemanticComponent.Attachment |
+                KiwiRecoveryDomainCoordinator.SemanticComponent
+                    .HeadLocalSampleFrame)
+        )
+        {
+            return false;
+        }
+
+        // Phase 6: local optical residuals are valid only when Root rigid and
+        // FacePart semantic geometry belong to the same canonical source frame.
+        // External-provider / semantic-hold cycles must not let image motion act
+        // as a hidden second Root tracker.
+        if (KiwiCanonicalTrackingFrame.IsRuntimeCoordinatorActive)
+        {
+            if (
+                !KiwiCanonicalTrackingFrame.TryGetFrame(
+                    out KiwiTrackingFrame canonical) ||
+                !canonical.hasSemanticLandmarks ||
+                canonical.semanticTimestamp !=
+                    canonical.rigid.timestamp
+            )
+            {
+                return false;
+            }
         }
 
         return true;
@@ -639,6 +820,139 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
             _kernel =
                 -1;
         }
+    }
+
+    private void RefreshCrossSystemGenerationContract(
+        Texture source)
+    {
+        if (source == null)
+        {
+            return;
+        }
+
+        int sourceTextureId =
+            source.GetInstanceID();
+
+        int sourceWidth =
+            Mathf.Max(1, source.width);
+
+        int sourceHeight =
+            Mathf.Max(1, source.height);
+
+        bool cameraIdentityChanged =
+            _lastSourceTextureId != 0 &&
+            (
+                sourceTextureId != _lastSourceTextureId ||
+                sourceWidth != _lastSourceTextureWidth ||
+                sourceHeight != _lastSourceTextureHeight
+            );
+
+        if (cameraIdentityChanged)
+        {
+            // Phase 8: FaceLandmarkerRunner/source lifecycle is the sole
+            // CameraGeneration owner. This presentation consumer only
+            // invalidates its local mailbox/history when it observes the
+            // texture identity transition. Pending GPU work retires naturally
+            // through the local generation and shared CameraGeneration gates.
+            _generation++;
+            _sourceIdentityInvalidations++;
+
+            lock (_readbackMailboxLock)
+            {
+                for (int i = 0; i < _slots.Length; i++)
+                {
+                    _slots[i].completedReady = false;
+                }
+            }
+
+            _hasPreviousFrame = false;
+            _hasPreviousCenters = false;
+            RejectDecodedCorrection();
+        }
+
+        _lastSourceTextureId =
+            sourceTextureId;
+
+        _lastSourceTextureWidth =
+            sourceWidth;
+
+        _lastSourceTextureHeight =
+            sourceHeight;
+
+        int configHash =
+            CalculateGenerationConfigHash();
+
+        int currentConfigEpoch =
+            KiwiRuntimeGenerationContext.ConfigEpoch;
+
+        if (
+            _hasGenerationConfigHash &&
+            configHash != _lastGenerationConfigHash
+        )
+        {
+            // Inspector/legacy mutations still need an epoch bump here. When
+            // RuntimePolicyResolver changed the same values, it advanced the
+            // epoch BEFORE writing them, so do not increment a second time.
+            if (
+                _lastObservedConfigEpoch <= 0 ||
+                currentConfigEpoch ==
+                    _lastObservedConfigEpoch
+            )
+            {
+                KiwiRuntimeGenerationContext
+                    .AdvanceConfigEpoch();
+            }
+        }
+
+        _lastGenerationConfigHash =
+            configHash;
+
+        _hasGenerationConfigHash =
+            true;
+
+        _lastObservedConfigEpoch =
+            KiwiRuntimeGenerationContext.ConfigEpoch;
+    }
+
+    private int CalculateGenerationConfigHash()
+    {
+        unchecked
+        {
+            int hash = 17;
+
+            hash = hash * 31 + trackingLongSide;
+            hash = hash * 31 + searchRadiusPixels;
+            hash = hash * 31 + patchStridePixels;
+            hash = hash * 31 + eyePatchFraction.GetHashCode();
+            hash = hash * 31 + mouthPatchFraction.GetHashCode();
+            hash = hash * 31 + shiftPenalty.GetHashCode();
+            hash = hash * 31 + minimumMatchConfidence.GetHashCode();
+            hash = hash * 31 + (adaptiveSearchRadius ? 1 : 0);
+            hash = hash * 31 + restingSearchRadiusPixels;
+            hash = hash * 31 + minimumSearchRisk.GetHashCode();
+            hash = hash * 31 + fullSearchRisk.GetHashCode();
+            hash = hash * 31 + maximumAcceptedCost.GetHashCode();
+            hash = hash * 31 + maximumCorrectionCropFraction.GetHashCode();
+            hash = hash * 31 + (enableExplicitRigidPixelSeparation ? 1 : 0);
+            hash = hash * 31 + (rejectResidualCommonMode ? 1 : 0);
+
+            return hash;
+        }
+    }
+
+    private static bool IsSlotCrossSystemIdentityCurrent(
+        ReadbackSlot slot)
+    {
+        return
+            slot != null &&
+            KiwiRuntimeGenerationContext.IsPresentationAsyncIdentityCurrent(
+                slot.cameraGeneration,
+                slot.providerGeneration,
+                slot.modelGeneration,
+                slot.configEpoch,
+                slot.calibrationGeneration,
+                slot.trackingSessionGeneration,
+                slot.semanticTransactionSequence);
     }
 
     private void EnsureFrameResources(
@@ -1027,6 +1341,9 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
                     0.001f;
         }
 
+        PopulateExpectedMotionContract(
+            slot);
+
         _matcher.SetInt(
             "_Width",
             _trackingWidth);
@@ -1089,6 +1406,9 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
             groups,
             PartCount);
 
+        KiwiRuntimeGenerationContext.Snapshot generationSnapshot =
+            KiwiRuntimeGenerationContext.Capture();
+
         slot.pending =
             true;
 
@@ -1097,6 +1417,30 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
 
         slot.generation =
             generation;
+
+        slot.cameraGeneration =
+            generationSnapshot.cameraGeneration;
+
+        slot.providerGeneration =
+            generationSnapshot.providerGeneration;
+
+        slot.modelGeneration =
+            generationSnapshot.modelGeneration;
+
+        slot.configEpoch =
+            generationSnapshot.configEpoch;
+
+        slot.calibrationGeneration =
+            generationSnapshot.calibrationGeneration;
+
+        slot.trackingSessionGeneration =
+            generationSnapshot.trackingSessionGeneration;
+
+        slot.semanticTransactionSequence =
+            generationSnapshot.semanticTransactionSequence;
+
+        slot.semanticTimestamp =
+            KiwiCommercialFacePartPolicy.PartDecisionTimestamp;
 
         slot.searchRadius =
             activeRadius;
@@ -1226,12 +1570,32 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
         int generation =
             slot.generation;
 
+        bool calibrationGenerationStale =
+            slot.calibrationGeneration !=
+                KiwiRuntimeGenerationContext.CalibrationGeneration;
+
         if (
             generation !=
                 _generation ||
+            !IsSlotCrossSystemIdentityCurrent(slot) ||
             request.hasError
         )
         {
+            if (
+                !request.hasError &&
+                generation == _generation
+            )
+            {
+                System.Threading.Interlocked.Increment(
+                    ref _generationReadbackDrops);
+
+                if (calibrationGenerationStale)
+                {
+                    System.Threading.Interlocked.Increment(
+                        ref _calibrationGenerationReadbackDrops);
+                }
+            }
+
             lock (_readbackMailboxLock)
             {
                 slot.pending =
@@ -1307,6 +1671,7 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
                     slot.completedReady &&
                     slot.generation ==
                         _generation &&
+                    IsSlotCrossSystemIdentityCurrent(slot) &&
                     slot.sequence >
                         selectedSequence
                 )
@@ -1369,7 +1734,8 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
             slot.sequence <=
                 _latestCompletedSequence ||
             slot.generation !=
-                _generation
+                _generation ||
+            !IsSlotCrossSystemIdentityCurrent(slot)
         )
         {
             return;
@@ -1466,6 +1832,36 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
                 uvStartsAtTop,
                 out Vector2 correction,
                 out float confidence);
+
+            // Phase 6 explicit decomposition:
+            // measured = expectedRigid + semanticLocal + opticalResidual.
+            // Only the final local residual is allowed to reach presentation.
+            Vector2 decodedResidualPixels =
+                UvDeltaToPixel(
+                    correction);
+
+            Vector2 measuredPixelDelta =
+                slot.expectedRigidPixelDelta[part] +
+                slot.expectedSemanticLocalPixelDelta[part] +
+                decodedResidualPixels;
+
+            Vector2 localResidualPixels =
+                measuredPixelDelta -
+                slot.expectedRigidPixelDelta[part] -
+                slot.expectedSemanticLocalPixelDelta[part];
+
+            correction =
+                PixelDeltaToUv(
+                    localResidualPixels);
+
+            _latestExpectedRigidPixelDelta[part] =
+                slot.expectedRigidPixelDelta[part];
+
+            _latestMeasuredPixelDelta[part] =
+                measuredPixelDelta;
+
+            _latestLocalResidualPixelDelta[part] =
+                localResidualPixels;
 
             float partQuality =
                 ResolvePartQuality(
@@ -1894,185 +2290,128 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
     private void ResolveRigidAnatomicalCorrections(
         ReadbackSlot slot)
     {
-        debugEyePairFallback =
-            false;
+        // Phase 6: this method no longer reconstructs and reapplies a rigid
+        // eye-pair transform. Instead, it estimates the common residual that is
+        // still shared by both eyes after expected rigid/semantic motion, removes
+        // that common mode, and passes only part-local residual to presentation.
+        debugEyePairFallback = false;
+        debugMouthAnatomyClamped = false;
+        debugEyePairRotationDeltaDegrees = 0f;
+        debugEyePairScale = 1f;
+        debugMouthSeparationRatio = 1f;
+        _latestRejectedCommonModePixels = Vector2.zero;
 
-        debugMouthAnatomyClamped =
-            false;
+        Rect leftRect = slot.baseRects[LeftPart];
+        Rect rightRect = slot.baseRects[RightPart];
+        Rect mouthRect = slot.baseRects[MouthPart];
 
-        debugEyePairRotationDeltaDegrees =
-            0f;
+        Vector2 baseLeft = leftRect.center;
+        Vector2 baseRight = rightRect.center;
+        Vector2 baseMouth = mouthRect.center;
 
-        debugEyePairScale =
-            1f;
+        Vector2 baseLeftPixels = UvPointToPixel(baseLeft);
+        Vector2 baseRightPixels = UvPointToPixel(baseRight);
+        Vector2 baseMouthPixels = UvPointToPixel(baseMouth);
 
-        debugMouthSeparationRatio =
-            1f;
+        Vector2 baseEyeVectorPixels =
+            baseRightPixels - baseLeftPixels;
 
-        Rect leftRect =
-            slot.baseRects[
-                LeftPart];
-
-        Rect rightRect =
-            slot.baseRects[
-                RightPart];
-
-        Rect mouthRect =
-            slot.baseRects[
-                MouthPart];
-
-        Vector2 baseLeft =
-            leftRect.center;
-
-        Vector2 baseRight =
-            rightRect.center;
-
-        Vector2 baseMouth =
-            mouthRect.center;
-
-        Vector2 baseEyeVector =
-            baseRight -
-            baseLeft;
-
-        float eyeSpan =
-            baseEyeVector.magnitude;
+        float eyeSpanPixels =
+            baseEyeVectorPixels.magnitude;
 
         if (
+            !enableExplicitRigidPixelSeparation ||
+            !rejectResidualCommonMode ||
             !enableBilateralEyeRigidSolve ||
-            eyeSpan <=
-                0.0001f
+            eyeSpanPixels <= 0.01f
         )
         {
-            for (
-                int i = 0;
-                i < PartCount;
-                i++
-            )
+            for (int i = 0; i < PartCount; i++)
             {
-                _targetCorrection[i] =
-                    _decodedCorrection[i];
-
-                _matchConfidence[i] =
-                    _decodedConfidence[i];
+                _targetCorrection[i] = _decodedCorrection[i];
+                _matchConfidence[i] = _decodedConfidence[i];
             }
 
+            CaptureFinalLocalResidualDiagnostics();
             return;
         }
 
-        Vector2 baseEyeMid =
-            (
-                baseLeft +
-                baseRight
-            ) *
-            0.5f;
+        Vector2 baseEyeMidPixels =
+            (baseLeftPixels + baseRightPixels) * 0.5f;
 
         float baseRoll =
             Mathf.Abs(
                 NormalizeSignedAngle(
                     Mathf.Atan2(
-                        baseEyeVector.y,
-                        baseEyeVector.x) *
+                        baseEyeVectorPixels.y,
+                        baseEyeVectorPixels.x) *
                     Mathf.Rad2Deg));
 
         if (baseRoll > 90f)
         {
-            baseRoll =
-                180f -
-                baseRoll;
+            baseRoll = 180f - baseRoll;
         }
 
-        debugEyePairRollDegrees =
-            baseRoll;
+        debugEyePairRollDegrees = baseRoll;
 
-        float leftConfidence =
-            _decodedConfidence[
-                LeftPart];
-
-        float rightConfidence =
-            _decodedConfidence[
-                RightPart];
+        float leftConfidence = _decodedConfidence[LeftPart];
+        float rightConfidence = _decodedConfidence[RightPart];
+        float mouthConfidence = _decodedConfidence[MouthPart];
 
         bool leftReliable =
-            leftConfidence >=
-            minimumReliableEyeConfidence;
+            leftConfidence >= minimumReliableEyeConfidence;
 
         bool rightReliable =
-            rightConfidence >=
-            minimumReliableEyeConfidence;
+            rightConfidence >= minimumReliableEyeConfidence;
 
-        Vector2 leftCorrection =
-            _decodedCorrection[
-                LeftPart];
+        Vector2 leftResidualPixels =
+            UvDeltaToPixel(_decodedCorrection[LeftPart]);
 
-        Vector2 rightCorrection =
-            _decodedCorrection[
-                RightPart];
+        Vector2 rightResidualPixels =
+            UvDeltaToPixel(_decodedCorrection[RightPart]);
 
-        Vector2 pairTranslation =
-            Vector2.zero;
+        Vector2 pairTranslationPixels = Vector2.zero;
+        float pairRotationDegrees = 0f;
+        float pairScale = 1f;
 
-        float pairRotationDegrees =
-            0f;
-
-        float pairScale =
-            1f;
-
-        float pairConfidence =
-            0f;
-
-        if (
-            leftReliable &&
-            rightReliable
-        )
+        if (leftReliable && rightReliable)
         {
             float weightSum =
                 Mathf.Max(
                     0.0001f,
-                    leftConfidence +
-                    rightConfidence);
+                    leftConfidence + rightConfidence);
 
-            pairTranslation =
+            pairTranslationPixels =
                 (
-                    leftCorrection *
-                        leftConfidence +
-                    rightCorrection *
-                        rightConfidence
+                    leftResidualPixels * leftConfidence +
+                    rightResidualPixels * rightConfidence
                 ) /
                 weightSum;
 
-            Vector2 rawTargetLeft =
-                baseLeft +
-                leftCorrection;
+            Vector2 rawTargetLeftPixels =
+                baseLeftPixels + leftResidualPixels;
 
-            Vector2 rawTargetRight =
-                baseRight +
-                rightCorrection;
+            Vector2 rawTargetRightPixels =
+                baseRightPixels + rightResidualPixels;
 
-            Vector2 rawTargetVector =
-                rawTargetRight -
-                rawTargetLeft;
+            Vector2 rawTargetVectorPixels =
+                rawTargetRightPixels - rawTargetLeftPixels;
 
             float rawScale =
-                rawTargetVector.magnitude /
-                Mathf.Max(
-                    0.0001f,
-                    eyeSpan);
+                rawTargetVectorPixels.magnitude /
+                Mathf.Max(0.01f, eyeSpanPixels);
 
             float rawRotation =
                 Vector2.SignedAngle(
-                    baseEyeVector,
-                    rawTargetVector);
+                    baseEyeVectorPixels,
+                    rawTargetVectorPixels);
 
             float shapeReliability =
                 Mathf.Clamp01(
-                    Mathf.Min(
-                        leftConfidence,
-                        rightConfidence) /
+                    Mathf.Min(leftConfidence, rightConfidence) /
                     Mathf.Max(
                         0.0001f,
-                        Mathf.Max(
-                            leftConfidence,
-                            rightConfidence)));
+                        Mathf.Max(leftConfidence, rightConfidence)));
 
             pairScale =
                 Mathf.Lerp(
@@ -2091,73 +2430,32 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
                         -maximumInterFrameEyeRotationDegrees,
                         maximumInterFrameEyeRotationDegrees),
                     shapeReliability);
-
-            pairConfidence =
-                Mathf.Max(
-                    leftConfidence,
-                    rightConfidence);
         }
-        else if (
-            leftReliable ||
-            rightReliable
-        )
+        else if (leftReliable || rightReliable)
         {
-            debugEyePairFallback =
-                true;
-
-            bool useLeft =
-                leftReliable &&
-                (
-                    !rightReliable ||
-                    leftConfidence >=
-                        rightConfidence
-                );
-
-            pairTranslation =
-                useLeft
-                    ? leftCorrection
-                    : rightCorrection;
-
-            pairScale =
-                1f;
-
-            pairRotationDegrees =
-                0f;
-
-            pairConfidence =
-                useLeft
-                    ? leftConfidence
-                    : rightConfidence;
+            // With one trustworthy eye there is no geometric evidence that its
+            // shift is local. Treat it as common translation and remove it.
+            debugEyePairFallback = true;
+            pairTranslationPixels =
+                leftReliable
+                    ? leftResidualPixels
+                    : rightResidualPixels;
         }
         else
         {
-            _targetCorrection[
-                LeftPart] =
-                Vector2.zero;
+            // No rigid basis => no safe local residual classification.
+            for (int i = 0; i < PartCount; i++)
+            {
+                _targetCorrection[i] = Vector2.zero;
+                _matchConfidence[i] = 0f;
+            }
 
-            _targetCorrection[
-                RightPart] =
-                Vector2.zero;
-
-            _targetCorrection[
-                MouthPart] =
-                Vector2.zero;
-
-            _matchConfidence[
-                LeftPart] =
-                0f;
-
-            _matchConfidence[
-                RightPart] =
-                0f;
-
-            _matchConfidence[
-                MouthPart] =
-                _decodedConfidence[
-                    MouthPart];
-
+            CaptureFinalLocalResidualDiagnostics();
             return;
         }
+
+        _latestRejectedCommonModePixels =
+            pairTranslationPixels;
 
         debugEyePairRotationDeltaDegrees =
             pairRotationDegrees;
@@ -2165,300 +2463,246 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
         debugEyePairScale =
             pairScale;
 
-        Vector2 fittedEyeVector =
+        Vector2 fittedEyeVectorPixels =
             RotateVector(
-                baseEyeVector *
-                    pairScale,
+                baseEyeVectorPixels * pairScale,
                 pairRotationDegrees);
 
-        Vector2 pairMid =
-            baseEyeMid +
-            pairTranslation;
+        Vector2 commonEyeMidPixels =
+            baseEyeMidPixels + pairTranslationPixels;
 
-        Vector2 pairLeftTarget =
-            pairMid -
-            fittedEyeVector *
-                0.5f;
+        Vector2 commonLeftTargetPixels =
+            commonEyeMidPixels - fittedEyeVectorPixels * 0.5f;
 
-        Vector2 pairRightTarget =
-            pairMid +
-            fittedEyeVector *
-                0.5f;
+        Vector2 commonRightTargetPixels =
+            commonEyeMidPixels + fittedEyeVectorPixels * 0.5f;
 
         float tiltFactor =
             Mathf.InverseLerp(
                 tiltTighteningStartDegrees,
                 Mathf.Max(
-                    tiltTighteningStartDegrees +
-                        0.01f,
+                    tiltTighteningStartDegrees + 0.01f,
                     tiltTighteningFullDegrees),
                 baseRoll);
 
-        float eyeResidualLimit =
-            eyeSpan *
+        float eyeResidualLimitPixels =
+            eyeSpanPixels *
             Mathf.Lerp(
                 frontalEyeLocalResidualEyeSpan,
                 tiltedEyeLocalResidualEyeSpan,
                 tiltFactor);
 
+        Vector2 localLeftPixels = Vector2.zero;
+        Vector2 localRightPixels = Vector2.zero;
+
         if (leftReliable)
         {
-            Vector2 rawLeftTarget =
-                baseLeft +
-                leftCorrection;
+            Vector2 rawLeftTargetPixels =
+                baseLeftPixels + leftResidualPixels;
 
-            Vector2 localResidual =
+            localLeftPixels =
                 Vector2.ClampMagnitude(
-                    rawLeftTarget -
-                        pairLeftTarget,
-                    eyeResidualLimit);
-
-            pairLeftTarget +=
-                localResidual;
+                    rawLeftTargetPixels - commonLeftTargetPixels,
+                    eyeResidualLimitPixels);
         }
 
         if (rightReliable)
         {
-            Vector2 rawRightTarget =
-                baseRight +
-                rightCorrection;
+            Vector2 rawRightTargetPixels =
+                baseRightPixels + rightResidualPixels;
 
-            Vector2 localResidual =
+            localRightPixels =
                 Vector2.ClampMagnitude(
-                    rawRightTarget -
-                        pairRightTarget,
-                    eyeResidualLimit);
-
-            pairRightTarget +=
-                localResidual;
+                    rawRightTargetPixels - commonRightTargetPixels,
+                    eyeResidualLimitPixels);
         }
 
-        _targetCorrection[
-            LeftPart] =
-            pairLeftTarget -
-            baseLeft;
+        _targetCorrection[LeftPart] =
+            PixelDeltaToUv(localLeftPixels);
 
-        _targetCorrection[
-            RightPart] =
-            pairRightTarget -
-            baseRight;
+        _targetCorrection[RightPart] =
+            PixelDeltaToUv(localRightPixels);
 
-        _matchConfidence[
-            LeftPart] =
-            Mathf.Max(
-                leftConfidence,
-                pairConfidence *
-                    0.78f);
+        _matchConfidence[LeftPart] =
+            leftReliable ? leftConfidence : 0f;
 
-        _matchConfidence[
-            RightPart] =
-            Mathf.Max(
-                rightConfidence,
-                pairConfidence *
-                    0.78f);
+        _matchConfidence[RightPart] =
+            rightReliable ? rightConfidence : 0f;
+
+        Vector2 commonMouthTargetPixels =
+            commonEyeMidPixels +
+            RotateVector(
+                (baseMouthPixels - baseEyeMidPixels) * pairScale,
+                pairRotationDegrees);
+
+        Vector2 rawMouthTargetPixels =
+            baseMouthPixels +
+            UvDeltaToPixel(_decodedCorrection[MouthPart]);
+
+        Vector2 mouthLocalPixels =
+            rawMouthTargetPixels - commonMouthTargetPixels;
 
         if (!constrainMouthToEyePair)
         {
-            _targetCorrection[
-                MouthPart] =
-                _decodedCorrection[
-                    MouthPart];
+            _targetCorrection[MouthPart] =
+                PixelDeltaToUv(mouthLocalPixels);
 
-            _matchConfidence[
-                MouthPart] =
-                _decodedConfidence[
-                    MouthPart];
+            _matchConfidence[MouthPart] =
+                mouthConfidence;
 
+            ClampAllLocalCorrections(
+                leftRect,
+                rightRect,
+                mouthRect);
+
+            CaptureFinalLocalResidualDiagnostics();
             return;
         }
 
-        Vector2 fittedMouthRigidTarget =
-            pairMid +
-            RotateVector(
-                (
-                    baseMouth -
-                    baseEyeMid
-                ) *
-                pairScale,
-                pairRotationDegrees);
+        Vector2 mouthResolvedPixels =
+            baseMouthPixels;
 
-        Vector2 mouthResolvedTarget =
-            fittedMouthRigidTarget;
-
-        float mouthConfidence =
-            _decodedConfidence[
-                MouthPart];
-
-        if (
-            mouthConfidence >=
-            minimumMatchConfidence
-        )
+        if (mouthConfidence >= minimumMatchConfidence)
         {
-            Vector2 rawMouthTarget =
-                baseMouth +
-                _decodedCorrection[
-                    MouthPart];
-
-            Vector2 localResidual =
-                rawMouthTarget -
-                fittedMouthRigidTarget;
-
             Vector2 xAxis =
-                fittedEyeVector.sqrMagnitude >
-                    0.0000001f
-                    ? fittedEyeVector.normalized
-                    : baseEyeVector.normalized;
+                baseEyeVectorPixels.sqrMagnitude > 0.0001f
+                    ? baseEyeVectorPixels.normalized
+                    : Vector2.right;
 
             Vector2 yAxis =
-                new Vector2(
-                    -xAxis.y,
-                    xAxis.x);
+                new Vector2(-xAxis.y, xAxis.x);
 
             if (
                 Vector2.Dot(
-                    baseMouth -
-                        baseEyeMid,
-                    yAxis) <
-                0f
+                    baseMouthPixels - baseEyeMidPixels,
+                    yAxis) < 0f
             )
             {
-                yAxis =
-                    -yAxis;
+                yAxis = -yAxis;
             }
 
             float localX =
-                Vector2.Dot(
-                    localResidual,
-                    xAxis);
+                Vector2.Dot(mouthLocalPixels, xAxis);
 
             float localY =
-                Vector2.Dot(
-                    localResidual,
-                    yAxis);
+                Vector2.Dot(mouthLocalPixels, yAxis);
 
             localX =
                 Mathf.Clamp(
                     localX,
-                    -eyeSpan *
-                        maximumMouthLocalResidualEyeSpanX,
-                    eyeSpan *
-                        maximumMouthLocalResidualEyeSpanX);
+                    -eyeSpanPixels * maximumMouthLocalResidualEyeSpanX,
+                    eyeSpanPixels * maximumMouthLocalResidualEyeSpanX);
 
             localY =
                 Mathf.Clamp(
                     localY,
-                    -eyeSpan *
-                        maximumMouthLocalResidualEyeSpanY,
-                    eyeSpan *
-                        maximumMouthLocalResidualEyeSpanY);
+                    -eyeSpanPixels * maximumMouthLocalResidualEyeSpanY,
+                    eyeSpanPixels * maximumMouthLocalResidualEyeSpanY);
 
-            mouthResolvedTarget =
-                fittedMouthRigidTarget +
-                xAxis *
-                    localX +
-                yAxis *
-                    localY;
+            mouthResolvedPixels =
+                baseMouthPixels +
+                xAxis * localX +
+                yAxis * localY;
 
             float baseSeparation =
                 Mathf.Abs(
                     Vector2.Dot(
-                        baseMouth -
-                            baseEyeMid,
+                        baseMouthPixels - baseEyeMidPixels,
                         yAxis));
 
             float minimumSeparation =
                 Mathf.Max(
                     baseSeparation *
                         minimumMouthEyeLineSeparationFromBase,
-                    eyeSpan *
+                    eyeSpanPixels *
                         minimumMouthEyeLineSeparationEyeSpan);
 
             float resolvedSeparation =
                 Vector2.Dot(
-                    mouthResolvedTarget -
-                        pairMid,
+                    mouthResolvedPixels - baseEyeMidPixels,
                     yAxis);
 
-            if (
-                resolvedSeparation <
-                minimumSeparation
-            )
+            if (resolvedSeparation < minimumSeparation)
             {
-                mouthResolvedTarget +=
+                mouthResolvedPixels +=
                     yAxis *
-                    (
-                        minimumSeparation -
-                        resolvedSeparation
-                    );
+                    (minimumSeparation - resolvedSeparation);
 
-                debugMouthAnatomyClamped =
-                    true;
+                debugMouthAnatomyClamped = true;
             }
 
             float minimumEyeDistance =
-                eyeSpan *
+                eyeSpanPixels *
                 minimumMouthEyeCenterDistanceEyeSpan;
 
             EnforceMinimumEyeDistance(
-                pairLeftTarget,
-                pairMid,
+                baseLeftPixels,
+                baseEyeMidPixels,
                 yAxis,
                 minimumEyeDistance,
-                ref mouthResolvedTarget);
+                ref mouthResolvedPixels);
 
             EnforceMinimumEyeDistance(
-                pairRightTarget,
-                pairMid,
+                baseRightPixels,
+                baseEyeMidPixels,
                 yAxis,
                 minimumEyeDistance,
-                ref mouthResolvedTarget);
+                ref mouthResolvedPixels);
 
             float finalSeparation =
                 Mathf.Max(
                     0.0001f,
                     Vector2.Dot(
-                        mouthResolvedTarget -
-                            pairMid,
+                        mouthResolvedPixels - baseEyeMidPixels,
                         yAxis));
 
             debugMouthSeparationRatio =
                 finalSeparation /
-                Mathf.Max(
-                    0.0001f,
-                    baseSeparation);
+                Mathf.Max(0.0001f, baseSeparation);
         }
 
-        _targetCorrection[
-            MouthPart] =
-            mouthResolvedTarget -
-            baseMouth;
+        _targetCorrection[MouthPart] =
+            PixelDeltaToUv(
+                mouthResolvedPixels - baseMouthPixels);
 
-        _matchConfidence[
-            MouthPart] =
-            Mathf.Max(
-                mouthConfidence,
-                pairConfidence *
-                    0.62f);
+        _matchConfidence[MouthPart] =
+            mouthConfidence;
 
-        _targetCorrection[
-            LeftPart] =
+        ClampAllLocalCorrections(
+            leftRect,
+            rightRect,
+            mouthRect);
+
+        CaptureFinalLocalResidualDiagnostics();
+    }
+
+    private void CaptureFinalLocalResidualDiagnostics()
+    {
+        for (int i = 0; i < PartCount; i++)
+        {
+            _latestLocalResidualPixelDelta[i] =
+                UvDeltaToPixel(_targetCorrection[i]);
+        }
+    }
+
+    private void ClampAllLocalCorrections(
+        Rect leftRect,
+        Rect rightRect,
+        Rect mouthRect)
+    {
+        _targetCorrection[LeftPart] =
             ClampCorrectionToRect(
-                _targetCorrection[
-                    LeftPart],
+                _targetCorrection[LeftPart],
                 leftRect);
 
-        _targetCorrection[
-            RightPart] =
+        _targetCorrection[RightPart] =
             ClampCorrectionToRect(
-                _targetCorrection[
-                    RightPart],
+                _targetCorrection[RightPart],
                 rightRect);
 
-        _targetCorrection[
-            MouthPart] =
+        _targetCorrection[MouthPart] =
             ClampCorrectionToRect(
-                _targetCorrection[
-                    MouthPart],
+                _targetCorrection[MouthPart],
                 mouthRect);
     }
 
@@ -2536,6 +2780,118 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
 
         debugMouthAnatomyClamped =
             true;
+    }
+
+    private void PopulateExpectedMotionContract(
+        ReadbackSlot slot)
+    {
+        if (slot == null)
+        {
+            return;
+        }
+
+        Vector2 previousLeft =
+            UvPointToPixel(_previousBaseCenters[LeftPart]);
+
+        Vector2 previousRight =
+            UvPointToPixel(_previousBaseCenters[RightPart]);
+
+        Vector2 currentLeft =
+            UvPointToPixel(_currentBaseCenters[LeftPart]);
+
+        Vector2 currentRight =
+            UvPointToPixel(_currentBaseCenters[RightPart]);
+
+        Vector2 previousEyeVector =
+            previousRight - previousLeft;
+
+        Vector2 currentEyeVector =
+            currentRight - currentLeft;
+
+        Vector2 previousEyeMid =
+            (previousLeft + previousRight) * 0.5f;
+
+        Vector2 currentEyeMid =
+            (currentLeft + currentRight) * 0.5f;
+
+        float previousSpan = previousEyeVector.magnitude;
+        float currentSpan = currentEyeVector.magnitude;
+
+        bool hasRigidBasis =
+            previousSpan > 0.01f &&
+            currentSpan > 0.01f;
+
+        float rigidScale =
+            hasRigidBasis
+                ? Mathf.Clamp(
+                    currentSpan / previousSpan,
+                    0.50f,
+                    2.00f)
+                : 1f;
+
+        float rigidRotation =
+            hasRigidBasis
+                ? Vector2.SignedAngle(
+                    previousEyeVector,
+                    currentEyeVector)
+                : 0f;
+
+        Vector2 fallbackTranslation =
+            currentEyeMid - previousEyeMid;
+
+        for (int i = 0; i < PartCount; i++)
+        {
+            Vector2 previousPixels =
+                UvPointToPixel(_previousBaseCenters[i]);
+
+            Vector2 currentPixels =
+                UvPointToPixel(_currentBaseCenters[i]);
+
+            Vector2 rigidPredictedPixels =
+                hasRigidBasis
+                    ? currentEyeMid +
+                        RotateVector(
+                            (previousPixels - previousEyeMid) *
+                                rigidScale,
+                            rigidRotation)
+                    : previousPixels + fallbackTranslation;
+
+            Vector2 expectedRigid =
+                rigidPredictedPixels - previousPixels;
+
+            Vector2 baseDelta =
+                currentPixels - previousPixels;
+
+            slot.expectedRigidPixelDelta[i] =
+                expectedRigid;
+
+            slot.expectedSemanticLocalPixelDelta[i] =
+                baseDelta - expectedRigid;
+        }
+    }
+
+    private Vector2 UvPointToPixel(
+        Vector2 uv)
+    {
+        return new Vector2(
+            uv.x * Mathf.Max(1, _trackingWidth),
+            uv.y * Mathf.Max(1, _trackingHeight));
+    }
+
+    private Vector2 UvDeltaToPixel(
+        Vector2 uvDelta)
+    {
+        return new Vector2(
+            uvDelta.x * Mathf.Max(1, _trackingWidth),
+            uvDelta.y * Mathf.Max(1, _trackingHeight));
+    }
+
+    private Vector2 PixelDeltaToUv(
+        Vector2 pixelDelta)
+    {
+        return new Vector2(
+            pixelDelta.x / Mathf.Max(1, _trackingWidth),
+            pixelDelta.y / Mathf.Max(1, _trackingHeight));
     }
 
     private static Vector2 RotateVector(
@@ -3071,7 +3427,31 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
 
             _matchConfidence[i] =
                 0f;
+
+            _latestExpectedRigidPixelDelta[i] =
+                Vector2.zero;
+
+            _latestMeasuredPixelDelta[i] =
+                Vector2.zero;
+
+            _latestLocalResidualPixelDelta[i] =
+                Vector2.zero;
         }
+
+        _latestRejectedCommonModePixels =
+            Vector2.zero;
+
+        debugExpectedRigidPixelDelta =
+            Vector2.zero;
+
+        debugRejectedCommonModePixels =
+            Vector2.zero;
+
+        debugLocalResidualPixelMagnitude =
+            Vector3.zero;
+
+        debugCanonicalSemanticAligned =
+            false;
 
         debugEyePairRollDegrees =
             0f;
@@ -3128,6 +3508,30 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
         debugStaleReadbackDrops =
             _staleReadbackDrops;
 
+        debugGenerationReadbackDrops =
+            _generationReadbackDrops;
+
+        debugCalibrationGenerationReadbackDrops =
+            _calibrationGenerationReadbackDrops;
+
+        debugRuntimeSuppressionInvalidations =
+            _runtimeSuppressionInvalidations;
+
+        debugSourceIdentityInvalidations =
+            _sourceIdentityInvalidations;
+
+        debugConfigEpoch =
+            KiwiRuntimeGenerationContext.ConfigEpoch;
+
+        debugCameraGeneration =
+            KiwiRuntimeGenerationContext.CameraGeneration;
+
+        debugModelGeneration =
+            KiwiRuntimeGenerationContext.ModelGeneration;
+
+        debugSemanticTransactionSequence =
+            KiwiRuntimeGenerationContext.SemanticTransactionSequence;
+
         debugOverloadSuspended =
             IsOverloadSuspended;
 
@@ -3160,5 +3564,35 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
         debugMouthCorrection =
             _renderCorrection[
                 MouthPart];
+
+        debugExpectedRigidPixelDelta =
+            (
+                _latestExpectedRigidPixelDelta[LeftPart] +
+                _latestExpectedRigidPixelDelta[RightPart]
+            ) * 0.5f;
+
+        debugRejectedCommonModePixels =
+            _latestRejectedCommonModePixels;
+
+        debugLocalResidualPixelMagnitude =
+            new Vector3(
+                _latestLocalResidualPixelDelta[LeftPart].magnitude,
+                _latestLocalResidualPixelDelta[RightPart].magnitude,
+                _latestLocalResidualPixelDelta[MouthPart].magnitude);
+
+        if (KiwiCanonicalTrackingFrame.IsRuntimeCoordinatorActive)
+        {
+            debugCanonicalSemanticAligned =
+                KiwiCanonicalTrackingFrame.TryGetFrame(
+                    out KiwiTrackingFrame canonical) &&
+                canonical.hasSemanticLandmarks &&
+                canonical.semanticTimestamp ==
+                    canonical.rigid.timestamp;
+        }
+        else
+        {
+            debugCanonicalSemanticAligned =
+                true;
+        }
     }
 }

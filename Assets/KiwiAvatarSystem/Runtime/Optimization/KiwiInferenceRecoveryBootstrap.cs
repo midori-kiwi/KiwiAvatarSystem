@@ -381,8 +381,10 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
         _runner.downscaleTrackingInput =
             true;
 
-        _runner.trackingInputMaxWidth =
-            mediaPipeInputWidth;
+        KiwiRuntimePolicyResolver.SubmitTrackingInputWidth(
+            mediaPipeInputWidth,
+            KiwiRuntimePolicyResolver.RequestPriority.Bootstrap,
+            "InferenceRecoveryBootstrap");
 
         // Do not let a camera-specific 480px profile override the measured
         // 320px auxiliary path from the supplied recording.
@@ -395,39 +397,27 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
             _matureSupervisor == null
         )
         {
-            _runner.sentisMediaPipeRefreshRateHz =
-                mediaPipeAuxRefreshHz;
+            KiwiRuntimePolicyResolver.SubmitBaselineMediaPipeRefreshHz(
+                mediaPipeAuxRefreshHz,
+                KiwiRuntimePolicyResolver.RequestPriority.Bootstrap,
+                "InferenceRecoveryBootstrap");
         }
+
+        KiwiRuntimePolicyResolver.SubmitBaselinePresenceThreshold(
+            inferencePresenceThreshold,
+            KiwiRuntimePolicyResolver.RequestPriority.Bootstrap,
+            "InferenceRecoveryBootstrap");
 
         if (
-            force ||
-            !adaptPresenceThreshold
+            _motionController != null &&
+            (force || !adaptPresenceThreshold)
         )
         {
-            _runner.sentisMinimumPresence =
-                inferencePresenceThreshold;
-
-            if (_motionController != null)
-            {
-                _motionController.inferencePresenceThreshold =
-                    inferencePresenceThreshold;
-            }
-        }
-        else if (_motionController != null)
-        {
-            // KiwiTrackingQuality10Controller mirrors its serialized threshold
-            // into the live tracker every LateUpdate. Keep both owners on the
-            // same adaptive value so the recovery policy is not undone later
-            // in the frame.
+            // This remains an input/preset value for Quality10. The actual
+            // Runner/tracker threshold is now written only by the resolver.
             _motionController.inferencePresenceThreshold =
-                _runner.sentisMinimumPresence;
+                inferencePresenceThreshold;
         }
-
-        SynchronizeLiveTrackerThreshold(
-            GetPrivateField(
-                _runner,
-                "_sentisTracker"),
-            _runner.sentisMinimumPresence);
     }
 
     private void ObserveTrackerProgress(
@@ -631,9 +621,11 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
         )
         {
             debugLivePresenceThreshold =
-                _runner != null
-                    ? _runner.sentisMinimumPresence
-                    : inferencePresenceThreshold;
+                KiwiRuntimePolicyResolver.ResolvedPresenceThreshold > 0f
+                    ? KiwiRuntimePolicyResolver.ResolvedPresenceThreshold
+                    : (_runner != null
+                        ? _runner.sentisMinimumPresence
+                        : inferencePresenceThreshold);
 
             return;
         }
@@ -667,7 +659,9 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
         }
 
         float current =
-            _runner.sentisMinimumPresence;
+            KiwiRuntimePolicyResolver.ResolvedPresenceThreshold > 0f
+                ? KiwiRuntimePolicyResolver.ResolvedPresenceThreshold
+                : _runner.sentisMinimumPresence;
 
         float next =
             target <
@@ -681,18 +675,13 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
                     target,
                     0.004f);
 
-        _runner.sentisMinimumPresence =
-            next;
-
-        if (_motionController != null)
-        {
-            _motionController.inferencePresenceThreshold =
-                next;
-        }
-
-        SynchronizeLiveTrackerThreshold(
-            tracker,
-            next);
+        // v5.1 Single Writer: adaptive recovery owns only an expiring request.
+        // Quality10/preset/bootstrap baselines remain available underneath it.
+        KiwiRuntimePolicyResolver.SubmitAdaptivePresenceThreshold(
+            next,
+            KiwiRuntimePolicyResolver.RequestPriority.RuntimeAdaptive,
+            "InferenceRecoveryBootstrap",
+            1.0f);
 
         debugLivePresenceThreshold =
             next;
@@ -928,6 +917,16 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
                 _runner,
                 "_sentisFlipVertically");
 
+        const string recoveryDomainSource =
+            "InferenceRecoveryBootstrap";
+
+        KiwiRecoveryDomainCoordinator.BeginGlobalRecovery(
+            recoveryDomainSource,
+            KiwiRecoveryDomainCoordinator.GlobalRecoveryReason
+                .InferencePipelineStalled |
+            KiwiRecoveryDomainCoordinator.GlobalRecoveryReason
+                .InferenceRestart);
+
         try
         {
             _recoveryAttempts++;
@@ -968,6 +967,10 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
                 "Tracker restarted: " +
                 reason;
 
+            KiwiRecoveryDomainCoordinator.CompleteGlobalRecovery(
+                recoveryDomainSource,
+                true);
+
             Debug.Log(
                 "[Kiwi Inference Recovery] Restarted Inference Engine (" +
                 reason +
@@ -976,6 +979,9 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
         }
         catch (Exception exception)
         {
+            KiwiRecoveryDomainCoordinator.CompleteGlobalRecovery(
+                recoveryDomainSource,
+                false);
             debugStatus =
                 "Recovery failed: " +
                 exception.GetType().Name;
@@ -1077,33 +1083,6 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
             GetPrivateBoolField(
                 _runner,
                 "_hasLatestSentisAnchor");
-    }
-
-    private void SynchronizeLiveTrackerThreshold(
-        object tracker,
-        float threshold)
-    {
-        if (tracker == null)
-        {
-            return;
-        }
-
-        PropertyInfo property =
-            tracker.GetType()
-                .GetProperty(
-                    "MinimumPresence",
-                    BindingFlags.Instance |
-                    BindingFlags.Public);
-
-        if (
-            property != null &&
-            property.CanWrite
-        )
-        {
-            property.SetValue(
-                tracker,
-                threshold);
-        }
     }
 
     private void ReportMissingModelOnce()

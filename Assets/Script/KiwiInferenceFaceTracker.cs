@@ -58,7 +58,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             StaleAnchor = 5,
             StaleGeneration = 6,
             StaleSource = 7,
-            Exception = 8
+            Exception = 8,
+            StaleCrossSystem = 9
         }
 
         private sealed class Lane : IDisposable
@@ -82,6 +83,19 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             public long pendingStartedHostTicks;
             public int pendingAnchorRevision;
             public int pendingTrackerGeneration;
+
+            // KIWI_V5_1_PHASE2_INFERENCE_ASYNC_IDENTITY
+            // Capture only identities that can invalidate this camera/inference
+            // job. Active provider/model/semantic identity is deliberately not
+            // included because this tracker may produce the next provider
+            // candidate and does not depend on the currently bound avatar.
+            public int pendingCameraGeneration;
+            public int pendingTrackingSessionGeneration;
+
+            // Decode policy belongs to the submitted job. A UI/profile threshold
+            // change while GPU work is pending must not reinterpret an older
+            // result with a newer presence threshold.
+            public float pendingMinimumPresence;
 
             public Lane(
                 Model model,
@@ -153,6 +167,10 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 pendingOutput =
                     null;
 
+                pendingCameraGeneration = 0;
+                pendingTrackingSessionGeneration = 0;
+                pendingMinimumPresence = 0f;
+
                 worker?.Dispose();
                 input?.Dispose();
 
@@ -186,6 +204,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             public long startedHostTicks;
             public int anchorRevision;
             public int trackerGeneration;
+            public int cameraGeneration;
+            public int trackingSessionGeneration;
             public float rawPresence;
             public float presence;
             public Quaternion rotation;
@@ -241,6 +261,7 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
         private int _rejectedPresenceFrameCount;
         private int _rejectedInvalidFrameCount;
         private int _discardedStaleFrameCount;
+        private int _discardedCrossSystemFrameCount;
 
         public float MinimumPresence { get; set; } =
             0.5f;
@@ -438,6 +459,9 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
         public int DiscardedStaleFrameCount =>
             _discardedStaleFrameCount;
+
+        public int DiscardedCrossSystemFrameCount =>
+            _discardedCrossSystemFrameCount;
 
         public KiwiInferenceFaceTracker(
             ModelAsset modelAsset,
@@ -832,6 +856,7 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                         readableOutput,
                         cropMatrix,
                         lane.decodedLandmarks,
+                        Mathf.Clamp01(MinimumPresence),
                         out float rawPresence,
                         out float presence,
                         out geometricRotation);
@@ -994,7 +1019,9 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     newestCompletion.status !=
                         DecodeStatus.StaleGeneration &&
                     newestCompletion.status !=
-                        DecodeStatus.StaleSource
+                        DecodeStatus.StaleSource &&
+                    newestCompletion.status !=
+                        DecodeStatus.StaleCrossSystem
                 )
                 {
                     LatestRejectionReason =
@@ -1076,6 +1103,15 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 int completedGeneration =
                     lane.pendingTrackerGeneration;
 
+                int completedCameraGeneration =
+                    lane.pendingCameraGeneration;
+
+                int completedTrackingSessionGeneration =
+                    lane.pendingTrackingSessionGeneration;
+
+                float completedMinimumPresence =
+                    lane.pendingMinimumPresence;
+
                 lane.readbackPending =
                     false;
 
@@ -1093,6 +1129,15 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
                 lane.pendingTrackerGeneration =
                     0;
+
+                lane.pendingCameraGeneration =
+                    0;
+
+                lane.pendingTrackingSessionGeneration =
+                    0;
+
+                lane.pendingMinimumPresence =
+                    0f;
 
                 _readbackCompletedFrameCount++;
 
@@ -1112,8 +1157,99 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                         anchorRevision =
                             completedAnchorRevision,
                         trackerGeneration =
-                            completedGeneration
+                            completedGeneration,
+                        cameraGeneration =
+                            completedCameraGeneration,
+                        trackingSessionGeneration =
+                            completedTrackingSessionGeneration
                     };
+
+                // KIWI_V5_1_PHASE2_INFERENCE_ASYNC_IDENTITY
+                // Retire every stale job before ReadbackAndClone. Local tracker
+                // generation/anchor/source ordering and cross-system camera/session
+                // identity are all known without touching the GPU output. This
+                // preserves behavior while avoiding CPU readback/decode work for
+                // results that can never be published.
+                DecodeStatus preDecodeStaleStatus =
+                    DecodeStatus.None;
+
+                if (
+                    completedGeneration !=
+                        _trackerGeneration
+                )
+                {
+                    preDecodeStaleStatus =
+                        DecodeStatus.StaleGeneration;
+                }
+                else if (
+                    completedAnchorRevision !=
+                        _anchorRevision
+                )
+                {
+                    preDecodeStaleStatus =
+                        DecodeStatus.StaleAnchor;
+                }
+                else if (
+                    completedSourceTicks > 0L &&
+                    _latestCompletedSourceHostTicks > 0L &&
+                    completedSourceTicks <=
+                        _latestCompletedSourceHostTicks
+                )
+                {
+                    preDecodeStaleStatus =
+                        DecodeStatus.StaleSource;
+                }
+                else if (
+                    !KiwiRuntimeGenerationContext.IsCameraSessionIdentityCurrent(
+                        completedCameraGeneration,
+                        completedTrackingSessionGeneration)
+                )
+                {
+                    preDecodeStaleStatus =
+                        DecodeStatus.StaleCrossSystem;
+                }
+
+                if (preDecodeStaleStatus != DecodeStatus.None)
+                {
+                    completion.status =
+                        preDecodeStaleStatus;
+
+                    completion.valid =
+                        false;
+
+                    // The stale job is intentionally not decoded, so keep the
+                    // last real presence diagnostics instead of publishing a
+                    // synthetic zero from an uninspected tensor.
+                    completion.rawPresence =
+                        LatestRawPresenceLogit;
+
+                    completion.presence =
+                        LatestPresence;
+
+                    _discardedStaleFrameCount++;
+
+                    if (preDecodeStaleStatus == DecodeStatus.StaleCrossSystem)
+                    {
+                        _discardedCrossSystemFrameCount++;
+                    }
+
+                    RecordLatency(
+                        startedTicks,
+                        arrivalHostTicks);
+
+                    if (
+                        !newestCompletion.exists ||
+                        IsCompletionNewer(
+                            completion,
+                            newestCompletion)
+                    )
+                    {
+                        newestCompletion =
+                            completion;
+                    }
+
+                    continue;
+                }
 
                 try
                 {
@@ -1126,6 +1262,7 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                             readableOutput,
                             completedCropMatrix,
                             lane.decodedLandmarks,
+                            completedMinimumPresence,
                             out float rawPresence,
                             out float presence,
                             out Quaternion rotation);
@@ -1138,47 +1275,6 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
                     completion.rotation =
                         rotation;
-
-                    if (
-                        completedGeneration !=
-                            _trackerGeneration
-                    )
-                    {
-                        status =
-                            DecodeStatus.StaleGeneration;
-
-                        _discardedStaleFrameCount++;
-                    }
-                    else if (
-                        completedAnchorRevision !=
-                            _anchorRevision
-                    )
-                    {
-                        status =
-                            DecodeStatus.StaleAnchor;
-
-                        _discardedStaleFrameCount++;
-                    }
-                    else if (
-                        status ==
-                            DecodeStatus.Valid &&
-                        completedSourceTicks >
-                            0L &&
-                        _latestCompletedSourceHostTicks >
-                            0L &&
-                        completedSourceTicks <=
-                            _latestCompletedSourceHostTicks
-                    )
-                    {
-                        // Multi-lane GPU jobs may complete out of order.
-                        // A result older than the latest already-published
-                        // source frame is consumed but never allowed to move
-                        // the avatar backwards in time.
-                        status =
-                            DecodeStatus.StaleSource;
-
-                        _discardedStaleFrameCount++;
-                    }
 
                     completion.status =
                         status;
@@ -1212,7 +1308,9 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                         status !=
                             DecodeStatus.StaleGeneration &&
                         status !=
-                            DecodeStatus.StaleSource
+                            DecodeStatus.StaleSource &&
+                        status !=
+                            DecodeStatus.StaleCrossSystem
                     )
                     {
                         anyNonStaleFailure =
@@ -1360,6 +1458,18 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 lane.pendingTrackerGeneration =
                     _trackerGeneration;
 
+                KiwiRuntimeGenerationContext.Snapshot generationSnapshot =
+                    KiwiRuntimeGenerationContext.Capture();
+
+                lane.pendingCameraGeneration =
+                    generationSnapshot.cameraGeneration;
+
+                lane.pendingTrackingSessionGeneration =
+                    generationSnapshot.trackingSessionGeneration;
+
+                lane.pendingMinimumPresence =
+                    Mathf.Clamp01(MinimumPresence);
+
                 lane.pendingOutput =
                     packedOutput;
 
@@ -1403,6 +1513,15 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
                 lane.pendingTrackerGeneration =
                     0;
+
+                lane.pendingCameraGeneration =
+                    0;
+
+                lane.pendingTrackingSessionGeneration =
+                    0;
+
+                lane.pendingMinimumPresence =
+                    0f;
 
                 _rejectedInvalidFrameCount++;
 
@@ -1506,6 +1625,7 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             Tensor<float> readableOutput,
             Matrix4x4 cropMatrix,
             Vector3[] destination,
+            float minimumPresence,
             out float rawPresence,
             out float presence,
             out Quaternion geometricRotation)
@@ -1547,7 +1667,7 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 !IsFinite(presence) ||
                 presence <
                     Mathf.Clamp01(
-                        MinimumPresence)
+                        minimumPresence)
             )
             {
                 return

@@ -17,7 +17,7 @@ using Mediapipe.Unity.Sample.FaceLandmarkDetection;
 public sealed class KiwiMatureVTuberSupervisor : MonoBehaviour
 {
     public const string Version =
-        "4.5.0-on-screen-panel-controls";
+        "5.1.0-phase16.8-commercial-qos";
 
     private const string RuntimeObjectName =
         "[Kiwi] Mature VTuber Supervisor";
@@ -60,6 +60,31 @@ public sealed class KiwiMatureVTuberSupervisor : MonoBehaviour
     [Range(0.70f, 1.30f)]
     public float runtimeAuxiliaryCadenceScale = 1f;
 
+    // KIWI_V5_1_PHASE16_5_COMMERCIAL_CADENCE_HEADROOM
+    // KIWI_V5_1_PHASE16_8_COMMERCIAL_TRACKING_QOS_FLOOR
+    [Header("Commercial tracking cadence headroom")]
+    [Tooltip("Use spare render headroom to raise the auxiliary correction cadence. The request still goes through KiwiRuntimePolicyResolver Single Writer and automatically falls back when render performance drops.")]
+    public bool enableCommercialCadenceBoost = true;
+
+    [Range(30f, 90f)]
+    public float commercialCadenceMinimumRenderFps = 34f;
+
+    [Tooltip("Once cadence boost is active, keep it active until render FPS falls below this lower threshold. Prevents QoS mode flapping around the enable threshold.")]
+    [Range(20f, 80f)]
+    public float commercialCadenceDisableRenderFps = 30f;
+
+    [Range(0.08f, 0.25f)]
+    public float commercialCadenceAgedSourceSeconds = 0.12f;
+
+    [Range(6f, 15f)]
+    public float commercialCadenceHealthyTargetHz = 12f;
+
+    [Range(8f, 15f)]
+    public float commercialCadenceAgedTargetHz = 15f;
+
+    [Range(0.5f, 12f)]
+    public float commercialRenderFpsResponse = 3f;
+
     [Header("Model switch policy")]
     public bool tuneModelSwitch = true;
 
@@ -78,6 +103,8 @@ public sealed class KiwiMatureVTuberSupervisor : MonoBehaviour
     [SerializeField] private float debugAppliedPredictionStrength;
     [SerializeField] private float debugAppliedPredictionCapMs;
     [SerializeField] private float debugAuxiliaryMediaPipeHz;
+    [SerializeField] private float debugRenderFps;
+    [SerializeField] private bool debugCommercialCadenceBoost;
     [SerializeField] private string debugEyeSource = "-";
     [SerializeField] private bool debugExpressionsTrusted;
     [SerializeField] private float debugDualDomainQuality;
@@ -115,6 +142,8 @@ public sealed class KiwiMatureVTuberSupervisor : MonoBehaviour
 
     private float _motionIntensityEma;
     private float _smoothedPolicyQuality = 0.60f;
+    private float _renderFpsEma = 60f;
+    private bool _commercialCadenceHeadroomLatched;
 
     public string CurrentMode =>
         debugMode;
@@ -124,6 +153,12 @@ public sealed class KiwiMatureVTuberSupervisor : MonoBehaviour
 
     public float CurrentAuxiliaryMediaPipeHz =>
         debugAuxiliaryMediaPipeHz;
+
+    public float CurrentRenderFps =>
+        debugRenderFps;
+
+    public bool CommercialCadenceBoostActive =>
+        debugCommercialCadenceBoost;
 
     [RuntimeInitializeOnLoadMethod(
         RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -617,6 +652,34 @@ public sealed class KiwiMatureVTuberSupervisor : MonoBehaviour
             return;
         }
 
+        // KIWI_V5_1_PHASE16_5_COMMERCIAL_CADENCE_HEADROOM
+        float instantaneousRenderFps =
+            1f /
+            Mathf.Max(
+                Time.unscaledDeltaTime,
+                0.001f);
+
+        instantaneousRenderFps =
+            Mathf.Clamp(
+                instantaneousRenderFps,
+                1f,
+                240f);
+
+        _renderFpsEma =
+            SmoothTo(
+                _renderFpsEma,
+                instantaneousRenderFps,
+                Mathf.Max(0.5f, commercialRenderFpsResponse),
+                dt);
+
+        debugRenderFps =
+            _renderFpsEma;
+
+        float cadenceScale =
+            KiwiRuntimePolicyResolver.HasLive2DPolicy
+                ? KiwiRuntimePolicyResolver.ResolvedAuxiliaryCadenceScale
+                : runtimeAuxiliaryCadenceScale;
+
         float targetHz =
             (
                 _continuity != null
@@ -624,19 +687,99 @@ public sealed class KiwiMatureVTuberSupervisor : MonoBehaviour
                     : 6f
             ) *
             Mathf.Clamp(
-                runtimeAuxiliaryCadenceScale,
+                cadenceScale,
                 0.70f,
                 1.30f);
 
-        _runner.sentisMediaPipeRefreshRateHz =
+        float sourceAgeSeconds =
+            _latencyBudget != null
+                ? Mathf.Max(0f, _latencyBudget.SourceAgeSeconds)
+                : _faceMotion != null
+                    ? Mathf.Max(0f, _faceMotion.PrecisionPredictionAgeMs * 0.001f)
+                    : 0f;
+
+        // KIWI_V5_1_PHASE16_8_COMMERCIAL_CADENCE_HYSTERESIS
+        // Field data showed a 40 FPS median render cadence while the old 45 FPS
+        // gate left commercial boost inactive for >93% of render frames. Use a
+        // 34/30 FPS hysteresis pair so tracking QoS stays on during healthy
+        // 35-45 FPS diagnostic rendering but still yields before render quality
+        // collapses.
+        float enableThreshold =
+            Mathf.Max(
+                30f,
+                commercialCadenceMinimumRenderFps);
+
+        float disableThreshold =
+            Mathf.Min(
+                enableThreshold - 1f,
+                Mathf.Max(
+                    20f,
+                    commercialCadenceDisableRenderFps));
+
+        if (!enableCommercialCadenceBoost)
+        {
+            _commercialCadenceHeadroomLatched = false;
+        }
+        else if (_commercialCadenceHeadroomLatched)
+        {
+            if (_renderFpsEma < disableThreshold)
+            {
+                _commercialCadenceHeadroomLatched = false;
+            }
+        }
+        else if (_renderFpsEma >= enableThreshold)
+        {
+            _commercialCadenceHeadroomLatched = true;
+        }
+
+        bool cadenceBoostAllowed =
+            _commercialCadenceHeadroomLatched &&
+            (_continuity == null ||
+             _continuity.State != KiwiTrackingContinuityState.ContinuityState.Lost);
+
+        if (cadenceBoostAllowed)
+        {
+            float commercialTargetHz =
+                sourceAgeSeconds >=
+                Mathf.Max(0.08f, commercialCadenceAgedSourceSeconds)
+                    ? commercialCadenceAgedTargetHz
+                    : commercialCadenceHealthyTargetHz;
+
+            targetHz =
+                Mathf.Max(
+                    targetHz,
+                    Mathf.Clamp(
+                        commercialTargetHz,
+                        6f,
+                        15f));
+        }
+
+        debugCommercialCadenceBoost =
+            cadenceBoostAllowed;
+
+        float currentHz =
+            KiwiRuntimePolicyResolver.ResolvedMediaPipeRefreshHz > 0f
+                ? KiwiRuntimePolicyResolver.ResolvedMediaPipeRefreshHz
+                : _runner.sentisMediaPipeRefreshRateHz;
+
+        float requestedHz =
             SmoothTo(
-                _runner.sentisMediaPipeRefreshRateHz,
+                currentHz,
                 Mathf.Clamp(targetHz, 4f, 15f),
                 6f,
                 dt);
 
+        // v5.1 Single Writer: submit a short lease instead of mutating Runner.
+        // If this supervisor stops producing requests, the resolver naturally
+        // falls back to the persistent preset/bootstrap baseline.
+        KiwiRuntimePolicyResolver.SubmitRuntimeMediaPipeRefreshHz(
+            requestedHz,
+            KiwiRuntimePolicyResolver.RequestPriority.RuntimeAdaptive,
+            "MatureVTuberSupervisor",
+            0.75f);
+
         debugAuxiliaryMediaPipeHz =
-            _runner.sentisMediaPipeRefreshRateHz;
+            requestedHz;
     }
 
     private void ApplyMotionProfile(

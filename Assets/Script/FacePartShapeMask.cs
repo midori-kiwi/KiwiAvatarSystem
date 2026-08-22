@@ -1137,8 +1137,12 @@ public class FacePartShapeMask : MonoBehaviour
             0;
 
 
+        // KIWI_V5_1_PHASE5_CANONICAL_MASK_FRAME
+        // Mask contour and expression are latched from the same display
+        // cycle as Cropper/Root; callbacks after the latch wait one cycle.
         bool valid =
-            runner.TryGetLatestLandmarksIfChanged(
+            KiwiCanonicalTrackingFrame.TryGetSemanticLandmarksIfChanged(
+                runner,
                 ref _landmarks,
                 _lastTimestamp,
                 out landmarkCount,
@@ -1217,7 +1221,8 @@ public class FacePartShapeMask : MonoBehaviour
 
 
         bool hasExpression =
-            runner.TryGetLatestExpressionData(
+            KiwiCanonicalTrackingFrame.TryGetExpressionData(
+                runner,
                 out expression,
                 out expressionTimestamp
             );
@@ -1577,7 +1582,9 @@ public class FacePartShapeMask : MonoBehaviour
         // Canvas alpha remains continuous. Complete blinks now fade through the
         // material at render cadence instead of switching the whole eye on/off
         // only when a new Landmarker sample arrives.
-        _image.canvasRenderer.SetAlpha(1f);
+        // KIWI_V5_1_PHASE4_SHAPEMASK_CANVAS_RELEASE
+        // Semantic/blink opacity remains material-owned. Final
+        // CanvasRenderer alpha is owned by PresentationResolver.
 
 
         // =====================================================
@@ -4163,9 +4170,9 @@ public class FacePartShapeMask : MonoBehaviour
         );
 
 
-        _image.canvasRenderer.SetAlpha(
-            1f
-        );
+        // KIWI_V5_1_PHASE4_SHAPEMASK_CANVAS_RELEASE
+        // Semantic/blink opacity remains material-owned. Final
+        // CanvasRenderer alpha is owned by PresentationResolver.
 
 
         _image.material =
@@ -4400,9 +4407,8 @@ public class FacePartShapeMask : MonoBehaviour
 
         if (_image != null)
         {
-            _image.canvasRenderer.SetAlpha(
-                1f
-            );
+            // KIWI_V5_1_PHASE4_SHAPEMASK_CANVAS_RELEASE
+            // PresentationResolver owns CanvasRenderer alpha.
         }
 
 
@@ -4422,9 +4428,8 @@ public class FacePartShapeMask : MonoBehaviour
 
         if (_image != null)
         {
-            _image.canvasRenderer.SetAlpha(
-                1f
-            );
+            // KIWI_V5_1_PHASE4_SHAPEMASK_CANVAS_RELEASE
+            // PresentationResolver owns CanvasRenderer alpha.
         }
 
 

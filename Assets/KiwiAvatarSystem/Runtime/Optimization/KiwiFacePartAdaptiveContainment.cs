@@ -275,9 +275,12 @@ public sealed class KiwiFacePartAdaptiveContainment : MonoBehaviour
 
     private void ObserveTracking()
     {
+        // KIWI_V5_1_PHASE5_CANONICAL_CONTAINMENT_RIGID
+        // Motion-risk envelopes must use the same rigid sample as Root.
         if (
             _runner == null ||
-            !_runner.TryGetLatestPrecisionTrackingData(
+            !KiwiCommercialRigidMotionPolicy.TryGetAuthoritativeFrame(
+                _runner,
                 out FacePrecisionTrackingData data) ||
             !data.isValid
         )
@@ -431,7 +434,8 @@ public sealed class KiwiFacePartAdaptiveContainment : MonoBehaviour
     {
         if (
             _runner == null ||
-            !_runner.TryGetLatestPrecisionTrackingData(
+            !KiwiCommercialRigidMotionPolicy.TryGetAuthoritativeFrame(
+                _runner,
                 out FacePrecisionTrackingData data) ||
             !data.isValid
         )

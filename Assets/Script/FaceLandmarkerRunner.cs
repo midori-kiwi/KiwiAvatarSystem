@@ -423,6 +423,22 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
         private int _lastObservedWebCamUnityFrame = -1;
         private WebCamTexture _observedWebCamTexture;
 
+        // KIWI_V5_1_PHASE8_CAMERA_GENERATION_OWNER
+        // Camera/source session identity is owned here, beside the
+        // source lifecycle and submission timeline. Consumers only
+        // observe KiwiRuntimeGenerationContext.CameraGeneration.
+        private int _kiwiOwnedCameraGeneration;
+        private int _kiwiOwnedSourceTextureId;
+        private int _kiwiOwnedSourceWidth;
+        private int _kiwiOwnedSourceHeight;
+        private string _kiwiOwnedSourceName = string.Empty;
+        private long _kiwiLastRawSourceTimestamp = -1L;
+        private long _kiwiLastTaskTimestamp = -1L;
+        private bool _kiwiWebCamPlayingKnown;
+        private bool _kiwiWebCamWasPlaying;
+        private bool _kiwiTrackingResourceRebuildPending;
+        private int _kiwiLiveStreamGateCameraGeneration;
+
         // Main-thread pipeline diagnostics. Source/submission/result cadence is
         // intentionally reported separately so a camera, readback, or inference
         // bottleneck can be identified from one recording.
@@ -489,6 +505,9 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
         private readonly long[] _submissionHostTicks =
             new long[SubmissionHistoryCapacity];
 
+        private readonly int[] _submissionCameraGenerations =
+            new int[SubmissionHistoryCapacity];
+
         private int _submissionWriteIndex;
 
 
@@ -533,6 +552,14 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
         public float SourceRequestedFrameRate =>
             _sourceRequestedFrameRate;
+
+        public int RuntimeCameraGeneration =>
+            _kiwiOwnedCameraGeneration > 0
+                ? _kiwiOwnedCameraGeneration
+                : KiwiRuntimeGenerationContext.CameraGeneration;
+
+        public int RuntimeCameraSourceTextureId =>
+            _kiwiOwnedSourceTextureId;
 
         public bool Cm831ProfileActive =>
             _cm831ProfileActive;
@@ -816,6 +843,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
         private void ObserveFreshWebCamFrame(WebCamTexture webCamTexture)
         {
+            ObserveOwnedWebCamLifecycle(webCamTexture);
+
             if (
                 !_acceptTrackingResults ||
                 webCamTexture == null ||
@@ -835,6 +864,258 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             _pendingSourceFrameHostTicks = hostTicks;
             _latestSentisSourceFrameHostTicks = hostTicks;
             RecordFreshSourceFrame(hostTicks);
+        }
+
+        private void BeginOwnedCameraSourceSession(
+            Texture source,
+            string sourceName,
+            int width,
+            int height)
+        {
+            _kiwiLastRawSourceTimestamp = -1L;
+            _kiwiLastTaskTimestamp = -1L;
+            _kiwiTrackingResourceRebuildPending = false;
+
+            AdvanceOwnedCameraBoundary(
+                KiwiCameraGenerationReason.SourceRunStarted,
+                source,
+                sourceName,
+                width,
+                height,
+                -1L);
+        }
+
+        private void AdvanceOwnedCameraBoundary(
+            KiwiCameraGenerationReason reason,
+            Texture source,
+            string sourceName,
+            int width,
+            int height,
+            long observedTimestamp)
+        {
+            int textureId =
+                source != null ? source.GetInstanceID() : 0;
+
+            _kiwiOwnedCameraGeneration =
+                KiwiCameraGeneration.Advance(
+                    reason,
+                    sourceName,
+                    textureId,
+                    width,
+                    height,
+                    observedTimestamp);
+
+            // Old MediaPipe callbacks are invalid after this point.
+            // Keep the bounded submission ring so old callbacks can
+            // resolve their original generation and be counted stale.
+            // The generation is rechecked again inside publish locks.
+            ClearTrackingData(false);
+
+            _pendingFreshWebCamFrame = false;
+            _pendingSourceFrameHostTicks = 0L;
+            _freshWebCamGeneration = 0;
+            _lastObservedWebCamUnityFrame = -1;
+            _previousFreshSourceHostTicks = 0L;
+            _previousSubmissionRateHostTicks = 0L;
+            _latestFreshSourceRateHz = 0f;
+            _latestSubmissionRateHz = 0f;
+
+            if (!_kiwiTrackingResourceRebuildPending)
+            {
+                // Same-sized source restarts/replacements can release
+                // the app-level gate immediately; generation-tagged
+                // callbacks make the abandoned request harmless.
+                _liveStreamRequestInFlight = false;
+                _kiwiLiveStreamGateCameraGeneration = 0;
+            }
+
+            _kiwiOwnedSourceTextureId = textureId;
+            _kiwiOwnedSourceWidth = Mathf.Max(1, width);
+            _kiwiOwnedSourceHeight = Mathf.Max(1, height);
+            _kiwiOwnedSourceName = sourceName ?? string.Empty;
+            _kiwiLastRawSourceTimestamp = -1L;
+
+            _observedWebCamTexture = source as WebCamTexture;
+            _sentisSourceTexture = source;
+            _lastSentisProcessedGeneration = -1;
+            _lastSentisAnchorTimestampApplied = -1L;
+            _sentisPrimaryActive = false;
+            _hasLatestSentisAnchor = false;
+            _hasLatestMediaPipeAuxRotation = false;
+            _hasSentisRotationOffset = false;
+            _latestSentisSourceFrameHostTicks = 0L;
+
+            WebCamTexture webCam = source as WebCamTexture;
+            _kiwiWebCamPlayingKnown = webCam != null;
+            _kiwiWebCamWasPlaying =
+                webCam != null && webCam.isPlaying;
+        }
+
+        private bool RefreshOwnedCameraSource(
+            Texture source,
+            string sourceName)
+        {
+            if (source == null)
+            {
+                return false;
+            }
+
+            int textureId = source.GetInstanceID();
+            int width = Mathf.Max(1, source.width);
+            int height = Mathf.Max(1, source.height);
+            string name = sourceName ?? string.Empty;
+
+            bool dimensionsChanged =
+                _kiwiOwnedSourceWidth > 0 &&
+                (width != _kiwiOwnedSourceWidth ||
+                 height != _kiwiOwnedSourceHeight);
+
+            KiwiCameraGenerationReason reason =
+                KiwiCameraGenerationReason.None;
+
+            if (
+                _kiwiOwnedSourceTextureId != 0 &&
+                textureId != _kiwiOwnedSourceTextureId)
+            {
+                reason = KiwiCameraGenerationReason.SourceTextureChanged;
+            }
+            else if (
+                dimensionsChanged)
+            {
+                reason = KiwiCameraGenerationReason.SourceDimensionsChanged;
+            }
+            else if (
+                !string.Equals(
+                    name,
+                    _kiwiOwnedSourceName,
+                    System.StringComparison.Ordinal))
+            {
+                reason = KiwiCameraGenerationReason.SourceNameChanged;
+            }
+
+            if (reason == KiwiCameraGenerationReason.None)
+            {
+                return false;
+            }
+
+            int previousTrackingInputMaxWidth =
+                trackingInputMaxWidth;
+
+            _sourceName = name;
+            _sourceTextureWidth = width;
+            _sourceTextureHeight = height;
+            _cm831ProfileActive =
+                WebCamSource.IsCm831DeviceName(_sourceName);
+
+            if (autoOptimizeCm831 && _cm831ProfileActive)
+            {
+                trackingInputMaxWidth = Mathf.Clamp(
+                    cm831TrackingInputWidth, 480, 960);
+            }
+
+            if (
+                dimensionsChanged ||
+                trackingInputMaxWidth != previousTrackingInputMaxWidth)
+            {
+                _kiwiTrackingResourceRebuildPending = true;
+            }
+
+            AdvanceOwnedCameraBoundary(
+                reason,
+                source,
+                name,
+                width,
+                height,
+                -1L);
+
+            return true;
+        }
+
+        private void RebuildOwnedTrackingResources()
+        {
+            _textureFramePool?.Dispose();
+            _textureFramePool = null;
+
+            PrepareTrackingInputTexture(
+                _sourceTextureWidth,
+                _sourceTextureHeight);
+
+            int poolSize =
+                config.ImageReadMode == ImageReadMode.GPU ? 4 : 2;
+
+            _textureFramePool =
+                new Experimental.TextureFramePool(
+                    _trackingInputWidth,
+                    _trackingInputHeight,
+                    TextureFormat.RGBA32,
+                    poolSize);
+        }
+
+        private void ObserveOwnedWebCamLifecycle(
+            WebCamTexture webCamTexture)
+        {
+            if (!_acceptTrackingResults || webCamTexture == null)
+            {
+                return;
+            }
+
+            bool isPlaying = webCamTexture.isPlaying;
+
+            if (!_kiwiWebCamPlayingKnown)
+            {
+                _kiwiWebCamPlayingKnown = true;
+                _kiwiWebCamWasPlaying = isPlaying;
+                return;
+            }
+
+            if (!_kiwiWebCamWasPlaying && isPlaying)
+            {
+                AdvanceOwnedCameraBoundary(
+                    KiwiCameraGenerationReason.WebCamRestarted,
+                    webCamTexture,
+                    _sourceName,
+                    Mathf.Max(1, webCamTexture.width),
+                    Mathf.Max(1, webCamTexture.height),
+                    -1L);
+            }
+
+            _kiwiWebCamWasPlaying = isPlaying;
+        }
+
+        private long NormalizeOwnedSourceTimestamp(
+            long rawTimestamp,
+            Texture source,
+            out bool generationAdvanced)
+        {
+            generationAdvanced = false;
+
+            if (
+                _kiwiLastRawSourceTimestamp >= 0L &&
+                rawTimestamp < _kiwiLastRawSourceTimestamp)
+            {
+                AdvanceOwnedCameraBoundary(
+                    KiwiCameraGenerationReason.SourceTimelineRegression,
+                    source,
+                    _sourceName,
+                    _sourceTextureWidth,
+                    _sourceTextureHeight,
+                    rawTimestamp);
+
+                generationAdvanced = true;
+            }
+
+            _kiwiLastRawSourceTimestamp = rawTimestamp;
+
+            long normalized = rawTimestamp;
+            if (
+                _kiwiLastTaskTimestamp >= 0L &&
+                normalized <= _kiwiLastTaskTimestamp)
+            {
+                normalized = _kiwiLastTaskTimestamp + 1L;
+            }
+
+            _kiwiLastTaskTimestamp = normalized;
+            return normalized;
         }
 
         public bool TryGetLatestLandmarks(
@@ -1214,6 +1495,12 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             _sourceTextureWidth = Mathf.Max(1, imageSource.textureWidth);
             _sourceTextureHeight = Mathf.Max(1, imageSource.textureHeight);
 
+            BeginOwnedCameraSourceSession(
+                imageSource.GetCurrentTexture(),
+                _sourceName,
+                _sourceTextureWidth,
+                _sourceTextureHeight);
+
 
             Debug.Log(
                 "[KiwiCamera] source=" + _sourceName +
@@ -1353,6 +1640,43 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 Texture sourceTexture =
                     imageSource.GetCurrentTexture();
 
+                if (RefreshOwnedCameraSource(
+                        sourceTexture,
+                        imageSource.sourceName ?? string.Empty))
+                {
+                    var refreshedTransformationOptions =
+                        imageSource.GetTransformationOptions();
+
+                    flipHorizontally =
+                        refreshedTransformationOptions.flipHorizontally;
+                    flipVertically =
+                        refreshedTransformationOptions.flipVertically;
+                    IsInputHorizontallyMirrored = flipHorizontally;
+                    imageProcessingOptions =
+                        new Tasks.Vision.Core.ImageProcessingOptions(
+                            rotationDegrees:
+                            (int)refreshedTransformationOptions.rotationAngle);
+
+                    _sentisSourceTexture = sourceTexture;
+                    _sentisFlipHorizontally = flipHorizontally;
+                    _sentisFlipVertically = flipVertically;
+                }
+
+                if (_kiwiTrackingResourceRebuildPending)
+                {
+                    // Do not dispose a TextureFramePool while a
+                    // LIVE_STREAM image from that pool can still be
+                    // owned by native inference. Wait for its callback.
+                    if (isLiveStream && _liveStreamRequestInFlight)
+                    {
+                        yield return null;
+                        continue;
+                    }
+
+                    RebuildOwnedTrackingResources();
+                    _kiwiTrackingResourceRebuildPending = false;
+                }
+
 
                 long sourceObservationHostTicks =
                     System.Diagnostics.Stopwatch.GetTimestamp();
@@ -1424,6 +1748,11 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
                 int submittedFreshGeneration =
                     _freshWebCamGeneration;
+
+                int sourceCameraGeneration =
+                    _kiwiOwnedCameraGeneration > 0
+                        ? _kiwiOwnedCameraGeneration
+                        : KiwiRuntimeGenerationContext.CameraGeneration;
 
 
                 if (
@@ -1569,6 +1898,38 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     System.Diagnostics.Stopwatch.GetTimestamp()
                 );
 
+                // A source boundary can occur while CPUAsync readback
+                // is pending. Never submit pixels captured under the
+                // previous camera generation as a new-session frame.
+                Texture latestSourceTexture =
+                    imageSource.GetCurrentTexture();
+
+                bool sourceChangedDuringReadback =
+                    latestSourceTexture != sourceTexture ||
+                    sourceTexture == null ||
+                    sourceTexture.width != _kiwiOwnedSourceWidth ||
+                    sourceTexture.height != _kiwiOwnedSourceHeight ||
+                    !string.Equals(
+                        imageSource.sourceName ?? string.Empty,
+                        _kiwiOwnedSourceName,
+                        System.StringComparison.Ordinal);
+
+                if (sourceChangedDuringReadback)
+                {
+                    // Let the next loop iteration establish the new
+                    // source identity before any result is submitted.
+                    image.Dispose();
+                    continue;
+                }
+
+                if (
+                    sourceCameraGeneration !=
+                    KiwiRuntimeGenerationContext.CameraGeneration)
+                {
+                    image.Dispose();
+                    continue;
+                }
+
 
                 switch (taskApi.runningMode)
                 {
@@ -1582,11 +1943,24 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                                 )
                             )
                             {
+                                long timestamp =
+                                    NormalizeOwnedSourceTimestamp(
+                                        GetCurrentTimestampMillisec(),
+                                        sourceTexture,
+                                        out bool cameraBoundary);
+
+                                if (cameraBoundary)
+                                {
+                                    sourceCameraGeneration =
+                                        KiwiRuntimeGenerationContext.CameraGeneration;
+                                }
+
                                 StoreTrackingData(
                                     result,
-                                    GetCurrentTimestampMillisec(),
+                                    timestamp,
                                     0L,
-                                    System.Diagnostics.Stopwatch.GetTimestamp()
+                                    System.Diagnostics.Stopwatch.GetTimestamp(),
+                                    sourceCameraGeneration
                                 );
 
 
@@ -1619,7 +1993,16 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     case Tasks.Vision.Core.RunningMode.VIDEO:
                         {
                             long timestamp =
-                                GetCurrentTimestampMillisec();
+                                NormalizeOwnedSourceTimestamp(
+                                    GetCurrentTimestampMillisec(),
+                                    sourceTexture,
+                                    out bool cameraBoundary);
+
+                            if (cameraBoundary)
+                            {
+                                sourceCameraGeneration =
+                                    KiwiRuntimeGenerationContext.CameraGeneration;
+                            }
 
 
                             if (
@@ -1635,7 +2018,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                                     result,
                                     timestamp,
                                     0L,
-                                    System.Diagnostics.Stopwatch.GetTimestamp()
+                                    System.Diagnostics.Stopwatch.GetTimestamp(),
+                                    sourceCameraGeneration
                                 );
 
 
@@ -1668,7 +2052,16 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     case Tasks.Vision.Core.RunningMode.LIVE_STREAM:
                         {
                             long timestamp =
-                                GetCurrentTimestampMillisec();
+                                NormalizeOwnedSourceTimestamp(
+                                    GetCurrentTimestampMillisec(),
+                                    sourceTexture,
+                                    out bool cameraBoundary);
+
+                            if (cameraBoundary)
+                            {
+                                sourceCameraGeneration =
+                                    KiwiRuntimeGenerationContext.CameraGeneration;
+                            }
 
 
                             long submissionHostTicks =
@@ -1677,7 +2070,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
                             RememberSubmittedFrame(
                                 timestamp,
-                                submissionHostTicks
+                                submissionHostTicks,
+                                sourceCameraGeneration
                             );
 
 
@@ -1697,6 +2091,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                             if (latestFrameOnlyLiveStream)
                             {
                                 _liveStreamRequestInFlight = true;
+                                _kiwiLiveStreamGateCameraGeneration =
+                                    sourceCameraGeneration;
                             }
 
 
@@ -1711,6 +2107,7 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                             catch
                             {
                                 _liveStreamRequestInFlight = false;
+                                _kiwiLiveStreamGateCameraGeneration = 0;
                                 throw;
                             }
 
@@ -1883,10 +2280,9 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 System.Diagnostics.Stopwatch.GetTimestamp();
 
 
-            // Release the newest-frame gate immediately on callback entry. C#
-            // geometry extraction can overlap selection of the next camera frame.
-            _liveStreamRequestInFlight = false;
-
+            // Phase 8: gate release is generation-owned. An old
+            // callback must never release a request submitted by the
+            // current camera generation. Resolve the submission first.
 
             if (!_acceptTrackingResults)
             {
@@ -1896,7 +2292,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
             long submissionHostTicks =
                 ResolveSubmittedFrameHostTicks(
-                    timestamp
+                    timestamp,
+                    out int submissionCameraGeneration
                 );
 
 
@@ -1906,6 +2303,25 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             // in both cases publishing it would be more harmful than dropping it.
             if (submissionHostTicks <= 0L)
             {
+                KiwiCameraGeneration.RecordUnmatchedCallbackDrop();
+                return;
+            }
+
+            if (
+                _liveStreamRequestInFlight &&
+                _kiwiLiveStreamGateCameraGeneration ==
+                    submissionCameraGeneration)
+            {
+                _liveStreamRequestInFlight = false;
+                _kiwiLiveStreamGateCameraGeneration = 0;
+            }
+
+            if (
+                submissionCameraGeneration <= 0 ||
+                submissionCameraGeneration !=
+                    KiwiRuntimeGenerationContext.CameraGeneration)
+            {
+                KiwiCameraGeneration.RecordStaleCallbackDrop();
                 return;
             }
 
@@ -1917,13 +2333,22 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     return;
                 }
 
+                if (
+                    submissionCameraGeneration !=
+                        KiwiRuntimeGenerationContext.CameraGeneration)
+                {
+                    KiwiCameraGeneration.RecordStaleCallbackDrop();
+                    return;
+                }
+
 
                 bool published =
                     StoreTrackingData(
                         result,
                         timestamp,
                         submissionHostTicks,
-                        arrivalHostTicks
+                        arrivalHostTicks,
+                        submissionCameraGeneration
                     );
 
 
@@ -1949,9 +2374,14 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             FaceLandmarkerResult result,
             long timestamp,
             long submissionHostTicks,
-            long arrivalHostTicks = 0L)
+            long arrivalHostTicks = 0L,
+            int cameraGeneration = 0)
         {
-            if (!_acceptTrackingResults)
+            if (
+                !_acceptTrackingResults ||
+                (cameraGeneration > 0 &&
+                 cameraGeneration !=
+                    KiwiRuntimeGenerationContext.CameraGeneration))
             {
                 return false;
             }
@@ -1968,7 +2398,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             )
             {
                 return ClearTrackingDataForTimestamp(
-                    timestamp
+                    timestamp,
+                    cameraGeneration
                 );
             }
 
@@ -2531,6 +2962,9 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     // tracking snapshot that has already been published.
                     if (
                         !_acceptTrackingResults ||
+                        (cameraGeneration > 0 &&
+                         cameraGeneration !=
+                            KiwiRuntimeGenerationContext.CameraGeneration) ||
                         (
                             _latestResultTimestamp >= 0L &&
                             timestamp < _latestResultTimestamp
@@ -2985,7 +3419,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
         private void RememberSubmittedFrame(
             long timestamp,
-            long hostTicks)
+            long hostTicks,
+            int cameraGeneration)
         {
             lock (_submissionLock)
             {
@@ -3000,6 +3435,9 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 _submissionHostTicks[index] =
                     hostTicks;
 
+                _submissionCameraGenerations[index] =
+                    cameraGeneration;
+
 
                 _submissionWriteIndex =
                     (
@@ -3013,8 +3451,10 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
 
         private long ResolveSubmittedFrameHostTicks(
-            long timestamp)
+            long timestamp,
+            out int cameraGeneration)
         {
+            cameraGeneration = 0;
             lock (_submissionLock)
             {
                 // LIVE_STREAM callbacks normally correspond to one of the most
@@ -3050,6 +3490,9 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                         long value =
                             _submissionHostTicks[index];
 
+                        cameraGeneration =
+                            _submissionCameraGenerations[index];
+
 
                         _submissionTimestamps[index] =
                             -1L;
@@ -3057,6 +3500,9 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
                         _submissionHostTicks[index] =
                             0L;
+
+                        _submissionCameraGenerations[index] =
+                            0;
 
 
                         return value;
@@ -3273,12 +3719,16 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
 
         private bool ClearTrackingDataForTimestamp(
-            long timestamp)
+            long timestamp,
+            int cameraGeneration = 0)
         {
             lock (_trackingLock)
             {
                 if (
                     !_acceptTrackingResults ||
+                    (cameraGeneration > 0 &&
+                     cameraGeneration !=
+                        KiwiRuntimeGenerationContext.CameraGeneration) ||
                     (
                         _latestResultTimestamp >= 0L &&
                         timestamp < _latestResultTimestamp
@@ -3314,6 +3764,7 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             if (clearSubmissionHistory)
             {
                 _liveStreamRequestInFlight = false;
+                _kiwiLiveStreamGateCameraGeneration = 0;
                 _pendingFreshWebCamFrame = false;
                 _pendingSourceFrameHostTicks = 0L;
                 _freshWebCamGeneration = 0;
@@ -3371,6 +3822,9 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
                     _submissionHostTicks[i] =
                         0L;
+
+                    _submissionCameraGenerations[i] =
+                        0;
                 }
 
 

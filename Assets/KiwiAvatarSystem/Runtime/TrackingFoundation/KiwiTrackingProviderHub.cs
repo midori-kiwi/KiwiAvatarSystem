@@ -57,6 +57,9 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
         public float cadenceQuality;
         public float geometryQuality;
         public KiwiTrackingBackend backend;
+        public KiwiTrackingTimestampQuality timestampQuality;
+        public KiwiTrackingTimebase sourceTimebase;
+        public bool canonicalInputHorizontallyMirrored;
     }
 
     private sealed class ProviderSlot
@@ -65,13 +68,28 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
         public int priority;
         public TrackingCapability capabilities;
         public FacePrecisionTrackingData data;
+        public KiwiTrackingNormalizedFrameMetadata metadata;
         public ulong sourceFrameId;
         public ulong syntheticFrameId;
+        public ulong lastProviderSourceFrameId;
+        public ulong normalizedExternalFrameId;
+        public bool hasExternalFrameIdentity;
         public long arrivalHostTicks;
         public double submittedRealtime;
         public float frameIntervalEma;
         public float frameIntervalDeviationEma;
         public float rigidAnchorCorrectionMagnitude;
+
+        // Phase 9: provider-native monotonic clocks are mapped once at the
+        // adapter boundary. Canonical consumers only see local Stopwatch ticks.
+        public bool hasTimebaseAnchor;
+        public KiwiTrackingTimebase mappedTimebase;
+        public long timebaseSourceAnchor;
+        public long timebaseHostAnchor;
+        public long lastProviderSourceTimestamp;
+        public long lastNormalizedObservationHostTicks;
+        public long lastCanonicalTimestampMilliseconds;
+        public int timebaseResetCount;
         public bool hasFrame;
     }
 
@@ -227,6 +245,32 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
     [Range(0.05f, 0.50f)]
     public float handoffReleaseScaleFraction = 0.20f;
 
+    // KIWI_V5_1_PHASE16_5_COMMERCIAL_HANDOFF_RELEASE
+    [Tooltip("Maximum handoff-alignment weight that may be released by one fresh provider sample. This prevents a backend coordinate-basis offset from being dumped into one accepted pose while leaving ordinary same-provider tracking untouched.")]
+    [Range(0.15f, 0.80f)]
+    public float handoffMaximumWeightReleasePerSample = 0.42f;
+
+    // KIWI_V5_1_PHASE16_8_COMMERCIAL_STICKY_RIGID_AUTHORITY
+    [Header("Commercial sticky rigid authority")]
+    [Tooltip("Keep the current built-in rigid authority through a short cadence miss instead of immediately switching backends. Publication still enters Holding; stale observations are never exposed as fresh tracking.")]
+    public bool enableCommercialStickyRigidAuthority = true;
+
+    [Tooltip("Arrival-silence grace before a healthy-but-late built-in rigid provider may fail over. This is authority hysteresis only; no stale frame is published during the grace period.")]
+    [Range(0.25f, 1.20f)]
+    public float commercialTransientFailoverGraceSeconds = 0.60f;
+
+    [Tooltip("Absolute source-age ceiling for authority grace. Prevents an old provider identity from blocking failover indefinitely.")]
+    [Range(0.45f, 1.50f)]
+    public float commercialFailoverSourceAgeCeilingSeconds = 0.80f;
+
+    [Tooltip("Minimum healthy ownership dwell before a live built-in provider may be replaced by another live provider.")]
+    [Range(0.45f, 2.50f)]
+    public float commercialMinimumAuthorityDwellSeconds = 1.00f;
+
+    [Tooltip("Independent Inference Engine source frames required when returning from MediaPipe while MediaPipe remains healthy.")]
+    [Range(3, 8)]
+    public int commercialPrimaryRecoveryConfirmationFrames = 4;
+
     [Header("Diagnostics")]
     [SerializeField] private string debugActiveProvider = "-";
     [SerializeField] private float debugActiveScore;
@@ -241,6 +285,8 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
     [SerializeField] private bool debugHandoffActive;
     [SerializeField] private string debugHandoffProvider = "-";
     [SerializeField] private float debugHandoffWeight;
+    [SerializeField] private float debugHandoffTargetWeight;
+    [SerializeField] private float debugHandoffReleaseStep;
     [SerializeField] private float debugHandoffCenterOffset;
     [SerializeField] private float debugHandoffRotationOffsetDegrees;
     [SerializeField] private float debugHandoffScaleRatio = 1f;
@@ -248,6 +294,19 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
     [SerializeField] private bool debugResumeReferenceValid;
     [SerializeField] private float debugResumeGapMs;
     [SerializeField] private int debugResumeHandoffCount;
+    [SerializeField] private bool debugCommercialFailoverDeferred;
+    [SerializeField] private float debugCommercialFailoverGraceRemainingMs;
+    [SerializeField] private int debugCommercialDeferredFailoverCount;
+
+    [Header("Phase 9 normalization diagnostics")]
+    [SerializeField] private string debugActiveTimebase = "-";
+    [SerializeField] private string debugActiveTimestampQuality = "-";
+    [SerializeField] private string debugActiveHorizontalConvention = "-";
+    [SerializeField] private bool debugCanonicalInputMirrored;
+    [SerializeField] private bool debugHorizontalTransformApplied;
+    [SerializeField] private int debugTimebaseResetCount;
+    [SerializeField] private int debugArrivalFallbackCount;
+    [SerializeField] private int debugHorizontalTransformCount;
 
     private FaceLandmarkerRunner _runner;
 
@@ -294,7 +353,11 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
     private ulong _lastPublishedSourceFrameId;
 
     private FacePrecisionTrackingData _latestPublished;
+    private KiwiTrackingNormalizedFrameMetadata _latestPublishedMetadata;
     private bool _hasPublished;
+
+    private int _arrivalFallbackCount;
+    private int _horizontalTransformCount;
 
     private bool _handoffActive;
     private string _handoffProviderId = string.Empty;
@@ -317,6 +380,30 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
     private string _resumeReferenceProviderId = string.Empty;
     private double _resumeGapStartedRealtime;
     private int _resumeHandoffCount;
+    private bool _commercialFailoverDeferredLastPass;
+    private bool _commercialFailoverWindowActive;
+    private int _commercialDeferredFailoverCount;
+
+    // KIWI_V5_1_PHASE16_6_COMMERCIAL_RIGID_COHERENCE_GUARD
+    // Final canonical-provider output guard. It is intentionally not a normal
+    // smoother: only a physically inconsistent center+rotation+depth shock, or
+    // a catastrophic center residual unsupported by eye/nose/chin translation,
+    // is bounded. Ordinary same-provider motion remains untouched.
+    private bool _hasCommercialRigidCoherenceHistory;
+    private FacePrecisionTrackingData _commercialRigidPrevious;
+    private string _commercialRigidPreviousProvider = string.Empty;
+    private int _commercialRigidShockCount;
+    private float _commercialRigidLastCenterResidualEyeSpans;
+    private float _commercialRigidLastRotationDelta;
+    private float _commercialRigidLastDepthLogDelta;
+
+    public int CommercialRigidShockCount => _commercialRigidShockCount;
+    public float CommercialRigidLastCenterResidualEyeSpans =>
+        _commercialRigidLastCenterResidualEyeSpans;
+    public float CommercialRigidLastRotationDelta =>
+        _commercialRigidLastRotationDelta;
+    public float CommercialRigidLastDepthLogDelta =>
+        _commercialRigidLastDepthLogDelta;
 
     public string ActiveProviderId =>
         _activeProviderId;
@@ -332,6 +419,12 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
 
     public float HandoffWeight =>
         _handoffWeight;
+
+    public float HandoffTargetWeight =>
+        debugHandoffTargetWeight;
+
+    public float HandoffReleaseStep =>
+        debugHandoffReleaseStep;
 
     public float HandoffCenterOffsetMagnitude =>
         _handoffCenterOffset.magnitude;
@@ -361,6 +454,51 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
 
     public int ResumeHandoffCount =>
         _resumeHandoffCount;
+
+    public bool CommercialFailoverDeferred =>
+        _commercialFailoverDeferredLastPass;
+
+    public float CommercialFailoverGraceRemainingMilliseconds =>
+        debugCommercialFailoverGraceRemainingMs;
+
+    public int CommercialDeferredFailoverCount =>
+        _commercialDeferredFailoverCount;
+
+    public KiwiTrackingNormalizedFrameMetadata ActiveNormalizationMetadata =>
+        _latestPublishedMetadata;
+
+    public KiwiTrackingTimebase ActiveSourceTimebase =>
+        _latestPublishedMetadata.valid
+            ? _latestPublishedMetadata.sourceTimebase
+            : KiwiTrackingTimebase.LegacyUnspecified;
+
+    public KiwiTrackingTimestampQuality ActiveTimestampQuality =>
+        _latestPublishedMetadata.valid
+            ? _latestPublishedMetadata.timestampQuality
+            : KiwiTrackingTimestampQuality.ArrivalFallback;
+
+    public KiwiTrackingHorizontalConvention ActiveSourceHorizontalConvention =>
+        _latestPublishedMetadata.valid
+            ? _latestPublishedMetadata.sourceHorizontalConvention
+            : KiwiTrackingHorizontalConvention.CanonicalPresentation;
+
+    public bool CanonicalInputHorizontallyMirrored =>
+        GetCanonicalInputHorizontallyMirrored();
+
+    public bool ActiveHorizontalTransformApplied =>
+        _latestPublishedMetadata.valid &&
+        _latestPublishedMetadata.horizontalTransformApplied;
+
+    public int ActiveTimebaseResetCount =>
+        _latestPublishedMetadata.valid
+            ? _latestPublishedMetadata.timebaseResetCount
+            : 0;
+
+    public int ArrivalFallbackCount =>
+        _arrivalFallbackCount;
+
+    public int HorizontalTransformCount =>
+        _horizontalTransformCount;
 
     public float ActiveProviderSourceAgeMilliseconds =>
         debugActiveAgeMs;
@@ -429,6 +567,8 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
         Scene scene,
         LoadSceneMode mode)
     {
+        KiwiRuntimeGenerationContext.AdvanceTrackingSessionGeneration();
+
         _runner = null;
         _activeProviderId = string.Empty;
         _activeProviderSinceRealtime = 0.0;
@@ -440,19 +580,41 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
         ClearSlot(_inference);
 
         _latestPublished = default;
+        _latestPublishedMetadata = default;
         _hasPublished = false;
         _lastPublishedProviderId = string.Empty;
         _lastPublishedSourceFrameId = 0UL;
         ResetHandoff(false);
         ClearResumeReference();
+        _commercialFailoverDeferredLastPass = false;
+        _commercialFailoverWindowActive = false;
+        _commercialDeferredFailoverCount = 0;
+        debugCommercialFailoverDeferred = false;
+        debugCommercialFailoverGraceRemainingMs = 0f;
+        debugCommercialDeferredFailoverCount = 0;
 
         RefreshRunner();
     }
 
     private void Update()
     {
+        RefreshCanonicalSelectionNow();
+    }
+
+    // KIWI_V5_1_PHASE5_CANONICAL_PROVIDER_REFRESH
+    // Update runs before FaceLandmarkerRunner.Update because the Hub has a very
+    // early execution order. The canonical frame coordinator calls this same
+    // arbitration pass again in LateUpdate, after Runner.Update and before
+    // FacePartCropper, so Root and semantic FaceParts can consume one current
+    // provider decision without duplicating or bypassing switch policy.
+    public void RefreshCanonicalSelectionNow()
+    {
         RefreshRunner();
         ObserveBuiltInRunner();
+
+        _commercialFailoverDeferredLastPass = false;
+        debugCommercialFailoverDeferred = false;
+        debugCommercialFailoverGraceRemainingMs = 0f;
 
         Candidate best =
             FindBestCandidate(
@@ -477,6 +639,7 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
             // TryGetLatestFrame still returns false because _hasPublished is
             // cleared below; this preserves Holding semantics without pinning.
             _hasPublished = false;
+            _commercialFailoverWindowActive = false;
             ClearSwitchCandidate();
             ResetHandoff(false);
 
@@ -503,16 +666,79 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
         double nowRealtime =
             Time.realtimeSinceStartupAsDouble;
 
+        // KIWI_V5_1_PHASE16_8_COMMERCIAL_STICKY_RIGID_AUTHORITY
+        // A 150-500 ms cadence miss is presentation Holding, not proof that a
+        // second backend should become the rigid authority. Keep the existing
+        // provider identity during a bounded grace window. No old observation
+        // is published here: _hasPublished is cleared and consumers keep the
+        // normal Holding/Lost Prediction=0 contract. Invalid geometry bypasses
+        // this grace and may fail over immediately.
+        if (
+            !active.valid &&
+            ShouldDeferCommercialFailover(
+                best,
+                out float commercialGraceRemainingSeconds,
+                out ProviderSlot deferredActiveSlot)
+        )
+        {
+            CaptureResumeReferenceIfNeeded();
+            _hasPublished = false;
+            ClearSwitchCandidate();
+            ResetHandoff(false);
+
+            _commercialFailoverDeferredLastPass = true;
+            if (!_commercialFailoverWindowActive)
+            {
+                _commercialFailoverWindowActive = true;
+                _commercialDeferredFailoverCount++;
+            }
+            debugCommercialFailoverDeferred = true;
+            debugCommercialDeferredFailoverCount =
+                _commercialDeferredFailoverCount;
+            debugCommercialFailoverGraceRemainingMs =
+                Mathf.Max(0f, commercialGraceRemainingSeconds * 1000f);
+
+            debugActiveProvider =
+                string.IsNullOrEmpty(_activeProviderId)
+                    ? "-"
+                    : _activeProviderId + " (hold)";
+            debugActiveScore = 0f;
+            debugActiveAgeMs =
+                deferredActiveSlot != null
+                    ? CalculateFrameAgeSeconds(deferredActiveSlot) * 1000f
+                    : 0f;
+            debugActiveArrivalAgeMs =
+                deferredActiveSlot != null
+                    ? CalculateArrivalAgeSeconds(deferredActiveSlot) * 1000f
+                    : 0f;
+            debugActiveArrivalLimitMs =
+                commercialTransientFailoverGraceSeconds * 1000f;
+            debugActiveCadenceQuality =
+                deferredActiveSlot != null
+                    ? CalculateCadenceQuality(deferredActiveSlot)
+                    : 0f;
+            return;
+        }
+
+        _commercialFailoverWindowActive = false;
+
         if (active.valid)
         {
             selected = active;
+
+            float requiredAuthorityDwellSeconds =
+                enableCommercialStickyRigidAuthority
+                    ? Mathf.Max(
+                        minimumProviderHoldSeconds,
+                        commercialMinimumAuthorityDwellSeconds)
+                    : minimumProviderHoldSeconds;
 
             bool holdSatisfied =
                 _activeProviderSinceRealtime <=
                     0.0 ||
                 nowRealtime -
                     _activeProviderSinceRealtime >=
-                    minimumProviderHoldSeconds;
+                    requiredAuthorityDwellSeconds;
 
             if (
                 holdSatisfied &&
@@ -527,11 +753,32 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
             {
                 ObserveSwitchCandidate(best);
 
-                if (
-                    _switchCandidateCount >=
+                int requiredSwitchFrames =
                     Mathf.Max(
                         1,
-                        providerSwitchConfirmationFrames)
+                        providerSwitchConfirmationFrames);
+
+                if (
+                    enableCommercialStickyRigidAuthority &&
+                    string.Equals(
+                        active.slot.id,
+                        MediaPipeProviderId,
+                        StringComparison.Ordinal) &&
+                    string.Equals(
+                        best.slot.id,
+                        InferenceProviderId,
+                        StringComparison.Ordinal)
+                )
+                {
+                    requiredSwitchFrames =
+                        Mathf.Max(
+                            requiredSwitchFrames,
+                            commercialPrimaryRecoveryConfirmationFrames);
+                }
+
+                if (
+                    _switchCandidateCount >=
+                    requiredSwitchFrames
                 )
                 {
                     selected = best;
@@ -557,6 +804,12 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
 
         if (providerChanged)
         {
+            // ProviderGeneration changes only when rigid authority identity
+            // actually changes. A same-provider short-gap resume keeps the
+            // same _activeProviderId and therefore does not invalidate itself
+            // as a synthetic provider switch.
+            KiwiRuntimeGenerationContext.AdvanceProviderGeneration();
+
             BeginProviderHandoff(selected);
 
             _activeProviderSinceRealtime =
@@ -613,16 +866,37 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
     }
 
     /// <summary>
-    /// Submit one normalized external provider frame.
+    /// Legacy external-provider submission.
     ///
-    /// Provider-specific SDK code belongs in an adapter. The avatar motion
-    /// system only consumes the normalized frame selected by this hub.
+    /// Compatibility contract: the adapter already uses Kiwi's current
+    /// presentation horizontal convention. submissionHostTicks, when present,
+    /// is local Stopwatch time; otherwise arrival time is used. New adapters
+    /// should call the explicit-contract overload below.
     /// </summary>
     public void SubmitExternalFrame(
         string providerId,
         int priority,
         TrackingCapability capabilities,
         FacePrecisionTrackingData data)
+    {
+        SubmitExternalFrame(
+            providerId,
+            priority,
+            capabilities,
+            data,
+            KiwiExternalTrackingFrameContract.LegacyNormalized(data));
+    }
+
+    /// <summary>
+    /// Phase 9 explicit adapter boundary. Provider-native time and horizontal
+    /// convention are normalized here before arbitration / handoff.
+    /// </summary>
+    public void SubmitExternalFrame(
+        string providerId,
+        int priority,
+        TrackingCapability capabilities,
+        FacePrecisionTrackingData data,
+        KiwiExternalTrackingFrameContract contract)
     {
         if (
             string.IsNullOrWhiteSpace(providerId) ||
@@ -655,26 +929,21 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
         slot.capabilities =
             capabilities;
 
-        ulong sourceFrameId =
+        ulong providerSourceFrameId =
             data.frameId;
 
-        if (sourceFrameId == 0UL)
-        {
-            slot.syntheticFrameId++;
-
-            if (slot.syntheticFrameId == 0UL)
-            {
-                slot.syntheticFrameId++;
-            }
-
-            sourceFrameId =
-                slot.syntheticFrameId;
-        }
+        ulong sourceFrameId =
+            NormalizeExternalSourceFrameId(
+                slot,
+                providerSourceFrameId);
 
         UpdateSlot(
             slot,
             data,
             sourceFrameId,
+            providerSourceFrameId,
+            contract,
+            true,
             Time.realtimeSinceStartupAsDouble);
     }
 
@@ -699,12 +968,25 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
         {
             _activeProviderId =
                 string.Empty;
+
+            KiwiRuntimeGenerationContext.AdvanceProviderGeneration();
         }
     }
 
     public bool TryGetLatestFrame(
         out FacePrecisionTrackingData data,
         out string providerId)
+    {
+        return TryGetLatestFrame(
+            out data,
+            out providerId,
+            out _);
+    }
+
+    public bool TryGetLatestFrame(
+        out FacePrecisionTrackingData data,
+        out string providerId,
+        out KiwiTrackingNormalizedFrameMetadata metadata)
     {
         Candidate active =
             GetCandidateById(
@@ -724,6 +1006,7 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
             // out parameters makes stale-frame misuse impossible for future code.
             data = default;
             providerId = string.Empty;
+            metadata = default;
             return false;
         }
 
@@ -732,6 +1015,9 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
 
         providerId =
             _activeProviderId;
+
+        metadata =
+            _latestPublishedMetadata;
 
         return true;
     }
@@ -845,7 +1131,13 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
                     Mathf.Clamp01(
                         data.geometryQuality),
                 backend =
-                    data.backend
+                    data.backend,
+                timestampQuality =
+                    candidate.slot.metadata.timestampQuality,
+                sourceTimebase =
+                    candidate.slot.metadata.sourceTimebase,
+                canonicalInputHorizontallyMirrored =
+                    candidate.slot.metadata.canonicalInputHorizontallyMirrored
             };
 
         return
@@ -922,10 +1214,34 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
                 0f;
         }
 
+        bool runnerMirrored =
+            _runner != null &&
+            _runner.IsInputHorizontallyMirrored;
+
+        KiwiExternalTrackingFrameContract contract =
+            new KiwiExternalTrackingFrameContract
+            {
+                timebase =
+                    data.submissionHostTicks > 0L
+                        ? KiwiTrackingTimebase.HostStopwatchTicks
+                        : KiwiTrackingTimebase.ArrivalHostOnly,
+                sourceTimestamp =
+                    data.submissionHostTicks,
+                arrivalHostTicks =
+                    data.arrivalHostTicks,
+                horizontalConvention =
+                    runnerMirrored
+                        ? KiwiTrackingHorizontalConvention.Mirrored
+                        : KiwiTrackingHorizontalConvention.Unmirrored
+            };
+
         UpdateSlot(
             slot,
             data,
             data.frameId,
+            data.frameId,
+            contract,
+            false,
             Time.realtimeSinceStartupAsDouble);
     }
 
@@ -933,12 +1249,24 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
         ProviderSlot slot,
         FacePrecisionTrackingData data,
         ulong sourceFrameId,
+        ulong providerSourceFrameId,
+        KiwiExternalTrackingFrameContract contract,
+        bool isExternal,
         double submittedRealtime)
     {
         if (slot == null)
         {
             return;
         }
+
+        NormalizeProviderFrame(
+            slot,
+            ref data,
+            sourceFrameId,
+            providerSourceFrameId,
+            contract,
+            isExternal,
+            out KiwiTrackingNormalizedFrameMetadata metadata);
 
         long arrivalTicks =
             data.arrivalHostTicks;
@@ -1007,6 +1335,9 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
         slot.data =
             data;
 
+        slot.metadata =
+            metadata;
+
         slot.sourceFrameId =
             sourceFrameId;
 
@@ -1018,6 +1349,537 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
 
         slot.hasFrame =
             true;
+    }
+
+    private void NormalizeProviderFrame(
+        ProviderSlot slot,
+        ref FacePrecisionTrackingData data,
+        ulong normalizedSourceFrameId,
+        ulong providerSourceFrameId,
+        KiwiExternalTrackingFrameContract contract,
+        bool isExternal,
+        out KiwiTrackingNormalizedFrameMetadata metadata)
+    {
+        long nowHostTicks =
+            KiwiTrackingNormalizationMath.CurrentHostTicks();
+
+        long arrivalHostTicks =
+            contract.arrivalHostTicks > 0L
+                ? contract.arrivalHostTicks
+                : data.arrivalHostTicks;
+
+        if (
+            arrivalHostTicks <= 0L ||
+            arrivalHostTicks > nowHostTicks
+        )
+        {
+            arrivalHostTicks =
+                nowHostTicks;
+        }
+
+        KiwiTrackingTimebase timebase =
+            contract.timebase;
+
+        if (timebase == KiwiTrackingTimebase.LegacyUnspecified)
+        {
+            timebase =
+                data.submissionHostTicks > 0L
+                    ? KiwiTrackingTimebase.HostStopwatchTicks
+                    : KiwiTrackingTimebase.ArrivalHostOnly;
+        }
+
+        bool sameExternalSourceFrame =
+            isExternal &&
+            slot.hasFrame &&
+            normalizedSourceFrameId == slot.sourceFrameId &&
+            slot.metadata.valid;
+
+        if (sameExternalSourceFrame)
+        {
+            // A duplicate provider frame is liveness, not a new observation.
+            // Preserve every source-owned field/geometry exactly and update only
+            // the local arrival tick. This prevents duplicate transport from
+            // refreshing source age, quality, handedness, or arbitration input.
+            data =
+                slot.data;
+
+            data.arrivalHostTicks =
+                arrivalHostTicks;
+
+            KiwiTrackingNormalizedFrameMetadata previous =
+                slot.metadata;
+
+            metadata =
+                new KiwiTrackingNormalizedFrameMetadata(
+                    valid: previous.valid,
+                    sourceTimebase: previous.sourceTimebase,
+                    timestampQuality: previous.timestampQuality,
+                    sourceHorizontalConvention:
+                        previous.sourceHorizontalConvention,
+                    canonicalInputHorizontallyMirrored:
+                        previous.canonicalInputHorizontallyMirrored,
+                    horizontalTransformApplied:
+                        previous.horizontalTransformApplied,
+                    providerSourceTimestamp:
+                        previous.providerSourceTimestamp,
+                    providerSourceFrameId:
+                        previous.providerSourceFrameId,
+                    observationHostTicks:
+                        previous.observationHostTicks,
+                    arrivalHostTicks:
+                        arrivalHostTicks,
+                    timebaseResetCount:
+                        previous.timebaseResetCount);
+
+            return;
+        }
+
+        long observationHostTicks =
+            arrivalHostTicks;
+
+        KiwiTrackingTimestampQuality timestampQuality =
+            KiwiTrackingTimestampQuality.ArrivalFallback;
+
+        switch (timebase)
+        {
+            case KiwiTrackingTimebase.HostStopwatchTicks:
+            {
+                long sourceHostTicks =
+                    contract.sourceTimestamp > 0L
+                        ? contract.sourceTimestamp
+                        : data.submissionHostTicks;
+
+                if (
+                    sourceHostTicks > 0L &&
+                    sourceHostTicks <= arrivalHostTicks
+                )
+                {
+                    observationHostTicks =
+                        sourceHostTicks;
+                    timestampQuality =
+                        KiwiTrackingTimestampQuality.ExactHostObservation;
+                }
+
+                break;
+            }
+
+            case KiwiTrackingTimebase.ProviderMonotonicMilliseconds:
+            case KiwiTrackingTimebase.ProviderMonotonicMicroseconds:
+            case KiwiTrackingTimebase.ProviderMonotonicNanoseconds:
+                observationHostTicks =
+                    MapProviderTimeToHost(
+                        slot,
+                        timebase,
+                        contract.sourceTimestamp,
+                        arrivalHostTicks);
+                timestampQuality =
+                    KiwiTrackingTimestampQuality.ProviderMapped;
+                break;
+
+            default:
+                observationHostTicks =
+                    arrivalHostTicks;
+                timestampQuality =
+                    KiwiTrackingTimestampQuality.ArrivalFallback;
+                break;
+        }
+
+        if (observationHostTicks <= 0L)
+        {
+            observationHostTicks =
+                arrivalHostTicks;
+            timestampQuality =
+                KiwiTrackingTimestampQuality.ArrivalFallback;
+        }
+
+        if (observationHostTicks > arrivalHostTicks)
+        {
+            observationHostTicks =
+                arrivalHostTicks;
+            timestampQuality =
+                KiwiTrackingTimestampQuality.ArrivalFallback;
+        }
+
+        data.submissionHostTicks =
+            observationHostTicks;
+
+        data.arrivalHostTicks =
+            arrivalHostTicks;
+
+        data.hasMatchedSubmissionTiming =
+            timestampQuality !=
+                KiwiTrackingTimestampQuality.ArrivalFallback;
+
+        if (isExternal)
+        {
+            long canonicalMilliseconds =
+                KiwiTrackingNormalizationMath.HostTicksToMilliseconds(
+                    observationHostTicks);
+
+            if (
+                canonicalMilliseconds <=
+                slot.lastCanonicalTimestampMilliseconds
+            )
+            {
+                canonicalMilliseconds =
+                    slot.lastCanonicalTimestampMilliseconds + 1L;
+            }
+
+            slot.lastCanonicalTimestampMilliseconds =
+                canonicalMilliseconds;
+
+            data.timestamp =
+                canonicalMilliseconds;
+        }
+
+        bool canonicalMirrored =
+            GetCanonicalInputHorizontallyMirrored();
+
+        bool horizontalTransformApplied =
+            KiwiTrackingNormalizationMath.RequiresHorizontalMirror(
+                contract.horizontalConvention,
+                canonicalMirrored);
+
+        if (horizontalTransformApplied)
+        {
+            KiwiTrackingNormalizationMath.MirrorHorizontal(
+                ref data);
+            _horizontalTransformCount++;
+        }
+
+        if (
+            timestampQuality ==
+                KiwiTrackingTimestampQuality.ArrivalFallback
+        )
+        {
+            _arrivalFallbackCount++;
+        }
+
+        metadata =
+            new KiwiTrackingNormalizedFrameMetadata(
+                valid: true,
+                sourceTimebase: timebase,
+                timestampQuality: timestampQuality,
+                sourceHorizontalConvention:
+                    contract.horizontalConvention,
+                canonicalInputHorizontallyMirrored:
+                    canonicalMirrored,
+                horizontalTransformApplied:
+                    horizontalTransformApplied,
+                providerSourceTimestamp:
+                    contract.sourceTimestamp,
+                providerSourceFrameId:
+                    providerSourceFrameId,
+                observationHostTicks:
+                    observationHostTicks,
+                arrivalHostTicks:
+                    arrivalHostTicks,
+                timebaseResetCount:
+                    slot.timebaseResetCount);
+    }
+
+    private long MapProviderTimeToHost(
+        ProviderSlot slot,
+        KiwiTrackingTimebase timebase,
+        long sourceTimestamp,
+        long arrivalHostTicks)
+    {
+        bool timebaseChanged =
+            slot.hasTimebaseAnchor &&
+            slot.mappedTimebase != timebase;
+
+        bool sourceRegressed =
+            slot.hasTimebaseAnchor &&
+            !timebaseChanged &&
+            sourceTimestamp <
+                slot.lastProviderSourceTimestamp;
+
+        if (
+            !slot.hasTimebaseAnchor ||
+            timebaseChanged ||
+            sourceRegressed
+        )
+        {
+            if (slot.hasTimebaseAnchor)
+            {
+                slot.timebaseResetCount++;
+            }
+
+            slot.hasTimebaseAnchor =
+                true;
+            slot.mappedTimebase =
+                timebase;
+            slot.timebaseSourceAnchor =
+                sourceTimestamp;
+            slot.timebaseHostAnchor =
+                arrivalHostTicks;
+            slot.lastProviderSourceTimestamp =
+                sourceTimestamp;
+            slot.lastNormalizedObservationHostTicks =
+                arrivalHostTicks;
+
+            return arrivalHostTicks;
+        }
+
+        double scale =
+            KiwiTrackingNormalizationMath.SourceUnitsToHostTicks(
+                timebase);
+
+        double sourceDelta =
+            (double)sourceTimestamp -
+            slot.timebaseSourceAnchor;
+
+        double hostDelta =
+            sourceDelta *
+            scale;
+
+        long normalized =
+            arrivalHostTicks;
+
+        if (
+            scale > 0.0 &&
+            !double.IsNaN(hostDelta) &&
+            !double.IsInfinity(hostDelta) &&
+            hostDelta >= long.MinValue &&
+            hostDelta <= long.MaxValue
+        )
+        {
+            double candidate =
+                slot.timebaseHostAnchor +
+                hostDelta;
+
+            if (
+                !double.IsNaN(candidate) &&
+                !double.IsInfinity(candidate) &&
+                candidate >= 1.0 &&
+                candidate <= long.MaxValue
+            )
+            {
+                normalized =
+                    (long)Math.Round(candidate);
+            }
+        }
+
+        // Provider clocks can drift relative to local Stopwatch. Observation
+        // time cannot be later than result arrival, so re-anchor just enough to
+        // keep the mapped clock causal instead of publishing a future frame.
+        if (normalized > arrivalHostTicks)
+        {
+            long correction =
+                normalized -
+                arrivalHostTicks;
+
+            double adjustedAnchor =
+                (double)slot.timebaseHostAnchor -
+                correction;
+
+            slot.timebaseHostAnchor =
+                adjustedAnchor > 1.0
+                    ? (long)Math.Min(
+                        adjustedAnchor,
+                        long.MaxValue)
+                    : 1L;
+
+            normalized =
+                arrivalHostTicks;
+        }
+
+        if (
+            normalized <=
+                slot.lastNormalizedObservationHostTicks &&
+            arrivalHostTicks >
+                slot.lastNormalizedObservationHostTicks &&
+            sourceTimestamp >
+                slot.lastProviderSourceTimestamp
+        )
+        {
+            // A coarse provider clock (for example integer milliseconds) can
+            // repeat/advance too slowly. Arrival is still local monotonic time and
+            // is safer than fabricating a negative/zero source interval.
+            normalized =
+                arrivalHostTicks;
+        }
+
+        slot.lastProviderSourceTimestamp =
+            sourceTimestamp;
+
+        slot.lastNormalizedObservationHostTicks =
+            normalized;
+
+        return normalized;
+    }
+
+    private static ulong NormalizeExternalSourceFrameId(
+        ProviderSlot slot,
+        ulong providerSourceFrameId)
+    {
+        if (slot == null)
+        {
+            return 0UL;
+        }
+
+        bool newProviderFrame =
+            providerSourceFrameId == 0UL ||
+            !slot.hasExternalFrameIdentity ||
+            providerSourceFrameId !=
+                slot.lastProviderSourceFrameId;
+
+        if (newProviderFrame)
+        {
+            slot.normalizedExternalFrameId++;
+
+            if (slot.normalizedExternalFrameId == 0UL)
+            {
+                slot.normalizedExternalFrameId++;
+            }
+
+            if (providerSourceFrameId != 0UL)
+            {
+                slot.lastProviderSourceFrameId =
+                    providerSourceFrameId;
+                slot.hasExternalFrameIdentity =
+                    true;
+            }
+        }
+
+        return slot.normalizedExternalFrameId;
+    }
+
+    private bool GetCanonicalInputHorizontallyMirrored()
+    {
+        return
+            _runner != null &&
+            _runner.IsInputHorizontallyMirrored;
+    }
+
+    private ProviderSlot GetProviderSlotByIdRaw(
+        string providerId)
+    {
+        if (string.IsNullOrEmpty(providerId))
+        {
+            return null;
+        }
+
+        if (string.Equals(
+            providerId,
+            MediaPipeProviderId,
+            StringComparison.Ordinal))
+        {
+            return _mediaPipe;
+        }
+
+        if (string.Equals(
+            providerId,
+            InferenceProviderId,
+            StringComparison.Ordinal))
+        {
+            return _inference;
+        }
+
+        return _external.TryGetValue(
+            providerId,
+            out ProviderSlot external)
+                ? external
+                : null;
+    }
+
+    private bool ShouldDeferCommercialFailover(
+        Candidate best,
+        out float graceRemainingSeconds,
+        out ProviderSlot activeSlot)
+    {
+        graceRemainingSeconds = 0f;
+        activeSlot = null;
+
+        if (
+            !enableCommercialStickyRigidAuthority ||
+            !best.valid ||
+            best.slot == null ||
+            string.IsNullOrEmpty(_activeProviderId) ||
+            string.Equals(
+                _activeProviderId,
+                best.slot.id,
+                StringComparison.Ordinal)
+        )
+        {
+            return false;
+        }
+
+        activeSlot =
+            GetProviderSlotByIdRaw(_activeProviderId);
+
+        if (
+            activeSlot == null ||
+            !activeSlot.hasFrame ||
+            !activeSlot.data.isValid ||
+            activeSlot.data.geometryQuality <
+                minimumProviderGeometryQuality
+        )
+        {
+            return false;
+        }
+
+        if (
+            activeSlot.metadata.valid &&
+            activeSlot.metadata.canonicalInputHorizontallyMirrored !=
+                GetCanonicalInputHorizontallyMirrored()
+        )
+        {
+            return false;
+        }
+
+        // Only built-in Runner backends use this short dropout grace. External
+        // providers retain their explicit adapter failover behavior.
+        bool activeBuiltIn =
+            string.Equals(
+                activeSlot.id,
+                InferenceProviderId,
+                StringComparison.Ordinal) ||
+            string.Equals(
+                activeSlot.id,
+                MediaPipeProviderId,
+                StringComparison.Ordinal);
+
+        bool bestBuiltIn =
+            string.Equals(
+                best.slot.id,
+                InferenceProviderId,
+                StringComparison.Ordinal) ||
+            string.Equals(
+                best.slot.id,
+                MediaPipeProviderId,
+                StringComparison.Ordinal);
+
+        if (!activeBuiltIn || !bestBuiltIn)
+        {
+            return false;
+        }
+
+        float arrivalAge =
+            CalculateArrivalAgeSeconds(activeSlot);
+        float sourceAge =
+            CalculateFrameAgeSeconds(activeSlot);
+        float grace =
+            Mathf.Max(
+                maximumArrivalFreshnessSeconds,
+                commercialTransientFailoverGraceSeconds);
+        float sourceCeiling =
+            Mathf.Max(
+                maximumProviderFrameAge,
+                commercialFailoverSourceAgeCeilingSeconds);
+
+        if (
+            arrivalAge >= grace ||
+            sourceAge >= sourceCeiling
+        )
+        {
+            return false;
+        }
+
+        graceRemainingSeconds =
+            Mathf.Max(0f, grace - arrivalAge);
+
+        return true;
     }
 
     private Candidate FindBestCandidate(
@@ -1140,6 +2002,18 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
             requiredCapabilities ||
             slot.data.geometryQuality <
                 minimumProviderGeometryQuality
+        )
+        {
+            return default;
+        }
+
+        // Phase 9: a frame normalized under a previous camera mirror
+        // convention cannot compete with frames in the current presentation
+        // space. The provider becomes eligible again on its next fresh submit.
+        if (
+            slot.metadata.valid &&
+            slot.metadata.canonicalInputHorizontallyMirrored !=
+                GetCanonicalInputHorizontallyMirrored()
         )
         {
             return default;
@@ -1445,6 +2319,10 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
             selected.slot.id,
             ref output);
 
+        ApplyCommercialRigidCoherenceGuard(
+            selected.slot.id,
+            ref output);
+
         _hubFrameId++;
 
         if (_hubFrameId == 0UL)
@@ -1458,6 +2336,14 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
         _latestPublished =
             output;
 
+        _latestPublishedMetadata =
+            selected.slot.metadata;
+
+        UpdateNormalizationDiagnostics(
+            _latestPublishedMetadata);
+
+        KiwiRuntimeGenerationContext.NextObservationSequence();
+
         _hasPublished =
             true;
 
@@ -1466,6 +2352,237 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
 
         _lastPublishedSourceFrameId =
             selected.slot.sourceFrameId;
+    }
+
+    private void ApplyCommercialRigidCoherenceGuard(
+        string providerId,
+        ref FacePrecisionTrackingData data)
+    {
+        if (!data.isValid)
+        {
+            return;
+        }
+
+        if (!_hasCommercialRigidCoherenceHistory)
+        {
+            AcceptCommercialRigidCoherenceHistory(providerId, data);
+            return;
+        }
+
+        FacePrecisionTrackingData previous =
+            _commercialRigidPrevious;
+
+        float referenceEyeSpan =
+            Mathf.Max(
+                0.01f,
+                Mathf.Max(
+                    previous.eyeSpan2D,
+                    data.eyeSpan2D));
+
+        Vector2 eyeDelta =
+            data.eyeCenter - previous.eyeCenter;
+        Vector2 noseDelta =
+            data.nose - previous.nose;
+        Vector2 chinDelta =
+            data.chin - previous.chin;
+
+        Vector2 expectedTranslation =
+            eyeDelta * 0.50f +
+            noseDelta * 0.20f +
+            chinDelta * 0.30f;
+
+        Vector2 expectedCenter =
+            previous.faceCenter + expectedTranslation;
+
+        float centerResidual =
+            Vector2.Distance(
+                data.faceCenter,
+                expectedCenter) /
+            referenceEyeSpan;
+
+        float anchorMotion =
+            Mathf.Max(
+                eyeDelta.magnitude,
+                Mathf.Max(
+                    noseDelta.magnitude,
+                    chinDelta.magnitude)) /
+            referenceEyeSpan;
+
+        float rotationDelta =
+            Quaternion.Angle(
+                previous.faceRotation,
+                data.faceRotation);
+
+        float depthRatio = 1f;
+        if (
+            previous.eyeSpan3D > 0.000001f &&
+            data.eyeSpan3D > 0.000001f
+        )
+        {
+            depthRatio =
+                data.eyeSpan3D /
+                previous.eyeSpan3D;
+        }
+        else if (
+            previous.eyeSpan2D > 0.000001f &&
+            data.eyeSpan2D > 0.000001f
+        )
+        {
+            depthRatio =
+                data.eyeSpan2D /
+                previous.eyeSpan2D;
+        }
+
+        float depthLogDelta =
+            Mathf.Abs(
+                Mathf.Log(
+                    Mathf.Clamp(
+                        depthRatio,
+                        0.50f,
+                        2.00f)));
+
+        _commercialRigidLastCenterResidualEyeSpans =
+            centerResidual;
+        _commercialRigidLastRotationDelta =
+            rotationDelta;
+        _commercialRigidLastDepthLogDelta =
+            depthLogDelta;
+
+        bool coupledShock =
+            centerResidual > 0.42f &&
+            rotationDelta > 18f &&
+            depthLogDelta > 0.085f &&
+            anchorMotion < 0.70f;
+
+        bool catastrophicCenterShock =
+            centerResidual > 1.00f &&
+            anchorMotion < 0.50f;
+
+        if (coupledShock || catastrophicCenterShock)
+        {
+            float maximumCenterResidual =
+                referenceEyeSpan *
+                (coupledShock ? 0.22f : 0.30f);
+
+            Vector2 residual =
+                data.faceCenter - expectedCenter;
+
+            if (residual.magnitude > maximumCenterResidual)
+            {
+                residual =
+                    residual.normalized *
+                    maximumCenterResidual;
+            }
+
+            data.faceCenter =
+                expectedCenter + residual;
+
+            if (coupledShock)
+            {
+                data.faceRotation =
+                    Quaternion.RotateTowards(
+                        previous.faceRotation,
+                        data.faceRotation,
+                        15f);
+
+                data.eyeSpan2D =
+                    BoundCommercialScaleMetric(
+                        previous.eyeSpan2D,
+                        data.eyeSpan2D,
+                        0.10f);
+
+                data.eyeSpan3D =
+                    BoundCommercialScaleMetric(
+                        previous.eyeSpan3D,
+                        data.eyeSpan3D,
+                        0.10f);
+
+                data.faceWidth2D =
+                    BoundCommercialScaleMetric(
+                        previous.faceWidth2D,
+                        data.faceWidth2D,
+                        0.10f);
+
+                data.faceHeight2D =
+                    BoundCommercialScaleMetric(
+                        previous.faceHeight2D,
+                        data.faceHeight2D,
+                        0.10f);
+            }
+
+            _commercialRigidShockCount++;
+        }
+
+        AcceptCommercialRigidCoherenceHistory(
+            providerId,
+            data);
+    }
+
+    private static float BoundCommercialScaleMetric(
+        float previous,
+        float current,
+        float maximumFraction)
+    {
+        if (
+            previous <= 0.000001f ||
+            current <= 0.000001f
+        )
+        {
+            return current;
+        }
+
+        float maximumDelta =
+            previous * Mathf.Max(0f, maximumFraction);
+
+        return Mathf.MoveTowards(
+            previous,
+            current,
+            maximumDelta);
+    }
+
+    private void AcceptCommercialRigidCoherenceHistory(
+        string providerId,
+        FacePrecisionTrackingData data)
+    {
+        _commercialRigidPrevious = data;
+        _commercialRigidPreviousProvider =
+            providerId ?? string.Empty;
+        _hasCommercialRigidCoherenceHistory = true;
+    }
+
+    private void UpdateNormalizationDiagnostics(
+        KiwiTrackingNormalizedFrameMetadata metadata)
+    {
+        if (!metadata.valid)
+        {
+            debugActiveTimebase = "-";
+            debugActiveTimestampQuality = "-";
+            debugActiveHorizontalConvention = "-";
+            debugCanonicalInputMirrored =
+                GetCanonicalInputHorizontallyMirrored();
+            debugHorizontalTransformApplied = false;
+            debugTimebaseResetCount = 0;
+        }
+        else
+        {
+            debugActiveTimebase =
+                metadata.sourceTimebase.ToString();
+            debugActiveTimestampQuality =
+                metadata.timestampQuality.ToString();
+            debugActiveHorizontalConvention =
+                metadata.sourceHorizontalConvention.ToString();
+            debugCanonicalInputMirrored =
+                metadata.canonicalInputHorizontallyMirrored;
+            debugHorizontalTransformApplied =
+                metadata.horizontalTransformApplied;
+            debugTimebaseResetCount =
+                metadata.timebaseResetCount;
+        }
+
+        debugArrivalFallbackCount =
+            _arrivalFallbackCount;
+        debugHorizontalTransformCount =
+            _horizontalTransformCount;
     }
 
     private bool TryCalculateJawNeutralRigidAnchor(
@@ -1954,10 +3071,55 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
             _resumeReleaseFrameCount++;
         }
 
-        _handoffWeight =
+        // KIWI_V5_1_PHASE16_5_COMMERCIAL_HANDOFF_RELEASE
+        // The raw motion estimate decides *whether* the temporary coordinate-basis
+        // alignment may release. The release itself is monotonic and slew-limited
+        // per accepted provider sample. This is intentionally not a temporal pose
+        // filter: normal same-provider Landmarker samples remain untouched.
+        float targetHandoffWeight =
             1f -
             Smooth01(
                 releaseProgress);
+
+        targetHandoffWeight =
+            Mathf.Min(
+                _handoffWeight,
+                targetHandoffWeight);
+
+        float maximumReleasePerSample =
+            Mathf.Clamp(
+                handoffMaximumWeightReleasePerSample,
+                0.05f,
+                1f);
+
+        if (_handoffIsResume)
+        {
+            maximumReleasePerSample =
+                Mathf.Max(
+                    maximumReleasePerSample,
+                    1f /
+                    Mathf.Max(
+                        1,
+                        resumeHandoffReleaseFrames));
+        }
+
+        float previousHandoffWeight =
+            _handoffWeight;
+
+        _handoffWeight =
+            Mathf.MoveTowards(
+                _handoffWeight,
+                targetHandoffWeight,
+                maximumReleasePerSample);
+
+        debugHandoffTargetWeight =
+            targetHandoffWeight;
+
+        debugHandoffReleaseStep =
+            Mathf.Max(
+                0f,
+                previousHandoffWeight -
+                _handoffWeight);
 
         if (_handoffWeight <= 0.0001f)
         {
@@ -2118,6 +3280,12 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
         debugHandoffWeight =
             0f;
 
+        debugHandoffTargetWeight =
+            0f;
+
+        debugHandoffReleaseStep =
+            0f;
+
         debugHandoffCenterOffset =
             0f;
 
@@ -2144,6 +3312,12 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
 
         debugHandoffWeight =
             _handoffWeight;
+
+        if (!_handoffActive)
+        {
+            debugHandoffTargetWeight = 0f;
+            debugHandoffReleaseStep = 0f;
+        }
 
         debugHandoffCenterOffset =
             _handoffCenterOffset.magnitude;
@@ -2307,6 +3481,18 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
         slot.syntheticFrameId =
             0UL;
 
+        slot.metadata =
+            default;
+
+        slot.lastProviderSourceFrameId =
+            0UL;
+
+        slot.normalizedExternalFrameId =
+            0UL;
+
+        slot.hasExternalFrameIdentity =
+            false;
+
         slot.arrivalHostTicks =
             0L;
 
@@ -2318,6 +3504,30 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
 
         slot.frameIntervalDeviationEma =
             0f;
+
+        slot.hasTimebaseAnchor =
+            false;
+
+        slot.mappedTimebase =
+            KiwiTrackingTimebase.LegacyUnspecified;
+
+        slot.timebaseSourceAnchor =
+            0L;
+
+        slot.timebaseHostAnchor =
+            0L;
+
+        slot.lastProviderSourceTimestamp =
+            0L;
+
+        slot.lastNormalizedObservationHostTicks =
+            0L;
+
+        slot.lastCanonicalTimestampMilliseconds =
+            0L;
+
+        slot.timebaseResetCount =
+            0;
 
         slot.hasFrame =
             false;

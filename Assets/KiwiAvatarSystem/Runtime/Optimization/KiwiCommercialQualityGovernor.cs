@@ -554,65 +554,58 @@ public sealed class KiwiCommercialQualityGovernor : MonoBehaviour
 
         RefreshReferences(false);
 
-        if (_liveMotion != null)
+        int trackingLongSide;
+        int patchStridePixels;
+        int restingSearchRadiusPixels;
+        float auxiliaryCadenceScale;
+
+        switch (tier)
         {
-            switch (tier)
-            {
-                case RuntimeTier.Quality:
-                    _liveMotion.trackingLongSide =
-                        qualityLiveTrackingLongSide;
+            case RuntimeTier.Quality:
+                trackingLongSide =
+                    qualityLiveTrackingLongSide;
+                patchStridePixels =
+                    qualityPatchStride;
+                restingSearchRadiusPixels =
+                    qualityRestingSearchRadius;
+                auxiliaryCadenceScale =
+                    qualityAuxiliaryCadenceScale;
+                break;
 
-                    _liveMotion.patchStridePixels =
-                        qualityPatchStride;
+            case RuntimeTier.Realtime:
+                trackingLongSide =
+                    realtimeLiveTrackingLongSide;
+                patchStridePixels =
+                    realtimePatchStride;
+                restingSearchRadiusPixels =
+                    realtimeRestingSearchRadius;
+                auxiliaryCadenceScale =
+                    realtimeAuxiliaryCadenceScale;
+                break;
 
-                    _liveMotion.restingSearchRadiusPixels =
-                        qualityRestingSearchRadius;
-                    break;
-
-                case RuntimeTier.Realtime:
-                    _liveMotion.trackingLongSide =
-                        realtimeLiveTrackingLongSide;
-
-                    _liveMotion.patchStridePixels =
-                        realtimePatchStride;
-
-                    _liveMotion.restingSearchRadiusPixels =
-                        realtimeRestingSearchRadius;
-                    break;
-
-                default:
-                    _liveMotion.trackingLongSide =
-                        balancedLiveTrackingLongSide;
-
-                    _liveMotion.patchStridePixels =
-                        balancedPatchStride;
-
-                    _liveMotion.restingSearchRadiusPixels =
-                        balancedRestingSearchRadius;
-                    break;
-            }
+            default:
+                trackingLongSide =
+                    balancedLiveTrackingLongSide;
+                patchStridePixels =
+                    balancedPatchStride;
+                restingSearchRadiusPixels =
+                    balancedRestingSearchRadius;
+                auxiliaryCadenceScale =
+                    balancedAuxiliaryCadenceScale;
+                break;
         }
 
-        if (_supervisor != null)
-        {
-            switch (tier)
-            {
-                case RuntimeTier.Quality:
-                    _supervisor.runtimeAuxiliaryCadenceScale =
-                        qualityAuxiliaryCadenceScale;
-                    break;
-
-                case RuntimeTier.Realtime:
-                    _supervisor.runtimeAuxiliaryCadenceScale =
-                        realtimeAuxiliaryCadenceScale;
-                    break;
-
-                default:
-                    _supervisor.runtimeAuxiliaryCadenceScale =
-                        balancedAuxiliaryCadenceScale;
-                    break;
-            }
-        }
+        // v5.1 Single Writer: the governor owns the desired quality tier,
+        // not the mutable runtime fields. The resolver advances ConfigEpoch
+        // before applying a changed Live2D configuration so in-flight GPU work
+        // from the old tier is stale immediately.
+        KiwiRuntimePolicyResolver.SubmitLive2DPolicy(
+            trackingLongSide,
+            patchStridePixels,
+            restingSearchRadiusPixels,
+            auxiliaryCadenceScale,
+            KiwiRuntimePolicyResolver.RequestPriority.Governor,
+            "CommercialQualityGovernor");
     }
 
     private void RefreshReferences(

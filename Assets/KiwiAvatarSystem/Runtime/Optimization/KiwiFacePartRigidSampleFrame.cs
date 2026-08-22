@@ -22,6 +22,9 @@ public sealed class KiwiFacePartRigidSampleFrame : MonoBehaviour
     private const string RuntimeObjectName =
         "[Kiwi] Face-Part Rigid Sample Frame";
 
+    private const string RecoveryDomainSource =
+        "FacePartRigidSampleFrame";
+
     [Header("Head-local sample frame")]
     public bool enableHeadLocalSampleFrame = true;
 
@@ -65,6 +68,7 @@ public sealed class KiwiFacePartRigidSampleFrame : MonoBehaviour
     private bool _hasPendingAngleJump;
     private float _pendingAngleJump;
     private int _pendingAngleJumpSamples;
+    private bool _semanticRecoveryActive;
 
     public static bool IsOperational { get; private set; }
     public static float AppliedRotationDegrees { get; private set; }
@@ -103,11 +107,13 @@ public sealed class KiwiFacePartRigidSampleFrame : MonoBehaviour
     private void OnDestroy()
     {
         SceneManager.sceneLoaded -= HandleSceneLoaded;
+        CompleteHeadLocalSemanticRecovery();
         ResetPartRotations();
     }
 
     private void OnDisable()
     {
+        CompleteHeadLocalSemanticRecovery();
         ResetPartRotations();
         IsOperational = false;
         AppliedRotationDegrees = 0f;
@@ -187,6 +193,8 @@ public sealed class KiwiFacePartRigidSampleFrame : MonoBehaviour
                 _pendingAngleJumpSamples++;
             }
 
+            BeginHeadLocalSemanticRecovery();
+
             if (_pendingAngleJumpSamples < 2)
             {
                 debugRejectedAngleJumps++;
@@ -202,11 +210,13 @@ public sealed class KiwiFacePartRigidSampleFrame : MonoBehaviour
             angle = _pendingAngleJump;
             _hasPendingAngleJump = false;
             _pendingAngleJumpSamples = 0;
+            CompleteHeadLocalSemanticRecovery();
         }
         else
         {
             _hasPendingAngleJump = false;
             _pendingAngleJumpSamples = 0;
+            CompleteHeadLocalSemanticRecovery();
         }
 
         _lastAcceptedAngle = angle;
@@ -381,8 +391,42 @@ public sealed class KiwiFacePartRigidSampleFrame : MonoBehaviour
         }
     }
 
+    private void BeginHeadLocalSemanticRecovery()
+    {
+        if (_semanticRecoveryActive)
+        {
+            return;
+        }
+
+        _semanticRecoveryActive = true;
+
+        KiwiRecoveryDomainCoordinator.BeginSemanticRecovery(
+            KiwiRecoveryDomainCoordinator.SemanticComponent
+                .HeadLocalSampleFrame,
+            KiwiRecoveryDomainCoordinator.SemanticRecoveryReason
+                .HeadLocalAngleReacquire,
+            RecoveryDomainSource);
+    }
+
+    private void CompleteHeadLocalSemanticRecovery()
+    {
+        if (!_semanticRecoveryActive)
+        {
+            return;
+        }
+
+        _semanticRecoveryActive = false;
+
+        KiwiRecoveryDomainCoordinator.CompleteSemanticRecovery(
+            KiwiRecoveryDomainCoordinator.SemanticComponent
+                .HeadLocalSampleFrame,
+            RecoveryDomainSource);
+    }
+
     private void ResetNeutralReference()
     {
+        CompleteHeadLocalSemanticRecovery();
+
         _hasNeutral = false;
         _neutralAngle = 0f;
         _lastAcceptedAngle = 0f;

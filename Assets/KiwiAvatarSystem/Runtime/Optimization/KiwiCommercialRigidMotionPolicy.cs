@@ -63,6 +63,19 @@ public static class KiwiCommercialRigidMotionPolicy
     {
         data = default;
 
+        // KIWI_V5_1_PHASE5_CANONICAL_RIGID_CONSUMPTION
+        // Once the display-cycle coordinator is active, every Root read
+        // (LateUpdate and onBeforeRender) is pinned to the same immutable
+        // canonical snapshot consumed by FacePartCropper / ShapeMask. A newer
+        // callback arriving after the latch waits for the next cycle instead of
+        // moving Root alone.
+        if (KiwiCanonicalTrackingFrame.IsRuntimeCoordinatorActive)
+        {
+            return
+                KiwiCanonicalTrackingFrame.TryGetRigidFrame(
+                    out data);
+        }
+
         if (KiwiTrackingProviderHub.HasRuntimeInstance)
         {
             return
@@ -74,6 +87,56 @@ public static class KiwiCommercialRigidMotionPolicy
             runner != null &&
             runner.TryGetLatestPrecisionTrackingData(
                 out data);
+    }
+
+    /// <summary>
+    /// ProviderGeneration paired with the currently authoritative display-cycle
+    /// frame. KiwiFaceMotion uses this to invalidate velocity/prediction history
+    /// on External->External switches even when both adapters report backend
+    /// Unknown. It does not change provider selection or Root ownership.
+    /// </summary>
+    public static int GetAuthoritativeProviderGeneration()
+    {
+        if (
+            KiwiCanonicalTrackingFrame.IsRuntimeCoordinatorActive &&
+            KiwiCanonicalTrackingFrame.TryGetFrame(
+                out KiwiTrackingFrame frame)
+        )
+        {
+            return frame.generation.providerGeneration;
+        }
+
+        return KiwiRuntimeGenerationContext.ProviderGeneration;
+    }
+
+    public static void GetAuthoritativeTimingIdentity(
+        out int providerGeneration,
+        out int timebaseResetCount,
+        out KiwiTrackingTimestampQuality timestampQuality)
+    {
+        providerGeneration =
+            KiwiRuntimeGenerationContext.ProviderGeneration;
+        timebaseResetCount = 0;
+        timestampQuality =
+            KiwiTrackingTimestampQuality.ArrivalFallback;
+
+        if (
+            KiwiCanonicalTrackingFrame.IsRuntimeCoordinatorActive &&
+            KiwiCanonicalTrackingFrame.TryGetFrame(
+                out KiwiTrackingFrame frame)
+        )
+        {
+            providerGeneration =
+                frame.generation.providerGeneration;
+
+            if (frame.normalization.valid)
+            {
+                timebaseResetCount =
+                    frame.normalization.timebaseResetCount;
+                timestampQuality =
+                    frame.normalization.timestampQuality;
+            }
+        }
     }
 
     /// <summary>

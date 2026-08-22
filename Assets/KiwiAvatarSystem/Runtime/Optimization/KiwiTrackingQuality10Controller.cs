@@ -581,8 +581,10 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
         runner.latestFrameOnlyLiveStream = true;
 
         runner.downscaleTrackingInput = true;
-        runner.trackingInputMaxWidth =
-            auxiliaryMediaPipeInputWidth;
+        KiwiRuntimePolicyResolver.SubmitTrackingInputWidth(
+            auxiliaryMediaPipeInputWidth,
+            KiwiRuntimePolicyResolver.RequestPriority.Preset,
+            "Quality10Preset");
 
         // The 20:02 recording still showed input 480x270 because the CM831
         // auto profile overwrote auxiliaryMediaPipeInputWidth. Disable that
@@ -590,14 +592,18 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
         runner.autoOptimizeCm831 = false;
 
         runner.enableSentisHybridTracking = true;
-        runner.sentisMediaPipeRefreshRateHz =
-            auxiliaryMediaPipeRefreshHz;
+        KiwiRuntimePolicyResolver.SubmitBaselineMediaPipeRefreshHz(
+            auxiliaryMediaPipeRefreshHz,
+            KiwiRuntimePolicyResolver.RequestPriority.Preset,
+            "Quality10Preset");
 
         // Keep the GPU tracker alive through normal confidence variation.
         // The tracker still requires finite landmarks, valid geometry and uses
         // four consecutive failures before abandoning its ROI.
-        runner.sentisMinimumPresence =
-            inferencePresenceThreshold;
+        KiwiRuntimePolicyResolver.SubmitBaselinePresenceThreshold(
+            inferencePresenceThreshold,
+            KiwiRuntimePolicyResolver.RequestPriority.Preset,
+            "Quality10Preset");
     }
 
     private static void ApplyCropperPreset(
@@ -721,70 +727,20 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
 
     private void ApplyLiveInferenceTuning()
     {
+        // KIWI_V5_1_RUNTIME_POLICY_SINGLE_WRITER
+        // Quality10 contributes a persistent preset request only.
+        // Adaptive recovery and user overrides are arbitrated by
+        // KiwiRuntimePolicyResolver, which alone writes Runner and
+        // the already-created Inference tracker.
         if (_runner == null)
         {
             return;
         }
 
-        // Keep the serialized field and an already-created tracker in sync.
-        // This is intentionally a narrow compatibility bridge; no inference
-        // algorithm is replaced here.
-        _runner.sentisMinimumPresence =
-            inferencePresenceThreshold;
-
-        double now =
-            Time.realtimeSinceStartupAsDouble;
-
-        if (now < _nextInferenceThresholdApplyTime)
-        {
-            return;
-        }
-
-        _nextInferenceThresholdApplyTime =
-            now + 0.50;
-
-        try
-        {
-            System.Reflection.FieldInfo trackerField =
-                typeof(FaceLandmarkerRunner).GetField(
-                    "_sentisTracker",
-                    System.Reflection.BindingFlags.Instance |
-                    System.Reflection.BindingFlags.NonPublic);
-
-            object tracker =
-                trackerField != null
-                    ? trackerField.GetValue(_runner)
-                    : null;
-
-            if (tracker == null)
-            {
-                return;
-            }
-
-            System.Reflection.PropertyInfo minimumPresence =
-                tracker.GetType().GetProperty(
-                    "MinimumPresence",
-                    System.Reflection.BindingFlags.Instance |
-                    System.Reflection.BindingFlags.Public);
-
-            if (
-                minimumPresence != null &&
-                minimumPresence.CanWrite
-            )
-            {
-                minimumPresence.SetValue(
-                    tracker,
-                    inferencePresenceThreshold);
-            }
-        }
-        catch (Exception exception)
-        {
-            Debug.LogWarning(
-                "[Kiwi Human Motion] Could not synchronize the live inference " +
-                "presence threshold: " +
-                exception.Message,
-                this);
-        }
+        KiwiRuntimePolicyResolver.SubmitBaselinePresenceThreshold(
+            inferencePresenceThreshold,
+            KiwiRuntimePolicyResolver.RequestPriority.Preset,
+            "Quality10LiveTuning");
     }
 
     private void UpdatePipelineDiagnostics()

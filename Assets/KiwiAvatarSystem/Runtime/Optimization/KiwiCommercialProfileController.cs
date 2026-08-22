@@ -341,14 +341,24 @@ public sealed class KiwiCommercialProfileController : MonoBehaviour
     {
         RefreshReferences(false);
 
-        if (_actorCalibration != null)
+        // v5.1 Phase 7: one user action is one calibration generation even
+        // though ActorFace and model-primary face-part calibration are separate
+        // components. Nested Recalibrate calls join this transaction.
+        using (
+            KiwiCalibrationGeneration.BeginTransaction(
+                KiwiCalibrationScope.ActorFace |
+                KiwiCalibrationScope.ModelFaceParts,
+                "QuickRecalibrate"))
         {
-            _actorCalibration.Recalibrate();
-        }
+            if (_actorCalibration != null)
+            {
+                _actorCalibration.Recalibrate();
+            }
 
-        if (_surfaceConstraint != null)
-        {
-            _surfaceConstraint.Recalibrate();
+            if (_surfaceConstraint != null)
+            {
+                _surfaceConstraint.Recalibrate();
+            }
         }
     }
 

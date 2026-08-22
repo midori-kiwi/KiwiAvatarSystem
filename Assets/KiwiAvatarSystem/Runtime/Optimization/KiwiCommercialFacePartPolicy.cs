@@ -17,6 +17,15 @@ using Mediapipe.Unity.Sample.FaceLandmarkDetection;
 /// </summary>
 public static class KiwiCommercialFacePartPolicy
 {
+    // KIWI_V5_1_PHASE16_6_COMMERCIAL_SEMANTIC_TRANSACTION
+    // Commercial semantic presentation keeps one trusted topology baseline and
+    // one immutable generation/canonical identity per Crop+Mask transaction.
+    private const float SemanticTopologyMeanResidualEyeSpans = 0.42f;
+    private const float SemanticTopologyMaxResidualEyeSpans = 0.72f;
+    private const float SemanticEyeSpanMinimumRatio = 0.60f;
+    private const float SemanticEyeSpanMaximumRatio = 1.65f;
+    private const float SemanticPendingConsistencyEyeSpans = 0.22f;
+
     public enum SemanticPart
     {
         LeftEye = 0,
@@ -53,6 +62,7 @@ public static class KiwiCommercialFacePartPolicy
     private static long _lastRejectedTimestamp = -1L;
 
     private static long _partDecisionTimestamp = -1L;
+    private static long _semanticTransactionSequence;
     private static bool _leftEyeAccepted = true;
     private static bool _rightEyeAccepted = true;
     private static bool _mouthAccepted = true;
@@ -62,6 +72,25 @@ public static class KiwiCommercialFacePartPolicy
     private static long _lastLeftEyeRejectedTimestamp = -1L;
     private static long _lastRightEyeRejectedTimestamp = -1L;
     private static long _lastMouthRejectedTimestamp = -1L;
+
+    private static KiwiRuntimeGenerationContext.Snapshot _transactionGeneration;
+    private static ulong _transactionCanonicalFrameId;
+
+    private static readonly Vector2[] _trustedSemanticAnchors = new Vector2[4];
+    private static readonly Vector2[] _pendingSemanticAnchors = new Vector2[4];
+    private static readonly Vector2[] _currentSemanticAnchors = new Vector2[4];
+    private static bool _hasTrustedSemanticAnchors;
+    private static bool _hasPendingSemanticShock;
+    private static int _pendingSemanticShockCount;
+    private static string _trustedSemanticProvider = string.Empty;
+    private static int _trustedSemanticCameraGeneration;
+    private static int _trustedSemanticProviderGeneration;
+    private static int _trustedSemanticTrackingSessionGeneration;
+    private static int _semanticTopologyRejectCount;
+    private static long _lastSemanticTopologyRejectedTimestamp = -1L;
+
+    public static int SemanticTopologyRejectCount => _semanticTopologyRejectCount;
+    public static ulong TransactionCanonicalFrameId => _transactionCanonicalFrameId;
 
     public static float LastSemanticSourceAgeMs =>
         _lastSemanticSourceAgeMs;
@@ -74,6 +103,9 @@ public static class KiwiCommercialFacePartPolicy
 
     public static long PartDecisionTimestamp =>
         _partDecisionTimestamp;
+
+    public static long SemanticTransactionSequence =>
+        _semanticTransactionSequence;
 
     public static bool LastLeftEyeAccepted =>
         _leftEyeAccepted;
@@ -102,6 +134,7 @@ public static class KiwiCommercialFacePartPolicy
         _lastRejectedTimestamp = -1L;
 
         _partDecisionTimestamp = -1L;
+        _semanticTransactionSequence = 0L;
         _leftEyeAccepted = true;
         _rightEyeAccepted = true;
         _mouthAccepted = true;
@@ -111,6 +144,18 @@ public static class KiwiCommercialFacePartPolicy
         _lastLeftEyeRejectedTimestamp = -1L;
         _lastRightEyeRejectedTimestamp = -1L;
         _lastMouthRejectedTimestamp = -1L;
+
+        _transactionGeneration = default;
+        _transactionCanonicalFrameId = 0UL;
+        _hasTrustedSemanticAnchors = false;
+        _hasPendingSemanticShock = false;
+        _pendingSemanticShockCount = 0;
+        _trustedSemanticProvider = string.Empty;
+        _trustedSemanticCameraGeneration = 0;
+        _trustedSemanticProviderGeneration = 0;
+        _trustedSemanticTrackingSessionGeneration = 0;
+        _semanticTopologyRejectCount = 0;
+        _lastSemanticTopologyRejectedTimestamp = -1L;
     }
 
     public static bool IsSemanticSampleAdoptable(
@@ -122,9 +167,29 @@ public static class KiwiCommercialFacePartPolicy
             return false;
         }
 
-        if (
+        FacePrecisionTrackingData precision;
+
+        // KIWI_V5_1_PHASE5_CANONICAL_SEMANTIC_AGE
+        // When the display-cycle latch is active, age the semantic crop/mask
+        // against the exact rigid snapshot that Root consumes. Never consult a
+        // newer Runner precision sample here, because that would reintroduce a
+        // cross-phase timestamp into an otherwise canonical FacePart frame.
+        if (KiwiCanonicalTrackingFrame.IsRuntimeCoordinatorActive)
+        {
+            if (
+                !KiwiCanonicalTrackingFrame.IsCurrentSemanticTimestamp(
+                    semanticTimestamp) ||
+                !KiwiCanonicalTrackingFrame.TryGetRigidFrame(
+                    out precision) ||
+                !precision.isValid
+            )
+            {
+                return false;
+            }
+        }
+        else if (
             !runner.TryGetLatestPrecisionTrackingData(
-                out FacePrecisionTrackingData precision) ||
+                out precision) ||
             !precision.isValid
         )
         {
@@ -219,8 +284,20 @@ public static class KiwiCommercialFacePartPolicy
         bool rightEyeAccepted,
         bool mouthAccepted)
     {
+        if (semanticTimestamp != _partDecisionTimestamp)
+        {
+            _semanticTransactionSequence =
+                KiwiRuntimeGenerationContext.AdvanceSemanticTransaction();
+        }
+
         _partDecisionTimestamp =
             semanticTimestamp;
+
+        _transactionGeneration =
+            KiwiRuntimeGenerationContext.Capture();
+
+        _transactionCanonicalFrameId =
+            KiwiCanonicalTrackingFrame.CanonicalFrameId;
 
         _leftEyeAccepted =
             leftEyeAccepted;
@@ -265,12 +342,35 @@ public static class KiwiCommercialFacePartPolicy
     {
         // A missing transaction means the caller is an older compatible path;
         // do not blank presentation merely because no v4.9 reporter exists.
+        if (semanticTimestamp < 0L)
+        {
+            return false;
+        }
+
+        if (semanticTimestamp != _partDecisionTimestamp)
+        {
+            // Once the canonical coordinator is active, Cropper and ShapeMask
+            // must consume the same transaction; a missing reporter is not a
+            // compatibility case anymore.
+            return !KiwiCanonicalTrackingFrame.IsRuntimeCoordinatorActive;
+        }
+
+        KiwiRuntimeGenerationContext.Snapshot currentGeneration =
+            KiwiRuntimeGenerationContext.Capture();
+
         if (
-            semanticTimestamp < 0L ||
-            semanticTimestamp != _partDecisionTimestamp
+            _transactionCanonicalFrameId == 0UL ||
+            _transactionCanonicalFrameId != KiwiCanonicalTrackingFrame.CanonicalFrameId ||
+            _transactionGeneration.cameraGeneration != currentGeneration.cameraGeneration ||
+            _transactionGeneration.providerGeneration != currentGeneration.providerGeneration ||
+            _transactionGeneration.modelGeneration != currentGeneration.modelGeneration ||
+            _transactionGeneration.configEpoch != currentGeneration.configEpoch ||
+            _transactionGeneration.calibrationGeneration != currentGeneration.calibrationGeneration ||
+            _transactionGeneration.trackingSessionGeneration != currentGeneration.trackingSessionGeneration ||
+            _transactionGeneration.semanticTransactionSequence != currentGeneration.semanticTransactionSequence
         )
         {
-            return true;
+            return false;
         }
 
         switch (part)
@@ -494,6 +594,270 @@ public static class KiwiCommercialFacePartPolicy
         else if (rightCandidate)
         {
             rightAccepted = false;
+        }
+    }
+
+    public static bool IsCanonicalSemanticGeometryCoherent(
+        Vector2[] landmarks,
+        int landmarkCount,
+        long semanticTimestamp,
+        string providerId,
+        KiwiRuntimeGenerationContext.Snapshot generation)
+    {
+        if (
+            landmarks == null ||
+            landmarkCount <= 362
+        )
+        {
+            return false;
+        }
+
+        Vector2[] current = _currentSemanticAnchors;
+        if (!TryBuildSemanticAnchors(landmarks, landmarkCount, current))
+        {
+            return false;
+        }
+
+        bool identityChanged =
+            !_hasTrustedSemanticAnchors ||
+            !string.Equals(
+                _trustedSemanticProvider,
+                providerId ?? string.Empty,
+                System.StringComparison.Ordinal) ||
+            _trustedSemanticCameraGeneration != generation.cameraGeneration ||
+            _trustedSemanticProviderGeneration != generation.providerGeneration ||
+            _trustedSemanticTrackingSessionGeneration != generation.trackingSessionGeneration;
+
+        if (identityChanged)
+        {
+            AcceptSemanticAnchors(current, providerId, generation);
+            return true;
+        }
+
+        Vector2 previousEyeVector =
+            _trustedSemanticAnchors[1] -
+            _trustedSemanticAnchors[0];
+
+        Vector2 currentEyeVector =
+            current[1] -
+            current[0];
+
+        float previousSpan =
+            previousEyeVector.magnitude;
+
+        float currentSpan =
+            currentEyeVector.magnitude;
+
+        if (
+            previousSpan <= 0.000001f ||
+            currentSpan <= 0.000001f
+        )
+        {
+            return false;
+        }
+
+        float spanRatio =
+            currentSpan / previousSpan;
+
+        float previousAngle =
+            Mathf.Atan2(
+                previousEyeVector.y,
+                previousEyeVector.x);
+
+        float currentAngle =
+            Mathf.Atan2(
+                currentEyeVector.y,
+                currentEyeVector.x);
+
+        float rotation =
+            currentAngle - previousAngle;
+
+        float c = Mathf.Cos(rotation);
+        float sin = Mathf.Sin(rotation);
+
+        Vector2 previousEyeCenter =
+            (_trustedSemanticAnchors[0] +
+             _trustedSemanticAnchors[1]) * 0.5f;
+
+        Vector2 currentEyeCenter =
+            (current[0] + current[1]) * 0.5f;
+
+        float noseResidual =
+            TransformResidual(
+                _trustedSemanticAnchors[2],
+                current[2],
+                previousEyeCenter,
+                currentEyeCenter,
+                c,
+                sin,
+                spanRatio) /
+            Mathf.Max(0.000001f, currentSpan);
+
+        float chinResidual =
+            TransformResidual(
+                _trustedSemanticAnchors[3],
+                current[3],
+                previousEyeCenter,
+                currentEyeCenter,
+                c,
+                sin,
+                spanRatio) /
+            Mathf.Max(0.000001f, currentSpan);
+
+        float meanResidual =
+            (noseResidual + chinResidual) * 0.5f;
+
+        float maxResidual =
+            Mathf.Max(noseResidual, chinResidual);
+
+        bool suspect =
+            spanRatio < SemanticEyeSpanMinimumRatio ||
+            spanRatio > SemanticEyeSpanMaximumRatio ||
+            meanResidual > SemanticTopologyMeanResidualEyeSpans ||
+            maxResidual > SemanticTopologyMaxResidualEyeSpans;
+
+        if (!suspect)
+        {
+            _hasPendingSemanticShock = false;
+            _pendingSemanticShockCount = 0;
+            AcceptSemanticAnchors(current, providerId, generation);
+            return true;
+        }
+
+        bool consistentPending =
+            _hasPendingSemanticShock &&
+            SemanticAnchorDistance(
+                _pendingSemanticAnchors,
+                current) <=
+            SemanticPendingConsistencyEyeSpans *
+            Mathf.Max(0.000001f, currentSpan);
+
+        if (consistentPending)
+        {
+            _pendingSemanticShockCount++;
+        }
+        else
+        {
+            CopyAnchors(current, _pendingSemanticAnchors);
+            _hasPendingSemanticShock = true;
+            _pendingSemanticShockCount = 1;
+        }
+
+        // A genuine abrupt pose can violate the broad topology gate. Reacquire
+        // after two mutually-consistent samples; a one-frame semantic glitch
+        // never reaches Cropper/ShapeMask.
+        if (_pendingSemanticShockCount >= 2)
+        {
+            _hasPendingSemanticShock = false;
+            _pendingSemanticShockCount = 0;
+            AcceptSemanticAnchors(current, providerId, generation);
+            return true;
+        }
+
+        if (_lastSemanticTopologyRejectedTimestamp != semanticTimestamp)
+        {
+            _lastSemanticTopologyRejectedTimestamp = semanticTimestamp;
+            _semanticTopologyRejectCount++;
+        }
+
+        return false;
+    }
+
+    private static bool TryBuildSemanticAnchors(
+        Vector2[] landmarks,
+        int count,
+        Vector2[] output)
+    {
+        // [0]=left eye center, [1]=right eye center, [2]=nose, [3]=chin.
+        if (
+            count <= 362 ||
+            count <= 263 ||
+            count <= 133 ||
+            count <= 33 ||
+            count <= 152 ||
+            count <= 1
+        )
+        {
+            return false;
+        }
+
+        output[0] = (landmarks[362] + landmarks[263]) * 0.5f;
+        output[1] = (landmarks[33] + landmarks[133]) * 0.5f;
+        output[2] = landmarks[1];
+        output[3] = landmarks[152];
+
+        for (int i = 0; i < output.Length; i++)
+        {
+            if (!IsFinite(output[i].x) || !IsFinite(output[i].y))
+            {
+                return false;
+            }
+        }
+
+        return
+            Vector2.Distance(output[0], output[1]) >
+            0.000001f;
+    }
+
+    private static float TransformResidual(
+        Vector2 previousPoint,
+        Vector2 currentPoint,
+        Vector2 previousCenter,
+        Vector2 currentCenter,
+        float c,
+        float s,
+        float scale)
+    {
+        Vector2 local =
+            previousPoint - previousCenter;
+
+        Vector2 rotated =
+            new Vector2(
+                local.x * c - local.y * s,
+                local.x * s + local.y * c) *
+            scale;
+
+        Vector2 predicted =
+            currentCenter + rotated;
+
+        return Vector2.Distance(predicted, currentPoint);
+    }
+
+    private static float SemanticAnchorDistance(
+        Vector2[] a,
+        Vector2[] b)
+    {
+        float max = 0f;
+        for (int i = 0; i < 4; i++)
+        {
+            max = Mathf.Max(
+                max,
+                Vector2.Distance(a[i], b[i]));
+        }
+        return max;
+    }
+
+    private static void AcceptSemanticAnchors(
+        Vector2[] anchors,
+        string providerId,
+        KiwiRuntimeGenerationContext.Snapshot generation)
+    {
+        CopyAnchors(anchors, _trustedSemanticAnchors);
+        _hasTrustedSemanticAnchors = true;
+        _trustedSemanticProvider = providerId ?? string.Empty;
+        _trustedSemanticCameraGeneration = generation.cameraGeneration;
+        _trustedSemanticProviderGeneration = generation.providerGeneration;
+        _trustedSemanticTrackingSessionGeneration =
+            generation.trackingSessionGeneration;
+    }
+
+    private static void CopyAnchors(
+        Vector2[] source,
+        Vector2[] destination)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            destination[i] = source[i];
         }
     }
 

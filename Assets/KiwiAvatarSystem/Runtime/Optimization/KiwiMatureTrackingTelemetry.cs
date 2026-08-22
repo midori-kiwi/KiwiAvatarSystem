@@ -41,6 +41,14 @@ public sealed class KiwiMatureTrackingTelemetry : MonoBehaviour
     [SerializeField] private bool debugResumeReferenceValid;
     [SerializeField] private float debugResumeGapMs;
     [SerializeField] private int debugResumeHandoffCount;
+    [SerializeField] private string debugNormalizationTimebase = "-";
+    [SerializeField] private string debugNormalizationTimestampQuality = "-";
+    [SerializeField] private string debugNormalizationSourceHorizontal = "-";
+    [SerializeField] private bool debugNormalizationCanonicalMirrored;
+    [SerializeField] private bool debugNormalizationHorizontalTransform;
+    [SerializeField] private int debugNormalizationTimebaseResets;
+    [SerializeField] private int debugNormalizationArrivalFallbacks;
+    [SerializeField] private int debugNormalizationHorizontalTransforms;
     [SerializeField] private float debugFreshSourceHz;
     [SerializeField] private float debugResultHz;
     [SerializeField] private float debugReadbackMs;
@@ -61,6 +69,7 @@ public sealed class KiwiMatureTrackingTelemetry : MonoBehaviour
     [SerializeField] private int debugRejectedPresence;
     [SerializeField] private int debugRejectedInvalid;
     [SerializeField] private int debugDiscardedStale;
+    [SerializeField] private int debugDiscardedCrossSystem;
     [SerializeField] private float debugRawPresenceLogit;
     [SerializeField] private float debugPresenceProbability;
     [SerializeField] private string debugInferenceReject = "-";
@@ -93,6 +102,7 @@ public sealed class KiwiMatureTrackingTelemetry : MonoBehaviour
     [SerializeField] private string debugEyeSource = "-";
     [SerializeField] private bool debugAttachmentRecalibrationPending;
     [SerializeField] private int debugAttachmentRecalibrationCount;
+    [SerializeField] private int debugAttachmentPendingCalibrationGeneration;
     [SerializeField] private float debugLeftEye2dQuality;
     [SerializeField] private float debugRightEye2dQuality;
     [SerializeField] private float debugMouth2dQuality;
@@ -100,10 +110,12 @@ public sealed class KiwiMatureTrackingTelemetry : MonoBehaviour
     [SerializeField] private bool debugActorCalibrated;
     [SerializeField] private float debugNeutralEyeOpen;
     [SerializeField] private int debugActorCalibrationSamples;
+    [SerializeField] private int debugActorProfileCalibrationGeneration;
     [SerializeField] private string debugLatencyProfile = "-";
     [SerializeField] private float debugPredictionBudgetMs;
     [SerializeField] private bool debugConstraintCalibrated;
     [SerializeField] private int debugConstraintCalibrationSamples;
+    [SerializeField] private int debugConstraintProfileCalibrationGeneration;
     [SerializeField] private float debugConstraintCalibrationQuality;
     [SerializeField] private float debugSurfaceConstraintStrength;
     [SerializeField] private Vector2 debugSurfaceLeftEyeOffset;
@@ -124,6 +136,10 @@ public sealed class KiwiMatureTrackingTelemetry : MonoBehaviour
     [SerializeField] private Vector2 debugLiveLeftCorrection;
     [SerializeField] private Vector2 debugLiveRightCorrection;
     [SerializeField] private Vector2 debugLiveMouthCorrection;
+    [SerializeField] private Vector2 debugLiveExpectedRigidPixels;
+    [SerializeField] private Vector2 debugLiveRejectedCommonPixels;
+    [SerializeField] private Vector3 debugLiveLocalResidualPixels;
+    [SerializeField] private bool debugLiveCanonicalAligned;
     [SerializeField] private float debugContainmentRisk;
     [SerializeField] private float debugContainmentAgeMs;
     [SerializeField] private float debugContainmentEyeScale;
@@ -152,11 +168,72 @@ public sealed class KiwiMatureTrackingTelemetry : MonoBehaviour
     [SerializeField] private Vector3Int debugSemanticPartAccepted = Vector3Int.one;
     [SerializeField] private Vector3Int debugSemanticPartRejectCounts;
     [SerializeField] private bool debugMaskReadinessComplete;
+    [SerializeField] private int debugCameraGeneration;
+    [SerializeField] private string debugCameraGenerationReason = "None";
+    [SerializeField] private int debugCameraGenerationEvents;
+    [SerializeField] private int debugCameraIdentityChanges;
+    [SerializeField] private int debugCameraRestarts;
+    [SerializeField] private int debugCameraTimelineRegressions;
+    [SerializeField] private int debugCameraStaleCallbackDrops;
+    [SerializeField] private int debugCameraUnmatchedCallbackDrops;
+    [SerializeField] private int debugLiveMotionSourceIdentityInvalidations;
+    [SerializeField] private int debugProviderGeneration;
+    [SerializeField] private int debugModelGeneration;
+    [SerializeField] private int debugConfigEpoch;
+    [SerializeField] private int debugCalibrationGeneration;
+    [SerializeField] private string debugCalibrationReason = "-";
+    [SerializeField] private string debugCalibrationScope = "None";
+    [SerializeField] private int debugCalibrationEvents;
+    [SerializeField] private int debugCalibrationCommits;
+    [SerializeField] private int debugCalibrationRejectedCommits;
+    [SerializeField] private string debugCalibrationLastCommitOwner = "-";
+    [SerializeField] private int debugCalibrationLastCommitGeneration;
+    [SerializeField] private int debugTrackingSessionGeneration;
+    [SerializeField] private long debugObservationSequence;
+    [SerializeField] private long debugSemanticTransactionSequence;
+    [SerializeField] private int debugLiveMotionGenerationDrops;
+    [SerializeField] private int debugLiveMotionCalibrationGenerationDrops;
+    [SerializeField] private int debugLiveMotionSuppressionInvalidations;
+    [SerializeField] private int debugPolicyVersion;
+    [SerializeField] private string debugPolicySource = "-";
+    [SerializeField] private float debugPolicyMediaPipeRefreshHz;
+    [SerializeField] private float debugPolicyPresenceThreshold;
+    [SerializeField] private int debugPolicyTrackingInputWidth;
+    [SerializeField] private float debugPolicyAuxiliaryCadenceScale = 1f;
+    [SerializeField] private string debugPresentationLeftReasons = "None";
+    [SerializeField] private string debugPresentationRightReasons = "None";
+    [SerializeField] private string debugPresentationMouthReasons = "None";
+    [SerializeField] private string debugGlobalRecoveryState = "Starting";
+    [SerializeField] private long debugGlobalRecoverySequence;
+    [SerializeField] private string debugGlobalRecoveryReason = "None";
+    [SerializeField] private string debugGlobalRecoverySource = "-";
+    [SerializeField] private string debugSemanticRecoveryHealth = "Healthy";
+    [SerializeField] private string debugSemanticRecoveryComponents = "None";
+    [SerializeField] private long debugSemanticRecoverySequence;
+    [SerializeField] private string debugSemanticRecoveryReason = "None";
+    [SerializeField] private string debugSemanticRecoverySource = "-";
+    [SerializeField] private int debugSemanticRecoveryRequests;
+    [SerializeField] private string debugValidationHealth = "Starting";
+    [SerializeField] private int debugValidationActive;
+    [SerializeField] private int debugValidationTotal;
+    [SerializeField] private int debugValidationWarnings;
+    [SerializeField] private int debugValidationErrors;
+    [SerializeField] private int debugValidationCriticals;
+    [SerializeField] private string debugValidationLastCode = "None";
+    [SerializeField] private int debugValidationLastFrame = -1;
+    [SerializeField] private string debugAcceptanceState = "Disabled";
+    [SerializeField] private string debugAcceptanceScenario = "None";
+    [SerializeField] private int debugAcceptancePassed;
+    [SerializeField] private int debugAcceptanceFailed;
+    [SerializeField] private string debugAcceptanceLastScenario = "None";
+    [SerializeField] private string debugAcceptanceMatrix = "NotRun";
 
     private FaceLandmarkerRunner _runner;
     private KiwiFaceMotion _faceMotion;
     private KiwiTrackingProviderHub _hub;
     private KiwiFacePartVisibilityRecovery _visibilityRecovery;
+    private KiwiFacePartPresentationResolver _presentationResolver;
+    private KiwiRecoveryDomainCoordinator _recoveryDomains;
     private KiwiTrackingContinuityState _continuity;
     private KiwiFaceChannelContinuity _faceChannels;
     private KiwiFaceAttachmentRecalibration _attachmentRecalibration;
@@ -177,7 +254,7 @@ public sealed class KiwiMatureTrackingTelemetry : MonoBehaviour
     private readonly StringBuilder _panelBuilder =
         new StringBuilder(4096);
     private string _cachedPanelText =
-        "Kiwi v5.0.1 Rigid Unpin + Head-Local Parts Telemetry";
+        "Kiwi v5.1 Phase 11 Runtime Validation Telemetry";
 
     [RuntimeInitializeOnLoadMethod(
         RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -206,6 +283,60 @@ public sealed class KiwiMatureTrackingTelemetry : MonoBehaviour
 
     public bool IsOverlayVisible =>
         showOverlay;
+
+    /// <summary>
+    /// Screen-space rectangle owned by this overlay. Other Kiwi diagnostic
+    /// panels use the same contract so independently auto-installed IMGUI
+    /// surfaces never compete for the top-right corner.
+    /// </summary>
+    public Rect OverlayRect =>
+        CalculateOverlayRect();
+
+    private Rect CalculateOverlayRect()
+    {
+        float maximumWidth =
+            Mathf.Max(1f, Screen.width - 16f);
+
+        float minimumWidth =
+            Mathf.Min(220f, maximumWidth);
+
+        float width =
+            Mathf.Clamp(
+                panelWidth,
+                minimumWidth,
+                maximumWidth);
+
+        float comparisonReserve = 0f;
+        KiwiFrameComparisonOverlay comparison =
+            KiwiFrameComparisonOverlay.Instance;
+
+        if (
+            comparison != null &&
+            comparison.visible
+        )
+        {
+            comparisonReserve =
+                comparison.PreferredPanelHeight + 20f;
+        }
+
+        float height =
+            Mathf.Min(
+                666f,
+                Mathf.Max(1f, Screen.height - 16f - comparisonReserve));
+
+        float x =
+            Mathf.Max(
+                8f,
+                Screen.width -
+                width -
+                8f);
+
+        return new Rect(
+            x,
+            8f,
+            width,
+            height);
+    }
 
     public void SetOverlayVisible(
         bool visible)
@@ -265,6 +396,20 @@ public sealed class KiwiMatureTrackingTelemetry : MonoBehaviour
         {
             _visibilityRecovery =
                 FindFirstObjectByType<KiwiFacePartVisibilityRecovery>(
+                    FindObjectsInactive.Include);
+        }
+
+        if (_presentationResolver == null)
+        {
+            _presentationResolver =
+                FindFirstObjectByType<KiwiFacePartPresentationResolver>(
+                    FindObjectsInactive.Include);
+        }
+
+        if (_recoveryDomains == null)
+        {
+            _recoveryDomains =
+                FindFirstObjectByType<KiwiRecoveryDomainCoordinator>(
                     FindObjectsInactive.Include);
         }
 
@@ -468,6 +613,23 @@ public sealed class KiwiMatureTrackingTelemetry : MonoBehaviour
 
             debugResumeHandoffCount =
                 _hub.ResumeHandoffCount;
+
+            debugNormalizationTimebase =
+                _hub.ActiveSourceTimebase.ToString();
+            debugNormalizationTimestampQuality =
+                _hub.ActiveTimestampQuality.ToString();
+            debugNormalizationSourceHorizontal =
+                _hub.ActiveSourceHorizontalConvention.ToString();
+            debugNormalizationCanonicalMirrored =
+                _hub.CanonicalInputHorizontallyMirrored;
+            debugNormalizationHorizontalTransform =
+                _hub.ActiveHorizontalTransformApplied;
+            debugNormalizationTimebaseResets =
+                _hub.ActiveTimebaseResetCount;
+            debugNormalizationArrivalFallbacks =
+                _hub.ArrivalFallbackCount;
+            debugNormalizationHorizontalTransforms =
+                _hub.HorizontalTransformCount;
         }
         else
         {
@@ -484,6 +646,14 @@ public sealed class KiwiMatureTrackingTelemetry : MonoBehaviour
             debugResumeReferenceValid = false;
             debugResumeGapMs = 0f;
             debugResumeHandoffCount = 0;
+            debugNormalizationTimebase = "-";
+            debugNormalizationTimestampQuality = "-";
+            debugNormalizationSourceHorizontal = "-";
+            debugNormalizationCanonicalMirrored = false;
+            debugNormalizationHorizontalTransform = false;
+            debugNormalizationTimebaseResets = 0;
+            debugNormalizationArrivalFallbacks = 0;
+            debugNormalizationHorizontalTransforms = 0;
         }
 
         debugGeometryQuality =
@@ -576,6 +746,11 @@ public sealed class KiwiMatureTrackingTelemetry : MonoBehaviour
                 tracker,
                 "DiscardedStaleFrameCount");
 
+        debugDiscardedCrossSystem =
+            GetPublicIntProperty(
+                tracker,
+                "DiscardedCrossSystemFrameCount");
+
         debugRawPresenceLogit =
             GetPublicFloatProperty(
                 tracker,
@@ -635,6 +810,78 @@ public sealed class KiwiMatureTrackingTelemetry : MonoBehaviour
             debugVisibilityRecoveries =
                 _visibilityRecovery.RecoveryCount;
         }
+
+        if (_presentationResolver != null)
+        {
+            debugLeftEyeAlpha =
+                _presentationResolver.LeftEyeAlpha;
+            debugRightEyeAlpha =
+                _presentationResolver.RightEyeAlpha;
+            debugMouthAlpha =
+                _presentationResolver.MouthAlpha;
+
+            debugPresentationLeftReasons =
+                _presentationResolver.LeftEyeReasons;
+            debugPresentationRightReasons =
+                _presentationResolver.RightEyeReasons;
+            debugPresentationMouthReasons =
+                _presentationResolver.MouthReasons;
+        }
+
+        if (_recoveryDomains != null)
+        {
+            debugGlobalRecoveryState =
+                _recoveryDomains.CurrentGlobalState.ToString();
+            debugGlobalRecoverySequence =
+                KiwiRecoveryDomainCoordinator.GlobalRecoverySequence;
+            debugGlobalRecoveryReason =
+                KiwiRecoveryDomainCoordinator.LastGlobalReason.ToString();
+            debugGlobalRecoverySource =
+                KiwiRecoveryDomainCoordinator.LastGlobalSource;
+
+            debugSemanticRecoveryHealth =
+                _recoveryDomains.CurrentSemanticHealth.ToString();
+            debugSemanticRecoveryComponents =
+                _recoveryDomains.ActiveSemanticComponents.ToString();
+            debugSemanticRecoverySequence =
+                KiwiRecoveryDomainCoordinator.SemanticRecoverySequence;
+            debugSemanticRecoveryReason =
+                KiwiRecoveryDomainCoordinator.LastSemanticReason.ToString();
+            debugSemanticRecoverySource =
+                KiwiRecoveryDomainCoordinator.LastSemanticSource;
+            debugSemanticRecoveryRequests =
+                _recoveryDomains.ActiveSemanticRequestCount;
+        }
+
+        debugValidationHealth =
+            KiwiRuntimeValidationHarness.Health.ToString();
+        debugValidationActive =
+            KiwiRuntimeValidationHarness.ActiveViolationCount;
+        debugValidationTotal =
+            KiwiRuntimeValidationHarness.TotalViolationCount;
+        debugValidationWarnings =
+            KiwiRuntimeValidationHarness.WarningCount;
+        debugValidationErrors =
+            KiwiRuntimeValidationHarness.ErrorCount;
+        debugValidationCriticals =
+            KiwiRuntimeValidationHarness.CriticalCount;
+        debugValidationLastCode =
+            KiwiRuntimeValidationHarness.LastViolationCode;
+        debugValidationLastFrame =
+            KiwiRuntimeValidationHarness.LastViolationFrame;
+
+        debugAcceptanceState =
+            KiwiFaultInjectionAcceptanceHarness.State.ToString();
+        debugAcceptanceScenario =
+            KiwiFaultInjectionAcceptanceHarness.ActiveScenario.ToString();
+        debugAcceptancePassed =
+            KiwiFaultInjectionAcceptanceHarness.PassedCount;
+        debugAcceptanceFailed =
+            KiwiFaultInjectionAcceptanceHarness.FailedCount;
+        debugAcceptanceLastScenario =
+            KiwiFaultInjectionAcceptanceHarness.LastScenario;
+        debugAcceptanceMatrix =
+            KiwiFaultInjectionAcceptanceHarness.DeterministicMatrixStatus;
 
         if (_continuity != null)
         {
@@ -703,6 +950,110 @@ public sealed class KiwiMatureTrackingTelemetry : MonoBehaviour
             _visibilityRecovery != null &&
             _visibilityRecovery.MaskReadinessComplete;
 
+        debugCameraGeneration =
+            KiwiRuntimeGenerationContext.CameraGeneration;
+
+        debugCameraGenerationReason =
+            KiwiCameraGeneration.LastReason.ToString();
+
+        debugCameraGenerationEvents =
+            KiwiCameraGeneration.EventCount;
+
+        debugCameraIdentityChanges =
+            KiwiCameraGeneration.IdentityChangeCount;
+
+        debugCameraRestarts =
+            KiwiCameraGeneration.RestartCount;
+
+        debugCameraTimelineRegressions =
+            KiwiCameraGeneration.TimelineRegressionCount;
+
+        debugCameraStaleCallbackDrops =
+            KiwiCameraGeneration.StaleCallbackDropCount;
+
+        debugCameraUnmatchedCallbackDrops =
+            KiwiCameraGeneration.UnmatchedCallbackDropCount;
+
+        debugLiveMotionSourceIdentityInvalidations =
+            _liveMotionBridge != null
+                ? _liveMotionBridge.SourceIdentityInvalidations
+                : 0;
+
+        debugProviderGeneration =
+            KiwiRuntimeGenerationContext.ProviderGeneration;
+
+        debugModelGeneration =
+            KiwiRuntimeGenerationContext.ModelGeneration;
+
+        debugConfigEpoch =
+            KiwiRuntimeGenerationContext.ConfigEpoch;
+
+        debugCalibrationGeneration =
+            KiwiRuntimeGenerationContext.CalibrationGeneration;
+
+        debugCalibrationReason =
+            KiwiCalibrationGeneration.LastReason;
+
+        debugCalibrationScope =
+            KiwiCalibrationGeneration.LastScope.ToString();
+
+        debugCalibrationEvents =
+            KiwiCalibrationGeneration.EventCount;
+
+        debugCalibrationCommits =
+            KiwiCalibrationGeneration.CommitCount;
+
+        debugCalibrationRejectedCommits =
+            KiwiCalibrationGeneration.RejectedCommitCount;
+
+        debugCalibrationLastCommitOwner =
+            KiwiCalibrationGeneration.LastCommitOwner;
+
+        debugCalibrationLastCommitGeneration =
+            KiwiCalibrationGeneration.LastCommitGeneration;
+
+        debugTrackingSessionGeneration =
+            KiwiRuntimeGenerationContext.TrackingSessionGeneration;
+
+        debugObservationSequence =
+            KiwiRuntimeGenerationContext.ObservationSequence;
+
+        debugSemanticTransactionSequence =
+            KiwiRuntimeGenerationContext.SemanticTransactionSequence;
+
+        debugLiveMotionGenerationDrops =
+            _liveMotionBridge != null
+                ? _liveMotionBridge.GenerationReadbackDrops
+                : 0;
+
+        debugLiveMotionCalibrationGenerationDrops =
+            _liveMotionBridge != null
+                ? _liveMotionBridge.CalibrationGenerationReadbackDrops
+                : 0;
+
+        debugLiveMotionSuppressionInvalidations =
+            _liveMotionBridge != null
+                ? _liveMotionBridge.RuntimeSuppressionInvalidations
+                : 0;
+
+        debugPolicyVersion =
+            KiwiRuntimePolicyResolver.PolicyVersion;
+
+        debugPolicySource =
+            KiwiRuntimePolicyResolver.LastPolicySource;
+
+        debugPolicyMediaPipeRefreshHz =
+            KiwiRuntimePolicyResolver.ResolvedMediaPipeRefreshHz;
+
+        debugPolicyPresenceThreshold =
+            KiwiRuntimePolicyResolver.ResolvedPresenceThreshold;
+
+        debugPolicyTrackingInputWidth =
+            KiwiRuntimePolicyResolver.ResolvedTrackingInputWidth;
+
+        debugPolicyAuxiliaryCadenceScale =
+            KiwiRuntimePolicyResolver.ResolvedAuxiliaryCadenceScale;
+
         debugRigidHolding =
             KiwiCommercialRigidMotionPolicy.LastHoldActive;
 
@@ -757,6 +1108,9 @@ public sealed class KiwiMatureTrackingTelemetry : MonoBehaviour
 
             debugAttachmentRecalibrationCount =
                 _attachmentRecalibration.RecalibrationCount;
+
+            debugAttachmentPendingCalibrationGeneration =
+                _attachmentRecalibration.PendingCalibrationGeneration;
         }
 
         if (_dualDomain != null)
@@ -784,6 +1138,9 @@ public sealed class KiwiMatureTrackingTelemetry : MonoBehaviour
 
             debugActorCalibrationSamples =
                 _actorCalibration.CollectedSamples;
+
+            debugActorProfileCalibrationGeneration =
+                _actorCalibration.ProfileCalibrationGeneration;
         }
 
         if (_latencyBudget != null)
@@ -803,6 +1160,9 @@ public sealed class KiwiMatureTrackingTelemetry : MonoBehaviour
 
             debugConstraintCalibrationSamples =
                 _modelPrimaryConstraint.CalibrationSamples;
+
+            debugConstraintProfileCalibrationGeneration =
+                _modelPrimaryConstraint.ProfileCalibrationGeneration;
 
             debugConstraintCalibrationQuality =
                 _modelPrimaryConstraint.CalibrationQuality;
@@ -869,6 +1229,18 @@ public sealed class KiwiMatureTrackingTelemetry : MonoBehaviour
 
             debugLiveMouthCorrection =
                 _liveMotionBridge.MouthCorrection;
+
+            debugLiveExpectedRigidPixels =
+                _liveMotionBridge.ExpectedRigidPixelDelta;
+
+            debugLiveRejectedCommonPixels =
+                _liveMotionBridge.RejectedCommonModePixels;
+
+            debugLiveLocalResidualPixels =
+                _liveMotionBridge.LocalResidualPixelMagnitude;
+
+            debugLiveCanonicalAligned =
+                _liveMotionBridge.CanonicalSemanticAligned;
         }
 
         if (_adaptiveContainment != null)
@@ -966,7 +1338,7 @@ public sealed class KiwiMatureTrackingTelemetry : MonoBehaviour
 
         b.Clear();
 
-        b.Append("Kiwi v5.0.1 Rigid Unpin + Head-Local Parts Telemetry\n");
+        b.Append("Kiwi v5.1 Phase 11 Runtime Validation Telemetry\n");
         b.Append("provider: ").Append(debugProvider).Append('\n');
         b.Append("rigid anchor jaw-neutral corr=")
             .Append(debugRigidAnchorCorrection.ToString("F4"))
@@ -985,6 +1357,21 @@ public sealed class KiwiMatureTrackingTelemetry : MonoBehaviour
             .Append("/")
             .Append(debugProviderArrivalLimitMs.ToString("F0"))
             .Append(" ms\n");
+        b.Append("normalization time=")
+            .Append(debugNormalizationTimebase)
+            .Append(" quality=")
+            .Append(debugNormalizationTimestampQuality)
+            .Append(" srcX=")
+            .Append(debugNormalizationSourceHorizontal)
+            .Append(" targetMirror=")
+            .Append(debugNormalizationCanonicalMirrored)
+            .Append(" xform=")
+            .Append(debugNormalizationHorizontalTransform)
+            .Append(" reset/fallback/xform#=")
+            .Append(debugNormalizationTimebaseResets).Append('/')
+            .Append(debugNormalizationArrivalFallbacks).Append('/')
+            .Append(debugNormalizationHorizontalTransforms)
+            .Append('\n');
         b.Append("resumeRef=").Append(debugResumeReferenceValid)
             .Append(" gap=").Append(debugResumeGapMs.ToString("F0")).Append("ms")
             .Append(" resume#=").Append(debugResumeHandoffCount)
@@ -1011,6 +1398,17 @@ public sealed class KiwiMatureTrackingTelemetry : MonoBehaviour
             .Append(" ms cadence=").Append(debugContinuityCadenceHz.ToString("F1"))
             .Append(" Hz jitter=").Append(debugContinuityJitter.ToString("F2"))
             .Append(" reacq=").Append(debugReacquireStreak).Append('\n');
+        b.Append("frame continuity suppress=")
+            .Append(KiwiFrameContinuityDiagnostics.DirectBypassSuppressed)
+            .Append(" gap=")
+            .Append(KiwiFrameContinuityDiagnostics.DiscontinuityGuardActive)
+            .Append(" track=")
+            .Append(KiwiFrameContinuityDiagnostics.TrackingRateHz.ToString("F1"))
+            .Append(" Hz interval=")
+            .Append((KiwiFrameContinuityDiagnostics.EffectiveSampleInterval * 1000f).ToString("F0"))
+            .Append(" ms cap=")
+            .Append(KiwiFrameContinuityDiagnostics.ResponseCap.ToString("F1"))
+            .Append('\n');
         b.Append("rigid policy hold=").Append(debugRigidHolding)
             .Append(" lost=").Append(debugRigidLost)
             .Append(" predAllow=").Append(debugRigidPredictionAllowance.ToString("F2"))
@@ -1026,8 +1424,48 @@ public sealed class KiwiMatureTrackingTelemetry : MonoBehaviour
             .Append(" score=").Append(debugPathfinderScore.ToString("F2")).Append('\n');
         b.Append("channels geom=").Append(debugGeometryChannel).Append('\n');
         b.Append("expr=").Append(debugExpressionChannel).Append(" eye=").Append(debugEyeSource).Append('\n');
-        b.Append("attach recal pending/count=").Append(debugAttachmentRecalibrationPending)
-            .Append(" / ").Append(debugAttachmentRecalibrationCount).Append('\n');
+        b.Append("recovery global=")
+            .Append(debugGlobalRecoveryState)
+            .Append(" #").Append(debugGlobalRecoverySequence)
+            .Append(" reason/source=")
+            .Append(debugGlobalRecoveryReason).Append('/')
+            .Append(debugGlobalRecoverySource).Append('\n');
+        b.Append("recovery semantic=")
+            .Append(debugSemanticRecoveryHealth)
+            .Append(" active=").Append(debugSemanticRecoveryComponents)
+            .Append(" #").Append(debugSemanticRecoverySequence)
+            .Append(" req=").Append(debugSemanticRecoveryRequests)
+            .Append(" reason/source=")
+            .Append(debugSemanticRecoveryReason).Append('/')
+            .Append(debugSemanticRecoverySource).Append('\n');
+        b.Append("validation=")
+            .Append(debugValidationHealth)
+            .Append(" active/total=")
+            .Append(debugValidationActive).Append('/')
+            .Append(debugValidationTotal)
+            .Append(" w/e/c=")
+            .Append(debugValidationWarnings).Append('/')
+            .Append(debugValidationErrors).Append('/')
+            .Append(debugValidationCriticals)
+            .Append(" last=")
+            .Append(debugValidationLastCode).Append('@')
+            .Append(debugValidationLastFrame)
+            .Append('\n');
+        b.Append("acceptance=")
+            .Append(debugAcceptanceState)
+            .Append(" scenario=")
+            .Append(debugAcceptanceScenario)
+            .Append(" pass/fail=")
+            .Append(debugAcceptancePassed).Append('/')
+            .Append(debugAcceptanceFailed)
+            .Append(" last=")
+            .Append(debugAcceptanceLastScenario)
+            .Append(" matrix=")
+            .Append(debugAcceptanceMatrix)
+            .Append('\n');
+        b.Append("attach recal pending/count/gen=").Append(debugAttachmentRecalibrationPending)
+            .Append(" / ").Append(debugAttachmentRecalibrationCount)
+            .Append(" / ").Append(debugAttachmentPendingCalibrationGeneration).Append('\n');
         b.Append("2D q L/R/M=").Append(debugLeftEye2dQuality.ToString("F2"))
             .Append(" / ").Append(debugRightEye2dQuality.ToString("F2"))
             .Append(" / ").Append(debugMouth2dQuality.ToString("F2"))
@@ -1035,6 +1473,67 @@ public sealed class KiwiMatureTrackingTelemetry : MonoBehaviour
         b.Append("semantic age=").Append(debugSemanticSourceAgeMs.ToString("F0"))
             .Append("ms staleReject=").Append(debugSemanticStaleRejects)
             .Append(" maskReady=").Append(debugMaskReadinessComplete).Append('\n');
+        b.Append("camera reason/events/id/restart/timeline/stale/unmatched/liveLocal=")
+            .Append(debugCameraGenerationReason).Append('/')
+            .Append(debugCameraGenerationEvents).Append('/')
+            .Append(debugCameraIdentityChanges).Append('/')
+            .Append(debugCameraRestarts).Append('/')
+            .Append(debugCameraTimelineRegressions).Append('/')
+            .Append(debugCameraStaleCallbackDrops).Append('/')
+            .Append(debugCameraUnmatchedCallbackDrops).Append('/')
+            .Append(debugLiveMotionSourceIdentityInvalidations)
+            .Append('\n');
+        b.Append("generation cam/prov/model/config/cal/session=")
+            .Append(debugCameraGeneration).Append('/')
+            .Append(debugProviderGeneration).Append('/')
+            .Append(debugModelGeneration).Append('/')
+            .Append(debugConfigEpoch).Append('/')
+            .Append(debugCalibrationGeneration).Append('/')
+            .Append(debugTrackingSessionGeneration)
+            .Append(" obs=").Append(debugObservationSequence)
+            .Append(" semantic=").Append(debugSemanticTransactionSequence)
+            .Append(" liveDrop=").Append(debugLiveMotionGenerationDrops)
+            .Append(" liveCalDrop=").Append(debugLiveMotionCalibrationGenerationDrops)
+            .Append(" liveSuppress=").Append(debugLiveMotionSuppressionInvalidations)
+            .Append('\n');
+        b.Append("calibration reason/scope=")
+            .Append(debugCalibrationReason).Append('/')
+            .Append(debugCalibrationScope)
+            .Append(" events/commit/reject=")
+            .Append(debugCalibrationEvents).Append('/')
+            .Append(debugCalibrationCommits).Append('/')
+            .Append(debugCalibrationRejectedCommits)
+            .Append(" lastCommit=")
+            .Append(debugCalibrationLastCommitOwner).Append('@')
+            .Append(debugCalibrationLastCommitGeneration)
+            .Append('\n');
+        b.Append("canonical id=")
+            .Append(KiwiCanonicalTrackingFrame.CanonicalFrameId)
+            .Append(" provider=")
+            .Append(KiwiCanonicalTrackingFrame.ProviderId)
+            .Append(" rigid/semantic=")
+            .Append(KiwiCanonicalTrackingFrame.RigidTimestamp)
+            .Append('/')
+            .Append(KiwiCanonicalTrackingFrame.SemanticTimestamp)
+            .Append(" match=")
+            .Append(KiwiCanonicalTrackingFrame.SemanticMatched)
+            .Append(" timing=")
+            .Append(KiwiCanonicalTrackingFrame.TimestampQuality)
+            .Append(" mirror=")
+            .Append(KiwiCanonicalTrackingFrame.CanonicalInputHorizontallyMirrored)
+            .Append(" latch/refresh/mismatch/hold=")
+            .Append(KiwiCanonicalTrackingFrame.RigidLatchCount).Append('/')
+            .Append(KiwiCanonicalTrackingFrame.LateRefreshCount).Append('/')
+            .Append(KiwiCanonicalTrackingFrame.SemanticMismatchCount).Append('/')
+            .Append(KiwiCanonicalTrackingFrame.SemanticHoldCount)
+            .Append('\n');
+        b.Append("policy v/source=").Append(debugPolicyVersion)
+            .Append('/').Append(debugPolicySource)
+            .Append(" input=").Append(debugPolicyTrackingInputWidth)
+            .Append(" auxHz=").Append(debugPolicyMediaPipeRefreshHz.ToString("F1"))
+            .Append(" presence=").Append(debugPolicyPresenceThreshold.ToString("F3"))
+            .Append(" cadenceScale=").Append(debugPolicyAuxiliaryCadenceScale.ToString("F2"))
+            .Append('\n');
         b.Append("semantic txn ts=").Append(debugSemanticTransactionTimestamp)
             .Append(" accept L/R/M=")
             .Append(debugSemanticPartAccepted.x).Append('/')
@@ -1046,11 +1545,13 @@ public sealed class KiwiMatureTrackingTelemetry : MonoBehaviour
             .Append(debugSemanticPartRejectCounts.z).Append('\n');
         b.Append("actorCal=").Append(debugActorCalibrated)
             .Append(" samples=").Append(debugActorCalibrationSamples)
+            .Append(" profileGen=").Append(debugActorProfileCalibrationGeneration)
             .Append(" neutralEye=").Append(debugNeutralEyeOpen.ToString("F3")).Append('\n');
         b.Append("latency=").Append(debugLatencyProfile)
             .Append(" predBudget=").Append(debugPredictionBudgetMs.ToString("F1")).Append(" ms\n");
         b.Append("constraintCal=").Append(debugConstraintCalibrated)
             .Append(" samples=").Append(debugConstraintCalibrationSamples)
+            .Append(" profileGen=").Append(debugConstraintProfileCalibrationGeneration)
             .Append(" q=").Append(debugConstraintCalibrationQuality.ToString("F2"))
             .Append(" api=").Append(debugSurfaceApiAvailable)
             .Append(" state=").Append(debugSurfaceConstraintState).Append('\n');
@@ -1072,6 +1573,16 @@ public sealed class KiwiMatureTrackingTelemetry : MonoBehaviour
             .Append(" corr L=").Append(debugLiveLeftCorrection.ToString("F3"))
             .Append(" R=").Append(debugLiveRightCorrection.ToString("F3"))
             .Append(" M=").Append(debugLiveMouthCorrection.ToString("F3")).Append('\n');
+        b.Append("live2D rigid/local px expected=")
+            .Append(debugLiveExpectedRigidPixels.ToString("F1"))
+            .Append(" commonRejected=")
+            .Append(debugLiveRejectedCommonPixels.ToString("F1"))
+            .Append(" local L/R/M=")
+            .Append(debugLiveLocalResidualPixels.x.ToString("F1"))
+            .Append('/').Append(debugLiveLocalResidualPixels.y.ToString("F1"))
+            .Append('/').Append(debugLiveLocalResidualPixels.z.ToString("F1"))
+            .Append(" canonical=").Append(debugLiveCanonicalAligned)
+            .Append('\n');
         b.Append("contain risk=").Append(debugContainmentRisk.ToString("F2"))
             .Append(" age=").Append(debugContainmentAgeMs.ToString("F0"))
             .Append("ms eye/mouth=").Append(debugContainmentEyeScale.ToString("F2"))
@@ -1110,13 +1621,19 @@ public sealed class KiwiMatureTrackingTelemetry : MonoBehaviour
             .Append(" threshold=").Append(debugLivePresenceThreshold.ToString("F3")).Append('\n');
         b.Append("Inference latency=").Append(debugTrackerLatencyMs.ToString("F1"))
             .Append(" ms reject=").Append(debugInferenceReject).Append('\n');
-        b.Append("reject p/invalid/stale=").Append(debugRejectedPresence)
-            .Append(" / ").Append(debugRejectedInvalid).Append(" / ").Append(debugDiscardedStale).Append('\n');
+        b.Append("reject p/invalid/stale/xsys=").Append(debugRejectedPresence)
+            .Append(" / ").Append(debugRejectedInvalid)
+            .Append(" / ").Append(debugDiscardedStale)
+            .Append(" / ").Append(debugDiscardedCrossSystem).Append('\n');
         b.Append("ROI=").Append(debugHasRegion).Append(" pending=").Append(debugReadbackPending).Append('\n');
         b.Append("parts alpha L/R/M=").Append(debugLeftEyeAlpha.ToString("F2"))
             .Append(" / ").Append(debugRightEyeAlpha.ToString("F2"))
             .Append(" / ").Append(debugMouthAlpha.ToString("F2"))
             .Append(" recoveries=").Append(debugVisibilityRecoveries).Append('\n');
+        b.Append("parts reason L/R/M=")
+            .Append(debugPresentationLeftReasons).Append(" / ")
+            .Append(debugPresentationRightReasons).Append(" / ")
+            .Append(debugPresentationMouthReasons).Append('\n');
         b.Append("parts mask vis=").Append(debugPartMaskVisibility.x.ToString("F2"))
             .Append('/').Append(debugPartMaskVisibility.y.ToString("F2"))
             .Append('/').Append(debugPartMaskVisibility.z.ToString("F2"))
@@ -1158,19 +1675,8 @@ public sealed class KiwiMatureTrackingTelemetry : MonoBehaviour
         string text =
             _cachedPanelText;
 
-        float x =
-            Mathf.Max(
-                8f,
-                Screen.width -
-                panelWidth -
-                8f);
-
         GUI.Box(
-            new Rect(
-                x,
-                8f,
-                panelWidth,
-                666f),
+            CalculateOverlayRect(),
             text,
             _style);
     }

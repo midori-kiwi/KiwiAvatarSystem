@@ -335,6 +335,13 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
             }
 
             swapCommitted = true;
+
+            // KIWI_V5_1_MODEL_GENERATION_COMMIT
+            // Advance only after the transactional hot-swap has
+            // committed. Pending async face-part work from the
+            // previous model will then fail generation identity.
+            KiwiRuntimeGenerationContext.AdvanceModelGeneration();
+
             candidate = null;
 
             if (
@@ -485,6 +492,10 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
 
     private void SwitchToFallbackInternal(bool clearLastAvatar)
     {
+        bool modelIdentityChanged =
+            _activeModel != null ||
+            _activeInstance != null;
+
         if (!fallbackReferenceCaptured)
         {
             CaptureFallbackReferencesNow();
@@ -513,6 +524,12 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
         _activeFaceFitMethod = "Embedded";
         _activeFaceFitConfidence = 1f;
         currentAvatarName = "Kiwi (Embedded)";
+
+        if (modelIdentityChanged)
+        {
+            KiwiRuntimeGenerationContext.AdvanceModelGeneration();
+        }
+
         status = "Ready";
 
         if (faceMotion != null && motionRoot != null)
