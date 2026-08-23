@@ -46,8 +46,30 @@ public sealed class KiwiCommercialTransformWriterAudit : MonoBehaviour
     private float _lastVisualRelativeLateToRenderScaleDelta;
     private bool _lastVisualMovedWithoutRoot;
     private bool _lastRootMovedAfterLate;
+    private bool _lastRenderBoundaryObserved;
     private int _visualMovedWithoutRootCount;
     private int _rootMovedAfterLateCount;
+
+    // KIWI_V5_1_PHASE16_9_WRITER_AUDIT_COMPLETED_FRAME_LATCH
+    // Render-boundary callbacks run after the Frame Comparison LateUpdate. Keep
+    // the current frame in a pending record and publish it on the next Update so
+    // CSV flags/deltas and cumulative counters describe the same completed frame.
+    private int _pendingFrame = -1;
+    private bool _pendingRenderObserved;
+    private float _pendingRootUpdateToLatePositionDelta;
+    private float _pendingRootUpdateToLateRotationDelta;
+    private float _pendingRootUpdateToLateScaleDelta;
+    private float _pendingRootLateToRenderPositionDelta;
+    private float _pendingRootLateToRenderRotationDelta;
+    private float _pendingRootLateToRenderScaleDelta;
+    private float _pendingVisualRelativeUpdateToLatePositionDelta;
+    private float _pendingVisualRelativeUpdateToLateRotationDelta;
+    private float _pendingVisualRelativeUpdateToLateScaleDelta;
+    private float _pendingVisualRelativeLateToRenderPositionDelta;
+    private float _pendingVisualRelativeLateToRenderRotationDelta;
+    private float _pendingVisualRelativeLateToRenderScaleDelta;
+    private bool _pendingVisualMovedWithoutRoot;
+    private bool _pendingRootMovedAfterLate;
 
     private const float RootPositionEpsilon = 0.00001f;
     private const float RootRotationEpsilonDegrees = 0.005f;
@@ -111,6 +133,9 @@ public sealed class KiwiCommercialTransformWriterAudit : MonoBehaviour
     public static bool RootMovedAfterLate =>
         _instance != null && _instance._lastRootMovedAfterLate;
 
+    public static bool RenderBoundaryObserved =>
+        _instance != null && _instance._lastRenderBoundaryObserved;
+
     public static int VisualMovedWithoutRootCount =>
         _instance != null ? _instance._visualMovedWithoutRootCount : 0;
 
@@ -158,6 +183,10 @@ public sealed class KiwiCommercialTransformWriterAudit : MonoBehaviour
 
     private void Update()
     {
+        // Publish only the previous frame, after onBeforeRender /
+        // beginCameraRendering have had a chance to finish it.
+        PublishCompletedPendingFrame();
+
         RefreshBinding(false);
         _updateSample = CaptureSample();
     }
@@ -168,14 +197,22 @@ public sealed class KiwiCommercialTransformWriterAudit : MonoBehaviour
         _lateSample = CaptureSample();
         _lateSampleFrame = Time.frameCount;
 
-        _lastRootLateToRenderPositionDelta = 0f;
-        _lastRootLateToRenderRotationDelta = 0f;
-        _lastRootLateToRenderScaleDelta = 0f;
-        _lastVisualRelativeLateToRenderPositionDelta = 0f;
-        _lastVisualRelativeLateToRenderRotationDelta = 0f;
-        _lastVisualRelativeLateToRenderScaleDelta = 0f;
-        _lastVisualMovedWithoutRoot = false;
-        _lastRootMovedAfterLate = false;
+        _pendingFrame = Time.frameCount;
+        _pendingRenderObserved = false;
+        _pendingRootUpdateToLatePositionDelta = 0f;
+        _pendingRootUpdateToLateRotationDelta = 0f;
+        _pendingRootUpdateToLateScaleDelta = 0f;
+        _pendingRootLateToRenderPositionDelta = 0f;
+        _pendingRootLateToRenderRotationDelta = 0f;
+        _pendingRootLateToRenderScaleDelta = 0f;
+        _pendingVisualRelativeUpdateToLatePositionDelta = 0f;
+        _pendingVisualRelativeUpdateToLateRotationDelta = 0f;
+        _pendingVisualRelativeUpdateToLateScaleDelta = 0f;
+        _pendingVisualRelativeLateToRenderPositionDelta = 0f;
+        _pendingVisualRelativeLateToRenderRotationDelta = 0f;
+        _pendingVisualRelativeLateToRenderScaleDelta = 0f;
+        _pendingVisualMovedWithoutRoot = false;
+        _pendingRootMovedAfterLate = false;
 
         if (
             _updateSample.valid &&
@@ -183,39 +220,30 @@ public sealed class KiwiCommercialTransformWriterAudit : MonoBehaviour
             _updateSample.unityFrame == _lateSample.unityFrame
         )
         {
-            _lastRootUpdateToLatePositionDelta =
+            _pendingRootUpdateToLatePositionDelta =
                 Vector3.Distance(
                     _updateSample.rootLocalPosition,
                     _lateSample.rootLocalPosition);
-            _lastRootUpdateToLateRotationDelta =
+            _pendingRootUpdateToLateRotationDelta =
                 Quaternion.Angle(
                     _updateSample.rootLocalRotation,
                     _lateSample.rootLocalRotation);
-            _lastRootUpdateToLateScaleDelta =
+            _pendingRootUpdateToLateScaleDelta =
                 Vector3.Distance(
                     _updateSample.rootLocalScale,
                     _lateSample.rootLocalScale);
-            _lastVisualRelativeUpdateToLatePositionDelta =
+            _pendingVisualRelativeUpdateToLatePositionDelta =
                 Vector3.Distance(
                     _updateSample.visualRelativePosition,
                     _lateSample.visualRelativePosition);
-            _lastVisualRelativeUpdateToLateRotationDelta =
+            _pendingVisualRelativeUpdateToLateRotationDelta =
                 Quaternion.Angle(
                     _updateSample.visualRelativeRotation,
                     _lateSample.visualRelativeRotation);
-            _lastVisualRelativeUpdateToLateScaleDelta =
+            _pendingVisualRelativeUpdateToLateScaleDelta =
                 Vector3.Distance(
                     _updateSample.visualRelativeScale,
                     _lateSample.visualRelativeScale);
-        }
-        else
-        {
-            _lastRootUpdateToLatePositionDelta = 0f;
-            _lastRootUpdateToLateRotationDelta = 0f;
-            _lastRootUpdateToLateScaleDelta = 0f;
-            _lastVisualRelativeUpdateToLatePositionDelta = 0f;
-            _lastVisualRelativeUpdateToLateRotationDelta = 0f;
-            _lastVisualRelativeUpdateToLateScaleDelta = 0f;
         }
     }
 
@@ -272,29 +300,29 @@ public sealed class KiwiCommercialTransformWriterAudit : MonoBehaviour
                 _lateSample.visualRelativeScale,
                 render.visualRelativeScale);
 
-        _lastRootLateToRenderPositionDelta =
+        _pendingRootLateToRenderPositionDelta =
             Mathf.Max(
-                _lastRootLateToRenderPositionDelta,
+                _pendingRootLateToRenderPositionDelta,
                 rootPositionDelta);
-        _lastRootLateToRenderRotationDelta =
+        _pendingRootLateToRenderRotationDelta =
             Mathf.Max(
-                _lastRootLateToRenderRotationDelta,
+                _pendingRootLateToRenderRotationDelta,
                 rootRotationDelta);
-        _lastRootLateToRenderScaleDelta =
+        _pendingRootLateToRenderScaleDelta =
             Mathf.Max(
-                _lastRootLateToRenderScaleDelta,
+                _pendingRootLateToRenderScaleDelta,
                 rootScaleDelta);
-        _lastVisualRelativeLateToRenderPositionDelta =
+        _pendingVisualRelativeLateToRenderPositionDelta =
             Mathf.Max(
-                _lastVisualRelativeLateToRenderPositionDelta,
+                _pendingVisualRelativeLateToRenderPositionDelta,
                 visualPositionDelta);
-        _lastVisualRelativeLateToRenderRotationDelta =
+        _pendingVisualRelativeLateToRenderRotationDelta =
             Mathf.Max(
-                _lastVisualRelativeLateToRenderRotationDelta,
+                _pendingVisualRelativeLateToRenderRotationDelta,
                 visualRotationDelta);
-        _lastVisualRelativeLateToRenderScaleDelta =
+        _pendingVisualRelativeLateToRenderScaleDelta =
             Mathf.Max(
-                _lastVisualRelativeLateToRenderScaleDelta,
+                _pendingVisualRelativeLateToRenderScaleDelta,
                 visualScaleDelta);
 
         bool rootMoved =
@@ -306,23 +334,72 @@ public sealed class KiwiCommercialTransformWriterAudit : MonoBehaviour
             visualRotationDelta > VisualRelativeRotationEpsilonDegrees ||
             visualScaleDelta > VisualRelativePositionEpsilon;
 
-        if (rootMoved && !_lastRootMovedAfterLate)
+        if (rootMoved && !_pendingRootMovedAfterLate)
         {
-            _lastRootMovedAfterLate = true;
+            _pendingRootMovedAfterLate = true;
             _rootMovedAfterLateCount++;
         }
 
         if (
             visualRelativeMoved &&
             !rootMoved &&
-            !_lastVisualMovedWithoutRoot
+            !_pendingVisualMovedWithoutRoot
         )
         {
-            _lastVisualMovedWithoutRoot = true;
+            _pendingVisualMovedWithoutRoot = true;
             _visualMovedWithoutRootCount++;
         }
 
-        _lastCompletedFrame = Time.frameCount;
+        _pendingRenderObserved = true;
+    }
+
+    private void PublishCompletedPendingFrame()
+    {
+        if (
+            _pendingFrame < 0 ||
+            _pendingFrame >= Time.frameCount
+        )
+        {
+            return;
+        }
+
+        // Even when SRP/onBeforeRender was unavailable for a frame, publish the
+        // Update->LateUpdate portion with zero render deltas rather than mixing
+        // it with a newer frame. The render-observed bit is exposed separately.
+        _lastCompletedFrame = _pendingFrame;
+        _lastRootUpdateToLatePositionDelta =
+            _pendingRootUpdateToLatePositionDelta;
+        _lastRootUpdateToLateRotationDelta =
+            _pendingRootUpdateToLateRotationDelta;
+        _lastRootUpdateToLateScaleDelta =
+            _pendingRootUpdateToLateScaleDelta;
+        _lastRootLateToRenderPositionDelta =
+            _pendingRootLateToRenderPositionDelta;
+        _lastRootLateToRenderRotationDelta =
+            _pendingRootLateToRenderRotationDelta;
+        _lastRootLateToRenderScaleDelta =
+            _pendingRootLateToRenderScaleDelta;
+        _lastVisualRelativeUpdateToLatePositionDelta =
+            _pendingVisualRelativeUpdateToLatePositionDelta;
+        _lastVisualRelativeUpdateToLateRotationDelta =
+            _pendingVisualRelativeUpdateToLateRotationDelta;
+        _lastVisualRelativeUpdateToLateScaleDelta =
+            _pendingVisualRelativeUpdateToLateScaleDelta;
+        _lastVisualRelativeLateToRenderPositionDelta =
+            _pendingVisualRelativeLateToRenderPositionDelta;
+        _lastVisualRelativeLateToRenderRotationDelta =
+            _pendingVisualRelativeLateToRenderRotationDelta;
+        _lastVisualRelativeLateToRenderScaleDelta =
+            _pendingVisualRelativeLateToRenderScaleDelta;
+        _lastVisualMovedWithoutRoot =
+            _pendingVisualMovedWithoutRoot;
+        _lastRootMovedAfterLate =
+            _pendingRootMovedAfterLate;
+        _lastRenderBoundaryObserved =
+            _pendingRenderObserved;
+
+        _pendingFrame = -1;
+        _pendingRenderObserved = false;
     }
 
     private Sample CaptureSample()
@@ -413,5 +490,7 @@ public sealed class KiwiCommercialTransformWriterAudit : MonoBehaviour
         _updateSample = default;
         _lateSample = default;
         _lateSampleFrame = -1;
+        _pendingFrame = -1;
+        _pendingRenderObserved = false;
     }
 }

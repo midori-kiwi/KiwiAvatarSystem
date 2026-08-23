@@ -557,6 +557,58 @@ public class KiwiFaceMotion : MonoBehaviour
     public float scaleDeadZoneReleaseSpeed = 0.004f;
 
 
+    // KIWI_V5_1_PHASE16_13_STATIC_REST_PRESENTATION
+    // Final display-domain spatial latch. This is deliberately not a
+    // temporal low-pass: while the target stays inside the existing
+    // microscopic corridors the rendered pose is held exactly; real
+    // accumulated displacement or raw-speed release exits immediately.
+    private bool _phase16_13PresentationRestLocked;
+    private float _phase16_13PresentationRestCandidateSeconds;
+    private Quaternion _phase16_13PresentationRestRotation = Quaternion.identity;
+    private Vector3 _phase16_13PresentationRestPosition;
+    private Vector3 _phase16_13PresentationRestScale = Vector3.one;
+    private int _phase16_13PresentationRestLockCount;
+    private int _phase16_13PresentationRestReleaseCount;
+    private int _phase16_13BeforeRenderRestHoldCount;
+    private int _phase16_13BeforeRenderNewSampleCount;
+
+    public bool Phase16_13StaticRestActive =>
+        _phase16_13PresentationRestLocked;
+
+    public float Phase16_13StaticRestCandidateSeconds =>
+        _phase16_13PresentationRestCandidateSeconds;
+
+    public int Phase16_13StaticRestLockCount =>
+        _phase16_13PresentationRestLockCount;
+
+    public int Phase16_13StaticRestReleaseCount =>
+        _phase16_13PresentationRestReleaseCount;
+
+    public int Phase16_13BeforeRenderRestHoldCount =>
+        _phase16_13BeforeRenderRestHoldCount;
+
+    public int Phase16_13BeforeRenderNewSampleCount =>
+        _phase16_13BeforeRenderNewSampleCount;
+
+
+    // KIWI_V5_1_PHASE16_15_NO_FRAME_HOLD_RESUME_ENVELOPE
+    // Presentation-only recovery state. Provider identity, calibration
+    // and accepted tracking samples remain owned by their existing systems.
+    private bool _phase16_15AuthoritativeFrameMissing;
+    private int _phase16_15MissingProviderGeneration;
+    private KiwiTrackingBackend _phase16_15MissingBackend = KiwiTrackingBackend.Unknown;
+    private bool _phase16_15ResumeBridgeActive;
+    private int _phase16_15ResumeBridgeAcceptedSamplesRemaining;
+    private int _phase16_15NoFrameHoldCount;
+    private int _phase16_15SameProviderResumeCount;
+
+    public bool Phase16_15AuthoritativeFrameMissing =>
+        _phase16_15AuthoritativeFrameMissing;
+
+    public bool Phase16_15SameProviderResumeActive =>
+        _phase16_15ResumeBridgeActive;
+
+
     // =========================================================
     // Motion Accent
     //
@@ -1326,6 +1378,10 @@ public class KiwiFaceMotion : MonoBehaviour
 
             if (accepted)
             {
+                HandlePhase16_15AcceptedAuthoritativeFrame(
+                    KiwiCommercialRigidMotionPolicy.GetAuthoritativeProviderGeneration(),
+                    precisionData.backend);
+
                 _lastSeenTime =
                     Time.unscaledTime;
 
@@ -1363,6 +1419,17 @@ public class KiwiFaceMotion : MonoBehaviour
             out bool holdRigidPose,
             out bool trackingLost);
 
+        // A missing canonical rigid frame is not a new pose. During a
+        // short gap, keep exactly the already-rendered Root and kill
+        // extrapolation. Only continuity Lost may return to neutral.
+        if (!hasTracking && !trackingLost)
+        {
+            BeginPhase16_15NoFrameHold();
+            ResetPredictionHistory();
+            RenderDisplayPose();
+            return;
+        }
+
                 if (holdRigidPose)
         {
             // KIWI_V5_1_PHASE16_4_PRESENTATION_HOLD_RESAMPLING
@@ -1379,6 +1446,7 @@ public class KiwiFaceMotion : MonoBehaviour
 
         if (trackingLost)
         {
+            ClearPhase16_15PresentationRecovery();
             if (!_trackingWasLost)
             {
                 ResetMotionAccent();
@@ -3714,6 +3782,11 @@ public class KiwiFaceMotion : MonoBehaviour
             return;
         }
 
+        // KIWI_V5_1_PHASE16_13_BEFORE_RENDER_REST_DEDUP
+        bool phase16_13ObservedNewRenderFrame = false;
+        // KIWI_V5_1_PHASE16_14_RENDER_BOUNDARY_FRESH_ONLY
+        bool phase16_14AcceptedNewRenderSample = false;
+
         // Prefer a genuinely newer accepted LandMarker result over prediction.
         // KIWI_V4_7_BEFORE_RENDER_RIGID_AUTHORITY
         // Never bypass the Provider Hub at the render boundary.
@@ -3724,6 +3797,10 @@ public class KiwiFaceMotion : MonoBehaviour
                     out FacePrecisionTrackingData latestData) &&
                 IsNewPrecisionFrame(latestData))
             {
+                phase16_13ObservedNewRenderFrame = true;
+                _phase16_13BeforeRenderNewSampleCount++;
+                KiwiPhase16_13PresentationDiagnostics.RecordBeforeRenderNewSample();
+
                 bool hasPositionGeometry = TryGetPositionGeometry(
                     latestData,
                     out PositionGeometry positionGeometry
@@ -3751,6 +3828,7 @@ public class KiwiFaceMotion : MonoBehaviour
 
                 if (accepted)
                 {
+                    phase16_14AcceptedNewRenderSample = true;
                     _lastSeenTime = Time.unscaledTime;
                     _trackingWasLost = false;
                 }
@@ -3761,6 +3839,32 @@ public class KiwiFaceMotion : MonoBehaviour
         // display state from Application.onBeforeRender.
         if (!_calibrated)
         {
+            return;
+        }
+
+        // Same/rejected/no-sample boundaries cannot improve the
+        // authoritative pose. LateUpdate has already rendered the
+        // current display pose, so do not advance or rewrite Root.
+        if (!phase16_14AcceptedNewRenderSample)
+        {
+            KiwiPhase16_13PresentationDiagnostics.RecordBeforeRenderSameSampleSkip();
+            return;
+        }
+
+        KiwiPhase16_13PresentationDiagnostics.RecordBeforeRenderAcceptedNewSample();
+
+        // A stationary already-consumed canonical frame must not
+        // advance the display resampler again between LateUpdate and
+        // render. A genuinely newer render-boundary sample bypasses
+        // this hold so motion remains late-latched.
+        if (
+            _phase16_13PresentationRestLocked &&
+            !phase16_13ObservedNewRenderFrame
+        )
+        {
+            _phase16_13BeforeRenderRestHoldCount++;
+            KiwiPhase16_13PresentationDiagnostics.RecordBeforeRenderRestHold();
+            RenderDisplayPose();
             return;
         }
 
@@ -3825,6 +3929,7 @@ public class KiwiFaceMotion : MonoBehaviour
         targetScale = _sampleScale;
         _renderPositionVelocity = Vector3.zero;
         _lastCaptureAgeCompensationMs = 0f;
+        KiwiPhase16_15RootContinuityDiagnostics.ReportPrediction(0f, 0f);
 
         if (!enableHybridPrecisionTracking ||
             !enableRenderTimeLatePrediction ||
@@ -3948,6 +4053,9 @@ public class KiwiFaceMotion : MonoBehaviour
             positionPredictionClamped = true;
         }
         targetPosition = _samplePosition + positionDelta;
+        KiwiPhase16_15RootContinuityDiagnostics.ReportPrediction(
+            positionDelta.magnitude,
+            positionLead * 1000f);
 
         if (
             !positionPredictionClamped &&
@@ -4056,6 +4164,17 @@ public class KiwiFaceMotion : MonoBehaviour
             _displayPosition = targetPosition;
             _displayScale = targetScale;
             _displayPoseInitialized = true;
+            return;
+        }
+
+        if (
+            TryApplyPhase16_13StaticRestPresentation(
+                targetRotation,
+                targetPosition,
+                targetScale,
+                dt)
+        )
+        {
             return;
         }
 
@@ -4169,12 +4288,150 @@ public class KiwiFaceMotion : MonoBehaviour
         }
     }
 
+    private bool TryApplyPhase16_13StaticRestPresentation(
+        Quaternion targetRotation,
+        Vector3 targetPosition,
+        Vector3 targetScale,
+        float dt)
+    {
+        if (
+            !enableUltraLowLatencyTracking ||
+            !ultraStaticPoseLock ||
+            !_displayPoseInitialized ||
+            _trackingWasLost
+        )
+        {
+            ResetPhase16_13PresentationRest();
+            return false;
+        }
+
+        float safeHeight = Mathf.Max(_modelHeight, 0.0001f);
+        float positionDeadZone =
+            KiwiCommercialRigidMotionPolicy.GetAdaptivePositionDeadZone(
+                ultraPositionDeadZone,
+                _lastPrecisionQuality);
+
+        float rotationCandidate = Mathf.Max(0.0001f, ultraRotationDeadZone * 1.50f);
+        float positionCandidate = Mathf.Max(0.000001f, positionDeadZone * 1.50f);
+        float scaleCandidate = Mathf.Max(0.000001f, ultraScaleDeadZone * 1.50f);
+        float rotationRelease = rotationCandidate * 1.50f;
+        float positionRelease = positionCandidate * 1.50f;
+        float scaleRelease = scaleCandidate * 1.50f;
+
+        bool rawRest =
+            _rawAngularSpeed <= ultraRotationStaticReleaseSpeed &&
+            _rawPositionSpeed <= ultraPositionStaticReleaseSpeed &&
+            _rawScaleSpeed <= ultraScaleStaticReleaseSpeed;
+
+        if (_phase16_13PresentationRestLocked)
+        {
+            float rotationError = Quaternion.Angle(
+                _phase16_13PresentationRestRotation,
+                targetRotation);
+            float positionError = Vector3.Distance(
+                _phase16_13PresentationRestPosition,
+                targetPosition) / safeHeight;
+            float restScaleFactor = SafeScaleRatio(
+                _phase16_13PresentationRestScale.x,
+                _baseScale.x);
+            float targetScaleFactor = SafeScaleRatio(
+                targetScale.x,
+                _baseScale.x);
+            float scaleError = Mathf.Abs(restScaleFactor - targetScaleFactor);
+
+            if (
+                rawRest &&
+                rotationError <= rotationRelease &&
+                positionError <= positionRelease &&
+                scaleError <= scaleRelease
+            )
+            {
+                _displayRotation = _phase16_13PresentationRestRotation;
+                _displayPosition = _phase16_13PresentationRestPosition;
+                _displayScale = _phase16_13PresentationRestScale;
+                return true;
+            }
+
+            _phase16_13PresentationRestLocked = false;
+            _phase16_13PresentationRestCandidateSeconds = 0f;
+            _phase16_13PresentationRestReleaseCount++;
+            KiwiPhase16_13PresentationDiagnostics.RecordRestRelease();
+            return false;
+        }
+
+        float candidateRotationError = Quaternion.Angle(
+            _displayRotation,
+            targetRotation);
+        float candidatePositionError = Vector3.Distance(
+            _displayPosition,
+            targetPosition) / safeHeight;
+        float displayScaleFactor = SafeScaleRatio(
+            _displayScale.x,
+            _baseScale.x);
+        float candidateTargetScaleFactor = SafeScaleRatio(
+            targetScale.x,
+            _baseScale.x);
+        float candidateScaleError = Mathf.Abs(
+            displayScaleFactor - candidateTargetScaleFactor);
+
+        bool candidate =
+            rawRest &&
+            candidateRotationError <= rotationCandidate &&
+            candidatePositionError <= positionCandidate &&
+            candidateScaleError <= scaleCandidate;
+
+        if (!candidate)
+        {
+            _phase16_13PresentationRestCandidateSeconds = 0f;
+            KiwiPhase16_13PresentationDiagnostics.ReportRestState(false, 0f);
+            return false;
+        }
+
+        _phase16_13PresentationRestCandidateSeconds +=
+            Mathf.Clamp(dt, 0f, 0.05f);
+        KiwiPhase16_13PresentationDiagnostics.ReportRestState(
+            false,
+            _phase16_13PresentationRestCandidateSeconds);
+
+        if (
+            _phase16_13PresentationRestCandidateSeconds <
+                Mathf.Max(0.04f, ultraStaticLockSeconds)
+        )
+        {
+            return false;
+        }
+
+        _phase16_13PresentationRestRotation = _displayRotation;
+        _phase16_13PresentationRestPosition = _displayPosition;
+        _phase16_13PresentationRestScale = _displayScale;
+        _phase16_13PresentationRestLocked = true;
+        _phase16_13PresentationRestLockCount++;
+        KiwiPhase16_13PresentationDiagnostics.ReportRestState(
+            true,
+            _phase16_13PresentationRestCandidateSeconds);
+        KiwiPhase16_13PresentationDiagnostics.RecordRestLock();
+        return true;
+    }
+
+    private void ResetPhase16_13PresentationRest()
+    {
+        _phase16_13PresentationRestLocked = false;
+        _phase16_13PresentationRestCandidateSeconds = 0f;
+        _phase16_13PresentationRestRotation = Quaternion.identity;
+        _phase16_13PresentationRestPosition = Vector3.zero;
+        _phase16_13PresentationRestScale = Vector3.one;
+        KiwiPhase16_13PresentationDiagnostics.ReportRestState(false, 0f);
+    }
+
+
     private bool ApplyZeroLagMotionTarget(
         Quaternion targetRotation,
         Vector3 targetPosition,
         Vector3 targetScale,
         float dt)
     {
+        KiwiPhase16_15RootContinuityDiagnostics.ReportCorrectionBacklog(false);
+
         if (
             !ultraDirectDisplayDuringMotion ||
             !_displayPoseInitialized ||
@@ -4234,6 +4491,9 @@ public class KiwiFaceMotion : MonoBehaviour
                     ultraPositionDirectError * 2f
                 ) ||
                 _predictionPositionConsistency < 0.35f;
+
+            KiwiPhase16_15RootContinuityDiagnostics.ReportCorrectionBacklog(
+                correctionBacklog);
 
             _displayPosition =
                 !ultraPredictivePositionResampling || correctionBacklog
@@ -4438,12 +4698,235 @@ public class KiwiFaceMotion : MonoBehaviour
                 ultraDirectBypassMinimumTrackingRateHz);
     }
 
+    private void BeginPhase16_15NoFrameHold()
+    {
+        if (!_phase16_15AuthoritativeFrameMissing)
+        {
+            _phase16_15AuthoritativeFrameMissing = true;
+            _phase16_15MissingProviderGeneration =
+                KiwiCommercialRigidMotionPolicy.GetAuthoritativeProviderGeneration();
+            _phase16_15MissingBackend = _lastAcceptedBackend;
+            _phase16_15NoFrameHoldCount++;
+            KiwiPhase16_15RootContinuityDiagnostics.RecordNoFrameHoldStart();
+        }
+
+        KiwiPhase16_15RootContinuityDiagnostics.ReportFrameAvailability(
+            true,
+            true);
+    }
+
+    private void HandlePhase16_15AcceptedAuthoritativeFrame(
+        int providerGeneration,
+        KiwiTrackingBackend backend)
+    {
+        bool startedResume = false;
+
+        if (_phase16_15AuthoritativeFrameMissing)
+        {
+            bool sameGeneration =
+                providerGeneration == _phase16_15MissingProviderGeneration;
+            bool sameBackend =
+                _phase16_15MissingBackend == KiwiTrackingBackend.Unknown ||
+                backend == KiwiTrackingBackend.Unknown ||
+                backend == _phase16_15MissingBackend;
+
+            _phase16_15AuthoritativeFrameMissing = false;
+            KiwiPhase16_15RootContinuityDiagnostics.ReportFrameAvailability(
+                false,
+                false);
+
+            if (sameGeneration && sameBackend)
+            {
+                _phase16_15ResumeBridgeActive = true;
+                _phase16_15ResumeBridgeAcceptedSamplesRemaining = 3;
+                _phase16_15SameProviderResumeCount++;
+                startedResume = true;
+            }
+            else
+            {
+                _phase16_15ResumeBridgeActive = false;
+                _phase16_15ResumeBridgeAcceptedSamplesRemaining = 0;
+            }
+        }
+        else if (_phase16_15ResumeBridgeActive)
+        {
+            _phase16_15ResumeBridgeAcceptedSamplesRemaining =
+                Mathf.Max(
+                    0,
+                    _phase16_15ResumeBridgeAcceptedSamplesRemaining - 1);
+
+            if (_phase16_15ResumeBridgeAcceptedSamplesRemaining <= 0)
+            {
+                _phase16_15ResumeBridgeActive = false;
+            }
+        }
+
+        KiwiPhase16_15RootContinuityDiagnostics.ReportSameProviderResume(
+            _phase16_15ResumeBridgeActive,
+            _phase16_15ResumeBridgeAcceptedSamplesRemaining,
+            startedResume);
+    }
+
+    private void ClearPhase16_15PresentationRecovery()
+    {
+        _phase16_15AuthoritativeFrameMissing = false;
+        _phase16_15ResumeBridgeActive = false;
+        _phase16_15ResumeBridgeAcceptedSamplesRemaining = 0;
+        KiwiPhase16_15RootContinuityDiagnostics.ReportFrameAvailability(false, false);
+        KiwiPhase16_15RootContinuityDiagnostics.ReportSameProviderResume(false, 0, false);
+    }
+
+    private void ResetPhase16_15RootContinuityState()
+    {
+        _phase16_15MissingProviderGeneration = 0;
+        _phase16_15MissingBackend = KiwiTrackingBackend.Unknown;
+        ClearPhase16_15PresentationRecovery();
+        KiwiPhase16_15RootContinuityDiagnostics.ReportPrediction(0f, 0f);
+        KiwiPhase16_15RootContinuityDiagnostics.ReportCorrectionBacklog(false);
+    }
+
+    private float CalculatePhase16_15MappedPositionStepLimit(float dt)
+    {
+        float safeDt = Mathf.Clamp(dt, 0f, 0.05f);
+        float safeHeight = Mathf.Max(_modelHeight, 0.0001f);
+        float modelHeightLimit =
+            safeHeight *
+            Mathf.Max(0f, ultraFrameContinuityMaxPositionSpeedHeightsPerSecond) *
+            safeDt;
+
+        if (!useScreenSpacePositionMapping || safeDt <= 0f)
+        {
+            return modelHeightLimit;
+        }
+
+        const float Probe = 0.05f;
+        Vector3 xMapped = CalculateScreenMappedPosition(new Vector2(Probe, 0f));
+        Vector3 yMapped = CalculateScreenMappedPosition(new Vector2(0f, Probe));
+        float unitsPerNormalized =
+            Mathf.Max(
+                Vector3.Distance(_basePosition, xMapped),
+                Vector3.Distance(_basePosition, yMapped)) / Probe;
+
+        if (
+            unitsPerNormalized <= 0.0001f ||
+            float.IsNaN(unitsPerNormalized) ||
+            float.IsInfinity(unitsPerNormalized)
+        )
+        {
+            return modelHeightLimit;
+        }
+
+        float normalizedSpeedLimit =
+            Mathf.Max(0.25f, precisionPositionOutlierSpeed) *
+            Mathf.Max(0.25f, faceMotionMultiplier) *
+            1.50f;
+        float mappedLimit =
+            unitsPerNormalized * normalizedSpeedLimit * safeDt;
+
+        return Mathf.Min(
+            modelHeightLimit,
+            Mathf.Max(0.0005f, mappedLimit));
+    }
+
+    private void ApplyPhase16_15RootCorrectionEnvelope()
+    {
+        if (kiwiRoot == null || !_displayPoseInitialized)
+        {
+            return;
+        }
+
+        Vector3 previousPosition = kiwiRoot.localPosition;
+        Quaternion previousRotation = kiwiRoot.localRotation;
+        Vector3 previousScale = kiwiRoot.localScale;
+
+        float rawPositionDelta = Vector3.Distance(previousPosition, _samplePosition);
+        float rawRotationDelta = Quaternion.Angle(previousRotation, _sampleRotation);
+        float previousScaleFactor = SafeScaleRatio(previousScale.x, _baseScale.x);
+        float rawScaleFactor = SafeScaleRatio(_sampleScale.x, _baseScale.x);
+        float rawScaleDelta = Mathf.Abs(rawScaleFactor - previousScaleFactor);
+
+        float prePositionDelta = Vector3.Distance(previousPosition, _displayPosition);
+        float preRotationDelta = Quaternion.Angle(previousRotation, _displayRotation);
+        float preScaleFactor = SafeScaleRatio(_displayScale.x, _baseScale.x);
+        float preScaleDelta = Mathf.Abs(preScaleFactor - previousScaleFactor);
+
+        float dt = Mathf.Clamp(Time.unscaledDeltaTime, 1f / 500f, 0.05f);
+        float maxPositionStep = 0f;
+        float maxRotationStep = 0f;
+        float maxScaleStep = 0f;
+        bool capApplied = false;
+
+        bool finalEnvelopeActive =
+            enableUltraLowLatencyTracking &&
+            ultraDisableSecondaryBodyMotion &&
+            (
+                _phase16_15ResumeBridgeActive ||
+                KiwiFrameContinuityDiagnostics.DiscontinuityGuardActive
+            );
+
+        if (finalEnvelopeActive)
+        {
+            maxPositionStep = CalculatePhase16_15MappedPositionStepLimit(dt);
+            maxRotationStep =
+                Mathf.Max(0f, ultraFrameContinuityMaxRotationSpeedDegreesPerSecond) * dt;
+            maxScaleStep =
+                Mathf.Max(0f, ultraFrameContinuityMaxScaleSpeedPerSecond) * dt;
+
+            Vector3 boundedPosition = Vector3.MoveTowards(
+                previousPosition,
+                _displayPosition,
+                maxPositionStep);
+            Quaternion boundedRotation = Quaternion.RotateTowards(
+                previousRotation,
+                _displayRotation,
+                maxRotationStep);
+            float boundedScaleFactor = Mathf.MoveTowards(
+                previousScaleFactor,
+                preScaleFactor,
+                maxScaleStep);
+            Vector3 boundedScale = _baseScale * boundedScaleFactor;
+
+            capApplied =
+                Vector3.Distance(boundedPosition, _displayPosition) > 0.000001f ||
+                Quaternion.Angle(boundedRotation, _displayRotation) > 0.0001f ||
+                Vector3.Distance(boundedScale, _displayScale) > 0.000001f;
+
+            _displayPosition = boundedPosition;
+            _displayRotation = boundedRotation;
+            _displayScale = boundedScale;
+        }
+
+        float postPositionDelta = Vector3.Distance(previousPosition, _displayPosition);
+        float postRotationDelta = Quaternion.Angle(previousRotation, _displayRotation);
+        float postScaleFactor = SafeScaleRatio(_displayScale.x, _baseScale.x);
+        float postScaleDelta = Mathf.Abs(postScaleFactor - previousScaleFactor);
+
+        KiwiPhase16_15RootContinuityDiagnostics.ReportEnvelope(
+            _modelHeight,
+            rawPositionDelta,
+            rawRotationDelta,
+            rawScaleDelta,
+            prePositionDelta,
+            preRotationDelta,
+            preScaleDelta,
+            postPositionDelta,
+            postRotationDelta,
+            postScaleDelta,
+            maxPositionStep,
+            maxRotationStep,
+            maxScaleStep,
+            capApplied);
+    }
+
+
     private void RenderDisplayPose()
     {
         if (!_displayPoseInitialized)
         {
             ResetDisplayPoseToSamples();
         }
+
+        ApplyPhase16_15RootCorrectionEnvelope();
 
         RenderRotation(_displayRotation);
         RenderPosition(_displayPosition);
@@ -4463,6 +4946,8 @@ public class KiwiFaceMotion : MonoBehaviour
 
     private void ResetUltraStaticLocks()
     {
+        ResetPhase16_13PresentationRest();
+
         _ultraRotationStaticLocked = false;
         _ultraPositionStaticLocked = false;
         _ultraScaleStaticLocked = false;
@@ -4478,6 +4963,7 @@ public class KiwiFaceMotion : MonoBehaviour
     private void ResetPrecisionState()
     {
         ResetUltraStaticLocks();
+        ResetPhase16_15RootContinuityState();
         _hasPrecisionInputHistory =
             false;
 

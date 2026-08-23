@@ -18,12 +18,29 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
     /// - discard stale-anchor completions rather than letting an old ROI snap
     ///   the avatar after reacquisition.
     ///
-    /// v5.0 keeps three preallocated desktop lanes and adapts the scheduling
-    /// budget between one, two, and three lanes. Sustained severe GPU latency
-    /// reduces the queue to one lane, two lanes are the normal operating point,
-    /// and the third lane is enabled only after a sustained low-latency streak.
-    /// This favors low end-to-end latency over backlog depth without reallocating
-    /// runtime buffers.
+    /// Phase 16.10 keeps a bounded commercial fresh-frame pipeline on desktop:
+    /// three GPU lanes are preallocated, at least two remain schedulable, and the
+    /// third lane is shed only under sustained pressure. Camera frames are still
+    /// coalesced latest-first and stale completions are discarded, so increasing
+    /// overlap raises fresh-result cadence without creating an unbounded queue.
+    ///
+    /// Phase 16.11 is freshness-first rather than throughput-only. Soft auxiliary
+    /// MediaPipe ROI corrections become future-only updates instead of invalidating
+    /// already submitted jobs whose crop matrix/source timestamp are still coherent.
+    /// The live path also schedules a newest camera frame before CPU completion
+    /// decode when a free lane exists and no completed GPU result is waiting.
+    ///
+    /// Phase 16.12 separates sample rejection from ROI authority loss. Short
+    /// presence/validity dips retain the last trusted ROI and optionally widen only
+    /// the recovery crop. After the existing failure-health gate is crossed, high-
+    /// rate ownership is allowed to fall back while the internal ROI remains leased;
+    /// a trusted inference result or auxiliary MediaPipe anchor re-arms it without a
+    /// hard reset. The ROI is released only after the trusted lease actually expires.
+    ///
+    /// Phase 16.13 is latency-first. Desktop begins single-flight, measures the
+    /// actual service latency, and promotes to two/three bounded lanes only if one
+    /// lane cannot sustain the minimum commercial cadence. This distinguishes true
+    /// model time from queue depth without changing ROI or confidence semantics.
     /// </summary>
     public sealed class KiwiInferenceFaceTracker : IDisposable
     {
@@ -81,7 +98,15 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
             public long pendingSourceHostTicks;
             public long pendingStartedHostTicks;
+
+            // KIWI_V5_1_PHASE16_12_INFERENCE_STAGE_PROFILING
+            // These host timestamps split CPU submit, GPU+readback wait and
+            // CPU decode without introducing any blocking synchronization.
+            public long pendingScheduleBeginHostTicks;
+            public long pendingReadbackRequestHostTicks;
+
             public int pendingAnchorRevision;
+            public int pendingExternalAnchorEpoch;
             public int pendingTrackerGeneration;
 
             // KIWI_V5_1_PHASE2_INFERENCE_ASYNC_IDENTITY
@@ -167,6 +192,9 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 pendingOutput =
                     null;
 
+                pendingScheduleBeginHostTicks = 0L;
+                pendingReadbackRequestHostTicks = 0L;
+                pendingExternalAnchorEpoch = 0;
                 pendingCameraGeneration = 0;
                 pendingTrackingSessionGeneration = 0;
                 pendingMinimumPresence = 0f;
@@ -203,6 +231,7 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             public long arrivalHostTicks;
             public long startedHostTicks;
             public int anchorRevision;
+            public int externalAnchorEpoch;
             public int trackerGeneration;
             public int cameraGeneration;
             public int trackingSessionGeneration;
@@ -214,22 +243,45 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
         private readonly Lane[] _lanes;
 
         // KIWI_V5_0_ADAPTIVE_LANE_BUDGET
-        // All workers are allocated once. Runtime only changes how many lanes
-        // may receive new work, so no GC/reallocation is introduced.
-        private int _schedulingLaneLimit = 1;
+        // KIWI_V5_1_PHASE16_10_COMMERCIAL_FRESH_FRAME_PIPELINE
+        // KIWI_V5_1_PHASE16_10_DESKTOP_BOUNDED_2_3_LANE
+        // KIWI_V5_1_PHASE16_13_LATENCY_FIRST_SINGLE_FLIGHT
+        // KIWI_V5_1_PHASE16_14_STABLE_DESKTOP_THREE_LANE
+        // Phase 16.13 proved that the ~90-100 ms single-flight latency is real
+        // service time on this Windows/DX11 path, not merely three-lane queue
+        // depth. The adaptive 1/2/3 lane policy therefore reduced cadence without
+        // reducing accepted-source age. Phase 16.14 keeps all workers preallocated
+        // and fixes desktop scheduling at the available three-lane ceiling
+        // (clamped to the actual allocated lane count). Camera history remains
+        // bounded because unscheduled frames still coalesce to the newest source.
+        private int _schedulingLaneLimit = 3;
         private int _lowLatencyCompletionStreak;
         private int _highLatencyCompletionStreak;
         private int _severeLatencyCompletionStreak;
         private int _recoveryLatencyCompletionStreak;
+        private long _previousReadbackCompletionHostTicks;
+        private float _latestCompletionIntervalMs;
+        private int _latencyFirstLanePromotionCount;
+        private int _latencyFirstLaneDemotionCount;
+        private int _singleFlightProbeCount;
 
-        private const float EnableThirdLaneBelowMs = 48f;
-        private const float DisableThirdLaneAboveMs = 62f;
-        private const float ReduceToSingleLaneAboveMs = 92f;
-        private const float RecoverSecondLaneBelowMs = 68f;
-        private const int EnableThirdLaneStreak = 24;
-        private const int DisableThirdLaneStreak = 4;
-        private const int ReduceToSingleLaneStreak = 6;
-        private const int RecoverSecondLaneStreak = 14;
+        private const int DesktopStableSchedulingLanes = 3;
+        private const int MobileStableSchedulingLanes = 2;
+
+        // KIWI_V5_1_PHASE16_12_PERSISTENT_ROI_AUTHORITY
+        // A rejected sample is not proof that the ROI itself is invalid. Keep
+        // the internal crop authority while a recent valid inference or
+        // auxiliary MediaPipe anchor still vouches for it. This lease is
+        // internal only: it never republishes an old landmark sample.
+        private const int PersistentRegionMinimumFailureCount = 4;
+        private const float PersistentRegionGraceSeconds = 0.75f;
+
+        // Recovery-only crop widening. This is not a presentation filter and
+        // does not move the ROI center. A valid sample immediately tightens the
+        // crop back through the normal landmark->ROI solve.
+        private const int RecoveryExpansionStartFailures = 2;
+        private const int RecoveryExpansionFullFailures = 4;
+        private const float RecoveryExpansionMaxScale = 1.35f;
 
         private readonly Vector3[] _landmarks =
             new Vector3[CompatibleLandmarkCount];
@@ -247,9 +299,20 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
         private bool _inputGammaPreservationActive;
 
         private int _anchorRevision;
+        private int _externalAnchorEpoch;
         private int _trackerGeneration;
         private int _consecutiveFailures;
         private int _nextLaneIndex;
+
+        // Phase 16.12 persistent internal ROI lease. The timestamp is refreshed
+        // only by a valid inference result or a MediaPipe external anchor.
+        private long _lastTrustedRegionHostTicks;
+        private float _trustedRegionWidth;
+        private float _trustedRegionHeight;
+        private bool _regionRetentionActive;
+        private float _regionRecoveryScale = 1f;
+        private int _retainedRegionFailureCount;
+        private int _regionReleaseCount;
 
         private long _latestCompletedSourceHostTicks;
         private long _latestCompletedArrivalHostTicks;
@@ -262,6 +325,23 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
         private int _rejectedInvalidFrameCount;
         private int _discardedStaleFrameCount;
         private int _discardedCrossSystemFrameCount;
+        // KIWI_V5_1_PHASE16_11_FRESHNESS_FIRST_INFERENCE
+        private int _discardedStaleAnchorFrameCount;
+        private int _discardedStaleGenerationFrameCount;
+        private int _discardedStaleSourceFrameCount;
+        private int _softExternalAnchorUpdateCount;
+        private int _hardExternalAnchorInvalidationCount;
+        private int _softAnchorSupersededRoiUpdateCount;
+        private float _latestScheduleDelayMs;
+        private float _latestSourceToCompletionAgeMs;
+        private float _latestAcceptedSourceAgeMs;
+
+        // Phase 16.12 stage profiling. GPU execution and transfer cannot be
+        // separated exactly by the public non-blocking Inference Engine API, so
+        // the middle metric is intentionally named GPU+readback wait.
+        private float _latestScheduleCpuMs;
+        private float _latestGpuReadbackWaitMs;
+        private float _latestDecodeCpuMs;
 
         public float MinimumPresence { get; set; } =
             0.5f;
@@ -269,11 +349,50 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
         public bool HasRegion =>
             _hasRegion;
 
+        // Tracking health and ROI existence are intentionally different.
+        // After the failure gate, Runner may fall back to MediaPipe while the
+        // internal ROI lease remains available for a soft re-arm.
         public bool IsTracking =>
             _hasRegion &&
-            _consecutiveFailures < 4;
+            _consecutiveFailures <
+                PersistentRegionMinimumFailureCount;
 
+        public int ConsecutiveFailures =>
+            _consecutiveFailures;
+
+        public bool RegionRetentionActive =>
+            _regionRetentionActive;
+
+        public float RegionTrustedAgeMs =>
+            GetTrustedRegionAgeMs(
+                System.Diagnostics.Stopwatch.GetTimestamp());
+
+        public float RegionGraceRemainingMs =>
+            GetRegionGraceRemainingMs(
+                System.Diagnostics.Stopwatch.GetTimestamp());
+
+        public float RegionRecoveryScale =>
+            _regionRecoveryScale;
+
+        public int RetainedRegionFailureCount =>
+            _retainedRegionFailureCount;
+
+        public int RegionReleaseCount =>
+            _regionReleaseCount;
+
+        public float RegionCenterXNormalized =>
+            _regionCenter.x;
+
+        public float RegionCenterYNormalized =>
+            _regionCenter.y;
+
+        // Runner uses this together with IsTracking to decide whether the
+        // high-rate backend may continue owning publication. Once the health
+        // gate is crossed, do not let still-draining GPU lanes block immediate
+        // MediaPipe fallback. Physical lane pressure remains observable through
+        // ActiveLaneCount / OldestPendingAgeMs.
         public bool IsAsyncReadbackPending =>
+            IsTracking &&
             ActiveLaneCount > 0;
 
         public float RegionWidthNormalized =>
@@ -324,6 +443,24 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
         public int SchedulingLaneLimit =>
             _schedulingLaneLimit;
+
+        public bool LatencyFirstSchedulingActive =>
+            false;
+
+        public bool StableDesktopSchedulingActive =>
+            !Application.isMobilePlatform;
+
+        public float LatestCompletionIntervalMs =>
+            _latestCompletionIntervalMs;
+
+        public int LatencyFirstLanePromotionCount =>
+            _latencyFirstLanePromotionCount;
+
+        public int LatencyFirstLaneDemotionCount =>
+            _latencyFirstLaneDemotionCount;
+
+        public int SingleFlightProbeCount =>
+            _singleFlightProbeCount;
 
         public int ActiveLaneCount
         {
@@ -426,6 +563,24 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
         public float LatestLatencyMs { get; private set; }
 
+        public float LatestScheduleDelayMs =>
+            _latestScheduleDelayMs;
+
+        public float LatestSourceToCompletionAgeMs =>
+            _latestSourceToCompletionAgeMs;
+
+        public float LatestAcceptedSourceAgeMs =>
+            _latestAcceptedSourceAgeMs;
+
+        public float LatestScheduleCpuMs =>
+            _latestScheduleCpuMs;
+
+        public float LatestGpuReadbackWaitMs =>
+            _latestGpuReadbackWaitMs;
+
+        public float LatestDecodeCpuMs =>
+            _latestDecodeCpuMs;
+
         public long LatestCompletedSourceHostTicks =>
             _latestCompletedSourceHostTicks;
 
@@ -462,6 +617,24 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
         public int DiscardedCrossSystemFrameCount =>
             _discardedCrossSystemFrameCount;
+
+        public int DiscardedStaleAnchorFrameCount =>
+            _discardedStaleAnchorFrameCount;
+
+        public int DiscardedStaleGenerationFrameCount =>
+            _discardedStaleGenerationFrameCount;
+
+        public int DiscardedStaleSourceFrameCount =>
+            _discardedStaleSourceFrameCount;
+
+        public int SoftExternalAnchorUpdateCount =>
+            _softExternalAnchorUpdateCount;
+
+        public int HardExternalAnchorInvalidationCount =>
+            _hardExternalAnchorInvalidationCount;
+
+        public int SoftAnchorSupersededRoiUpdateCount =>
+            _softAnchorSupersededRoiUpdateCount;
 
         public KiwiInferenceFaceTracker(
             ModelAsset modelAsset,
@@ -530,12 +703,14 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             _schedulingLaneLimit =
                 Mathf.Clamp(
                     Application.isMobilePlatform
-                        ? 2
-                        : 2,
+                        ? MobileStableSchedulingLanes
+                        : DesktopStableSchedulingLanes,
                     1,
                     Mathf.Max(
                         1,
                         _lanes.Length));
+
+            _singleFlightProbeCount = 0;
         }
 
         public void Dispose()
@@ -562,6 +737,9 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             _hasRegion =
                 false;
 
+            _externalAnchorEpoch =
+                0;
+
             _regionWidth =
                 0f;
 
@@ -573,6 +751,21 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
             _consecutiveFailures =
                 0;
+
+            _lastTrustedRegionHostTicks =
+                0L;
+
+            _trustedRegionWidth =
+                0f;
+
+            _trustedRegionHeight =
+                0f;
+
+            _regionRetentionActive =
+                false;
+
+            _regionRecoveryScale =
+                1f;
 
             _lowLatencyCompletionStreak =
                 0;
@@ -589,14 +782,20 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             _schedulingLaneLimit =
                 Mathf.Clamp(
                     Application.isMobilePlatform
-                        ? 2
-                        : 2,
+                        ? MobileStableSchedulingLanes
+                        : DesktopStableSchedulingLanes,
                     1,
                     Mathf.Max(
                         1,
                         _lanes != null
                             ? _lanes.Length
                             : 1));
+
+            _previousReadbackCompletionHostTicks = 0L;
+            _latestCompletionIntervalMs = 0f;
+            _latencyFirstLanePromotionCount = 0;
+            _latencyFirstLaneDemotionCount = 0;
+            _singleFlightProbeCount = 0;
 
             LatestPresence =
                 0f;
@@ -608,6 +807,24 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 "-";
 
             LatestLatencyMs =
+                0f;
+
+            _latestScheduleDelayMs =
+                0f;
+
+            _latestSourceToCompletionAgeMs =
+                0f;
+
+            _latestAcceptedSourceAgeMs =
+                0f;
+
+            _latestScheduleCpuMs =
+                0f;
+
+            _latestGpuReadbackWaitMs =
+                0f;
+
+            _latestDecodeCpuMs =
                 0f;
 
             _latestCompletedSourceHostTicks =
@@ -657,7 +874,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     centerBottomLeft,
                     width,
                     height,
-                    rollRadiansBottomLeft);
+                    rollRadiansBottomLeft,
+                    true);
 
                 return;
             }
@@ -729,6 +947,7 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             // translation, size or roll drift. Translation is compared in
             // pixel space so a 16:9 source cannot bias vertical corrections.
             if (
+                _regionRetentionActive ||
                 centerDistancePixels >
                     Mathf.Max(
                         12f,
@@ -742,19 +961,36 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     18f
             )
             {
+                // KIWI_V5_1_PHASE16_11_SOFT_ANCHOR_FUTURE_ONLY
+                // This correction updates future crops only. Jobs already in
+                // flight retain the exact crop matrix/source timestamp they were
+                // submitted with, so invalidating all of them here only creates
+                // avoidable age and gaps. Hard invalidation remains reserved for
+                // first-anchor / forced-reacquire transitions.
                 AdoptExternalAnchor(
                     centerBottomLeft,
                     width,
                     height,
-                    rollRadiansBottomLeft);
+                    rollRadiansBottomLeft,
+                    false);
+
+                return;
             }
+
+            // A close MediaPipe anchor is still valuable ROI evidence. It
+            // confirms the current crop without moving it and refreshes the
+            // persistent lease. A sub-threshold 1-3 inference failure streak is
+            // intentionally preserved; only an already-unhealthy backend is
+            // explicitly re-armed by the next trusted anchor.
+            MarkExternalAnchorTrusted();
         }
 
         private void AdoptExternalAnchor(
             Vector2 centerBottomLeft,
             float width,
             float height,
-            float rollRadiansBottomLeft)
+            float rollRadiansBottomLeft,
+            bool invalidatePending)
         {
             _regionCenter =
                 centerBottomLeft;
@@ -777,10 +1013,19 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             _hasRegion =
                 true;
 
-            _consecutiveFailures =
-                0;
+            MarkExternalAnchorTrusted();
 
-            _anchorRevision++;
+            _externalAnchorEpoch++;
+
+            if (invalidatePending)
+            {
+                _anchorRevision++;
+                _hardExternalAnchorInvalidationCount++;
+            }
+            else
+            {
+                _softExternalAnchorUpdateCount++;
+            }
         }
 
         /// <summary>
@@ -842,9 +1087,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                         PackedOutputLength
                 )
                 {
-                    RegisterFailure();
-                    LatestRejectionReason =
-                        DecodeStatus.InvalidOutput.ToString();
+                    RegisterDecodeFailure(
+                        DecodeStatus.InvalidOutput);
                     return false;
                 }
 
@@ -888,8 +1132,7 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 UpdateRegionFromLandmarks(
                     _landmarks);
 
-                _consecutiveFailures =
-                    0;
+                MarkRegionTrusted();
 
                 _completedFrameCount++;
 
@@ -950,6 +1193,30 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             bool anyNonStaleFailure =
                 false;
 
+            EvaluateRegionLeaseExpiry();
+
+            bool shouldScheduleLatest =
+                scheduleLatestSource &&
+                IsTracking &&
+                source != null;
+
+            // KIWI_V5_1_PHASE16_11_SCHEDULE_BEFORE_CPU_DECODE
+            // If a lane is already free and no GPU completion is waiting, push
+            // the newest camera frame immediately. A ready completion still polls
+            // first so its newer ROI can be used for the next crop.
+            if (
+                shouldScheduleLatest &&
+                HasSchedulableFreeLane() &&
+                !HasReadyCompletion())
+            {
+                scheduledLatestSource =
+                    TryScheduleNewestSource(
+                        source,
+                        flipHorizontally,
+                        flipVertically,
+                        latestSourceHostTicks);
+            }
+
             PollCompletedLanes(
                 ref newestCompletion,
                 ref newestValidCompletion,
@@ -982,14 +1249,26 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 _latestCompletedArrivalHostTicks =
                     newestValidCompletion.arrivalHostTicks;
 
-                // Only the newest accepted result from the current anchor may
-                // advance the ROI. Old in-flight crops are never allowed to
-                // pull the current ROI backwards.
-                UpdateRegionFromLandmarks(
-                    _landmarks);
+                RecordAcceptedSourceAge(
+                    newestValidCompletion.sourceHostTicks,
+                    System.Diagnostics.Stopwatch.GetTimestamp());
 
-                _consecutiveFailures =
-                    0;
+                // A pre-correction result remains valid for presentation in
+                // the crop matrix/source frame it was submitted with, but it must
+                // not roll a newer external ROI correction backwards.
+                if (
+                    newestValidCompletion.externalAnchorEpoch ==
+                    _externalAnchorEpoch)
+                {
+                    UpdateRegionFromLandmarks(
+                        _landmarks);
+                }
+                else
+                {
+                    _softAnchorSupersededRoiUpdateCount++;
+                }
+
+                MarkRegionTrusted();
 
                 _completedFrameCount++;
 
@@ -1029,18 +1308,17 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 }
             }
 
-            if (
-                scheduleLatestSource &&
-                _hasRegion &&
-                source != null
-            )
+            if (shouldScheduleLatest)
             {
-                scheduledLatestSource =
-                    TryScheduleNewestSource(
-                        source,
-                        flipHorizontally,
-                        flipVertically,
-                        latestSourceHostTicks);
+                if (!scheduledLatestSource)
+                {
+                    scheduledLatestSource =
+                        TryScheduleNewestSource(
+                            source,
+                            flipHorizontally,
+                            flipVertically,
+                            latestSourceHostTicks);
+                }
 
                 if (!scheduledLatestSource)
                 {
@@ -1094,11 +1372,21 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 long completedSourceTicks =
                     lane.pendingSourceHostTicks;
 
+                RecordSourceToCompletionAge(
+                    completedSourceTicks,
+                    arrivalHostTicks);
+
                 long startedTicks =
                     lane.pendingStartedHostTicks;
 
+                long readbackRequestTicks =
+                    lane.pendingReadbackRequestHostTicks;
+
                 int completedAnchorRevision =
                     lane.pendingAnchorRevision;
+
+                int completedExternalAnchorEpoch =
+                    lane.pendingExternalAnchorEpoch;
 
                 int completedGeneration =
                     lane.pendingTrackerGeneration;
@@ -1124,7 +1412,16 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 lane.pendingStartedHostTicks =
                     0L;
 
+                lane.pendingScheduleBeginHostTicks =
+                    0L;
+
+                lane.pendingReadbackRequestHostTicks =
+                    0L;
+
                 lane.pendingAnchorRevision =
+                    0;
+
+                lane.pendingExternalAnchorEpoch =
                     0;
 
                 lane.pendingTrackerGeneration =
@@ -1141,6 +1438,13 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
                 _readbackCompletedFrameCount++;
 
+                RecordReadbackCompletionInterval(
+                    arrivalHostTicks);
+
+                RecordGpuReadbackWait(
+                    readbackRequestTicks,
+                    arrivalHostTicks);
+
                 Completion completion =
                     new Completion
                     {
@@ -1156,6 +1460,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                             startedTicks,
                         anchorRevision =
                             completedAnchorRevision,
+                        externalAnchorEpoch =
+                            completedExternalAnchorEpoch,
                         trackerGeneration =
                             completedGeneration,
                         cameraGeneration =
@@ -1228,9 +1534,23 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
                     _discardedStaleFrameCount++;
 
-                    if (preDecodeStaleStatus == DecodeStatus.StaleCrossSystem)
+                    switch (preDecodeStaleStatus)
                     {
-                        _discardedCrossSystemFrameCount++;
+                        case DecodeStatus.StaleAnchor:
+                            _discardedStaleAnchorFrameCount++;
+                            break;
+
+                        case DecodeStatus.StaleGeneration:
+                            _discardedStaleGenerationFrameCount++;
+                            break;
+
+                        case DecodeStatus.StaleSource:
+                            _discardedStaleSourceFrameCount++;
+                            break;
+
+                        case DecodeStatus.StaleCrossSystem:
+                            _discardedCrossSystemFrameCount++;
+                            break;
                     }
 
                     RecordLatency(
@@ -1250,6 +1570,9 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
                     continue;
                 }
+
+                long decodeStartHostTicks =
+                    System.Diagnostics.Stopwatch.GetTimestamp();
 
                 try
                 {
@@ -1331,6 +1654,10 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                         true;
                 }
 
+                RecordDecodeCpu(
+                    decodeStartHostTicks,
+                    System.Diagnostics.Stopwatch.GetTimestamp());
+
                 RecordLatency(
                     startedTicks,
                     arrivalHostTicks);
@@ -1409,6 +1736,9 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             Lane lane =
                 _lanes[laneIndex];
 
+            long scheduleBeginHostTicks =
+                System.Diagnostics.Stopwatch.GetTimestamp();
+
             try
             {
                 UpdateSourceDimensions(
@@ -1434,8 +1764,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                         PackedOutputLength
                 )
                 {
-                    _rejectedInvalidFrameCount++;
-                    RegisterFailure();
+                    RegisterDecodeFailure(
+                        DecodeStatus.InvalidOutput);
                     return false;
                 }
 
@@ -1448,12 +1778,22 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                         : System.Diagnostics.Stopwatch
                             .GetTimestamp();
 
+                lane.pendingScheduleBeginHostTicks =
+                    scheduleBeginHostTicks;
+
                 lane.pendingStartedHostTicks =
                     System.Diagnostics.Stopwatch
                         .GetTimestamp();
 
+                RecordScheduleDelay(
+                    lane.pendingSourceHostTicks,
+                    lane.pendingStartedHostTicks);
+
                 lane.pendingAnchorRevision =
                     _anchorRevision;
+
+                lane.pendingExternalAnchorEpoch =
+                    _externalAnchorEpoch;
 
                 lane.pendingTrackerGeneration =
                     _trackerGeneration;
@@ -1473,8 +1813,15 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 lane.pendingOutput =
                     packedOutput;
 
+                lane.pendingReadbackRequestHostTicks =
+                    System.Diagnostics.Stopwatch.GetTimestamp();
+
                 lane.pendingOutput
                     .ReadbackRequest();
+
+                RecordScheduleCpu(
+                    lane.pendingScheduleBeginHostTicks,
+                    System.Diagnostics.Stopwatch.GetTimestamp());
 
                 lane.readbackPending =
                     true;
@@ -1508,7 +1855,16 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 lane.pendingStartedHostTicks =
                     0L;
 
+                lane.pendingScheduleBeginHostTicks =
+                    0L;
+
+                lane.pendingReadbackRequestHostTicks =
+                    0L;
+
                 lane.pendingAnchorRevision =
+                    0;
+
+                lane.pendingExternalAnchorEpoch =
                     0;
 
                 lane.pendingTrackerGeneration =
@@ -1523,12 +1879,40 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 lane.pendingMinimumPresence =
                     0f;
 
-                _rejectedInvalidFrameCount++;
-
-                RegisterFailure();
+                RegisterDecodeFailure(
+                    DecodeStatus.Exception);
 
                 return false;
             }
+        }
+
+        private bool HasSchedulableFreeLane()
+        {
+            return FindFreeLane() >= 0;
+        }
+
+        private bool HasReadyCompletion()
+        {
+            if (_lanes == null)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < _lanes.Length; i++)
+            {
+                Lane lane = _lanes[i];
+
+                if (
+                    lane != null &&
+                    lane.readbackPending &&
+                    lane.pendingOutput != null &&
+                    lane.pendingOutput.IsReadbackRequestDone())
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private int FindFreeLane()
@@ -2332,15 +2716,438 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
         {
             _consecutiveFailures++;
 
+            if (!_hasRegion)
+            {
+                return;
+            }
+
+            long now =
+                System.Diagnostics.Stopwatch.GetTimestamp();
+
+            float trustedAgeMs =
+                GetTrustedRegionAgeMs(now);
+
+            bool hasTrustedLease =
+                _lastTrustedRegionHostTicks > 0L &&
+                trustedAgeMs <
+                    PersistentRegionGraceSeconds * 1000f;
+
             if (
-                _consecutiveFailures >=
-                    4
+                _consecutiveFailures <
+                    PersistentRegionMinimumFailureCount ||
+                hasTrustedLease
             )
             {
-                _hasRegion =
-                    false;
+                // KIWI_V5_1_PHASE16_12_PRESENCE_RECOVERY_EXPANSION
+                // Reject this sample but retain the internal ROI. No old
+                // landmark sample is republished. Widen only the recovery crop
+                // so fast motion can re-enter the 192x192 model field without
+                // inventing a predicted center.
+                _regionRetentionActive =
+                    true;
+
+                _retainedRegionFailureCount++;
+
+                ExpandRegionForRecovery();
+                return;
+            }
+
+            ReleasePersistentRegion();
+        }
+
+        private void EvaluateRegionLeaseExpiry()
+        {
+            if (
+                !_hasRegion ||
+                _consecutiveFailures <
+                    PersistentRegionMinimumFailureCount
+            )
+            {
+                return;
+            }
+
+            long now =
+                System.Diagnostics.Stopwatch.GetTimestamp();
+
+            bool leaseExpired =
+                _lastTrustedRegionHostTicks <= 0L ||
+                GetTrustedRegionAgeMs(now) >=
+                    PersistentRegionGraceSeconds * 1000f;
+
+            if (leaseExpired)
+            {
+                ReleasePersistentRegion();
             }
         }
+
+        private void ReleasePersistentRegion()
+        {
+            if (!_hasRegion)
+            {
+                return;
+            }
+
+            // The trusted ROI lease has genuinely expired. Retire already
+            // submitted jobs from this ROI before allowing a future external
+            // anchor to start a fresh hard-reacquisition generation.
+            _hasRegion =
+                false;
+
+            _regionRetentionActive =
+                false;
+
+            _regionRecoveryScale =
+                1f;
+
+            _regionReleaseCount++;
+
+            _anchorRevision++;
+        }
+
+        private void MarkExternalAnchorTrusted()
+        {
+            _hasRegion =
+                true;
+
+            // A MediaPipe anchor validates ROI geometry, not the Inference
+            // Engine presence classifier itself. Preserve a 1-3 sample failure
+            // streak so frequent auxiliary anchors cannot keep a failing high-
+            // rate backend falsely "healthy". Once the health gate has already
+            // been crossed and Runner has yielded publication to MediaPipe, the
+            // next trusted anchor explicitly re-arms one fresh inference cycle.
+            if (
+                _consecutiveFailures >=
+                    PersistentRegionMinimumFailureCount
+            )
+            {
+                _consecutiveFailures =
+                    0;
+            }
+
+            _regionRetentionActive =
+                false;
+
+            _regionRecoveryScale =
+                1f;
+
+            _lastTrustedRegionHostTicks =
+                System.Diagnostics.Stopwatch.GetTimestamp();
+
+            _trustedRegionWidth =
+                Mathf.Clamp(
+                    _regionWidth,
+                    0.04f,
+                    2.50f);
+
+            _trustedRegionHeight =
+                Mathf.Clamp(
+                    _regionHeight,
+                    0.04f,
+                    2.50f);
+        }
+
+        private void MarkRegionTrusted()
+        {
+            _hasRegion =
+                true;
+
+            _consecutiveFailures =
+                0;
+
+            _regionRetentionActive =
+                false;
+
+            _regionRecoveryScale =
+                1f;
+
+            _lastTrustedRegionHostTicks =
+                System.Diagnostics.Stopwatch.GetTimestamp();
+
+            _trustedRegionWidth =
+                Mathf.Clamp(
+                    _regionWidth,
+                    0.04f,
+                    2.50f);
+
+            _trustedRegionHeight =
+                Mathf.Clamp(
+                    _regionHeight,
+                    0.04f,
+                    2.50f);
+        }
+
+        private void ExpandRegionForRecovery()
+        {
+            if (
+                _trustedRegionWidth <= 0.0001f ||
+                _trustedRegionHeight <= 0.0001f ||
+                _consecutiveFailures <
+                    RecoveryExpansionStartFailures
+            )
+            {
+                _regionRecoveryScale =
+                    1f;
+                return;
+            }
+
+            float t =
+                Mathf.InverseLerp(
+                    RecoveryExpansionStartFailures,
+                    RecoveryExpansionFullFailures,
+                    _consecutiveFailures);
+
+            _regionRecoveryScale =
+                Mathf.Lerp(
+                    1f,
+                    RecoveryExpansionMaxScale,
+                    t);
+
+            _regionWidth =
+                Mathf.Clamp(
+                    Mathf.Max(
+                        _regionWidth,
+                        _trustedRegionWidth *
+                            _regionRecoveryScale),
+                    0.04f,
+                    2.50f);
+
+            _regionHeight =
+                Mathf.Clamp(
+                    Mathf.Max(
+                        _regionHeight,
+                        _trustedRegionHeight *
+                            _regionRecoveryScale),
+                    0.04f,
+                    2.50f);
+        }
+
+        private float GetTrustedRegionAgeMs(
+            long nowHostTicks)
+        {
+            if (
+                _lastTrustedRegionHostTicks <= 0L ||
+                nowHostTicks <=
+                    _lastTrustedRegionHostTicks
+            )
+            {
+                return 0f;
+            }
+
+            return
+                HostTickDeltaMilliseconds(
+                    _lastTrustedRegionHostTicks,
+                    nowHostTicks);
+        }
+
+        private float GetRegionGraceRemainingMs(
+            long nowHostTicks)
+        {
+            if (_lastTrustedRegionHostTicks <= 0L)
+            {
+                return 0f;
+            }
+
+            return
+                Mathf.Max(
+                    0f,
+                    PersistentRegionGraceSeconds *
+                        1000f -
+                    GetTrustedRegionAgeMs(
+                        nowHostTicks));
+        }
+
+        private void RecordScheduleCpu(
+            long startedHostTicks,
+            long finishedHostTicks)
+        {
+            if (
+                startedHostTicks <= 0L ||
+                finishedHostTicks <=
+                    startedHostTicks
+            )
+            {
+                return;
+            }
+
+            _latestScheduleCpuMs =
+                SmoothDiagnosticMilliseconds(
+                    _latestScheduleCpuMs,
+                    HostTickDeltaMilliseconds(
+                        startedHostTicks,
+                        finishedHostTicks));
+        }
+
+        private void RecordGpuReadbackWait(
+            long requestHostTicks,
+            long finishedHostTicks)
+        {
+            if (
+                requestHostTicks <= 0L ||
+                finishedHostTicks <=
+                    requestHostTicks
+            )
+            {
+                return;
+            }
+
+            _latestGpuReadbackWaitMs =
+                SmoothDiagnosticMilliseconds(
+                    _latestGpuReadbackWaitMs,
+                    HostTickDeltaMilliseconds(
+                        requestHostTicks,
+                        finishedHostTicks));
+        }
+
+        private void RecordDecodeCpu(
+            long startedHostTicks,
+            long finishedHostTicks)
+        {
+            if (
+                startedHostTicks <= 0L ||
+                finishedHostTicks <=
+                    startedHostTicks
+            )
+            {
+                return;
+            }
+
+            _latestDecodeCpuMs =
+                SmoothDiagnosticMilliseconds(
+                    _latestDecodeCpuMs,
+                    HostTickDeltaMilliseconds(
+                        startedHostTicks,
+                        finishedHostTicks));
+        }
+
+        private void RecordScheduleDelay(
+            long sourceHostTicks,
+            long startedHostTicks)
+        {
+            if (
+                sourceHostTicks <= 0L ||
+                startedHostTicks <= sourceHostTicks)
+            {
+                return;
+            }
+
+            float milliseconds =
+                HostTickDeltaMilliseconds(
+                    sourceHostTicks,
+                    startedHostTicks);
+
+            _latestScheduleDelayMs =
+                SmoothDiagnosticMilliseconds(
+                    _latestScheduleDelayMs,
+                    milliseconds);
+        }
+
+        private void RecordSourceToCompletionAge(
+            long sourceHostTicks,
+            long arrivalHostTicks)
+        {
+            if (
+                sourceHostTicks <= 0L ||
+                arrivalHostTicks <= sourceHostTicks)
+            {
+                return;
+            }
+
+            float milliseconds =
+                HostTickDeltaMilliseconds(
+                    sourceHostTicks,
+                    arrivalHostTicks);
+
+            _latestSourceToCompletionAgeMs =
+                SmoothDiagnosticMilliseconds(
+                    _latestSourceToCompletionAgeMs,
+                    milliseconds);
+        }
+
+        private void RecordAcceptedSourceAge(
+            long sourceHostTicks,
+            long arrivalHostTicks)
+        {
+            if (
+                sourceHostTicks <= 0L ||
+                arrivalHostTicks <= sourceHostTicks)
+            {
+                return;
+            }
+
+            float milliseconds =
+                HostTickDeltaMilliseconds(
+                    sourceHostTicks,
+                    arrivalHostTicks);
+
+            _latestAcceptedSourceAgeMs =
+                SmoothDiagnosticMilliseconds(
+                    _latestAcceptedSourceAgeMs,
+                    milliseconds);
+        }
+
+        private static float HostTickDeltaMilliseconds(
+            long start,
+            long end)
+        {
+            return
+                (float)(
+                    (end - start) *
+                    1000.0 /
+                    System.Diagnostics.Stopwatch.Frequency);
+        }
+
+        private static float SmoothDiagnosticMilliseconds(
+            float current,
+            float sample)
+        {
+            if (
+                float.IsNaN(sample) ||
+                float.IsInfinity(sample) ||
+                sample < 0f)
+            {
+                return current;
+            }
+
+            return
+                current > 0f
+                    ? Mathf.Lerp(
+                        current,
+                        sample,
+                        0.16f)
+                    : sample;
+        }
+
+        private void RecordReadbackCompletionInterval(
+            long completionHostTicks)
+        {
+            if (
+                _previousReadbackCompletionHostTicks > 0L &&
+                completionHostTicks > _previousReadbackCompletionHostTicks
+            )
+            {
+                float milliseconds =
+                    (float)(
+                        (completionHostTicks -
+                         _previousReadbackCompletionHostTicks) *
+                        1000.0 /
+                        System.Diagnostics.Stopwatch.Frequency);
+
+                if (milliseconds > 0f && milliseconds < 1000f)
+                {
+                    _latestCompletionIntervalMs =
+                        _latestCompletionIntervalMs > 0f
+                            ? Mathf.Lerp(
+                                _latestCompletionIntervalMs,
+                                milliseconds,
+                                0.20f)
+                            : milliseconds;
+                }
+            }
+
+            _previousReadbackCompletionHostTicks =
+                completionHostTicks;
+        }
+
 
         private void RecordLatency(
             long started,
@@ -2379,145 +3186,50 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
         private void UpdateSchedulingLaneBudget()
         {
             if (
-                Application.isMobilePlatform ||
                 _lanes == null ||
-                _lanes.Length <= 1 ||
-                LatestLatencyMs <= 0f
+                _lanes.Length == 0
             )
             {
                 return;
             }
 
-            // KIWI_V5_0_ADAPTIVE_1_2_3_LANE_BUDGET
-            // Commercial realtime trackers prefer a lower-latency stable cadence
-            // over a deeper queue. One lane is therefore allowed under sustained
-            // severe GPU latency, two lanes are the normal desktop operating
-            // point, and the third preallocated lane is used only after a long
-            // low-latency streak. No buffer is allocated or destroyed here.
-            if (
-                _schedulingLaneLimit >= 2 &&
-                LatestLatencyMs >= ReduceToSingleLaneAboveMs
-            )
-            {
-                _severeLatencyCompletionStreak =
-                    Mathf.Min(
-                        _severeLatencyCompletionStreak + 1,
-                        ReduceToSingleLaneStreak);
+            // KIWI_V5_1_PHASE16_14_STABLE_DESKTOP_THREE_LANE
+            // Phase 16.13 measured ~89-100 ms even in single-flight. Reducing
+            // the number of in-flight jobs therefore cut throughput without
+            // removing the dominant service latency. Keep the Windows path at
+            // the available three-lane ceiling and leave mobile at the existing
+            // conservative two-lane budget. This is scheduling-only: ordering,
+            // ROI authority, stale-result guards and confidence remain unchanged.
+            int targetLaneLimit =
+                Application.isMobilePlatform
+                    ? MobileStableSchedulingLanes
+                    : DesktopStableSchedulingLanes;
 
-                _recoveryLatencyCompletionStreak = 0;
-                _lowLatencyCompletionStreak = 0;
+            _schedulingLaneLimit =
+                Mathf.Clamp(
+                    targetLaneLimit,
+                    1,
+                    _lanes.Length);
 
-                if (
-                    _severeLatencyCompletionStreak >=
-                        ReduceToSingleLaneStreak
-                )
-                {
-                    _schedulingLaneLimit = 1;
-                    _nextLaneIndex = 0;
-                    _highLatencyCompletionStreak = 0;
-                }
+            _nextLaneIndex =
+                _nextLaneIndex %
+                Mathf.Max(
+                    1,
+                    _schedulingLaneLimit);
 
-                return;
-            }
-
+            _lowLatencyCompletionStreak = 0;
+            _highLatencyCompletionStreak = 0;
             _severeLatencyCompletionStreak = 0;
-
-            if (_schedulingLaneLimit <= 1)
-            {
-                if (LatestLatencyMs <= RecoverSecondLaneBelowMs)
-                {
-                    _recoveryLatencyCompletionStreak =
-                        Mathf.Min(
-                            _recoveryLatencyCompletionStreak + 1,
-                            RecoverSecondLaneStreak);
-
-                    if (
-                        _recoveryLatencyCompletionStreak >=
-                            RecoverSecondLaneStreak
-                    )
-                    {
-                        _schedulingLaneLimit =
-                            Mathf.Min(
-                                2,
-                                _lanes.Length);
-
-                        _recoveryLatencyCompletionStreak = 0;
-                    }
-                }
-                else
-                {
-                    _recoveryLatencyCompletionStreak = 0;
-                }
-
-                return;
-            }
-
             _recoveryLatencyCompletionStreak = 0;
 
-            if (
-                _schedulingLaneLimit >= 3 &&
-                LatestLatencyMs >= DisableThirdLaneAboveMs
-            )
-            {
-                _highLatencyCompletionStreak =
-                    Mathf.Min(
-                        _highLatencyCompletionStreak + 1,
-                        DisableThirdLaneStreak);
-
-                _lowLatencyCompletionStreak = 0;
-
-                if (
-                    _highLatencyCompletionStreak >=
-                        DisableThirdLaneStreak
-                )
-                {
-                    // Pending work in lane 2 is allowed to finish. We only stop
-                    // assigning new frames to it, so buffers are never reused
-                    // while a GPU readback still owns them.
-                    _schedulingLaneLimit =
-                        Mathf.Min(
-                            2,
-                            _lanes.Length);
-
-                    _nextLaneIndex =
-                        _nextLaneIndex %
-                        Mathf.Max(
-                            1,
-                            _schedulingLaneLimit);
-
-                    _highLatencyCompletionStreak = 0;
-                }
-
-                return;
-            }
-
-            _highLatencyCompletionStreak = 0;
-
-            if (
-                _schedulingLaneLimit == 2 &&
-                _lanes.Length >= 3 &&
-                LatestLatencyMs <= EnableThirdLaneBelowMs
-            )
-            {
-                _lowLatencyCompletionStreak =
-                    Mathf.Min(
-                        _lowLatencyCompletionStreak + 1,
-                        EnableThirdLaneStreak);
-
-                if (
-                    _lowLatencyCompletionStreak >=
-                        EnableThirdLaneStreak
-                )
-                {
-                    _schedulingLaneLimit = 3;
-                    _lowLatencyCompletionStreak = 0;
-                }
-            }
-            else
-            {
-                _lowLatencyCompletionStreak = 0;
-            }
+            // Compatibility telemetry from Phase 16.13 remains present so
+            // existing CSV readers do not break; stable scheduling never
+            // promotes/demotes or launches a single-flight probe.
+            _latencyFirstLanePromotionCount = 0;
+            _latencyFirstLaneDemotionCount = 0;
+            _singleFlightProbeCount = 0;
         }
+
 
         private static float NormalizePresence(
             float value)

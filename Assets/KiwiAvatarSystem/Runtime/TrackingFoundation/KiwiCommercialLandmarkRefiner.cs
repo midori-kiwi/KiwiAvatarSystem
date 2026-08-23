@@ -127,6 +127,15 @@ public static class KiwiCommercialLandmarkRefiner
     private static readonly byte[] PendingOutlierStreak =
         new byte[MaxLandmarks];
 
+    // KIWI_V5_1_PHASE16_9_STABLE_ISOLATED_CANDIDATE_SNAPSHOT
+    // Candidate classification must be immutable for the whole semantic sample.
+    // Phase 16.8 counted candidates first but re-ran the predicate while the
+    // refinement loop was already mutating LastRawLocal. That made later points
+    // see a different neighbour history and allowed rejectCount to exceed the
+    // pre-count (observed candidate<=2 but rejects up to 61).
+    private static readonly bool[] IsolatedCandidateByLandmark =
+        new bool[MaxLandmarks];
+
     private static readonly sbyte[] GroupByLandmark =
         new sbyte[MaxLandmarks];
 
@@ -385,13 +394,12 @@ public static class KiwiCommercialLandmarkRefiner
             Vector2 rawDelta = rawLocal - LastRawLocal[i];
             Vector2 predictionError = rawLocal - predicted;
 
+            // KIWI_V5_1_PHASE16_9_APPLY_STABLE_ISOLATED_CANDIDATE
+            // Never re-evaluate neighbour topology after earlier points in this
+            // same loop have already advanced LastRawLocal/LastRefinedLocal.
             bool isolatedShock =
                 !massRejectBypass &&
-                IsIsolatedContourPointShock(
-                    i,
-                    count,
-                    rawDelta,
-                    predictionError);
+                IsolatedCandidateByLandmark[i];
 
             bool rejectThisSample = false;
 
@@ -693,6 +701,9 @@ public static class KiwiCommercialLandmarkRefiner
     {
         int candidateCount = 0;
 
+        // KIWI_V5_1_PHASE16_9_STABLE_ISOLATED_CANDIDATE_PASS
+        // Evaluate every point against the same previous-sample state, then keep
+        // that boolean snapshot unchanged until the whole sample is committed.
         for (int i = 0; i < count; i++)
         {
             int group = GroupByLandmark[i];
@@ -714,16 +725,26 @@ public static class KiwiCommercialLandmarkRefiner
             Vector2 predictionError =
                 rawLocal - predicted;
 
-            if (
+            bool candidate =
                 IsIsolatedContourPointShock(
                     i,
                     count,
                     rawDelta,
-                    predictionError)
-            )
+                    predictionError);
+
+            IsolatedCandidateByLandmark[i] = candidate;
+
+            if (candidate)
             {
                 candidateCount++;
             }
+        }
+
+        // Clear unused tail values so a later sample with fewer landmarks cannot
+        // expose stale diagnostic state if the model changes.
+        for (int i = count; i < MaxLandmarks; i++)
+        {
+            IsolatedCandidateByLandmark[i] = false;
         }
 
         return candidateCount;

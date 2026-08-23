@@ -269,13 +269,28 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
                 "continuityEnabled,directBypassSuppressed,discontinuityGuard,trackingRateHz,effectiveIntervalMs,responseCap," +
                 "handoffActive,handoffWeight,handoffTargetWeight,handoffReleaseStep,handoffCenterOffset,handoffRotationOffsetDeg,handoffScaleRatio,handoffCount," +
                 "commercialCadenceBoost,renderFps,auxMediaPipeHz," +
+                // KIWI_V5_1_PHASE16_9_COMMERCIAL_PIPELINE_AND_FACEPART_DIAGNOSTICS
+                // KIWI_V5_1_PHASE16_10_INFERENCE_PIPELINE_DIAGNOSTICS
+                // KIWI_V5_1_PHASE16_11_FRESHNESS_AGE_DIAGNOSTICS
+                // KIWI_V5_1_PHASE16_12_PERSISTENT_ROI_DIAGNOSTICS
+                // KIWI_V5_1_PHASE16_13_LATENCY_AND_STATIC_REST_DIAGNOSTICS
+                // KIWI_V5_1_PHASE16_14_STABLE_PIPELINE_RENDER_BOUNDARY_DIAGNOSTICS
+                // KIWI_V5_1_PHASE16_15_ROOT_CONTINUITY_DIAGNOSTICS
+                "runnerFreshSourceHz,runnerSubmissionHz,runnerResultHz,canonicalAdoptionHz,runnerReadbackLatencyMs,sourceToSubmissionGapHz,submissionToResultGapHz,resultToAdoptionGapHz,submissionEfficiency,resultEfficiency,adoptionEfficiency,canonicalAdoptionCount," +
+                "inferenceTelemetryOperational,inferencePipelineDepth,inferenceLaneLimit,inferenceActiveLanes,inferenceOldestPendingAgeMs,inferenceLatencyMs,inferenceScheduleDelayMs,inferenceSourceToCompletionAgeMs,inferenceAcceptedSourceAgeMs," +
+                "inferenceRawPresenceLogit,inferencePresence,inferenceConsecutiveFailures,inferenceHasRegion,inferenceTrackingHealthy,inferenceRegionRetentionActive,inferenceRegionTrustedAgeMs,inferenceRegionGraceRemainingMs,inferenceRegionRecoveryScale,inferenceRegionRetainedFailureCount,inferenceRegionReleaseCount,inferenceRegionCenterX,inferenceRegionCenterY,inferenceRegionWidth,inferenceRegionHeight,inferenceScheduleCpuMs,inferenceGpuReadbackWaitMs,inferenceDecodeCpuMs," +
+                "inferenceLatencyFirstScheduling,inferenceStableDesktopScheduling,inferenceCompletionIntervalMs,inferenceLanePromotionCount,inferenceLaneDemotionCount,inferenceSingleFlightProbeCount," +
+                "inferenceScheduledCount,inferenceReadbackCompletedCount,inferenceCompletedCount,inferenceDroppedFreshCount,inferenceRejectedPresenceCount,inferenceRejectedInvalidCount,inferenceDiscardedStaleCount,inferenceDiscardedCrossSystemCount,inferenceDiscardedStaleAnchorCount,inferenceDiscardedStaleGenerationCount,inferenceDiscardedStaleSourceCount,inferenceSoftAnchorUpdateCount,inferenceHardAnchorInvalidationCount,inferenceSoftAnchorSupersededRoiUpdateCount,inferenceDropRatio,inferenceCompletionRatio," +
                 "commercialRigidShockCount,commercialRigidCenterResidualEyeSpans,commercialRigidRotationDelta,commercialRigidDepthLogDelta," +
                 "semanticTopologyRejectCount,semanticTransactionCanonicalFrameId,semanticTransactionSequence," +
                 "landmarkRefinedPointCount,landmarkIsolatedRejectCount,landmarkIsolatedCandidateCount,landmarkMassRejectBypass,landmarkMassRejectBypassCount,landmarkMeanAdjustmentEyeSpans,landmarkMaxAdjustmentEyeSpans,landmarkGeometryQuality,landmarkRefinerTimestamp," +
                 "commercialFailoverDeferred,commercialFailoverGraceRemainingMs,commercialDeferredFailoverCount," +
                 "writerAuditFrame,rootUpdateToLatePosDelta,rootUpdateToLateRotDelta,rootUpdateToLateScaleDelta,rootLateToRenderPosDelta,rootLateToRenderRotDelta,rootLateToRenderScaleDelta," +
                 "visualRelativeUpdateToLatePosDelta,visualRelativeUpdateToLateRotDelta,visualRelativeUpdateToLateScaleDelta,visualRelativeLateToRenderPosDelta,visualRelativeLateToRenderRotDelta,visualRelativeLateToRenderScaleDelta," +
-                "visualMovedWithoutRoot,rootMovedAfterLate,visualMovedWithoutRootCount,rootMovedAfterLateCount,liveTextureAdvancedWhileSemanticHeld");
+                "writerAuditRenderBoundaryObserved,visualMovedWithoutRoot,rootMovedAfterLate,visualMovedWithoutRootCount,rootMovedAfterLateCount," +
+                "staticRestActive,staticRestCandidateSeconds,staticRestLockCount,staticRestReleaseCount,beforeRenderRestHoldCount,beforeRenderNewSampleCount,beforeRenderFreshOnlyPolicy,beforeRenderSameSampleSkipCount,beforeRenderAcceptedNewSampleCount," +
+                "rootModelHeight,rootRawTargetPosDelta,rootRawTargetRotDelta,rootRawTargetScaleDelta,rootDisplayPreCapPosDelta,rootDisplayPreCapRotDelta,rootDisplayPreCapScaleDelta,rootDisplayPostCapPosDelta,rootDisplayPostCapRotDelta,rootDisplayPostCapScaleDelta,rootContinuityMaxPosStep,rootContinuityMaxRotStep,rootContinuityMaxScaleStep,rootContinuityCapApplied,rootPredictionPositionDelta,rootPredictionLeadMs,rootCorrectionBacklog,rootAuthoritativeFrameMissing,noFrameHoldActive,noFrameHoldCount,sameProviderResumeActive,sameProviderResumeCount,sameProviderResumeSamplesRemaining," +
+                "faceTextureTransactionOperational,faceTextureSceneBindingValid,faceTextureStrictPresentation,faceTextureSemanticTimestamp,faceTextureCanonicalFrameId,faceTextureMatchDeltaMs,faceTextureBufferedFrames,faceTextureCaptureCount,faceTextureCommitCount,faceTextureMissCount,faceTextureHoldCount,faceTextureExternalWriter,faceTextureExternalWriterCount,liveTextureAdvancedWhileSemanticHeld");
 
             recordedFrameCount = 0;
             _framesSinceCsvFlush = 0;
@@ -1142,6 +1157,71 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
             Append(row, _supervisor != null && _supervisor.CommercialCadenceBoostActive); Sep(row);
             Append(row, _supervisor != null ? _supervisor.CurrentRenderFps : 0f); Sep(row);
             Append(row, _supervisor != null ? _supervisor.CurrentAuxiliaryMediaPipeHz : 0f); Sep(row);
+            // KIWI_V5_1_PHASE16_9_COMMERCIAL_PIPELINE_AND_FACEPART_DIAGNOSTICS
+            Append(row, KiwiCommercialCadencePipelineTelemetry.FreshSourceRateHz); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.SubmissionRateHz); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.ResultRateHz); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.CanonicalAdoptionRateHz); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.ReadbackLatencyMs); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.SourceToSubmissionGapHz); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.SubmissionToResultGapHz); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.ResultToAdoptionGapHz); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.SubmissionEfficiency); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.ResultEfficiency); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.AdoptionEfficiency); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.AdoptionCount); Sep(row);
+            // KIWI_V5_1_PHASE16_10_INFERENCE_PIPELINE_DIAGNOSTICS
+            // KIWI_V5_1_PHASE16_11_FRESHNESS_AGE_DIAGNOSTICS
+            // KIWI_V5_1_PHASE16_12_PERSISTENT_ROI_DIAGNOSTICS
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceTelemetryOperational); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferencePipelineDepth); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceLaneLimit); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceActiveLanes); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceOldestPendingAgeMs); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceLatencyMs); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceScheduleDelayMs); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceSourceToCompletionAgeMs); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceAcceptedSourceAgeMs); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceRawPresenceLogit); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferencePresence); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceConsecutiveFailures); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceHasRegion); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceTrackingHealthy); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceRegionRetentionActive); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceRegionTrustedAgeMs); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceRegionGraceRemainingMs); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceRegionRecoveryScale); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceRegionRetainedFailureCount); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceRegionReleaseCount); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceRegionCenterX); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceRegionCenterY); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceRegionWidth); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceRegionHeight); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceScheduleCpuMs); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceGpuReadbackWaitMs); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceDecodeCpuMs); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceLatencyFirstSchedulingActive); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceStableDesktopSchedulingActive); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceCompletionIntervalMs); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceLanePromotionCount); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceLaneDemotionCount); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceSingleFlightProbeCount); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceScheduledCount); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceReadbackCompletedCount); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceCompletedCount); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceDroppedFreshCount); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceRejectedPresenceCount); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceRejectedInvalidCount); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceDiscardedStaleCount); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceDiscardedCrossSystemCount); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceDiscardedStaleAnchorCount); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceDiscardedStaleGenerationCount); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceDiscardedStaleSourceCount); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceSoftAnchorUpdateCount); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceHardAnchorInvalidationCount); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceSoftAnchorSupersededRoiUpdateCount); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceDropRatio); Sep(row);
+            Append(row, KiwiCommercialCadencePipelineTelemetry.InferenceCompletionRatio); Sep(row);
             Append(row, _trackingHub != null ? _trackingHub.CommercialRigidShockCount : 0); Sep(row);
             Append(row, _trackingHub != null ? _trackingHub.CommercialRigidLastCenterResidualEyeSpans : 0f); Sep(row);
             Append(row, _trackingHub != null ? _trackingHub.CommercialRigidLastRotationDelta : 0f); Sep(row);
@@ -1174,10 +1254,56 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
             Append(row, KiwiCommercialTransformWriterAudit.VisualRelativeLateToRenderPositionDelta); Sep(row);
             Append(row, KiwiCommercialTransformWriterAudit.VisualRelativeLateToRenderRotationDelta); Sep(row);
             Append(row, KiwiCommercialTransformWriterAudit.VisualRelativeLateToRenderScaleDelta); Sep(row);
+            Append(row, KiwiCommercialTransformWriterAudit.RenderBoundaryObserved); Sep(row);
             Append(row, KiwiCommercialTransformWriterAudit.VisualMovedWithoutRoot); Sep(row);
             Append(row, KiwiCommercialTransformWriterAudit.RootMovedAfterLate); Sep(row);
             Append(row, KiwiCommercialTransformWriterAudit.VisualMovedWithoutRootCount); Sep(row);
             Append(row, KiwiCommercialTransformWriterAudit.RootMovedAfterLateCount); Sep(row);
+            Append(row, KiwiPhase16_13PresentationDiagnostics.StaticRestActive); Sep(row);
+            Append(row, KiwiPhase16_13PresentationDiagnostics.StaticRestCandidateSeconds); Sep(row);
+            Append(row, KiwiPhase16_13PresentationDiagnostics.StaticRestLockCount); Sep(row);
+            Append(row, KiwiPhase16_13PresentationDiagnostics.StaticRestReleaseCount); Sep(row);
+            Append(row, KiwiPhase16_13PresentationDiagnostics.BeforeRenderRestHoldCount); Sep(row);
+            Append(row, KiwiPhase16_13PresentationDiagnostics.BeforeRenderNewSampleCount); Sep(row);
+            Append(row, KiwiPhase16_13PresentationDiagnostics.BeforeRenderFreshOnlyPolicyActive); Sep(row);
+            Append(row, KiwiPhase16_13PresentationDiagnostics.BeforeRenderSameSampleSkipCount); Sep(row);
+            Append(row, KiwiPhase16_13PresentationDiagnostics.BeforeRenderAcceptedNewSampleCount); Sep(row);
+            Append(row, KiwiPhase16_15RootContinuityDiagnostics.RootModelHeight); Sep(row);
+            Append(row, KiwiPhase16_15RootContinuityDiagnostics.RootRawTargetPositionDelta); Sep(row);
+            Append(row, KiwiPhase16_15RootContinuityDiagnostics.RootRawTargetRotationDelta); Sep(row);
+            Append(row, KiwiPhase16_15RootContinuityDiagnostics.RootRawTargetScaleDelta); Sep(row);
+            Append(row, KiwiPhase16_15RootContinuityDiagnostics.RootDisplayPreCapPositionDelta); Sep(row);
+            Append(row, KiwiPhase16_15RootContinuityDiagnostics.RootDisplayPreCapRotationDelta); Sep(row);
+            Append(row, KiwiPhase16_15RootContinuityDiagnostics.RootDisplayPreCapScaleDelta); Sep(row);
+            Append(row, KiwiPhase16_15RootContinuityDiagnostics.RootDisplayPostCapPositionDelta); Sep(row);
+            Append(row, KiwiPhase16_15RootContinuityDiagnostics.RootDisplayPostCapRotationDelta); Sep(row);
+            Append(row, KiwiPhase16_15RootContinuityDiagnostics.RootDisplayPostCapScaleDelta); Sep(row);
+            Append(row, KiwiPhase16_15RootContinuityDiagnostics.RootContinuityMaxPositionStep); Sep(row);
+            Append(row, KiwiPhase16_15RootContinuityDiagnostics.RootContinuityMaxRotationStep); Sep(row);
+            Append(row, KiwiPhase16_15RootContinuityDiagnostics.RootContinuityMaxScaleStep); Sep(row);
+            Append(row, KiwiPhase16_15RootContinuityDiagnostics.RootContinuityCapApplied); Sep(row);
+            Append(row, KiwiPhase16_15RootContinuityDiagnostics.RootPredictionPositionDelta); Sep(row);
+            Append(row, KiwiPhase16_15RootContinuityDiagnostics.RootPredictionLeadMs); Sep(row);
+            Append(row, KiwiPhase16_15RootContinuityDiagnostics.RootCorrectionBacklog); Sep(row);
+            Append(row, KiwiPhase16_15RootContinuityDiagnostics.AuthoritativeFrameMissing); Sep(row);
+            Append(row, KiwiPhase16_15RootContinuityDiagnostics.NoFrameHoldActive); Sep(row);
+            Append(row, KiwiPhase16_15RootContinuityDiagnostics.NoFrameHoldCount); Sep(row);
+            Append(row, KiwiPhase16_15RootContinuityDiagnostics.SameProviderResumeActive); Sep(row);
+            Append(row, KiwiPhase16_15RootContinuityDiagnostics.SameProviderResumeCount); Sep(row);
+            Append(row, KiwiPhase16_15RootContinuityDiagnostics.SameProviderResumeSamplesRemaining); Sep(row);
+            Append(row, KiwiFacePartTextureTransaction.IsOperational); Sep(row);
+            Append(row, KiwiFacePartTextureTransaction.SceneBindingValid); Sep(row);
+            Append(row, KiwiFacePartTextureTransaction.StrictPresentationStarted); Sep(row);
+            Append(row, KiwiFacePartTextureTransaction.LastCommittedSemanticTimestamp); Sep(row);
+            Append(row, KiwiFacePartTextureTransaction.LastCommittedCanonicalFrameId); Sep(row);
+            Append(row, KiwiFacePartTextureTransaction.LastMatchDeltaMs); Sep(row);
+            Append(row, KiwiFacePartTextureTransaction.BufferedFrameCount); Sep(row);
+            Append(row, KiwiFacePartTextureTransaction.CaptureCount); Sep(row);
+            Append(row, KiwiFacePartTextureTransaction.TransactionCommitCount); Sep(row);
+            Append(row, KiwiFacePartTextureTransaction.TransactionMissCount); Sep(row);
+            Append(row, KiwiFacePartTextureTransaction.SemanticHoldCount); Sep(row);
+            Append(row, KiwiFacePartTextureTransaction.ExternalTextureWriterDetected); Sep(row);
+            Append(row, KiwiFacePartTextureTransaction.ExternalTextureWriterCount); Sep(row);
             Append(
                 row,
                 _cameraFreshThisFrame &&

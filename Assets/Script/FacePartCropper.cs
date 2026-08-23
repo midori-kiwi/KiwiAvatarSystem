@@ -483,14 +483,12 @@ public class FacePartCropper : MonoBehaviour
         // 高画質Webカメラ映像
         // =====================================================
 
-        leftEyeImage.texture =
-            sourceImage.texture;
-
-        rightEyeImage.texture =
-            sourceImage.texture;
-
-        mouthImage.texture =
-            sourceImage.texture;
+        // KIWI_V5_1_PHASE16_9_MATCHED_FACEPART_TEXTURE_WRITER
+        // Do not advance Eye/Mouth pixels independently from
+        // canonical Crop/Mask geometry. The transaction service
+        // keeps each output on its last complete semantic frame.
+        KiwiFacePartTextureTransaction.
+            ApplyCurrentPresentationTextures(this);
 
 
         // =====================================================
@@ -515,11 +513,23 @@ public class FacePartCropper : MonoBehaviour
         // A just-arrived ML result can still describe an old
         // camera frame. Hold the previous trusted crop instead
         // of replacing it with source-age-expired geometry.
+        // KIWI_V5_1_PHASE16_9_TEXTURE_SEMANTIC_GATE
+        // A semantic crop may advance only when the camera frame
+        // that produced it is still available in the GPU history.
+        // On a miss, Texture + Crop + Mask all hold together.
+        bool semanticTextureReady =
+            !hasNewLandmarks ||
+            KiwiFacePartTextureTransaction.
+                PrepareSemanticTransaction(
+                    this,
+                    timestamp);
+
         bool semanticSampleFresh =
             !hasNewLandmarks ||
-            KiwiCommercialFacePartPolicy.IsSemanticSampleAdoptable(
-                runner,
-                timestamp);
+            (semanticTextureReady &&
+             KiwiCommercialFacePartPolicy.IsSemanticSampleAdoptable(
+                 runner,
+                 timestamp));
 
         if (
             hasFace &&
@@ -747,6 +757,16 @@ public class FacePartCropper : MonoBehaviour
                 : rightOK;
 
         KiwiCommercialFacePartPolicy.ReportPartSampleDecision(
+            timestamp,
+            outputLeftEyeAccepted,
+            outputRightEyeAccepted,
+            mouthOK);
+
+        // KIWI_V5_1_PHASE16_9_TEXTURE_TRANSACTION_COMMIT
+        // Use the exact same output-space accept/reject decision
+        // for pixels that ShapeMask uses for contour adoption.
+        KiwiFacePartTextureTransaction.CommitPartDecision(
+            this,
             timestamp,
             outputLeftEyeAccepted,
             outputRightEyeAccepted,

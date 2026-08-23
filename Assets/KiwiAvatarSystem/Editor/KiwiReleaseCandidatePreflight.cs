@@ -27,7 +27,7 @@ using UnityEngine.SceneManagement;
 [InitializeOnLoad]
 public static class KiwiReleaseCandidatePreflight
 {
-    public const string PreflightVersion = "5.1.0-phase16.8";
+    public const string PreflightVersion = "5.1.0-phase16.15";
     public const string BaseCommit =
         "0b890a317cc3de64a4eadc955ce87bf21479786b";
     public const string ExpectedUnityVersion = "6000.0.80f1";
@@ -115,11 +115,11 @@ public static class KiwiReleaseCandidatePreflight
     private const string PlayGateMenu =
         MenuRoot + "Play Gate Enabled";
     private const string GatePrefSuffix =
-        ".KiwiAvatarSystem.Phase16_8.PlayGate";
+        ".KiwiAvatarSystem.Phase16_15.PlayGate";
     private const string StampRelativePath =
-        "Library/KiwiAvatarSystem/Phase16_8PassingPreflight.json";
+        "Library/KiwiAvatarSystem/Phase16_15PassingPreflight.json";
     private const string ExportFileName =
-        "KiwiPhase16_8ReleaseCandidatePreflight.json";
+        "KiwiPhase16_15ReleaseCandidatePreflight.json";
 
     private static readonly string[] SingletonRoleNames =
     {
@@ -159,7 +159,11 @@ public static class KiwiReleaseCandidatePreflight
             "KIWI_V5_1_PHASE16_FRAME_CONTINUITY_GUARD",
             "KIWI_V5_1_PHASE16_2_MEASURED_CONTINUITY_GUARD",
             "KIWI_V5_1_PHASE16_3_CONTINUITY_APPLY_CONFIRMED",
-            "KIWI_V5_1_PHASE16_4_PRESENTATION_HOLD_RESAMPLING"),
+            "KIWI_V5_1_PHASE16_4_PRESENTATION_HOLD_RESAMPLING",
+            "KIWI_V5_1_PHASE16_13_STATIC_REST_PRESENTATION",
+            "KIWI_V5_1_PHASE16_13_BEFORE_RENDER_REST_DEDUP",
+            "KIWI_V5_1_PHASE16_14_RENDER_BOUNDARY_FRESH_ONLY",
+            "KIWI_V5_1_PHASE16_15_NO_FRAME_HOLD_RESUME_ENVELOPE"),
         new MarkerRule(
             "Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/" +
             "KiwiTrackingProviderHub.cs",
@@ -170,7 +174,12 @@ public static class KiwiReleaseCandidatePreflight
             "KiwiMatureVTuberSupervisor.cs",
             "KIWI_V5_1_PHASE16_5_COMMERCIAL_CADENCE_HEADROOM",
             "KIWI_V5_1_PHASE16_8_COMMERCIAL_TRACKING_QOS_FLOOR",
-            "KIWI_V5_1_PHASE16_8_COMMERCIAL_CADENCE_HYSTERESIS"),
+            "KIWI_V5_1_PHASE16_8_COMMERCIAL_CADENCE_HYSTERESIS",
+            "KIWI_V5_1_PHASE16_10_HYBRID_AUXILIARY_BUDGET",
+            "KIWI_V5_1_PHASE16_12_PERSISTENT_ROI_POLICY",
+            "KIWI_V5_1_PHASE16_13_LATENCY_FIRST_PRESENTATION_POLICY",
+            "KIWI_V5_1_PHASE16_14_STABLE_PIPELINE_RENDER_CONTINUITY_POLICY",
+            "KIWI_V5_1_PHASE16_15_NO_FRAME_HOLD_RESUME_ENVELOPE_POLICY"),
         new MarkerRule(
             "Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/" +
             "KiwiCanonicalTrackingFrame.cs",
@@ -180,7 +189,10 @@ public static class KiwiReleaseCandidatePreflight
             "Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/" +
             "KiwiCommercialLandmarkRefiner.cs",
             "KIWI_V5_1_PHASE16_7_COMMERCIAL_LANDMARK_REFINER",
-            "KIWI_V5_1_PHASE16_8_LANDMARK_REFINER_FALSE_POSITIVE_GUARD"),
+            "KIWI_V5_1_PHASE16_8_LANDMARK_REFINER_FALSE_POSITIVE_GUARD",
+            "KIWI_V5_1_PHASE16_9_STABLE_ISOLATED_CANDIDATE_SNAPSHOT",
+            "KIWI_V5_1_PHASE16_9_STABLE_ISOLATED_CANDIDATE_PASS",
+            "KIWI_V5_1_PHASE16_9_APPLY_STABLE_ISOLATED_CANDIDATE"),
         new MarkerRule(
             "Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/" +
             "KiwiTrackingProviderHub.cs",
@@ -196,14 +208,60 @@ public static class KiwiReleaseCandidatePreflight
             "KIWI_V5_1_PHASE16_6_COMMERCIAL_PRESENTATION_PROFILE",
             "KIWI_V5_1_PHASE16_8_PRESENTATION_HEADROOM_FLOOR"),
         new MarkerRule(
+            "Assets/Script/KiwiInferenceFaceTracker.cs",
+            "KIWI_V5_1_PHASE16_10_COMMERCIAL_FRESH_FRAME_PIPELINE",
+            "KIWI_V5_1_PHASE16_10_DESKTOP_BOUNDED_2_3_LANE",
+            "KIWI_V5_1_PHASE16_10_DESKTOP_FRESHNESS_HYSTERESIS",
+            "KIWI_V5_1_PHASE16_11_FRESHNESS_FIRST_INFERENCE",
+            "KIWI_V5_1_PHASE16_11_SOFT_ANCHOR_FUTURE_ONLY",
+            "KIWI_V5_1_PHASE16_11_SCHEDULE_BEFORE_CPU_DECODE",
+            "KIWI_V5_1_PHASE16_12_PERSISTENT_ROI_AUTHORITY",
+            "KIWI_V5_1_PHASE16_12_PRESENCE_RECOVERY_EXPANSION",
+            "KIWI_V5_1_PHASE16_12_INFERENCE_STAGE_PROFILING",
+            "KIWI_V5_1_PHASE16_13_LATENCY_FIRST_SINGLE_FLIGHT",
+            "KIWI_V5_1_PHASE16_14_STABLE_DESKTOP_THREE_LANE"),
+        new MarkerRule(
             "Assets/KiwiAvatarSystem/Runtime/Validation/" +
             "KiwiFrameComparisonOverlay.cs",
             "KIWI_V5_1_PHASE16_8_COMMERCIAL_GAP_DIAGNOSTICS",
+            "KIWI_V5_1_PHASE16_9_COMMERCIAL_PIPELINE_AND_FACEPART_DIAGNOSTICS",
+            "KIWI_V5_1_PHASE16_10_INFERENCE_PIPELINE_DIAGNOSTICS",
+            "KIWI_V5_1_PHASE16_11_FRESHNESS_AGE_DIAGNOSTICS",
+            "KIWI_V5_1_PHASE16_12_PERSISTENT_ROI_DIAGNOSTICS",
+            "KIWI_V5_1_PHASE16_13_LATENCY_AND_STATIC_REST_DIAGNOSTICS",
+            "KIWI_V5_1_PHASE16_14_STABLE_PIPELINE_RENDER_BOUNDARY_DIAGNOSTICS",
+            "KIWI_V5_1_PHASE16_15_ROOT_CONTINUITY_DIAGNOSTICS",
+            "inferenceScheduleDelayMs",
+            "inferenceRawPresenceLogit",
+            "inferenceRegionRetentionActive",
+            "inferenceTrackingHealthy",
+            "inferenceGpuReadbackWaitMs",
+            "inferenceAcceptedSourceAgeMs",
+            "inferenceSoftAnchorUpdateCount",
+            "inferenceLaneLimit",
+            "inferenceLatencyFirstScheduling",
+            "inferenceStableDesktopScheduling",
+            "inferenceCompletionIntervalMs",
+            "staticRestActive",
+            "beforeRenderRestHoldCount",
+            "beforeRenderFreshOnlyPolicy",
+            "beforeRenderSameSampleSkipCount",
+            "beforeRenderAcceptedNewSampleCount",
+            "rootContinuityCapApplied",
+            "rootAuthoritativeFrameMissing",
+            "noFrameHoldCount",
+            "sameProviderResumeActive",
+            "rootPredictionLeadMs",
+            "inferenceDroppedFreshCount",
             "landmarkRefinedPointCount",
             "landmarkIsolatedRejectCount",
             "landmarkIsolatedCandidateCount",
             "landmarkMassRejectBypass",
             "commercialFailoverDeferred",
+            "writerAuditRenderBoundaryObserved",
+            "faceTextureSemanticTimestamp",
+            "runnerSubmissionHz",
+            "canonicalAdoptionHz",
             "visualMovedWithoutRoot"),
         new MarkerRule(
             "Assets/KiwiAvatarSystem/Runtime/Optimization/" +
@@ -212,13 +270,70 @@ public static class KiwiReleaseCandidatePreflight
         new MarkerRule(
             "Assets/KiwiAvatarSystem/Runtime/Validation/" +
             "KiwiCommercialTransformWriterAudit.cs",
-            "KIWI_V5_1_PHASE16_8_TRANSFORM_WRITER_AUDIT"),
+            "KIWI_V5_1_PHASE16_8_TRANSFORM_WRITER_AUDIT",
+            "KIWI_V5_1_PHASE16_9_WRITER_AUDIT_COMPLETED_FRAME_LATCH"),
+        new MarkerRule(
+            "Assets/KiwiAvatarSystem/Runtime/Validation/" +
+            "KiwiPhase16_13PresentationDiagnostics.cs",
+            "KIWI_V5_1_PHASE16_13_STATIC_REST_DIAGNOSTICS",
+            "KIWI_V5_1_PHASE16_14_RENDER_BOUNDARY_FRESH_ONLY_DIAGNOSTICS"),
+        new MarkerRule(
+            "Assets/KiwiAvatarSystem/Runtime/Validation/" +
+            "KiwiPhase16_15RootContinuityDiagnostics.cs",
+            "KIWI_V5_1_PHASE16_15_ROOT_CONTINUITY_DIAGNOSTICS",
+            "RootContinuityCapApplied",
+            "SameProviderResumeActive"),
+        new MarkerRule(
+            "Assets/KiwiAvatarSystem/Runtime/Validation/" +
+            "KiwiCommercialCadencePipelineTelemetry.cs",
+            "KIWI_V5_1_PHASE16_9_COMMERCIAL_CADENCE_PIPELINE_TELEMETRY",
+            "KIWI_V5_1_PHASE16_10_INFERENCE_PIPELINE_TELEMETRY",
+            "KIWI_V5_1_PHASE16_11_FRESHNESS_AGE_TELEMETRY",
+            "KIWI_V5_1_PHASE16_12_PERSISTENT_ROI_TELEMETRY",
+            "KIWI_V5_1_PHASE16_13_LATENCY_FIRST_TELEMETRY",
+            "KIWI_V5_1_PHASE16_14_STABLE_PIPELINE_TELEMETRY",
+            "InferenceScheduleDelayMs",
+            "InferenceRawPresenceLogit",
+            "InferenceRegionRetentionActive",
+            "InferenceTrackingHealthy",
+            "InferenceGpuReadbackWaitMs",
+            "InferenceAcceptedSourceAgeMs",
+            "InferenceDiscardedStaleAnchorCount",
+            "InferenceLaneLimit",
+            "InferenceLatencyFirstSchedulingActive",
+            "InferenceStableDesktopSchedulingActive",
+            "InferenceCompletionIntervalMs",
+            "InferenceDropRatio"),
+        new MarkerRule(
+            "Assets/KiwiAvatarSystem/Runtime/Presentation/" +
+            "KiwiFacePartTextureTransaction.cs",
+            "KIWI_V5_1_PHASE16_9_FACEPART_TEXTURE_TRANSACTION"),
+        new MarkerRule(
+            "Assets/KiwiAvatarSystem/Editor/" +
+            "KiwiPhase16_13StaticRestPresentationMigration.cs",
+            "KIWI_V5_1_PHASE16_13_STATIC_REST_PRESENTATION",
+            "KIWI_V5_1_PHASE16_13_BEFORE_RENDER_REST_DEDUP"),
+        new MarkerRule(
+            "Assets/KiwiAvatarSystem/Editor/" +
+            "KiwiPhase16_14RenderBoundaryContinuityMigration.cs",
+            "KIWI_V5_1_PHASE16_14_RENDER_BOUNDARY_FRESH_ONLY"),
+        new MarkerRule(
+            "Assets/KiwiAvatarSystem/Editor/" +
+            "KiwiPhase16_15RootContinuityMigration.cs",
+            "KIWI_V5_1_PHASE16_15_NO_FRAME_HOLD_RESUME_ENVELOPE"),
+        new MarkerRule(
+            "Assets/KiwiAvatarSystem/Editor/" +
+            "KiwiFacePartTextureTransactionMigration.cs",
+            "KIWI_V5_1_PHASE16_9_FACEPART_TEXTURE_TRANSACTION_MIGRATION"),
         new MarkerRule(
             "Assets/Script/FacePartCropper.cs",
             "KIWI_PRESENTATION_FPS_OWNER_V3_7",
             "KIWI_V4_8_SEMANTIC_FRESHNESS_GATE",
             "KIWI_V4_9_PART_TRANSACTION_REPORT",
-            "KIWI_V5_1_PHASE5_CANONICAL_CROPPER_FRAME"),
+            "KIWI_V5_1_PHASE5_CANONICAL_CROPPER_FRAME",
+            "KIWI_V5_1_PHASE16_9_MATCHED_FACEPART_TEXTURE_WRITER",
+            "KIWI_V5_1_PHASE16_9_TEXTURE_SEMANTIC_GATE",
+            "KIWI_V5_1_PHASE16_9_TEXTURE_TRANSACTION_COMMIT"),
         new MarkerRule(
             "Assets/Script/FacePartShapeMask.cs",
             "KIWI_V4_8_MASK_SEMANTIC_FRESHNESS_GATE",

@@ -331,18 +331,47 @@ public sealed class KiwiFacePartRigidSampleFrame : MonoBehaviour
     private void ApplyRotation(
         float degrees)
     {
-        _left?.SetSampleFrameRotationDegrees(degrees);
-        _right?.SetSampleFrameRotationDegrees(degrees);
-        _mouth?.SetSampleFrameRotationDegrees(degrees);
+        // UnityEngine.Object overloads == / != so a destroyed component compares
+        // equal to null. Do not use the C# null-conditional operator here: ?.
+        // checks only the managed reference and can invoke methods on a destroyed
+        // SurfaceFittedRawImage during scene teardown / Play Mode stop.
+        if (_left != null)
+        {
+            _left.SetSampleFrameRotationDegrees(degrees);
+        }
+
+        if (_right != null)
+        {
+            _right.SetSampleFrameRotationDegrees(degrees);
+        }
+
+        if (_mouth != null)
+        {
+            _mouth.SetSampleFrameRotationDegrees(degrees);
+        }
 
         AppliedRotationDegrees = degrees;
     }
 
     private void ResetPartRotations()
     {
-        _left?.ResetSampleFrameRotation();
-        _right?.ResetSampleFrameRotation();
-        _mouth?.ResetSampleFrameRotation();
+        // Same Unity destroyed-object rule as ApplyRotation. This path runs from
+        // OnDisable/OnDestroy and from scene rebinds, exactly when cached UI
+        // components may already have been destroyed.
+        if (_left != null)
+        {
+            _left.ResetSampleFrameRotation();
+        }
+
+        if (_right != null)
+        {
+            _right.ResetSampleFrameRotation();
+        }
+
+        if (_mouth != null)
+        {
+            _mouth.ResetSampleFrameRotation();
+        }
     }
 
     private void RefreshReferences(

@@ -16,8 +16,16 @@ using Mediapipe.Unity.Sample.FaceLandmarkDetection;
 [DisallowMultipleComponent]
 public sealed class KiwiMatureVTuberSupervisor : MonoBehaviour
 {
+    // KIWI_V5_1_PHASE16_12_PERSISTENT_ROI_POLICY
+    // KIWI_V5_1_PHASE16_13_LATENCY_FIRST_PRESENTATION_POLICY
+    // KIWI_V5_1_PHASE16_14_STABLE_PIPELINE_RENDER_CONTINUITY_POLICY
+    // KIWI_V5_1_PHASE16_15_NO_FRAME_HOLD_RESUME_ENVELOPE_POLICY
+    // Runtime policy authority remains single-owner. Phase 16.15 retains the
+    // stable desktop three-lane + fresh-only render boundary from Phase 16.14,
+    // then adds presentation-only no-frame hold, same-provider resume bridging,
+    // and a final discontinuity correction envelope inside the existing Root owner.
     public const string Version =
-        "5.1.0-phase16.8-commercial-qos";
+        "5.1.0-phase16.15-no-frame-hold-resume-envelope";
 
     private const string RuntimeObjectName =
         "[Kiwi] Mature VTuber Supervisor";
@@ -81,6 +89,11 @@ public sealed class KiwiMatureVTuberSupervisor : MonoBehaviour
 
     [Range(8f, 15f)]
     public float commercialCadenceAgedTargetHz = 15f;
+
+    // KIWI_V5_1_PHASE16_10_HYBRID_AUXILIARY_BUDGET
+    [Tooltip("When the GPU Inference Engine owns fresh-frame landmarks, cap MediaPipe to a robust anchor/blendshape cadence so auxiliary CPUAsync readback cannot compete with the high-rate path.")]
+    [Range(6f, 12f)]
+    public float commercialHybridAuxiliaryMaximumHz = 10f;
 
     [Range(0.5f, 12f)]
     public float commercialRenderFpsResponse = 3f;
@@ -752,6 +765,22 @@ public sealed class KiwiMatureVTuberSupervisor : MonoBehaviour
                         commercialTargetHz,
                         6f,
                         15f));
+        }
+
+        // KIWI_V5_1_PHASE16_10_HYBRID_AUXILIARY_BUDGET
+        // The high-rate path is the bounded GPU tracker. MediaPipe remains the
+        // robust detector/anchor, pose calibration and learned-expression source.
+        // Once GPU ownership is healthy, spending additional CPUAsync readbacks
+        // above this cap adds contention instead of reducing presentation age.
+        if (_runner.InferenceEnginePrimaryActive)
+        {
+            targetHz =
+                Mathf.Min(
+                    targetHz,
+                    Mathf.Clamp(
+                        commercialHybridAuxiliaryMaximumHz,
+                        6f,
+                        12f));
         }
 
         debugCommercialCadenceBoost =
