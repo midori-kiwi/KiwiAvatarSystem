@@ -82,28 +82,14 @@ namespace Mediapipe.Unity.Sample
       Glog.V = _glogV;
     }
 
-    public WebCamSource BuildWebCamSource()
-    {
-#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
-      return new Mediapipe.Unity.WindowsNativeWebCamSource(
-        _preferredDefaultWebCamWidth,
-        _defaultAvailableWebCamResolutions,
-        _preferredWebCamDeviceKeywords,
-        _preferredWebCamProfileWidth,
-        _preferredWebCamProfileHeight,
-        _preferredWebCamProfileFrameRate
-      );
-#else
-      return new WebCamSource(
-        _preferredDefaultWebCamWidth,
-        _defaultAvailableWebCamResolutions,
-        _preferredWebCamDeviceKeywords,
-        _preferredWebCamProfileWidth,
-        _preferredWebCamProfileHeight,
-        _preferredWebCamProfileFrameRate
-      );
-#endif
-    }
+    public WebCamSource BuildWebCamSource() => new WebCamSource(
+      _preferredDefaultWebCamWidth,
+      _defaultAvailableWebCamResolutions,
+      _preferredWebCamDeviceKeywords,
+      _preferredWebCamProfileWidth,
+      _preferredWebCamProfileHeight,
+      _preferredWebCamProfileFrameRate
+    );
 
     public StaticImageSource BuildStaticImageSource() => new StaticImageSource(
       _availableStaticImageSources,

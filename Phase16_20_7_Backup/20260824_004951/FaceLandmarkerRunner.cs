@@ -422,8 +422,6 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
         private int _freshWebCamGeneration;
         private int _lastObservedWebCamUnityFrame = -1;
         private WebCamTexture _observedWebCamTexture;
-        private IKiwiFreshFrameSource _observedFreshFrameSource;
-        private ulong _lastObservedFreshFrameSequence;
 
         // KIWI_V5_1_PHASE8_CAMERA_GENERATION_OWNER
         // Camera/source session identity is owned here, beside the
@@ -605,7 +603,6 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             // This observer continues to run while the processing coroutine is
             // awaiting AsyncGPUReadback. Without it, camera updates occurring in
             // that wait frame are invisible and effective source fps can halve.
-            ObserveFreshFrameSource(_observedFreshFrameSource);
             ObserveFreshWebCamFrame(_observedWebCamTexture);
             ProcessSentisFreshFrame();
         }
@@ -843,48 +840,6 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             return false;
         }
 
-
-        private void ObserveFreshFrameSource(
-            IKiwiFreshFrameSource freshFrameSource)
-        {
-            if (
-                !_acceptTrackingResults ||
-                freshFrameSource == null
-            )
-            {
-                return;
-            }
-
-            freshFrameSource.PrepareFrameForUnity();
-
-            if (
-                !freshFrameSource.TryGetLatestPresentedFrame(
-                    out ulong sequence,
-                    out long hostTicks
-                ) ||
-                sequence == 0 ||
-                sequence == _lastObservedFreshFrameSequence
-            )
-            {
-                return;
-            }
-
-            if (hostTicks <= 0L)
-            {
-                hostTicks =
-                    System.Diagnostics.Stopwatch.GetTimestamp();
-            }
-
-            _lastObservedFreshFrameSequence =
-                sequence;
-
-            _freshWebCamGeneration++;
-            _pendingFreshWebCamFrame = true;
-            _pendingSourceFrameHostTicks = hostTicks;
-            _latestSentisSourceFrameHostTicks = hostTicks;
-
-            RecordFreshSourceFrame(hostTicks);
-        }
 
         private void ObserveFreshWebCamFrame(WebCamTexture webCamTexture)
         {
@@ -1427,8 +1382,6 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             _freshWebCamGeneration = 0;
             _lastObservedWebCamUnityFrame = -1;
             _observedWebCamTexture = null;
-            _observedFreshFrameSource = null;
-            _lastObservedFreshFrameSequence = 0;
 
             Debug.Log(
                 $"Delegate = {config.Delegate}"
@@ -1511,9 +1464,6 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
             _observedWebCamTexture =
                 imageSource.GetCurrentTexture() as WebCamTexture;
-
-            _observedFreshFrameSource =
-                imageSource as IKiwiFreshFrameSource;
 
 
             _sourceName =
@@ -1746,10 +1696,6 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     ObserveFreshWebCamFrame(webCamTexture);
                 }
 
-                ObserveFreshFrameSource(
-                    _observedFreshFrameSource
-                );
-
 
                 if (
                     isLiveStream &&
@@ -1781,10 +1727,7 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 if (
                     isLiveStream &&
                     processOnlyFreshWebCamFrames &&
-                    (
-                        sourceTexture is WebCamTexture ||
-                        _observedFreshFrameSource != null
-                    ) &&
+                    sourceTexture is WebCamTexture &&
                     !_pendingFreshWebCamFrame
                 )
                 {
