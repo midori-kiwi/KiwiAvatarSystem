@@ -40,6 +40,7 @@ public sealed class KiwiCommercialStartupReconciler : MonoBehaviour
     private KiwiMatureVTuberSupervisor _matureSupervisor;
     private KiwiFaceAttachmentRecalibration _attachmentRecalibration;
     private FacePartCropper _facePartCropper;
+    private KiwiFacePartLiveMotionBridge _facePartLiveMotionBridge;
     private FacePartShapeMask[] _facePartShapeMasks;
 
     private bool _reconciled;
@@ -108,6 +109,7 @@ public sealed class KiwiCommercialStartupReconciler : MonoBehaviour
         _matureSupervisor = null;
         _attachmentRecalibration = null;
         _facePartCropper = null;
+        _facePartLiveMotionBridge = null;
         _facePartShapeMasks = null;
         _reconciled = false;
         _nextRetryRealtime = 0.0;
@@ -339,24 +341,35 @@ public sealed class KiwiCommercialStartupReconciler : MonoBehaviour
 
         if (_facePartCropper != null)
         {
-            // v4.8: prediction is compensation, not a permanent extrapolated
-            // pose. Keep the existing predictor but bound it to the measured
-            // commercial live window observed in the supplied recording.
-            _facePartCropper.enablePrediction = true;
-            _facePartCropper.compensateMatchedFrameAge = true;
-            _facePartCropper.directPositionDuringMotion = true;
-            _facePartCropper.maxExtrapolationSeconds =
-                Mathf.Min(
-                    _facePartCropper.maxExtrapolationSeconds,
-                    0.050f);
-            _facePartCropper.maxPredictionDistance =
-                Mathf.Min(
-                    _facePartCropper.maxPredictionDistance,
-                    0.0035f);
+            // KIWI_V5_1_PHASE16_19_STRICT_FACEPART_PRESENTATION_EPOCH_CONTRACT
+            // Phase16.9 pins Texture + Crop + Mask + semantic geometry to one
+            // immutable semantic/camera transaction. Do not then extrapolate the
+            // crop geometry toward a newer render time: doing so would move an
+            // older pinned pixel snapshot with a newer predicted semantic pose.
+            // Render-rate interpolation remains active inside FacePartCropper.
+            _facePartCropper.enablePrediction = false;
+            _facePartCropper.compensateMatchedFrameAge = false;
+            _facePartCropper.directPositionDuringMotion = false;
 
-            // A short semantic stall must hold the last trusted crop rather
-            // than blanking the eye/mouth renderer.
+            // A short semantic stall must hold the last trusted complete part
+            // transaction rather than blanking or advancing only one channel.
             _facePartCropper.hidePartsWhenLost = false;
+        }
+
+        if (_facePartLiveMotionBridge == null)
+        {
+            _facePartLiveMotionBridge =
+                FindFirstObjectByType<KiwiFacePartLiveMotionBridge>(
+                    FindObjectsInactive.Include);
+        }
+
+        if (_facePartLiveMotionBridge != null)
+        {
+            // A newer live-frame optical residual belongs to a newer camera
+            // epoch than the pinned Phase16.9 texture transaction. Keep the
+            // legacy implementation for rollback/non-transaction experiments,
+            // but disable it in the strict commercial presentation path.
+            _facePartLiveMotionBridge.enableLiveFrameTracking = false;
         }
 
         if (

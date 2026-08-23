@@ -13,7 +13,7 @@ OcclusionCullingSettings:
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 9
+  serializedVersion: 10
   m_Fog: 0
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
@@ -42,8 +42,8 @@ RenderSettings:
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 12
-  m_GIWorkflowMode: 1
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -66,9 +66,6 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
-    m_FinalGather: 0
-    m_FinalGatherFiltering: 1
-    m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
     m_MixedBakeMode: 2
     m_BakeBackend: 1
@@ -96,7 +93,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 20201, guid: 0000000000000000f000000000000000, type: 0}
   m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
@@ -335,7 +332,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   strictLandmarkerTracking: 0
   runner: {fileID: 1064799462}
+  faceMotion: {fileID: 0}
+  cropper: {fileID: 0}
   baseMaterial: {fileID: 2100000, guid: f1a4d843a90c29d4cace54547dc33afa, type: 2}
+  stabilizeSurfaceOcclusion: 1
+  fullVisibilityYaw: 48
+  hiddenVisibilityYaw: 58
   facePart: 0
   eyeContourMargin: 0.035
   mouthContourMargin: 0.03
@@ -393,6 +395,7 @@ MonoBehaviour:
   debugMouthEdgeClearance: 1
   debugMouthHiddenByFrame: 0
   debugMouthFrameVisibility: 1
+  debugMouthProtectedByBlink: 0
 --- !u!114 &553149539
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -622,6 +625,7 @@ MonoBehaviour:
   fallbackModel: {fileID: 1435267719}
   fallbackHead: {fileID: 1435267718}
   faceAnchor: {fileID: 1388073754}
+  surfaceFitter: {fileID: 0}
   fallbackFaceAnchorHeadLocalPosition: {x: 0, y: -0.259, z: -0.78}
   fallbackFaceAnchorHeadLocalEulerAngles: {x: -0, y: 0, z: 0}
   fallbackFaceAnchorHeadLocalScale: {x: 1, y: 1, z: 1}
@@ -755,7 +759,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   strictLandmarkerTracking: 0
   runner: {fileID: 1064799462}
+  faceMotion: {fileID: 0}
+  cropper: {fileID: 0}
   baseMaterial: {fileID: 2100000, guid: f1a4d843a90c29d4cace54547dc33afa, type: 2}
+  stabilizeSurfaceOcclusion: 1
+  fullVisibilityYaw: 48
+  hiddenVisibilityYaw: 58
   facePart: 0
   eyeContourMargin: 0.12
   mouthContourMargin: 0.02
@@ -790,6 +799,17 @@ MonoBehaviour:
   mouthCalibrationSamples: 10
   maximumMouthHeightCorrection: 0.4
   mouthHeightDeadZone: 0.00015
+  hideMouthOutsideTexture: 1
+  protectMouthDuringBlink: 1
+  mouthBlinkProtectionThreshold: 0.35
+  mouthBlinkGeometryThreshold: 0.13
+  mouthHideEdgeMargin: 0.003
+  mouthShowEdgeMargin: 0.015
+  mouthEdgeHideConfirmationSamples: 3
+  mouthEdgeHideGraceSeconds: 0.12
+  mouthEdgeShowConfirmationSamples: 2
+  mouthHideFadeSeconds: 0.04
+  mouthShowFadeSeconds: 0.06
   logMatching: 0
   debugSelectedEye: '-'
   debugBlinkScore: 0
@@ -799,6 +819,10 @@ MonoBehaviour:
   debugMouthCalibrated: 0
   debugMouthReferenceV: 0.5
   debugMouthOffsetY: 0
+  debugMouthEdgeClearance: 1
+  debugMouthHiddenByFrame: 0
+  debugMouthFrameVisibility: 1
+  debugMouthProtectedByBlink: 0
 --- !u!114 &788061715
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -925,7 +949,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   strictLandmarkerTracking: 0
   runner: {fileID: 1064799462}
+  faceMotion: {fileID: 0}
+  cropper: {fileID: 0}
   baseMaterial: {fileID: 2100000, guid: f1a4d843a90c29d4cace54547dc33afa, type: 2}
+  stabilizeSurfaceOcclusion: 1
+  fullVisibilityYaw: 48
+  hiddenVisibilityYaw: 58
   facePart: 0
   eyeContourMargin: 0.12
   mouthContourMargin: 0.02
@@ -960,6 +989,17 @@ MonoBehaviour:
   mouthCalibrationSamples: 10
   maximumMouthHeightCorrection: 0.4
   mouthHeightDeadZone: 0.00015
+  hideMouthOutsideTexture: 1
+  protectMouthDuringBlink: 1
+  mouthBlinkProtectionThreshold: 0.35
+  mouthBlinkGeometryThreshold: 0.13
+  mouthHideEdgeMargin: 0.003
+  mouthShowEdgeMargin: 0.015
+  mouthEdgeHideConfirmationSamples: 3
+  mouthEdgeHideGraceSeconds: 0.12
+  mouthEdgeShowConfirmationSamples: 2
+  mouthHideFadeSeconds: 0.04
+  mouthShowFadeSeconds: 0.06
   logMatching: 0
   debugSelectedEye: '-'
   debugBlinkScore: 0
@@ -969,6 +1009,10 @@ MonoBehaviour:
   debugMouthCalibrated: 0
   debugMouthReferenceV: 0.5
   debugMouthOffsetY: 0
+  debugMouthEdgeClearance: 1
+  debugMouthHiddenByFrame: 0
+  debugMouthFrameVisibility: 1
+  debugMouthProtectedByBlink: 0
 --- !u!114 &842958313
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1222,6 +1266,9 @@ MonoBehaviour:
   trackingInputMaxWidth: 480
   autoOptimizeCm831: 1
   cm831TrackingInputWidth: 480
+  enableSentisHybridTracking: 1
+  sentisMediaPipeRefreshRateHz: 10
+  sentisMinimumPresence: 0.5
 --- !u!224 &1229135957 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3259285889726014650, guid: 5713b959e3c77a58fb258133fc8e4aef, type: 3}
@@ -1281,6 +1328,7 @@ MonoBehaviour:
   rayStartMultiplier: 2.5
   rayLengthMultiplier: 6
   logResult: 1
+  minimumSuccessfulFitRate: 0.7
 --- !u!1 &1402437443
 GameObject:
   m_ObjectHideFlags: 0
@@ -1666,6 +1714,17 @@ MonoBehaviour:
   ultraPredictivePositionResampling: 1
   ultraPositionCorrectionResponse: 45
   ultraPositionRecoveryResponse: 180
+  enableUltraFrameContinuityGuard: 1
+  ultraDirectBypassMinimumTrackingRateHz: 18
+  ultraFrameContinuityConvergencePerSample: 0.9
+  ultraFrameContinuityDiscontinuityFrames: 3
+  ultraFrameContinuityDiscontinuityResponseCap: 18
+  ultraFrameContinuityMaxPositionSpeedHeightsPerSecond: 6
+  ultraFrameContinuityMaxRotationSpeedDegreesPerSecond: 420
+  ultraFrameContinuityMaxScaleSpeedPerSecond: 2
+  ultraFrameContinuityEmergencyPositionErrorHeights: 0.2
+  ultraFrameContinuityEmergencyRotationErrorDegrees: 24
+  ultraFrameContinuityEmergencyScaleError: 0.1
   enableHybridPrecisionTracking: 1
   enablePrecisionOutlierGuard: 1
   useBoundedLatestResultCorrection: 1
@@ -1700,6 +1759,14 @@ MonoBehaviour:
   maximumScale: 1.6
   scaleStaticDeadZone: 0.0008
   scaleDeadZoneReleaseSpeed: 0.004
+  phase16_16EnableRootProviderBridge: 1
+  phase16_16BridgeReleaseSamples: 5
+  phase16_16BridgeMaxReleasePositionHeights: 0.25
+  phase16_16BridgeMaxReleaseRotationDegrees: 12
+  phase16_16BridgeMaxReleaseScaleFraction: 0.08
+  phase16_16BridgeMotionReleasePositionHeights: 0.35
+  phase16_16BridgeMotionReleaseRotationDegrees: 18
+  phase16_16BridgeMotionReleaseScaleFraction: 0.15
   enableMotionAccent: 1
   motionAccentVelocityResponse: 28
   motionAccentResponse: 22
@@ -1939,6 +2006,7 @@ MonoBehaviour:
   predictionLeadSeconds: 0.001
   maxExtrapolationSeconds: 0.09
   maxPredictionDistance: 0.004
+  debugMatchedFrameAgeMs: 0
   stabilizeCoherentVerticalMotion: 1
   coherentVerticalMotionMinSpeed: 0.025
   coherentVerticalDeltaTolerance: 0.003
@@ -2091,9 +2159,8 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1806680259}
   m_Enabled: 1
-  serializedVersion: 10
+  serializedVersion: 11
   m_Type: 1
-  m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
   m_Range: 10
@@ -2143,8 +2210,12 @@ Light:
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
+  m_ForceVisible: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
 --- !u!4 &1806680261
 Transform:
   m_ObjectHideFlags: 0

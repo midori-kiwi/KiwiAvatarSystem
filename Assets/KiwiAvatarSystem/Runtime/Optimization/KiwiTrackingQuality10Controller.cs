@@ -26,6 +26,14 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
 {
     public const string PresetVersion = "3.0.0-provider-foundation";
 
+    // KIWI_V5_1_PHASE16_17_SINGLE_PRESENTATION_AUTHORITY
+    [Header("Phase 16.17 Single Presentation Authority")]
+    [Tooltip("Commercial default. Keep Quality10 as policy/telemetry only so KiwiFaceMotion is the sole temporal writer of the rigid Root. Disable only for rollback testing.")]
+    public bool phase16_17PolicyOnlyPresentation = true;
+
+    public bool Phase16_17PolicyOnlyPresentation =>
+        phase16_17PolicyOnlyPresentation;
+
     private const string RuntimeObjectName =
         "[Kiwi] Human Motion Presentation";
 
@@ -370,6 +378,14 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
             }
         }
 
+        if (phase16_17PolicyOnlyPresentation)
+        {
+            ReportPhase16_17PolicyState();
+            KiwiPhase16_17PresentationAuthorityDiagnostics.
+                ReportSuppressedLateUpdate();
+            return;
+        }
+
         CaptureNewTrackingSample();
         PresentAtRenderTime();
     }
@@ -382,6 +398,14 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
         }
 
         RefreshReferences(false);
+
+        if (phase16_17PolicyOnlyPresentation)
+        {
+            ReportPhase16_17PolicyState();
+            KiwiPhase16_17PresentationAuthorityDiagnostics.
+                ReportSuppressedBeforeRender();
+            return;
+        }
 
         // KiwiFaceMotion subscribes from the scene before this runtime-created
         // controller, so a just-arrived atomic sample can be captured here after
@@ -547,11 +571,11 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
         // Remove sample-domain holds and secondary temporal filters. They can turn
         // slow real movement into a sequence of releases.
         motion.ultraAdaptiveMicroFilter = false;
-        motion.ultraStaticPoseLock = false;
+        motion.ultraStaticPoseLock = true;
 
         // No body display interpolation inside KiwiFaceMotion. Keeping temporal
         // presentation in one layer prevents double-filter lag and uneven phase.
-        motion.ultraDisplayRateSmoothing = false;
+        motion.ultraDisplayRateSmoothing = true;
         motion.ultraDirectDisplayDuringMotion = true;
         motion.ultraPredictivePositionResampling = false;
 
@@ -571,6 +595,20 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
         // Avoid a discrete rotation hold at very slow head movement.
         motion.rotationStaticDeadZone = 0f;
         motion.rotationDeadZoneReleaseSpeed = 0f;
+    }
+
+    private void ReportPhase16_17PolicyState()
+    {
+        bool sharedRoot =
+            _faceMotion != null &&
+            _motionRoot != null &&
+            _motionRoot == _faceMotion.kiwiRoot;
+
+        KiwiPhase16_17PresentationAuthorityDiagnostics.
+            ReportPolicyState(
+                phase16_17PolicyOnlyPresentation,
+                sharedRoot,
+                _faceMotion);
     }
 
     private void ApplyRunnerPreset(
@@ -609,6 +647,10 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
     private static void ApplyCropperPreset(
         FacePartCropper cropper)
     {
+        // KIWI_V5_1_PHASE16_19_STRICT_FACEPART_PRESENTATION_EPOCH
+        // Phase16.9 pins pixels and semantic geometry to one sample.
+        // Keep render interpolation, but do not extrapolate crop geometry
+        // to a newer time than the pinned texture transaction.
         cropper.strictLandmarkerTracking = false;
 
         cropper.request120Fps = true;
@@ -635,8 +677,8 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
         cropper.velocityResponse = 96f;
         cropper.maxCenterVelocity = 2.5f;
 
-        cropper.enablePrediction = true;
-        cropper.compensateMatchedFrameAge = true;
+        cropper.enablePrediction = false;
+        cropper.compensateMatchedFrameAge = false;
 
         // Never expose accepted-sample stepping directly during motion.
         cropper.directPositionDuringMotion = false;
@@ -1849,6 +1891,12 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
                 scaleSmoothTime,
                 maximumScaleSpeed * 1.5f,
                 dt);
+
+        KiwiPhase16_17PresentationAuthorityDiagnostics.
+            ReportLegacyRootWrite(
+                phase16_17PolicyOnlyPresentation,
+                _faceMotion != null &&
+                _motionRoot == _faceMotion.kiwiRoot);
 
         _motionRoot.localPosition =
             _renderPosition;

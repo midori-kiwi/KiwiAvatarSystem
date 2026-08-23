@@ -1,4 +1,5 @@
 using UnityEngine;
+using Mediapipe.Unity.Sample.FaceLandmarkDetection;
 
 /// <summary>
 /// Phase 16.16 observer-only diagnostics for the Root-space provider handoff bridge.

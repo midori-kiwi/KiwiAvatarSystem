@@ -591,6 +591,41 @@ public class KiwiFaceMotion : MonoBehaviour
         _phase16_13BeforeRenderNewSampleCount;
 
 
+    // KIWI_V5_1_PHASE16_16_ROOT_SPACE_PROVIDER_BRIDGE
+    [Header("Phase 16.16 Root-Space Provider Bridge")]
+    [Tooltip("Normalize an actual provider-generation change to the Root pose already on screen, then release only on fresh accepted provider samples.")]
+    public bool phase16_16EnableRootProviderBridge = true;
+
+    [Range(2, 10)] public int phase16_16BridgeReleaseSamples = 5;
+    [Range(0.05f, 0.50f)] public float phase16_16BridgeMaxReleasePositionHeights = 0.25f;
+    [Range(3f, 30f)] public float phase16_16BridgeMaxReleaseRotationDegrees = 12f;
+    [Range(0.02f, 0.20f)] public float phase16_16BridgeMaxReleaseScaleFraction = 0.08f;
+    [Range(0.10f, 1.00f)] public float phase16_16BridgeMotionReleasePositionHeights = 0.35f;
+    [Range(5f, 45f)] public float phase16_16BridgeMotionReleaseRotationDegrees = 18f;
+    [Range(0.05f, 0.40f)] public float phase16_16BridgeMotionReleaseScaleFraction = 0.15f;
+
+    private int _phase16_16LastProviderGeneration;
+    private KiwiTrackingBackend _phase16_16LastProviderBackend = KiwiTrackingBackend.Unknown;
+    private bool _phase16_16ProviderBridgeActive;
+    private int _phase16_16BridgeProviderGeneration;
+    private KiwiTrackingBackend _phase16_16BridgeBackend = KiwiTrackingBackend.Unknown;
+    private int _phase16_16BridgeAcceptedSamples;
+    private Vector3 _phase16_16BridgeStartSamplePosition;
+    private Quaternion _phase16_16BridgeStartSampleRotation = Quaternion.identity;
+    private float _phase16_16BridgeStartSampleScaleFactor = 1f;
+    private bool _phase16_16BridgeOffsetsInitialized;
+    private Vector3 _phase16_16BridgeReferencePosition;
+    private Quaternion _phase16_16BridgeReferenceRotation = Quaternion.identity;
+    private float _phase16_16BridgeReferenceScaleFactor = 1f;
+    private Vector3 _phase16_16BridgePositionOffset;
+    private Quaternion _phase16_16BridgeRotationOffset = Quaternion.identity;
+    private float _phase16_16BridgeScaleRatio = 1f;
+    private float _phase16_16BridgeWeight;
+    private float _phase16_16BridgeTargetWeight;
+    private float _phase16_16BridgeReleaseStep;
+    private float _phase16_16BridgeMotionProgress;
+
+
     // KIWI_V5_1_PHASE16_15_NO_FRAME_HOLD_RESUME_ENVELOPE
     // Presentation-only recovery state. Provider identity, calibration
     // and accepted tracking samples remain owned by their existing systems.
@@ -1379,6 +1414,10 @@ public class KiwiFaceMotion : MonoBehaviour
             if (accepted)
             {
                 HandlePhase16_15AcceptedAuthoritativeFrame(
+                    KiwiCommercialRigidMotionPolicy.GetAuthoritativeProviderGeneration(),
+                    precisionData.backend);
+
+                HandlePhase16_16AcceptedProviderFrame(
                     KiwiCommercialRigidMotionPolicy.GetAuthoritativeProviderGeneration(),
                     precisionData.backend);
 
@@ -3829,6 +3868,9 @@ public class KiwiFaceMotion : MonoBehaviour
                 if (accepted)
                 {
                     phase16_14AcceptedNewRenderSample = true;
+                    HandlePhase16_16AcceptedProviderFrame(
+                        KiwiCommercialRigidMotionPolicy.GetAuthoritativeProviderGeneration(),
+                        latestData.backend);
                     _lastSeenTime = Time.unscaledTime;
                     _trackingWasLost = false;
                 }
@@ -4117,6 +4159,11 @@ public class KiwiFaceMotion : MonoBehaviour
         Vector3 targetScale,
         float dt)
     {
+        ApplyPhase16_16ProviderRootBridge(
+            ref targetRotation,
+            ref targetPosition,
+            ref targetScale);
+
         bool kiwiContinuityProtectionReady =
             enableUltraFrameContinuityGuard &&
             _displayPoseInitialized &&
@@ -4698,6 +4745,206 @@ public class KiwiFaceMotion : MonoBehaviour
                 ultraDirectBypassMinimumTrackingRateHz);
     }
 
+    private void HandlePhase16_16AcceptedProviderFrame(int providerGeneration, KiwiTrackingBackend backend)
+    {
+        // KIWI_V5_1_PHASE16_18_SINGLE_HANDOFF_AUTHORITY
+        bool canonicalHandoffOwner =
+            KiwiTrackingProviderHub.
+                CanonicalHandoffNormalizationEnabled;
+
+        if (providerGeneration <= 0) return;
+        bool providerChanged = _phase16_16LastProviderGeneration > 0 && providerGeneration != _phase16_16LastProviderGeneration;
+                // KIWI_V5_1_PHASE16_18_STATE_SUPPRESSION_AFTER_PROVIDER_DECLARATION
+        if (
+            canonicalHandoffOwner &&
+            providerChanged &&
+            phase16_16EnableRootProviderBridge)
+        {
+            KiwiPhase16_18HandoffAuthorityDiagnostics.
+                ReportLocalProviderBridgeSuppressed();
+        }
+
+        if (
+            canonicalHandoffOwner &&
+            _phase16_16ProviderBridgeActive)
+        {
+            ResetPhase16_16ActiveBridgeOnly();
+        }
+
+if (!canonicalHandoffOwner && providerChanged && phase16_16EnableRootProviderBridge)
+        {
+            BeginPhase16_16ProviderBridge(providerGeneration, backend);
+        }
+        else if (_phase16_16ProviderBridgeActive && providerGeneration == _phase16_16BridgeProviderGeneration)
+        {
+            AdvancePhase16_16ProviderBridgeRelease();
+        }
+        _phase16_16LastProviderGeneration = providerGeneration;
+        _phase16_16LastProviderBackend = backend;
+        ReportPhase16_16ProviderBridge(false);
+    }
+
+    private void BeginPhase16_16ProviderBridge(int providerGeneration, KiwiTrackingBackend backend)
+    {
+        if (kiwiRoot == null || !_displayPoseInitialized)
+        {
+            ResetPhase16_16ActiveBridgeOnly();
+            return;
+        }
+        Vector3 referencePosition = kiwiRoot.localPosition;
+        Quaternion referenceRotation = kiwiRoot.localRotation;
+        float referenceScaleFactor = SafeScaleRatio(kiwiRoot.localScale.x, _baseScale.x);
+        float incomingScaleFactor = SafeScaleRatio(_sampleScale.x, _baseScale.x);
+        if (!IsPhase16_16Finite(referencePosition) || !IsPhase16_16Finite(_samplePosition) || !IsPhase16_16Finite(referenceScaleFactor) || !IsPhase16_16Finite(incomingScaleFactor) || incomingScaleFactor <= 0.0001f)
+        {
+            ResetPhase16_16ActiveBridgeOnly();
+            return;
+        }
+        _phase16_16ProviderBridgeActive = true;
+        _phase16_16BridgeProviderGeneration = providerGeneration;
+        _phase16_16BridgeBackend = backend;
+        _phase16_16BridgeAcceptedSamples = 0;
+        _phase16_16BridgeStartSamplePosition = _samplePosition;
+        _phase16_16BridgeStartSampleRotation = _sampleRotation;
+        _phase16_16BridgeStartSampleScaleFactor = incomingScaleFactor;
+        _phase16_16BridgeOffsetsInitialized = false;
+        _phase16_16BridgeReferencePosition = referencePosition;
+        _phase16_16BridgeReferenceRotation = referenceRotation;
+        _phase16_16BridgeReferenceScaleFactor = referenceScaleFactor;
+        _phase16_16BridgePositionOffset = Vector3.zero;
+        _phase16_16BridgeRotationOffset = Quaternion.identity;
+        _phase16_16BridgeScaleRatio = 1f;
+        _phase16_16BridgeWeight = 1f;
+        _phase16_16BridgeTargetWeight = 1f;
+        _phase16_16BridgeReleaseStep = 0f;
+        _phase16_16BridgeMotionProgress = 0f;
+        ReportPhase16_16ProviderBridge(true);
+    }
+
+    private void AdvancePhase16_16ProviderBridgeRelease()
+    {
+        if (!_phase16_16ProviderBridgeActive || !_phase16_16BridgeOffsetsInitialized) return;
+        _phase16_16BridgeAcceptedSamples++;
+        float safeHeight = Mathf.Max(_modelHeight, 0.0001f);
+        float positionProgress = Vector3.Distance(_samplePosition, _phase16_16BridgeStartSamplePosition) / Mathf.Max(safeHeight * Mathf.Max(0.05f, phase16_16BridgeMotionReleasePositionHeights), 0.0001f);
+        float rotationProgress = Quaternion.Angle(_phase16_16BridgeStartSampleRotation, _sampleRotation) / Mathf.Max(1f, phase16_16BridgeMotionReleaseRotationDegrees);
+        float currentScaleFactor = SafeScaleRatio(_sampleScale.x, _baseScale.x);
+        float scaleProgress = Mathf.Abs(currentScaleFactor - _phase16_16BridgeStartSampleScaleFactor) / Mathf.Max(0.01f, phase16_16BridgeMotionReleaseScaleFraction);
+        float sampleProgress = _phase16_16BridgeAcceptedSamples / (float)Mathf.Max(2, phase16_16BridgeReleaseSamples);
+        _phase16_16BridgeMotionProgress = Mathf.Clamp01(Mathf.Max(sampleProgress, Mathf.Max(positionProgress, Mathf.Max(rotationProgress, scaleProgress))));
+        _phase16_16BridgeTargetWeight = 1f - Phase16_16Smooth01(_phase16_16BridgeMotionProgress);
+        _phase16_16BridgeTargetWeight = Mathf.Min(_phase16_16BridgeWeight, _phase16_16BridgeTargetWeight);
+        float maximumReleaseWeight = 0.40f;
+        float positionOffset = _phase16_16BridgePositionOffset.magnitude;
+        if (positionOffset > 0.0001f) maximumReleaseWeight = Mathf.Min(maximumReleaseWeight, safeHeight * Mathf.Max(0.01f, phase16_16BridgeMaxReleasePositionHeights) / positionOffset);
+        float rotationOffset = Quaternion.Angle(Quaternion.identity, _phase16_16BridgeRotationOffset);
+        if (rotationOffset > 0.001f) maximumReleaseWeight = Mathf.Min(maximumReleaseWeight, Mathf.Max(0.5f, phase16_16BridgeMaxReleaseRotationDegrees) / rotationOffset);
+        float scaleOffset = Mathf.Abs(_phase16_16BridgeScaleRatio - 1f);
+        if (scaleOffset > 0.0001f) maximumReleaseWeight = Mathf.Min(maximumReleaseWeight, Mathf.Max(0.005f, phase16_16BridgeMaxReleaseScaleFraction) / scaleOffset);
+        maximumReleaseWeight = Mathf.Clamp(maximumReleaseWeight, 0.02f, 0.40f);
+        float previousWeight = _phase16_16BridgeWeight;
+        _phase16_16BridgeWeight = Mathf.MoveTowards(_phase16_16BridgeWeight, _phase16_16BridgeTargetWeight, maximumReleaseWeight);
+        _phase16_16BridgeReleaseStep = Mathf.Max(0f, previousWeight - _phase16_16BridgeWeight);
+        if (_phase16_16BridgeWeight <= 0.0001f) ResetPhase16_16ActiveBridgeOnly();
+    }
+
+    private void ApplyPhase16_16ProviderRootBridge(ref Quaternion targetRotation, ref Vector3 targetPosition, ref Vector3 targetScale)
+    {
+        if (KiwiTrackingProviderHub.CanonicalHandoffNormalizationEnabled)
+        {
+            if (_phase16_16ProviderBridgeActive)
+            {
+                ResetPhase16_16ActiveBridgeOnly();
+            }
+
+            KiwiPhase16_16ProviderBridgeDiagnostics.
+                ReportApplied(0f, 0f, 0f);
+            return;
+        }
+
+        if (!_phase16_16ProviderBridgeActive || !phase16_16EnableRootProviderBridge || _phase16_16BridgeWeight <= 0.0001f)
+        {
+            KiwiPhase16_16ProviderBridgeDiagnostics.ReportApplied(0f, 0f, 0f);
+            return;
+        }
+        Vector3 beforePosition = targetPosition;
+        Quaternion beforeRotation = targetRotation;
+        float beforeScaleFactor = SafeScaleRatio(targetScale.x, _baseScale.x);
+        if (!_phase16_16BridgeOffsetsInitialized)
+        {
+            if (!IsPhase16_16Finite(beforePosition) || !IsPhase16_16Finite(beforeScaleFactor) || beforeScaleFactor <= 0.0001f)
+            {
+                ResetPhase16_16ActiveBridgeOnly();
+                KiwiPhase16_16ProviderBridgeDiagnostics.ReportApplied(0f, 0f, 0f);
+                return;
+            }
+            _phase16_16BridgePositionOffset = _phase16_16BridgeReferencePosition - beforePosition;
+            _phase16_16BridgeRotationOffset = _phase16_16BridgeReferenceRotation * Quaternion.Inverse(beforeRotation);
+            _phase16_16BridgeScaleRatio = Mathf.Clamp(_phase16_16BridgeReferenceScaleFactor / beforeScaleFactor, 0.50f, 2.00f);
+            _phase16_16BridgeOffsetsInitialized = true;
+            ReportPhase16_16ProviderBridge(false);
+        }
+        targetPosition += _phase16_16BridgePositionOffset * _phase16_16BridgeWeight;
+        Quaternion appliedRotation = Quaternion.Slerp(Quaternion.identity, _phase16_16BridgeRotationOffset, _phase16_16BridgeWeight);
+        targetRotation = appliedRotation * targetRotation;
+        float appliedScaleRatio = Mathf.Lerp(1f, _phase16_16BridgeScaleRatio, _phase16_16BridgeWeight);
+        float bridgedScaleFactor = beforeScaleFactor * appliedScaleRatio;
+        targetScale = _baseScale * bridgedScaleFactor;
+        KiwiPhase16_16ProviderBridgeDiagnostics.ReportApplied(Vector3.Distance(beforePosition, targetPosition), Quaternion.Angle(beforeRotation, targetRotation), Mathf.Abs(bridgedScaleFactor - beforeScaleFactor));
+    }
+
+    private void ReportPhase16_16ProviderBridge(bool started)
+    {
+        KiwiPhase16_16ProviderBridgeDiagnostics.ReportBridge(_phase16_16ProviderBridgeActive, started, _phase16_16BridgeProviderGeneration, _phase16_16BridgeBackend, _phase16_16BridgeWeight, _phase16_16BridgeTargetWeight, _phase16_16BridgeReleaseStep, _phase16_16BridgeAcceptedSamples, _phase16_16BridgeMotionProgress, _phase16_16BridgePositionOffset.magnitude, Quaternion.Angle(Quaternion.identity, _phase16_16BridgeRotationOffset), _phase16_16BridgeScaleRatio);
+    }
+
+    private void ResetPhase16_16ActiveBridgeOnly()
+    {
+        _phase16_16ProviderBridgeActive = false;
+        _phase16_16BridgeProviderGeneration = 0;
+        _phase16_16BridgeBackend = KiwiTrackingBackend.Unknown;
+        _phase16_16BridgeAcceptedSamples = 0;
+        _phase16_16BridgeStartSamplePosition = Vector3.zero;
+        _phase16_16BridgeStartSampleRotation = Quaternion.identity;
+        _phase16_16BridgeStartSampleScaleFactor = 1f;
+        _phase16_16BridgeOffsetsInitialized = false;
+        _phase16_16BridgeReferencePosition = Vector3.zero;
+        _phase16_16BridgeReferenceRotation = Quaternion.identity;
+        _phase16_16BridgeReferenceScaleFactor = 1f;
+        _phase16_16BridgePositionOffset = Vector3.zero;
+        _phase16_16BridgeRotationOffset = Quaternion.identity;
+        _phase16_16BridgeScaleRatio = 1f;
+        _phase16_16BridgeWeight = 0f;
+        _phase16_16BridgeTargetWeight = 0f;
+        _phase16_16BridgeReleaseStep = 0f;
+        _phase16_16BridgeMotionProgress = 0f;
+        ReportPhase16_16ProviderBridge(false);
+    }
+
+    private void ResetPhase16_16ProviderBridgeState()
+    {
+        _phase16_16LastProviderGeneration = 0;
+        _phase16_16LastProviderBackend = KiwiTrackingBackend.Unknown;
+        ResetPhase16_16ActiveBridgeOnly();
+    }
+
+    private static float Phase16_16Smooth01(float value)
+    {
+        value = Mathf.Clamp01(value);
+        return value * value * (3f - 2f * value);
+    }
+
+    private static bool IsPhase16_16Finite(float value)
+    {
+        return !float.IsNaN(value) && !float.IsInfinity(value);
+    }
+
+    private static bool IsPhase16_16Finite(Vector3 value)
+    {
+        return IsPhase16_16Finite(value.x) && IsPhase16_16Finite(value.y) && IsPhase16_16Finite(value.z);
+    }
+
+
     private void BeginPhase16_15NoFrameHold()
     {
         if (!_phase16_15AuthoritativeFrameMissing)
@@ -4864,6 +5111,15 @@ public class KiwiFaceMotion : MonoBehaviour
                 KiwiFrameContinuityDiagnostics.DiscontinuityGuardActive
             );
 
+        finalEnvelopeActive =
+            finalEnvelopeActive ||
+            KiwiTrackingProviderHub.CanonicalHandoffActive;
+
+        KiwiPhase16_18HandoffAuthorityDiagnostics.
+            ReportHubHandoffEnvelopeGuard(
+                finalEnvelopeActive &&
+                KiwiTrackingProviderHub.CanonicalHandoffActive);
+
         if (finalEnvelopeActive)
         {
             maxPositionStep = CalculatePhase16_15MappedPositionStepLimit(dt);
@@ -4964,6 +5220,7 @@ public class KiwiFaceMotion : MonoBehaviour
     {
         ResetUltraStaticLocks();
         ResetPhase16_15RootContinuityState();
+        ResetPhase16_16ProviderBridgeState();
         _hasPrecisionInputHistory =
             false;
 

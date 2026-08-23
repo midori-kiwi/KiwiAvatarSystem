@@ -10,6 +10,12 @@ using Mediapipe.Unity.Sample.FaceLandmarkDetection;
 /// <summary>
 /// v5.1 Phase 6 commercial live camera-frame local-residual tracker.
 ///
+/// KIWI_V5_1_PHASE16_19_STRICT_FACEPART_PRESENTATION_EPOCH
+/// In the strict commercial presentation path, Phase16.9 pins pixels and
+/// semantic geometry to one immutable transaction. A newer live-frame residual
+/// must therefore not be applied to that older pinned image. The implementation
+/// is retained only for rollback / non-transaction experiments.
+///
 /// Commercial AR/filter systems commonly combine a slower semantic detector
 /// with a lightweight local tracker between detector updates. Kiwi uses the
 /// same hierarchy:
@@ -37,7 +43,8 @@ public sealed class KiwiFacePartLiveMotionBridge : MonoBehaviour
     private const int MouthPart = 2;
 
     [Header("Master")]
-    public bool enableLiveFrameTracking = true;
+    [Tooltip("Legacy/non-transaction path only. Keep OFF when strict FacePart texture transactions are active so pixel and crop geometry remain on one presentation epoch.")]
+    public bool enableLiveFrameTracking = false;
 
     [Tooltip("Desktop/DX11 target. Mobile keeps the ML/prediction path unless explicitly enabled.")]
     public bool enableOnMobile = false;

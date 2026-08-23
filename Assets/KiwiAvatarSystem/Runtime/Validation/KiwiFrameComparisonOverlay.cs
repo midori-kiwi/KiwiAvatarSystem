@@ -279,6 +279,7 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
                 // KIWI_V5_1_PHASE16_16_ROOT_SPACE_PROVIDER_BRIDGE_DIAGNOSTICS
                 // KIWI_V5_1_PHASE16_17_SINGLE_PRESENTATION_AUTHORITY_DIAGNOSTICS
                 // KIWI_V5_1_PHASE16_18_SINGLE_HANDOFF_AUTHORITY_DIAGNOSTICS
+                // KIWI_V5_1_PHASE16_19_STRICT_FACEPART_PRESENTATION_EPOCH_DIAGNOSTICS
                 "runnerFreshSourceHz,runnerSubmissionHz,runnerResultHz,canonicalAdoptionHz,runnerReadbackLatencyMs,sourceToSubmissionGapHz,submissionToResultGapHz,resultToAdoptionGapHz,submissionEfficiency,resultEfficiency,adoptionEfficiency,canonicalAdoptionCount," +
                 "inferenceTelemetryOperational,inferencePipelineDepth,inferenceLaneLimit,inferenceActiveLanes,inferenceOldestPendingAgeMs,inferenceLatencyMs,inferenceScheduleDelayMs,inferenceSourceToCompletionAgeMs,inferenceAcceptedSourceAgeMs," +
                 "inferenceRawPresenceLogit,inferencePresence,inferenceConsecutiveFailures,inferenceHasRegion,inferenceTrackingHealthy,inferenceRegionRetentionActive,inferenceRegionTrustedAgeMs,inferenceRegionGraceRemainingMs,inferenceRegionRecoveryScale,inferenceRegionRetainedFailureCount,inferenceRegionReleaseCount,inferenceRegionCenterX,inferenceRegionCenterY,inferenceRegionWidth,inferenceRegionHeight,inferenceScheduleCpuMs,inferenceGpuReadbackWaitMs,inferenceDecodeCpuMs," +
@@ -296,6 +297,7 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
                 "rootProviderBridgeActive,rootProviderBridgeCount,rootProviderBridgeGeneration,rootProviderBridgeBackend,rootProviderBridgeWeight,rootProviderBridgeTargetWeight,rootProviderBridgeReleaseStep,rootProviderBridgeAcceptedSamples,rootProviderBridgeMotionProgress,rootProviderBridgePositionOffset,rootProviderBridgeRotationOffsetDeg,rootProviderBridgeScaleRatio,rootProviderBridgeAppliedPosDelta,rootProviderBridgeAppliedRotDelta,rootProviderBridgeAppliedScaleDelta," +
                 "singlePresentationAuthority,quality10PolicyOnly,quality10SharedRootBinding,quality10SuppressedLateUpdateCount,quality10SuppressedBeforeRenderCount,quality10LegacyRootWriteCount,quality10LegacyWriteViolationCount,faceMotionDisplayRateSmoothing,faceMotionStaticRestEnabled,faceMotionAdaptiveMicroFilter,faceMotionPredictionDisabled," +
                 "singleHandoffAuthority,canonicalHandoffNormalizationEnabled,canonicalHandoffActive,canonicalHandoffIsResume,localRootProviderBridgeActive,localRootProviderBridgeSuppressedCount,handoffAuthorityViolationCount,hubHandoffEnvelopeGuardActivationCount," +
+                "strictFacePartPresentationEpoch,facePartPredictionDisabled,facePartMatchedAgeCompensationDisabled,facePartDirectMotionDisabled,facePartLiveResidualDisabled,facePartPresentationEpochAligned,facePartPresentationEpochViolationCount,facePartEpochSemanticTimestamp,facePartEpochTextureCanonicalFrameId," +
                 "faceTextureTransactionOperational,faceTextureSceneBindingValid,faceTextureStrictPresentation,faceTextureSemanticTimestamp,faceTextureCanonicalFrameId,faceTextureMatchDeltaMs,faceTextureBufferedFrames,faceTextureCaptureCount,faceTextureCommitCount,faceTextureMissCount,faceTextureHoldCount,faceTextureExternalWriter,faceTextureExternalWriterCount,liveTextureAdvancedWhileSemanticHeld");
 
             recordedFrameCount = 0;
@@ -1331,6 +1333,15 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
             Append(row, KiwiPhase16_18HandoffAuthorityDiagnostics.LocalBridgeSuppressedCount); Sep(row);
             Append(row, KiwiPhase16_18HandoffAuthorityDiagnostics.AuthorityViolationCount); Sep(row);
             Append(row, KiwiPhase16_18HandoffAuthorityDiagnostics.HubEnvelopeGuardActivationCount); Sep(row);
+            Append(row, KiwiPhase16_19FacePartEpochDiagnostics.StrictPresentationEpochActive); Sep(row);
+            Append(row, KiwiPhase16_19FacePartEpochDiagnostics.PredictionDisabled); Sep(row);
+            Append(row, KiwiPhase16_19FacePartEpochDiagnostics.MatchedAgeCompensationDisabled); Sep(row);
+            Append(row, KiwiPhase16_19FacePartEpochDiagnostics.DirectMotionDisabled); Sep(row);
+            Append(row, KiwiPhase16_19FacePartEpochDiagnostics.LiveResidualDisabled); Sep(row);
+            Append(row, KiwiPhase16_19FacePartEpochDiagnostics.ContractAligned); Sep(row);
+            Append(row, KiwiPhase16_19FacePartEpochDiagnostics.ViolationCount); Sep(row);
+            Append(row, KiwiPhase16_19FacePartEpochDiagnostics.SemanticTimestamp); Sep(row);
+            Append(row, KiwiPhase16_19FacePartEpochDiagnostics.TextureCanonicalFrameId); Sep(row);
             Append(row, KiwiFacePartTextureTransaction.IsOperational); Sep(row);
             Append(row, KiwiFacePartTextureTransaction.SceneBindingValid); Sep(row);
             Append(row, KiwiFacePartTextureTransaction.StrictPresentationStarted); Sep(row);

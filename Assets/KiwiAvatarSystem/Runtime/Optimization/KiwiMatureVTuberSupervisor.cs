@@ -23,13 +23,14 @@ public sealed class KiwiMatureVTuberSupervisor : MonoBehaviour
     // KIWI_V5_1_PHASE16_16_ROOT_SPACE_PROVIDER_HANDOFF_POLICY
     // KIWI_V5_1_PHASE16_17_SINGLE_PRESENTATION_AUTHORITY_POLICY
     // KIWI_V5_1_PHASE16_18_SINGLE_HANDOFF_AUTHORITY_POLICY
+    // KIWI_V5_1_PHASE16_19_STRICT_FACEPART_PRESENTATION_EPOCH_POLICY
     // Runtime policy authority remains single-owner. Phase 16.17 also makes
     // KiwiFaceMotion the single temporal presenter of the rigid Root.
     // stable desktop three-lane + fresh-only render boundary from Phase 16.14,
     // then adds presentation-only no-frame hold, same-provider resume bridging,
     // and a final discontinuity correction envelope inside the existing Root owner.
     public const string Version =
-        "5.1.0-phase16.18-single-handoff-authority";
+        "5.1.0-phase16.19-strict-facepart-presentation-epoch";
 
     private const string RuntimeObjectName =
         "[Kiwi] Mature VTuber Supervisor";
