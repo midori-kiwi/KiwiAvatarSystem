@@ -276,6 +276,9 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
                 // KIWI_V5_1_PHASE16_13_LATENCY_AND_STATIC_REST_DIAGNOSTICS
                 // KIWI_V5_1_PHASE16_14_STABLE_PIPELINE_RENDER_BOUNDARY_DIAGNOSTICS
                 // KIWI_V5_1_PHASE16_15_ROOT_CONTINUITY_DIAGNOSTICS
+                // KIWI_V5_1_PHASE16_16_ROOT_SPACE_PROVIDER_BRIDGE_DIAGNOSTICS
+                // KIWI_V5_1_PHASE16_17_SINGLE_PRESENTATION_AUTHORITY_DIAGNOSTICS
+                // KIWI_V5_1_PHASE16_18_SINGLE_HANDOFF_AUTHORITY_DIAGNOSTICS
                 "runnerFreshSourceHz,runnerSubmissionHz,runnerResultHz,canonicalAdoptionHz,runnerReadbackLatencyMs,sourceToSubmissionGapHz,submissionToResultGapHz,resultToAdoptionGapHz,submissionEfficiency,resultEfficiency,adoptionEfficiency,canonicalAdoptionCount," +
                 "inferenceTelemetryOperational,inferencePipelineDepth,inferenceLaneLimit,inferenceActiveLanes,inferenceOldestPendingAgeMs,inferenceLatencyMs,inferenceScheduleDelayMs,inferenceSourceToCompletionAgeMs,inferenceAcceptedSourceAgeMs," +
                 "inferenceRawPresenceLogit,inferencePresence,inferenceConsecutiveFailures,inferenceHasRegion,inferenceTrackingHealthy,inferenceRegionRetentionActive,inferenceRegionTrustedAgeMs,inferenceRegionGraceRemainingMs,inferenceRegionRecoveryScale,inferenceRegionRetainedFailureCount,inferenceRegionReleaseCount,inferenceRegionCenterX,inferenceRegionCenterY,inferenceRegionWidth,inferenceRegionHeight,inferenceScheduleCpuMs,inferenceGpuReadbackWaitMs,inferenceDecodeCpuMs," +
@@ -290,6 +293,9 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
                 "writerAuditRenderBoundaryObserved,visualMovedWithoutRoot,rootMovedAfterLate,visualMovedWithoutRootCount,rootMovedAfterLateCount," +
                 "staticRestActive,staticRestCandidateSeconds,staticRestLockCount,staticRestReleaseCount,beforeRenderRestHoldCount,beforeRenderNewSampleCount,beforeRenderFreshOnlyPolicy,beforeRenderSameSampleSkipCount,beforeRenderAcceptedNewSampleCount," +
                 "rootModelHeight,rootRawTargetPosDelta,rootRawTargetRotDelta,rootRawTargetScaleDelta,rootDisplayPreCapPosDelta,rootDisplayPreCapRotDelta,rootDisplayPreCapScaleDelta,rootDisplayPostCapPosDelta,rootDisplayPostCapRotDelta,rootDisplayPostCapScaleDelta,rootContinuityMaxPosStep,rootContinuityMaxRotStep,rootContinuityMaxScaleStep,rootContinuityCapApplied,rootPredictionPositionDelta,rootPredictionLeadMs,rootCorrectionBacklog,rootAuthoritativeFrameMissing,noFrameHoldActive,noFrameHoldCount,sameProviderResumeActive,sameProviderResumeCount,sameProviderResumeSamplesRemaining," +
+                "rootProviderBridgeActive,rootProviderBridgeCount,rootProviderBridgeGeneration,rootProviderBridgeBackend,rootProviderBridgeWeight,rootProviderBridgeTargetWeight,rootProviderBridgeReleaseStep,rootProviderBridgeAcceptedSamples,rootProviderBridgeMotionProgress,rootProviderBridgePositionOffset,rootProviderBridgeRotationOffsetDeg,rootProviderBridgeScaleRatio,rootProviderBridgeAppliedPosDelta,rootProviderBridgeAppliedRotDelta,rootProviderBridgeAppliedScaleDelta," +
+                "singlePresentationAuthority,quality10PolicyOnly,quality10SharedRootBinding,quality10SuppressedLateUpdateCount,quality10SuppressedBeforeRenderCount,quality10LegacyRootWriteCount,quality10LegacyWriteViolationCount,faceMotionDisplayRateSmoothing,faceMotionStaticRestEnabled,faceMotionAdaptiveMicroFilter,faceMotionPredictionDisabled," +
+                "singleHandoffAuthority,canonicalHandoffNormalizationEnabled,canonicalHandoffActive,canonicalHandoffIsResume,localRootProviderBridgeActive,localRootProviderBridgeSuppressedCount,handoffAuthorityViolationCount,hubHandoffEnvelopeGuardActivationCount," +
                 "faceTextureTransactionOperational,faceTextureSceneBindingValid,faceTextureStrictPresentation,faceTextureSemanticTimestamp,faceTextureCanonicalFrameId,faceTextureMatchDeltaMs,faceTextureBufferedFrames,faceTextureCaptureCount,faceTextureCommitCount,faceTextureMissCount,faceTextureHoldCount,faceTextureExternalWriter,faceTextureExternalWriterCount,liveTextureAdvancedWhileSemanticHeld");
 
             recordedFrameCount = 0;
@@ -1291,6 +1297,40 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
             Append(row, KiwiPhase16_15RootContinuityDiagnostics.SameProviderResumeActive); Sep(row);
             Append(row, KiwiPhase16_15RootContinuityDiagnostics.SameProviderResumeCount); Sep(row);
             Append(row, KiwiPhase16_15RootContinuityDiagnostics.SameProviderResumeSamplesRemaining); Sep(row);
+            Append(row, KiwiPhase16_16ProviderBridgeDiagnostics.Active); Sep(row);
+            Append(row, KiwiPhase16_16ProviderBridgeDiagnostics.Count); Sep(row);
+            Append(row, KiwiPhase16_16ProviderBridgeDiagnostics.ProviderGeneration); Sep(row);
+            Append(row, (int)KiwiPhase16_16ProviderBridgeDiagnostics.Backend); Sep(row);
+            Append(row, KiwiPhase16_16ProviderBridgeDiagnostics.Weight); Sep(row);
+            Append(row, KiwiPhase16_16ProviderBridgeDiagnostics.TargetWeight); Sep(row);
+            Append(row, KiwiPhase16_16ProviderBridgeDiagnostics.ReleaseStep); Sep(row);
+            Append(row, KiwiPhase16_16ProviderBridgeDiagnostics.AcceptedSamples); Sep(row);
+            Append(row, KiwiPhase16_16ProviderBridgeDiagnostics.MotionProgress); Sep(row);
+            Append(row, KiwiPhase16_16ProviderBridgeDiagnostics.PositionOffset); Sep(row);
+            Append(row, KiwiPhase16_16ProviderBridgeDiagnostics.RotationOffsetDegrees); Sep(row);
+            Append(row, KiwiPhase16_16ProviderBridgeDiagnostics.ScaleRatio); Sep(row);
+            Append(row, KiwiPhase16_16ProviderBridgeDiagnostics.AppliedPositionDelta); Sep(row);
+            Append(row, KiwiPhase16_16ProviderBridgeDiagnostics.AppliedRotationDeltaDegrees); Sep(row);
+            Append(row, KiwiPhase16_16ProviderBridgeDiagnostics.AppliedScaleDelta); Sep(row);
+            Append(row, KiwiPhase16_17PresentationAuthorityDiagnostics.SinglePresentationAuthority); Sep(row);
+            Append(row, KiwiPhase16_17PresentationAuthorityDiagnostics.Quality10PolicyOnlyActive); Sep(row);
+            Append(row, KiwiPhase16_17PresentationAuthorityDiagnostics.SharedRootBinding); Sep(row);
+            Append(row, KiwiPhase16_17PresentationAuthorityDiagnostics.SuppressedLateUpdateCount); Sep(row);
+            Append(row, KiwiPhase16_17PresentationAuthorityDiagnostics.SuppressedBeforeRenderCount); Sep(row);
+            Append(row, KiwiPhase16_17PresentationAuthorityDiagnostics.LegacyRootWriteCount); Sep(row);
+            Append(row, KiwiPhase16_17PresentationAuthorityDiagnostics.LegacyWriteViolationCount); Sep(row);
+            Append(row, KiwiPhase16_17PresentationAuthorityDiagnostics.FaceMotionDisplayRateSmoothing); Sep(row);
+            Append(row, KiwiPhase16_17PresentationAuthorityDiagnostics.FaceMotionStaticRestEnabled); Sep(row);
+            Append(row, KiwiPhase16_17PresentationAuthorityDiagnostics.FaceMotionAdaptiveMicroFilter); Sep(row);
+            Append(row, KiwiPhase16_17PresentationAuthorityDiagnostics.FaceMotionPredictionDisabled); Sep(row);
+            Append(row, KiwiPhase16_18HandoffAuthorityDiagnostics.SingleHandoffAuthority); Sep(row);
+            Append(row, KiwiPhase16_18HandoffAuthorityDiagnostics.CanonicalNormalizationEnabled); Sep(row);
+            Append(row, KiwiPhase16_18HandoffAuthorityDiagnostics.CanonicalHandoffActive); Sep(row);
+            Append(row, KiwiPhase16_18HandoffAuthorityDiagnostics.CanonicalHandoffIsResume); Sep(row);
+            Append(row, KiwiPhase16_18HandoffAuthorityDiagnostics.LocalRootProviderBridgeActive); Sep(row);
+            Append(row, KiwiPhase16_18HandoffAuthorityDiagnostics.LocalBridgeSuppressedCount); Sep(row);
+            Append(row, KiwiPhase16_18HandoffAuthorityDiagnostics.AuthorityViolationCount); Sep(row);
+            Append(row, KiwiPhase16_18HandoffAuthorityDiagnostics.HubEnvelopeGuardActivationCount); Sep(row);
             Append(row, KiwiFacePartTextureTransaction.IsOperational); Sep(row);
             Append(row, KiwiFacePartTextureTransaction.SceneBindingValid); Sep(row);
             Append(row, KiwiFacePartTextureTransaction.StrictPresentationStarted); Sep(row);

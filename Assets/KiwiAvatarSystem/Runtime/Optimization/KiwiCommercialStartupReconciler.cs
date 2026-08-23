@@ -200,9 +200,29 @@ public sealed class KiwiCommercialStartupReconciler : MonoBehaviour
         _faceMotion.landMarkerSpeedMode = true;
         _faceMotion.useBoundedLatestResultCorrection = true;
 
+        // KIWI_V5_1_PHASE16_17_SINGLE_PRESENTATION_AUTHORITY_CONTRACT
+        // KiwiFaceMotion is the single rigid Root temporal presenter.
+        // Keep only the final spatial rest latch; do not stack the older
+        // sample-domain micro hold underneath it.
+        _faceMotion.useBeforeRenderLateLatch = true;
+        _faceMotion.ultraConsumeLatestSampleBeforeRender = true;
         _faceMotion.ultraUseRunnerPositionAnchor = true;
-        _faceMotion.ultraAdaptiveMicroFilter = true;
+        _faceMotion.ultraAdaptiveMicroFilter = false;
         _faceMotion.ultraStaticPoseLock = true;
+
+        // One display-rate resampler lives inside the Root owner.
+        _faceMotion.ultraDisplayRateSmoothing = true;
+        _faceMotion.ultraDirectDisplayDuringMotion = true;
+        _faceMotion.ultraPredictivePositionResampling = false;
+
+        // Quality10 no longer owns Root temporal prediction in Phase16.17.
+        // Keep FaceMotion's duplicate long-horizon predictors disabled too;
+        // source freshness and provider continuity remain separate concerns.
+        _faceMotion.ultraPredictionStrength = 0f;
+        _faceMotion.ultraCompensateFullResultAge = false;
+        _faceMotion.ultraCompensateCameraCaptureAge = false;
+        _faceMotion.enableRenderTimeLatePrediction = false;
+        _faceMotion.predictionStrength = 0f;
 
         // Critical: expression/idle animation remains a presentation option,
         // but it must never move the rigid tracking root in the commercial core.
@@ -222,6 +242,13 @@ public sealed class KiwiCommercialStartupReconciler : MonoBehaviour
 
         if (_trackingHub != null)
         {
+            // KIWI_V5_1_PHASE16_18_SINGLE_HANDOFF_AUTHORITY_CONTRACT
+            // Canonical provider-space normalization is the one handoff
+            // coordinate owner. KiwiFaceMotion may keep only a final bounded
+            // safety envelope; it must not independently normalize the same
+            // provider transition.
+            _trackingHub.enableProviderHandoffNormalization = true;
+
             // KIWI_V5_0_NATURAL_CONTINUITY_CONTRACT
             // Keep Inference as the rigid geometry owner while it is still
             // delivering frames. End-to-end latency lowers quality/prediction,

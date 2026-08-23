@@ -27,7 +27,7 @@ using UnityEngine.SceneManagement;
 [InitializeOnLoad]
 public static class KiwiReleaseCandidatePreflight
 {
-    public const string PreflightVersion = "5.1.0-phase16.15";
+    public const string PreflightVersion = "5.1.0-phase16.18";
     public const string BaseCommit =
         "0b890a317cc3de64a4eadc955ce87bf21479786b";
     public const string ExpectedUnityVersion = "6000.0.80f1";
@@ -115,11 +115,11 @@ public static class KiwiReleaseCandidatePreflight
     private const string PlayGateMenu =
         MenuRoot + "Play Gate Enabled";
     private const string GatePrefSuffix =
-        ".KiwiAvatarSystem.Phase16_15.PlayGate";
+        ".KiwiAvatarSystem.Phase16_18.PlayGate";
     private const string StampRelativePath =
-        "Library/KiwiAvatarSystem/Phase16_15PassingPreflight.json";
+        "Library/KiwiAvatarSystem/Phase16_18PassingPreflight.json";
     private const string ExportFileName =
-        "KiwiPhase16_15ReleaseCandidatePreflight.json";
+        "KiwiPhase16_18ReleaseCandidatePreflight.json";
 
     private static readonly string[] SingletonRoleNames =
     {
@@ -163,12 +163,18 @@ public static class KiwiReleaseCandidatePreflight
             "KIWI_V5_1_PHASE16_13_STATIC_REST_PRESENTATION",
             "KIWI_V5_1_PHASE16_13_BEFORE_RENDER_REST_DEDUP",
             "KIWI_V5_1_PHASE16_14_RENDER_BOUNDARY_FRESH_ONLY",
-            "KIWI_V5_1_PHASE16_15_NO_FRAME_HOLD_RESUME_ENVELOPE"),
+            "KIWI_V5_1_PHASE16_15_NO_FRAME_HOLD_RESUME_ENVELOPE",
+            "KIWI_V5_1_PHASE16_16_ROOT_SPACE_PROVIDER_BRIDGE",
+            "KIWI_V5_1_PHASE16_18_SINGLE_HANDOFF_AUTHORITY"),
         new MarkerRule(
             "Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/" +
             "KiwiTrackingProviderHub.cs",
             "KIWI_V5_1_PHASE16_5_COMMERCIAL_HANDOFF_RELEASE",
-            "KIWI_V5_1_PHASE16_8_COMMERCIAL_STICKY_RIGID_AUTHORITY"),
+            "KIWI_V5_1_PHASE16_6_COMMERCIAL_RIGID_COHERENCE_GUARD",
+            "KIWI_V5_1_PHASE16_8_COMMERCIAL_STICKY_RIGID_AUTHORITY",
+            "KIWI_V5_1_PHASE16_18_SINGLE_HANDOFF_AUTHORITY",
+            "CanonicalHandoffNormalizationEnabled",
+            "CanonicalHandoffActive"),
         new MarkerRule(
             "Assets/KiwiAvatarSystem/Runtime/Optimization/" +
             "KiwiMatureVTuberSupervisor.cs",
@@ -179,7 +185,15 @@ public static class KiwiReleaseCandidatePreflight
             "KIWI_V5_1_PHASE16_12_PERSISTENT_ROI_POLICY",
             "KIWI_V5_1_PHASE16_13_LATENCY_FIRST_PRESENTATION_POLICY",
             "KIWI_V5_1_PHASE16_14_STABLE_PIPELINE_RENDER_CONTINUITY_POLICY",
-            "KIWI_V5_1_PHASE16_15_NO_FRAME_HOLD_RESUME_ENVELOPE_POLICY"),
+            "KIWI_V5_1_PHASE16_15_NO_FRAME_HOLD_RESUME_ENVELOPE_POLICY",
+            "KIWI_V5_1_PHASE16_16_ROOT_SPACE_PROVIDER_HANDOFF_POLICY",
+            "KIWI_V5_1_PHASE16_17_SINGLE_PRESENTATION_AUTHORITY_POLICY",
+            "KIWI_V5_1_PHASE16_18_SINGLE_HANDOFF_AUTHORITY_POLICY"),
+        new MarkerRule(
+            "Assets/KiwiAvatarSystem/Runtime/Optimization/" +
+            "KiwiCommercialStartupReconciler.cs",
+            "KIWI_V5_1_PHASE16_17_SINGLE_PRESENTATION_AUTHORITY_CONTRACT",
+            "KIWI_V5_1_PHASE16_18_SINGLE_HANDOFF_AUTHORITY_CONTRACT"),
         new MarkerRule(
             "Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/" +
             "KiwiCanonicalTrackingFrame.cs",
@@ -193,11 +207,6 @@ public static class KiwiReleaseCandidatePreflight
             "KIWI_V5_1_PHASE16_9_STABLE_ISOLATED_CANDIDATE_SNAPSHOT",
             "KIWI_V5_1_PHASE16_9_STABLE_ISOLATED_CANDIDATE_PASS",
             "KIWI_V5_1_PHASE16_9_APPLY_STABLE_ISOLATED_CANDIDATE"),
-        new MarkerRule(
-            "Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/" +
-            "KiwiTrackingProviderHub.cs",
-            "KIWI_V5_1_PHASE16_5_COMMERCIAL_HANDOFF_RELEASE",
-            "KIWI_V5_1_PHASE16_6_COMMERCIAL_RIGID_COHERENCE_GUARD"),
         new MarkerRule(
             "Assets/KiwiAvatarSystem/Runtime/Optimization/" +
             "KiwiCommercialFacePartPolicy.cs",
@@ -231,6 +240,19 @@ public static class KiwiReleaseCandidatePreflight
             "KIWI_V5_1_PHASE16_13_LATENCY_AND_STATIC_REST_DIAGNOSTICS",
             "KIWI_V5_1_PHASE16_14_STABLE_PIPELINE_RENDER_BOUNDARY_DIAGNOSTICS",
             "KIWI_V5_1_PHASE16_15_ROOT_CONTINUITY_DIAGNOSTICS",
+            "KIWI_V5_1_PHASE16_16_ROOT_SPACE_PROVIDER_BRIDGE_DIAGNOSTICS",
+            "KIWI_V5_1_PHASE16_17_SINGLE_PRESENTATION_AUTHORITY_DIAGNOSTICS",
+            "KIWI_V5_1_PHASE16_18_SINGLE_HANDOFF_AUTHORITY_DIAGNOSTICS",
+            "singlePresentationAuthority",
+            "singleHandoffAuthority",
+            "canonicalHandoffNormalizationEnabled",
+            "localRootProviderBridgeActive",
+            "handoffAuthorityViolationCount",
+            "quality10LegacyWriteViolationCount",
+            "faceMotionPredictionDisabled",
+            "rootProviderBridgeActive",
+            "rootProviderBridgeWeight",
+            "rootProviderBridgeAppliedPosDelta",
             "inferenceScheduleDelayMs",
             "inferenceRawPresenceLogit",
             "inferenceRegionRetentionActive",
@@ -285,6 +307,25 @@ public static class KiwiReleaseCandidatePreflight
             "SameProviderResumeActive"),
         new MarkerRule(
             "Assets/KiwiAvatarSystem/Runtime/Validation/" +
+            "KiwiPhase16_16ProviderBridgeDiagnostics.cs",
+            "KIWI_V5_1_PHASE16_16_ROOT_SPACE_PROVIDER_BRIDGE_DIAGNOSTICS",
+            "AppliedPositionDelta",
+            "MotionProgress"),
+        new MarkerRule(
+            "Assets/KiwiAvatarSystem/Runtime/Validation/" +
+            "KiwiPhase16_17PresentationAuthorityDiagnostics.cs",
+            "KIWI_V5_1_PHASE16_17_SINGLE_PRESENTATION_AUTHORITY_DIAGNOSTICS",
+            "SinglePresentationAuthority",
+            "LegacyWriteViolationCount"),
+        new MarkerRule(
+            "Assets/KiwiAvatarSystem/Runtime/Validation/" +
+            "KiwiPhase16_18HandoffAuthorityDiagnostics.cs",
+            "KIWI_V5_1_PHASE16_18_SINGLE_HANDOFF_AUTHORITY_DIAGNOSTICS",
+            "SingleHandoffAuthority",
+            "LocalBridgeSuppressedCount",
+            "AuthorityViolationCount"),
+        new MarkerRule(
+            "Assets/KiwiAvatarSystem/Runtime/Validation/" +
             "KiwiCommercialCadencePipelineTelemetry.cs",
             "KIWI_V5_1_PHASE16_9_COMMERCIAL_CADENCE_PIPELINE_TELEMETRY",
             "KIWI_V5_1_PHASE16_10_INFERENCE_PIPELINE_TELEMETRY",
@@ -323,6 +364,18 @@ public static class KiwiReleaseCandidatePreflight
             "KIWI_V5_1_PHASE16_15_NO_FRAME_HOLD_RESUME_ENVELOPE"),
         new MarkerRule(
             "Assets/KiwiAvatarSystem/Editor/" +
+            "KiwiPhase16_16ProviderBridgeMigration.cs",
+            "KIWI_V5_1_PHASE16_16_ROOT_SPACE_PROVIDER_BRIDGE"),
+        new MarkerRule(
+            "Assets/KiwiAvatarSystem/Editor/" +
+            "KiwiPhase16_17SinglePresentationAuthorityMigration.cs",
+            "KIWI_V5_1_PHASE16_17_SINGLE_PRESENTATION_AUTHORITY"),
+        new MarkerRule(
+            "Assets/KiwiAvatarSystem/Editor/" +
+            "KiwiPhase16_18SingleHandoffAuthorityMigration.cs",
+            "KIWI_V5_1_PHASE16_18_SINGLE_HANDOFF_AUTHORITY"),
+        new MarkerRule(
+            "Assets/KiwiAvatarSystem/Editor/" +
             "KiwiFacePartTextureTransactionMigration.cs",
             "KIWI_V5_1_PHASE16_9_FACEPART_TEXTURE_TRANSACTION_MIGRATION"),
         new MarkerRule(
@@ -348,7 +401,10 @@ public static class KiwiReleaseCandidatePreflight
         new MarkerRule(
             "Assets/KiwiAvatarSystem/Runtime/Optimization/" +
             "KiwiTrackingQuality10Controller.cs",
-            "KIWI_V5_1_RUNTIME_POLICY_SINGLE_WRITER"),
+            "KIWI_V5_1_RUNTIME_POLICY_SINGLE_WRITER",
+            "KIWI_V5_1_PHASE16_17_SINGLE_PRESENTATION_AUTHORITY",
+            "phase16_17PolicyOnlyPresentation",
+            "ReportSuppressedBeforeRender"),
         new MarkerRule(
             "Assets/KiwiAvatarSystem/Runtime/KiwiAvatarRuntimeManager.cs",
             "KIWI_V5_1_MODEL_GENERATION_COMMIT"),

@@ -114,6 +114,25 @@ public sealed class KiwiTrackingProviderHub : MonoBehaviour
     public static bool HasRuntimeInstance =>
         _instance != null;
 
+    // KIWI_V5_1_PHASE16_18_SINGLE_HANDOFF_AUTHORITY
+    // Provider-space handoff normalization belongs to the canonical authority
+    // boundary. Downstream Root presentation may enforce a final safety
+    // envelope, but must not create a second coordinate-normalization bridge
+    // while this owner is enabled.
+    public static bool CanonicalHandoffNormalizationEnabled =>
+        _instance != null &&
+        _instance.enableProviderHandoffNormalization;
+
+    public static bool CanonicalHandoffActive =>
+        _instance != null &&
+        _instance._handoffActive;
+
+    public static bool CanonicalHandoffIsResume =>
+        _instance != null &&
+        _instance._handoffActive &&
+        _instance._handoffIsResume;
+
+
     public static bool TryGetCurrentRigidFrame(
         out FacePrecisionTrackingData data)
     {
