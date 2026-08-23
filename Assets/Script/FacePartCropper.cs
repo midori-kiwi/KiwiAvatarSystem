@@ -228,13 +228,14 @@ public class FacePartCropper : MonoBehaviour
         "FaceLandmarkListの安定感に近づけるならOFF推奨。" +
         "遅延が気になる時だけON。"
     )]
-    public bool enablePrediction = true;
+    // KIWI_V5_1_PHASE16_19_PERSISTENT_FACEPART_RUNTIME_CONTRACT
+    public bool enablePrediction = false;
 
     [Tooltip("Use the matched camera-frame submission time to compensate LandMarker inference age. This keeps the live camera texture aligned with its eye/mouth crops during translation.")]
-    public bool compensateMatchedFrameAge = true;
+    public bool compensateMatchedFrameAge = false;
 
     [Tooltip("During intentional motion, apply the compensated crop center directly. Rest motion still uses render-rate interpolation.")]
-    public bool directPositionDuringMotion = true;
+    public bool directPositionDuringMotion = false;
 
     [Range(0.02f, 1f)]
     public float directPositionSpeed = 0.12f;
@@ -442,6 +443,20 @@ public class FacePartCropper : MonoBehaviour
     }
 
 
+    // KIWI_V5_1_PHASE16_19_PERSISTENT_FACEPART_RUNTIME_CONTRACT
+    // Keep semantic geometry in the same presentation epoch as the pinned
+    // texture transaction. Render-rate interpolation below is preserved; only
+    // time extrapolation / matched-age compensation / direct predicted motion
+    // are forbidden by the commercial Phase16.19 contract.
+    private void EnforcePhase16_19StrictPresentationEpoch()
+    {
+        enablePrediction = false;
+        compensateMatchedFrameAge = false;
+        directPositionDuringMotion = false;
+        hidePartsWhenLost = false;
+    }
+
+
     // =========================================================
     // Start
     // =========================================================
@@ -451,6 +466,7 @@ public class FacePartCropper : MonoBehaviour
     // KiwiTrackingQuality10Controller. FacePartCropper follows render time.
     private void Start()
     {
+        EnforcePhase16_19StrictPresentationEpoch();
     }
 
 
@@ -460,6 +476,8 @@ public class FacePartCropper : MonoBehaviour
 
     private void LateUpdate()
     {
+        EnforcePhase16_19StrictPresentationEpoch();
+
         if (runner == null)
             return;
 

@@ -54,6 +54,14 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
     private int _leftSlot = -1;
     private int _rightSlot = -1;
     private int _mouthSlot = -1;
+
+    // KIWI_V5_1_PHASE16_19_3_MATCHED_LANDMARK_PREVIEW_EPOCH
+    // Observer-only handle to the exact camera snapshot matched to the most
+    // recently committed semantic transaction. This is never a presentation
+    // writer; the Frame Comparison overlay uses it only for like-for-like
+    // camera/Landmark diagnostics.
+    private int _lastCommittedSlot = -1;
+
     private int _stagedSlot = -1;
     private long _stagedSemanticTimestamp = -1L;
     private ulong _stagedCanonicalFrameId;
@@ -128,6 +136,58 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
 
     public static int ExternalTextureWriterCount =>
         _instance != null ? _instance._externalTextureWriterCount : 0;
+
+    // KIWI_V5_1_PHASE16_19_3_MATCHED_LANDMARK_PREVIEW_EPOCH
+    /// <summary>
+    /// Observer-only access to the camera snapshot that belongs to the latest
+    /// committed semantic FacePart transaction. The returned texture is owned
+    /// by this service and must never be modified, released, or reassigned by
+    /// the caller.
+    /// </summary>
+    public static bool TryGetLastCommittedPresentationFrame(
+        out Texture texture,
+        out long semanticTimestamp,
+        out ulong canonicalFrameId)
+    {
+        texture = null;
+        semanticTimestamp = -1L;
+        canonicalFrameId = 0UL;
+
+        KiwiFacePartTextureTransaction service =
+            _instance;
+
+        if (
+            service == null ||
+            !service._strictPresentationStarted ||
+            service._slots == null ||
+            service._lastCommittedSlot < 0 ||
+            service._lastCommittedSlot >= service._slots.Length
+        )
+        {
+            return false;
+        }
+
+        Slot slot =
+            service._slots[service._lastCommittedSlot];
+
+        if (
+            slot == null ||
+            !slot.valid ||
+            slot.texture == null ||
+            service._lastCommittedSemanticTimestamp < 0L
+        )
+        {
+            return false;
+        }
+
+        texture = slot.texture;
+        semanticTimestamp =
+            service._lastCommittedSemanticTimestamp;
+        canonicalFrameId =
+            service._lastCommittedCanonicalFrameId;
+
+        return true;
+    }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void AutoInstall()
@@ -335,6 +395,7 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
         )
         {
             service._strictPresentationStarted = true;
+            service._lastCommittedSlot = slot;
             service._lastCommittedSemanticTimestamp = semanticTimestamp;
             service._lastCommittedCanonicalFrameId =
                 service._stagedCanonicalFrameId;
@@ -821,6 +882,7 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
         _leftSlot = -1;
         _rightSlot = -1;
         _mouthSlot = -1;
+        _lastCommittedSlot = -1;
         _stagedSlot = -1;
         _stagedSemanticTimestamp = -1L;
         _stagedCanonicalFrameId = 0UL;
@@ -878,6 +940,7 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
         _leftSlot = -1;
         _rightSlot = -1;
         _mouthSlot = -1;
+        _lastCommittedSlot = -1;
         _stagedSlot = -1;
         _strictPresentationStarted = false;
     }

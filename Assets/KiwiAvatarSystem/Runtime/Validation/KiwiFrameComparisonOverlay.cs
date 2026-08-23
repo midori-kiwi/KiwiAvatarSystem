@@ -12,7 +12,8 @@ using Mediapipe.Unity.Sample.FaceLandmarkDetection;
 /// The overlay observes the same canonical snapshot used by Root / FaceParts.
 /// It never submits tracking data, advances generations, mutates recovery,
 /// changes Canvas alpha, or writes the avatar Transform. Its only purposes are:
-/// 1) show the live camera image with the canonical semantic landmarks overlaid;
+/// 1) show the semantic-frame-matched camera snapshot with canonical
+///    semantic landmarks in the same mirrored presentation space;
 /// 2) expose source/semantic/rigid identity on the recorded Game view; and
 /// 3) optionally write one CSV row per Unity render frame so camera freshness,
 ///    landmark movement, canonical identity and final rendered Root motion can
@@ -55,6 +56,8 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
     [SerializeField] private float debugRootRotationStep;
     [SerializeField] private float debugRootPositionStep;
     [SerializeField] private float debugRootScaleStep;
+    [SerializeField] private bool debugLandmarkPreviewEpochMatched;
+    [SerializeField] private long debugLandmarkPreviewSemanticTimestamp = -1L;
 
     private FaceLandmarkerRunner _runner;
     private FacePartCropper _cropper;
@@ -99,16 +102,31 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
     /// Height this diagnostic panel wants at the current camera aspect. The
     /// telemetry panel reserves this space so the right diagnostic column can
     /// stack cleanly even in shorter Game views.
+    ///
+    /// Phase16.19.5 deliberately reserves two presentation regions:
+    /// 1) the current live camera texture at render cadence; and
+    /// 2) the immutable semantic-frame-matched snapshot used only for precise
+    ///    Landmark epoch inspection.
     /// </summary>
     public float PreferredPanelHeight
     {
         get
         {
-            Texture sourceTexture = GetSourceTexture();
+            Texture liveSourceTexture = GetSourceTexture();
+            Texture matchedTexture =
+                GetLandmarkPreviewTexture(
+                    out _,
+                    out _);
+
+            Texture aspectTexture =
+                liveSourceTexture != null
+                    ? liveSourceTexture
+                    : matchedTexture;
+
             float width = Mathf.Clamp(previewWidth, 260f, 560f);
             float sourceAspect =
-                sourceTexture != null && sourceTexture.height > 0
-                    ? sourceTexture.width / (float)sourceTexture.height
+                aspectTexture != null && aspectTexture.height > 0
+                    ? aspectTexture.width / (float)aspectTexture.height
                     : 16f / 9f;
 
             float preferredPreviewHeight = Mathf.Clamp(
@@ -116,7 +134,13 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
                 150f,
                 330f);
 
-            return preferredPreviewHeight + (showHelp ? 142f : 120f);
+            const float firstPreviewHeaderHeight = 28f;
+            const float secondPreviewHeaderHeight = 26f;
+            return
+                firstPreviewHeaderHeight +
+                preferredPreviewHeight * 2f +
+                secondPreviewHeaderHeight +
+                (showHelp ? 142f : 120f);
         }
     }
 
@@ -588,9 +612,13 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
         EnsureLandmarkTexture();
         ClearLandmarkPixels();
 
-        bool mirrorX =
-            _cropper != null &&
-            _cropper.mirrorX;
+        // KIWI_V5_1_PHASE16_19_4_LANDMARK_ANNOTATION_MIRROR_ALIGNMENT
+        // MediaPipe's front-camera input is already transformed into the same
+        // mirrored presentation space used by the sample Screen. Canonical
+        // normalized landmark X therefore must NOT be mirrored again here.
+        // FacePartCropper.mirrorX is a separate raw-texture sampling conversion
+        // and must not be reused by this annotation-only overlay.
+        const bool mirrorLandmarksX = false;
 
         if (drawAllLandmarks && _landmarks != null)
         {
@@ -601,7 +629,7 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
             {
                 DrawNormalizedPoint(
                     _landmarks[i],
-                    mirrorX,
+                    mirrorLandmarksX,
                     landmarkColor,
                     1);
             }
@@ -614,31 +642,31 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
 
             DrawNormalizedPoint(
                 rigid.faceCenter,
-                mirrorX,
+                mirrorLandmarksX,
                 new Color32(255, 70, 70, 255),
                 4);
 
             DrawNormalizedPoint(
                 rigid.leftEyeCenter,
-                mirrorX,
+                mirrorLandmarksX,
                 new Color32(70, 255, 90, 255),
                 3);
 
             DrawNormalizedPoint(
                 rigid.rightEyeCenter,
-                mirrorX,
+                mirrorLandmarksX,
                 new Color32(70, 255, 90, 255),
                 3);
 
             DrawNormalizedPoint(
                 rigid.nose,
-                mirrorX,
+                mirrorLandmarksX,
                 new Color32(255, 230, 60, 255),
                 3);
 
             DrawNormalizedPoint(
                 rigid.chin,
-                mirrorX,
+                mirrorLandmarksX,
                 new Color32(255, 90, 235, 255),
                 3);
         }
@@ -727,6 +755,50 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
                 : null;
     }
 
+    // KIWI_V5_1_PHASE16_19_3_MATCHED_LANDMARK_PREVIEW_EPOCH
+    // The old diagnostic panel overlaid canonical Landmarks on the current live
+    // WebCamTexture. With ~100 ms inference/semantic age that deliberately
+    // compared two different moments and made correct Landmarks look spatially
+    // wrong during motion. Use the immutable camera snapshot already matched by
+    // the Phase16.9 Texture Transaction instead.
+    private Texture GetLandmarkPreviewTexture(
+        out bool epochMatched,
+        out long previewSemanticTimestamp)
+    {
+        epochMatched = false;
+        previewSemanticTimestamp = -1L;
+
+        if (
+            !KiwiFacePartTextureTransaction.
+                TryGetLastCommittedPresentationFrame(
+                    out Texture matchedTexture,
+                    out long matchedSemanticTimestamp,
+                    out _) ||
+            matchedTexture == null
+        )
+        {
+            return null;
+        }
+
+        previewSemanticTimestamp =
+            matchedSemanticTimestamp;
+
+        epochMatched =
+            debugSemanticTimestamp >= 0L &&
+            matchedSemanticTimestamp ==
+                debugSemanticTimestamp;
+
+        return epochMatched
+            ? matchedTexture
+            : null;
+    }
+
+    // KIWI_V5_1_PHASE16_19_5_LIVE_CAMERA_MATCHED_DEBUG_SEPARATION
+    // Presentation cadence and semantic diagnostic cadence are intentionally
+    // different. The live camera must never wait for a Landmarker result, while
+    // canonical Landmarks must never be drawn over an unmatched live frame.
+    // Both views are observer-only and do not alter tracking, texture transaction,
+    // Root presentation, provider authority, or FacePart production state.
     private void OnGUI()
     {
         if (!visible)
@@ -736,87 +808,115 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
 
         EnsureGuiStyles();
 
-        Texture sourceTexture = GetSourceTexture();
+        Texture liveSourceTexture = GetSourceTexture();
+        Texture matchedTexture =
+            GetLandmarkPreviewTexture(
+                out bool previewEpochMatched,
+                out long previewSemanticTimestamp);
+
+        debugLandmarkPreviewEpochMatched =
+            previewEpochMatched;
+        debugLandmarkPreviewSemanticTimestamp =
+            previewSemanticTimestamp;
+
+        Texture aspectTexture =
+            liveSourceTexture != null
+                ? liveSourceTexture
+                : matchedTexture;
+
         float width = Mathf.Clamp(previewWidth, 260f, 560f);
         float sourceAspect =
-            sourceTexture != null && sourceTexture.height > 0
-                ? sourceTexture.width / (float)sourceTexture.height
+            aspectTexture != null && aspectTexture.height > 0
+                ? aspectTexture.width / (float)aspectTexture.height
                 : 16f / 9f;
 
-        float previewHeight = Mathf.Clamp(
+        float desiredPreviewHeight = Mathf.Clamp(
             width / Mathf.Max(0.25f, sourceAspect),
             150f,
             330f);
 
-        float panelHeight = previewHeight + (showHelp ? 142f : 120f);
+        const float firstPreviewHeaderHeight = 28f;
+        const float secondPreviewHeaderHeight = 26f;
+        float footerHeight = showHelp ? 142f : 120f;
+        float desiredPanelHeight =
+            firstPreviewHeaderHeight +
+            desiredPreviewHeight +
+            secondPreviewHeaderHeight +
+            desiredPreviewHeight +
+            footerHeight;
+
         Rect panel = CalculateNonOverlappingPanelRect(
             width + 8f,
-            panelHeight);
+            desiredPanelHeight);
 
-        // The emergency small-window fallback may narrow the panel to preserve
-        // non-overlap. Keep every child rectangle inside the owned panel too.
+        // The emergency small-window fallback may narrow/shorten the panel to
+        // preserve non-overlap. Split the remaining preview budget evenly so
+        // neither observer view can cover the telemetry panel.
         width = Mathf.Max(1f, panel.width - 8f);
-        previewHeight = Mathf.Min(
-            previewHeight,
-            Mathf.Max(1f, panel.height - (showHelp ? 142f : 120f)));
+        float availablePreviewHeight = Mathf.Max(
+            2f,
+            panel.height -
+            firstPreviewHeaderHeight -
+            secondPreviewHeaderHeight -
+            footerHeight);
+        float previewHeight = Mathf.Min(
+            desiredPreviewHeight,
+            availablePreviewHeight * 0.5f);
 
         Color oldColor = GUI.color;
         GUI.color = new Color(0f, 0f, 0f, 0.76f);
         GUI.Box(panel, GUIContent.none);
         GUI.color = oldColor;
 
-        Rect titleRect = new Rect(
+        Rect liveTitleRect = new Rect(
             panel.x + 8f,
             panel.y + 5f,
             width - 8f,
             22f);
 
         GUI.Label(
-            titleRect,
-            "CAMERA + CANONICAL LANDMARKS",
+            liveTitleRect,
+            "LIVE CAMERA",
             _headerStyle);
 
-        Rect previewRect = new Rect(
+        Rect livePreviewRect = new Rect(
             panel.x + 8f,
-            panel.y + 28f,
+            panel.y + firstPreviewHeaderHeight,
             width - 8f,
             previewHeight);
 
-        if (sourceTexture != null)
-        {
-            bool mirrorX =
-                _cropper != null &&
-                _cropper.mirrorX;
+        DrawLiveCameraPreview(
+            livePreviewRect,
+            liveSourceTexture);
 
-            Rect texCoords =
-                mirrorX
-                    ? new Rect(1f, 0f, -1f, 1f)
-                    : new Rect(0f, 0f, 1f, 1f);
+        float matchedTitleY =
+            livePreviewRect.yMax + 4f;
 
-            GUI.DrawTextureWithTexCoords(
-                previewRect,
-                sourceTexture,
-                texCoords,
-                true);
+        Rect matchedTitleRect = new Rect(
+            panel.x + 8f,
+            matchedTitleY,
+            width - 8f,
+            22f);
 
-            if (_landmarkOverlayTexture != null)
-            {
-                GUI.DrawTexture(
-                    previewRect,
-                    _landmarkOverlayTexture,
-                    ScaleMode.StretchToFill,
-                    true);
-            }
-        }
-        else
-        {
-            GUI.Label(
-                previewRect,
-                "Camera texture unavailable",
-                _bodyStyle);
-        }
+        GUI.Label(
+            matchedTitleRect,
+            previewEpochMatched
+                ? "MATCHED LANDMARK DEBUG"
+                : "MATCHED LANDMARK DEBUG - WAITING FOR MATCHED FRAME",
+            _headerStyle);
 
-        float textY = previewRect.yMax + 5f;
+        Rect matchedPreviewRect = new Rect(
+            panel.x + 8f,
+            matchedTitleY + secondPreviewHeaderHeight,
+            width - 8f,
+            previewHeight);
+
+        DrawMatchedLandmarkDebugPreview(
+            matchedPreviewRect,
+            matchedTexture,
+            previewEpochMatched);
+
+        float textY = matchedPreviewRect.yMax + 5f;
         bool semanticMatched =
             _hasCanonicalFrame &&
             _canonicalFrame.hasSemanticLandmarks &&
@@ -826,12 +926,14 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
         string line1 =
             "provider=" +
             (string.IsNullOrEmpty(debugProvider) ? "-" : debugProvider) +
-            "  cam=" +
+            "  liveCam=" +
             (_cameraFreshThisFrame ? "NEW" : "hold") +
             "  landmark=" +
             (_semanticChangedThisFrame ? "NEW" : "hold") +
-            "  same=" +
-            semanticMatched;
+            "  rigid/semantic=" +
+            semanticMatched +
+            "  matchedDebug=" +
+            (previewEpochMatched ? "MATCHED" : "WAIT");
 
         GUI.Label(
             new Rect(panel.x + 8f, textY, width - 8f, 20f),
@@ -843,6 +945,8 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
         string line2 =
             "rigid=" + debugRigidTimestamp +
             "  semantic=" + debugSemanticTimestamp +
+            "  previewTs=" +
+            debugLandmarkPreviewSemanticTimestamp +
             "  pts=" + _landmarkCount +
             "  age=" +
             (observationAgeMs >= 0f
@@ -914,9 +1018,80 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
         {
             GUI.Label(
                 new Rect(panel.x + 8f, textY + 95f, width - 8f, 20f),
-                "Tools > Kiwi Avatar System > Frame Comparison | F8/F9 when legacy input is enabled",
+                "LIVE = current camera | MATCHED DEBUG = semantic epoch | F8/F9 when legacy input is enabled",
                 _smallStyle);
         }
+    }
+
+
+    private void DrawLiveCameraPreview(
+        Rect previewRect,
+        Texture liveSourceTexture)
+    {
+        if (liveSourceTexture == null)
+        {
+            GUI.Label(
+                previewRect,
+                "Live camera texture unavailable",
+                _bodyStyle);
+            return;
+        }
+
+        GUI.DrawTextureWithTexCoords(
+            previewRect,
+            liveSourceTexture,
+            GetCameraPreviewTexCoords(),
+            true);
+    }
+
+
+    private void DrawMatchedLandmarkDebugPreview(
+        Rect previewRect,
+        Texture matchedTexture,
+        bool previewEpochMatched)
+    {
+        if (!previewEpochMatched || matchedTexture == null)
+        {
+            GUI.Label(
+                previewRect,
+                "Waiting for semantic-frame-matched camera snapshot",
+                _bodyStyle);
+            return;
+        }
+
+        GUI.DrawTextureWithTexCoords(
+            previewRect,
+            matchedTexture,
+            GetCameraPreviewTexCoords(),
+            true);
+
+        // KIWI_V5_1_PHASE16_19_3_MATCHED_LANDMARK_PREVIEW_EPOCH
+        // Canonical Landmarks are rendered only over their exact committed camera
+        // epoch. Never substitute the current live frame here.
+        if (
+            previewEpochMatched &&
+            _landmarkOverlayTexture != null
+        )
+        {
+            GUI.DrawTexture(
+                previewRect,
+                _landmarkOverlayTexture,
+                ScaleMode.StretchToFill,
+                true);
+        }
+    }
+
+
+    private Rect GetCameraPreviewTexCoords()
+    {
+        bool mirrorX =
+            _cropper != null &&
+            _cropper.mirrorX;
+
+        return
+            mirrorX
+                ? new Rect(1f, 0f, -1f, 1f)
+                : new Rect(0f, 0f, 1f, 1f);
     }
 
 

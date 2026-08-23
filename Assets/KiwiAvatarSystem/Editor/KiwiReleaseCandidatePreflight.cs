@@ -27,7 +27,7 @@ using UnityEngine.SceneManagement;
 [InitializeOnLoad]
 public static class KiwiReleaseCandidatePreflight
 {
-    public const string PreflightVersion = "5.1.0-phase16.19";
+    public const string PreflightVersion = "5.1.0-phase16.19.5.1";
     public const string BaseCommit =
         "0b890a317cc3de64a4eadc955ce87bf21479786b";
     public const string ExpectedUnityVersion = "6000.0.80f1";
@@ -115,11 +115,11 @@ public static class KiwiReleaseCandidatePreflight
     private const string PlayGateMenu =
         MenuRoot + "Play Gate Enabled";
     private const string GatePrefSuffix =
-        ".KiwiAvatarSystem.Phase16_18.PlayGate";
+        ".KiwiAvatarSystem.Phase16_19.PlayGate";
     private const string StampRelativePath =
-        "Library/KiwiAvatarSystem/Phase16_18PassingPreflight.json";
+        "Library/KiwiAvatarSystem/Phase16_19PassingPreflight.json";
     private const string ExportFileName =
-        "KiwiPhase16_18ReleaseCandidatePreflight.json";
+        "KiwiPhase16_19ReleaseCandidatePreflight.json";
 
     private static readonly string[] SingletonRoleNames =
     {
@@ -189,7 +189,11 @@ public static class KiwiReleaseCandidatePreflight
             "KIWI_V5_1_PHASE16_16_ROOT_SPACE_PROVIDER_HANDOFF_POLICY",
             "KIWI_V5_1_PHASE16_17_SINGLE_PRESENTATION_AUTHORITY_POLICY",
             "KIWI_V5_1_PHASE16_18_SINGLE_HANDOFF_AUTHORITY_POLICY",
-            "KIWI_V5_1_PHASE16_19_STRICT_FACEPART_PRESENTATION_EPOCH_POLICY"),
+            "KIWI_V5_1_PHASE16_19_STRICT_FACEPART_PRESENTATION_EPOCH_POLICY",
+            "KIWI_V5_1_PHASE16_19_2_SUPERVISOR_FACEPART_POLICY_HARDENING",
+            "_cropper.enablePrediction = false;",
+            "_cropper.compensateMatchedFrameAge = false;",
+            "_cropper.directPositionDuringMotion = false;"),
         new MarkerRule(
             "Assets/KiwiAvatarSystem/Runtime/Optimization/" +
             "KiwiCommercialStartupReconciler.cs",
@@ -222,7 +226,6 @@ public static class KiwiReleaseCandidatePreflight
             "Assets/Script/KiwiInferenceFaceTracker.cs",
             "KIWI_V5_1_PHASE16_10_COMMERCIAL_FRESH_FRAME_PIPELINE",
             "KIWI_V5_1_PHASE16_10_DESKTOP_BOUNDED_2_3_LANE",
-            "KIWI_V5_1_PHASE16_10_DESKTOP_FRESHNESS_HYSTERESIS",
             "KIWI_V5_1_PHASE16_11_FRESHNESS_FIRST_INFERENCE",
             "KIWI_V5_1_PHASE16_11_SOFT_ANCHOR_FUTURE_ONLY",
             "KIWI_V5_1_PHASE16_11_SCHEDULE_BEFORE_CPU_DECODE",
@@ -246,6 +249,14 @@ public static class KiwiReleaseCandidatePreflight
             "KIWI_V5_1_PHASE16_17_SINGLE_PRESENTATION_AUTHORITY_DIAGNOSTICS",
             "KIWI_V5_1_PHASE16_18_SINGLE_HANDOFF_AUTHORITY_DIAGNOSTICS",
             "KIWI_V5_1_PHASE16_19_STRICT_FACEPART_PRESENTATION_EPOCH_DIAGNOSTICS",
+            "KIWI_V5_1_PHASE16_19_3_MATCHED_LANDMARK_PREVIEW_EPOCH",
+            "KIWI_V5_1_PHASE16_19_4_LANDMARK_ANNOTATION_MIRROR_ALIGNMENT",
+            "KIWI_V5_1_PHASE16_19_5_LIVE_CAMERA_MATCHED_DEBUG_SEPARATION",
+            "DrawLiveCameraPreview",
+            "DrawMatchedLandmarkDebugPreview",
+            "const bool mirrorLandmarksX = false;",
+            "TryGetLastCommittedPresentationFrame",
+            "previewEpochMatched",
             "singlePresentationAuthority",
             "singleHandoffAuthority",
             "canonicalHandoffNormalizationEnabled",
@@ -360,7 +371,10 @@ public static class KiwiReleaseCandidatePreflight
         new MarkerRule(
             "Assets/KiwiAvatarSystem/Runtime/Presentation/" +
             "KiwiFacePartTextureTransaction.cs",
-            "KIWI_V5_1_PHASE16_9_FACEPART_TEXTURE_TRANSACTION"),
+            "KIWI_V5_1_PHASE16_9_FACEPART_TEXTURE_TRANSACTION",
+            "KIWI_V5_1_PHASE16_19_3_MATCHED_LANDMARK_PREVIEW_EPOCH",
+            "TryGetLastCommittedPresentationFrame",
+            "_lastCommittedSlot"),
         new MarkerRule(
             "Assets/KiwiAvatarSystem/Runtime/Optimization/" +
             "KiwiFacePartLiveMotionBridge.cs",
@@ -410,7 +424,13 @@ public static class KiwiReleaseCandidatePreflight
             "KIWI_V5_1_PHASE5_CANONICAL_CROPPER_FRAME",
             "KIWI_V5_1_PHASE16_9_MATCHED_FACEPART_TEXTURE_WRITER",
             "KIWI_V5_1_PHASE16_9_TEXTURE_SEMANTIC_GATE",
-            "KIWI_V5_1_PHASE16_9_TEXTURE_TRANSACTION_COMMIT"),
+            "KIWI_V5_1_PHASE16_9_TEXTURE_TRANSACTION_COMMIT",
+            "KIWI_V5_1_PHASE16_19_PERSISTENT_FACEPART_RUNTIME_CONTRACT",
+            "public bool enablePrediction = false;",
+            "public bool compensateMatchedFrameAge = false;",
+            "public bool directPositionDuringMotion = false;",
+            "public bool hidePartsWhenLost = false;",
+            "EnforcePhase16_19StrictPresentationEpoch"),
         new MarkerRule(
             "Assets/Script/FacePartShapeMask.cs",
             "KIWI_V4_8_MASK_SEMANTIC_FRESHNESS_GATE",
@@ -428,10 +448,13 @@ public static class KiwiReleaseCandidatePreflight
             "KIWI_V5_1_RUNTIME_POLICY_SINGLE_WRITER",
             "KIWI_V5_1_PHASE16_17_SINGLE_PRESENTATION_AUTHORITY",
             "KIWI_V5_1_PHASE16_19_STRICT_FACEPART_PRESENTATION_EPOCH",
+            "KIWI_V5_1_PHASE16_19_PERSISTENT_FACEPART_RUNTIME_CONTRACT",
             "phase16_17PolicyOnlyPresentation",
-            "cropper.enablePrediction = false",
-            "cropper.compensateMatchedFrameAge = false",
-            "cropper.directPositionDuringMotion = false",
+            "EnforcePhase16_19FacePartTemporalContract",
+            "_cropper.enablePrediction = false",
+            "_cropper.compensateMatchedFrameAge = false",
+            "_cropper.directPositionDuringMotion = false",
+            "_cropper.hidePartsWhenLost = false",
             "ReportSuppressedBeforeRender"),
         new MarkerRule(
             "Assets/KiwiAvatarSystem/Runtime/KiwiAvatarRuntimeManager.cs",
@@ -508,7 +531,7 @@ public static class KiwiReleaseCandidatePreflight
         if (_lastReport == null)
         {
             Debug.LogWarning(
-                "[KiwiPreflight] No Phase 16.1 preflight has been run in this " +
+                "[KiwiPreflight] No Phase 16.19 preflight has been run in this " +
                 "Editor domain yet.");
             return;
         }
@@ -545,7 +568,7 @@ public static class KiwiReleaseCandidatePreflight
         PlayGateEnabled = !PlayGateEnabled;
         Menu.SetChecked(PlayGateMenu, PlayGateEnabled);
         Debug.Log(
-            "[KiwiPreflight] Phase 16.1 Strict Play Gate " +
+            "[KiwiPreflight] Phase 16.19 Strict Play Gate " +
             (PlayGateEnabled
                 ? "enabled. Play requires a current passing preflight stamp."
                 : "disabled. Diagnostic Play is allowed; RC/Release build gates remain strict."));
@@ -563,7 +586,7 @@ public static class KiwiReleaseCandidatePreflight
     {
         _bypassPlayGateOnce = true;
         Debug.LogWarning(
-            "[KiwiPreflight] The Phase 16.1 Strict Play Gate will be bypassed for the " +
+            "[KiwiPreflight] The Phase 16.19 Strict Play Gate will be bypassed for the " +
             "next Play attempt only. This does not create a passing RC stamp.");
     }
 
@@ -577,7 +600,7 @@ public static class KiwiReleaseCandidatePreflight
         }
 
         Debug.Log(
-            "[KiwiPreflight] Phase 16.1 passing stamp cleared.");
+            "[KiwiPreflight] Phase 16.19 passing stamp cleared.");
     }
 
     public static PreflightReport RunFullPreflight(bool logResult)
@@ -614,6 +637,10 @@ public static class KiwiReleaseCandidatePreflight
             CheckUniVrm(issues);
             CheckRequiredResources(issues);
             CheckMigrationMarkers(issues);
+            CheckPhase16_19StrictFacePartRuntimeContract(issues);
+            CheckPhase16_19_3LandmarkPreviewEpochContract(issues);
+            CheckPhase16_19_4LandmarkAnnotationMirrorContract(issues);
+            CheckPhase16_19_5LiveCameraMatchedDebugSeparationContract(issues);
             CheckLegacyWriterRetirement(issues);
             CheckStaticSingleWriterContracts(issues);
             CheckDeterministicAcceptanceMatrix(issues);
@@ -675,7 +702,7 @@ public static class KiwiReleaseCandidatePreflight
             string.IsNullOrEmpty(stamp.fingerprint)
         )
         {
-            reason = "No passing Phase 16.1 full-preflight stamp exists.";
+            reason = "No passing Phase 16.19 full-preflight stamp exists.";
             return false;
         }
 
@@ -762,7 +789,7 @@ public static class KiwiReleaseCandidatePreflight
         EditorApplication.isPlaying = false;
 
         Debug.LogError(
-            "[KiwiPreflight] Play Mode blocked by Phase 16.1 Strict RC gate: " +
+            "[KiwiPreflight] Play Mode blocked by Phase 16.19 Strict RC gate: " +
             reason +
             " A full preflight will run now. Press Play again only after PASS, " +
             "or disable 'Release Candidate Preflight/Play Gate Enabled' for diagnostic camera/Landmark testing. " +
@@ -1189,6 +1216,83 @@ public static class KiwiReleaseCandidatePreflight
             }
         }
     }
+
+    private static void CheckPhase16_19StrictFacePartRuntimeContract(
+        List<PreflightIssue> issues)
+    {
+        // Phase16.19.1 hardening: marker presence alone is not sufficient.
+        // Reject active source defaults or policy assignments that can reactivate
+        // FacePart temporal extrapolation after the strict preset was applied.
+        string cropperPath =
+            "Assets/Script/FacePartCropper.cs";
+        string quality10Path =
+            "Assets/KiwiAvatarSystem/Runtime/Optimization/" +
+            "KiwiTrackingQuality10Controller.cs";
+        string supervisorPath =
+            "Assets/KiwiAvatarSystem/Runtime/Optimization/" +
+            "KiwiMatureVTuberSupervisor.cs";
+
+        string[] forbiddenCropperDefaults =
+        {
+            "public bool enablePrediction = true;",
+            "public bool compensateMatchedFrameAge = true;",
+            "public bool directPositionDuringMotion = true;",
+            "public bool hidePartsWhenLost = true;"
+        };
+
+        foreach (string token in forbiddenCropperDefaults)
+        {
+            CheckActiveLineAbsent(
+                issues,
+                cropperPath,
+                token,
+                "Phase16.19.FacePartUnsafeDefault",
+                "Phase16.19 strict FacePart runtime contract has an unsafe " +
+                "active source default: " + token);
+        }
+
+        string[] forbiddenQuality10Assignments =
+        {
+            "_cropper.enablePrediction = true;",
+            "_cropper.compensateMatchedFrameAge = true;",
+            "_cropper.directPositionDuringMotion = true;",
+            "_cropper.hidePartsWhenLost = true;"
+        };
+
+        foreach (string token in forbiddenQuality10Assignments)
+        {
+            CheckActiveLineAbsent(
+                issues,
+                quality10Path,
+                token,
+                "Phase16.19.FacePartPolicyRegression",
+                "Quality10 re-enables a Phase16.19-forbidden FacePart path: " +
+                token);
+        }
+
+        // Phase16.19.2: the mature Supervisor runs after Quality10 and used to
+        // reopen prediction/matched-age compensation every LateUpdate. Require
+        // the Supervisor itself to obey the same strict presentation epoch.
+        string[] forbiddenSupervisorAssignments =
+        {
+            "_cropper.enablePrediction = true;",
+            "_cropper.compensateMatchedFrameAge = true;",
+            "_cropper.directPositionDuringMotion = true;",
+            "!holdingOrLost;"
+        };
+
+        foreach (string token in forbiddenSupervisorAssignments)
+        {
+            CheckActiveLineAbsent(
+                issues,
+                supervisorPath,
+                token,
+                "Phase16.19.FacePartSupervisorRegression",
+                "MatureVTuberSupervisor re-enables a Phase16.19-forbidden " +
+                "FacePart temporal path: " + token);
+        }
+    }
+
 
     private static void CheckLegacyWriterRetirement(
         List<PreflightIssue> issues)
@@ -2106,6 +2210,156 @@ public static class KiwiReleaseCandidatePreflight
         return false;
     }
 
+    private static void CheckPhase16_19_3LandmarkPreviewEpochContract(
+        List<PreflightIssue> issues)
+    {
+        const string overlayPath =
+            "Assets/KiwiAvatarSystem/Runtime/Validation/" +
+            "KiwiFrameComparisonOverlay.cs";
+
+        const string transactionPath =
+            "Assets/KiwiAvatarSystem/Runtime/Presentation/" +
+            "KiwiFacePartTextureTransaction.cs";
+
+        CheckActiveLinePresent(
+            issues,
+            overlayPath,
+            "previewEpochMatched &&",
+            "Phase16.19.LandmarkPreviewUnmatchedOverlay",
+            "Frame Comparison must gate canonical Landmark drawing on a " +
+            "semantic-frame-matched camera snapshot.");
+
+        CheckActiveLinePresent(
+            issues,
+            transactionPath,
+            "public static bool TryGetLastCommittedPresentationFrame(",
+            "Phase16.19.LandmarkPreviewMatchedFrameApiMissing",
+            "FacePart Texture Transaction must expose observer-only access " +
+            "to the latest committed semantic camera snapshot.");
+    }
+
+
+    private static void CheckPhase16_19_4LandmarkAnnotationMirrorContract(
+        List<PreflightIssue> issues)
+    {
+        const string overlayPath =
+            "Assets/KiwiAvatarSystem/Runtime/Validation/" +
+            "KiwiFrameComparisonOverlay.cs";
+
+        CheckActiveLinePresent(
+            issues,
+            overlayPath,
+            "const bool mirrorLandmarksX = false;",
+            "Phase16.19.LandmarkAnnotationDoubleMirror",
+            "Canonical Landmark annotation must stay in MediaPipe's already-" +
+            "mirrored presentation space. FacePart raw-texture mirrorX must " +
+            "not be applied a second time.");
+
+        CheckActiveLinePresent(
+            issues,
+            overlayPath,
+            "mirrorLandmarksX,",
+            "Phase16.19.LandmarkAnnotationMirrorContractMissing",
+            "Landmark points and rigid debug anchors must use the dedicated " +
+            "annotation mirror contract.");
+    }
+
+
+    private static void CheckPhase16_19_5LiveCameraMatchedDebugSeparationContract(
+        List<PreflightIssue> issues)
+    {
+        const string overlayPath =
+            "Assets/KiwiAvatarSystem/Runtime/Validation/" +
+            "KiwiFrameComparisonOverlay.cs";
+
+        CheckActiveLinePresent(
+            issues,
+            overlayPath,
+            "Texture liveSourceTexture = GetSourceTexture();",
+            "Phase16.19.LiveCameraDirectSourceMissing",
+            "LIVE CAMERA must bind directly to the current source texture and " +
+            "must not wait for semantic/Landmarker cadence.");
+
+        CheckActiveLinePresent(
+            issues,
+            overlayPath,
+            "DrawLiveCameraPreview(",
+            "Phase16.19.LiveCameraPresentationMissing",
+            "Frame Comparison must expose an independent live-camera observer " +
+            "presentation path.");
+
+        CheckActiveLinePresent(
+            issues,
+            overlayPath,
+            "DrawMatchedLandmarkDebugPreview(",
+            "Phase16.19.MatchedLandmarkDebugMissing",
+            "Frame Comparison must preserve a separate semantic-frame-matched " +
+            "Landmark diagnostic presentation path.");
+
+        CheckActiveLineAbsent(
+            issues,
+            overlayPath,
+            "sourceTexture = liveSourceTexture;",
+            "Phase16.19.MatchedDebugLiveFallback",
+            "MATCHED LANDMARK DEBUG must never fall back to the current live " +
+            "camera frame, because that recreates cross-epoch annotation.");
+    }
+
+
+    private static void CheckActiveLinePresent(
+        List<PreflightIssue> issues,
+        string assetPath,
+        string token,
+        string code,
+        string message)
+    {
+        string fullPath =
+            AssetPathToFullPath(assetPath);
+
+        if (!File.Exists(fullPath))
+        {
+            Add(
+                issues,
+                "Critical",
+                code,
+                message + " Source file is missing.",
+                assetPath);
+            return;
+        }
+
+        string[] lines =
+            File.ReadAllLines(fullPath);
+
+        for (int i = 0; i < lines.Length; i++)
+        {
+            string trimmed =
+                lines[i].Trim();
+
+            if (
+                trimmed.Length == 0 ||
+                trimmed.StartsWith("//", StringComparison.Ordinal) ||
+                trimmed.StartsWith("/*", StringComparison.Ordinal) ||
+                trimmed.StartsWith("*", StringComparison.Ordinal)
+            )
+            {
+                continue;
+            }
+
+            if (trimmed.IndexOf(token, StringComparison.Ordinal) >= 0)
+            {
+                return;
+            }
+        }
+
+        Add(
+            issues,
+            "Critical",
+            code,
+            message,
+            assetPath);
+    }
+
+
     private static void CheckActiveLineAbsent(
         List<PreflightIssue> issues,
         string assetPath,
@@ -2436,7 +2690,7 @@ public static class KiwiReleaseCandidatePreflight
         }
 
         string summary =
-            "[KiwiPreflight] Phase 16.1 " +
+            "[KiwiPreflight] Phase 16.19 " +
             (report.passed ? "PASS" : "FAIL") +
             " scenes=" + report.scenesScanned +
             " objects/components=" +

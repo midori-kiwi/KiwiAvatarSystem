@@ -1,0 +1,7 @@
+KiwiAvatarSystem Phase16.20.3
+Contract: KIWI_V5_1_PHASE16_20_3_FINECAM_PREFERRED_PROFILE_1080P60
+UTC: 2026-08-23T14:27:23.6307644Z
+Source asset: Assets/MediaPipeUnity/Samples/Scenes/AppSettings.asset
+Source instance: 33016
+Target preferred profile: 1920x1080@60
+Note: backup is outside Assets and is not imported by Unity.

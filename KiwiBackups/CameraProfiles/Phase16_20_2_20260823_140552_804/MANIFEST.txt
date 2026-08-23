@@ -1,0 +1,8 @@
+KiwiAvatarSystem Phase16.20.2 FineCam Lite 4K Profile
+Contract: KIWI_V5_1_PHASE16_20_2_FINECAM_LITE_4K_1080P60_PROFILE
+UTC: 2026-08-23T14:05:52.8304717Z
+Source asset: Assets/MediaPipeUnity/Samples/Scenes/AppSettings.asset
+Source instance: 33134
+Target request: 1920x1080@60
+Existing target-mode count before write: 2
+Note: backup is outside Assets and is not imported by Unity.

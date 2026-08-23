@@ -23,8 +23,8 @@ MonoBehaviour:
   _preferredWebCamDeviceKeywords:
   - CM831
   - UGREEN
-  _preferredWebCamProfileWidth: 1920
-  _preferredWebCamProfileHeight: 1080
+  _preferredWebCamProfileWidth: 1280
+  _preferredWebCamProfileHeight: 720
   _preferredWebCamProfileFrameRate: 60
   _defaultAvailableWebCamResolutions:
   - width: 176

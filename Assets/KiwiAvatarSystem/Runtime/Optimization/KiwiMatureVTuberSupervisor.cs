@@ -1274,14 +1274,14 @@ public sealed class KiwiMatureVTuberSupervisor : MonoBehaviour
                     10f,
                     dt);
 
-            _cropper.enablePrediction =
-                !holdingOrLost;
-
-            _cropper.compensateMatchedFrameAge =
-                true;
-
-            _cropper.directPositionDuringMotion =
-                false;
+            // KIWI_V5_1_PHASE16_19_2_SUPERVISOR_FACEPART_POLICY_HARDENING
+            // Phase16.19 pins Eye/Mouth pixels and semantic geometry to one
+            // presentation epoch. The Supervisor may still tune render response
+            // and inert rollback envelope values, but it must never reopen any
+            // temporal extrapolation path after Cropper/Quality10 closed it.
+            _cropper.enablePrediction = false;
+            _cropper.compensateMatchedFrameAge = false;
+            _cropper.directPositionDuringMotion = false;
 
             _cropper.predictionLeadSeconds =
                 inferenceHighRate

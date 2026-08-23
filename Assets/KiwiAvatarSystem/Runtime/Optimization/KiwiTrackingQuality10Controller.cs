@@ -34,6 +34,13 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
     public bool Phase16_17PolicyOnlyPresentation =>
         phase16_17PolicyOnlyPresentation;
 
+    // KIWI_V5_1_PHASE16_19_PERSISTENT_FACEPART_RUNTIME_CONTRACT
+    // Commercial Phase16.19 is a hard presentation-epoch contract, not a one-shot
+    // preset. These four FacePart escape paths are reasserted independently from
+    // applyRecommendedSettings/applyPresetOnlyOnce so Inspector/scene preset drift
+    // cannot advance geometry beyond the pinned texture transaction.
+    public bool Phase16_19StrictFacePartPresentationEpoch => true;
+
     private const string RuntimeObjectName =
         "[Kiwi] Human Motion Presentation";
 
@@ -328,6 +335,7 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
         SceneManager.sceneLoaded += HandleSceneLoaded;
         RefreshReferences(true);
         ApplyRecommendedPresetIfNeeded();
+        EnforcePhase16_19FacePartTemporalContract();
     }
 
     private void OnEnable()
@@ -351,6 +359,7 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
     {
         RefreshReferences(true);
         ApplyRecommendedPresetIfNeeded();
+        EnforcePhase16_19FacePartTemporalContract();
         ResetPresentationFromCurrentPose();
     }
 
@@ -358,6 +367,7 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
     {
         RefreshReferences(true);
         ApplyRecommendedPresetIfNeeded();
+        EnforcePhase16_19FacePartTemporalContract();
         ResetPresentationFromCurrentPose();
     }
 
@@ -367,6 +377,7 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
         ApplyRecommendedPresetIfNeeded();
         UpdateAvatarSwapState();
         ApplyLiveInferenceTuning();
+        EnforcePhase16_19FacePartTemporalContract();
         UpdatePipelineDiagnostics();
 
         if (_pendingResetFrames > 0)
@@ -398,6 +409,7 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
         }
 
         RefreshReferences(false);
+        EnforcePhase16_19FacePartTemporalContract();
 
         if (phase16_17PolicyOnlyPresentation)
         {
@@ -471,6 +483,21 @@ public sealed class KiwiTrackingQuality10Controller : MonoBehaviour
             ResetPresentationFromCurrentPose();
         }
     }
+
+    // KIWI_V5_1_PHASE16_19_PERSISTENT_FACEPART_RUNTIME_CONTRACT
+    private void EnforcePhase16_19FacePartTemporalContract()
+    {
+        if (_cropper == null)
+        {
+            return;
+        }
+
+        _cropper.enablePrediction = false;
+        _cropper.compensateMatchedFrameAge = false;
+        _cropper.directPositionDuringMotion = false;
+        _cropper.hidePartsWhenLost = false;
+    }
+
 
     private void ApplyRecommendedPresetIfNeeded()
     {
