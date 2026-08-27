@@ -1,0 +1,13 @@
+﻿{
+    "version":  "5.1.0-phase16.20.29-v42",
+    "installedAt":  "2026-08-26T23:38:58.6034326+09:00",
+    "baseline":  "v41 ORT shadow installed",
+    "authority":  "UNITY_INFERENCE_ENGINE",
+    "probe":  "ORT_DIRECTML_NATIVE_D3D12_ZERO_COPY_SHADOW",
+    "modelSha256":  "ed487104519b0a88cb2cb2ec3678e183f447fb9dd63560998e960ffbaa8fb335",
+    "trackerSha256":  "52c046ee44b41a4ff50b85aef503bc29dd31b57eaf58c0d160ccc33c5d4b7695",
+    "runtimeSha256":  "e9ed0c9d41b3d5e2ca03e141241539637ee0a4b5784fb7cf92388957344cbb8e",
+    "bridgeSha256":  "1178a93ba2cc1279cefd0d191b4e40fd235d4eb0f52e8b289f8138274aecac12",
+    "ortSha256":  "95366724919f4e95ecc60010912ed538ad9804b6683fbd0aad389749102834b9",
+    "directMlSha256":  "9c9e6d822561c6c41b90e6994b3e8857cf1d66dbfb1e0c4c799c7c89b4e92da1"
+}

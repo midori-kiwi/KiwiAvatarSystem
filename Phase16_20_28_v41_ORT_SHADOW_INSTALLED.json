@@ -1,0 +1,13 @@
+﻿{
+    "version":  "5.1.0-phase16.20.28-v41",
+    "installedAt":  "2026-08-26T21:12:58.4045182+09:00",
+    "ortVersion":  "1.22.0",
+    "directMlVersion":  "1.15.4",
+    "trackerSha256":  "3d8b97521f5655016e182e779f674ce08564acf3eaeca35235dd6ea515ede330",
+    "shadowRuntimeSha256":  "0df165211ef4219fd162ece28b1c26bf8257c93735b3e6aae67ed33a83596e4c",
+    "managedOrtSha256":  "a65876e5722478227840bea854aca2e772eac6efb05906effb916699cae086d6",
+    "nativeOrtSha256":  "95366724919f4e95ecc60010912ed538ad9804b6683fbd0aad389749102834b9",
+    "directMlSha256":  "9c9e6d822561c6c41b90e6994b3e8857cf1d66dbfb1e0c4c799c7c89b4e92da1",
+    "modelSha256":  "ed487104519b0a88cb2cb2ec3678e183f447fb9dd63560998e960ffbaa8fb335",
+    "baselineTrackerSha256":  "74ec576fdae360f3720083520ec318eb1a2b8e33a3c452479216ec0b33464f3d"
+}

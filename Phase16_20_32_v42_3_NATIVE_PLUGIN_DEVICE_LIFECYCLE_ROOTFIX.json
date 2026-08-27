@@ -1,0 +1,12 @@
+﻿{
+    "version":  "5.1.0-phase16.20.32-v42.3",
+    "rootFix":  "NATIVE_PLUGIN_DEVICE_LIFECYCLE",
+    "installedAt":  "2026-08-27T19:41:37.5031771+09:00",
+    "runtimeSha256":  "717f8431970a71bb06a3de95a04cd3ee9b361a7c641b89c1884e6c19a59de571",
+    "bridgeSha256":  "e607c916ac2d648420bba85990f694c851789aa2ba0f606a457355759de3a926",
+    "bridgePdbSha256":  "f14d475db91e1b600a4cc17bc64f417dbbdad087c2be4918f45a01238b6f955c",
+    "nativeSourceSha256":  "321f553703c1eaf966aef1b60eba4a2163aa79d0ae49df87c34f4d8687a11810",
+    "pluginImporterPreloaded":  1,
+    "trackerUnchanged":  1,
+    "cameraPathUnchanged":  1
+}

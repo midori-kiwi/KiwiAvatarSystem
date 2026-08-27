@@ -80,6 +80,19 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
     private KiwiTrackingFrame _canonicalFrame;
     private ulong _lastOverlayRigidFrameId;
     private bool _cameraFreshThisFrame;
+    // KIWI_V5_1_PHASE16_20_7_V13_NATIVE_CAMERA_TELEMETRY
+    // KIWI_V5_1_PHASE16_20_7_V14_ASYNC_ACQUISITION_TELEMETRY
+    // KIWI_V5_1_PHASE16_20_7_V15_NV12_INGEST_TELEMETRY
+    // KIWI_V5_1_PHASE16_20_7_V16_IMMEDIATE_INGEST_FLUSH_TELEMETRY
+    // KIWI_V5_1_PHASE16_20_7_V17_CAPTURE_DEVICE_ISOLATION_TELEMETRY
+    // KIWI_V5_1_PHASE16_20_7_V18_FULLY_DECOUPLED_LATEST_FRAME_TELEMETRY
+    // KIWI_V5_1_PHASE16_20_7_V19_CAPTURE_TRANSPORT_AB_TELEMETRY
+    // KIWI_V5_1_PHASE16_20_9_V21_FRAME_PACING_DIAGNOSTIC_TELEMETRY
+    // KIWI_V5_1_PHASE16_20_10_V22_INFERENCE_READBACK_BOUNDARY_TELEMETRY
+    private ulong _lastNativePresentedSequenceForFreshness;
+    private bool _hasNativeCameraTelemetry;
+    private Mediapipe.Unity.KiwiNativeCameraTelemetrySnapshot
+        _nativeCameraTelemetry;
 
     private bool _hasPreviousRoot;
     private Vector3 _previousRootPosition;
@@ -199,6 +212,8 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
     {
         StopCsvRecording();
 
+        KiwiCameraPreviewQualityService.Release();
+
         if (_landmarkOverlayTexture != null)
         {
             Destroy(_landmarkOverlayTexture);
@@ -230,6 +245,15 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
     {
         RefreshReferences(false);
         CaptureFrameComparisonState();
+
+        Texture qualityMatchedTexture =
+            GetLandmarkPreviewTexture(
+                out _,
+                out _);
+
+        KiwiCameraPreviewQualityService.PrepareFrame(
+            GetSourceTexture(),
+            qualityMatchedTexture);
 
         if (_csvWriter != null)
         {
@@ -283,6 +307,27 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
             // KIWI_V5_1_PHASE16_8_COMMERCIAL_GAP_DIAGNOSTICS
             _csvWriter.WriteLine(
                 "unityFrame,realtimeSeconds,cameraFresh,sourceTextureId,sourceWidth,sourceHeight," +
+                "nativeCameraActive,nativeSessionGeneration,nativeCaptureSequence,nativePresentedSequence," +
+                "nativeCaptureCount,nativeDroppedCount,nativePresentedCount,nativeProducerFenceCompleted," +
+                "nativeCaptureAgeMs,nativePresentedAgeMs,nativeTargetFps,nativePresentationTextureId," +
+                "nativeSourceSequence,nativeSourceCount,nativeSupersededCount,nativeProcessingFailureCount," +
+                "nativeSourceAgeMs,nativeWorkerRunning,nativeTimestampCalibrated,nativeQpcFrequency," +
+                "nativeSourceIntervalMs,nativeIngestSequence,nativeIngestCount,nativeIngestFailureCount," +
+                "nativeIngestAgeMs,nativeIngestCopySubmitMs,nativeIngestFenceCompleted,nativeD3D11MultithreadProtected,nativeProcessingCpuMs," +
+                "nativeCallbackCpuMs,nativeRequestNextCpuMs,nativeCallbackToRequestNextMs,nativeSourceTimestampIntervalMs,nativeArrivalIntervalMs," +
+                "nativeIngestConsumerFenceCompleted,nativeCaptureDeviceIsolated,nativeCaptureD3D11MultithreadProtected," +
+                "nativeCaptureGpuWaitCount,nativeProcessingGpuWaitCount,nativeReadyReplacementCount,nativeAllSlotsBusyDropCount," +
+                "nativeIngestAcceptedCount,nativeIngestAcceptedRatio,nativeReadyUnclaimedCount,nativeOldestReadyAgeMs," +
+                "nativeProducerFenceLag,nativeConsumerFenceLag,nativeLatestProcessedSourceAgeMs," +
+                "nativeCaptureTransportId,nativeSystemMemoryCaptureEnabled,nativeMfSampleResidenceMs," +
+                "nativeCaptureCopyGpuSubmitMs,nativeCaptureCopyGpuCompletionMs,nativeCaptureCopyGpuOutstandingDepth," +
+                "nativeCpuNv12CopyMs,nativeCpuNv12CopyBytes,nativeCpuLatestReplacementCount,nativeCpuAllSlotsBusyDropCount," +
+                "nativeGpuUploadSubmitMs,nativeGpuUploadCount," +
+                "framePacingModeId,framePacingVSyncCount,framePacingTargetFrameRate," +
+                "framePacingRenderFrameInterval,framePacingEffectiveRenderFrameRate,framePacingWillCurrentFrameRender," +
+                "inferencePreReadbackSubmitCpuMs,inferenceReadbackRequestCpuMs,inferenceRequestToDoneObservedMs," +
+                "inferenceReadbackObservedFrameDelta,inferencePollIntervalMs,inferenceReadbackCloneCpuMs," +
+                "inferenceDecodeMathCpuMs,inferenceBoundarySampleCount," +
                 "cameraGeneration,providerGeneration,trackingSessionGeneration,providerId,canonicalFrameId," +
                 "rigidFrameId,rigidTimestamp,semanticTimestamp,semanticMatched,semanticChanged,landmarkCount," +
                 "landmarkMeanStepNorm,landmarkMaxStepNorm,rigidFaceCenterX,rigidFaceCenterY," +
@@ -486,8 +531,26 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
 
         Texture sourceTexture = GetSourceTexture();
         WebCamTexture webCam = sourceTexture as WebCamTexture;
+
+        _hasNativeCameraTelemetry =
+            Mediapipe.Unity.KiwiNativeCameraTelemetry.TryGetSnapshot(
+                out _nativeCameraTelemetry);
+
+        bool nativeFresh =
+            _hasNativeCameraTelemetry &&
+            _nativeCameraTelemetry.latestPresentedSequence > 0UL &&
+            _nativeCameraTelemetry.latestPresentedSequence !=
+                _lastNativePresentedSequenceForFreshness;
+
+        if (nativeFresh)
+        {
+            _lastNativePresentedSequenceForFreshness =
+                _nativeCameraTelemetry.latestPresentedSequence;
+        }
+
         _cameraFreshThisFrame =
-            webCam != null && webCam.didUpdateThisFrame;
+            nativeFresh ||
+            (webCam != null && webCam.didUpdateThisFrame);
 
         CaptureRootStepMetrics();
     }
@@ -794,6 +857,10 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
     }
 
     // KIWI_V5_1_PHASE16_19_5_LIVE_CAMERA_MATCHED_DEBUG_SEPARATION
+
+    // KIWI_V5_1_PHASE16_20_16_V28_CAMERA_PREVIEW_QUALITY
+    // Observer-only preview minification. Tracking and matched transactions
+    // continue using their original textures.
     // Presentation cadence and semantic diagnostic cadence are intentionally
     // different. The live camera must never wait for a Landmarker result, while
     // canonical Landmarks must never be drawn over an unmatched live frame.
@@ -887,7 +954,9 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
 
         DrawLiveCameraPreview(
             livePreviewRect,
-            liveSourceTexture);
+            KiwiCameraPreviewQualityService.
+                GetLivePreviewOrSource(
+                    liveSourceTexture));
 
         float matchedTitleY =
             livePreviewRect.yMax + 4f;
@@ -913,7 +982,9 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
 
         DrawMatchedLandmarkDebugPreview(
             matchedPreviewRect,
-            matchedTexture,
+            KiwiCameraPreviewQualityService.
+                GetMatchedPreviewOrSource(
+                    matchedTexture),
             previewEpochMatched);
 
         float textY = matchedPreviewRect.yMax + 5f;
@@ -1171,6 +1242,27 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
     }
 
 
+    private static float GetNativeHostTicksAgeMs(long hostTicks)
+    {
+        if (hostTicks <= 0L)
+        {
+            return -1f;
+        }
+
+        long nowTicks =
+            System.Diagnostics.Stopwatch.GetTimestamp();
+
+        if (nowTicks < hostTicks)
+        {
+            return -1f;
+        }
+
+        return
+            (float)(
+                (nowTicks - hostTicks) *
+                1000.0 /
+                System.Diagnostics.Stopwatch.Frequency);
+    }
     private float GetCanonicalObservationAgeMs()
     {
         if (
@@ -1286,6 +1378,80 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
             Append(row, sourceId); Sep(row);
             Append(row, sourceWidth); Sep(row);
             Append(row, sourceHeight); Sep(row);
+            Append(row, _hasNativeCameraTelemetry); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.sessionGeneration : 0); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.latestCaptureSequence : 0UL); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.latestPresentedSequence : 0UL); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.captureFrameCount : 0UL); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.droppedFrameCount : 0UL); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.presentedFrameCount : 0UL); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.producerCompletedFenceValue : 0UL); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? GetNativeHostTicksAgeMs(_nativeCameraTelemetry.latestCaptureHostTicks) : -1f); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? GetNativeHostTicksAgeMs(_nativeCameraTelemetry.latestPresentedHostTicks) : -1f); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.targetFrameRate : 0); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.presentationTextureId : 0); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.latestSourceSequence : 0UL); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.sourceFrameCount : 0UL); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.supersededFrameCount : 0UL); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.processingFailureFrameCount : 0UL); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? GetNativeHostTicksAgeMs(_nativeCameraTelemetry.latestSourceHostTicks) : -1f); Sep(row);
+            Append(row, _hasNativeCameraTelemetry && _nativeCameraTelemetry.processingWorkerRunning); Sep(row);
+            Append(row, _hasNativeCameraTelemetry && _nativeCameraTelemetry.timestampCalibrationValid); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.nativeQpcFrequency : 0L); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.sourceIntervalMs : 0f); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.latestIngestSequence : 0UL); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.ingestCopyFrameCount : 0UL); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.ingestCopyFailureFrameCount : 0UL); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? GetNativeHostTicksAgeMs(_nativeCameraTelemetry.latestIngestHostTicks) : -1f); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.ingestCopySubmitMs : 0f); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.ingestCompletedFenceValue : 0UL); Sep(row);
+            Append(row, _hasNativeCameraTelemetry && _nativeCameraTelemetry.d3d11MultithreadProtected); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.processingCpuMs : 0f); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.callbackCpuMs : 0f); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.requestNextCpuMs : 0f); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.callbackToRequestNextMs : 0f); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.sourceTimestampIntervalMs : 0f); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.arrivalIntervalMs : 0f); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.ingestConsumerCompletedFenceValue : 0UL); Sep(row);
+            Append(row, _hasNativeCameraTelemetry && _nativeCameraTelemetry.captureDeviceIsolated); Sep(row);
+            Append(row, _hasNativeCameraTelemetry && _nativeCameraTelemetry.captureD3D11MultithreadProtected); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.captureGpuWaitCount : 0UL); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.processingGpuWaitCount : 0UL); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.readyReplacementCount : 0UL); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.allSlotsBusyDropCount : 0UL); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.ingestAcceptedCount : 0UL); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.ingestAcceptedRatio : 0f); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.readyUnclaimedCount : 0UL); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.oldestReadyAgeMs : 0f); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.producerFenceLag : 0UL); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.consumerFenceLag : 0UL); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.latestProcessedSourceAgeMs : 0f); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.captureTransportId : 0); Sep(row);
+            Append(row, _hasNativeCameraTelemetry && _nativeCameraTelemetry.systemMemoryCaptureEnabled); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.mfSampleResidenceMs : 0f); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.captureCopyGpuSubmitMs : 0f); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.captureCopyGpuCompletionMs : 0f); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.captureCopyGpuOutstandingDepth : 0UL); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.cpuNv12CopyMs : 0f); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.cpuNv12CopyBytes : 0UL); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.cpuLatestReplacementCount : 0UL); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.cpuAllSlotsBusyDropCount : 0UL); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.gpuUploadSubmitMs : 0f); Sep(row);
+            Append(row, _hasNativeCameraTelemetry ? _nativeCameraTelemetry.gpuUploadCount : 0UL); Sep(row);
+            Append(row, KiwiFramePacingDiagnosticController.ModeId); Sep(row);
+            Append(row, KiwiFramePacingDiagnosticController.VSyncCount); Sep(row);
+            Append(row, KiwiFramePacingDiagnosticController.TargetFrameRate); Sep(row);
+            Append(row, KiwiFramePacingDiagnosticController.RenderFrameInterval); Sep(row);
+            Append(row, KiwiFramePacingDiagnosticController.EffectiveRenderFrameRate); Sep(row);
+            Append(row, KiwiFramePacingDiagnosticController.WillCurrentFrameRender); Sep(row);
+            Append(row, KiwiInferenceReadbackBoundaryDiagnostics.PreReadbackSubmitCpuMs); Sep(row);
+            Append(row, KiwiInferenceReadbackBoundaryDiagnostics.ReadbackRequestCpuMs); Sep(row);
+            Append(row, KiwiInferenceReadbackBoundaryDiagnostics.RequestToDoneObservedMs); Sep(row);
+            Append(row, KiwiInferenceReadbackBoundaryDiagnostics.ReadbackObservedFrameDelta); Sep(row);
+            Append(row, KiwiInferenceReadbackBoundaryDiagnostics.PollIntervalMs); Sep(row);
+            Append(row, KiwiInferenceReadbackBoundaryDiagnostics.ReadbackCloneCpuMs); Sep(row);
+            Append(row, KiwiInferenceReadbackBoundaryDiagnostics.DecodeMathCpuMs); Sep(row);
+            Append(row, KiwiInferenceReadbackBoundaryDiagnostics.BoundarySampleCount); Sep(row);
             Append(row, generation.cameraGeneration); Sep(row);
             Append(row, generation.providerGeneration); Sep(row);
             Append(row, generation.trackingSessionGeneration); Sep(row);
@@ -1536,7 +1702,10 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
                 !_semanticChangedThisFrame &&
                 _cropper != null &&
                 _cropper.sourceImage != null &&
-                _cropper.sourceImage.texture is WebCamTexture);
+                (
+                    _cropper.sourceImage.texture is WebCamTexture ||
+                    _hasNativeCameraTelemetry
+                ));
 
             _csvWriter.WriteLine(row.ToString());
             recordedFrameCount++;

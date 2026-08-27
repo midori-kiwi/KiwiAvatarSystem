@@ -1,0 +1,11 @@
+﻿KiwiAvatarSystem v41 diagnostic dependency notice
+================================================
+Microsoft.ML.OnnxRuntime.DirectML 1.22.0 / Microsoft.ML.OnnxRuntime.Managed 1.22.0
+Project: https://github.com/microsoft/onnxruntime
+License: MIT
+
+Microsoft.AI.DirectML 1.15.4
+Project: https://github.com/microsoft/DirectML
+License information is distributed by Microsoft with the NuGet package.
+
+These files are installed only for the v41 local diagnostic/shadow benchmark.

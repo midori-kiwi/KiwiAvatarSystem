@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Unity.InferenceEngine;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 {
@@ -86,6 +87,7 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             public readonly RenderTexture cropTexture;
             public readonly Material cropMaterial;
             public readonly TextureTransform textureTransform;
+            public readonly CommandBuffer asyncCommandBuffer;
 
             public readonly Vector3[] decodedLandmarks =
                 new Vector3[CompatibleLandmarkCount];
@@ -104,6 +106,9 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             // CPU decode without introducing any blocking synchronization.
             public long pendingScheduleBeginHostTicks;
             public long pendingReadbackRequestHostTicks;
+            // KIWI_V5_1_PHASE16_20_10_V22_INFERENCE_READBACK_BOUNDARY_PROFILING
+            // Observer-only frame identity for request->done observation depth.
+            public int pendingReadbackRequestUnityFrame = -1;
 
             public int pendingAnchorRevision;
             public int pendingExternalAnchorEpoch;
@@ -125,7 +130,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             public Lane(
                 Model model,
                 Shader cropShader,
-                int index)
+                int index,
+                bool createAsyncCommandBuffer)
             {
                 worker =
                     new Worker(
@@ -182,6 +188,20 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                             TensorLayout.NCHW)
                         .SetCoordOrigin(
                             CoordOrigin.TopLeft);
+
+                if (createAsyncCommandBuffer)
+                {
+                    asyncCommandBuffer =
+                        new CommandBuffer
+                        {
+                            name =
+                                "Kiwi Inference Async Compute Lane " +
+                                index
+                        };
+
+                    asyncCommandBuffer.SetExecutionFlags(
+                        CommandBufferExecutionFlags.AsyncCompute);
+                }
             }
 
             public void Dispose()
@@ -198,6 +218,11 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 pendingCameraGeneration = 0;
                 pendingTrackingSessionGeneration = 0;
                 pendingMinimumPresence = 0f;
+
+                if (asyncCommandBuffer != null)
+                {
+                    asyncCommandBuffer.Release();
+                }
 
                 worker?.Dispose();
                 input?.Dispose();
@@ -267,6 +292,18 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
         private const int DesktopStableSchedulingLanes = 3;
         private const int MobileStableSchedulingLanes = 2;
+        // KIWI_V5_1_PHASE16_20_8_V20_PATHB_LANE_RECHARACTERIZATION
+        // Scheduling-capacity diagnostic only. All three desktop workers remain
+        // preallocated; this only limits how many may be in flight at once.
+        private const string DesktopLaneLimitEnvironment =
+            "KIWI_INFERENCE_LANE_LIMIT";
+
+        private readonly int _desktopConfiguredLaneLimit =
+            ResolveDesktopConfiguredLaneLimit();
+        // identity contracts are unchanged.
+
+        // pre-existing input tensor on CPU before TextureConverter.ToTensor.
+
 
         // KIWI_V5_1_PHASE16_12_PERSISTENT_ROI_AUTHORITY
         // A rejected sample is not proof that the ROI itself is invalid. Keep
@@ -297,6 +334,37 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
         private int _sourceWidth = 1;
         private int _sourceHeight = 1;
         private bool _inputGammaPreservationActive;
+
+        // KIWI_V5_1_PHASE16_20_26_V38_ASYNC_COMPUTE_AB_PROBE
+        // Diagnostic-only A/B switch. Baseline remains the exact v37.2
+        // Graphics queue path unless the environment variable is explicitly set.
+        private const string AsyncComputeProbeEnvironment =
+            "KIWI_INFERENCE_ASYNC_COMPUTE_PROBE";
+
+        private const string AsyncComputeProbeContract =
+            "KIWI_V5_1_PHASE16_20_26_V38_ASYNC_COMPUTE_AB_PROBE";
+
+        private readonly bool _asyncComputeProbeRequested;
+        private readonly bool _asyncComputeProbeEnabled;
+        private int _asyncComputeSubmissionCount;
+        private int _graphicsQueueSubmissionCount;
+
+        // KIWI_V5_1_PHASE16_20_27_V39_GPU_BUDGETED_INFERENCE_30HZ_AB_PROBE
+        // Keep three independent lanes/readbacks, but optionally admit only
+        // the newest source at 30 Hz. This is NOT the retired single-flight
+        // policy: 2-3 jobs may remain in flight while redundant >30 Hz inputs
+        // are coalesced before GPU submission.
+        private const string CadenceBudgetEnvironment =
+            "KIWI_INFERENCE_CADENCE_BUDGET_HZ";
+
+        private const string CadenceBudgetContract =
+            "KIWI_V5_1_PHASE16_20_27_V39_GPU_BUDGETED_INFERENCE_30HZ_AB_PROBE";
+
+        private readonly bool _cadenceBudgetRequested;
+        private readonly bool _cadenceBudgetEnabled;
+        private readonly int _cadenceBudgetHz;
+        private long _nextCadenceBudgetAdmissionHostTicks;
+        private int _cadenceBudgetSkippedFreshFrameCount;
 
         private int _anchorRevision;
         private int _externalAnchorEpoch;
@@ -403,6 +471,30 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
         public bool InputGammaPreservationActive =>
             _inputGammaPreservationActive;
+
+        public bool AsyncComputeProbeRequested =>
+            _asyncComputeProbeRequested;
+
+        public bool AsyncComputeProbeEnabled =>
+            _asyncComputeProbeEnabled;
+
+        public int AsyncComputeSubmissionCount =>
+            _asyncComputeSubmissionCount;
+
+        public int GraphicsQueueSubmissionCount =>
+            _graphicsQueueSubmissionCount;
+
+        public bool CadenceBudgetRequested =>
+            _cadenceBudgetRequested;
+
+        public bool CadenceBudgetEnabled =>
+            _cadenceBudgetEnabled;
+
+        public int CadenceBudgetHz =>
+            _cadenceBudgetHz;
+
+        public int CadenceBudgetSkippedFreshFrameCount =>
+            _cadenceBudgetSkippedFreshFrameCount;
 
         public float RegionPixelAspectError
         {
@@ -652,6 +744,96 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     nameof(cropShader));
             }
 
+            string asyncComputeProbeValue =
+                Environment.GetEnvironmentVariable(
+                    AsyncComputeProbeEnvironment);
+
+            _asyncComputeProbeRequested =
+                string.Equals(
+                    asyncComputeProbeValue,
+                    "1",
+                    StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(
+                    asyncComputeProbeValue,
+                    "true",
+                    StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(
+                    asyncComputeProbeValue,
+                    "on",
+                    StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(
+                    asyncComputeProbeValue,
+                    "async",
+                    StringComparison.OrdinalIgnoreCase);
+
+            _asyncComputeProbeEnabled =
+                _asyncComputeProbeRequested &&
+                !Application.isMobilePlatform &&
+                SystemInfo.supportsAsyncCompute &&
+                SystemInfo.graphicsDeviceType ==
+                    GraphicsDeviceType.Direct3D12;
+
+            string cadenceBudgetValue =
+                Environment.GetEnvironmentVariable(
+                    CadenceBudgetEnvironment);
+
+            int cadenceBudgetRequestHz;
+            bool cadenceBudgetParsed =
+                int.TryParse(
+                    cadenceBudgetValue,
+                    out cadenceBudgetRequestHz);
+
+            _cadenceBudgetRequested =
+                cadenceBudgetParsed &&
+                cadenceBudgetRequestHz > 0;
+
+            _cadenceBudgetHz =
+                _cadenceBudgetRequested
+                    ? cadenceBudgetRequestHz
+                    : 0;
+
+            _cadenceBudgetEnabled =
+                _cadenceBudgetRequested &&
+                _cadenceBudgetHz == 30 &&
+                !_asyncComputeProbeEnabled &&
+                !Application.isMobilePlatform &&
+                SystemInfo.graphicsDeviceType ==
+                    GraphicsDeviceType.Direct3D12;
+
+            Debug.Log(
+                "[KiwiInferenceV39] contract=" +
+                CadenceBudgetContract +
+                " requested=" +
+                (_cadenceBudgetRequested ? "1" : "0") +
+                " enabled=" +
+                (_cadenceBudgetEnabled ? "1" : "0") +
+                " hz=" +
+                _cadenceBudgetHz +
+                " policy=" +
+                (_cadenceBudgetEnabled
+                    ? "LATEST_ONLY_THREE_LANE"
+                    : "V38_BASELINE_UNTHROTTLED") +
+                " asyncCompute=" +
+                (_asyncComputeProbeEnabled ? "1" : "0") +
+                " graphicsApi=" +
+                SystemInfo.graphicsDeviceType);
+
+            Debug.Log(
+                "[KiwiInferenceV38] contract=" +
+                AsyncComputeProbeContract +
+                " requested=" +
+                (_asyncComputeProbeRequested ? "1" : "0") +
+                " enabled=" +
+                (_asyncComputeProbeEnabled ? "1" : "0") +
+                " queue=" +
+                (_asyncComputeProbeEnabled
+                    ? "ASYNC_COMPUTE_DEFAULT"
+                    : "GRAPHICS_BASELINE") +
+                " supportsAsyncCompute=" +
+                (SystemInfo.supportsAsyncCompute ? "1" : "0") +
+                " graphicsApi=" +
+                SystemInfo.graphicsDeviceType);
+
             int requestedDepth =
                 Application.isMobilePlatform
                     ? 2
@@ -681,7 +863,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                         new Lane(
                             model,
                             cropShader,
-                            i));
+                            i,
+                            _asyncComputeProbeEnabled));
                 }
                 catch
                 {
@@ -699,12 +882,11 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
             _lanes =
                 lanes.ToArray();
-
             _schedulingLaneLimit =
                 Mathf.Clamp(
                     Application.isMobilePlatform
-                        ? MobileStableSchedulingLanes
-                        : DesktopStableSchedulingLanes,
+                    ? MobileStableSchedulingLanes
+                    : _desktopConfiguredLaneLimit,
                     1,
                     Mathf.Max(
                         1,
@@ -782,8 +964,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             _schedulingLaneLimit =
                 Mathf.Clamp(
                     Application.isMobilePlatform
-                        ? MobileStableSchedulingLanes
-                        : DesktopStableSchedulingLanes,
+                    ? MobileStableSchedulingLanes
+                    : _desktopConfiguredLaneLimit,
                     1,
                     Mathf.Max(
                         1,
@@ -796,6 +978,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             _latencyFirstLanePromotionCount = 0;
             _latencyFirstLaneDemotionCount = 0;
             _singleFlightProbeCount = 0;
+            _nextCadenceBudgetAdmissionHostTicks = 0L;
+            _cadenceBudgetSkippedFreshFrameCount = 0;
 
             LatestPresence =
                 0f;
@@ -1075,7 +1259,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     source,
                     flipHorizontally,
                     flipVertically,
-                    cropMatrix);
+                    cropMatrix,
+                    0L);
 
                 Tensor<float> packedOutput =
                     lane.worker.PeekOutput(0)
@@ -1195,10 +1380,28 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
             EvaluateRegionLeaseExpiry();
 
+                        long cadenceBudgetNowHostTicks =
+                System.Diagnostics.Stopwatch.GetTimestamp();
+
+            bool cadenceBudgetAdmissionDue =
+                IsCadenceBudgetAdmissionDue(
+                    cadenceBudgetNowHostTicks);
+
+            if (
+                _cadenceBudgetEnabled &&
+                scheduleLatestSource &&
+                IsTracking &&
+                source != null &&
+                !cadenceBudgetAdmissionDue)
+            {
+                _cadenceBudgetSkippedFreshFrameCount++;
+            }
+
             bool shouldScheduleLatest =
                 scheduleLatestSource &&
                 IsTracking &&
-                source != null;
+                source != null &&
+                cadenceBudgetAdmissionDue;
 
             // KIWI_V5_1_PHASE16_11_SCHEDULE_BEFORE_CPU_DECODE
             // If a lane is already free and no GPU completion is waiting, push
@@ -1339,6 +1542,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             {
                 return;
             }
+            KiwiInferenceReadbackBoundaryDiagnostics.RecordPollPass(
+                System.Diagnostics.Stopwatch.GetTimestamp());
 
             for (
                 int i = 0;
@@ -1381,6 +1586,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
                 long readbackRequestTicks =
                     lane.pendingReadbackRequestHostTicks;
+                int readbackRequestUnityFrame =
+                    lane.pendingReadbackRequestUnityFrame;
 
                 int completedAnchorRevision =
                     lane.pendingAnchorRevision;
@@ -1444,6 +1651,11 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 RecordGpuReadbackWait(
                     readbackRequestTicks,
                     arrivalHostTicks);
+                KiwiInferenceReadbackBoundaryDiagnostics.RecordDoneObserved(
+                    readbackRequestTicks,
+                    arrivalHostTicks,
+                    readbackRequestUnityFrame,
+                    Time.frameCount);
 
                 Completion completion =
                     new Completion
@@ -1579,6 +1791,32 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     using Tensor<float> readableOutput =
                         completedOutput
                             .ReadbackAndClone();
+                    long cloneEndHostTicks =
+                        System.Diagnostics.Stopwatch.GetTimestamp();
+
+                    // KIWI_V5_1_PHASE16_20_28_V41_ORT_DIRECTML_SHADOW
+                    // Compare model-space outputs for the exact same source
+                    // timestamp. This is observer-only and does not reinterpret
+                    // the authority result.
+                    KiwiOrtDirectMLShadowRuntime.RecordSentisPackedOutput(
+                        completedSourceTicks,
+                        readableOutput,
+                        arrivalHostTicks);
+
+                    // KIWI_V5_1_PHASE16_20_29_V42_ORT_DML_D3D12_ZERO_COPY_SHADOW
+                    // Observer-only zero-copy backend receives the exact matching
+                    // authority output for raw model-space parity checks.
+                    KiwiOrtDmlZeroCopyRuntime.RecordSentisPackedOutput(
+                        completedSourceTicks,
+                        readableOutput,
+                        arrivalHostTicks);
+
+                    KiwiInferenceReadbackBoundaryDiagnostics.RecordReadbackCloneCpu(
+                        decodeStartHostTicks,
+                        cloneEndHostTicks);
+
+                    long decodeMathStartHostTicks =
+                        cloneEndHostTicks;
 
                     DecodeStatus status =
                         DecodeReadableOutput(
@@ -1589,6 +1827,9 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                             out float rawPresence,
                             out float presence,
                             out Quaternion rotation);
+                    KiwiInferenceReadbackBoundaryDiagnostics.RecordDecodeMathCpu(
+                        decodeMathStartHostTicks,
+                        System.Diagnostics.Stopwatch.GetTimestamp());
 
                     completion.rawPresence =
                         rawPresence;
@@ -1719,8 +1960,72 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             return false;
         }
 
-        private bool TryScheduleNewestSource(
-            Texture source,
+        private long GetCadenceBudgetPeriodTicks()
+        {
+            if (_cadenceBudgetHz <= 0)
+            {
+                return 1L;
+            }
+
+            return
+                Math.Max(
+                    1L,
+                    (long)Math.Round(
+                        System.Diagnostics.Stopwatch.Frequency /
+                        (double)_cadenceBudgetHz));
+        }
+
+        private bool IsCadenceBudgetAdmissionDue(
+            long nowHostTicks)
+        {
+            return
+                !_cadenceBudgetEnabled ||
+                _cadenceBudgetHz <= 0 ||
+                _nextCadenceBudgetAdmissionHostTicks <= 0L ||
+                nowHostTicks >=
+                    _nextCadenceBudgetAdmissionHostTicks;
+        }
+
+        private void AdvanceCadenceBudgetAdmissionDeadline(
+            long successfulScheduleHostTicks)
+        {
+            if (!_cadenceBudgetEnabled)
+            {
+                return;
+            }
+
+            long periodTicks =
+                GetCadenceBudgetPeriodTicks();
+
+            if (_nextCadenceBudgetAdmissionHostTicks <= 0L)
+            {
+                _nextCadenceBudgetAdmissionHostTicks =
+                    successfulScheduleHostTicks +
+                    periodTicks;
+                return;
+            }
+
+            long overdueTicks =
+                successfulScheduleHostTicks -
+                    _nextCadenceBudgetAdmissionHostTicks;
+
+            if (overdueTicks > periodTicks)
+            {
+                // Do not burst/catch up after a long stall or lost ROI.
+                _nextCadenceBudgetAdmissionHostTicks =
+                    successfulScheduleHostTicks +
+                    periodTicks;
+            }
+            else
+            {
+                // Preserve fractional phase so a 37-40 FPS render loop
+                // converges to 30 admissions/s instead of 18-20/s.
+                _nextCadenceBudgetAdmissionHostTicks +=
+                    periodTicks;
+            }
+        }
+
+        private bool TryScheduleNewestSource(            Texture source,
             bool flipHorizontally,
             bool flipVertically,
             long sourceHostTicks)
@@ -1738,28 +2043,40 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
             long scheduleBeginHostTicks =
                 System.Diagnostics.Stopwatch.GetTimestamp();
-
             try
             {
-                UpdateSourceDimensions(
+                
+UpdateSourceDimensions(
                     source);
 
-                Matrix4x4 cropMatrix =
+                
+Matrix4x4 cropMatrix =
                     BuildCropMatrix();
 
-                ScheduleModel(
+                
+ScheduleModel(
                     lane,
                     source,
                     flipHorizontally,
                     flipVertically,
-                    cropMatrix);
+                    cropMatrix,
+                    sourceHostTicks > 0L
+                        ? sourceHostTicks
+                        : scheduleBeginHostTicks);
 
-                Tensor<float> packedOutput =
+                
+Tensor<float> packedOutput =
                     lane.worker.PeekOutput(0)
                     as Tensor<float>;
 
+                if (packedOutput == null)
+                {
+                    RegisterDecodeFailure(
+                        DecodeStatus.InvalidOutput);
+                    return false;
+                }
+
                 if (
-                    packedOutput == null ||
                     packedOutput.shape.length !=
                         PackedOutputLength
                 )
@@ -1810,23 +2127,45 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 lane.pendingMinimumPresence =
                     Mathf.Clamp01(MinimumPresence);
 
-                lane.pendingOutput =
+                                lane.pendingOutput =
                     packedOutput;
 
-                lane.pendingReadbackRequestHostTicks =
+                long readbackRequestBeginHostTicks =
                     System.Diagnostics.Stopwatch.GetTimestamp();
 
-                lane.pendingOutput
+                lane.pendingReadbackRequestHostTicks =
+                    readbackRequestBeginHostTicks;
+
+                lane.pendingReadbackRequestUnityFrame =
+                    Time.frameCount;
+
+                KiwiInferenceReadbackBoundaryDiagnostics.RecordPreReadbackSubmitCpu(
+                    lane.pendingScheduleBeginHostTicks,
+                    readbackRequestBeginHostTicks);
+
+                
+lane.pendingOutput
                     .ReadbackRequest();
+
+                long readbackRequestEndHostTicks =
+                    System.Diagnostics.Stopwatch.GetTimestamp();
+
+                KiwiInferenceReadbackBoundaryDiagnostics.RecordReadbackRequestCpu(
+                    readbackRequestBeginHostTicks,
+                    readbackRequestEndHostTicks);
 
                 RecordScheduleCpu(
                     lane.pendingScheduleBeginHostTicks,
-                    System.Diagnostics.Stopwatch.GetTimestamp());
+                    readbackRequestEndHostTicks);
 
                 lane.readbackPending =
                     true;
 
-                _scheduledFrameCount++;
+                
+_scheduledFrameCount++;
+
+                AdvanceCadenceBudgetAdmissionDeadline(
+                    scheduleBeginHostTicks);
 
                 _nextLaneIndex =
                     (
@@ -1841,7 +2180,7 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
                 return true;
             }
-            catch
+                        catch (Exception exception)
             {
                 lane.pendingOutput =
                     null;
@@ -1964,7 +2303,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             Texture source,
             bool flipHorizontally,
             bool flipVertically,
-            Matrix4x4 cropMatrix)
+            Matrix4x4 cropMatrix,
+            long shadowSourceHostTicks)
         {
             Matrix4x4 samplingMatrix =
                 BuildFlipMatrix(
@@ -1990,19 +2330,69 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     ? 1f
                     : 0f);
 
-            Graphics.Blit(
+            
+Graphics.Blit(
                 source,
                 lane.cropTexture,
                 lane.cropMaterial,
                 0);
 
-            TextureConverter.ToTensor(
+            // KIWI_V5_1_PHASE16_20_28_V41_ORT_DIRECTML_SHADOW
+            // Observer-only hook. The shadow backend reads the exact 192x192
+            // ARGB32 crop already used by the authority Sentis path. It never
+            // publishes tracking state, changes ROI, thresholds, generations,
+            // or the authority worker.
+            KiwiOrtDirectMLShadowRuntime.TrySubmitCrop(
                 lane.cropTexture,
-                lane.input,
-                lane.textureTransform);
+                shadowSourceHostTicks);
 
-            lane.worker.Schedule(
-                lane.input);
+            // KIWI_V5_1_PHASE16_20_29_V42_ORT_DML_D3D12_ZERO_COPY_SHADOW
+            // The v42 observer writes the exact same 192x192 crop directly into
+            // a persistent GPU tensor buffer. No GPU->CPU image readback occurs.
+            KiwiOrtDmlZeroCopyRuntime.TrySubmitCrop(
+                lane.cropTexture,
+                shadowSourceHostTicks);
+
+            
+            if (
+                _asyncComputeProbeEnabled &&
+                lane.asyncCommandBuffer != null)
+            {
+                CommandBuffer cb =
+                    lane.asyncCommandBuffer;
+
+                cb.Clear();
+                cb.SetExecutionFlags(
+                    CommandBufferExecutionFlags.AsyncCompute);
+
+                cb.ToTensor(
+                    lane.cropTexture,
+                    lane.input,
+                    lane.textureTransform);
+
+                cb.ScheduleWorker(
+                    lane.worker,
+                    lane.input);
+
+                Graphics.ExecuteCommandBufferAsync(
+                    cb,
+                    ComputeQueueType.Default);
+
+                _asyncComputeSubmissionCount++;
+            }
+            else
+            {
+                // Exact v37.2 baseline path retained for A/B comparison.
+                TextureConverter.ToTensor(
+                    lane.cropTexture,
+                    lane.input,
+                    lane.textureTransform);
+
+                lane.worker.Schedule(
+                    lane.input);
+
+                _graphicsQueueSubmissionCount++;
+            }
         }
 
         private DecodeStatus DecodeReadableOutput(
@@ -3203,7 +3593,7 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             int targetLaneLimit =
                 Application.isMobilePlatform
                     ? MobileStableSchedulingLanes
-                    : DesktopStableSchedulingLanes;
+                    : _desktopConfiguredLaneLimit;
 
             _schedulingLaneLimit =
                 Mathf.Clamp(
@@ -3231,7 +3621,37 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
         }
 
 
-        private static float NormalizePresence(
+                
+        
+private static int ResolveDesktopConfiguredLaneLimit()
+        {
+            if (Application.isMobilePlatform)
+            {
+                return MobileStableSchedulingLanes;
+            }
+
+            string raw =
+                Environment.GetEnvironmentVariable(
+                    DesktopLaneLimitEnvironment);
+
+            if (
+                !string.IsNullOrWhiteSpace(raw) &&
+                int.TryParse(
+                    raw,
+                    out int configured)
+            )
+            {
+                return
+                    Mathf.Clamp(
+                        configured,
+                        1,
+                        DesktopStableSchedulingLanes);
+            }
+
+            return DesktopStableSchedulingLanes;
+        }
+
+private static float NormalizePresence(
             float value)
         {
             if (

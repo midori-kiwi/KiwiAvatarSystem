@@ -1,0 +1,25 @@
+﻿{
+    "version":  "5.1.0-phase16.20.31-v42.2",
+    "installedAt":  "2026-08-27T18:25:16.0775811+09:00",
+    "transactionModel":  "SELF_HEALING_IDEMPOTENT_COMMIT_ROLLBACK",
+    "baseVersion":  "v42-baseline",
+    "rootCauseFix":  [
+                         "STALE_BACKUP_AUTO_RECOVERY",
+                         "ROLLBACK_REMOVES_BACKUP_AFTER_VERIFIED_RESTORE",
+                         "FAILED_APPLY_REMOVES_BACKUP_AFTER_VERIFIED_RESTORE",
+                         "COMMITTED_APPLY_IS_IDEMPOTENT",
+                         "PERSISTENT_PLUGINIMPORTER_POLICY",
+                         "NO_META_YAML_PARSING",
+                         "NO_PLAYER_EXE_BRIDGE_DUPLICATE",
+                         "BOUNDED_RUNTIME_BRIDGE_READY_RETRY"
+                     ],
+    "authority":  "UNITY_INFERENCE_ENGINE",
+    "nativeCameraChanged":  false,
+    "trackerChanged":  false,
+    "trackingMathChanged":  false,
+    "runtimeSha256":  "675003230285bae78dedfe38594922b872394af62ef0068d0382c918f73969e8",
+    "policySha256":  "62bd92e8eb4c18621213955be3f2f06285856d009763513fc34c69aaab59b63a",
+    "bridgeSha256":  "1178a93ba2cc1279cefd0d191b4e40fd235d4eb0f52e8b289f8138274aecac12",
+    "unityExe":  "C:\\Program Files\\Unity\\Hub\\Editor\\6000.0.80f1\\Editor\\Unity.exe",
+    "pluginPolicyResult":  "status=PASS\nmode=APPLY\nimporter=1 native=1 preloaded=1 anyPlatform=0 editor=0 win64=1 cpu=x86_64 unity=6000.0.80f1"
+}
