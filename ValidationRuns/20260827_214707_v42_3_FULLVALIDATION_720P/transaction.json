@@ -1,0 +1,23 @@
+{
+  "state": "COMMITTED",
+  "startedUtc": "2026-08-27T12:47:07.3775247Z",
+  "updatedUtc": "2026-08-27T12:47:26.5728383Z",
+  "targets": [
+    {
+      "path": "D:\\KiwiAvatarSystem\\Assets\\Plugins\\KiwiOrtDirectML\\x86_64\\KiwiOrtDmlZeroCopyBridge.dll.meta",
+      "preSha256": "3b999cef522bd3ba5aec24f8b639d20689a6ed7c8dd13e9d805129e9303091e2",
+      "postSha256": "3b999cef522bd3ba5aec24f8b639d20689a6ed7c8dd13e9d805129e9303091e2",
+      "backupPath": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_214707_v42_3_FULLVALIDATION_720P\\Transaction\\Assets_Plugins_KiwiOrtDirectML_x86_64_KiwiOrtDmlZeroCopyBridge.dll.meta.backup",
+      "restoreSha256": null
+    },
+    {
+      "path": "D:\\KiwiAvatarSystem\\ProjectSettings\\ProjectSettings.asset",
+      "preSha256": "88cb3f68f275e1a7dcbf1fea8c59d123f50743c6f93b0f861e1fd653865ec6aa",
+      "postSha256": "88cb3f68f275e1a7dcbf1fea8c59d123f50743c6f93b0f861e1fd653865ec6aa",
+      "backupPath": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_214707_v42_3_FULLVALIDATION_720P\\Transaction\\ProjectSettings_ProjectSettings.asset.backup",
+      "restoreSha256": null
+    }
+  ],
+  "rollbackAttempted": false,
+  "rollbackVerified": false
+}

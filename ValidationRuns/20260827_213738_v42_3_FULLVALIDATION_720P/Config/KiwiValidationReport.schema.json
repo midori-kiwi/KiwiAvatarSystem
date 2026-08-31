@@ -1,0 +1,625 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kiwiavatarsystem.local/schemas/KiwiValidationReport.schema.json",
+  "title": "KiwiAvatarSystem Automated Runtime Validation Report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "harnessVersion",
+    "runId",
+    "profileId",
+    "status",
+    "automatedVerdict",
+    "finalVerdict",
+    "blockingReasons",
+    "createdUtc",
+    "completedUtc",
+    "identity",
+    "environment",
+    "transaction",
+    "cases",
+    "comparison",
+    "gates",
+    "artifacts",
+    "visualReview",
+    "issues"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0.0"
+    },
+    "harnessVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "runId": {
+      "type": "string",
+      "pattern": "^[0-9]{8}_[0-9]{6}_v[0-9]+_[0-9]+_FULLVALIDATION_(720P|1080P)$"
+    },
+    "profileId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": ["COMPLETE", "INCOMPLETE"]
+    },
+    "automatedVerdict": {
+      "$ref": "#/$defs/verdict"
+    },
+    "finalVerdict": {
+      "$ref": "#/$defs/verdict"
+    },
+    "blockingReasons": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "createdUtc": {
+      "$ref": "#/$defs/dateTime"
+    },
+    "completedUtc": {
+      "anyOf": [
+        { "$ref": "#/$defs/dateTime" },
+        { "type": "null" }
+      ]
+    },
+    "identity": {
+      "$ref": "#/$defs/identity"
+    },
+    "environment": {
+      "$ref": "#/$defs/environment"
+    },
+    "transaction": {
+      "$ref": "#/$defs/transaction"
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/caseReport"
+      }
+    },
+    "comparison": {
+      "$ref": "#/$defs/comparison"
+    },
+    "gates": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/gate"
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/artifact"
+      }
+    },
+    "visualReview": {
+      "$ref": "#/$defs/visualReview"
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/issue"
+      }
+    }
+  },
+  "$defs": {
+    "dateTime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{64}$"
+    },
+    "absolutePath": {
+      "type": "string",
+      "pattern": "^[A-Za-z]:[\\\\/].+"
+    },
+    "verdict": {
+      "enum": ["GO", "NO_GO"]
+    },
+    "gateStatus": {
+      "enum": ["PASS", "FAIL", "WARN", "SKIP"]
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "systemVersion",
+        "installedVersion",
+        "installedManifest",
+        "installedManifestSha256",
+        "unityVersion",
+        "scene",
+        "graphicsApi",
+        "developmentBuild",
+        "resolution",
+        "modelPath",
+        "modelSha256",
+        "preflightContractVersion",
+        "runtimeHarnessVersion"
+      ],
+      "properties": {
+        "systemVersion": { "type": "string", "minLength": 1 },
+        "installedVersion": { "type": "string", "minLength": 1 },
+        "installedManifest": { "$ref": "#/$defs/absolutePath" },
+        "installedManifestSha256": { "$ref": "#/$defs/sha256" },
+        "unityVersion": { "type": "string", "minLength": 1 },
+        "scene": { "type": "string", "minLength": 1 },
+        "graphicsApi": { "const": "Direct3D12" },
+        "developmentBuild": { "const": true },
+        "resolution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["label", "width", "height"],
+          "properties": {
+            "label": { "enum": ["720P", "1080P"] },
+            "width": { "type": "integer", "minimum": 1 },
+            "height": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "modelPath": { "$ref": "#/$defs/absolutePath" },
+        "modelSha256": { "$ref": "#/$defs/sha256" },
+        "preflightContractVersion": { "type": "string", "minLength": 1 },
+        "runtimeHarnessVersion": { "type": "string", "minLength": 1 }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "machineName",
+        "os",
+        "powerShellVersion",
+        "gpu",
+        "tools",
+        "thresholdsSha256",
+        "reportSchemaSha256"
+      ],
+      "properties": {
+        "machineName": { "type": "string", "minLength": 1 },
+        "os": { "type": "string", "minLength": 1 },
+        "powerShellVersion": { "type": "string", "minLength": 1 },
+        "gpu": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["index", "uuid", "name", "driverVersion"],
+          "properties": {
+            "index": { "type": "integer", "minimum": 0 },
+            "uuid": { "type": "string", "pattern": "^GPU-[A-Za-z0-9-]+$" },
+            "name": { "type": "string", "minLength": 1 },
+            "driverVersion": { "type": "string", "minLength": 1 }
+          }
+        },
+        "tools": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/tool"
+          }
+        },
+        "thresholdsSha256": { "$ref": "#/$defs/sha256" },
+        "reportSchemaSha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "path", "version", "sha256"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "path": { "$ref": "#/$defs/absolutePath" },
+        "version": { "type": "string", "minLength": 1 },
+        "sha256": {
+          "anyOf": [
+            { "$ref": "#/$defs/sha256" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "transaction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "startedUtc",
+        "updatedUtc",
+        "targets",
+        "rollbackAttempted",
+        "rollbackVerified"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "PREPARED",
+            "APPLYING",
+            "COMMITTED",
+            "ROLLING_BACK",
+            "ROLLED_BACK",
+            "ROLLBACK_FAILED"
+          ]
+        },
+        "startedUtc": { "$ref": "#/$defs/dateTime" },
+        "updatedUtc": { "$ref": "#/$defs/dateTime" },
+        "targets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/transactionTarget"
+          }
+        },
+        "rollbackAttempted": { "type": "boolean" },
+        "rollbackVerified": { "type": "boolean" }
+      }
+    },
+    "transactionTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "preSha256",
+        "postSha256",
+        "backupPath",
+        "restoreSha256"
+      ],
+      "properties": {
+        "path": { "$ref": "#/$defs/absolutePath" },
+        "preSha256": { "$ref": "#/$defs/sha256" },
+        "postSha256": {
+          "anyOf": [
+            { "$ref": "#/$defs/sha256" },
+            { "type": "null" }
+          ]
+        },
+        "backupPath": { "$ref": "#/$defs/absolutePath" },
+        "restoreSha256": {
+          "anyOf": [
+            { "$ref": "#/$defs/sha256" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "caseReport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "caseId",
+        "order",
+        "mode",
+        "purpose",
+        "status",
+        "startedUtc",
+        "completedUtc",
+        "environment",
+        "process",
+        "metrics",
+        "gates",
+        "artifacts",
+        "issues"
+      ],
+      "properties": {
+        "caseId": { "type": "string", "minLength": 1 },
+        "order": { "type": "integer", "minimum": 1 },
+        "mode": { "enum": ["BASELINE", "ZEROCOPY"] },
+        "purpose": { "enum": ["METRICS", "VISUAL"] },
+        "status": { "enum": ["COMPLETE", "FAILED", "INCOMPLETE"] },
+        "startedUtc": { "$ref": "#/$defs/dateTime" },
+        "completedUtc": {
+          "anyOf": [
+            { "$ref": "#/$defs/dateTime" },
+            { "type": "null" }
+          ]
+        },
+        "environment": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "process": { "$ref": "#/$defs/process" },
+        "metrics": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/metric"
+          }
+        },
+        "gates": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/gate" }
+        },
+        "artifacts": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/artifact" }
+        },
+        "issues": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/issue" }
+        }
+      }
+    },
+    "process": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "executable",
+        "arguments",
+        "pid",
+        "startSucceeded",
+        "startupSurvived",
+        "readyMarkerSeen",
+        "completionMarkerSeen",
+        "receiptCommitted",
+        "exitObserved",
+        "exitCode",
+        "forcedTermination",
+        "crashArtifactCount"
+      ],
+      "properties": {
+        "executable": { "$ref": "#/$defs/absolutePath" },
+        "arguments": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "pid": {
+          "anyOf": [
+            { "type": "integer", "minimum": 1 },
+            { "type": "null" }
+          ]
+        },
+        "startSucceeded": { "type": "boolean" },
+        "startupSurvived": { "type": "boolean" },
+        "readyMarkerSeen": { "type": "boolean" },
+        "completionMarkerSeen": { "type": "boolean" },
+        "receiptCommitted": { "type": "boolean" },
+        "exitObserved": { "type": "boolean" },
+        "exitCode": {
+          "anyOf": [
+            { "type": "integer" },
+            { "type": "null" }
+          ]
+        },
+        "forcedTermination": { "type": "boolean" },
+        "crashArtifactCount": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unit", "sampleCount", "statistics", "source", "status"],
+      "properties": {
+        "unit": { "type": "string", "minLength": 1 },
+        "sampleCount": { "type": "integer", "minimum": 0 },
+        "statistics": {
+          "type": "object",
+          "additionalProperties": { "type": "number" }
+        },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["artifactSha256", "columns", "calculation"],
+          "properties": {
+            "artifactSha256": { "$ref": "#/$defs/sha256" },
+            "columns": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 }
+            },
+            "calculation": { "type": "string", "minLength": 1 }
+          }
+        },
+        "status": { "$ref": "#/$defs/gateStatus" }
+      }
+    },
+    "comparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["baselineCaseId", "candidateCaseId", "evaluations", "status"],
+      "properties": {
+        "baselineCaseId": {
+          "anyOf": [
+            { "type": "string", "minLength": 1 },
+            { "type": "null" }
+          ]
+        },
+        "candidateCaseId": {
+          "anyOf": [
+            { "type": "string", "minLength": 1 },
+            { "type": "null" }
+          ]
+        },
+        "evaluations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/thresholdEvaluation" }
+        },
+        "status": { "$ref": "#/$defs/gateStatus" }
+      }
+    },
+    "thresholdEvaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "metric",
+        "statistic",
+        "operator",
+        "expected",
+        "actual",
+        "unit",
+        "status"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "metric": { "type": "string", "minLength": 1 },
+        "statistic": { "type": "string", "minLength": 1 },
+        "operator": { "enum": [">=", "<=", "==", ">", "<"] },
+        "expected": { "type": "number" },
+        "actual": {
+          "anyOf": [
+            { "type": "number" },
+            { "type": "null" }
+          ]
+        },
+        "unit": { "type": "string", "minLength": 1 },
+        "status": { "$ref": "#/$defs/gateStatus" }
+      }
+    },
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "status", "expected", "actual", "evidence"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "status": { "$ref": "#/$defs/gateStatus" },
+        "expected": {},
+        "actual": {},
+        "evidence": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "caseId",
+        "required",
+        "sourcePath",
+        "path",
+        "sha256",
+        "bytes",
+        "createdUtc",
+        "tokenMatched",
+        "copyHashMatched",
+        "validationStatus"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "FRAME_COMPARISON_CSV",
+            "ZERO_COPY_CSV",
+            "GPU_CSV",
+            "GPU_META",
+            "PLAYER_LOG",
+            "RUNTIME_VALIDATION_JSON",
+            "CASE_RECEIPT_JSON",
+            "VIDEO_MP4",
+            "VIDEO_PROBE_JSON",
+            "VIDEO_FRAME_INDEX_CSV",
+            "CRASH_DUMP",
+            "CRASH_REPORT",
+            "APPLY_RECEIPT",
+            "STATIC_VALIDATION_RECEIPT",
+            "BUILD_RECEIPT",
+            "BUILD_LOG",
+            "PLUGIN_IMPORTER_RECEIPT",
+            "THRESHOLDS_SNAPSHOT",
+            "SCHEMA_SNAPSHOT",
+            "OTHER"
+          ]
+        },
+        "caseId": {
+          "anyOf": [
+            { "type": "string", "minLength": 1 },
+            { "type": "null" }
+          ]
+        },
+        "required": { "type": "boolean" },
+        "sourcePath": {
+          "anyOf": [
+            { "$ref": "#/$defs/absolutePath" },
+            { "type": "null" }
+          ]
+        },
+        "path": { "$ref": "#/$defs/absolutePath" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "bytes": { "type": "integer", "minimum": 0 },
+        "createdUtc": { "$ref": "#/$defs/dateTime" },
+        "tokenMatched": { "type": "boolean" },
+        "copyHashMatched": { "type": "boolean" },
+        "validationStatus": { "$ref": "#/$defs/gateStatus" }
+      }
+    },
+    "visualReview": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "status", "cases"],
+      "properties": {
+        "required": { "type": "boolean" },
+        "status": { "enum": ["PENDING", "PASS", "FAIL", "NOT_REQUIRED"] },
+        "cases": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/visualReviewCase" }
+        }
+      }
+    },
+    "visualReviewCase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "caseId",
+        "status",
+        "videoSha256",
+        "decodedFrameCount",
+        "reviewedFrameCount",
+        "reviewer",
+        "reviewedUtc",
+        "findings"
+      ],
+      "properties": {
+        "caseId": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["PENDING", "PASS", "FAIL"] },
+        "videoSha256": {
+          "anyOf": [
+            { "$ref": "#/$defs/sha256" },
+            { "type": "null" }
+          ]
+        },
+        "decodedFrameCount": { "type": "integer", "minimum": 0 },
+        "reviewedFrameCount": { "type": "integer", "minimum": 0 },
+        "reviewer": {
+          "anyOf": [
+            { "type": "string", "minLength": 1 },
+            { "type": "null" }
+          ]
+        },
+        "reviewedUtc": {
+          "anyOf": [
+            { "$ref": "#/$defs/dateTime" },
+            { "type": "null" }
+          ]
+        },
+        "findings": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "issue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["severity", "code", "message", "caseId", "evidence"],
+      "properties": {
+        "severity": { "enum": ["INFO", "KNOWN_ISSUE", "WARNING", "ERROR", "CRITICAL"] },
+        "code": { "type": "string", "minLength": 1 },
+        "message": { "type": "string", "minLength": 1 },
+        "caseId": {
+          "anyOf": [
+            { "type": "string", "minLength": 1 },
+            { "type": "null" }
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

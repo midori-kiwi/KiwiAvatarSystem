@@ -1,0 +1,67 @@
+ordinal,rva,address,export,native_signature,managed_signature,calling_convention,ownership,abi_result
+1,0x8010,0x180008010,KiwiNativeCamera_GetAllSlotsBusyDropFrameCount,uint64_t(void),ulong(void),Cdecl,value,match
+2,0x8020,0x180008020,KiwiNativeCamera_GetCaptureCopyGpuOutstandingDepth,uint64_t(void),ulong(void),Cdecl,value,match
+3,0x8090,0x180008090,KiwiNativeCamera_GetCaptureFrameCount,uint64_t(void),ulong(void),Cdecl,value,match
+4,0x80A0,0x1800080A0,KiwiNativeCamera_GetCaptureGpuWaitCount,uint64_t(void),ulong(void),Cdecl,value,match
+5,0x80B0,0x1800080B0,KiwiNativeCamera_GetCaptureTransportId,int32_t(void),int(void),Cdecl,value,match
+6,0x80C0,0x1800080C0,KiwiNativeCamera_GetCpuAllSlotsBusyDropCount,uint64_t(void),ulong(void),Cdecl,value,match
+7,0x80D0,0x1800080D0,KiwiNativeCamera_GetCpuLatestReplacementCount,uint64_t(void),ulong(void),Cdecl,value,match
+8,0x80E0,0x1800080E0,KiwiNativeCamera_GetDroppedFrameCount,uint64_t(void),ulong(void),Cdecl,value,match
+9,0x80F0,0x1800080F0,KiwiNativeCamera_GetGpuUploadCount,uint64_t(void),ulong(void),Cdecl,value,match
+10,0x8100,0x180008100,KiwiNativeCamera_GetIngestAcceptedFrameCount,uint64_t(void),ulong(void),Cdecl,value,match
+11,0x8110,0x180008110,KiwiNativeCamera_GetIngestCompletedFenceValue,uint64_t(void),ulong(void),Cdecl,value,match
+12,0x8130,0x180008130,KiwiNativeCamera_GetIngestConsumerCompletedFenceValue,uint64_t(void),ulong(void),Cdecl,value,match
+13,0x8150,0x180008150,KiwiNativeCamera_GetIngestConsumerFenceLag,uint64_t(void),ulong(void),Cdecl,value,match
+14,0x81A0,0x1800081A0,KiwiNativeCamera_GetIngestCopyFailureFrameCount,uint64_t(void),ulong(void),Cdecl,value,match
+15,0x81B0,0x1800081B0,KiwiNativeCamera_GetIngestCopyFrameCount,uint64_t(void),ulong(void),Cdecl,value,match
+16,0x81C0,0x1800081C0,KiwiNativeCamera_GetIngestProducerFenceLag,uint64_t(void),ulong(void),Cdecl,value,match
+17,0x8210,0x180008210,KiwiNativeCamera_GetLastErrorCode,int32_t(void),int(void),Cdecl,value,match
+18,0x8280,0x180008280,KiwiNativeCamera_GetLastErrorMessage,const char*(void),IntPtr(void),Cdecl,borrowed ANSI pointer; copy immediately; never free,match
+19,0x8300,0x180008300,KiwiNativeCamera_GetLatestArrivalIntervalMicroseconds,uint64_t(void),ulong(void),Cdecl,value,match
+20,0x8310,0x180008310,KiwiNativeCamera_GetLatestCallbackCpuMicroseconds,uint64_t(void),ulong(void),Cdecl,value,match
+21,0x8320,0x180008320,KiwiNativeCamera_GetLatestCallbackToRequestNextMicroseconds,uint64_t(void),ulong(void),Cdecl,value,match
+22,0x8330,0x180008330,KiwiNativeCamera_GetLatestCaptureCopyGpuCompletionMicroseconds,uint64_t(void),ulong(void),Cdecl,value,match
+23,0x8340,0x180008340,KiwiNativeCamera_GetLatestCaptureCopyGpuSubmitMicroseconds,uint64_t(void),ulong(void),Cdecl,value,match
+24,0x8350,0x180008350,KiwiNativeCamera_GetLatestCaptureHostTicks,int64_t(void),long(void),Cdecl,value,match
+25,0x8360,0x180008360,KiwiNativeCamera_GetLatestCaptureSequence,uint64_t(void),ulong(void),Cdecl,value,match
+26,0x8370,0x180008370,KiwiNativeCamera_GetLatestCpuNv12CopyBytes,uint64_t(void),ulong(void),Cdecl,value,match
+27,0x8380,0x180008380,KiwiNativeCamera_GetLatestCpuNv12CopyMicroseconds,uint64_t(void),ulong(void),Cdecl,value,match
+28,0x8390,0x180008390,KiwiNativeCamera_GetLatestGpuUploadSubmitMicroseconds,uint64_t(void),ulong(void),Cdecl,value,match
+29,0x83A0,0x1800083A0,KiwiNativeCamera_GetLatestIngestCopySubmitMicroseconds,uint64_t(void),ulong(void),Cdecl,value,match
+30,0x83B0,0x1800083B0,KiwiNativeCamera_GetLatestIngestHostTicks,int64_t(void),long(void),Cdecl,value,match
+31,0x83C0,0x1800083C0,KiwiNativeCamera_GetLatestIngestSequence,uint64_t(void),ulong(void),Cdecl,value,match
+32,0x83D0,0x1800083D0,KiwiNativeCamera_GetLatestMfSampleResidenceMicroseconds,uint64_t(void),ulong(void),Cdecl,value,match
+33,0x83E0,0x1800083E0,KiwiNativeCamera_GetLatestProcessedSourceAgeMicroseconds,uint64_t(void),ulong(void),Cdecl,value,match
+34,0x83F0,0x1800083F0,KiwiNativeCamera_GetLatestProcessingCpuMicroseconds,uint64_t(void),ulong(void),Cdecl,value,match
+35,0x8400,0x180008400,KiwiNativeCamera_GetLatestRequestNextCpuMicroseconds,uint64_t(void),ulong(void),Cdecl,value,match
+36,0x8410,0x180008410,KiwiNativeCamera_GetLatestSourceHostTicks,int64_t(void),long(void),Cdecl,value,match
+37,0x8420,0x180008420,KiwiNativeCamera_GetLatestSourceIntervalMicroseconds,uint64_t(void),ulong(void),Cdecl,value,match
+38,0x8430,0x180008430,KiwiNativeCamera_GetLatestSourceSequence,uint64_t(void),ulong(void),Cdecl,value,match
+39,0x8440,0x180008440,KiwiNativeCamera_GetLatestSourceTimestampIntervalMicroseconds,uint64_t(void),ulong(void),Cdecl,value,match
+40,0x8450,0x180008450,KiwiNativeCamera_GetOldestReadyAgeMicroseconds,uint64_t(void),ulong(void),Cdecl,value,match
+41,0x84E0,0x1800084E0,KiwiNativeCamera_GetPresentEventBase,int32_t(void),int(void),Cdecl,value,match
+42,0x84F0,0x1800084F0,KiwiNativeCamera_GetPresentedFrameCount,uint64_t(void),ulong(void),Cdecl,value,match
+43,0x8500,0x180008500,KiwiNativeCamera_GetProcessingFailureFrameCount,uint64_t(void),ulong(void),Cdecl,value,match
+44,0x8510,0x180008510,KiwiNativeCamera_GetProcessingGpuWaitCount,uint64_t(void),ulong(void),Cdecl,value,match
+45,0x8520,0x180008520,KiwiNativeCamera_GetProducerCompletedFenceValue,uint64_t(void),ulong(void),Cdecl,value,match
+46,0x8540,0x180008540,KiwiNativeCamera_GetQpcFrequency,int64_t(void),long(void),Cdecl,value,match
+47,0x8550,0x180008550,KiwiNativeCamera_GetQpcNow,int64_t(void),long(void),Cdecl,value,match
+48,0x8580,0x180008580,KiwiNativeCamera_GetReadyReplacementFrameCount,uint64_t(void),ulong(void),Cdecl,value,match
+49,0x8590,0x180008590,KiwiNativeCamera_GetReadyUnclaimedCount,uint64_t(void),ulong(void),Cdecl,value,match
+50,0x85A0,0x1800085A0,KiwiNativeCamera_GetRenderEventFunc,UnityRenderingEvent(void),IntPtr(void),Cdecl,borrowed function pointer; never free,match
+51,0x85B0,0x1800085B0,KiwiNativeCamera_GetSharedResourceCompatibilityTier,int32_t(void),int(void),Cdecl,value,match
+52,0x8630,0x180008630,KiwiNativeCamera_GetSourceFrameCount,uint64_t(void),ulong(void),Cdecl,value,match
+53,0x8640,0x180008640,KiwiNativeCamera_GetSupersededFrameCount,uint64_t(void),ulong(void),Cdecl,value,match
+54,0x8650,0x180008650,KiwiNativeCamera_IsCaptureD3D11MultithreadProtected,int32_t(void),int(void),Cdecl,32-bit bool-like value,match
+55,0x8680,0x180008680,KiwiNativeCamera_IsCaptureDeviceIsolated,int32_t(void),int(void),Cdecl,32-bit bool-like value,match
+56,0x86B0,0x1800086B0,KiwiNativeCamera_IsD3D11MultithreadProtected,int32_t(void),int(void),Cdecl,32-bit bool-like value,match
+57,0x86E0,0x1800086E0,KiwiNativeCamera_IsProcessingWorkerRunning,int32_t(void),int(void),Cdecl,32-bit bool-like value,match
+58,0x86F0,0x1800086F0,KiwiNativeCamera_IsRunning,int32_t(void),int(void),Cdecl,32-bit bool-like value,match
+59,0x8700,0x180008700,KiwiNativeCamera_IsSupported,int32_t(void),int(void),Cdecl,32-bit bool-like value,match
+60,0x8710,0x180008710,KiwiNativeCamera_IsSystemMemoryCaptureEnabled,int32_t(void),int(void),Cdecl,32-bit bool-like value,match
+61,0x8720,0x180008720,KiwiNativeCamera_RequestLatestPresent,"int32_t(int32_t*,uint64_t*,int64_t*,ID3D12Resource**)","int(out int,out ulong,out long,out IntPtr)",Cdecl,borrowed plugin-owned resource; managed must not Release; valid until Stop,match
+62,0x8900,0x180008900,KiwiNativeCamera_Start,"int32_t(const wchar_t*,int32_t,int32_t,int32_t)","int(string,int,int,int) CharSet.Unicode",Cdecl,input string only; 32-bit bool-like return,match
+63,0x8920,0x180008920,KiwiNativeCamera_StartDiagnostic,"int32_t(const wchar_t*,int32_t,int32_t,int32_t,int32_t)","int(string,int,int,int,int) CharSet.Unicode",Cdecl,input string only; 32-bit bool-like return,match
+64,0x8A90,0x180008A90,KiwiNativeCamera_Stop,void(void),void(void),Cdecl,no returned ownership,match
+65,0x9980,0x180009980,UnityPluginLoad,void(IUnityInterfaces*),none,Unity native plugin ABI,borrowed Unity interface registry,unmanaged-only expected
+66,0x99F0,0x1800099F0,UnityPluginUnload,void(void),none,Unity native plugin ABI,no returned ownership,unmanaged-only expected

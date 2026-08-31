@@ -1,0 +1,97 @@
+#include "Common.h"
+#include "Event.h"
+#include "Receiver.h"
+#include "Sender.h"
+#include "System.h"
+#include "Util.h"
+#include <mutex>
+
+using namespace KlakSpout;
+
+namespace {
+
+std::mutex lock_;
+
+void UNITY_INTERFACE_API
+  OnGraphicsDeviceEvent(UnityGfxDeviceEventType event_type)
+{
+    if (!_system) return;
+
+    if (event_type == kUnityGfxDeviceEventInitialize)
+    {
+        // KiwiAvatarSystem v44.18:
+        // The sender DX12 bridge checks a D3D11On12-created shared texture out
+        // to D3D12. The API may schedule queue-side ordering on the queue passed
+        // to it, so the sender event explicitly requests graphics queue access.
+        _system->configureD3D12SenderEvent(event_updateSender);
+    }
+
+    if (event_type == kUnityGfxDeviceEventShutdown)
+        _system->shutdown();
+}
+
+void UNITY_INTERFACE_API
+  OnRenderEvent(int event_id, void* event_data)
+{
+    std::lock_guard<std::mutex> guard(lock_);
+    auto data = reinterpret_cast<const EventData*>(event_data);
+    if (!data) return;
+
+    if (event_id == event_updateSender  ) data->sender->update(data->texture);
+    if (event_id == event_updateReceiver) data->receiver->update();
+    if (event_id == event_closeSender  ) delete data->sender;
+    if (event_id == event_closeReceiver) delete data->receiver;
+}
+
+} // anonymous namespace
+
+extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API
+  UnityPluginLoad(IUnityInterfaces* interfaces)
+{
+    _system = std::make_unique<System>(interfaces);
+    _system->getGraphics()->RegisterDeviceEventCallback(OnGraphicsDeviceEvent);
+
+    // Unity's native rendering sample performs D3D12 event configuration during
+    // graphics-device initialization. Invoke the same initialization path here
+    // as well so already-created devices are covered after plugin load.
+    OnGraphicsDeviceEvent(kUnityGfxDeviceEventInitialize);
+}
+
+extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API UnityPluginUnload()
+{
+    _system->getGraphics()->UnregisterDeviceEventCallback(OnGraphicsDeviceEvent);
+    _system.reset();
+}
+
+extern "C" UnityRenderingEventAndData UNITY_INTERFACE_EXPORT
+  GetRenderEventCallback()
+{
+    return OnRenderEvent;
+}
+
+extern "C" Sender UNITY_INTERFACE_EXPORT *
+  CreateSender(const char* name, int width, int height)
+{
+    return new Sender(name, width, height);
+}
+
+extern "C" Receiver UNITY_INTERFACE_EXPORT *
+  CreateReceiver(const char* name)
+{
+    return new Receiver(name);
+}
+
+extern "C" Receiver::InteropData UNITY_INTERFACE_EXPORT
+  GetReceiverData(Receiver* receiver)
+{
+    return receiver->getInteropData();
+}
+
+extern "C" void UNITY_INTERFACE_EXPORT
+  GetSenderNames(char*** names, int* count)
+{
+    std::lock_guard<std::mutex> guard(lock_);
+    std::set<std::string> senders;
+    _system->spout.GetSenderNames(&senders);
+    std::tie(*names, *count) = MarshalStringSet(senders);
+}

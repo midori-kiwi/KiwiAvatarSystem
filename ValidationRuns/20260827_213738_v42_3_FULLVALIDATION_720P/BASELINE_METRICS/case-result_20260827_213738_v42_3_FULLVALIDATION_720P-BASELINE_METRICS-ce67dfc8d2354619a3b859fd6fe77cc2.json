@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "1.0.0",
+  "caseId": "BASELINE_METRICS",
+  "mode": "BASELINE",
+  "purpose": "METRICS",
+  "token": "20260827_213738_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-ce67dfc8d2354619a3b859fd6fe77cc2",
+  "status": "FAILED",
+  "error": "Player exit code was 2.",
+  "startedUtc": "2026-08-27T12:38:25.2168584Z",
+  "completedUtc": "2026-08-27T12:38:40.4001827Z",
+  "environment": {
+    "KIWI_VALIDATION_RUN_ID": "20260827_213738_v42_3_FULLVALIDATION_720P",
+    "KIWI_VALIDATION_CASE_ID": "BASELINE_METRICS",
+    "KIWI_VALIDATION_TOKEN": "20260827_213738_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-ce67dfc8d2354619a3b859fd6fe77cc2",
+    "KIWI_VALIDATION_MODE": "BASELINE",
+    "KIWI_VALIDATION_PURPOSE": "METRICS",
+    "KIWI_ORT_DML_ZERO_COPY_SHADOW": "0"
+  },
+  "process": {
+    "executable": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_213738_v42_3_FULLVALIDATION_720P\\Build\\KiwiAvatarSystem_v42_3_DX12_AUTOMATED_VALIDATION.exe",
+    "arguments": [
+      "-force-d3d12",
+      "-screen-fullscreen",
+      "0",
+      "-screen-width",
+      "1280",
+      "-screen-height",
+      "720",
+      "-logFile",
+      "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_213738_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\Logs\\KiwiStandalonePlayer_20260827_213738_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-ce67dfc8d2354619a3b859fd6fe77cc2.log",
+      "-crash-report-folder",
+      "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_213738_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\Crash"
+    ],
+    "pid": 14344,
+    "startSucceeded": true,
+    "startupSurvived": true,
+    "readyMarkerSeen": true,
+    "completionMarkerSeen": false,
+    "receiptCommitted": false,
+    "exitObserved": true,
+    "exitCode": 2,
+    "forcedTermination": false,
+    "crashArtifactCount": 0
+  },
+  "artifacts": [
+    {
+      "type": "PLAYER_LOG",
+      "sourcePath": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_213738_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\Logs\\KiwiStandalonePlayer_20260827_213738_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-ce67dfc8d2354619a3b859fd6fe77cc2.log",
+      "path": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_213738_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\Logs\\KiwiStandalonePlayer_20260827_213738_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-ce67dfc8d2354619a3b859fd6fe77cc2.log",
+      "sha256": "10996ca5d8bdfe24f84a7d4f9ce04ac480a0d684cd8743ab19b44f326dbb3b2a",
+      "bytes": 169856,
+      "createdUtc": "2026-08-27T12:38:25.7455460Z",
+      "tokenMatched": true,
+      "copyHashMatched": true
+    },
+    {
+      "type": "GPU_META",
+      "sourcePath": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_213738_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\GPU\\KiwiGpuTelemetry_20260827_213738_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-ce67dfc8d2354619a3b859fd6fe77cc2.meta.json",
+      "path": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_213738_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\GPU\\KiwiGpuTelemetry_20260827_213738_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-ce67dfc8d2354619a3b859fd6fe77cc2.meta.json",
+      "sha256": "3f8ef1140e7fba3fef8ed15ed72186e96c720f03a4862010911ccf84a6e72ffd",
+      "bytes": 485,
+      "createdUtc": "2026-08-27T12:38:40.4127073Z",
+      "tokenMatched": true,
+      "copyHashMatched": true
+    }
+  ],
+  "videoCapture": {
+    "required": false,
+    "started": false,
+    "startedUtc": null
+  }
+}

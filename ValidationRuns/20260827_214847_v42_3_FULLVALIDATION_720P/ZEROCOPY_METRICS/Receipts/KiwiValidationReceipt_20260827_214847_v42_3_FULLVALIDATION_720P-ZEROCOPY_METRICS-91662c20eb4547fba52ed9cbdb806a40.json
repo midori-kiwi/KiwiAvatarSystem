@@ -1,0 +1,51 @@
+{
+    "contract": "KIWI_V5_1_PHASE16_20_32_V42_3_AUTOMATED_VALIDATION_V1",
+    "version": "v42.3",
+    "status": "OK",
+    "error": "",
+    "runId": "20260827_214847_v42_3_FULLVALIDATION_720P",
+    "caseId": "ZEROCOPY_METRICS",
+    "token": "20260827_214847_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-91662c20eb4547fba52ed9cbdb806a40",
+    "mode": "ZEROCOPY",
+    "purpose": "METRICS",
+    "processId": 26436,
+    "graphicsApi": "Direct3D12",
+    "screenWidth": 1280,
+    "screenHeight": 720,
+    "startedUtc": "2026-08-27T12:50:47.4289457Z",
+    "startupReadyUtc": "2026-08-27T12:50:50.5859023Z",
+    "recordingStartedUtc": "2026-08-27T12:50:55.6677949Z",
+    "recordingStoppedUtc": "2026-08-27T12:51:25.6842829Z",
+    "committedUtc": "2026-08-27T12:51:25.7645433Z",
+    "warmupSeconds": 5.0,
+    "requestedRecordSeconds": 30.0,
+    "runtimeValidationErrors": 0,
+    "runtimeValidationCriticals": 0,
+    "camera": {
+        "active": true,
+        "width": 1920,
+        "height": 1080,
+        "targetFrameRate": 60,
+        "timestampCalibrationValid": true,
+        "sourceFrameCount": 2146,
+        "presentedFrameCount": 1291
+    },
+    "frameComparisonCsv": {
+        "path": "C:\\Users\\main\\AppData\\LocalLow\\MidoriKiwi\\KiwiAvatarSystem\\KiwiFrameComparison\\KiwiFrameComparison_20260827_215055_20260827_214847_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-91662c20eb4547fba52ed9cbdb806a40.csv",
+        "bytes": 1767474,
+        "rows": 1161,
+        "sha256": "fd67cd244a1093e2d364d0b56d7c12c638746f8a144bb7ec69c3ba67b99aa0a6"
+    },
+    "ortZeroCopyCsv": {
+        "path": "C:\\Users\\main\\AppData\\LocalLow\\MidoriKiwi\\KiwiAvatarSystem\\KiwiOrtDmlZeroCopy\\KiwiOrtDmlZeroCopyTelemetry_v42_3_20260827_215055.csv",
+        "bytes": 178422,
+        "rows": 826,
+        "sha256": "9fd6e437cc38c70d1c8315a0013924074427f7dad854b4ff4c58e020d3f7e835"
+    },
+    "runtimeValidationJson": {
+        "path": "C:\\Users\\main\\AppData\\LocalLow\\MidoriKiwi\\KiwiAvatarSystem\\KiwiValidationHarness\\20260827_214847_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-91662c20eb4547fba52ed9cbdb806a40\\runtime.json",
+        "bytes": 633,
+        "rows": 0,
+        "sha256": "95091d06c13f8c578f725c513a616d5025541e22b006a4a4d06021b10af08abf"
+    }
+}

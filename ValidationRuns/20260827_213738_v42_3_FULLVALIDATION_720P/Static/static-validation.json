@@ -1,0 +1,16 @@
+{
+    "contract": "KIWI_V5_1_PHASE16_20_32_V42_3_AUTOMATED_VALIDATION_STATIC_V1",
+    "status": "PASS",
+    "error": "",
+    "completedUtc": "2026-08-27T12:37:56.9234682Z",
+    "unityVersion": "6000.0.80f1",
+    "graphicsApis": "Direct3D12",
+    "installedVersion": "5.1.0-phase16.20.32-v42.3",
+    "manifestSha256": "c0e37acb4d2c74fa5d3c90d459b6f03a3eeb584ab3ddb36383440c855bf879aa",
+    "modelSha256": "ed487104519b0a88cb2cb2ec3678e183f447fb9dd63560998e960ffbaa8fb335",
+    "runtimeSha256": "717f8431970a71bb06a3de95a04cd3ee9b361a7c641b89c1884e6c19a59de571",
+    "bridgeSha256": "e607c916ac2d648420bba85990f694c851789aa2ba0f606a457355759de3a926",
+    "bridgePdbSha256": "f14d475db91e1b600a4cc17bc64f417dbbdad087c2be4918f45a01238b6f955c",
+    "pluginImporterState": "importer=1 native=1 preloaded=1 anyPlatform=0 editor=0 win64=1 cpu=x86_64 unity=6000.0.80f1",
+    "buildContract": "KIWI_V5_1_PHASE16_20_32_V42_3_DX12_PLAYER_BUILD_API_LOCK"
+}

@@ -1,0 +1,10 @@
+KiwiAvatarSystem v44.4 Avatar Mesh Source Audit
+generated=2026-08-28T20:29:53.3002086+09:00
+projectRoot=D:\KiwiAvatarSystem
+projectModified=0
+coreAndSelectedSourceFilesCopied=155
+selectedSourceMatches=40
+modelMetadataRows=1395
+
+Purpose: identify the exact runtime import / fallback / surface-fit path responsible for geometry_0 before any mesh simplification change.
+No model file is copied. No Unity asset/source/settings are modified.

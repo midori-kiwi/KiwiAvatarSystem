@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "1.0.0",
+  "caseId": "BASELINE_METRICS",
+  "token": "20260827_212744_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-e753a4e5b6354dfa98f9de2ac620005e",
+  "status": "FAIL",
+  "checkedUtc": "2026-08-27T12:29:27.0852315Z",
+  "checks": [
+    {
+      "id": "artifact.required.FRAME_COMPARISON_CSV",
+      "status": "FAIL",
+      "expected": "exactly one existing, hash-matched, token-matched artifact",
+      "actual": "count=0",
+      "evidence": [
+        "count=0"
+      ]
+    },
+    {
+      "id": "artifact.required.GPU_CSV",
+      "status": "FAIL",
+      "expected": "exactly one existing, hash-matched, token-matched artifact",
+      "actual": "count=0",
+      "evidence": [
+        "count=0"
+      ]
+    },
+    {
+      "id": "artifact.required.GPU_META",
+      "status": "FAIL",
+      "expected": "exactly one existing, hash-matched, token-matched artifact",
+      "actual": "count=0",
+      "evidence": [
+        "count=0"
+      ]
+    },
+    {
+      "id": "artifact.required.PLAYER_LOG",
+      "status": "FAIL",
+      "expected": "exactly one existing, hash-matched, token-matched artifact",
+      "actual": "count=0",
+      "evidence": [
+        "count=0"
+      ]
+    },
+    {
+      "id": "artifact.required.RUNTIME_VALIDATION_JSON",
+      "status": "FAIL",
+      "expected": "exactly one existing, hash-matched, token-matched artifact",
+      "actual": "count=0",
+      "evidence": [
+        "count=0"
+      ]
+    },
+    {
+      "id": "artifact.required.CASE_RECEIPT_JSON",
+      "status": "FAIL",
+      "expected": "exactly one existing, hash-matched, token-matched artifact",
+      "actual": "count=0",
+      "evidence": [
+        "count=0"
+      ]
+    },
+    {
+      "id": "artifact.rows.FRAME_COMPARISON_CSV",
+      "status": "FAIL",
+      "expected": 800,
+      "actual": null,
+      "evidence": [
+        "artifact missing"
+      ]
+    },
+    {
+      "id": "artifact.rows.GPU_CSV",
+      "status": "FAIL",
+      "expected": 100,
+      "actual": null,
+      "evidence": [
+        "artifact missing"
+      ]
+    },
+    {
+      "id": "process.lifecycle",
+      "status": "FAIL",
+      "expected": "clean lifecycle, exit=0, no forced termination, no crash artifacts",
+      "actual": "{\"executable\":\"D:\\\\KiwiAvatarSystem\\\\ValidationRuns\\\\20260827_212744_v42_3_FULLVALIDATION_720P\\\\Build\\\\KiwiAvatarSystem_v42_3_DX12_AUTOMATED_VALIDATION.exe\",\"arguments\":[\"-force-d3d12\",\"-screen-fullscreen\",\"0\",\"-screen-width\",\"1280\",\"-screen-height\",\"720\",\"-logFile\",\"D:\\\\KiwiAvatarSystem\\\\ValidationRuns\\\\20260827_212744_v42_3_FULLVALIDATION_720P\\\\BASELINE_METRICS\\\\Logs\\\\KiwiStandalonePlayer_20260827_212744_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-e753a4e5b6354dfa98f9de2ac620005e.log\",\"-crash-report-folder\",\"D:\\\\KiwiAvatarSystem\\\\ValidationRuns\\\\20260827_212744_v42_3_FULLVALIDATION_720P\\\\BASELINE_METRICS\\\\Crash\"],\"pid\":30708,\"startSucceeded\":true,\"startupSurvived\":false,\"readyMarkerSeen\":true,\"completionMarkerSeen\":false,\"receiptCommitted\":false,\"exitObserved\":true,\"exitCode\":2,\"forcedTermination\":false,\"crashArtifactCount\":0}",
+      "evidence": [
+        "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_212744_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\case-result_20260827_212744_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-e753a4e5b6354dfa98f9de2ac620005e.json"
+      ]
+    }
+  ],
+  "issues": []
+}

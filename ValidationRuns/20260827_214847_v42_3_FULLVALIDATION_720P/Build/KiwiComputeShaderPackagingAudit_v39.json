@@ -1,0 +1,2907 @@
+{
+    "contract": "KIWI_V5_1_PHASE16_20_27_V39_DX12_COMPUTE_SHADER_PACKAGING_AUDIT",
+    "unityVersion": "6000.0.80f1",
+    "buildTarget": "StandaloneWindows64",
+    "developmentBuild": true,
+    "windowsAutoGraphicsApi": false,
+    "windowsGraphicsApis": [
+        "Direct3D12"
+    ],
+    "dx12OnlyConfigured": true,
+    "computeShaderAssetCount": 42,
+    "compileCallbackCount": 375,
+    "requiredKernelCompileCallbackCount": 2,
+    "editorHasTextureToTensorExact": true,
+    "editorHasMatch": true,
+    "buildSawTextureToTensorExact": true,
+    "buildSawMatch": true,
+    "textureToTensorExactVariants": 2,
+    "matchVariants": 1,
+    "textureToTensorExactAssetPaths": [
+        "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/TextureConversion/TextureToTensor.compute"
+    ],
+    "matchAssetPaths": [
+        "Assets/KiwiAvatarSystem/Resources/KiwiFacePartBlockMatch.compute"
+    ],
+    "assets": [
+        {
+            "path": "Assets/KiwiAvatarSystem/Resources/KiwiFacePartBlockMatch.compute",
+            "name": "KiwiFacePartBlockMatch",
+            "hasTextureToTensorExact": false,
+            "hasMatch": true
+        },
+        {
+            "path": "Assets/KiwiAvatarSystem/Resources/KiwiOrtDmlTensorize.compute",
+            "name": "KiwiOrtDmlTensorize",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/AxisActivations.compute",
+            "name": "AxisActivations",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/BitonicSort.compute",
+            "name": "BitonicSort",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CompareOps.compute",
+            "name": "CompareOps",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "name": "Compute.Shaders.Broadcast.gen",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Conv.gen.compute",
+            "name": "Compute.Shaders.Conv.gen",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.ConvTranspose.gen.compute",
+            "name": "Compute.Shaders.ConvTranspose.gen",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "name": "Compute.Shaders.PointwiseUnary.gen",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "name": "Compute.Shaders.Reduction.gen",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.ReductionUnrolled.gen.compute",
+            "name": "Compute.Shaders.ReductionUnrolled.gen",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ConvGeneric.compute",
+            "name": "ConvGeneric",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CopyOps.compute",
+            "name": "CopyOps",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CumSum.compute",
+            "name": "CumSum",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Dense.compute",
+            "name": "Dense",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/DepthwiseConv.compute",
+            "name": "DepthwiseConv",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/GemmT.compute",
+            "name": "GemmT",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/GridSample.compute",
+            "name": "GridSample",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ImageBased.compute",
+            "name": "ImageBased",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/IndexingOps.compute",
+            "name": "IndexingOps",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/LogicalOps.compute",
+            "name": "LogicalOps",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/NMS.compute",
+            "name": "NMS",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Normalization.compute",
+            "name": "Normalization",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Pool.compute",
+            "name": "Pool",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/RNN.compute",
+            "name": "RNN",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Random.compute",
+            "name": "Random",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReduceIndices.compute",
+            "name": "ReduceIndices",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.Einsum.compute",
+            "name": "ReferenceImpl.Einsum",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.GenericA.compute",
+            "name": "ReferenceImpl.GenericA",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.IndexingOpsA.compute",
+            "name": "ReferenceImpl.IndexingOpsA",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.Logical.compute",
+            "name": "ReferenceImpl.Logical",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.PadA.compute",
+            "name": "ReferenceImpl.PadA",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.PoolA.compute",
+            "name": "ReferenceImpl.PoolA",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.compute",
+            "name": "ReferenceImpl",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Resize.compute",
+            "name": "Resize",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/RoiAlign.compute",
+            "name": "RoiAlign",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ScatterOps.compute",
+            "name": "ScatterOps",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/SortingOps.compute",
+            "name": "SortingOps",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Spectral.compute",
+            "name": "Spectral",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/WindowedDFTMatrix.compute",
+            "name": "WindowedDFTMatrix",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/TextureConversion/TensorToTexture.compute",
+            "name": "TensorToTexture",
+            "hasTextureToTensorExact": false,
+            "hasMatch": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/TextureConversion/TextureToTensor.compute",
+            "name": "TextureToTensor",
+            "hasTextureToTensorExact": true,
+            "hasMatch": false
+        }
+    ],
+    "compileRecords": [
+        {
+            "path": "Assets/KiwiAvatarSystem/Resources/KiwiFacePartBlockMatch.compute",
+            "shaderName": "KiwiFacePartBlockMatch",
+            "kernelName": "Match",
+            "variantCount": 1,
+            "requiredKernel": true
+        },
+        {
+            "path": "Assets/KiwiAvatarSystem/Resources/KiwiOrtDmlTensorize.compute",
+            "shaderName": "KiwiOrtDmlTensorize",
+            "kernelName": "CSMain",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/AxisActivations.compute",
+            "shaderName": "AxisActivations",
+            "kernelName": "HardmaxEnd",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/AxisActivations.compute",
+            "shaderName": "AxisActivations",
+            "kernelName": "LogSoftmaxEnd",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/AxisActivations.compute",
+            "shaderName": "AxisActivations",
+            "kernelName": "SoftmaxEnd",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/BitonicSort.compute",
+            "shaderName": "BitonicSort",
+            "kernelName": "BitonicSortKeyStep",
+            "variantCount": 2,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/BitonicSort.compute",
+            "shaderName": "BitonicSort",
+            "kernelName": "BitonicSortStep",
+            "variantCount": 2,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CompareOps.compute",
+            "shaderName": "CompareOps",
+            "kernelName": "EqualFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CompareOps.compute",
+            "shaderName": "CompareOps",
+            "kernelName": "EqualInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CompareOps.compute",
+            "shaderName": "CompareOps",
+            "kernelName": "GreaterFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CompareOps.compute",
+            "shaderName": "CompareOps",
+            "kernelName": "GreaterInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CompareOps.compute",
+            "shaderName": "CompareOps",
+            "kernelName": "GreaterOrEqualFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CompareOps.compute",
+            "shaderName": "CompareOps",
+            "kernelName": "GreaterOrEqualInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CompareOps.compute",
+            "shaderName": "CompareOps",
+            "kernelName": "LessFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CompareOps.compute",
+            "shaderName": "CompareOps",
+            "kernelName": "LessInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CompareOps.compute",
+            "shaderName": "CompareOps",
+            "kernelName": "LessOrEqualFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CompareOps.compute",
+            "shaderName": "CompareOps",
+            "kernelName": "LessOrEqualInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CompareOps.compute",
+            "shaderName": "CompareOps",
+            "kernelName": "NotEqualFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CompareOps.compute",
+            "shaderName": "CompareOps",
+            "kernelName": "NotEqualInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastAddFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastAddInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastAtan2",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastBitwiseAnd",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastBitwiseOr",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastBitwiseXor",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastDivFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastFModFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastFModInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastFloorDivFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastFloorDivInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastMaxFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastMaxInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastMeanFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastMinFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastMinInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastModFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastModInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastMulFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastMulInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastPRelu",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastPowFloatFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastPowFloatInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastPowIntFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastPowIntInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastSubFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastSubInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastTruncDivFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "BroadcastTruncDivInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwiseAddFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwiseAddInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwiseAtan2",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwiseBitwiseAnd",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwiseBitwiseOr",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwiseBitwiseXor",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwiseDivFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwiseFModFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwiseFModInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwiseFloorDivFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwiseFloorDivInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwiseMaxFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwiseMaxInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwiseMeanFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwiseMinFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwiseMinInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwiseModFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwiseModInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwiseMulFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwiseMulInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwisePRelu",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwisePowFloatFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwisePowFloatInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwisePowIntFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwisePowIntInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwiseSubFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwiseSubInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwiseTruncDivFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ElementwiseTruncDivInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastAddFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastAddInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastAtan2",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastBitwiseAnd",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastBitwiseOr",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastBitwiseXor",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastDivFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastFModFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastFModInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastFloorDivFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastFloorDivInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastMaxFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastMaxInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastMeanFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastMinFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastMinInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastModFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastModInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastMulFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastMulInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastPRelu",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastPowFloatFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastPowFloatInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastPowIntFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastPowIntInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastSubFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastSubInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastTruncDivFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Broadcast.gen.compute",
+            "shaderName": "Compute.Shaders.Broadcast.gen",
+            "kernelName": "ScalarBroadcastTruncDivInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Conv.gen.compute",
+            "shaderName": "Compute.Shaders.Conv.gen",
+            "kernelName": "Conv1D_1x1",
+            "variantCount": 2,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Conv.gen.compute",
+            "shaderName": "Compute.Shaders.Conv.gen",
+            "kernelName": "Conv1D_KxK",
+            "variantCount": 2,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Conv.gen.compute",
+            "shaderName": "Compute.Shaders.Conv.gen",
+            "kernelName": "Conv2D_1x1",
+            "variantCount": 2,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Conv.gen.compute",
+            "shaderName": "Compute.Shaders.Conv.gen",
+            "kernelName": "Conv2D_KxK",
+            "variantCount": 2,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.ConvTranspose.gen.compute",
+            "shaderName": "Compute.Shaders.ConvTranspose.gen",
+            "kernelName": "ConvTranspose1D_KxK",
+            "variantCount": 2,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.ConvTranspose.gen.compute",
+            "shaderName": "Compute.Shaders.ConvTranspose.gen",
+            "kernelName": "ConvTranspose2D_KxK",
+            "variantCount": 2,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "AbsFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "AbsInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Acos",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Acosh",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Asin",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Asinh",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Atan",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Atanh",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "BitwiseNot",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "CastFloatToInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "CastIntToFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Ceil",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Celu",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "ClipFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "ClipInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Cos",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Cosh",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Elu",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Erf",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Exp",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Expm1",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Floor",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Gelu",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "GeluFast",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "HardSigmoid",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "HardSwish",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "IsNaN",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "LeakyRelu",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Log",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Log10",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Log1p",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Log2",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Mish",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "NegFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "NegInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Not",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "RangeFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "RangeInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Reciprocal",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Relu",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Relu6",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Round",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Rsqrt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "ScalarMadFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "ScalarMadInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Selu",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Shrink",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Sigmoid",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "SignFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "SignInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Sin",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Sinh",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Softplus",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Softsign",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Sqrt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "SquareFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "SquareInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Swish",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Tan",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Tanh",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "ThresholdedRelu",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.PointwiseUnary.gen.compute",
+            "shaderName": "Compute.Shaders.PointwiseUnary.gen",
+            "kernelName": "Trunc",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "GlobalReduceL1Float",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "GlobalReduceL1Int",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "GlobalReduceL2Float",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "GlobalReduceLogSumExpFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "GlobalReduceLogSumFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "GlobalReduceMaxFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "GlobalReduceMaxInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "GlobalReduceMeanFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "GlobalReduceMeanSquareFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "GlobalReduceMinFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "GlobalReduceMinInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "GlobalReduceProdFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "GlobalReduceProdInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "GlobalReduceSqrtFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "GlobalReduceSumExpFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "GlobalReduceSumFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "GlobalReduceSumInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "GlobalReduceSumSquareFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "GlobalReduceSumSquareInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "ReduceL1Float",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "ReduceL1Int",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "ReduceL2Float",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "ReduceLogSumExpFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "ReduceLogSumFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "ReduceMaxFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "ReduceMaxInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "ReduceMeanFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "ReduceMeanSquareFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "ReduceMinFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "ReduceMinInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "ReduceProdFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "ReduceProdInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "ReduceSqrtFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "ReduceSumExpFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "ReduceSumFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "ReduceSumInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "ReduceSumSquareFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.Reduction.gen.compute",
+            "shaderName": "Compute.Shaders.Reduction.gen",
+            "kernelName": "ReduceSumSquareInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.ReductionUnrolled.gen.compute",
+            "shaderName": "Compute.Shaders.ReductionUnrolled.gen",
+            "kernelName": "UnrolledReduceL1Float",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.ReductionUnrolled.gen.compute",
+            "shaderName": "Compute.Shaders.ReductionUnrolled.gen",
+            "kernelName": "UnrolledReduceL1Int",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.ReductionUnrolled.gen.compute",
+            "shaderName": "Compute.Shaders.ReductionUnrolled.gen",
+            "kernelName": "UnrolledReduceL2Float",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.ReductionUnrolled.gen.compute",
+            "shaderName": "Compute.Shaders.ReductionUnrolled.gen",
+            "kernelName": "UnrolledReduceLogSumExpFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.ReductionUnrolled.gen.compute",
+            "shaderName": "Compute.Shaders.ReductionUnrolled.gen",
+            "kernelName": "UnrolledReduceLogSumFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.ReductionUnrolled.gen.compute",
+            "shaderName": "Compute.Shaders.ReductionUnrolled.gen",
+            "kernelName": "UnrolledReduceMaxFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.ReductionUnrolled.gen.compute",
+            "shaderName": "Compute.Shaders.ReductionUnrolled.gen",
+            "kernelName": "UnrolledReduceMaxInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.ReductionUnrolled.gen.compute",
+            "shaderName": "Compute.Shaders.ReductionUnrolled.gen",
+            "kernelName": "UnrolledReduceMeanFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.ReductionUnrolled.gen.compute",
+            "shaderName": "Compute.Shaders.ReductionUnrolled.gen",
+            "kernelName": "UnrolledReduceMeanSquareFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.ReductionUnrolled.gen.compute",
+            "shaderName": "Compute.Shaders.ReductionUnrolled.gen",
+            "kernelName": "UnrolledReduceMinFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.ReductionUnrolled.gen.compute",
+            "shaderName": "Compute.Shaders.ReductionUnrolled.gen",
+            "kernelName": "UnrolledReduceMinInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.ReductionUnrolled.gen.compute",
+            "shaderName": "Compute.Shaders.ReductionUnrolled.gen",
+            "kernelName": "UnrolledReduceProdFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.ReductionUnrolled.gen.compute",
+            "shaderName": "Compute.Shaders.ReductionUnrolled.gen",
+            "kernelName": "UnrolledReduceProdInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.ReductionUnrolled.gen.compute",
+            "shaderName": "Compute.Shaders.ReductionUnrolled.gen",
+            "kernelName": "UnrolledReduceSqrtFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.ReductionUnrolled.gen.compute",
+            "shaderName": "Compute.Shaders.ReductionUnrolled.gen",
+            "kernelName": "UnrolledReduceSumExpFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.ReductionUnrolled.gen.compute",
+            "shaderName": "Compute.Shaders.ReductionUnrolled.gen",
+            "kernelName": "UnrolledReduceSumFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.ReductionUnrolled.gen.compute",
+            "shaderName": "Compute.Shaders.ReductionUnrolled.gen",
+            "kernelName": "UnrolledReduceSumInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.ReductionUnrolled.gen.compute",
+            "shaderName": "Compute.Shaders.ReductionUnrolled.gen",
+            "kernelName": "UnrolledReduceSumSquareFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Compute.Shaders.ReductionUnrolled.gen.compute",
+            "shaderName": "Compute.Shaders.ReductionUnrolled.gen",
+            "kernelName": "UnrolledReduceSumSquareInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ConvGeneric.compute",
+            "shaderName": "ConvGeneric",
+            "kernelName": "Conv1DComplex_OutTransposed_4eoc_4esp",
+            "variantCount": 12,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ConvGeneric.compute",
+            "shaderName": "ConvGeneric",
+            "kernelName": "Conv1D_1x1_Generic",
+            "variantCount": 12,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ConvGeneric.compute",
+            "shaderName": "ConvGeneric",
+            "kernelName": "Conv1D_Generic",
+            "variantCount": 12,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ConvGeneric.compute",
+            "shaderName": "ConvGeneric",
+            "kernelName": "Conv1D_OutTransposedDouble_4eoc_4esp",
+            "variantCount": 12,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ConvGeneric.compute",
+            "shaderName": "ConvGeneric",
+            "kernelName": "Conv1D_OutTransposed_4eoc_4esp",
+            "variantCount": 12,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ConvGeneric.compute",
+            "shaderName": "ConvGeneric",
+            "kernelName": "Conv1D_Scaled_Complex_OutTransposed_4eoc_4esp",
+            "variantCount": 12,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ConvGeneric.compute",
+            "shaderName": "ConvGeneric",
+            "kernelName": "Conv1D_Scaled_OutTransposed_4eoc_4esp",
+            "variantCount": 12,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ConvGeneric.compute",
+            "shaderName": "ConvGeneric",
+            "kernelName": "Conv2D_1x1_Generic",
+            "variantCount": 12,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ConvGeneric.compute",
+            "shaderName": "ConvGeneric",
+            "kernelName": "Conv2D_Generic",
+            "variantCount": 12,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ConvGeneric.compute",
+            "shaderName": "ConvGeneric",
+            "kernelName": "Conv3D_1x1_Generic",
+            "variantCount": 12,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ConvGeneric.compute",
+            "shaderName": "ConvGeneric",
+            "kernelName": "Conv3D_Generic",
+            "variantCount": 12,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ConvGeneric.compute",
+            "shaderName": "ConvGeneric",
+            "kernelName": "ConvTranspose1D_1x1_Generic",
+            "variantCount": 12,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ConvGeneric.compute",
+            "shaderName": "ConvGeneric",
+            "kernelName": "ConvTranspose1D_Generic",
+            "variantCount": 12,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ConvGeneric.compute",
+            "shaderName": "ConvGeneric",
+            "kernelName": "ConvTranspose2D_1x1_Generic",
+            "variantCount": 12,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ConvGeneric.compute",
+            "shaderName": "ConvGeneric",
+            "kernelName": "ConvTranspose2D_Generic",
+            "variantCount": 12,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ConvGeneric.compute",
+            "shaderName": "ConvGeneric",
+            "kernelName": "ConvTranspose3D_1x1_Generic",
+            "variantCount": 12,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ConvGeneric.compute",
+            "shaderName": "ConvGeneric",
+            "kernelName": "ConvTranspose3D_Generic",
+            "variantCount": 12,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CopyOps.compute",
+            "shaderName": "CopyOps",
+            "kernelName": "CastHalfToFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CopyOps.compute",
+            "shaderName": "CopyOps",
+            "kernelName": "DequantizeUint8",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CopyOps.compute",
+            "shaderName": "CopyOps",
+            "kernelName": "MemCopy",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CopyOps.compute",
+            "shaderName": "CopyOps",
+            "kernelName": "MemCopyStride",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CopyOps.compute",
+            "shaderName": "CopyOps",
+            "kernelName": "MemSet",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CopyOps.compute",
+            "shaderName": "CopyOps",
+            "kernelName": "Split",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CopyOps.compute",
+            "shaderName": "CopyOps",
+            "kernelName": "Transpose2D",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CopyOps.compute",
+            "shaderName": "CopyOps",
+            "kernelName": "Tril",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CopyOps.compute",
+            "shaderName": "CopyOps",
+            "kernelName": "Triu",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CumSum.compute",
+            "shaderName": "CumSum",
+            "kernelName": "CumSumFloatForwardExclusive",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CumSum.compute",
+            "shaderName": "CumSum",
+            "kernelName": "CumSumFloatForwardInclusive",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CumSum.compute",
+            "shaderName": "CumSum",
+            "kernelName": "CumSumFloatReverseExclusive",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CumSum.compute",
+            "shaderName": "CumSum",
+            "kernelName": "CumSumFloatReverseInclusive",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CumSum.compute",
+            "shaderName": "CumSum",
+            "kernelName": "CumSumIntForwardExclusive",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CumSum.compute",
+            "shaderName": "CumSum",
+            "kernelName": "CumSumIntForwardInclusive",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CumSum.compute",
+            "shaderName": "CumSum",
+            "kernelName": "CumSumIntReverseExclusive",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/CumSum.compute",
+            "shaderName": "CumSum",
+            "kernelName": "CumSumIntReverseInclusive",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Dense.compute",
+            "shaderName": "Dense",
+            "kernelName": "DenseBatched_T16x16_R4x4",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Dense.compute",
+            "shaderName": "Dense",
+            "kernelName": "DenseBatched_T8x8_R4x4",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Dense.compute",
+            "shaderName": "Dense",
+            "kernelName": "DenseBatched_V_L1Cached64",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Dense.compute",
+            "shaderName": "Dense",
+            "kernelName": "Dense_T16x16_R4x4",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Dense.compute",
+            "shaderName": "Dense",
+            "kernelName": "Dense_T8x8_R4x4",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Dense.compute",
+            "shaderName": "Dense",
+            "kernelName": "Dense_V_L1Cached64",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Dense.compute",
+            "shaderName": "Dense",
+            "kernelName": "GemmBatched_T16x16_R4x4",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Dense.compute",
+            "shaderName": "Dense",
+            "kernelName": "GemmBatched_T8x8_R4x4",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Dense.compute",
+            "shaderName": "Dense",
+            "kernelName": "GemmBatched_V_L1Cached64",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Dense.compute",
+            "shaderName": "Dense",
+            "kernelName": "Gemm_T16x16_R4x4",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Dense.compute",
+            "shaderName": "Dense",
+            "kernelName": "Gemm_T8x8_R4x4",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Dense.compute",
+            "shaderName": "Dense",
+            "kernelName": "Gemm_V_L1Cached64",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/DepthwiseConv.compute",
+            "shaderName": "DepthwiseConv",
+            "kernelName": "DepthwiseConv2DDirect",
+            "variantCount": 2,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/DepthwiseConv.compute",
+            "shaderName": "DepthwiseConv",
+            "kernelName": "DepthwiseConv2DWinograd",
+            "variantCount": 2,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/DepthwiseConv.compute",
+            "shaderName": "DepthwiseConv",
+            "kernelName": "KernelWinoExpand",
+            "variantCount": 2,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/GemmT.compute",
+            "shaderName": "GemmT",
+            "kernelName": "GemmT_WT_T8x8_R4x4",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/GemmT.compute",
+            "shaderName": "GemmT",
+            "kernelName": "GemmT_XT_T8x8_R4x4",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/GemmT.compute",
+            "shaderName": "GemmT",
+            "kernelName": "GemmT_XT_WT_T8x8_R4x4",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/GridSample.compute",
+            "shaderName": "GridSample",
+            "kernelName": "GridSample2D",
+            "variantCount": 12,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/GridSample.compute",
+            "shaderName": "GridSample",
+            "kernelName": "GridSample3D",
+            "variantCount": 12,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ImageBased.compute",
+            "shaderName": "ImageBased",
+            "kernelName": "DepthToSpaceColumnRowDepth",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ImageBased.compute",
+            "shaderName": "ImageBased",
+            "kernelName": "DepthToSpaceDepthColumnRow",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ImageBased.compute",
+            "shaderName": "ImageBased",
+            "kernelName": "SpaceToDepth",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/IndexingOps.compute",
+            "shaderName": "IndexingOps",
+            "kernelName": "GatherND",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/IndexingOps.compute",
+            "shaderName": "IndexingOps",
+            "kernelName": "OneHot",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/IndexingOps.compute",
+            "shaderName": "IndexingOps",
+            "kernelName": "SliceSet",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/LogicalOps.compute",
+            "shaderName": "LogicalOps",
+            "kernelName": "AndInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/LogicalOps.compute",
+            "shaderName": "LogicalOps",
+            "kernelName": "IsInf",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/LogicalOps.compute",
+            "shaderName": "LogicalOps",
+            "kernelName": "OrInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/LogicalOps.compute",
+            "shaderName": "LogicalOps",
+            "kernelName": "XorInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/NMS.compute",
+            "shaderName": "NMS",
+            "kernelName": "NMSBitmaskCenter",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/NMS.compute",
+            "shaderName": "NMS",
+            "kernelName": "NMSBitmaskCorners",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/NMS.compute",
+            "shaderName": "NMS",
+            "kernelName": "NMSCompact",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/NMS.compute",
+            "shaderName": "NMS",
+            "kernelName": "NMSSelect",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Normalization.compute",
+            "shaderName": "Normalization",
+            "kernelName": "BatchNormalization",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Normalization.compute",
+            "shaderName": "Normalization",
+            "kernelName": "LayerNormalizationTail",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Normalization.compute",
+            "shaderName": "Normalization",
+            "kernelName": "RMSNormalizationTail",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Normalization.compute",
+            "shaderName": "Normalization",
+            "kernelName": "ScaleBias",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Pool.compute",
+            "shaderName": "Pool",
+            "kernelName": "ArgMaxReduce",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Pool.compute",
+            "shaderName": "Pool",
+            "kernelName": "AveragePoolReduce",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Pool.compute",
+            "shaderName": "Pool",
+            "kernelName": "AverageVariancePoolReduce",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Pool.compute",
+            "shaderName": "Pool",
+            "kernelName": "GlobalArgMaxReduce",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Pool.compute",
+            "shaderName": "Pool",
+            "kernelName": "GlobalAveragePool",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Pool.compute",
+            "shaderName": "Pool",
+            "kernelName": "GlobalAverageVariancePool",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Pool.compute",
+            "shaderName": "Pool",
+            "kernelName": "GlobalMaxPool",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Pool.compute",
+            "shaderName": "Pool",
+            "kernelName": "MaxPoolReduce",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/RNN.compute",
+            "shaderName": "RNN",
+            "kernelName": "LSTMEnd",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Random.compute",
+            "shaderName": "Random",
+            "kernelName": "BernoulliFloat",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Random.compute",
+            "shaderName": "Random",
+            "kernelName": "BernoulliInt",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Random.compute",
+            "shaderName": "Random",
+            "kernelName": "RandomNormal",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Random.compute",
+            "shaderName": "Random",
+            "kernelName": "RandomUniform",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Random.compute",
+            "shaderName": "Random",
+            "kernelName": "TopP",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReduceIndices.compute",
+            "shaderName": "ReduceIndices",
+            "kernelName": "ArgMaxFloatFirst",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReduceIndices.compute",
+            "shaderName": "ReduceIndices",
+            "kernelName": "ArgMaxFloatLast",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReduceIndices.compute",
+            "shaderName": "ReduceIndices",
+            "kernelName": "ArgMaxIntFirst",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReduceIndices.compute",
+            "shaderName": "ReduceIndices",
+            "kernelName": "ArgMaxIntLast",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReduceIndices.compute",
+            "shaderName": "ReduceIndices",
+            "kernelName": "ArgMinFloatFirst",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReduceIndices.compute",
+            "shaderName": "ReduceIndices",
+            "kernelName": "ArgMinFloatLast",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReduceIndices.compute",
+            "shaderName": "ReduceIndices",
+            "kernelName": "ArgMinIntFirst",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReduceIndices.compute",
+            "shaderName": "ReduceIndices",
+            "kernelName": "ArgMinIntLast",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.Einsum.compute",
+            "shaderName": "ReferenceImpl.Einsum",
+            "kernelName": "EinsumOne",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.Einsum.compute",
+            "shaderName": "ReferenceImpl.Einsum",
+            "kernelName": "EinsumTwo",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.GenericA.compute",
+            "shaderName": "ReferenceImpl.GenericA",
+            "kernelName": "InstanceNormalizationTail",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.GenericA.compute",
+            "shaderName": "ReferenceImpl.GenericA",
+            "kernelName": "Transpose",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.IndexingOpsA.compute",
+            "shaderName": "ReferenceImpl.IndexingOpsA",
+            "kernelName": "Expand",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.IndexingOpsA.compute",
+            "shaderName": "ReferenceImpl.IndexingOpsA",
+            "kernelName": "Gather",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.IndexingOpsA.compute",
+            "shaderName": "ReferenceImpl.IndexingOpsA",
+            "kernelName": "GatherElements",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.IndexingOpsA.compute",
+            "shaderName": "ReferenceImpl.IndexingOpsA",
+            "kernelName": "GatherElementsFast",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.IndexingOpsA.compute",
+            "shaderName": "ReferenceImpl.IndexingOpsA",
+            "kernelName": "ScatterElements",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.IndexingOpsA.compute",
+            "shaderName": "ReferenceImpl.IndexingOpsA",
+            "kernelName": "ScatterElementsFast",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.IndexingOpsA.compute",
+            "shaderName": "ReferenceImpl.IndexingOpsA",
+            "kernelName": "Slice",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.IndexingOpsA.compute",
+            "shaderName": "ReferenceImpl.IndexingOpsA",
+            "kernelName": "Tile",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.Logical.compute",
+            "shaderName": "ReferenceImpl.Logical",
+            "kernelName": "Where",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.PadA.compute",
+            "shaderName": "ReferenceImpl.PadA",
+            "kernelName": "PadBorderND",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.PadA.compute",
+            "shaderName": "ReferenceImpl.PadA",
+            "kernelName": "PadEdgeND",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.PadA.compute",
+            "shaderName": "ReferenceImpl.PadA",
+            "kernelName": "PadReflectND",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.PadA.compute",
+            "shaderName": "ReferenceImpl.PadA",
+            "kernelName": "PadSymmetricND",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.PadA.compute",
+            "shaderName": "ReferenceImpl.PadA",
+            "kernelName": "PadWrapND",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.PoolA.compute",
+            "shaderName": "ReferenceImpl.PoolA",
+            "kernelName": "AveragePool1D",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.PoolA.compute",
+            "shaderName": "ReferenceImpl.PoolA",
+            "kernelName": "AveragePool2D",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.PoolA.compute",
+            "shaderName": "ReferenceImpl.PoolA",
+            "kernelName": "MaxPool1D",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.PoolA.compute",
+            "shaderName": "ReferenceImpl.PoolA",
+            "kernelName": "MaxPool2D",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ReferenceImpl.compute",
+            "shaderName": "ReferenceImpl",
+            "kernelName": "MatMul",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Resize.compute",
+            "shaderName": "Resize",
+            "kernelName": "Resize1D_Linear_None",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Resize.compute",
+            "shaderName": "Resize",
+            "kernelName": "Resize1D_Nearest_Ceil",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Resize.compute",
+            "shaderName": "Resize",
+            "kernelName": "Resize1D_Nearest_Floor",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Resize.compute",
+            "shaderName": "Resize",
+            "kernelName": "Upsample1D_Linear_None",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Resize.compute",
+            "shaderName": "Resize",
+            "kernelName": "Upsample1D_Nearest_Ceil",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Resize.compute",
+            "shaderName": "Resize",
+            "kernelName": "Upsample1D_Nearest_Floor",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Resize.compute",
+            "shaderName": "Resize",
+            "kernelName": "Upsample2D_Linear_None",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Resize.compute",
+            "shaderName": "Resize",
+            "kernelName": "Upsample2D_Nearest_Ceil",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Resize.compute",
+            "shaderName": "Resize",
+            "kernelName": "Upsample2D_Nearest_Floor",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Resize.compute",
+            "shaderName": "Resize",
+            "kernelName": "Upsample3D_Linear_None",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Resize.compute",
+            "shaderName": "Resize",
+            "kernelName": "Upsample3D_Nearest_Ceil",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Resize.compute",
+            "shaderName": "Resize",
+            "kernelName": "Upsample3D_Nearest_Floor",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/RoiAlign.compute",
+            "shaderName": "RoiAlign",
+            "kernelName": "RoiAlign",
+            "variantCount": 4,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/ScatterOps.compute",
+            "shaderName": "ScatterOps",
+            "kernelName": "ScatterND",
+            "variantCount": 10,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/SortingOps.compute",
+            "shaderName": "SortingOps",
+            "kernelName": "TopK",
+            "variantCount": 4,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Spectral.compute",
+            "shaderName": "Spectral",
+            "kernelName": "BlackmanWindow",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Spectral.compute",
+            "shaderName": "Spectral",
+            "kernelName": "HammingWindow",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Spectral.compute",
+            "shaderName": "Spectral",
+            "kernelName": "HannWindow",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/Spectral.compute",
+            "shaderName": "Spectral",
+            "kernelName": "MelWeightMatrix",
+            "variantCount": 1,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/WindowedDFTMatrix.compute",
+            "shaderName": "WindowedDFTMatrix",
+            "kernelName": "k_IDFTMatrixPackedComplex_Half_32x32Data_256T",
+            "variantCount": 2,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/WindowedDFTMatrix.compute",
+            "shaderName": "WindowedDFTMatrix",
+            "kernelName": "k_IDFTMatrixSplitReImTo2Rows_Half_32x32Data_256T",
+            "variantCount": 2,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/WindowedDFTMatrix.compute",
+            "shaderName": "WindowedDFTMatrix",
+            "kernelName": "k_WindowedDFTMatrixPackedComplex_Half_32x32Data_256T",
+            "variantCount": 2,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/ComputeShaders/WindowedDFTMatrix.compute",
+            "shaderName": "WindowedDFTMatrix",
+            "kernelName": "k_WindowedDFTMatrixSplitReImTo2Rows_Half_32x32Data_256T",
+            "variantCount": 2,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/TextureConversion/TensorToTexture.compute",
+            "shaderName": "TensorToTexture",
+            "kernelName": "TensorToTextureExact",
+            "variantCount": 2,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/TextureConversion/TensorToTexture.compute",
+            "shaderName": "TensorToTexture",
+            "kernelName": "TensorToTextureLinear",
+            "variantCount": 2,
+            "requiredKernel": false
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/TextureConversion/TextureToTensor.compute",
+            "shaderName": "TextureToTensor",
+            "kernelName": "TextureToTensorExact",
+            "variantCount": 2,
+            "requiredKernel": true
+        },
+        {
+            "path": "Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/TextureConversion/TextureToTensor.compute",
+            "shaderName": "TextureToTensor",
+            "kernelName": "TextureToTensorLinear",
+            "variantCount": 2,
+            "requiredKernel": false
+        }
+    ]
+}

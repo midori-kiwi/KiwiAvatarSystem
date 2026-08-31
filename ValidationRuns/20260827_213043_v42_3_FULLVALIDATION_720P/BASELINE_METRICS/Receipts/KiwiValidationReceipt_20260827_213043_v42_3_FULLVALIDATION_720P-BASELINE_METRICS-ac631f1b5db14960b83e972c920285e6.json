@@ -1,0 +1,51 @@
+{
+    "contract": "KIWI_V5_1_PHASE16_20_32_V42_3_AUTOMATED_VALIDATION_V1",
+    "version": "v42.3",
+    "status": "OK",
+    "error": "",
+    "runId": "20260827_213043_v42_3_FULLVALIDATION_720P",
+    "caseId": "BASELINE_METRICS",
+    "token": "20260827_213043_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-ac631f1b5db14960b83e972c920285e6",
+    "mode": "BASELINE",
+    "purpose": "METRICS",
+    "processId": 28284,
+    "graphicsApi": "Direct3D12",
+    "screenWidth": 1280,
+    "screenHeight": 720,
+    "startedUtc": "2026-08-27T12:31:43.6674571Z",
+    "startupReadyUtc": "2026-08-27T12:31:46.9532801Z",
+    "recordingStartedUtc": "2026-08-27T12:31:52.0354581Z",
+    "recordingStoppedUtc": "2026-08-27T12:32:22.0582419Z",
+    "committedUtc": "2026-08-27T12:32:22.1210550Z",
+    "warmupSeconds": 5.0,
+    "requestedRecordSeconds": 30.0,
+    "runtimeValidationErrors": 0,
+    "runtimeValidationCriticals": 0,
+    "camera": {
+        "active": true,
+        "width": 1920,
+        "height": 1080,
+        "targetFrameRate": 60,
+        "timestampCalibrationValid": true,
+        "sourceFrameCount": 2132,
+        "presentedFrameCount": 1244
+    },
+    "frameComparisonCsv": {
+        "path": "C:\\Users\\main\\AppData\\LocalLow\\MidoriKiwi\\KiwiAvatarSystem\\KiwiFrameComparison\\KiwiFrameComparison_20260827_213151_20260827_213043_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-ac631f1b5db14960b83e972c920285e6.csv",
+        "bytes": 975665,
+        "rows": 1112,
+        "sha256": "529b19dc7d385f7cda77cd3ebc2f4828ccac6e9348d1430b0092b92816353281"
+    },
+    "ortZeroCopyCsv": {
+        "path": "",
+        "bytes": 0,
+        "rows": 0,
+        "sha256": ""
+    },
+    "runtimeValidationJson": {
+        "path": "C:\\Users\\main\\AppData\\LocalLow\\MidoriKiwi\\KiwiAvatarSystem\\KiwiValidationHarness\\20260827_213043_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-ac631f1b5db14960b83e972c920285e6\\runtime.json",
+        "bytes": 598,
+        "rows": 0,
+        "sha256": "c3a8e5db2a0776abdc299409827142df54b28b6ef4f89b7bb8833b791b6f24f5"
+    }
+}

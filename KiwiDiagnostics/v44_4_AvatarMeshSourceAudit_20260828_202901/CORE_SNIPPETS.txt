@@ -1,0 +1,900 @@
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+    3: using System.IO;
+    4: using System.Threading.Tasks;
+    5: using UniGLTF;
+    6: using UnityEngine;
+    7: using VRM;
+    8: 
+    9: [DefaultExecutionOrder(-500)]
+   10: [DisallowMultipleComponent]
+   11: public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
+   12: {
+   13:     public const string PackageVersion = "1.0.0";
+   14: 
+   15:     [Header("Tracking / Scene References")]
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+   32:     public bool fallbackReferenceCaptured;
+   33: 
+   34:     [Header("Runtime Models")]
+   35:     public string vtuberLayerName = "VTuberModel1";
+   36:     public bool autoLoadLastAvatar = true;
+   37:     public bool enableSpringBone = true;
+   38:     [Range(16, 1024)] public int maximumRuntimeModelSizeMB = 200;
+   39:     [Range(16, 512)] public int mobileMaximumRuntimeModelSizeMB = 128;
+   40:     public bool adaptiveMobileMemoryGuard = true;
+   41:     [Range(16, 256)] public int lowMemoryDeviceModelLimitMB = 64;
+   42: 
+   43:     [Header("Adaptive Head / Face Fit")]
+   44:     public bool enableAdaptiveHeadFit = true;
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+   53:     [SerializeField] private bool busy;
+   54: 
+   55:     private const string LastAvatarKey = "KiwiAvatarSystem.LastAvatar.v1";
+   56:     private readonly List<string> _modelFiles = new List<string>();
+   57:     private RuntimeGltfInstance _activeInstance;
+   58:     private Transform _activeModel;
+   59:     private Transform _activeHead;
+   60:     private KiwiAvatarProfile _activeProfile;
+   61:     private string _activeModelPath = string.Empty;
+   62:     private KiwiHeadGeometry _fallbackGeometry;
+   63:     private KiwiHeadGeometry _activeGeometry;
+   64:     private string _activeFaceFitMethod = "Embedded";
+   65:     private float _activeFaceFitConfidence = 1f;
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+   65:     private float _activeFaceFitConfidence = 1f;
+   66: 
+   67:     private struct ActiveAvatarState
+   68:     {
+   69:         public RuntimeGltfInstance instance;
+   70:         public Transform model;
+   71:         public Transform head;
+   72:         public KiwiAvatarProfile profile;
+   73:         public string modelPath;
+   74:         public KiwiHeadGeometry geometry;
+   75:         public string faceFitMethod;
+   76:         public float faceFitConfidence;
+   77:         public string avatarName;
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+   81:         public Quaternion faceAnchorLocalRotation;
+   82:         public Vector3 faceAnchorLocalScale;
+   83:         public Transform fitterModelRoot;
+   84:         public Transform fitterPartsRoot;
+   85:         public SkinnedMeshRenderer fitterTargetRenderer;
+   86:     }
+   87: 
+   88:     public IReadOnlyList<string> ModelFiles => _modelFiles;
+   89:     public string ModelsDirectory => KiwiAvatarStorage.ModelsDirectory;
+   90:     public bool IsBusy => busy;
+   91:     public bool IsExternalAvatarActive => _activeModel != null;
+   92:     public int EffectiveModelSizeLimitMB => CalculateEffectiveModelLimitMB();
+   93:     public KiwiAvatarProfile ActiveProfile => _activeProfile;
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+  114: 
+  115:     private void Start()
+  116:     {
+  117:         ScanModels();
+  118:         SwitchToFallbackInternal(false);
+  119: 
+  120:         if (autoLoadLastAvatar)
+  121:         {
+  122:             string lastPath = PlayerPrefs.GetString(LastAvatarKey, string.Empty);
+  123:             if (!string.IsNullOrWhiteSpace(lastPath) && File.Exists(lastPath))
+  124:             {
+  125:                 SwitchToModel(lastPath);
+  126:             }
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+  116:     {
+  117:         ScanModels();
+  118:         SwitchToFallbackInternal(false);
+  119: 
+  120:         if (autoLoadLastAvatar)
+  121:         {
+  122:             string lastPath = PlayerPrefs.GetString(LastAvatarKey, string.Empty);
+  123:             if (!string.IsNullOrWhiteSpace(lastPath) && File.Exists(lastPath))
+  124:             {
+  125:                 SwitchToModel(lastPath);
+  126:             }
+  127:         }
+  128:     }
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+  185:             KiwiAvatarStorage.ModelsDirectory,
+  186:             "*",
+  187:             SearchOption.TopDirectoryOnly))
+  188:         {
+  189:             if (string.Equals(Path.GetExtension(path), ".vrm", StringComparison.OrdinalIgnoreCase))
+  190:             {
+  191:                 _modelFiles.Add(Path.GetFullPath(path));
+  192:             }
+  193:         }
+  194: 
+  195:         _modelFiles.Sort(StringComparer.OrdinalIgnoreCase);
+  196:         if (!busy)
+  197:         {
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+  198:             status = _modelFiles.Count + " external model(s) found";
+  199:         }
+  200:     }
+  201: 
+  202:     public void ImportVrmFromPicker()
+  203:     {
+  204:         if (busy)
+  205:         {
+  206:             return;
+  207:         }
+  208: 
+  209:         long maximumBytes = (long)EffectiveModelSizeLimitMB * 1024L * 1024L;
+  210: 
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+  209:         long maximumBytes = (long)EffectiveModelSizeLimitMB * 1024L * 1024L;
+  210: 
+  211:         if (KiwiAvatarStorage.IsMobileRuntime)
+  212:         {
+  213:             KiwiMobileFilePicker.Instance.PickVrm(
+  214:                 maximumBytes,
+  215:                 KiwiAvatarStorage.ModelsDirectory,
+  216:                 OnMobileModelPicked,
+  217:                 message => status = message
+  218:             );
+  219:             return;
+  220:         }
+  221: 
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+  218:             );
+  219:             return;
+  220:         }
+  221: 
+  222:         if (!KiwiWindowsFilePicker.TryPickVrm(out string selectedPath))
+  223:         {
+  224:             status = "Model import cancelled";
+  225:             return;
+  226:         }
+  227: 
+  228:         ImportAndSwitch(selectedPath, maximumBytes);
+  229:     }
+  230: 
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+  284:             return;
+  285:         }
+  286: 
+  287:         busy = true;
+  288:         status = "Loading " + Path.GetFileName(path) + "...";
+  289:         RuntimeGltfInstance candidate = null;
+  290:         ActiveAvatarState previousState = CaptureActiveAvatarState();
+  291:         bool candidateBound = false;
+  292:         bool swapCommitted = false;
+  293: 
+  294:         try
+  295:         {
+  296:             candidate = await VrmUtility.LoadAsync(path, new RuntimeOnlyAwaitCaller());
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+  285:         }
+  286: 
+  287:         busy = true;
+  288:         status = "Loading " + Path.GetFileName(path) + "...";
+  289:         RuntimeGltfInstance candidate = null;
+  290:         ActiveAvatarState previousState = CaptureActiveAvatarState();
+  291:         bool candidateBound = false;
+  292:         bool swapCommitted = false;
+  293: 
+  294:         try
+  295:         {
+  296:             candidate = await VrmUtility.LoadAsync(path, new RuntimeOnlyAwaitCaller());
+  297:             if (candidate == null || candidate.Root == null)
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+  292:         bool swapCommitted = false;
+  293: 
+  294:         try
+  295:         {
+  296:             candidate = await VrmUtility.LoadAsync(path, new RuntimeOnlyAwaitCaller());
+  297:             if (candidate == null || candidate.Root == null)
+  298:             {
+  299:                 throw new InvalidDataException("VRM importer returned no model root.");
+  300:             }
+  301: 
+  302:             candidate.ShowMeshes();
+  303:             candidate.EnableUpdateWhenOffscreen();
+  304:             Transform candidateRoot = candidate.Root.transform;
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+  295:         {
+  296:             candidate = await VrmUtility.LoadAsync(path, new RuntimeOnlyAwaitCaller());
+  297:             if (candidate == null || candidate.Root == null)
+  298:             {
+  299:                 throw new InvalidDataException("VRM importer returned no model root.");
+  300:             }
+  301: 
+  302:             candidate.ShowMeshes();
+  303:             candidate.EnableUpdateWhenOffscreen();
+  304:             Transform candidateRoot = candidate.Root.transform;
+  305:             candidateRoot.SetParent(motionRoot, false);
+  306:             candidateRoot.localPosition = Vector3.zero;
+  307:             candidateRoot.localRotation = Quaternion.identity;
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+  313:                 ? animator.GetBoneTransform(HumanBodyBones.Head)
+  314:                 : FindChildByName(candidateRoot, "head");
+  315:             if (head == null)
+  316:             {
+  317:                 throw new InvalidDataException("The VRM has no usable head transform.");
+  318:             }
+  319: 
+  320:             KiwiAvatarProfile profile = LoadProfile(path);
+  321:             _activeInstance = candidate;
+  322:             _activeModel = candidateRoot;
+  323:             _activeHead = head;
+  324:             _activeModelPath = path;
+  325:             _activeProfile = profile;
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+  316:             {
+  317:                 throw new InvalidDataException("The VRM has no usable head transform.");
+  318:             }
+  319: 
+  320:             KiwiAvatarProfile profile = LoadProfile(path);
+  321:             _activeInstance = candidate;
+  322:             _activeModel = candidateRoot;
+  323:             _activeHead = head;
+  324:             _activeModelPath = path;
+  325:             _activeProfile = profile;
+  326:             candidateBound = true;
+  327: 
+  328:             // Configure while the previous instance is still alive. Candidate
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+  370:             if (candidate != null && candidate.Root != null)
+  371:             {
+  372:                 Destroy(candidate.Root);
+  373:             }
+  374:             status = "Load failed: " + exception.Message;
+  375:             Debug.LogException(exception, this);
+  376:         }
+  377:         finally
+  378:         {
+  379:             busy = false;
+  380:         }
+  381:     }
+  382: 
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+  461:             }
+  462:             else
+  463:             {
+  464:                 RestoreFallbackFaceAnchor();
+  465:                 ApplySurfaceFit(fallbackModel, fallbackHead, "Embedded");
+  466:                 if (faceMotion != null && motionRoot != null)
+  467:                 {
+  468:                     faceMotion.kiwiRoot = motionRoot;
+  469:                     faceMotion.RecenterTracking();
+  470:                 }
+  471:             }
+  472:         }
+  473:         catch (Exception rollbackException)
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+  485:     public void SwitchToFallback()
+  486:     {
+  487:         if (!busy)
+  488:         {
+  489:             SwitchToFallbackInternal(true);
+  490:         }
+  491:     }
+  492: 
+  493:     private void SwitchToFallbackInternal(bool clearLastAvatar)
+  494:     {
+  495:         bool modelIdentityChanged =
+  496:             _activeModel != null ||
+  497:             _activeInstance != null;
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+  489:             SwitchToFallbackInternal(true);
+  490:         }
+  491:     }
+  492: 
+  493:     private void SwitchToFallbackInternal(bool clearLastAvatar)
+  494:     {
+  495:         bool modelIdentityChanged =
+  496:             _activeModel != null ||
+  497:             _activeInstance != null;
+  498: 
+  499:         if (!fallbackReferenceCaptured)
+  500:         {
+  501:             CaptureFallbackReferencesNow();
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+  507:             fallbackModel.gameObject.SetActive(true);
+  508:             SetLayerRecursively(fallbackModel.gameObject, ResolveVtuberLayer());
+  509:         }
+  510: 
+  511:         ApplySurfaceFit(fallbackModel, fallbackHead, "Embedded");
+  512: 
+  513:         if (_activeInstance != null && _activeInstance.Root != null)
+  514:         {
+  515:             Destroy(_activeInstance.Root);
+  516:         }
+  517: 
+  518:         _activeInstance = null;
+  519:         _activeModel = null;
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+  645: 
+  646:     public void RestoreSpringBoneInitialTransform()
+  647:     {
+  648:         if (_activeModel == null) return;
+  649:         VRMSpringBone[] springs = _activeModel.GetComponentsInChildren<VRMSpringBone>(true);
+  650:         for (int i = 0; i < springs.Length; i++)
+  651:         {
+  652:             springs[i].ReinitializeRotation();
+  653:         }
+  654:     }
+  655: 
+  656:     public void ReconstructSpringBone()
+  657:     {
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+  655: 
+  656:     public void ReconstructSpringBone()
+  657:     {
+  658:         if (_activeModel == null) return;
+  659:         VRMSpringBone[] springs = _activeModel.GetComponentsInChildren<VRMSpringBone>(true);
+  660:         for (int i = 0; i < springs.Length; i++)
+  661:         {
+  662:             springs[i].Setup(true);
+  663:         }
+  664:     }
+  665: 
+  666:     private void ApplyActiveProfile()
+  667:     {
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+  703:         }
+  704:         _activeModel.localPosition = _activeProfile.modelLocalPosition;
+  705: 
+  706:         ApplyFaceAnchorFit();
+  707:         ApplySurfaceFit(_activeModel, _activeHead, _activeFaceFitMethod);
+  708:         SetSpringComponentsEnabled(
+  709:             _activeModel,
+  710:             enableSpringBone && _activeProfile.springBoneEnabled
+  711:         );
+  712:         ReconstructSpringBone();
+  713: 
+  714:         if (faceMotion != null && motionRoot != null)
+  715:         {
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+  779:         faceAnchor.localEulerAngles = fallbackFaceAnchorHeadLocalEulerAngles;
+  780:         faceAnchor.localScale = fallbackFaceAnchorHeadLocalScale;
+  781:     }
+  782: 
+  783:     private void ApplySurfaceFit(Transform model, Transform head, string fallbackMethod)
+  784:     {
+  785:         if (surfaceFitter == null || model == null || faceAnchor == null)
+  786:         {
+  787:             return;
+  788:         }
+  789: 
+  790:         SkinnedMeshRenderer renderer =
+  791:             KiwiSurfaceFitter.FindBestFaceRenderer(model, head);
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+  786:         {
+  787:             return;
+  788:         }
+  789: 
+  790:         SkinnedMeshRenderer renderer =
+  791:             KiwiSurfaceFitter.FindBestFaceRenderer(model, head);
+  792:         if (renderer == null)
+  793:         {
+  794:             _activeFaceFitMethod = fallbackMethod;
+  795:             return;
+  796:         }
+  797: 
+  798:         surfaceFitter.modelRoot = model;
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+  810:             _activeFaceFitMethod = fallbackMethod;
+  811:         }
+  812:     }
+  813: 
+  814:     private KiwiAvatarProfile LoadProfile(string modelPath)
+  815:     {
+  816:         KiwiAvatarProfile profile = null;
+  817:         string profilePath = GetProfilePath(modelPath);
+  818:         try
+  819:         {
+  820:             if (File.Exists(profilePath))
+  821:             {
+  822:                 profile = JsonUtility.FromJson<KiwiAvatarProfile>(File.ReadAllText(profilePath));
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+  823:             }
+  824:         }
+  825:         catch (Exception exception)
+  826:         {
+  827:             Debug.LogWarning("[KiwiAvatarSystem] Profile load failed: " + exception.Message, this);
+  828:         }
+  829: 
+  830:         if (profile == null)
+  831:         {
+  832:             profile = KiwiAvatarProfile.CreateDefault(
+  833:                 Path.GetFileName(modelPath),
+  834:                 Path.GetFileNameWithoutExtension(modelPath)
+  835:             );
+
+FILE=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\KiwiAvatarRuntimeManager.cs
+  936: 
+  937:     private static void SetSpringComponentsEnabled(Transform root, bool enabled)
+  938:     {
+  939:         if (root == null) return;
+  940:         VRMSpringBone[] springs = root.GetComponentsInChildren<VRMSpringBone>(true);
+  941:         for (int i = 0; i < springs.Length; i++) springs[i].enabled = enabled;
+  942:     }
+  943: 
+  944:     private static Transform FindChildByName(Transform root, string name)
+  945:     {
+  946:         if (root == null) return null;
+  947:         Transform[] all = root.GetComponentsInChildren<Transform>(true);
+  948:         for (int i = 0; i < all.Length; i++)
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+   10: 
+   11:     [Header("Kiwi Model")]
+   12: 
+   13:     [Tooltip(
+   14:         "繧ｭ繧ｦ繧､譛ｬ菴薙・SkinnedMeshRenderer縲・n" +
+   15:         "遨ｺ谺・↑繧芽・蜍墓､懃ｴ｢縲・
+   16:     )]
+   17:     public SkinnedMeshRenderer targetRenderer;
+   18: 
+   19: 
+   20:     [Tooltip(
+   21:         "閾ｪ蜍墓､懃ｴ｢縺吶ｋVRM Root縲・n" +
+   22:         "遨ｺ谺・↑繧・transform.root縲・
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+   13:     [Tooltip(
+   14:         "繧ｭ繧ｦ繧､譛ｬ菴薙・SkinnedMeshRenderer縲・n" +
+   15:         "遨ｺ谺・↑繧芽・蜍墓､懃ｴ｢縲・
+   16:     )]
+   17:     public SkinnedMeshRenderer targetRenderer;
+   18: 
+   19: 
+   20:     [Tooltip(
+   21:         "閾ｪ蜍墓､懃ｴ｢縺吶ｋVRM Root縲・n" +
+   22:         "遨ｺ谺・↑繧・transform.root縲・
+   23:     )]
+   24:     public Transform modelRoot;
+   25: 
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+   17:     public SkinnedMeshRenderer targetRenderer;
+   18: 
+   19: 
+   20:     [Tooltip(
+   21:         "閾ｪ蜍墓､懃ｴ｢縺吶ｋVRM Root縲・n" +
+   22:         "遨ｺ谺・↑繧・transform.root縲・
+   23:     )]
+   24:     public Transform modelRoot;
+   25: 
+   26: 
+   27:     // =========================================================
+   28:     // Face Parts
+   29:     // =========================================================
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+   94:     private Mesh _bakedMesh;
+   95: 
+   96:     private GameObject _colliderObject;
+   97: 
+   98:     private MeshCollider _meshCollider;
+   99: 
+  100: 
+  101:     private bool _isFitting = false;
+  102: 
+  103:     [Range(0f, 1f)]
+  104:     public float minimumSuccessfulFitRate = 0.70f;
+  105: 
+  106:     public int LastTotalVertices { get; private set; }
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+  192:             if (targetRenderer == null)
+  193:             {
+  194:                 Debug.LogError(
+  195:                     "[KiwiSurfaceFitter] " +
+  196:                     "繧ｭ繧ｦ繧､譛ｬ菴薙・SkinnedMeshRenderer縺・ +
+  197:                     "隕九▽縺九ｊ縺ｾ縺帙ｓ縲・
+  198:                 );
+  199: 
+  200:                 return;
+  201:             }
+  202: 
+  203: 
+  204:             // =============================================
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+  225:             );
+  226: 
+  227: 
+  228:             // =============================================
+  229:             // 笘・MeshCollider繧・蛟九□縺・
+  230:             // =============================================
+  231: 
+  232:             _colliderObject =
+  233:                 new GameObject(
+  234:                     "__KiwiSurfaceFitCollider"
+  235:                 );
+  236: 
+  237: 
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+  256:             _colliderObject.transform.localScale =
+  257:                 Vector3.one;
+  258: 
+  259: 
+  260:             _meshCollider =
+  261:                 _colliderObject.AddComponent
+  262:                 <
+  263:                     MeshCollider
+  264:                 >();
+  265: 
+  266: 
+  267:             _meshCollider.convex =
+  268:                 false;
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+  259: 
+  260:             _meshCollider =
+  261:                 _colliderObject.AddComponent
+  262:                 <
+  263:                     MeshCollider
+  264:                 >();
+  265: 
+  266: 
+  267:             _meshCollider.convex =
+  268:                 false;
+  269: 
+  270: 
+  271:             _meshCollider.sharedMesh =
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+  263:                     MeshCollider
+  264:                 >();
+  265: 
+  266: 
+  267:             _meshCollider.convex =
+  268:                 false;
+  269: 
+  270: 
+  271:             _meshCollider.sharedMesh =
+  272:                 _bakedMesh;
+  273: 
+  274: 
+  275:             Physics.SyncTransforms();
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+  267:             _meshCollider.convex =
+  268:                 false;
+  269: 
+  270: 
+  271:             _meshCollider.sharedMesh =
+  272:                 _bakedMesh;
+  273: 
+  274: 
+  275:             Physics.SyncTransforms();
+  276: 
+  277: 
+  278:             // =============================================
+  279:             // 陦ｨ陬上←縺｡繧峨°繧峨〒繧３ay縺碁壹ｋ繧医≧縺ｫ
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+  440:     // =========================================================
+  441:     // Resolve Renderer
+  442:     // =========================================================
+  443: 
+  444:     public static SkinnedMeshRenderer FindBestFaceRenderer(
+  445:         Transform root,
+  446:         Transform head)
+  447:     {
+  448:         if (root == null)
+  449:         {
+  450:             return null;
+  451:         }
+  452: 
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+  449:         {
+  450:             return null;
+  451:         }
+  452: 
+  453:         SkinnedMeshRenderer[] renderers =
+  454:             root.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+  455:         SkinnedMeshRenderer best = null;
+  456:         float bestScore = float.NegativeInfinity;
+  457: 
+  458:         for (int i = 0; i < renderers.Length; i++)
+  459:         {
+  460:             SkinnedMeshRenderer renderer = renderers[i];
+  461:             Mesh mesh = renderer != null ? renderer.sharedMesh : null;
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+  450:             return null;
+  451:         }
+  452: 
+  453:         SkinnedMeshRenderer[] renderers =
+  454:             root.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+  455:         SkinnedMeshRenderer best = null;
+  456:         float bestScore = float.NegativeInfinity;
+  457: 
+  458:         for (int i = 0; i < renderers.Length; i++)
+  459:         {
+  460:             SkinnedMeshRenderer renderer = renderers[i];
+  461:             Mesh mesh = renderer != null ? renderer.sharedMesh : null;
+  462:             if (mesh == null || mesh.vertexCount < 3)
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+  451:         }
+  452: 
+  453:         SkinnedMeshRenderer[] renderers =
+  454:             root.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+  455:         SkinnedMeshRenderer best = null;
+  456:         float bestScore = float.NegativeInfinity;
+  457: 
+  458:         for (int i = 0; i < renderers.Length; i++)
+  459:         {
+  460:             SkinnedMeshRenderer renderer = renderers[i];
+  461:             Mesh mesh = renderer != null ? renderer.sharedMesh : null;
+  462:             if (mesh == null || mesh.vertexCount < 3)
+  463:             {
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+  456:         float bestScore = float.NegativeInfinity;
+  457: 
+  458:         for (int i = 0; i < renderers.Length; i++)
+  459:         {
+  460:             SkinnedMeshRenderer renderer = renderers[i];
+  461:             Mesh mesh = renderer != null ? renderer.sharedMesh : null;
+  462:             if (mesh == null || mesh.vertexCount < 3)
+  463:             {
+  464:                 continue;
+  465:             }
+  466: 
+  467:             string rendererName = renderer.name.ToLowerInvariant();
+  468:             float nameScore =
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+  457: 
+  458:         for (int i = 0; i < renderers.Length; i++)
+  459:         {
+  460:             SkinnedMeshRenderer renderer = renderers[i];
+  461:             Mesh mesh = renderer != null ? renderer.sharedMesh : null;
+  462:             if (mesh == null || mesh.vertexCount < 3)
+  463:             {
+  464:                 continue;
+  465:             }
+  466: 
+  467:             string rendererName = renderer.name.ToLowerInvariant();
+  468:             float nameScore =
+  469:                 rendererName.Contains("face") ? 5f :
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+  555:             return;
+  556:         }
+  557: 
+  558: 
+  559:         SkinnedMeshRenderer[] renderers =
+  560:             root.GetComponentsInChildren
+  561:             <
+  562:                 SkinnedMeshRenderer
+  563:             >(
+  564:                 true
+  565:             );
+  566: 
+  567: 
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+  558: 
+  559:         SkinnedMeshRenderer[] renderers =
+  560:             root.GetComponentsInChildren
+  561:             <
+  562:                 SkinnedMeshRenderer
+  563:             >(
+  564:                 true
+  565:             );
+  566: 
+  567: 
+  568:         if (
+  569:             renderers == null ||
+  570:             renderers.Length == 0
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+  587:             -1f;
+  588: 
+  589: 
+  590:         foreach (
+  591:             SkinnedMeshRenderer renderer
+  592:             in renderers
+  593:         )
+  594:         {
+  595:             if (
+  596:                 renderer == null ||
+  597:                 renderer.sharedMesh == null
+  598:             )
+  599:             {
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+  593:         )
+  594:         {
+  595:             if (
+  596:                 renderer == null ||
+  597:                 renderer.sharedMesh == null
+  598:             )
+  599:             {
+  600:                 continue;
+  601:             }
+  602: 
+  603: 
+  604:             int vertexCount =
+  605:                 renderer.sharedMesh
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+  601:             }
+  602: 
+  603: 
+  604:             int vertexCount =
+  605:                 renderer.sharedMesh
+  606:                     .vertexCount;
+  607: 
+  608: 
+  609:             float boundsSize =
+  610:                 renderer.bounds
+  611:                     .size
+  612:                     .sqrMagnitude;
+  613: 
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+  648:                 "[KiwiSurfaceFitter] " +
+  649:                 "Auto Renderer = " +
+  650:                 targetRenderer.name +
+  651:                 " / Vertices = " +
+  652:                 targetRenderer.sharedMesh.vertexCount
+  653:             );
+  654:         }
+  655:     }
+  656: 
+  657: 
+  658:     // =========================================================
+  659:     // Fit One Part
+  660:     // =========================================================
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+  889:             }
+  890:         }
+  891: 
+  892: 
+  893:         part.ApplySurfaceFit(
+  894:             fittedPositions
+  895:         );
+  896: 
+  897: 
+  898:         if (logResult)
+  899:         {
+  900:             float percentage =
+  901:                 vertexCount > 0
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+  970:             );
+  971: 
+  972: 
+  973:         bool hitA =
+  974:             _meshCollider.Raycast(
+  975:                 rayA,
+  976:                 out RaycastHit resultA,
+  977:                 rayLength
+  978:             );
+  979: 
+  980: 
+  981:         // =============================================
+  982:         // -Normal蛛ｴ縺九ｉ
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+  996:             );
+  997: 
+  998: 
+  999:         bool hitB =
+ 1000:             _meshCollider.Raycast(
+ 1001:                 rayB,
+ 1002:                 out RaycastHit resultB,
+ 1003:                 rayLength
+ 1004:             );
+ 1005: 
+ 1006: 
+ 1007:         // =============================================
+ 1008:         // 荳｡譁ｹ
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+ 1097:                 castDirection.normalized
+ 1098:             );
+ 1099: 
+ 1100: 
+ 1101:         return _meshCollider.Raycast(
+ 1102:             ray,
+ 1103:             out hit,
+ 1104:             rayLength
+ 1105:         );
+ 1106:     }
+ 1107: 
+ 1108: 
+ 1109:     // =========================================================
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+ 1111:     // =========================================================
+ 1112: 
+ 1113:     private void CleanupTemporaryObjects()
+ 1114:     {
+ 1115:         if (_meshCollider != null)
+ 1116:         {
+ 1117:             _meshCollider.enabled =
+ 1118:                 false;
+ 1119: 
+ 1120: 
+ 1121:             _meshCollider.sharedMesh =
+ 1122:                 null;
+ 1123: 
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+ 1113:     private void CleanupTemporaryObjects()
+ 1114:     {
+ 1115:         if (_meshCollider != null)
+ 1116:         {
+ 1117:             _meshCollider.enabled =
+ 1118:                 false;
+ 1119: 
+ 1120: 
+ 1121:             _meshCollider.sharedMesh =
+ 1122:                 null;
+ 1123: 
+ 1124: 
+ 1125:             _meshCollider =
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+ 1117:             _meshCollider.enabled =
+ 1118:                 false;
+ 1119: 
+ 1120: 
+ 1121:             _meshCollider.sharedMesh =
+ 1122:                 null;
+ 1123: 
+ 1124: 
+ 1125:             _meshCollider =
+ 1126:                 null;
+ 1127:         }
+ 1128: 
+ 1129: 
+
+FILE=D:\KiwiAvatarSystem\Assets\Script\KiwiSurfaceFitter.cs
+ 1121:             _meshCollider.sharedMesh =
+ 1122:                 null;
+ 1123: 
+ 1124: 
+ 1125:             _meshCollider =
+ 1126:                 null;
+ 1127:         }
+ 1128: 
+ 1129: 
+ 1130:         if (_colliderObject != null)
+ 1131:         {
+ 1132:             if (Application.isPlaying)
+ 1133:             {

@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
@@ -68,6 +68,115 @@ namespace Mediapipe.Unity
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         private static extern ulong KiwiNativeCamera_GetSupersededFrameCount();
+
+        // v44.53 observer-only Native CPU NV12 direct shadow crop.
+        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        private static extern ulong KiwiNativeCamera_GetNativeCpuShadowCropCount();
+
+        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        private static extern ulong KiwiNativeCamera_GetNativeCpuShadowCropFailureCount();
+
+        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        private static extern ulong KiwiNativeCamera_GetLatestNativeCpuShadowCropMicroseconds();
+
+        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        private static extern ulong KiwiNativeCamera_GetLatestNativeCpuShadowCropSequence();
+
+        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        private static extern int KiwiNativeCamera_CopyLatestCpuCropNchwFloat(
+            [In] float[] samplingMatrix16,
+            int outputSize,
+            [Out] float[] destination,
+            int destinationFloatCount,
+            out ulong sequence,
+            out long hostTicks,
+            out ulong nativeCpuMicroseconds);
+
+        // v44.55.1 observer-only low-rate armed snapshot.
+        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        private static extern int KiwiNativeCamera_ArmDiagnosticCpuSnapshot();
+
+        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        private static extern int KiwiNativeCamera_GetDiagnosticCpuSnapshotIdentity(
+            out ulong sequence,
+            out long hostTicks);
+
+        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        private static extern int KiwiNativeCamera_CopyDiagnosticCpuSnapshotCropNchwFloat(
+            long expectedHostTicks,
+            [In] float[] samplingMatrix16,
+            int outputSize,
+            [Out] float[] destination,
+            int destinationFloatCount,
+            out ulong sequence,
+            out long matchedHostTicks,
+            out ulong nativeCpuMicroseconds);
+
+
+        // v44.55.8 observer-only Production UNORM8 parity candidates.
+        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        private static extern int KiwiNativeCamera_CopyDiagnosticCpuSnapshotCropNchwFloatQuantized(
+            long expectedHostTicks,
+            [In] float[] samplingMatrix16,
+            int outputSize,
+            int quantizationMode,
+            [Out] float[] destination,
+            int destinationFloatCount,
+            out ulong sequence,
+            out long matchedHostTicks,
+            out ulong nativeCpuMicroseconds);
+
+        // v44.55.10 observer-only Presentation-frame identity burst.
+        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        private static extern int KiwiNativeCamera_GetDiagnosticCpuIdentityBurstStatus(
+            out int validCandidateCount,
+            out int complete);
+
+        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        private static extern int KiwiNativeCamera_GetDiagnosticCpuIdentityCandidate(
+            int candidateIndex,
+            out ulong sequence,
+            out long hostTicks,
+            out int role);
+
+        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        private static extern int KiwiNativeCamera_CopyDiagnosticCpuIdentityCandidateCropNchwFloatQuantized(
+            int candidateIndex,
+            [In] float[] samplingMatrix16,
+            int outputSize,
+            int quantizationMode,
+            [Out] float[] destination,
+            int destinationFloatCount,
+            out ulong sequence,
+            out long hostTicks,
+            out int role,
+            out ulong nativeCpuMicroseconds);
+
+        // v44.55.12 observer-only D3D fixed-point subtexel candidate crop.
+        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        private static extern int KiwiNativeCamera_CopyDiagnosticCpuIdentityCandidateCropNchwFloatSubtexel(
+            int candidateIndex,
+            [In] float[] samplingMatrix16,
+            int outputSize,
+            int fractionalBits,
+            [Out] float[] destination,
+            int destinationFloatCount,
+            out ulong sequence,
+            out long hostTicks,
+            out int role,
+            out ulong nativeCpuMicroseconds);
+
+        // v44.55 retrospective exact-slot API retained for diagnostic compatibility.
+        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        private static extern int KiwiNativeCamera_CopyCpuCropNchwFloatByHostTicks(
+            long expectedHostTicks,
+            [In] float[] samplingMatrix16,
+            int outputSize,
+            [Out] float[] destination,
+            int destinationFloatCount,
+            out ulong sequence,
+            out long matchedHostTicks,
+            out ulong nativeCpuMicroseconds);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         private static extern ulong KiwiNativeCamera_GetProcessingFailureFrameCount();
@@ -340,6 +449,503 @@ namespace Mediapipe.Unity
 
         internal static ulong SupersededFrameCount =>
             KiwiNativeCamera_GetSupersededFrameCount();
+
+
+        internal static ulong NativeCpuShadowCropCount =>
+            KiwiNativeCamera_GetNativeCpuShadowCropCount();
+
+        internal static ulong NativeCpuShadowCropFailureCount =>
+            KiwiNativeCamera_GetNativeCpuShadowCropFailureCount();
+
+        internal static ulong LatestNativeCpuShadowCropMicroseconds =>
+            KiwiNativeCamera_GetLatestNativeCpuShadowCropMicroseconds();
+
+        internal static ulong LatestNativeCpuShadowCropSequence =>
+            KiwiNativeCamera_GetLatestNativeCpuShadowCropSequence();
+
+        internal static bool TryArmDiagnosticCpuSnapshot()
+        {
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+            try
+            {
+                return
+                    KiwiNativeCamera_ArmDiagnosticCpuSnapshot() != 0;
+            }
+            catch (DllNotFoundException)
+            {
+                return false;
+            }
+            catch (EntryPointNotFoundException)
+            {
+                return false;
+            }
+#else
+            return false;
+#endif
+        }
+
+        internal static bool TryGetDiagnosticCpuSnapshotIdentity(
+            out ulong sequence,
+            out long hostTicks)
+        {
+            sequence = 0;
+            hostTicks = 0;
+
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+            try
+            {
+                return
+                    KiwiNativeCamera_GetDiagnosticCpuSnapshotIdentity(
+                        out sequence,
+                        out hostTicks) != 0 &&
+                    sequence > 0 &&
+                    hostTicks > 0;
+            }
+            catch (DllNotFoundException)
+            {
+                return false;
+            }
+            catch (EntryPointNotFoundException)
+            {
+                return false;
+            }
+#else
+            return false;
+#endif
+        }
+
+        internal static bool TryCopyDiagnosticCpuSnapshotCropNchwFloat(
+            long expectedHostTicks,
+            float[] samplingMatrix16,
+            int outputSize,
+            float[] destination,
+            out ulong sequence,
+            out long matchedHostTicks,
+            out ulong nativeCpuMicroseconds)
+        {
+            sequence = 0;
+            matchedHostTicks = 0;
+            nativeCpuMicroseconds = 0;
+
+            if (
+                expectedHostTicks <= 0 ||
+                samplingMatrix16 == null ||
+                samplingMatrix16.Length != 16 ||
+                outputSize <= 0 ||
+                destination == null ||
+                destination.Length <
+                    outputSize *
+                    outputSize *
+                    3)
+            {
+                return false;
+            }
+
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+            try
+            {
+                return
+                    KiwiNativeCamera_CopyDiagnosticCpuSnapshotCropNchwFloat(
+                        expectedHostTicks,
+                        samplingMatrix16,
+                        outputSize,
+                        destination,
+                        destination.Length,
+                        out sequence,
+                        out matchedHostTicks,
+                        out nativeCpuMicroseconds) != 0 &&
+                    matchedHostTicks ==
+                        expectedHostTicks;
+            }
+            catch (DllNotFoundException)
+            {
+                return false;
+            }
+            catch (EntryPointNotFoundException)
+            {
+                return false;
+            }
+#else
+            return false;
+#endif
+        }
+
+        internal static bool TryCopyDiagnosticCpuSnapshotCropNchwFloatQuantized(
+            long expectedHostTicks,
+            float[] samplingMatrix16,
+            int outputSize,
+            int quantizationMode,
+            float[] destination,
+            out ulong sequence,
+            out long matchedHostTicks,
+            out ulong nativeCpuMicroseconds)
+        {
+            sequence = 0;
+            matchedHostTicks = 0;
+            nativeCpuMicroseconds = 0;
+
+            if (
+                expectedHostTicks <= 0 ||
+                samplingMatrix16 == null ||
+                samplingMatrix16.Length != 16 ||
+                outputSize <= 0 ||
+                quantizationMode < 0 ||
+                quantizationMode > 2 ||
+                destination == null ||
+                destination.Length < outputSize * outputSize * 3)
+            {
+                return false;
+            }
+
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+            try
+            {
+                return
+                    KiwiNativeCamera_CopyDiagnosticCpuSnapshotCropNchwFloatQuantized(
+                        expectedHostTicks,
+                        samplingMatrix16,
+                        outputSize,
+                        quantizationMode,
+                        destination,
+                        destination.Length,
+                        out sequence,
+                        out matchedHostTicks,
+                        out nativeCpuMicroseconds) != 0 &&
+                    matchedHostTicks == expectedHostTicks;
+            }
+            catch (DllNotFoundException)
+            {
+                return false;
+            }
+            catch (EntryPointNotFoundException)
+            {
+                return false;
+            }
+#else
+            return false;
+#endif
+        }
+
+
+        internal static bool TryGetDiagnosticCpuIdentityBurstStatus(
+            out int validCandidateCount,
+            out bool complete)
+        {
+            validCandidateCount = 0;
+            complete = false;
+
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+            try
+            {
+                int completeValue = 0;
+
+                bool available =
+                    KiwiNativeCamera_GetDiagnosticCpuIdentityBurstStatus(
+                        out validCandidateCount,
+                        out completeValue) != 0;
+
+                complete =
+                    completeValue != 0;
+
+                return available;
+            }
+            catch (DllNotFoundException)
+            {
+                return false;
+            }
+            catch (EntryPointNotFoundException)
+            {
+                return false;
+            }
+#else
+            return false;
+#endif
+        }
+
+        internal static bool TryGetDiagnosticCpuIdentityCandidate(
+            int candidateIndex,
+            out ulong sequence,
+            out long hostTicks,
+            out int role)
+        {
+            sequence = 0;
+            hostTicks = 0;
+            role = 0;
+
+            if (
+                candidateIndex < 0 ||
+                candidateIndex >= 5)
+            {
+                return false;
+            }
+
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+            try
+            {
+                return
+                    KiwiNativeCamera_GetDiagnosticCpuIdentityCandidate(
+                        candidateIndex,
+                        out sequence,
+                        out hostTicks,
+                        out role) != 0 &&
+                    sequence > 0 &&
+                    hostTicks > 0;
+            }
+            catch (DllNotFoundException)
+            {
+                return false;
+            }
+            catch (EntryPointNotFoundException)
+            {
+                return false;
+            }
+#else
+            return false;
+#endif
+        }
+
+        internal static bool TryCopyDiagnosticCpuIdentityCandidateCropNchwFloatQuantized(
+            int candidateIndex,
+            float[] samplingMatrix16,
+            int outputSize,
+            int quantizationMode,
+            float[] destination,
+            out ulong sequence,
+            out long hostTicks,
+            out int role,
+            out ulong nativeCpuMicroseconds)
+        {
+            sequence = 0;
+            hostTicks = 0;
+            role = 0;
+            nativeCpuMicroseconds = 0;
+
+            if (
+                candidateIndex < 0 ||
+                candidateIndex >= 5 ||
+                samplingMatrix16 == null ||
+                samplingMatrix16.Length != 16 ||
+                outputSize <= 0 ||
+                quantizationMode < 0 ||
+                quantizationMode > 2 ||
+                destination == null ||
+                destination.Length <
+                    outputSize *
+                    outputSize *
+                    3)
+            {
+                return false;
+            }
+
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+            try
+            {
+                return
+                    KiwiNativeCamera_CopyDiagnosticCpuIdentityCandidateCropNchwFloatQuantized(
+                        candidateIndex,
+                        samplingMatrix16,
+                        outputSize,
+                        quantizationMode,
+                        destination,
+                        destination.Length,
+                        out sequence,
+                        out hostTicks,
+                        out role,
+                        out nativeCpuMicroseconds) != 0 &&
+                    sequence > 0 &&
+                    hostTicks > 0;
+            }
+            catch (DllNotFoundException)
+            {
+                return false;
+            }
+            catch (EntryPointNotFoundException)
+            {
+                return false;
+            }
+#else
+            return false;
+#endif
+        }
+
+
+        internal static bool TryCopyDiagnosticCpuIdentityCandidateCropNchwFloatSubtexel(
+            int candidateIndex,
+            float[] samplingMatrix16,
+            int outputSize,
+            int fractionalBits,
+            float[] destination,
+            out ulong sequence,
+            out long hostTicks,
+            out int role,
+            out ulong nativeCpuMicroseconds)
+        {
+            sequence = 0;
+            hostTicks = 0;
+            role = 0;
+            nativeCpuMicroseconds = 0;
+
+            bool validFractionBits =
+                fractionalBits == 0 ||
+                fractionalBits == 8 ||
+                fractionalBits == 9 ||
+                fractionalBits == 10 ||
+                fractionalBits == 12;
+
+            if (
+                candidateIndex < 0 ||
+                candidateIndex >= 5 ||
+                samplingMatrix16 == null ||
+                samplingMatrix16.Length != 16 ||
+                outputSize <= 0 ||
+                !validFractionBits ||
+                destination == null ||
+                destination.Length <
+                    outputSize *
+                    outputSize *
+                    3)
+            {
+                return false;
+            }
+
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+            try
+            {
+                return
+                    KiwiNativeCamera_CopyDiagnosticCpuIdentityCandidateCropNchwFloatSubtexel(
+                        candidateIndex,
+                        samplingMatrix16,
+                        outputSize,
+                        fractionalBits,
+                        destination,
+                        destination.Length,
+                        out sequence,
+                        out hostTicks,
+                        out role,
+                        out nativeCpuMicroseconds) != 0 &&
+                    sequence > 0 &&
+                    hostTicks > 0;
+            }
+            catch (DllNotFoundException)
+            {
+                return false;
+            }
+            catch (EntryPointNotFoundException)
+            {
+                return false;
+            }
+#else
+            return false;
+#endif
+        }
+
+
+        internal static bool TryCopyCpuCropNchwFloatByHostTicks(
+            long expectedHostTicks,
+            float[] samplingMatrix16,
+            int outputSize,
+            float[] destination,
+            out ulong sequence,
+            out long matchedHostTicks,
+            out ulong nativeCpuMicroseconds)
+        {
+            sequence = 0;
+            matchedHostTicks = 0;
+            nativeCpuMicroseconds = 0;
+
+            if (
+                expectedHostTicks <= 0 ||
+                samplingMatrix16 == null ||
+                samplingMatrix16.Length != 16 ||
+                outputSize <= 0 ||
+                destination == null ||
+                destination.Length <
+                    outputSize *
+                    outputSize *
+                    3)
+            {
+                return false;
+            }
+
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+            try
+            {
+                return
+                    KiwiNativeCamera_CopyCpuCropNchwFloatByHostTicks(
+                        expectedHostTicks,
+                        samplingMatrix16,
+                        outputSize,
+                        destination,
+                        destination.Length,
+                        out sequence,
+                        out matchedHostTicks,
+                        out nativeCpuMicroseconds) != 0 &&
+                    matchedHostTicks ==
+                        expectedHostTicks;
+            }
+            catch (DllNotFoundException)
+            {
+                return false;
+            }
+            catch (EntryPointNotFoundException)
+            {
+                return false;
+            }
+#else
+            return false;
+#endif
+        }
+
+        internal static bool TryCopyLatestCpuCropNchwFloat(
+            float[] samplingMatrix16,
+            int outputSize,
+            float[] destination,
+            out ulong sequence,
+            out long hostTicks,
+            out ulong nativeCpuMicroseconds)
+        {
+            sequence = 0;
+            hostTicks = 0;
+            nativeCpuMicroseconds = 0;
+
+            if (
+                samplingMatrix16 == null ||
+                samplingMatrix16.Length != 16 ||
+                destination == null ||
+                outputSize <= 0 ||
+                destination.Length <
+                    outputSize *
+                    outputSize *
+                    3)
+            {
+                return false;
+            }
+
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+            try
+            {
+                return
+                    KiwiNativeCamera_CopyLatestCpuCropNchwFloat(
+                        samplingMatrix16,
+                        outputSize,
+                        destination,
+                        destination.Length,
+                        out sequence,
+                        out hostTicks,
+                        out nativeCpuMicroseconds) != 0;
+            }
+            catch (DllNotFoundException)
+            {
+                return false;
+            }
+            catch (EntryPointNotFoundException)
+            {
+                return false;
+            }
+#else
+            return false;
+#endif
+        }
 
         internal static ulong ProcessingFailureFrameCount =>
             KiwiNativeCamera_GetProcessingFailureFrameCount();

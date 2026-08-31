@@ -1,0 +1,632 @@
+{
+  "schemaVersion": "1.0.0",
+  "caseId": "ZEROCOPY_METRICS",
+  "token": "20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-f1f90da299f14e5da25ab2e050f311c3",
+  "status": "FAIL",
+  "analyzedUtc": "2026-08-27T12:55:04.6398414Z",
+  "trim": {
+    "startSeconds": 2.0,
+    "endSeconds": 1.0
+  },
+  "sourceRowCounts": {
+    "frameComparison": 1137,
+    "frameComparisonTrimmed": 1024,
+    "gpu": 127
+  },
+  "metrics": {
+    "camera.nativeSourceHz": {
+      "unit": "Hz",
+      "sampleCount": 1,
+      "statistics": {
+        "value": 60.16142332325465
+      },
+      "source": {
+        "artifactSha256": "365018ccd9612eb4dfb0356b31427692cef9d69e0e95c09c2fc328f0bf2624f3",
+        "columns": [
+          "realtimeSeconds",
+          "nativeSourceCount"
+        ],
+        "calculation": "delta(nativeSourceCount)/delta(realtimeSeconds) after trim"
+      },
+      "status": "PASS"
+    },
+    "render.fps": {
+      "unit": "fps",
+      "sampleCount": 1024,
+      "statistics": {
+        "min": 30.9175053,
+        "p50": 37.7950172,
+        "p95": 40.86969395,
+        "max": 42.644928,
+        "mean": 37.65890025302728
+      },
+      "source": {
+        "artifactSha256": "365018ccd9612eb4dfb0356b31427692cef9d69e0e95c09c2fc328f0bf2624f3",
+        "columns": [
+          "renderFps"
+        ],
+        "calculation": "distribution after trim"
+      },
+      "status": "FAIL"
+    },
+    "sentis.requestToDoneMs": {
+      "unit": "ms",
+      "sampleCount": 1024,
+      "statistics": {
+        "min": 63.9394,
+        "p50": 77.19030000000001,
+        "p95": 90.71044999999998,
+        "max": 108.6146,
+        "mean": 78.10849697265621
+      },
+      "source": {
+        "artifactSha256": "365018ccd9612eb4dfb0356b31427692cef9d69e0e95c09c2fc328f0bf2624f3",
+        "columns": [
+          "inferenceRequestToDoneObservedMs"
+        ],
+        "calculation": "distribution after trim"
+      },
+      "status": "PASS"
+    },
+    "tracking.acceptedSourceAgeMs": {
+      "unit": "ms",
+      "sampleCount": 1024,
+      "statistics": {
+        "min": 83.44496,
+        "p50": 89.66881000000001,
+        "p95": 99.19636,
+        "max": 108.497894,
+        "mean": 91.21067478808583
+      },
+      "source": {
+        "artifactSha256": "365018ccd9612eb4dfb0356b31427692cef9d69e0e95c09c2fc328f0bf2624f3",
+        "columns": [
+          "inferenceAcceptedSourceAgeMs"
+        ],
+        "calculation": "distribution after trim"
+      },
+      "status": "PASS"
+    },
+    "tracking.canonicalHz": {
+      "unit": "Hz",
+      "sampleCount": 1,
+      "statistics": {
+        "value": 22.486443323408604
+      },
+      "source": {
+        "artifactSha256": "365018ccd9612eb4dfb0356b31427692cef9d69e0e95c09c2fc328f0bf2624f3",
+        "columns": [
+          "realtimeSeconds",
+          "canonicalAdoptionCount"
+        ],
+        "calculation": "delta(canonicalAdoptionCount)/delta(realtimeSeconds) after trim"
+      },
+      "status": "FAIL"
+    },
+    "native.dropCountDelta": {
+      "unit": "count",
+      "sampleCount": 1,
+      "statistics": {
+        "value": 0.0
+      },
+      "source": {
+        "artifactSha256": "365018ccd9612eb4dfb0356b31427692cef9d69e0e95c09c2fc328f0bf2624f3",
+        "columns": [
+          "nativeDroppedCount"
+        ],
+        "calculation": "last-first after trim"
+      },
+      "status": "PASS"
+    },
+    "native.gpuWaitCountDelta": {
+      "unit": "count",
+      "sampleCount": 1,
+      "statistics": {
+        "value": 0.0
+      },
+      "source": {
+        "artifactSha256": "365018ccd9612eb4dfb0356b31427692cef9d69e0e95c09c2fc328f0bf2624f3",
+        "columns": [
+          "nativeCaptureGpuWaitCount",
+          "nativeProcessingGpuWaitCount"
+        ],
+        "calculation": "sum of counter deltas after trim"
+      },
+      "status": "PASS"
+    },
+    "tracking.crossSystemDiscardDelta": {
+      "unit": "count",
+      "sampleCount": 1,
+      "statistics": {
+        "value": 0.0
+      },
+      "source": {
+        "artifactSha256": "365018ccd9612eb4dfb0356b31427692cef9d69e0e95c09c2fc328f0bf2624f3",
+        "columns": [
+          "inferenceDiscardedCrossSystemCount"
+        ],
+        "calculation": "last-first after trim"
+      },
+      "status": "PASS"
+    },
+    "runtime.epochViolationDelta": {
+      "unit": "count",
+      "sampleCount": 1,
+      "statistics": {
+        "value": 0.0
+      },
+      "source": {
+        "artifactSha256": "365018ccd9612eb4dfb0356b31427692cef9d69e0e95c09c2fc328f0bf2624f3",
+        "columns": [
+          "handoffAuthorityViolationCount",
+          "facePartPresentationEpochViolationCount"
+        ],
+        "calculation": "sum of counter deltas after trim"
+      },
+      "status": "PASS"
+    },
+    "runtime.errorCriticalCount": {
+      "unit": "count",
+      "sampleCount": 1,
+      "statistics": {
+        "value": 0.0
+      },
+      "source": {
+        "artifactSha256": "69ebab05afa0083c5a4d4b17c3a0a023c843b6e6257bb51a1601438a4498a42c",
+        "columns": [
+          "errors",
+          "criticals"
+        ],
+        "calculation": "errors+criticals"
+      },
+      "status": "PASS"
+    },
+    "gpu.utilizationPercent": {
+      "unit": "percent",
+      "sampleCount": 127,
+      "statistics": {
+        "min": 93.0,
+        "p50": 98.0,
+        "p95": 100.0,
+        "max": 100.0,
+        "mean": 97.2992125984252
+      },
+      "source": {
+        "artifactSha256": "7d51085c09858ec3c68b37a2520d552d531f36f16ab03cb865695e9f35473fee",
+        "columns": [
+          "utilization.gpu [%]",
+          "uuid"
+        ],
+        "calculation": "nvidia-smi distribution during recording"
+      },
+      "status": "PASS"
+    },
+    "ort.inferenceMs": {
+      "unit": "ms",
+      "sampleCount": 739,
+      "statistics": {
+        "min": 1.5814,
+        "p50": 23.5774,
+        "p95": 30.530820000000002,
+        "max": 55.8838,
+        "mean": 23.402812449255727
+      },
+      "source": {
+        "artifactSha256": "eda908753b10136adb57174da4e1ec8a970e41834160df74fef79f0a218b1658",
+        "columns": [
+          "ortInferenceMs"
+        ],
+        "calculation": "distribution after trim"
+      },
+      "status": "PASS"
+    },
+    "ort.bridgeToDoneMs": {
+      "unit": "ms",
+      "sampleCount": 739,
+      "statistics": {
+        "min": 12.9749,
+        "p50": 23.894,
+        "p95": 30.92262,
+        "max": 55.9199,
+        "mean": 24.357993775372098
+      },
+      "source": {
+        "artifactSha256": "eda908753b10136adb57174da4e1ec8a970e41834160df74fef79f0a218b1658",
+        "columns": [
+          "bridgeToDoneMs"
+        ],
+        "calculation": "distribution after trim"
+      },
+      "status": "PASS"
+    },
+    "ort.sourceToObservedMs": {
+      "unit": "ms",
+      "sampleCount": 739,
+      "statistics": {
+        "min": 19.7999,
+        "p50": 38.9715,
+        "p95": 67.04017,
+        "max": 89.6144,
+        "mean": 42.49660054127202
+      },
+      "source": {
+        "artifactSha256": "eda908753b10136adb57174da4e1ec8a970e41834160df74fef79f0a218b1658",
+        "columns": [
+          "sourceToOrtObservedMs"
+        ],
+        "calculation": "distribution after trim"
+      },
+      "status": "PASS"
+    },
+    "parity.landmarkMaeNormalized": {
+      "unit": "normalized",
+      "sampleCount": 739,
+      "statistics": {
+        "min": 4.710321E-08,
+        "p50": 7.807443E-08,
+        "p95": 9.647219676E-08,
+        "max": 1.16951519E-07,
+        "mean": 7.849705373761834E-08
+      },
+      "source": {
+        "artifactSha256": "eda908753b10136adb57174da4e1ec8a970e41834160df74fef79f0a218b1658",
+        "columns": [
+          "landmarkMaeNormalized"
+        ],
+        "calculation": "distribution after trim"
+      },
+      "status": "PASS"
+    },
+    "parity.landmarkMaxAbsRaw": {
+      "unit": "raw",
+      "sampleCount": 739,
+      "statistics": {
+        "min": 6.10351563E-05,
+        "p50": 0.000106811523,
+        "p95": 0.000152587891,
+        "max": 0.000213623047,
+        "mean": 0.00011305750934533223
+      },
+      "source": {
+        "artifactSha256": "eda908753b10136adb57174da4e1ec8a970e41834160df74fef79f0a218b1658",
+        "columns": [
+          "landmarkMaxAbsRaw"
+        ],
+        "calculation": "distribution after trim"
+      },
+      "status": "PASS"
+    },
+    "parity.presenceAbsDiff": {
+      "unit": "probability",
+      "sampleCount": 739,
+      "statistics": {
+        "min": 0.0,
+        "p50": 0.0,
+        "p95": 6.60121450000001E-07,
+        "max": 2.62260437E-06,
+        "mean": 1.1512306177028804E-07
+      },
+      "source": {
+        "artifactSha256": "eda908753b10136adb57174da4e1ec8a970e41834160df74fef79f0a218b1658",
+        "columns": [
+          "presenceAbsDiff"
+        ],
+        "calculation": "distribution after trim"
+      },
+      "status": "PASS"
+    },
+    "ort.effectiveHz": {
+      "unit": "Hz",
+      "sampleCount": 1,
+      "statistics": {
+        "value": 33.96875925509474
+      },
+      "source": {
+        "artifactSha256": "eda908753b10136adb57174da4e1ec8a970e41834160df74fef79f0a218b1658",
+        "columns": [
+          "realtimeSeconds",
+          "nativeCompleted"
+        ],
+        "calculation": "delta(nativeCompleted)/delta(realtimeSeconds) after trim"
+      },
+      "status": "FAIL"
+    },
+    "ort.failureCountDelta": {
+      "unit": "count",
+      "sampleCount": 1,
+      "statistics": {
+        "value": 0.0
+      },
+      "source": {
+        "artifactSha256": "eda908753b10136adb57174da4e1ec8a970e41834160df74fef79f0a218b1658",
+        "columns": [
+          "nativeFailures"
+        ],
+        "calculation": "last-first after trim"
+      },
+      "status": "PASS"
+    },
+    "ort.skippedCountDelta": {
+      "unit": "count",
+      "sampleCount": 1,
+      "statistics": {
+        "value": 0.0
+      },
+      "source": {
+        "artifactSha256": "eda908753b10136adb57174da4e1ec8a970e41834160df74fef79f0a218b1658",
+        "columns": [
+          "nativeSkipped"
+        ],
+        "calculation": "last-first after trim"
+      },
+      "status": "PASS"
+    },
+    "ort.readyReplacementDelta": {
+      "unit": "count",
+      "sampleCount": 1,
+      "statistics": {
+        "value": 0.0
+      },
+      "source": {
+        "artifactSha256": "eda908753b10136adb57174da4e1ec8a970e41834160df74fef79f0a218b1658",
+        "columns": [
+          "nativeReadyReplacements"
+        ],
+        "calculation": "last-first after trim"
+      },
+      "status": "PASS"
+    },
+    "ort.advantageObservedMs": {
+      "unit": "ms",
+      "sampleCount": 739,
+      "statistics": {
+        "min": 19.1034,
+        "p50": 51.6197,
+        "p95": 61.77509,
+        "max": 73.6296,
+        "mean": 47.96976887686063
+      },
+      "source": {
+        "artifactSha256": "eda908753b10136adb57174da4e1ec8a970e41834160df74fef79f0a218b1658",
+        "columns": [
+          "sentisArrivalHostTicks",
+          "ortObservedHostTicks"
+        ],
+        "calculation": "hostTicksDerived=(sentisArrivalHostTicks-ortObservedHostTicks)*1000/Stopwatch.Frequency; CSV ortMinusSentisObservedMs intentionally ignored"
+      },
+      "status": "PASS"
+    }
+  },
+  "evaluations": [
+    {
+      "id": "camera.native_source_hz.min",
+      "metric": "camera.nativeSourceHz",
+      "statistic": "value",
+      "operator": ">=",
+      "expected": 58.0,
+      "actual": 60.16142332325465,
+      "unit": "Hz",
+      "status": "PASS"
+    },
+    {
+      "id": "render.fps.p50.min",
+      "metric": "render.fps",
+      "statistic": "p50",
+      "operator": ">=",
+      "expected": 38.0,
+      "actual": 37.7950172,
+      "unit": "fps",
+      "status": "FAIL"
+    },
+    {
+      "id": "sentis.request_to_done.p50.max",
+      "metric": "sentis.requestToDoneMs",
+      "statistic": "p50",
+      "operator": "<=",
+      "expected": 80.0,
+      "actual": 77.19030000000001,
+      "unit": "ms",
+      "status": "PASS"
+    },
+    {
+      "id": "sentis.request_to_done.p95.max",
+      "metric": "sentis.requestToDoneMs",
+      "statistic": "p95",
+      "operator": "<=",
+      "expected": 105.0,
+      "actual": 90.71044999999998,
+      "unit": "ms",
+      "status": "PASS"
+    },
+    {
+      "id": "tracking.accepted_source_age.p50.max",
+      "metric": "tracking.acceptedSourceAgeMs",
+      "statistic": "p50",
+      "operator": "<=",
+      "expected": 95.0,
+      "actual": 89.66881000000001,
+      "unit": "ms",
+      "status": "PASS"
+    },
+    {
+      "id": "tracking.accepted_source_age.p95.max",
+      "metric": "tracking.acceptedSourceAgeMs",
+      "statistic": "p95",
+      "operator": "<=",
+      "expected": 125.0,
+      "actual": 99.19636,
+      "unit": "ms",
+      "status": "PASS"
+    },
+    {
+      "id": "tracking.canonical_hz.min",
+      "metric": "tracking.canonicalHz",
+      "statistic": "value",
+      "operator": ">=",
+      "expected": 30.0,
+      "actual": 22.486443323408604,
+      "unit": "Hz",
+      "status": "FAIL"
+    },
+    {
+      "id": "native.drop_count.zero",
+      "metric": "native.dropCountDelta",
+      "statistic": "value",
+      "operator": "==",
+      "expected": 0.0,
+      "actual": 0.0,
+      "unit": "count",
+      "status": "PASS"
+    },
+    {
+      "id": "native.gpu_wait.zero",
+      "metric": "native.gpuWaitCountDelta",
+      "statistic": "value",
+      "operator": "==",
+      "expected": 0.0,
+      "actual": 0.0,
+      "unit": "count",
+      "status": "PASS"
+    },
+    {
+      "id": "tracking.cross_system_discard.zero",
+      "metric": "tracking.crossSystemDiscardDelta",
+      "statistic": "value",
+      "operator": "==",
+      "expected": 0.0,
+      "actual": 0.0,
+      "unit": "count",
+      "status": "PASS"
+    },
+    {
+      "id": "runtime.epoch_violation.zero",
+      "metric": "runtime.epochViolationDelta",
+      "statistic": "value",
+      "operator": "==",
+      "expected": 0.0,
+      "actual": 0.0,
+      "unit": "count",
+      "status": "PASS"
+    },
+    {
+      "id": "runtime.error_critical.zero",
+      "metric": "runtime.errorCriticalCount",
+      "statistic": "value",
+      "operator": "==",
+      "expected": 0.0,
+      "actual": 0.0,
+      "unit": "count",
+      "status": "PASS"
+    },
+    {
+      "id": "ort.inference.p50.max",
+      "metric": "ort.inferenceMs",
+      "statistic": "p50",
+      "operator": "<=",
+      "expected": 30.0,
+      "actual": 23.5774,
+      "unit": "ms",
+      "status": "PASS"
+    },
+    {
+      "id": "ort.inference.p95.max",
+      "metric": "ort.inferenceMs",
+      "statistic": "p95",
+      "operator": "<=",
+      "expected": 35.0,
+      "actual": 30.530820000000002,
+      "unit": "ms",
+      "status": "PASS"
+    },
+    {
+      "id": "ort.effective_hz.min",
+      "metric": "ort.effectiveHz",
+      "statistic": "value",
+      "operator": ">=",
+      "expected": 35.0,
+      "actual": 33.96875925509474,
+      "unit": "Hz",
+      "status": "FAIL"
+    },
+    {
+      "id": "ort.failure_count.zero",
+      "metric": "ort.failureCountDelta",
+      "statistic": "value",
+      "operator": "==",
+      "expected": 0.0,
+      "actual": 0.0,
+      "unit": "count",
+      "status": "PASS"
+    },
+    {
+      "id": "ort.skipped_count.zero",
+      "metric": "ort.skippedCountDelta",
+      "statistic": "value",
+      "operator": "==",
+      "expected": 0.0,
+      "actual": 0.0,
+      "unit": "count",
+      "status": "PASS"
+    },
+    {
+      "id": "ort.ready_replacement.zero",
+      "metric": "ort.readyReplacementDelta",
+      "statistic": "value",
+      "operator": "==",
+      "expected": 0.0,
+      "actual": 0.0,
+      "unit": "count",
+      "status": "PASS"
+    },
+    {
+      "id": "parity.landmark_normalized_mae.p95.max",
+      "metric": "parity.landmarkMaeNormalized",
+      "statistic": "p95",
+      "operator": "<=",
+      "expected": 1E-06,
+      "actual": 9.647219676E-08,
+      "unit": "normalized",
+      "status": "PASS"
+    },
+    {
+      "id": "parity.landmark_raw_max.p95.max",
+      "metric": "parity.landmarkMaxAbsRaw",
+      "statistic": "p95",
+      "operator": "<=",
+      "expected": 0.0005,
+      "actual": 0.000152587891,
+      "unit": "raw",
+      "status": "PASS"
+    },
+    {
+      "id": "parity.presence_abs_diff.p95.max",
+      "metric": "parity.presenceAbsDiff",
+      "statistic": "p95",
+      "operator": "<=",
+      "expected": 1E-05,
+      "actual": 6.60121450000001E-07,
+      "unit": "probability",
+      "status": "PASS"
+    },
+    {
+      "id": "gpu.utilization.p50.max",
+      "metric": "gpu.utilizationPercent",
+      "statistic": "p50",
+      "operator": "<=",
+      "expected": 99.5,
+      "actual": 98.0,
+      "unit": "percent",
+      "status": "PASS"
+    },
+    {
+      "id": "gpu.utilization.p95.max",
+      "metric": "gpu.utilizationPercent",
+      "statistic": "p95",
+      "operator": "<=",
+      "expected": 100.0,
+      "actual": 100.0,
+      "unit": "percent",
+      "status": "PASS"
+    }
+  ]
+}

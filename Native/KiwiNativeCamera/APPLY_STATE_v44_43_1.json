@@ -1,0 +1,14 @@
+﻿{
+    "Contract":  "KIWI_V5_1_PHASE16_20_66_V44_43_1_PRODUCTION_MODE9_INSTALLER_COPY_FIX",
+    "Applied":  "2026-08-30T10:42:08.8530312+09:00",
+    "ProductionSource":  "D:\\KiwiAvatarSystem\\Native\\KiwiNativeCamera\\Source\\KiwiNativeCameraPlugin.cpp",
+    "ProductionSourceSHA256":  "8C28F7A9E22DF9DA66455C37777069E5922037DB62AD7897DBDFEC8931975E03",
+    "ProductionDll":  "D:\\KiwiAvatarSystem\\Assets\\Plugins\\x86_64\\KiwiNativeCamera.dll",
+    "ProductionDllSHA256":  "8091265D91993B0082BFC63D55FFF8A18CC18AACA9B1F907E874E7011D8017E2",
+    "FrozenRollbackDll":  "D:\\KiwiAvatarSystem\\KiwiBackups\\v44_43_20260830_102547\\KiwiNativeCamera_FROZEN_ORIGINAL.dll",
+    "FrozenRollbackDllSHA256":  "DB590279E63D50246BBB9F2A25E51D5C6EB36FB2F6F6C423447459628E8C2177",
+    "BuildSnapshot":  "D:\\KiwiAvatarSystem\\Builds\\v44_43_PRODUCTION_METADATA_COLOR",
+    "DiagnosticModes1To8":  "E_NOTIMPL; known limitation",
+    "ProductionMode":  9,
+    "Result":  "V44_43_1_APPLY_PASS"
+}

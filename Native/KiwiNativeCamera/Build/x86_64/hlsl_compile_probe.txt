@@ -1,0 +1,4 @@
+HRESULT=0x00000000
+SourceBytes=912
+BytecodeBytes=1404
+CompilerMessages=

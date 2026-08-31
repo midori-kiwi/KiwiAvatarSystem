@@ -1,0 +1,1577 @@
+Mono path[0] = 'D:/KiwiAvatarSystem/ValidationRuns/20260827_213738_v42_3_FULLVALIDATION_720P/Build/KiwiAvatarSystem_v42_3_DX12_AUTOMATED_VALIDATION_Data/Managed'
+Mono config path = 'D:/KiwiAvatarSystem/ValidationRuns/20260827_213738_v42_3_FULLVALIDATION_720P/Build/MonoBleedingEdge/etc'
+Found 1 interfaces on host : 0) 192.168.0.2
+Player connection [26964]  Target information:
+
+Player connection [26964]  * "[IP] 192.168.0.2 [Port] 55000 [Flags] 2 [Guid] 4026796992 [EditorId] 3636429607 [Version] 1048832 [Id] WindowsPlayer(2,DESKTOP-THHVR4N) [Debug] 0 [PackageName] WindowsPlayer [ProjectName] KiwiAvatarSystem" 
+
+Player connection [26964] Started UDP target info broadcast (1) on [225.0.0.222:54997].
+
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+Initialize engine version: 6000.0.80f1 (2dfd32957da2)
+[Subsystems] Discovering subsystems at path D:/KiwiAvatarSystem/ValidationRuns/20260827_213738_v42_3_FULLVALIDATION_720P/Build/KiwiAvatarSystem_v42_3_DX12_AUTOMATED_VALIDATION_Data/UnitySubsystems
+Forcing GfxDevice: Direct3D 12
+GfxDevice: creating device client; kGfxThreadingModeSplitJobs
+d3d12: failed to query info queue interface (0x80004002).
+Direct3D:
+    Version:         Direct3D 12 [level 12.1]
+    Renderer:        NVIDIA GeForce RTX 4090 (ID=0x2684)
+    Vendor:          NVIDIA
+    VRAM:            24138 MB
+    App VRAM Budget: 23370 MB
+    Driver:          32.0.16.1088
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+- Loaded All Assemblies, in  0.149 seconds
+- Finished resetting the current domain, in  0.002 seconds
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+<b>[App UI]</b> Unable to find an AppUISettings instance, creating a default one...
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:LogWarning (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:213)
+Unity.AppUI.Core.AppUI:InitializeInPlayer () (at ./Library/PackageCache/com.unity.dt.app-ui@3bbd9e4c5c92/Runtime/Core/AppUI.cs:282)
+Unity.AppUI.Core.AppUI:.cctor () (at ./Library/PackageCache/com.unity.dt.app-ui@3bbd9e4c5c92/Runtime/Core/AppUI.cs:68)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 213)
+
+<RI> Initializing input.
+<RI> Input initialized.
+d3d12: upload buffer was too small for the requested resource! Size: 16777216. Requested: 20344040.
+UnloadTime: 0.950100 ms
+[KiwiFramePacing] KIWI_V5_1_PHASE16_20_9_V21_FRAME_PACING_ISOLATION mode=BASELINE vSyncCount=1 targetFrameRate=-1 renderFrameInterval=1 effectiveRenderFrameRate=144
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+KiwiFramePacingDiagnosticController:LogStateOnce () (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Validation/KiwiFramePacingDiagnosticController.cs:176)
+KiwiFramePacingDiagnosticController:Awake () (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Validation/KiwiFramePacingDiagnosticController.cs:85)
+UnityEngine.GameObject:Internal_AddComponentWithType (System.Type)
+UnityEngine.GameObject:AddComponent (System.Type) (at C:/build/output/unity/unity/Runtime/Export/Scripting/GameObject.bindings.cs:246)
+UnityEngine.GameObject:AddComponent<KiwiFramePacingDiagnosticController> () (at C:/build/output/unity/unity/Runtime/Export/Scripting/GameObject.bindings.cs:251)
+KiwiFramePacingDiagnosticController:AutoInstall () (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Validation/KiwiFramePacingDiagnosticController.cs:76)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[0;93m2026-08-27 21:42:32.5005550 [W:onnxruntime:, graph.cc:4454 onnxruntime::Graph::CleanUnusedInitializersAndNodeArgs] Removing initializer 'channel_padding_1/Paddings'. It is not used by any node and should be removed from the model.[m
+[0;93m2026-08-27 21:42:32.5011159 [W:onnxruntime:, graph.cc:4454 onnxruntime::Graph::CleanUnusedInitializersAndNodeArgs] Removing initializer 'channel_padding/Paddings'. It is not used by any node and should be removed from the model.[m
+[0;93m2026-08-27 21:42:32.5016036 [W:onnxruntime:, graph.cc:4454 onnxruntime::Graph::CleanUnusedInitializersAndNodeArgs] Removing initializer 'channel_padding_2/Paddings'. It is not used by any node and should be removed from the model.[m
+[KiwiInferenceV42.3] contract=KIWI_V5_1_PHASE16_20_32_V42_3_ORT_DML_NATIVE_LIFECYCLE_ROOTFIX enabled=1 backend=ORT_DIRECTML_NATIVE_D3D12 input=192x192 gpuInputReadback=0 authority=UNITY_INFERENCE_ENGINE slots=3 latestOnly=1 bridgeReadyAttempts=1 graphicsApi=Direct3D12
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+KiwiOrtDmlZeroCopyRuntime:InitializeReadyBridge () (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiOrtDmlZeroCopyRuntime.cs:450)
+KiwiOrtDmlZeroCopyRuntime/<InitializeWhenBridgeReady>d__70:MoveNext () (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiOrtDmlZeroCopyRuntime.cs:308)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+UnityEngine.MonoBehaviour:StartCoroutineManaged2 (System.Collections.IEnumerator)
+UnityEngine.MonoBehaviour:StartCoroutine (System.Collections.IEnumerator) (at C:/build/output/unity/unity/Runtime/Export/Scripting/MonoBehaviour.bindings.cs:114)
+KiwiOrtDmlZeroCopyRuntime:Awake () (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiOrtDmlZeroCopyRuntime.cs:287)
+UnityEngine.GameObject:Internal_AddComponentWithType (System.Type)
+UnityEngine.GameObject:AddComponent (System.Type) (at C:/build/output/unity/unity/Runtime/Export/Scripting/GameObject.bindings.cs:246)
+UnityEngine.GameObject:AddComponent<KiwiOrtDmlZeroCopyRuntime> () (at C:/build/output/unity/unity/Runtime/Export/Scripting/GameObject.bindings.cs:251)
+KiwiOrtDmlZeroCopyRuntime:AutoInstall () (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiOrtDmlZeroCopyRuntime.cs:228)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+Source mesh has over 2,097,152 triangles in it, and is using the Fast Midphase option. This might cause certain collisions to not be detected correctly due to an issue in the physics engine. If you observe that in your project, a workaround could be to turn off the Fast Midphase option for this particular mesh. Source mesh name: __KiwiSurfaceBakedMesh
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.MeshCollider:set_sharedMesh (UnityEngine.Mesh)
+KiwiSurfaceFitter:FitAllNow () (at D:/KiwiAvatarSystem/Assets/Script/KiwiSurfaceFitter.cs:271)
+KiwiAvatarRuntimeManager:ApplySurfaceFit (UnityEngine.Transform,UnityEngine.Transform,string) (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/KiwiAvatarRuntimeManager.cs:801)
+KiwiAvatarRuntimeManager:SwitchToFallbackInternal (bool) (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/KiwiAvatarRuntimeManager.cs:511)
+KiwiAvatarRuntimeManager:Start () (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/KiwiAvatarRuntimeManager.cs:118)
+
+[D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/KiwiAvatarRuntimeManager.cs line 511]
+
+[KiwiSurfaceFitter] LeftEye3D  183 / 189  (96.8%)
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+KiwiSurfaceFitter:FitPart (SurfaceFittedRawImage,single,single) (at D:/KiwiAvatarSystem/Assets/Script/KiwiSurfaceFitter.cs:911)
+KiwiSurfaceFitter:FitAllNow () (at D:/KiwiAvatarSystem/Assets/Script/KiwiSurfaceFitter.cs:339)
+KiwiAvatarRuntimeManager:ApplySurfaceFit (UnityEngine.Transform,UnityEngine.Transform,string) (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/KiwiAvatarRuntimeManager.cs:801)
+KiwiAvatarRuntimeManager:SwitchToFallbackInternal (bool) (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/KiwiAvatarRuntimeManager.cs:511)
+KiwiAvatarRuntimeManager:Start () (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/KiwiAvatarRuntimeManager.cs:118)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[KiwiSurfaceFitter] RightEye3D  181 / 189  (95.8%)
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+KiwiSurfaceFitter:FitPart (SurfaceFittedRawImage,single,single) (at D:/KiwiAvatarSystem/Assets/Script/KiwiSurfaceFitter.cs:911)
+KiwiSurfaceFitter:FitAllNow () (at D:/KiwiAvatarSystem/Assets/Script/KiwiSurfaceFitter.cs:339)
+KiwiAvatarRuntimeManager:ApplySurfaceFit (UnityEngine.Transform,UnityEngine.Transform,string) (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/KiwiAvatarRuntimeManager.cs:801)
+KiwiAvatarRuntimeManager:SwitchToFallbackInternal (bool) (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/KiwiAvatarRuntimeManager.cs:511)
+KiwiAvatarRuntimeManager:Start () (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/KiwiAvatarRuntimeManager.cs:118)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[KiwiSurfaceFitter] Mouth3D  275 / 275  (100.0%)
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+KiwiSurfaceFitter:FitPart (SurfaceFittedRawImage,single,single) (at D:/KiwiAvatarSystem/Assets/Script/KiwiSurfaceFitter.cs:911)
+KiwiSurfaceFitter:FitAllNow () (at D:/KiwiAvatarSystem/Assets/Script/KiwiSurfaceFitter.cs:339)
+KiwiAvatarRuntimeManager:ApplySurfaceFit (UnityEngine.Transform,UnityEngine.Transform,string) (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/KiwiAvatarRuntimeManager.cs:801)
+KiwiAvatarRuntimeManager:SwitchToFallbackInternal (bool) (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/KiwiAvatarRuntimeManager.cs:511)
+KiwiAvatarRuntimeManager:Start () (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/KiwiAvatarRuntimeManager.cs:118)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[KiwiSurfaceFitter] Surface Fit 完了  639 / 653 vertices  (97.9%)
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+KiwiSurfaceFitter:FitAllNow () (at D:/KiwiAvatarSystem/Assets/Script/KiwiSurfaceFitter.cs:381)
+KiwiAvatarRuntimeManager:ApplySurfaceFit (UnityEngine.Transform,UnityEngine.Transform,string) (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/KiwiAvatarRuntimeManager.cs:801)
+KiwiAvatarRuntimeManager:SwitchToFallbackInternal (bool) (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/KiwiAvatarRuntimeManager.cs:511)
+KiwiAvatarRuntimeManager:Start () (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/KiwiAvatarRuntimeManager.cs:118)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+Initializing the Bootstrap GameObject
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Mediapipe.Unity.Sample.BaseRunner:FindBootstrap () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/TaskApiRunner.cs:82)
+Mediapipe.Unity.Sample.BaseRunner/<Start>d__7:MoveNext () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/TaskApiRunner.cs:33)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+The configuration for the sample app can be modified using AppSettings.asset.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Mediapipe.Unity.Sample.Bootstrap/<Init>d__11:MoveNext () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/Bootstrap.cs:27)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+UnityEngine.MonoBehaviour:StartCoroutineManaged2 (System.Collections.IEnumerator)
+UnityEngine.MonoBehaviour:StartCoroutine (System.Collections.IEnumerator) (at C:/build/output/unity/unity/Runtime/Export/Scripting/MonoBehaviour.bindings.cs:114)
+Mediapipe.Unity.Sample.Bootstrap:OnEnable () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/Bootstrap.cs:22)
+UnityEngine.Object:Internal_CloneSingle (UnityEngine.Object)
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject) (at C:/build/output/unity/unity/Runtime/Export/Scripting/UnityEngineObject.bindings.cs:450)
+Mediapipe.Unity.Sample.BaseRunner:FindBootstrap () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/TaskApiRunner.cs:83)
+Mediapipe.Unity.Sample.BaseRunner/<Start>d__7:MoveNext () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/TaskApiRunner.cs:33)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+Setting global flags...
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Mediapipe.Unity.Sample.Bootstrap/<Init>d__11:MoveNext () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/Bootstrap.cs:36)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+UnityEngine.MonoBehaviour:StartCoroutineManaged2 (System.Collections.IEnumerator)
+UnityEngine.MonoBehaviour:StartCoroutine (System.Collections.IEnumerator) (at C:/build/output/unity/unity/Runtime/Export/Scripting/MonoBehaviour.bindings.cs:114)
+Mediapipe.Unity.Sample.Bootstrap:OnEnable () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/Bootstrap.cs:22)
+UnityEngine.Object:Internal_CloneSingle (UnityEngine.Object)
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject) (at C:/build/output/unity/unity/Runtime/Export/Scripting/UnityEngineObject.bindings.cs:450)
+Mediapipe.Unity.Sample.BaseRunner:FindBootstrap () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/TaskApiRunner.cs:83)
+Mediapipe.Unity.Sample.BaseRunner/<Start>d__7:MoveNext () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/TaskApiRunner.cs:33)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+Initializing AssetLoader...
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Mediapipe.Unity.Sample.Bootstrap/<Init>d__11:MoveNext () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/Bootstrap.cs:41)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+UnityEngine.MonoBehaviour:StartCoroutineManaged2 (System.Collections.IEnumerator)
+UnityEngine.MonoBehaviour:StartCoroutine (System.Collections.IEnumerator) (at C:/build/output/unity/unity/Runtime/Export/Scripting/MonoBehaviour.bindings.cs:114)
+Mediapipe.Unity.Sample.Bootstrap:OnEnable () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/Bootstrap.cs:22)
+UnityEngine.Object:Internal_CloneSingle (UnityEngine.Object)
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject) (at C:/build/output/unity/unity/Runtime/Export/Scripting/UnityEngineObject.bindings.cs:450)
+Mediapipe.Unity.Sample.BaseRunner:FindBootstrap () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/TaskApiRunner.cs:83)
+Mediapipe.Unity.Sample.BaseRunner/<Start>d__7:MoveNext () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/TaskApiRunner.cs:33)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+Preparing ImageSource...
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Mediapipe.Unity.Sample.Bootstrap/<Init>d__11:MoveNext () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/Bootstrap.cs:84)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+UnityEngine.MonoBehaviour:StartCoroutineManaged2 (System.Collections.IEnumerator)
+UnityEngine.MonoBehaviour:StartCoroutine (System.Collections.IEnumerator) (at C:/build/output/unity/unity/Runtime/Export/Scripting/MonoBehaviour.bindings.cs:114)
+Mediapipe.Unity.Sample.Bootstrap:OnEnable () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/Bootstrap.cs:22)
+UnityEngine.Object:Internal_CloneSingle (UnityEngine.Object)
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject) (at C:/build/output/unity/unity/Runtime/Export/Scripting/UnityEngineObject.bindings.cs:450)
+Mediapipe.Unity.Sample.BaseRunner:FindBootstrap () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/TaskApiRunner.cs:83)
+Mediapipe.Unity.Sample.BaseRunner/<Start>d__7:MoveNext () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/TaskApiRunner.cs:33)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[KiwiValidation] BOOT contract=KIWI_V5_1_PHASE16_20_32_V42_3_AUTOMATED_VALIDATION_V1 runId=20260827_214108_v42_3_FULLVALIDATION_720P caseId=ZEROCOPY_VISUAL token=20260827_214108_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-21c7570ae95c4b90b4257f6a7c014d86 mode=ZEROCOPY purpose=VISUAL
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+KiwiAutomatedValidationController/<Start>d__35:MoveNext () (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Validation/KiwiAutomatedValidationController.cs:170)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[KiwiPreviewCostABC] mode=DIRECT targetWidth=768 observerOnly=1
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+KiwiCameraPreviewQualityService:LogModeOnce () (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Validation/KiwiCameraPreviewQualityService.cs:249)
+KiwiCameraPreviewQualityService:PrepareFrame (UnityEngine.Texture,UnityEngine.Texture) (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Validation/KiwiCameraPreviewQualityService.cs:126)
+KiwiFrameComparisonOverlay:LateUpdate () (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Validation/KiwiFrameComparisonOverlay.cs:254)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+Delegate = CPU
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.FaceLandmarkerRunner/<Run>d__160:MoveNext () (at D:/KiwiAvatarSystem/Assets/Script/FaceLandmarkerRunner.cs:1434)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+UnityEngine.MonoBehaviour:StartCoroutineManaged2 (System.Collections.IEnumerator)
+UnityEngine.MonoBehaviour:StartCoroutine (System.Collections.IEnumerator) (at C:/build/output/unity/unity/Runtime/Export/Scripting/MonoBehaviour.bindings.cs:114)
+Mediapipe.Unity.Sample.VisionTaskApiRunner`1<Mediapipe.Tasks.Vision.FaceLandmarker.FaceLandmarker>:Play () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/VisionTaskApiRunner.cs:28)
+Mediapipe.Unity.Sample.BaseRunner/<Start>d__7:MoveNext () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/TaskApiRunner.cs:36)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+Image Read Mode = CPU
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.FaceLandmarkerRunner/<Run>d__160:MoveNext () (at D:/KiwiAvatarSystem/Assets/Script/FaceLandmarkerRunner.cs:1438)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+UnityEngine.MonoBehaviour:StartCoroutineManaged2 (System.Collections.IEnumerator)
+UnityEngine.MonoBehaviour:StartCoroutine (System.Collections.IEnumerator) (at C:/build/output/unity/unity/Runtime/Export/Scripting/MonoBehaviour.bindings.cs:114)
+Mediapipe.Unity.Sample.VisionTaskApiRunner`1<Mediapipe.Tasks.Vision.FaceLandmarker.FaceLandmarker>:Play () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/VisionTaskApiRunner.cs:28)
+Mediapipe.Unity.Sample.BaseRunner/<Start>d__7:MoveNext () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/TaskApiRunner.cs:36)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+Running Mode = LIVE_STREAM
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.FaceLandmarkerRunner/<Run>d__160:MoveNext () (at D:/KiwiAvatarSystem/Assets/Script/FaceLandmarkerRunner.cs:1442)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+UnityEngine.MonoBehaviour:StartCoroutineManaged2 (System.Collections.IEnumerator)
+UnityEngine.MonoBehaviour:StartCoroutine (System.Collections.IEnumerator) (at C:/build/output/unity/unity/Runtime/Export/Scripting/MonoBehaviour.bindings.cs:114)
+Mediapipe.Unity.Sample.VisionTaskApiRunner`1<Mediapipe.Tasks.Vision.FaceLandmarker.FaceLandmarker>:Play () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/VisionTaskApiRunner.cs:28)
+Mediapipe.Unity.Sample.BaseRunner/<Start>d__7:MoveNext () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/TaskApiRunner.cs:36)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+NumFaces = 1
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.FaceLandmarkerRunner/<Run>d__160:MoveNext () (at D:/KiwiAvatarSystem/Assets/Script/FaceLandmarkerRunner.cs:1446)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+UnityEngine.MonoBehaviour:StartCoroutineManaged2 (System.Collections.IEnumerator)
+UnityEngine.MonoBehaviour:StartCoroutine (System.Collections.IEnumerator) (at C:/build/output/unity/unity/Runtime/Export/Scripting/MonoBehaviour.bindings.cs:114)
+Mediapipe.Unity.Sample.VisionTaskApiRunner`1<Mediapipe.Tasks.Vision.FaceLandmarker.FaceLandmarker>:Play () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/VisionTaskApiRunner.cs:28)
+Mediapipe.Unity.Sample.BaseRunner/<Start>d__7:MoveNext () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/TaskApiRunner.cs:36)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+MinFaceDetectionConfidence = 0.5
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.FaceLandmarkerRunner/<Run>d__160:MoveNext () (at D:/KiwiAvatarSystem/Assets/Script/FaceLandmarkerRunner.cs:1450)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+UnityEngine.MonoBehaviour:StartCoroutineManaged2 (System.Collections.IEnumerator)
+UnityEngine.MonoBehaviour:StartCoroutine (System.Collections.IEnumerator) (at C:/build/output/unity/unity/Runtime/Export/Scripting/MonoBehaviour.bindings.cs:114)
+Mediapipe.Unity.Sample.VisionTaskApiRunner`1<Mediapipe.Tasks.Vision.FaceLandmarker.FaceLandmarker>:Play () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/VisionTaskApiRunner.cs:28)
+Mediapipe.Unity.Sample.BaseRunner/<Start>d__7:MoveNext () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/TaskApiRunner.cs:36)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+MinFacePresenceConfidence = 0.5
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.FaceLandmarkerRunner/<Run>d__160:MoveNext () (at D:/KiwiAvatarSystem/Assets/Script/FaceLandmarkerRunner.cs:1454)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+UnityEngine.MonoBehaviour:StartCoroutineManaged2 (System.Collections.IEnumerator)
+UnityEngine.MonoBehaviour:StartCoroutine (System.Collections.IEnumerator) (at C:/build/output/unity/unity/Runtime/Export/Scripting/MonoBehaviour.bindings.cs:114)
+Mediapipe.Unity.Sample.VisionTaskApiRunner`1<Mediapipe.Tasks.Vision.FaceLandmarker.FaceLandmarker>:Play () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/VisionTaskApiRunner.cs:28)
+Mediapipe.Unity.Sample.BaseRunner/<Start>d__7:MoveNext () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/TaskApiRunner.cs:36)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+MinTrackingConfidence = 0.5
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.FaceLandmarkerRunner/<Run>d__160:MoveNext () (at D:/KiwiAvatarSystem/Assets/Script/FaceLandmarkerRunner.cs:1458)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+UnityEngine.MonoBehaviour:StartCoroutineManaged2 (System.Collections.IEnumerator)
+UnityEngine.MonoBehaviour:StartCoroutine (System.Collections.IEnumerator) (at C:/build/output/unity/unity/Runtime/Export/Scripting/MonoBehaviour.bindings.cs:114)
+Mediapipe.Unity.Sample.VisionTaskApiRunner`1<Mediapipe.Tasks.Vision.FaceLandmarker.FaceLandmarker>:Play () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/VisionTaskApiRunner.cs:28)
+Mediapipe.Unity.Sample.BaseRunner/<Start>d__7:MoveNext () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/TaskApiRunner.cs:36)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+OutputFaceBlendshapes = True
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.FaceLandmarkerRunner/<Run>d__160:MoveNext () (at D:/KiwiAvatarSystem/Assets/Script/FaceLandmarkerRunner.cs:1462)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+UnityEngine.MonoBehaviour:StartCoroutineManaged2 (System.Collections.IEnumerator)
+UnityEngine.MonoBehaviour:StartCoroutine (System.Collections.IEnumerator) (at C:/build/output/unity/unity/Runtime/Export/Scripting/MonoBehaviour.bindings.cs:114)
+Mediapipe.Unity.Sample.VisionTaskApiRunner`1<Mediapipe.Tasks.Vision.FaceLandmarker.FaceLandmarker>:Play () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/VisionTaskApiRunner.cs:28)
+Mediapipe.Unity.Sample.BaseRunner/<Start>d__7:MoveNext () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/TaskApiRunner.cs:36)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+OutputFacialTransformationMatrixes = True
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.FaceLandmarkerRunner/<Run>d__160:MoveNext () (at D:/KiwiAvatarSystem/Assets/Script/FaceLandmarkerRunner.cs:1466)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+UnityEngine.MonoBehaviour:StartCoroutineManaged2 (System.Collections.IEnumerator)
+UnityEngine.MonoBehaviour:StartCoroutine (System.Collections.IEnumerator) (at C:/build/output/unity/unity/Runtime/Export/Scripting/MonoBehaviour.bindings.cs:114)
+Mediapipe.Unity.Sample.VisionTaskApiRunner`1<Mediapipe.Tasks.Vision.FaceLandmarker.FaceLandmarker>:Play () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/VisionTaskApiRunner.cs:28)
+Mediapipe.Unity.Sample.BaseRunner/<Start>d__7:MoveNext () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/TaskApiRunner.cs:36)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+StreamingAssetsResourceManager: face_landmarker_v2_with_blendshapes.bytes will not be copied to D:/KiwiAvatarSystem/ValidationRuns/20260827_213738_v42_3_FULLVALIDATION_720P/Build/KiwiAvatarSystem_v42_3_DX12_AUTOMATED_VALIDATION_Data/StreamingAssets\face_landmarker_v2_with_blendshapes.bytes because it already exists
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,string,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:72)
+Mediapipe.Logger/LoggerWrapper:Log (Mediapipe.Logger/LogLevel,string,object) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Logger.cs:262)
+Mediapipe.Logger:Log (Mediapipe.Logger/LogLevel,string,object) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Logger.cs:138)
+Mediapipe.Logger:LogInfo (string,object) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Logger.cs:181)
+Mediapipe.Unity.StreamingAssetsResourceManager/<Mediapipe-Unity-IResourceManager-PrepareAssetAsync>d__6:MoveNext () (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Unity/ResourceManager/StreamingAssetsResourceManager.cs:39)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+UnityEngine.MonoBehaviour:StartCoroutineManaged2 (System.Collections.IEnumerator)
+UnityEngine.MonoBehaviour:StartCoroutine (System.Collections.IEnumerator) (at C:/build/output/unity/unity/Runtime/Export/Scripting/MonoBehaviour.bindings.cs:114)
+Mediapipe.Unity.Sample.VisionTaskApiRunner`1<Mediapipe.Tasks.Vision.FaceLandmarker.FaceLandmarker>:Play () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/VisionTaskApiRunner.cs:28)
+Mediapipe.Unity.Sample.BaseRunner/<Start>d__7:MoveNext () (at D:/KiwiAvatarSystem/Assets/MediaPipeUnity/Samples/Common/Scripts/TaskApiRunner.cs:36)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Unity/ResourceManager/StreamingAssetsResourceManager.cs Line: 39)
+
+Source mesh has over 2,097,152 triangles in it, and is using the Fast Midphase option. This might cause certain collisions to not be detected correctly due to an issue in the physics engine. If you observe that in your project, a workaround could be to turn off the Fast Midphase option for this particular mesh. Source mesh name: __KiwiSurfaceBakedMesh
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.MeshCollider:set_sharedMesh (UnityEngine.Mesh)
+KiwiSurfaceFitter:FitAllNow () (at D:/KiwiAvatarSystem/Assets/Script/KiwiSurfaceFitter.cs:271)
+KiwiSurfaceFitter/<Start>d__28:MoveNext () (at D:/KiwiAvatarSystem/Assets/Script/KiwiSurfaceFitter.cs:135)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs line 35]
+
+[KiwiSurfaceFitter] LeftEye3D  183 / 189  (96.8%)
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+KiwiSurfaceFitter:FitPart (SurfaceFittedRawImage,single,single) (at D:/KiwiAvatarSystem/Assets/Script/KiwiSurfaceFitter.cs:911)
+KiwiSurfaceFitter:FitAllNow () (at D:/KiwiAvatarSystem/Assets/Script/KiwiSurfaceFitter.cs:339)
+KiwiSurfaceFitter/<Start>d__28:MoveNext () (at D:/KiwiAvatarSystem/Assets/Script/KiwiSurfaceFitter.cs:135)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[KiwiSurfaceFitter] RightEye3D  181 / 189  (95.8%)
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+KiwiSurfaceFitter:FitPart (SurfaceFittedRawImage,single,single) (at D:/KiwiAvatarSystem/Assets/Script/KiwiSurfaceFitter.cs:911)
+KiwiSurfaceFitter:FitAllNow () (at D:/KiwiAvatarSystem/Assets/Script/KiwiSurfaceFitter.cs:339)
+KiwiSurfaceFitter/<Start>d__28:MoveNext () (at D:/KiwiAvatarSystem/Assets/Script/KiwiSurfaceFitter.cs:135)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[KiwiSurfaceFitter] Mouth3D  275 / 275  (100.0%)
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+KiwiSurfaceFitter:FitPart (SurfaceFittedRawImage,single,single) (at D:/KiwiAvatarSystem/Assets/Script/KiwiSurfaceFitter.cs:911)
+KiwiSurfaceFitter:FitAllNow () (at D:/KiwiAvatarSystem/Assets/Script/KiwiSurfaceFitter.cs:339)
+KiwiSurfaceFitter/<Start>d__28:MoveNext () (at D:/KiwiAvatarSystem/Assets/Script/KiwiSurfaceFitter.cs:135)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[KiwiSurfaceFitter] Surface Fit 完了  639 / 653 vertices  (97.9%)
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+KiwiSurfaceFitter:FitAllNow () (at D:/KiwiAvatarSystem/Assets/Script/KiwiSurfaceFitter.cs:381)
+KiwiSurfaceFitter/<Start>d__28:MoveNext () (at D:/KiwiAvatarSystem/Assets/Script/KiwiSurfaceFitter.cs:135)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+face_landmarker_v2_with_blendshapes.bytes is requested
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Mediapipe.ResourceUtil:PathToResourceAsFile (string) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Util/ResourceUtil.cs:87)
+Mediapipe.Tasks.Core.TaskRunner:Create (Mediapipe.CalculatorGraphConfig,int,Mediapipe.Tasks.Core.TaskRunner/NativePacketsCallback) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Tasks/Core/TaskRunner.cs:30)
+Mediapipe.Tasks.Vision.Core.BaseVisionTaskApi:.ctor (Mediapipe.CalculatorGraphConfig,Mediapipe.Tasks.Vision.Core.RunningMode,Mediapipe.GpuResources,Mediapipe.Tasks.Core.TaskRunner/PacketsCallback) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Tasks/Vision/Core/BaseVisionTaskApi.cs:63)
+Mediapipe.Tasks.Vision.FaceLandmarker.FaceLandmarker:.ctor (Mediapipe.CalculatorGraphConfig,Mediapipe.Tasks.Vision.Core.RunningMode,Mediapipe.GpuResources,System.Collections.Generic.List`1<Mediapipe.Tasks.Vision.FaceGeometry.Proto.FaceGeometry>,Mediapipe.Tasks.Core.TaskRunner/PacketsCallback) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Tasks/Vision/FaceLandmarker/FaceLandmarker.cs:44)
+Mediapipe.Tasks.Vision.FaceLandmarker.FaceLandmarker:CreateFromOptions (Mediapipe.Tasks.Vision.FaceLandmarker.FaceLandmarkerOptions,Mediapipe.GpuResources) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Tasks/Vision/FaceLandmarker/FaceLandmarker.cs:106)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.FaceLandmarkerRunner/<Run>d__160:MoveNext () (at D:/KiwiAvatarSystem/Assets/Script/FaceLandmarkerRunner.cs:1488)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+ResourceUtil: face_landmarker_v2_with_blendshapes.bytes is requested
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,string,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:72)
+Mediapipe.Logger/LoggerWrapper:Log (Mediapipe.Logger/LogLevel,string,object) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Logger.cs:262)
+Mediapipe.Logger:Log (Mediapipe.Logger/LogLevel,string,object) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Logger.cs:138)
+Mediapipe.Logger:LogDebug (string,object) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Logger.cs:217)
+Mediapipe.ResourceUtil:PathToResourceAsFile (string) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Util/ResourceUtil.cs:90)
+Mediapipe.Tasks.Core.TaskRunner:Create (Mediapipe.CalculatorGraphConfig,int,Mediapipe.Tasks.Core.TaskRunner/NativePacketsCallback) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Tasks/Core/TaskRunner.cs:30)
+Mediapipe.Tasks.Vision.Core.BaseVisionTaskApi:.ctor (Mediapipe.CalculatorGraphConfig,Mediapipe.Tasks.Vision.Core.RunningMode,Mediapipe.GpuResources,Mediapipe.Tasks.Core.TaskRunner/PacketsCallback) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Tasks/Vision/Core/BaseVisionTaskApi.cs:63)
+Mediapipe.Tasks.Vision.FaceLandmarker.FaceLandmarker:.ctor (Mediapipe.CalculatorGraphConfig,Mediapipe.Tasks.Vision.Core.RunningMode,Mediapipe.GpuResources,System.Collections.Generic.List`1<Mediapipe.Tasks.Vision.FaceGeometry.Proto.FaceGeometry>,Mediapipe.Tasks.Core.TaskRunner/PacketsCallback) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Tasks/Vision/FaceLandmarker/FaceLandmarker.cs:44)
+Mediapipe.Tasks.Vision.FaceLandmarker.FaceLandmarker:CreateFromOptions (Mediapipe.Tasks.Vision.FaceLandmarker.FaceLandmarkerOptions,Mediapipe.GpuResources) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Tasks/Vision/FaceLandmarker/FaceLandmarker.cs:106)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.FaceLandmarkerRunner/<Run>d__160:MoveNext () (at D:/KiwiAvatarSystem/Assets/Script/FaceLandmarkerRunner.cs:1488)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Util/ResourceUtil.cs Line: 90)
+
+D:/KiwiAvatarSystem/ValidationRuns/20260827_213738_v42_3_FULLVALIDATION_720P/Build/KiwiAvatarSystem_v42_3_DX12_AUTOMATED_VALIDATION_Data/StreamingAssets\face_landmarker_v2_with_blendshapes.bytes is requested
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Mediapipe.ResourceUtil:PathToResourceAsFile (string) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Util/ResourceUtil.cs:87)
+Mediapipe.Tasks.Core.TaskRunner:Create (Mediapipe.CalculatorGraphConfig,int,Mediapipe.Tasks.Core.TaskRunner/NativePacketsCallback) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Tasks/Core/TaskRunner.cs:30)
+Mediapipe.Tasks.Vision.Core.BaseVisionTaskApi:.ctor (Mediapipe.CalculatorGraphConfig,Mediapipe.Tasks.Vision.Core.RunningMode,Mediapipe.GpuResources,Mediapipe.Tasks.Core.TaskRunner/PacketsCallback) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Tasks/Vision/Core/BaseVisionTaskApi.cs:63)
+Mediapipe.Tasks.Vision.FaceLandmarker.FaceLandmarker:.ctor (Mediapipe.CalculatorGraphConfig,Mediapipe.Tasks.Vision.Core.RunningMode,Mediapipe.GpuResources,System.Collections.Generic.List`1<Mediapipe.Tasks.Vision.FaceGeometry.Proto.FaceGeometry>,Mediapipe.Tasks.Core.TaskRunner/PacketsCallback) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Tasks/Vision/FaceLandmarker/FaceLandmarker.cs:44)
+Mediapipe.Tasks.Vision.FaceLandmarker.FaceLandmarker:CreateFromOptions (Mediapipe.Tasks.Vision.FaceLandmarker.FaceLandmarkerOptions,Mediapipe.GpuResources) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Tasks/Vision/FaceLandmarker/FaceLandmarker.cs:106)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.FaceLandmarkerRunner/<Run>d__160:MoveNext () (at D:/KiwiAvatarSystem/Assets/Script/FaceLandmarkerRunner.cs:1488)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+ResourceUtil: D:/KiwiAvatarSystem/ValidationRuns/20260827_213738_v42_3_FULLVALIDATION_720P/Build/KiwiAvatarSystem_v42_3_DX12_AUTOMATED_VALIDATION_Data/StreamingAssets\face_landmarker_v2_with_blendshapes.bytes is requested
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,string,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:72)
+Mediapipe.Logger/LoggerWrapper:Log (Mediapipe.Logger/LogLevel,string,object) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Logger.cs:262)
+Mediapipe.Logger:Log (Mediapipe.Logger/LogLevel,string,object) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Logger.cs:138)
+Mediapipe.Logger:LogDebug (string,object) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Logger.cs:217)
+Mediapipe.ResourceUtil:PathToResourceAsFile (string) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Util/ResourceUtil.cs:90)
+Mediapipe.Tasks.Core.TaskRunner:Create (Mediapipe.CalculatorGraphConfig,int,Mediapipe.Tasks.Core.TaskRunner/NativePacketsCallback) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Tasks/Core/TaskRunner.cs:30)
+Mediapipe.Tasks.Vision.Core.BaseVisionTaskApi:.ctor (Mediapipe.CalculatorGraphConfig,Mediapipe.Tasks.Vision.Core.RunningMode,Mediapipe.GpuResources,Mediapipe.Tasks.Core.TaskRunner/PacketsCallback) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Tasks/Vision/Core/BaseVisionTaskApi.cs:63)
+Mediapipe.Tasks.Vision.FaceLandmarker.FaceLandmarker:.ctor (Mediapipe.CalculatorGraphConfig,Mediapipe.Tasks.Vision.Core.RunningMode,Mediapipe.GpuResources,System.Collections.Generic.List`1<Mediapipe.Tasks.Vision.FaceGeometry.Proto.FaceGeometry>,Mediapipe.Tasks.Core.TaskRunner/PacketsCallback) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Tasks/Vision/FaceLandmarker/FaceLandmarker.cs:44)
+Mediapipe.Tasks.Vision.FaceLandmarker.FaceLandmarker:CreateFromOptions (Mediapipe.Tasks.Vision.FaceLandmarker.FaceLandmarkerOptions,Mediapipe.GpuResources) (at ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Tasks/Vision/FaceLandmarker/FaceLandmarker.cs:106)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.FaceLandmarkerRunner/<Run>d__160:MoveNext () (at D:/KiwiAvatarSystem/Assets/Script/FaceLandmarkerRunner.cs:1488)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: ./Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/Runtime/Scripts/Util/ResourceUtil.cs Line: 90)
+
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+W0000 00:00:1787834555.365155   26964 face_landmarker_graph.cc:174] Sets FaceBlendshapesGraph acceleration to xnnpack by default.
+INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+W0000 00:00:1787834555.374712   27372 inference_feedback_manager.cc:114] Feedback manager requires a model with a single signature inference. Disabling support for feedback tensors.
+[WindowsNativeWebCamSource] PRODUCTION native camera starting. path=MF-NV12/D3D11->CompatibilityReverseShare/D3D12 sharedTier=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Mediapipe.Unity.WindowsNativeWebCamSource/<Play>d__39:MoveNext () (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Camera/WindowsNativeWebCamSource.cs:208)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[WindowsNativeWebCamSource] Native timestamp calibration ACTIVE nativeQpcHz=10000000 managedStopwatchHz=10000000
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Mediapipe.Unity.WindowsNativeWebCamSource:CalibrateNativeTimestampDomain () (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Camera/WindowsNativeWebCamSource.cs:1243)
+Mediapipe.Unity.WindowsNativeWebCamSource/<TryPlayNative>d__44:MoveNext () (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Camera/WindowsNativeWebCamSource.cs:853)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[WindowsNativeWebCamSource] ACTIVE camera='UGREEN Camera 4K' profile=1920x1080@60 backend=MediaFoundation/NV12/D3D11->D3D12CompatibilityReverseSharedRGBA captureTransport=B:SystemMemoryNV12 texture=RGBA32-linear stablePresentation=True orientation=ProviderGpuYNormalized acquisition=MFAsyncCaptureA->NeverWaitLatestReplace->SharedNV12Ingest3->ProcessingBProducerPoll sync=NonBlockingProducerFence+Fixed3SlotTextureRing timestampCalibrated=True
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Mediapipe.Unity.WindowsNativeWebCamSource/<TryPlayNative>d__44:MoveNext () (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Camera/WindowsNativeWebCamSource.cs:926)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[KiwiCamera] source=UGREEN Camera 4K actual=1920x1080 requested=1920x1080 (60Hz) cm831=True trackingWidth=320
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.FaceLandmarkerRunner/<Run>d__160:MoveNext () (at D:/KiwiAvatarSystem/Assets/Script/FaceLandmarkerRunner.cs:1586)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[KiwiInferenceV39] contract=KIWI_V5_1_PHASE16_20_27_V39_GPU_BUDGETED_INFERENCE_30HZ_AB_PROBE requested=0 enabled=0 hz=0 policy=V38_BASELINE_UNTHROTTLED asyncCompute=0 graphicsApi=Direct3D12
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.KiwiInferenceFaceTracker:.ctor (Unity.InferenceEngine.ModelAsset,UnityEngine.Shader) (at D:/KiwiAvatarSystem/Assets/Script/KiwiInferenceFaceTracker.cs:803)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.FaceLandmarkerRunner:InitializeSentisTracker (UnityEngine.Texture,bool,bool) (at D:/KiwiAvatarSystem/Assets/Script/FaceLandmarkerRunner.cs:779)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.FaceLandmarkerRunner/<Run>d__160:MoveNext () (at D:/KiwiAvatarSystem/Assets/Script/FaceLandmarkerRunner.cs:1654)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[KiwiInferenceV38] contract=KIWI_V5_1_PHASE16_20_26_V38_ASYNC_COMPUTE_AB_PROBE requested=0 enabled=0 queue=GRAPHICS_BASELINE supportsAsyncCompute=1 graphicsApi=Direct3D12
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.KiwiInferenceFaceTracker:.ctor (Unity.InferenceEngine.ModelAsset,UnityEngine.Shader) (at D:/KiwiAvatarSystem/Assets/Script/KiwiInferenceFaceTracker.cs:821)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.FaceLandmarkerRunner:InitializeSentisTracker (UnityEngine.Texture,bool,bool) (at D:/KiwiAvatarSystem/Assets/Script/FaceLandmarkerRunner.cs:779)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.FaceLandmarkerRunner/<Run>d__160:MoveNext () (at D:/KiwiAvatarSystem/Assets/Script/FaceLandmarkerRunner.cs:1654)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[KiwiInference] Hybrid GPU single-readback landmark path initialized on Direct3D12.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.FaceLandmarkerRunner:InitializeSentisTracker (UnityEngine.Texture,bool,bool) (at D:/KiwiAvatarSystem/Assets/Script/FaceLandmarkerRunner.cs:793)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.FaceLandmarkerRunner/<Run>d__160:MoveNext () (at D:/KiwiAvatarSystem/Assets/Script/FaceLandmarkerRunner.cs:1654)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[KiwiInferenceV39] contract=KIWI_V5_1_PHASE16_20_27_V39_GPU_BUDGETED_INFERENCE_30HZ_AB_PROBE requested=0 enabled=0 hz=0 policy=V38_BASELINE_UNTHROTTLED asyncCompute=0 graphicsApi=Direct3D12
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.KiwiInferenceFaceTracker:.ctor (Unity.InferenceEngine.ModelAsset,UnityEngine.Shader) (at D:/KiwiAvatarSystem/Assets/Script/KiwiInferenceFaceTracker.cs:803)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.FaceLandmarkerRunner:InitializeSentisTracker (UnityEngine.Texture,bool,bool) (at D:/KiwiAvatarSystem/Assets/Script/FaceLandmarkerRunner.cs:779)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+KiwiInferenceRecoveryBootstrap:TryRecoverInferenceTracker (string) (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiInferenceRecoveryBootstrap.cs:937)
+KiwiInferenceRecoveryBootstrap:Update () (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiInferenceRecoveryBootstrap.cs:294)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[KiwiInferenceV38] contract=KIWI_V5_1_PHASE16_20_26_V38_ASYNC_COMPUTE_AB_PROBE requested=0 enabled=0 queue=GRAPHICS_BASELINE supportsAsyncCompute=1 graphicsApi=Direct3D12
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.KiwiInferenceFaceTracker:.ctor (Unity.InferenceEngine.ModelAsset,UnityEngine.Shader) (at D:/KiwiAvatarSystem/Assets/Script/KiwiInferenceFaceTracker.cs:821)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.FaceLandmarkerRunner:InitializeSentisTracker (UnityEngine.Texture,bool,bool) (at D:/KiwiAvatarSystem/Assets/Script/FaceLandmarkerRunner.cs:779)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+KiwiInferenceRecoveryBootstrap:TryRecoverInferenceTracker (string) (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiInferenceRecoveryBootstrap.cs:937)
+KiwiInferenceRecoveryBootstrap:Update () (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiInferenceRecoveryBootstrap.cs:294)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[KiwiInference] Hybrid GPU single-readback landmark path initialized on Direct3D12.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.FaceLandmarkerRunner:InitializeSentisTracker (UnityEngine.Texture,bool,bool) (at D:/KiwiAvatarSystem/Assets/Script/FaceLandmarkerRunner.cs:793)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+KiwiInferenceRecoveryBootstrap:TryRecoverInferenceTracker (string) (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiInferenceRecoveryBootstrap.cs:937)
+KiwiInferenceRecoveryBootstrap:Update () (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiInferenceRecoveryBootstrap.cs:294)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[Kiwi Inference Recovery] Restarted Inference Engine (no GPU readback completion).
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object,UnityEngine.Object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:66)
+UnityEngine.Debug:Log (object,UnityEngine.Object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:128)
+KiwiInferenceRecoveryBootstrap:TryRecoverInferenceTracker (string) (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiInferenceRecoveryBootstrap.cs:974)
+KiwiInferenceRecoveryBootstrap:Update () (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiInferenceRecoveryBootstrap.cs:294)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 128)
+
+[KiwiValidation] STARTUP_READY runId=20260827_214108_v42_3_FULLVALIDATION_720P caseId=ZEROCOPY_VISUAL token=20260827_214108_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-21c7570ae95c4b90b4257f6a7c014d86 mode=ZEROCOPY purpose=VISUAL
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+KiwiAutomatedValidationController/<Start>d__35:MoveNext () (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Validation/KiwiAutomatedValidationController.cs:198)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[KiwiInferenceV42] input row calibration selected=FLIP_Y nativeMae=13.508349 flipMae=0.000014
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+KiwiOrtDmlZeroCopyRuntime:TryMatchLocked (KiwiOrtDmlZeroCopyRuntime/PairState) (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiOrtDmlZeroCopyRuntime.cs:786)
+KiwiOrtDmlZeroCopyRuntime:RecordSentisPackedOutput (long,Unity.InferenceEngine.Tensor`1<single>,long) (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiOrtDmlZeroCopyRuntime.cs:578)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.KiwiInferenceFaceTracker:PollCompletedLanes (Mediapipe.Unity.Sample.FaceLandmarkDetection.KiwiInferenceFaceTracker/Completion&,Mediapipe.Unity.Sample.FaceLandmarkDetection.KiwiInferenceFaceTracker/Completion&,bool&) (at D:/KiwiAvatarSystem/Assets/Script/KiwiInferenceFaceTracker.cs:1809)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.KiwiInferenceFaceTracker:TryProcessAsync (UnityEngine.Texture,bool,bool,long,bool,bool&,UnityEngine.Vector3[]&,UnityEngine.Quaternion&,long&) (at D:/KiwiAvatarSystem/Assets/Script/KiwiInferenceFaceTracker.cs:1423)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.FaceLandmarkerRunner:ProcessSentisFreshFrame () (at D:/KiwiAvatarSystem/Assets/Script/FaceLandmarkerRunner.cs:658)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.FaceLandmarkerRunner:Update () (at D:/KiwiAvatarSystem/Assets/Script/FaceLandmarkerRunner.cs:610)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[KiwiValidation] FAILED error=Prerequisite lost during warmup: Canonical face tracking is not established; frame=2 provider=
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:LogError (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:151)
+KiwiAutomatedValidationController/<FailAndQuit>d__39:MoveNext () (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Validation/KiwiAutomatedValidationController.cs:583)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 151)
+
+[KiwiValidation] RECEIPT_COMMITTED path=C:/Users/main/AppData/LocalLow/MidoriKiwi/KiwiAvatarSystem\KiwiValidationHarness\20260827_214108_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-21c7570ae95c4b90b4257f6a7c014d86\receipt.json
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+KiwiAutomatedValidationController/<FailAndQuit>d__39:MoveNext () (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Validation/KiwiAutomatedValidationController.cs:629)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[KiwiValidation] EXIT_REQUESTED code=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+KiwiAutomatedValidationController/<FailAndQuit>d__39:MoveNext () (at D:/KiwiAvatarSystem/Assets/KiwiAvatarSystem/Runtime/Validation/KiwiAutomatedValidationController.cs:641)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+Releasing render texture that is set to be RenderTexture.active!
+[Physics::Module] Cleanup current backned.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input System polling thread exited.
+Input System module state changed to: Shutdown.
+abort_threads: Failed aborting id: 00000000000034A0, mono_thread_manage will ignore it
+
+abort_threads: Failed aborting id: 00000000000075D0, mono_thread_manage will ignore it
+
+abort_threads: Failed aborting id: 0000000000000518, mono_thread_manage will ignore it
+
+abort_threads: Failed aborting id: 0000000000006EAC, mono_thread_manage will ignore it
+
+abort_threads: Failed aborting id: 0000000000005078, mono_thread_manage will ignore it
+
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+Found unreferenced, but undisposed ComputeTensorData which might lead to GPU resource leak
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+Leak Detected : Persistent allocates 24 individual allocations. To find out more, run with the command line argument '-native-leak-detection EnabledWithStackTrace' and reproduce the leak again.
+PlayerConnection::Cleanup##utp:{"type":"MemoryLeaks","version":2,"phase":"Immediate","time":1787834557403,"processId":12400,"allocatedMemory":909550,"memoryLabels":[{"Default":144},{"NewDelete":880},{"Thread":14144},{"Manager":543374},{"VFX":-104},{"GfxDevice":226048},{"GfxThread":30576},{"Serialization":520},{"JobScheduler":32768},{"String":331},{"HashMap":56832},{"PoolAlloc":720},{"VR":1792},{"Video":144},{"NativeArray":1056},{"Subsystems":96},{"Gui":109},{"CoreBusinessMetrics":120}]}

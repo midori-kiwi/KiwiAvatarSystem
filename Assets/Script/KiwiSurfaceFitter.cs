@@ -1,9 +1,12 @@
 using System.Collections;
+using Unity.Collections;
+using Unity.Jobs;
 using UnityEngine;
 
 
 public class KiwiSurfaceFitter : MonoBehaviour
 {
+    // KIWI_V5_1_PHASE16_20_48_V44_17_PARALLEL_FAST_COOK_SURFACE_FIT
     // =========================================================
     // Target Kiwi
     // =========================================================
@@ -86,6 +89,28 @@ public class KiwiSurfaceFitter : MonoBehaviour
 
     public bool logResult = true;
 
+    [Header("v44.17 Parallel Fast-Cook Collider Partition")]
+
+    [Tooltip(
+        "Surface Fit用の一時MeshCollider 1個あたりの最大三角形数。\n" +
+        "元形状は変更せず、index rangeだけを複数Colliderへ分割する。"
+    )]
+    [Range(100000, 500000)]
+    public int temporaryColliderTriangleLimit = 250000;
+
+    public double LastBakeMeshMs { get; private set; }
+    public double LastColliderCookAssignMs { get; private set; }
+    public double LastFitTotalMs { get; private set; }
+    public int LastBakedVertexCount { get; private set; }
+    public long LastBakedTriangleCount { get; private set; }
+    public long LastSourceLargestVertexStreamBytes { get; private set; }
+    public int LastColliderPartitionCount { get; private set; }
+    public long LastColliderPartitionTriangleCount { get; private set; }
+    public double LastColliderPartitionMaxCookMs { get; private set; }
+    public double LastColliderPrepMainMs { get; private set; }
+    public double LastColliderBakeWallMs { get; private set; }
+    public double LastColliderAssignMainMs { get; private set; }
+
 
     // =========================================================
     // Internal
@@ -95,7 +120,9 @@ public class KiwiSurfaceFitter : MonoBehaviour
 
     private GameObject _colliderObject;
 
-    private MeshCollider _meshCollider;
+    private MeshCollider[] _meshColliders;
+
+    private Mesh[] _colliderMeshes;
 
 
     private bool _isFitting = false;
@@ -155,14 +182,62 @@ public class KiwiSurfaceFitter : MonoBehaviour
         LastTotalVertices = 0;
         LastTotalHits = 0;
         LastSuccessRate = 0f;
+        LastBakeMeshMs = 0.0;
+        LastColliderCookAssignMs = 0.0;
+        LastFitTotalMs = 0.0;
+        LastBakedVertexCount = 0;
+        LastBakedTriangleCount = 0;
+        LastSourceLargestVertexStreamBytes = 0;
+        LastColliderPartitionCount = 0;
+        LastColliderPartitionTriangleCount = 0;
+        LastColliderPartitionMaxCookMs = 0.0;
+        LastColliderPrepMainMs = 0.0;
+        LastColliderBakeWallMs = 0.0;
+        LastColliderAssignMainMs = 0.0;
+
+        double fitStartedAt =
+            Time.realtimeSinceStartupAsDouble;
 
 
         bool oldQueriesHitBackfaces =
             Physics.queriesHitBackfaces;
 
+        Transform topologyTransactionRoot =
+            modelRoot != null
+                ?
+                modelRoot
+                :
+                (
+                    targetRenderer != null
+                        ?
+                        targetRenderer.transform.root
+                        :
+                        transform.root
+                );
+
+        int topologyTransactionBindingCount =
+            0;
+
 
         try
         {
+            topologyTransactionBindingCount =
+                KiwiAvatarRenderMeshOptimizer
+                    .BeginSurfaceFitTopologyTransaction(
+                        topologyTransactionRoot
+                    );
+
+            if (topologyTransactionBindingCount < 0)
+            {
+                Debug.LogError(
+                    "[KiwiSurfaceFitter] " +
+                    "Original topology restore failed; " +
+                    "Surface Fit skipped to preserve fit authority."
+                );
+
+                return;
+            }
+
             Canvas.ForceUpdateCanvases();
 
 
@@ -201,6 +276,23 @@ public class KiwiSurfaceFitter : MonoBehaviour
             }
 
 
+            Mesh sourceMesh =
+                targetRenderer.sharedMesh;
+
+            if (sourceMesh != null)
+            {
+                LastSourceLargestVertexStreamBytes =
+                    GetLargestVertexStreamBytes(
+                        sourceMesh
+                    );
+
+                LogMeshUploadSignature(
+                    "SOURCE",
+                    sourceMesh
+                );
+            }
+
+
             // =============================================
             // 前回の一時データを念のため削除
             // =============================================
@@ -220,57 +312,49 @@ public class KiwiSurfaceFitter : MonoBehaviour
                 "__KiwiSurfaceBakedMesh";
 
 
+            double bakeStartedAt =
+                Time.realtimeSinceStartupAsDouble;
+
             targetRenderer.BakeMesh(
+                _bakedMesh
+            );
+
+            LastBakeMeshMs =
+                (
+                    Time.realtimeSinceStartupAsDouble -
+                    bakeStartedAt
+                ) *
+                1000.0;
+
+            LastBakedVertexCount =
+                _bakedMesh.vertexCount;
+
+            LastBakedTriangleCount =
+                GetTriangleCount(
+                    _bakedMesh
+                );
+
+            LogMeshUploadSignature(
+                "BAKED",
                 _bakedMesh
             );
 
 
             // =============================================
-            // ★ MeshColliderも1個だけ
+            // v44.16
+            // 元BakeMeshのtriangle index rangeを複数Colliderへ分割。
+            // Geometry authorityは元meshのまま。
             // =============================================
 
-            _colliderObject =
-                new GameObject(
-                    "__KiwiSurfaceFitCollider"
+            if (!BuildTemporaryColliderPartitions())
+            {
+                Debug.LogError(
+                    "[KiwiSurfaceFitter] " +
+                    "Temporary collider partition build failed."
                 );
 
-
-            _colliderObject.hideFlags =
-                HideFlags.HideAndDontSave;
-
-
-            _colliderObject.transform.SetParent(
-                targetRenderer.transform,
-                false
-            );
-
-
-            _colliderObject.transform.localPosition =
-                Vector3.zero;
-
-
-            _colliderObject.transform.localRotation =
-                Quaternion.identity;
-
-
-            _colliderObject.transform.localScale =
-                Vector3.one;
-
-
-            _meshCollider =
-                _colliderObject.AddComponent
-                <
-                    MeshCollider
-                >();
-
-
-            _meshCollider.convex =
-                false;
-
-
-            _meshCollider.sharedMesh =
-                _bakedMesh;
-
+                return;
+            }
 
             Physics.SyncTransforms();
 
@@ -392,8 +476,45 @@ public class KiwiSurfaceFitter : MonoBehaviour
         }
         finally
         {
+            LastFitTotalMs =
+                (
+                    Time.realtimeSinceStartupAsDouble -
+                    fitStartedAt
+                ) *
+                1000.0;
+
             Physics.queriesHitBackfaces =
                 oldQueriesHitBackfaces;
+
+            Debug.Log(
+                "[KiwiSurfaceFitV44_17] FIT_TIMING" +
+                " success=" +
+                (LastFitSucceeded ? "1" : "0") +
+                " hits=" +
+                LastTotalHits +
+                "/" +
+                LastTotalVertices +
+                " rate=" +
+                LastSuccessRate.ToString("F6") +
+                " bakeMs=" +
+                LastBakeMeshMs.ToString("F3") +
+                " colliderAssignMs=" +
+                LastColliderCookAssignMs.ToString("F3") +
+                " partitionCount=" +
+                LastColliderPartitionCount +
+                " partitionTriangles=" +
+                LastColliderPartitionTriangleCount +
+                " partitionMaxCookMs=" +
+                LastColliderPartitionMaxCookMs.ToString("F3") +
+                " prepMainMs=" +
+                LastColliderPrepMainMs.ToString("F3") +
+                " bakeWallMs=" +
+                LastColliderBakeWallMs.ToString("F3") +
+                " assignMainMs=" +
+                LastColliderAssignMainMs.ToString("F3") +
+                " totalMs=" +
+                LastFitTotalMs.ToString("F3")
+            );
 
 
             // =============================================
@@ -407,9 +528,592 @@ public class KiwiSurfaceFitter : MonoBehaviour
             CleanupTemporaryObjects();
 
 
+            KiwiAvatarRenderMeshOptimizer
+                .EndSurfaceFitTopologyTransaction(
+                    topologyTransactionRoot,
+                    topologyTransactionBindingCount
+                );
+
+
             _isFitting =
                 false;
         }
+    }
+
+
+
+    // =========================================================
+    // v44.16 Partitioned Temporary Collider
+    // =========================================================
+
+    private struct BakeColliderPartitionsJob :
+        IJobParallelFor
+    {
+        [ReadOnly]
+        public NativeArray<int> meshIds;
+
+        public MeshColliderCookingOptions
+            cookingOptions;
+
+        public void Execute(
+            int index)
+        {
+            Physics.BakeMesh(
+                meshIds[index],
+                false,
+                cookingOptions
+            );
+        }
+    }
+
+
+    private bool BuildTemporaryColliderPartitions()
+    {
+        if (_bakedMesh == null)
+        {
+            return false;
+        }
+
+        double buildStartedAt =
+            Time.realtimeSinceStartupAsDouble;
+
+        Vector3[] vertices =
+            _bakedMesh.vertices;
+
+        int[] indices =
+            _bakedMesh.triangles;
+
+        if (
+            vertices == null ||
+            vertices.Length == 0 ||
+            indices == null ||
+            indices.Length < 3)
+        {
+            return false;
+        }
+
+        int totalTriangles =
+            indices.Length /
+            3;
+
+        int triangleLimit =
+            Mathf.Clamp(
+                temporaryColliderTriangleLimit,
+                100000,
+                500000
+            );
+
+        int partitionCount =
+            Mathf.Max(
+                1,
+                Mathf.CeilToInt(
+                    totalTriangles /
+                    (float)triangleLimit
+                )
+            );
+
+        LastColliderPartitionCount =
+            partitionCount;
+
+        LastColliderPartitionTriangleCount =
+            0;
+
+        LastColliderPartitionMaxCookMs =
+            0.0;
+
+        _meshColliders =
+            new MeshCollider[
+                partitionCount
+            ];
+
+        _colliderMeshes =
+            new Mesh[
+                partitionCount
+            ];
+
+        // Surface Fit destroys these colliders immediately after a very small
+        // number of ray queries. Unity documents CookForFasterSimulation as
+        // extra cooking work that optimizes later simulation/query speed.
+        // Keep cleaning + welding for hit robustness, and Fast Midphase for
+        // scalable query structures, but prefer faster temporary cooking.
+        MeshColliderCookingOptions cookingOptions =
+            MeshColliderCookingOptions.EnableMeshCleaning |
+            MeshColliderCookingOptions.WeldColocatedVertices |
+            MeshColliderCookingOptions.UseFastMidphase;
+
+        NativeArray<int> meshIds =
+            new NativeArray<int>(
+                partitionCount,
+                Allocator.TempJob,
+                NativeArrayOptions.UninitializedMemory
+            );
+
+        bool prepSucceeded =
+            false;
+
+        try
+        {
+            double prepStartedAt =
+                Time.realtimeSinceStartupAsDouble;
+
+            for (
+                int partitionIndex = 0;
+                partitionIndex < partitionCount;
+                partitionIndex++)
+            {
+                int triangleStart =
+                    partitionIndex *
+                    triangleLimit;
+
+                int triangleCount =
+                    Mathf.Min(
+                        triangleLimit,
+                        totalTriangles -
+                        triangleStart
+                    );
+
+                int indexStart =
+                    triangleStart *
+                    3;
+
+                int indexCount =
+                    triangleCount *
+                    3;
+
+                Mesh colliderMesh =
+                    new Mesh();
+
+                colliderMesh.name =
+                    "__KiwiSurfaceFitColliderMesh_" +
+                    partitionIndex;
+
+                colliderMesh.indexFormat =
+                    UnityEngine.Rendering
+                        .IndexFormat
+                        .UInt32;
+
+                colliderMesh.vertices =
+                    vertices;
+
+                colliderMesh.SetIndices(
+                    indices,
+                    indexStart,
+                    indexCount,
+                    MeshTopology.Triangles,
+                    0,
+                    false,
+                    0
+                );
+
+                colliderMesh.bounds =
+                    _bakedMesh.bounds;
+
+                _colliderMeshes[
+                    partitionIndex
+                ] =
+                    colliderMesh;
+
+                meshIds[
+                    partitionIndex
+                ] =
+                    colliderMesh
+                        .GetInstanceID();
+
+                LastColliderPartitionTriangleCount +=
+                    triangleCount;
+
+                Debug.Log(
+                    "[KiwiSurfaceFitV44_17] COLLIDER_PARTITION_PREP" +
+                    " index=" +
+                    partitionIndex +
+                    "/" +
+                    partitionCount +
+                    " triangles=" +
+                    triangleCount +
+                    " indices=" +
+                    indexCount +
+                    " vertices=" +
+                    vertices.Length
+                );
+            }
+
+            LastColliderPrepMainMs =
+                (
+                    Time.realtimeSinceStartupAsDouble -
+                    prepStartedAt
+                ) *
+                1000.0;
+
+            if (
+                LastColliderPartitionTriangleCount !=
+                totalTriangles)
+            {
+                return false;
+            }
+
+            double bakeStartedAt =
+                Time.realtimeSinceStartupAsDouble;
+
+            BakeColliderPartitionsJob bakeJob =
+                new BakeColliderPartitionsJob
+                {
+                    meshIds =
+                        meshIds,
+
+                    cookingOptions =
+                        cookingOptions
+                };
+
+            JobHandle bakeHandle =
+                bakeJob.Schedule(
+                    partitionCount,
+                    1
+                );
+
+            // This is a CPU job join, not a GPU wait. The expensive PhysX
+            // baking executes on worker threads in parallel; the synchronous
+            // FitAllNow contract is preserved so topology transactions and
+            // current callers do not need to change.
+            bakeHandle.Complete();
+
+            LastColliderBakeWallMs =
+                (
+                    Time.realtimeSinceStartupAsDouble -
+                    bakeStartedAt
+                ) *
+                1000.0;
+
+            // Parallel bake wall time is the bounded "max cook" measure for
+            // this version; individual worker timings are intentionally not
+            // sampled via Unity Time APIs off-main-thread.
+            LastColliderPartitionMaxCookMs =
+                LastColliderBakeWallMs;
+
+            prepSucceeded =
+                true;
+        }
+        finally
+        {
+            if (meshIds.IsCreated)
+            {
+                meshIds.Dispose();
+            }
+        }
+
+        if (!prepSucceeded)
+        {
+            return false;
+        }
+
+        double assignStartedAt =
+            Time.realtimeSinceStartupAsDouble;
+
+        _colliderObject =
+            new GameObject(
+                "__KiwiSurfaceFitColliderRoot"
+            );
+
+        _colliderObject.hideFlags =
+            HideFlags.HideAndDontSave;
+
+        _colliderObject.transform.SetParent(
+            targetRenderer.transform,
+            false
+        );
+
+        _colliderObject.transform.localPosition =
+            Vector3.zero;
+
+        _colliderObject.transform.localRotation =
+            Quaternion.identity;
+
+        _colliderObject.transform.localScale =
+            Vector3.one;
+
+        for (
+            int partitionIndex = 0;
+            partitionIndex < partitionCount;
+            partitionIndex++)
+        {
+            GameObject partitionObject =
+                new GameObject(
+                    "__KiwiSurfaceFitCollider_" +
+                    partitionIndex
+                );
+
+            partitionObject.hideFlags =
+                HideFlags.HideAndDontSave;
+
+            partitionObject.transform.SetParent(
+                _colliderObject.transform,
+                false
+            );
+
+            partitionObject.transform.localPosition =
+                Vector3.zero;
+
+            partitionObject.transform.localRotation =
+                Quaternion.identity;
+
+            partitionObject.transform.localScale =
+                Vector3.one;
+
+            MeshCollider collider =
+                partitionObject.AddComponent
+                <
+                    MeshCollider
+                >();
+
+            collider.convex =
+                false;
+
+            collider.cookingOptions =
+                cookingOptions;
+
+            // Physics.BakeMesh used exactly the same cookingOptions above,
+            // therefore this assignment reuses the baked collision data.
+            collider.sharedMesh =
+                _colliderMeshes[
+                    partitionIndex
+                ];
+
+            _meshColliders[
+                partitionIndex
+            ] =
+                collider;
+        }
+
+        LastColliderAssignMainMs =
+            (
+                Time.realtimeSinceStartupAsDouble -
+                assignStartedAt
+            ) *
+                1000.0;
+
+        LastColliderCookAssignMs =
+            (
+                Time.realtimeSinceStartupAsDouble -
+                buildStartedAt
+            ) *
+            1000.0;
+
+        Debug.Log(
+            "[KiwiSurfaceFitV44_17] COLLIDER_PARALLEL_BAKE" +
+            " partitions=" +
+            LastColliderPartitionCount +
+            " totalTriangles=" +
+            LastColliderPartitionTriangleCount +
+            " triangleLimit=" +
+            triangleLimit +
+            " useFastMidphase=1" +
+            " cookForFasterSimulation=0" +
+            " cleaning=1" +
+            " welding=1" +
+            " jobBatchSize=1" +
+            " prepMainMs=" +
+            LastColliderPrepMainMs.ToString("F3") +
+            " bakeWallMs=" +
+            LastColliderBakeWallMs.ToString("F3") +
+            " assignMainMs=" +
+            LastColliderAssignMainMs.ToString("F3") +
+            " totalBuildMs=" +
+            LastColliderCookAssignMs.ToString("F3")
+        );
+
+        return
+            LastColliderPartitionTriangleCount ==
+            totalTriangles;
+    }
+
+
+    private bool RaycastTemporaryColliders(
+        Ray ray,
+        out RaycastHit hit,
+        float maxDistance)
+    {
+        hit =
+            default;
+
+        if (
+            _meshColliders == null ||
+            _meshColliders.Length == 0)
+        {
+            return false;
+        }
+
+        bool found =
+            false;
+
+        float nearestDistance =
+            maxDistance;
+
+        RaycastHit nearestHit =
+            default;
+
+        for (
+            int colliderIndex = 0;
+            colliderIndex < _meshColliders.Length;
+            colliderIndex++)
+        {
+            MeshCollider collider =
+                _meshColliders[
+                    colliderIndex
+                ];
+
+            if (
+                collider == null ||
+                !collider.enabled)
+            {
+                continue;
+            }
+
+            if (
+                collider.Raycast(
+                    ray,
+                    out RaycastHit candidate,
+                    nearestDistance
+                ))
+            {
+                found =
+                    true;
+
+                nearestDistance =
+                    candidate.distance;
+
+                nearestHit =
+                    candidate;
+            }
+        }
+
+        if (found)
+        {
+            hit =
+                nearestHit;
+        }
+
+        return found;
+    }
+
+
+    // =========================================================
+    // v44.17 Mesh / Upload Diagnostics
+    // =========================================================
+
+    private static long GetTriangleCount(
+        Mesh mesh)
+    {
+        if (mesh == null)
+        {
+            return 0;
+        }
+
+        long triangleCount = 0;
+
+        for (
+            int subMeshIndex = 0;
+            subMeshIndex < mesh.subMeshCount;
+            subMeshIndex++)
+        {
+            if (mesh.GetTopology(subMeshIndex) != MeshTopology.Triangles)
+            {
+                continue;
+            }
+
+            triangleCount +=
+                (long)mesh.GetIndexCount(subMeshIndex) /
+                3L;
+        }
+
+        return triangleCount;
+    }
+
+
+    private static long GetLargestVertexStreamBytes(
+        Mesh mesh)
+    {
+        if (mesh == null)
+        {
+            return 0;
+        }
+
+        long largestBytes = 0;
+
+        for (
+            int streamIndex = 0;
+            streamIndex < mesh.vertexBufferCount;
+            streamIndex++)
+        {
+            int stride =
+                mesh.GetVertexBufferStride(streamIndex);
+
+            long streamBytes =
+                (long)mesh.vertexCount *
+                stride;
+
+            if (streamBytes > largestBytes)
+            {
+                largestBytes = streamBytes;
+            }
+        }
+
+        return largestBytes;
+    }
+
+
+    private static void LogMeshUploadSignature(
+        string label,
+        Mesh mesh)
+    {
+        if (mesh == null)
+        {
+            return;
+        }
+
+        string streamSummary = string.Empty;
+
+        for (
+            int streamIndex = 0;
+            streamIndex < mesh.vertexBufferCount;
+            streamIndex++)
+        {
+            int stride =
+                mesh.GetVertexBufferStride(streamIndex);
+
+            long streamBytes =
+                (long)mesh.vertexCount *
+                stride;
+
+            if (streamSummary.Length > 0)
+            {
+                streamSummary += ";";
+            }
+
+            streamSummary +=
+                streamIndex +
+                ":stride=" +
+                stride +
+                ",bytes=" +
+                streamBytes;
+        }
+
+        Debug.Log(
+            "[KiwiSurfaceFitV44_17] MESH_SIGNATURE" +
+            " label=" +
+            label +
+            " name='" +
+            mesh.name +
+            "'" +
+            " vertices=" +
+            mesh.vertexCount +
+            " triangles=" +
+            GetTriangleCount(mesh) +
+            " subMeshes=" +
+            mesh.subMeshCount +
+            " vertexStreams=" +
+            mesh.vertexBufferCount +
+            " streams=" +
+            streamSummary
+        );
     }
 
 
@@ -971,7 +1675,7 @@ public class KiwiSurfaceFitter : MonoBehaviour
 
 
         bool hitA =
-            _meshCollider.Raycast(
+            RaycastTemporaryColliders(
                 rayA,
                 out RaycastHit resultA,
                 rayLength
@@ -997,7 +1701,7 @@ public class KiwiSurfaceFitter : MonoBehaviour
 
 
         bool hitB =
-            _meshCollider.Raycast(
+            RaycastTemporaryColliders(
                 rayB,
                 out RaycastHit resultB,
                 rayLength
@@ -1098,7 +1802,7 @@ public class KiwiSurfaceFitter : MonoBehaviour
             );
 
 
-        return _meshCollider.Raycast(
+        return RaycastTemporaryColliders(
             ray,
             out hit,
             rayLength
@@ -1112,17 +1816,63 @@ public class KiwiSurfaceFitter : MonoBehaviour
 
     private void CleanupTemporaryObjects()
     {
-        if (_meshCollider != null)
+        if (_meshColliders != null)
         {
-            _meshCollider.enabled =
-                false;
+            for (
+                int i = 0;
+                i < _meshColliders.Length;
+                i++)
+            {
+                MeshCollider collider =
+                    _meshColliders[i];
 
+                if (collider == null)
+                {
+                    continue;
+                }
 
-            _meshCollider.sharedMesh =
+                collider.enabled =
+                    false;
+
+                collider.sharedMesh =
+                    null;
+            }
+
+            _meshColliders =
                 null;
+        }
 
 
-            _meshCollider =
+        if (_colliderMeshes != null)
+        {
+            for (
+                int i = 0;
+                i < _colliderMeshes.Length;
+                i++)
+            {
+                Mesh colliderMesh =
+                    _colliderMeshes[i];
+
+                if (colliderMesh == null)
+                {
+                    continue;
+                }
+
+                if (Application.isPlaying)
+                {
+                    Destroy(
+                        colliderMesh
+                    );
+                }
+                else
+                {
+                    DestroyImmediate(
+                        colliderMesh
+                    );
+                }
+            }
+
+            _colliderMeshes =
                 null;
         }
 

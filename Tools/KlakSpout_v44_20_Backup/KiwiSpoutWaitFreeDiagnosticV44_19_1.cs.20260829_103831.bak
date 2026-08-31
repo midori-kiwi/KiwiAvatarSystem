@@ -1,0 +1,168 @@
+﻿using System;
+using System.Runtime.InteropServices;
+using UnityEngine;
+
+/// <summary>
+/// KiwiAvatarSystem v44.19.1
+/// Read-only KlakSpout native telemetry bridge.
+///
+/// This component does not participate in rendering, tracking, camera capture,
+/// synchronization, or texture ownership. It only polls native counters and
+/// forwards them to Unity Debug.Log so they appear in Player.log.
+/// </summary>
+internal sealed class KiwiSpoutWaitFreeDiagnosticV44_19_1 : MonoBehaviour
+{
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+    private const string NativeLibrary = "KlakSpout";
+
+    [DllImport(NativeLibrary, CallingConvention = CallingConvention.Winapi)]
+    private static extern int KiwiSpoutDiagGetPluginLoaded();
+
+    [DllImport(NativeLibrary, CallingConvention = CallingConvention.Winapi)]
+    private static extern int KiwiSpoutDiagGetState();
+
+    [DllImport(NativeLibrary, CallingConvention = CallingConvention.Winapi)]
+    private static extern int KiwiSpoutDiagGetStage();
+
+    [DllImport(NativeLibrary, CallingConvention = CallingConvention.Winapi)]
+    private static extern int KiwiSpoutDiagGetLastHResult();
+
+    [DllImport(NativeLibrary, CallingConvention = CallingConvention.Winapi)]
+    private static extern ulong KiwiSpoutDiagGetSenderCreateCount();
+
+    [DllImport(NativeLibrary, CallingConvention = CallingConvention.Winapi)]
+    private static extern ulong KiwiSpoutDiagGetSubmitCount();
+
+    [DllImport(NativeLibrary, CallingConvention = CallingConvention.Winapi)]
+    private static extern ulong KiwiSpoutDiagGetPublishCount();
+
+    [DllImport(NativeLibrary, CallingConvention = CallingConvention.Winapi)]
+    private static extern ulong KiwiSpoutDiagGetDiscardCount();
+
+    [DllImport(NativeLibrary, CallingConvention = CallingConvention.Winapi)]
+    private static extern ulong KiwiSpoutDiagGetNoFreeSkipCount();
+#endif
+
+    private const float InitialDelaySeconds = 1.0f;
+    private const float PollIntervalSeconds = 2.0f;
+
+    private float _nextPoll;
+    private bool _nativeUnavailable;
+    private int _lastState = int.MinValue;
+    private ulong _lastSubmit = ulong.MaxValue;
+    private ulong _lastPublish = ulong.MaxValue;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    private static void Install()
+    {
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+        if (FindFirstObjectByType<KiwiSpoutWaitFreeDiagnosticV44_19_1>() != null)
+            return;
+
+        var go = new GameObject("__KiwiSpoutWaitFreeDiagnosticV44_19_1");
+        DontDestroyOnLoad(go);
+        go.hideFlags = HideFlags.DontSave;
+        go.AddComponent<KiwiSpoutWaitFreeDiagnosticV44_19_1>();
+#endif
+    }
+
+    private void Awake()
+    {
+        _nextPoll = Time.unscaledTime + InitialDelaySeconds;
+    }
+
+    private void Update()
+    {
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+        if (_nativeUnavailable || Time.unscaledTime < _nextPoll)
+            return;
+
+        _nextPoll = Time.unscaledTime + PollIntervalSeconds;
+        PollAndLog(false);
+#endif
+    }
+
+    private void OnApplicationQuit()
+    {
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+        if (!_nativeUnavailable)
+            PollAndLog(true);
+#endif
+    }
+
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+    private void PollAndLog(bool final)
+    {
+        try
+        {
+            int loaded = KiwiSpoutDiagGetPluginLoaded();
+            int state = KiwiSpoutDiagGetState();
+            int stage = KiwiSpoutDiagGetStage();
+            int hr = KiwiSpoutDiagGetLastHResult();
+
+            ulong senderCreate = KiwiSpoutDiagGetSenderCreateCount();
+            ulong submit = KiwiSpoutDiagGetSubmitCount();
+            ulong publish = KiwiSpoutDiagGetPublishCount();
+            ulong discard = KiwiSpoutDiagGetDiscardCount();
+            ulong noFreeSkip = KiwiSpoutDiagGetNoFreeSkipCount();
+
+            // Always log the first sample/final sample. During runtime, log on
+            // state/counter changes so the 10-15 second diagnostic is visible
+            // without flooding Player.log.
+            bool changed =
+                state != _lastState ||
+                submit != _lastSubmit ||
+                publish != _lastPublish;
+
+            if (changed || final)
+            {
+                string stateName = StateName(state);
+                string line =
+                    $"[KiwiSpoutV44_19_1] final={(final ? 1 : 0)} " +
+                    $"pluginLoaded={loaded} state={state}({stateName}) stage={stage} " +
+                    $"hr=0x{unchecked((uint)hr):X8} senderCreate={senderCreate} " +
+                    $"submit={submit} publish={publish} discard={discard} " +
+                    $"noFreeSkip={noFreeSkip}";
+
+                if (state < 0)
+                    Debug.LogError(line);
+                else
+                    Debug.Log(line);
+
+                _lastState = state;
+                _lastSubmit = submit;
+                _lastPublish = publish;
+            }
+        }
+        catch (DllNotFoundException ex)
+        {
+            _nativeUnavailable = true;
+            Debug.LogError($"[KiwiSpoutV44_19_1] DllNotFound: {ex.Message}");
+        }
+        catch (EntryPointNotFoundException ex)
+        {
+            _nativeUnavailable = true;
+            Debug.LogError($"[KiwiSpoutV44_19_1] EntryPointNotFound: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            _nativeUnavailable = true;
+            Debug.LogError($"[KiwiSpoutV44_19_1] telemetry exception: {ex}");
+        }
+    }
+
+    private static string StateName(int state)
+    {
+        switch (state)
+        {
+            case 0: return "UNLOADED_OR_IDLE";
+            case 1: return "PLUGIN_LOADED";
+            case 10: return "SENDER_CONSTRUCTED";
+            case 20: return "BRIDGE_INIT";
+            case 30: return "READY";
+            case -1: return "FAILED";
+            default: return "UNKNOWN";
+        }
+    }
+#endif
+}

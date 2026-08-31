@@ -1,0 +1,398 @@
+#pragma once
+
+#include "Common.h"
+#include "System.h"
+#include <array>
+#include <cstdint>
+
+namespace KlakSpout {
+
+// DX11/12 compatible Spout sender class.
+//
+// KiwiAvatarSystem v44.18 DX12 path:
+//   Unity D3D12 RenderTexture
+//        |
+//        | Unity IUnityGraphicsD3D12v6::ExecuteCommandList
+//        v
+//   D3D11On12-owned Spout shared texture (unwrapped as ID3D12Resource)
+//
+// Important:
+// - Unity's texture is never wrapped into the D3D11On12 translation layer.
+// - No Unity D3D12 queue Wait is issued by this code.
+// - No CPU fence wait is issued by this code.
+// - Command-list slots are reused only after Unity's frame fence completes.
+// - If all slots are busy, the newest export attempt is skipped instead of queued.
+class Sender final
+{
+public:
+
+    Sender(const char* name, int width, int height)
+      : _name(name), _width(width), _height(height) {}
+
+    ~Sender()
+    {
+        if (_texture)
+        {
+            _system->spout.ReleaseSenderName(_name.c_str());
+            _texture = nullptr;
+        }
+
+        for (auto& slot : _commandSlots)
+        {
+            slot.list = nullptr;
+            slot.allocator = nullptr;
+            slot.fenceValue = 0;
+        }
+
+        _d3d11on12v2 = nullptr;
+    }
+
+    void update(IUnknown* source)
+    {
+        if (!_texture) initialize();
+        if (!_texture || !source) return;
+
+        WRL::ComPtr<IUnknown> unknown(source);
+
+        if (_system->isD3D12)
+        {
+            WRL::ComPtr<ID3D12Resource> d3d12;
+            auto hres = unknown.As(&d3d12);
+            if (FAILED(hres) || !d3d12)
+            {
+                LogError("Query ID3D12Resource", _name, hres);
+                return;
+            }
+            updateTexture(d3d12.Get());
+        }
+        else
+        {
+            WRL::ComPtr<ID3D11Resource> d3d11;
+            auto hres = unknown.As(&d3d11);
+            if (FAILED(hres) || !d3d11)
+            {
+                LogError("Query ID3D11Resource", _name, hres);
+                return;
+            }
+            updateTexture(d3d11.Get());
+        }
+    }
+
+private:
+
+    static constexpr size_t kCommandSlotCount = 8;
+
+    struct CommandSlot
+    {
+        WRL::ComPtr<ID3D12CommandAllocator> allocator;
+        WRL::ComPtr<ID3D12GraphicsCommandList> list;
+        UINT64 fenceValue = 0;
+    };
+
+    std::string _name;
+    int _width, _height;
+    WRL::ComPtr<ID3D11Texture2D> _texture;
+
+    WRL::ComPtr<ID3D11On12Device2> _d3d11on12v2;
+    std::array<CommandSlot, kCommandSlotCount> _commandSlots = {};
+    size_t _nextCommandSlot = 0;
+    bool _dx12BridgeReady = false;
+    uint64_t _busySkipCount = 0;
+
+    void initialize()
+    {
+        D3D11_TEXTURE2D_DESC desc = {};
+        desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+        desc.Width = _width;
+        desc.Height = _height;
+        desc.MipLevels = 1;
+        desc.ArraySize = 1;
+        desc.SampleDesc.Count = 1;
+        desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+        desc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
+
+        auto device11 = _system->getD3D11Device();
+        if (!device11)
+        {
+            LogError("GetD3D11Device", _name, E_FAIL);
+            return;
+        }
+
+        auto hres = device11->CreateTexture2D(&desc, nullptr, &_texture);
+        if (FAILED(hres))
+        {
+            LogError("CreateTexture2D", _name, hres);
+            _texture = nullptr;
+            return;
+        }
+
+        HANDLE handle = nullptr;
+        WRL::ComPtr<IDXGIResource> resource;
+        hres = _texture.As(&resource);
+        if (FAILED(hres) || !resource)
+        {
+            LogError("Query IDXGIResource", _name, hres);
+            _texture = nullptr;
+            return;
+        }
+
+        hres = resource->GetSharedHandle(&handle);
+        if (FAILED(hres) || !handle)
+        {
+            LogError("GetSharedHandle", _name, hres);
+            _texture = nullptr;
+            return;
+        }
+
+        auto res = _system->spout.CreateSender
+          (_name.c_str(), _width, _height, handle, desc.Format);
+
+        if (!res)
+        {
+            LogError("CreateSender", _name, 0);
+            _texture = nullptr;
+            return;
+        }
+
+        if (_system->isD3D12)
+            initializeD3D12Bridge();
+    }
+
+    void initializeD3D12Bridge()
+    {
+        _d3d11on12v2 = _system->getD3D11On12Device2();
+        if (!_d3d11on12v2)
+        {
+            LogError("Query ID3D11On12Device2", _name, E_NOINTERFACE);
+            return;
+        }
+
+        auto device12 = _system->getD3D12Device();
+        if (!device12)
+        {
+            LogError("GetD3D12Device", _name, E_FAIL);
+            return;
+        }
+
+        for (auto& slot : _commandSlots)
+        {
+            auto hres = device12->CreateCommandAllocator
+              (D3D12_COMMAND_LIST_TYPE_DIRECT,
+               IID_PPV_ARGS(&slot.allocator));
+
+            if (FAILED(hres))
+            {
+                LogError("CreateCommandAllocator", _name, hres);
+                return;
+            }
+
+            hres = device12->CreateCommandList
+              (0,
+               D3D12_COMMAND_LIST_TYPE_DIRECT,
+               slot.allocator.Get(),
+               nullptr,
+               IID_PPV_ARGS(&slot.list));
+
+            if (FAILED(hres))
+            {
+                LogError("CreateCommandList", _name, hres);
+                return;
+            }
+
+            hres = slot.list->Close();
+            if (FAILED(hres))
+            {
+                LogError("CloseCommandList", _name, hres);
+                return;
+            }
+        }
+
+        _dx12BridgeReady = true;
+    }
+
+    CommandSlot* acquireCommandSlot()
+    {
+        auto frameFence = _system->getUnityFrameFence();
+        if (!frameFence) return nullptr;
+
+        const auto completed = frameFence->GetCompletedValue();
+
+        for (size_t i = 0; i < kCommandSlotCount; ++i)
+        {
+            const auto index = (_nextCommandSlot + i) % kCommandSlotCount;
+            auto& slot = _commandSlots[index];
+
+            if (slot.fenceValue == 0 || slot.fenceValue <= completed)
+            {
+                _nextCommandSlot = (index + 1) % kCommandSlotCount;
+                return &slot;
+            }
+        }
+
+        ++_busySkipCount;
+        return nullptr;
+    }
+
+    static D3D12_RESOURCE_BARRIER transitionBarrier
+      (ID3D12Resource* resource,
+       D3D12_RESOURCE_STATES before,
+       D3D12_RESOURCE_STATES after)
+    {
+        D3D12_RESOURCE_BARRIER barrier = {};
+        barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+        barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+        barrier.Transition.pResource = resource;
+        barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+        barrier.Transition.StateBefore = before;
+        barrier.Transition.StateAfter = after;
+        return barrier;
+    }
+
+    bool validateCopyCompatibility(ID3D12Resource* source) const
+    {
+        if (!source) return false;
+
+        const auto desc = source->GetDesc();
+
+        if (desc.Dimension != D3D12_RESOURCE_DIMENSION_TEXTURE2D)
+            return false;
+
+        if (desc.Width != static_cast<UINT64>(_width) ||
+            desc.Height != static_cast<UINT>(_height))
+            return false;
+
+        if (desc.DepthOrArraySize != 1 ||
+            desc.MipLevels != 1 ||
+            desc.SampleDesc.Count != 1)
+            return false;
+
+        // KlakSpout's managed sender buffer is expected to be RGBA8.
+        // UNORM/SRGB members of the same format family are copy-compatible.
+        if (desc.Format != DXGI_FORMAT_R8G8B8A8_UNORM &&
+            desc.Format != DXGI_FORMAT_R8G8B8A8_UNORM_SRGB)
+            return false;
+
+        return true;
+    }
+
+    void updateTexture(ID3D11Resource* source)
+    {
+        auto ctx = _system->getD3D11Context();
+        if (!ctx || !_texture || !source) return;
+        ctx->CopyResource(_texture.Get(), source);
+    }
+
+    void updateTexture(ID3D12Resource* source)
+    {
+        if (!_dx12BridgeReady || !_texture || !source) return;
+
+        if (!validateCopyCompatibility(source))
+        {
+            LogError("DX12 copy compatibility", _name, E_INVALIDARG);
+            return;
+        }
+
+        auto slot = acquireCommandSlot();
+        if (!slot) return; // Latest-frame policy: never queue stale export work.
+
+        auto queue = _system->getD3D12CommandQueue();
+        auto frameFence = _system->getUnityFrameFence();
+        if (!queue || !frameFence) return;
+
+        // The Spout texture was created through ID3D11Device::CreateTexture2D
+        // on the D3D11On12 device. Unwrap it to its underlying D3D12 resource.
+        // Per Microsoft contract, the returned resource is made COMMON and any
+        // required prior D3D11 work is ordered on the supplied command queue.
+        WRL::ComPtr<ID3D12Resource> destination;
+        auto hres = _d3d11on12v2->UnwrapUnderlyingResource
+          (_texture.Get(),
+           queue,
+           IID_PPV_ARGS(&destination));
+
+        if (FAILED(hres) || !destination)
+        {
+            LogError("UnwrapUnderlyingResource", _name, hres);
+            return;
+        }
+
+        hres = slot->allocator->Reset();
+        if (FAILED(hres))
+        {
+            LogError("ResetCommandAllocator", _name, hres);
+            _d3d11on12v2->ReturnUnderlyingResource
+              (_texture.Get(), 0, nullptr, nullptr);
+            return;
+        }
+
+        hres = slot->list->Reset(slot->allocator.Get(), nullptr);
+        if (FAILED(hres))
+        {
+            LogError("ResetCommandList", _name, hres);
+            _d3d11on12v2->ReturnUnderlyingResource
+              (_texture.Get(), 0, nullptr, nullptr);
+            return;
+        }
+
+        auto toCopyDest = transitionBarrier
+          (destination.Get(),
+           D3D12_RESOURCE_STATE_COMMON,
+           D3D12_RESOURCE_STATE_COPY_DEST);
+
+        slot->list->ResourceBarrier(1, &toCopyDest);
+        slot->list->CopyResource(destination.Get(), source);
+
+        auto toCommon = transitionBarrier
+          (destination.Get(),
+           D3D12_RESOURCE_STATE_COPY_DEST,
+           D3D12_RESOURCE_STATE_COMMON);
+
+        slot->list->ResourceBarrier(1, &toCommon);
+
+        hres = slot->list->Close();
+        if (FAILED(hres))
+        {
+            LogError("CloseDX12CopyCommandList", _name, hres);
+            _d3d11on12v2->ReturnUnderlyingResource
+              (_texture.Get(), 0, nullptr, nullptr);
+            return;
+        }
+
+        // Unity owns the source texture's state tracking. Ask Unity to present
+        // the source to this command list in COPY_SOURCE and record it as still
+        // COPY_SOURCE after execution. Unity can transition it to the next
+        // required state for its subsequent use.
+        UnityGraphicsD3D12ResourceState sourceState = {};
+        sourceState.resource = source;
+        sourceState.expected = D3D12_RESOURCE_STATE_COPY_SOURCE;
+        sourceState.current = D3D12_RESOURCE_STATE_COPY_SOURCE;
+
+        const UINT64 fenceValue = _system->executeUnityCommandList
+          (slot->list.Get(), 1, &sourceState);
+
+        if (fenceValue == 0)
+        {
+            LogError("ExecuteCommandList", _name, E_FAIL);
+            _d3d11on12v2->ReturnUnderlyingResource
+              (_texture.Get(), 0, nullptr, nullptr);
+            return;
+        }
+
+        // Return the texture to D3D11On12 without a CPU wait. The Unity frame
+        // fence value returned by ExecuteCommandList covers the submitted copy.
+        ID3D12Fence* fences[] = { frameFence };
+        UINT64 values[] = { fenceValue };
+
+        hres = _d3d11on12v2->ReturnUnderlyingResource
+          (_texture.Get(), 1, values, fences);
+
+        if (FAILED(hres))
+        {
+            LogError("ReturnUnderlyingResource", _name, hres);
+            return;
+        }
+
+        slot->fenceValue = fenceValue;
+    }
+};
+
+} // namespace KlakSpout

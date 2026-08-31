@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "1.0.0",
+  "token": "20260827_215259_v42_3_FULLVALIDATION_720P-BASELINE_VISUAL-471e9d9f43b241f8ba1b94e08d5141f3",
+  "caseId": "BASELINE_VISUAL",
+  "gpuUuid": "GPU-6efc5d27-d766-eeac-cb81-8aa14cebbfa3",
+  "query": "timestamp,uuid,name,driver_version,utilization.gpu,memory.used,memory.total,power.draw,temperature.gpu",
+  "intervalMs": 200,
+  "startedUtc": "2026-08-27T12:55:28.4542987Z",
+  "completedUtc": "2026-08-27T12:55:59.1988758Z",
+  "terminationReason": "case-completed"
+}

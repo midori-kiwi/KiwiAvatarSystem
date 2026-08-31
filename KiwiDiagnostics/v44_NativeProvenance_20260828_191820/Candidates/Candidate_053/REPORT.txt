@@ -1,0 +1,10 @@
+KiwiAvatarSystem v44 Native Source Locator
+generated=2026-08-28T19:02:41.5960806+09:00
+projectRoot=D:\KiwiAvatarSystem
+downloadsRoot=D:\Users\main\Downloads
+projectSourceModified=0
+requiredSymbols=KiwiNativeCamera_GetCaptureTransportId,KiwiNativeCamera_GetLatestCpuNv12CopyMicroseconds,KiwiNativeCamera_GetCpuLatestReplacementCount,KiwiNativeCamera_GetLatestGpuUploadSubmitMicroseconds
+candidateCount=0
+
+NO_CURRENT_NATIVE_SOURCE_FOUND
+The installed DLL is newer than the source available inside the Unity project.

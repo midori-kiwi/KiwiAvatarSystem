@@ -1,0 +1,215 @@
+{
+  "schemaVersion": "1.0.0",
+  "caseId": "ZEROCOPY_VISUAL",
+  "token": "20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da",
+  "status": "FAIL",
+  "checkedUtc": "2026-08-27T12:56:58.2742128Z",
+  "checks": [
+    {
+      "id": "artifact.required.FRAME_COMPARISON_CSV",
+      "status": "PASS",
+      "expected": "exactly one existing, hash-matched, token-matched artifact",
+      "actual": "count=1; path=D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\Telemetry\\KiwiFrameComparison_20260827_215624_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.csv; sha256=9f36b848cc50d17b48d05bc46d811d9a1bfa0aa4ac62af4b0c72f71bcf4e4c71; tokenMatched=True",
+      "evidence": [
+        "count=1",
+        "path=D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\Telemetry\\KiwiFrameComparison_20260827_215624_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.csv",
+        "sha256=9f36b848cc50d17b48d05bc46d811d9a1bfa0aa4ac62af4b0c72f71bcf4e4c71",
+        "tokenMatched=True"
+      ]
+    },
+    {
+      "id": "artifact.required.ZERO_COPY_CSV",
+      "status": "PASS",
+      "expected": "exactly one existing, hash-matched, token-matched artifact",
+      "actual": "count=1; path=D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\Telemetry\\KiwiOrtDmlZeroCopyTelemetry_v42_3_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.csv; sha256=dba9e3b45cc115fb70a661cb45cc2eb00ff31c9753b754ed5da3ef8e7e0426fc; tokenMatched=True",
+      "evidence": [
+        "count=1",
+        "path=D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\Telemetry\\KiwiOrtDmlZeroCopyTelemetry_v42_3_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.csv",
+        "sha256=dba9e3b45cc115fb70a661cb45cc2eb00ff31c9753b754ed5da3ef8e7e0426fc",
+        "tokenMatched=True"
+      ]
+    },
+    {
+      "id": "artifact.required.GPU_CSV",
+      "status": "PASS",
+      "expected": "exactly one existing, hash-matched, token-matched artifact",
+      "actual": "count=1; path=D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\GPU\\KiwiGpuTelemetry_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.csv; sha256=509d2e4682b1bfc8e707ed6945e04f1b3f02180a0697b3445bd1c4e9fca80d43; tokenMatched=True",
+      "evidence": [
+        "count=1",
+        "path=D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\GPU\\KiwiGpuTelemetry_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.csv",
+        "sha256=509d2e4682b1bfc8e707ed6945e04f1b3f02180a0697b3445bd1c4e9fca80d43",
+        "tokenMatched=True"
+      ]
+    },
+    {
+      "id": "artifact.required.GPU_META",
+      "status": "PASS",
+      "expected": "exactly one existing, hash-matched, token-matched artifact",
+      "actual": "count=1; path=D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\GPU\\KiwiGpuTelemetry_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.meta.json; sha256=3d61b1e93a86a86e112bce6fe2ccfdc1ea788c3901abe71ec52aba083f9cd952; tokenMatched=True",
+      "evidence": [
+        "count=1",
+        "path=D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\GPU\\KiwiGpuTelemetry_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.meta.json",
+        "sha256=3d61b1e93a86a86e112bce6fe2ccfdc1ea788c3901abe71ec52aba083f9cd952",
+        "tokenMatched=True"
+      ]
+    },
+    {
+      "id": "artifact.required.PLAYER_LOG",
+      "status": "PASS",
+      "expected": "exactly one existing, hash-matched, token-matched artifact",
+      "actual": "count=1; path=D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\Logs\\KiwiStandalonePlayer_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.log; sha256=ad1825bcb8b01ed698065faeb7e800898beffeeb3028e06d861be879f4ae65fb; tokenMatched=True",
+      "evidence": [
+        "count=1",
+        "path=D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\Logs\\KiwiStandalonePlayer_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.log",
+        "sha256=ad1825bcb8b01ed698065faeb7e800898beffeeb3028e06d861be879f4ae65fb",
+        "tokenMatched=True"
+      ]
+    },
+    {
+      "id": "artifact.required.RUNTIME_VALIDATION_JSON",
+      "status": "PASS",
+      "expected": "exactly one existing, hash-matched, token-matched artifact",
+      "actual": "count=1; path=D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\Receipts\\KiwiRuntimeValidation_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.json; sha256=d0266b2099f33ad71a8e5641af602086d3ec454c916ab76ed26c026610312e77; tokenMatched=True",
+      "evidence": [
+        "count=1",
+        "path=D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\Receipts\\KiwiRuntimeValidation_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.json",
+        "sha256=d0266b2099f33ad71a8e5641af602086d3ec454c916ab76ed26c026610312e77",
+        "tokenMatched=True"
+      ]
+    },
+    {
+      "id": "artifact.required.CASE_RECEIPT_JSON",
+      "status": "PASS",
+      "expected": "exactly one existing, hash-matched, token-matched artifact",
+      "actual": "count=1; path=D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\Receipts\\KiwiValidationReceipt_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.json; sha256=907af9435a86ca01f0ea2a8673dc5305402b1c020b06a867155cfaa7609e2a24; tokenMatched=True",
+      "evidence": [
+        "count=1",
+        "path=D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\Receipts\\KiwiValidationReceipt_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.json",
+        "sha256=907af9435a86ca01f0ea2a8673dc5305402b1c020b06a867155cfaa7609e2a24",
+        "tokenMatched=True"
+      ]
+    },
+    {
+      "id": "artifact.required.VIDEO_MP4",
+      "status": "PASS",
+      "expected": "exactly one existing, hash-matched, token-matched artifact",
+      "actual": "count=1; path=D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\Video\\KiwiValidation_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.mp4; sha256=976b12588798913b6f6d71bceceb116208189099cbe28fd5d1c17af214b34e0f; tokenMatched=True",
+      "evidence": [
+        "count=1",
+        "path=D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\Video\\KiwiValidation_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.mp4",
+        "sha256=976b12588798913b6f6d71bceceb116208189099cbe28fd5d1c17af214b34e0f",
+        "tokenMatched=True"
+      ]
+    },
+    {
+      "id": "artifact.required.VIDEO_PROBE_JSON",
+      "status": "PASS",
+      "expected": "exactly one existing, hash-matched, token-matched artifact",
+      "actual": "count=1; path=D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\Video\\KiwiVideoProbe_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.json; sha256=cc318f63508d954b21f56aa477e9023332ece6857a96309519d91680833c838a; tokenMatched=True",
+      "evidence": [
+        "count=1",
+        "path=D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\Video\\KiwiVideoProbe_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.json",
+        "sha256=cc318f63508d954b21f56aa477e9023332ece6857a96309519d91680833c838a",
+        "tokenMatched=True"
+      ]
+    },
+    {
+      "id": "artifact.required.VIDEO_FRAME_INDEX_CSV",
+      "status": "PASS",
+      "expected": "exactly one existing, hash-matched, token-matched artifact",
+      "actual": "count=1; path=D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\Video\\KiwiVideoFrameIndex_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.csv; sha256=98c5728eb60df78bb1676d84a5beb3480891a7a2f58501957367a2ac07f28a01; tokenMatched=True",
+      "evidence": [
+        "count=1",
+        "path=D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\Video\\KiwiVideoFrameIndex_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.csv",
+        "sha256=98c5728eb60df78bb1676d84a5beb3480891a7a2f58501957367a2ac07f28a01",
+        "tokenMatched=True"
+      ]
+    },
+    {
+      "id": "artifact.rows.FRAME_COMPARISON_CSV",
+      "status": "PASS",
+      "expected": 800,
+      "actual": 1083,
+      "evidence": [
+        "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\Telemetry\\KiwiFrameComparison_20260827_215624_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.csv"
+      ]
+    },
+    {
+      "id": "artifact.rows.ZERO_COPY_CSV",
+      "status": "FAIL",
+      "expected": 800,
+      "actual": 785,
+      "evidence": [
+        "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\Telemetry\\KiwiOrtDmlZeroCopyTelemetry_v42_3_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.csv"
+      ]
+    },
+    {
+      "id": "artifact.rows.GPU_CSV",
+      "status": "PASS",
+      "expected": 100,
+      "actual": 127,
+      "evidence": [
+        "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\GPU\\KiwiGpuTelemetry_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.csv"
+      ]
+    },
+    {
+      "id": "receipt.identity",
+      "status": "PASS",
+      "expected": "exact run/case/token/mode/purpose and status=OK",
+      "actual": "run=20260827_215259_v42_3_FULLVALIDATION_720P;case=ZEROCOPY_VISUAL;token=20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da;mode=ZEROCOPY;purpose=VISUAL;status=OK",
+      "evidence": [
+        "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\Receipts\\KiwiValidationReceipt_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.json"
+      ]
+    },
+    {
+      "id": "player.log.contract",
+      "status": "PASS",
+      "expected": "exact ready/completion markers and zero fatal patterns",
+      "actual": "ready=True;complete=True;fatal=0",
+      "evidence": [
+        "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\Logs\\KiwiStandalonePlayer_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.log"
+      ]
+    },
+    {
+      "id": "process.lifecycle",
+      "status": "PASS",
+      "expected": "clean lifecycle, exit=0, no forced termination, no crash artifacts",
+      "actual": "{\"executable\":\"D:\\\\KiwiAvatarSystem\\\\ValidationRuns\\\\20260827_214847_v42_3_FULLVALIDATION_720P\\\\Build\\\\KiwiAvatarSystem_v42_3_DX12_AUTOMATED_VALIDATION.exe\",\"arguments\":[\"-force-d3d12\",\"-screen-fullscreen\",\"0\",\"-screen-width\",\"1280\",\"-screen-height\",\"720\",\"-logFile\",\"D:\\\\KiwiAvatarSystem\\\\ValidationRuns\\\\20260827_215259_v42_3_FULLVALIDATION_720P\\\\ZEROCOPY_VISUAL\\\\Logs\\\\KiwiStandalonePlayer_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.log\",\"-crash-report-folder\",\"D:\\\\KiwiAvatarSystem\\\\ValidationRuns\\\\20260827_215259_v42_3_FULLVALIDATION_720P\\\\ZEROCOPY_VISUAL\\\\Crash\"],\"pid\":7264,\"startSucceeded\":true,\"startupSurvived\":true,\"readyMarkerSeen\":true,\"completionMarkerSeen\":true,\"receiptCommitted\":true,\"exitObserved\":true,\"exitCode\":0,\"forcedTermination\":false,\"crashArtifactCount\":0}",
+      "evidence": [
+        "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\case-result_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.json"
+      ]
+    }
+  ],
+  "issues": [
+    {
+      "severity": "KNOWN_ISSUE",
+      "code": "sentis.compute_tensor_shutdown",
+      "message": "Known log pattern count=378 maximum=10000",
+      "caseId": "ZEROCOPY_VISUAL",
+      "evidence": [
+        "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\Logs\\KiwiStandalonePlayer_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.log",
+        "Found unreferenced, but undisposed ComputeTensorData"
+      ]
+    },
+    {
+      "severity": "KNOWN_ISSUE",
+      "code": "sentis.compute_buffer_gc_shutdown",
+      "message": "Known log pattern count=378 maximum=10000",
+      "caseId": "ZEROCOPY_VISUAL",
+      "evidence": [
+        "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\Logs\\KiwiStandalonePlayer_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.log",
+        "GarbageCollector disposing of ComputeBuffer"
+      ]
+    },
+    {
+      "severity": "KNOWN_ISSUE",
+      "code": "d3d12_upload_buffer_small",
+      "message": "Known log pattern count=1 maximum=10",
+      "caseId": "ZEROCOPY_VISUAL",
+      "evidence": [
+        "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_VISUAL\\Logs\\KiwiStandalonePlayer_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-b9cdd64e427e4242918da95b705273da.log",
+        "d3d12: upload buffer was too small"
+      ]
+    }
+  ]
+}

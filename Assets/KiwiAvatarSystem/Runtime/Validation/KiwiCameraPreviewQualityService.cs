@@ -43,8 +43,26 @@ public static class KiwiCameraPreviewQualityService
     public const string V29ContractMarker =
         "KIWI_V5_1_PHASE16_20_17_V29_PREVIEW_COST_ABC";
 
+    public const string V44_29ContractMarker =
+        "KIWI_V5_1_PHASE16_20_56_V44_29_LIVE_CAMERA_METADATA_CORRECTION_DIAG";
+
+    public const string V44_31ContractMarker =
+        "KIWI_V5_1_PHASE16_20_57_V44_31_SRGB_CORRECTION_RT_DIAG";
+
     private const string PreviewModeEnvironment =
         "KIWI_CAMERA_PREVIEW_MODE";
+
+    private const string ColorCorrectionEnvironment =
+        "KIWI_LIVE_CAMERA_COLOR_CORRECTION";
+
+    private const string NativePresentationTextureName =
+        "KiwiNativeCameraPresentation";
+
+    private const string CorrectionShaderResourceName =
+        "KiwiLiveCameraMetadataCorrectionV44_29";
+
+    private const string CorrectionShaderFallbackName =
+        "Hidden/Kiwi/LiveCameraMetadataCorrectionV44_29";
 
     private const int PreviewTargetWidth = 768;
 
@@ -53,6 +71,12 @@ public static class KiwiCameraPreviewQualityService
         Direct = 0,
         Single = 1,
         Staged = 2
+    }
+
+    public enum LiveCameraColorCorrectionMode
+    {
+        Off = 0,
+        Metadata = 1
     }
 
     private sealed class Channel
@@ -69,8 +93,17 @@ public static class KiwiCameraPreviewQualityService
     private static readonly PreviewMode ConfiguredMode =
         ResolveConfiguredMode();
 
+    private static readonly LiveCameraColorCorrectionMode
+        ConfiguredColorCorrection =
+            ResolveColorCorrectionMode();
+
     private static int _preparedUnityFrame = -1;
     private static bool _modeLogged;
+    private static bool _colorModeLogged;
+    private static bool _colorShaderErrorLogged;
+    private static bool _liveColorCorrectionApplied;
+
+    private static Material _colorCorrectionMaterial;
 
     public static PreviewMode CurrentMode =>
         ConfiguredMode;
@@ -80,6 +113,16 @@ public static class KiwiCameraPreviewQualityService
 
     public static string CurrentModeName =>
         ConfiguredMode.ToString().ToUpperInvariant();
+
+    public static LiveCameraColorCorrectionMode
+        CurrentColorCorrectionMode =>
+            ConfiguredColorCorrection;
+
+    public static string CurrentColorCorrectionModeName =>
+        ConfiguredColorCorrection.ToString().ToUpperInvariant();
+
+    public static bool LiveColorCorrectionApplied =>
+        _liveColorCorrectionApplied;
 
     public static int LiveBlitsLastPrepare =>
         Live.blitsLastPrepare;
@@ -125,10 +168,13 @@ public static class KiwiCameraPreviewQualityService
 
         LogModeOnce();
 
-        PrepareChannel(
-            Live,
-            liveSource,
-            "KiwiCameraPreviewQuality_Live");
+        if (!PrepareCorrectedLivePreview(liveSource))
+        {
+            PrepareChannel(
+                Live,
+                liveSource,
+                "KiwiCameraPreviewQuality_Live");
+        }
 
         PrepareChannel(
             Matched,
@@ -139,6 +185,19 @@ public static class KiwiCameraPreviewQualityService
     public static Texture GetLivePreviewOrSource(
         Texture liveSource)
     {
+        if (
+            _liveColorCorrectionApplied &&
+            liveSource != null &&
+            ReferenceEquals(
+                Live.preparedSource,
+                liveSource) &&
+            Live.output != null &&
+            Live.output.IsCreated()
+        )
+        {
+            return Live.output;
+        }
+
         if (ConfiguredMode == PreviewMode.Direct)
         {
             return liveSource;
@@ -190,11 +249,229 @@ public static class KiwiCameraPreviewQualityService
         ReleaseChannel(
             Matched);
 
+        if (_colorCorrectionMaterial != null)
+        {
+            UnityEngine.Object.Destroy(
+                _colorCorrectionMaterial);
+
+            _colorCorrectionMaterial =
+                null;
+        }
+
+        _liveColorCorrectionApplied =
+            false;
+
         _preparedUnityFrame =
             -1;
 
         _modeLogged =
             false;
+
+        _colorModeLogged =
+            false;
+
+        _colorShaderErrorLogged =
+            false;
+    }
+
+    private static LiveCameraColorCorrectionMode
+        ResolveColorCorrectionMode()
+    {
+        string raw =
+            Environment.GetEnvironmentVariable(
+                ColorCorrectionEnvironment);
+
+        if (string.IsNullOrWhiteSpace(raw))
+        {
+            return LiveCameraColorCorrectionMode.Off;
+        }
+
+        if (
+            string.Equals(
+                raw.Trim(),
+                "METADATA",
+                StringComparison.OrdinalIgnoreCase)
+        )
+        {
+            return LiveCameraColorCorrectionMode.Metadata;
+        }
+
+        return LiveCameraColorCorrectionMode.Off;
+    }
+
+    private static bool PrepareCorrectedLivePreview(
+        Texture source)
+    {
+        _liveColorCorrectionApplied =
+            false;
+
+        bool eligible =
+            ConfiguredColorCorrection ==
+                LiveCameraColorCorrectionMode.Metadata &&
+            source != null &&
+            string.Equals(
+                source.name,
+                NativePresentationTextureName,
+                StringComparison.Ordinal);
+
+        if (!eligible)
+        {
+            LogColorModeOnce(
+                source,
+                false,
+                false);
+
+            return false;
+        }
+
+        Material material =
+            GetOrCreateColorCorrectionMaterial();
+
+        if (material == null)
+        {
+            LogColorModeOnce(
+                source,
+                true,
+                false);
+
+            return false;
+        }
+
+        Live.preparedSource =
+            null;
+
+        Live.blitsLastPrepare =
+            0;
+
+        ReleaseRenderTexture(
+            ref Live.intermediate);
+
+        EnsureColorCorrectionRenderTexture(
+            ref Live.output,
+            source.width,
+            source.height,
+            "KiwiCameraPreviewQuality_Live_MetadataCorrected_sRGB");
+
+        Graphics.Blit(
+            source,
+            Live.output,
+            material);
+
+        Live.blitsLastPrepare =
+            1;
+
+        Live.preparedSource =
+            source;
+
+        _liveColorCorrectionApplied =
+            true;
+
+        LogColorModeOnce(
+            source,
+            true,
+            true);
+
+        return true;
+    }
+
+    private static Material
+        GetOrCreateColorCorrectionMaterial()
+    {
+        if (_colorCorrectionMaterial != null)
+        {
+            return _colorCorrectionMaterial;
+        }
+
+        Shader shader =
+            Resources.Load<Shader>(
+                CorrectionShaderResourceName);
+
+        if (shader == null)
+        {
+            shader =
+                Shader.Find(
+                    CorrectionShaderFallbackName);
+        }
+
+        if (shader == null)
+        {
+            if (!_colorShaderErrorLogged)
+            {
+                _colorShaderErrorLogged =
+                    true;
+
+                Debug.LogError(
+                    "[KiwiLiveCameraColorV44_29] " +
+                    "shaderMissing=1 correctionDisabled=1");
+            }
+
+            return null;
+        }
+
+        _colorCorrectionMaterial =
+            new Material(shader)
+            {
+                name =
+                    "KiwiLiveCameraMetadataCorrectionV44_29_Material",
+                hideFlags =
+                    HideFlags.HideAndDontSave
+            };
+
+        return _colorCorrectionMaterial;
+    }
+
+    private static void LogColorModeOnce(
+        Texture source,
+        bool eligible,
+        bool applied)
+    {
+        if (
+            _colorModeLogged ||
+            source == null)
+        {
+            return;
+        }
+
+        _colorModeLogged =
+            true;
+
+        Debug.Log(
+            "[KiwiLiveCameraColorV44_29] " +
+            "contract=" +
+            V44_29ContractMarker +
+            " mode=" +
+            CurrentColorCorrectionModeName +
+            " source=" +
+            source.name +
+            " size=" +
+            source.width +
+            "x" +
+            source.height +
+            " eligibleNativePresentation=" +
+            (eligible ? "1" : "0") +
+            " applied=" +
+            (applied ? "1" : "0") +
+            " addedLivePreviewBlit=" +
+            (applied ? "1" : "0") +
+            " correctedOutputSrgb=" +
+            (
+                Live.output != null &&
+                Live.output.IsCreated() &&
+                Live.output.sRGB
+                    ? "1"
+                    : "0"
+            ) +
+            " correctedOutputFormat=" +
+            (
+                Live.output != null
+                    ? Live.output.graphicsFormat.ToString()
+                    : "NONE"
+            ) +
+            " v44_31=" +
+            V44_31ContractMarker +
+            " trackingInputChanged=0" +
+            " nativeDllChanged=0" +
+            " spoutChanged=0");
     }
 
     private static PreviewMode ResolveConfiguredMode()
@@ -400,6 +677,59 @@ public static class KiwiCameraPreviewQualityService
 
         channel.preparedSource =
             source;
+    }
+
+    private static void EnsureColorCorrectionRenderTexture(
+        ref RenderTexture texture,
+        int width,
+        int height,
+        string name)
+    {
+        if (
+            texture != null &&
+            texture.width == width &&
+            texture.height == height &&
+            texture.sRGB &&
+            texture.IsCreated()
+        )
+        {
+            return;
+        }
+
+        ReleaseRenderTexture(
+            ref texture);
+
+        texture =
+            new RenderTexture(
+                width,
+                height,
+                0,
+                RenderTextureFormat.ARGB32,
+                RenderTextureReadWrite.sRGB)
+            {
+                name = name,
+                filterMode =
+                    FilterMode.Bilinear,
+                wrapMode =
+                    TextureWrapMode.Clamp,
+                hideFlags =
+                    HideFlags.DontSave,
+                useMipMap =
+                    false,
+                autoGenerateMips =
+                    false
+            };
+
+        texture.Create();
+
+        if (!texture.sRGB)
+        {
+            Debug.LogError(
+                "[KiwiLiveCameraColorV44_31] " +
+                "correctedOutputSrgb=0 " +
+                "expected=1 " +
+                "correctionRtCreationFailed=1");
+        }
     }
 
     private static void EnsureRenderTexture(

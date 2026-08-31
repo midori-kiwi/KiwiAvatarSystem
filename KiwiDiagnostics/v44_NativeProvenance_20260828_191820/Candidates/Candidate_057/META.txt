@@ -1,0 +1,1 @@
+source=D:\Users\main\Downloads\KiwiAvatarSystem_v44_NativeSourceLocator.zip :: Kiwi_v44_NativeSourceLocator/README.txt score=30 exactCurrentPathBSymbols=0 sha256=9d38eeb410481925d14b50340e1e755124243ace3a619e690c64713e9b494521

@@ -1,0 +1,51 @@
+{
+    "contract": "KIWI_V5_1_PHASE16_20_32_V42_3_AUTOMATED_VALIDATION_V1",
+    "version": "v42.3",
+    "status": "OK",
+    "error": "",
+    "runId": "20260827_213043_v42_3_FULLVALIDATION_720P",
+    "caseId": "BASELINE_VISUAL",
+    "token": "20260827_213043_v42_3_FULLVALIDATION_720P-BASELINE_VISUAL-1fc912bdb0b5469bae7b2c4e9072b551",
+    "mode": "BASELINE",
+    "purpose": "VISUAL",
+    "processId": 24076,
+    "graphicsApi": "Direct3D12",
+    "screenWidth": 1280,
+    "screenHeight": 720,
+    "startedUtc": "2026-08-27T12:33:37.3428563Z",
+    "startupReadyUtc": "2026-08-27T12:33:40.2554622Z",
+    "recordingStartedUtc": "2026-08-27T12:33:45.3425622Z",
+    "recordingStoppedUtc": "2026-08-27T12:34:15.3688827Z",
+    "committedUtc": "2026-08-27T12:34:15.4312644Z",
+    "warmupSeconds": 5.0,
+    "requestedRecordSeconds": 30.0,
+    "runtimeValidationErrors": 0,
+    "runtimeValidationCriticals": 0,
+    "camera": {
+        "active": true,
+        "width": 1920,
+        "height": 1080,
+        "targetFrameRate": 60,
+        "timestampCalibrationValid": true,
+        "sourceFrameCount": 2130,
+        "presentedFrameCount": 1188
+    },
+    "frameComparisonCsv": {
+        "path": "C:\\Users\\main\\AppData\\LocalLow\\MidoriKiwi\\KiwiAvatarSystem\\KiwiFrameComparison\\KiwiFrameComparison_20260827_213345_20260827_213043_v42_3_FULLVALIDATION_720P-BASELINE_VISUAL-1fc912bdb0b5469bae7b2c4e9072b551.csv",
+        "bytes": 926231,
+        "rows": 1053,
+        "sha256": "bd77cca65d0c79cf2cf9ec0f12bed095ea7a0c7ec9a1193716c0444607ec6e3a"
+    },
+    "ortZeroCopyCsv": {
+        "path": "",
+        "bytes": 0,
+        "rows": 0,
+        "sha256": ""
+    },
+    "runtimeValidationJson": {
+        "path": "C:\\Users\\main\\AppData\\LocalLow\\MidoriKiwi\\KiwiAvatarSystem\\KiwiValidationHarness\\20260827_213043_v42_3_FULLVALIDATION_720P-BASELINE_VISUAL-1fc912bdb0b5469bae7b2c4e9072b551\\runtime.json",
+        "bytes": 598,
+        "rows": 0,
+        "sha256": "0e3aa1e96f83c24b555491ee149363308f07fe3a3af88b6524d210de29543d12"
+    }
+}

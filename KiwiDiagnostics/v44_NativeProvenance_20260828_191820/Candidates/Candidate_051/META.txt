@@ -1,0 +1,1 @@
+source=D:\Users\main\Downloads\KiwiAvatarSystem_v44_NativeSourceLocator\Kiwi_v44_NativeSourceLocator\Tools\Find-v44-CurrentNativeSource.ps1 score=450 exactCurrentPathBSymbols=4 sha256=fbc222fb1c9ff81c57e3209fd95b0ebea8a424515ce83094a49e55d84707f445

@@ -1,0 +1,27 @@
+// KiwiAvatarSystem v42 observer-only exact crop -> NCHW float tensorization.
+#pragma kernel CSMain
+
+Texture2D<float4> _Source;
+RWStructuredBuffer<float> _Output;
+int _FlipY;
+
+#define KIWI_INPUT_SIZE 192
+#define KIWI_PIXEL_COUNT 36864
+
+[numthreads(8, 8, 1)]
+void CSMain(uint3 tid : SV_DispatchThreadID)
+{
+    if (tid.x >= KIWI_INPUT_SIZE || tid.y >= KIWI_INPUT_SIZE)
+        return;
+
+    uint sampleY = _FlipY != 0
+        ? (KIWI_INPUT_SIZE - 1 - tid.y)
+        : tid.y;
+
+    float3 rgb = _Source.Load(int3(tid.x, sampleY, 0)).rgb;
+    uint index = tid.y * KIWI_INPUT_SIZE + tid.x;
+
+    _Output[index] = rgb.r;
+    _Output[KIWI_PIXEL_COUNT + index] = rgb.g;
+    _Output[KIWI_PIXEL_COUNT * 2 + index] = rgb.b;
+}

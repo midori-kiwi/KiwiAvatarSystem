@@ -1,0 +1,21 @@
+KiwiAvatarSystem v42.3 DX12 Development Standalone Diagnostic
+contract=KIWI_V5_1_PHASE16_20_32_V42_3_DX12_PLAYER_BUILD_API_LOCK
+unityVersion=6000.0.80f1
+output=D:\KiwiAvatarSystem\ValidationRuns\20260827_214847_v42_3_FULLVALIDATION_720P\Build\KiwiAvatarSystem_v42_3_DX12_AUTOMATED_VALIDATION.exe
+buildTarget=StandaloneWindows64
+developmentBuild=1
+autoconnectProfiler=0
+deepProfiling=0
+scriptDebugging=0
+diagnosticOnly=1
+releaseCandidateArtifact=0
+windowsAutoGraphicsApi=0
+windowsGraphicsApis=Direct3D12
+dx12OnlyBuild=1
+mandatoryFullPreflight=1
+buildGateBypassed=0
+buildResult=Succeeded
+totalSize=275775523
+warnings=205
+errors=0
+scenes=Assets/Scenes/Face Landmark Detection.unity

@@ -1,0 +1,28 @@
+{
+    "version": "5.1.0-phase11",
+    "health": "Healthy",
+    "frame": 1406,
+    "realtime": 41.03936020175737,
+    "totalViolations": 0,
+    "activeViolations": 0,
+    "warnings": 0,
+    "errors": 0,
+    "criticals": 0,
+    "lastCode": "None",
+    "lastMessage": "-",
+    "provider": "Runner/InferenceEngine",
+    "canonicalFrameId": 1072,
+    "rigidTimestamp": 37124,
+    "semanticTimestamp": 37124,
+    "generation": {
+        "camera": 2,
+        "provider": 9,
+        "model": 1,
+        "config": 3,
+        "calibration": 3,
+        "session": 2,
+        "observation": 1076,
+        "semantic": 1062
+    },
+    "recent": []
+}

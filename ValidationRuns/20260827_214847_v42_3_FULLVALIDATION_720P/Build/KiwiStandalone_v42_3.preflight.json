@@ -1,0 +1,34 @@
+{
+    "version": "5.1.0-phase16.19.5.1",
+    "baseCommit": "0b890a317cc3de64a4eadc955ce87bf21479786b",
+    "unityVersion": "6000.0.80f1",
+    "generatedUtc": "2026-08-27T12:49:19.5901580Z",
+    "fingerprint": "3946df732fa4f105d9dca0a046e52346259320c58cbbe367ed0d50e990301960",
+    "passed": true,
+    "releaseCandidateReady": true,
+    "scenesScanned": 1,
+    "objectsScanned": 50,
+    "componentsScanned": 61,
+    "warningCount": 2,
+    "errorCount": 0,
+    "criticalCount": 0,
+    "releaseScenes": [
+        "Assets/Scenes/Face Landmark Detection.unity"
+    ],
+    "issues": [
+        {
+            "severity": "Warning",
+            "code": "Package.VersionDrift",
+            "message": "com.unity.ugui resolved as 2.0.0; current main baseline uses 1.0.0.",
+            "assetPath": "Packages/manifest.json",
+            "objectPath": ""
+        },
+        {
+            "severity": "Warning",
+            "code": "Dependency.UniVRMVersionUnverified",
+            "message": "UniVRM/UniGLTF assemblies are loaded, but PackageManager does not expose a UniVRM package version. Confirm 0.130.1 during the RC environment check.",
+            "assetPath": "",
+            "objectPath": ""
+        }
+    ]
+}

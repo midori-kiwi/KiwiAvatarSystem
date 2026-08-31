@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "1.0.0",
+  "token": "20260827_214108_v42_3_FULLVALIDATION_720P-ZEROCOPY_VISUAL-21c7570ae95c4b90b4257f6a7c014d86",
+  "caseId": "ZEROCOPY_VISUAL",
+  "gpuUuid": "GPU-6efc5d27-d766-eeac-cb81-8aa14cebbfa3",
+  "query": "timestamp,uuid,name,driver_version,utilization.gpu,memory.used,memory.total,power.draw,temperature.gpu",
+  "intervalMs": 200,
+  "startedUtc": null,
+  "completedUtc": "2026-08-27T12:42:37.4264458Z",
+  "terminationReason": "not-started"
+}

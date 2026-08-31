@@ -1,0 +1,1 @@
+source=D:\Users\main\Downloads\KiwiAvatarSystem_v43_CadenceNoCsvProbe.zip :: Kiwi_v43_CadenceNoCsvProbe/README.txt score=40 exactCurrentPathBSymbols=0 sha256=70ec75899480ca52f758e17a935e076376e97e219f886f245f77959f33294380

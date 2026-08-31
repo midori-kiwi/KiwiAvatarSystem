@@ -1,0 +1,204 @@
+Microsoft (R) COFF/PE Dumper Version 14.44.35228.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+Dump of file KiwiNativeCamera.dll
+
+File Type: DLL
+
+  Section contains the following imports:
+
+    MSVCP140.dll
+             1800672C8 Import Address Table
+             180067BF8 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+
+                         275 ?_Throw_Cpp_error@std@@YAXH@Z
+                         54E _Cnd_do_broadcast_at_thread_exit
+                         552 _Cnd_signal
+                         54B _Cnd_broadcast
+                         555 _Cnd_wait
+                         589 _Mtx_unlock
+                         585 _Mtx_lock
+                         5B4 _Thrd_id
+                         5B5 _Thrd_join
+                         28E ?_Xlength_error@std@@YAXPEBD@Z
+
+    MF.dll
+             180067198 Import Address Table
+             180067AC8 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+
+                          4F MFEnumDeviceSources
+
+    MFPlat.DLL
+             1800671F8 Import Address Table
+             180067B28 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+
+                          2B MFCreateAttributes
+                          CD MFShutdown
+                          CF MFStartup
+
+    MFReadWrite.dll
+             180067268 Import Address Table
+             180067B98 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+
+                           5 MFCreateSourceReaderFromMediaSource
+
+    ole32.dll
+             180067790 Import Address Table
+             1800680C0 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+
+                          8C CoTaskMemFree
+
+    d3d11.dll
+             1800676D0 Import Address Table
+             180068000 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+
+                           6 D3D11CreateDevice
+
+    dxgi.dll
+             180067730 Import Address Table
+             180068060 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+
+                           5 CreateDXGIFactory2
+
+    D3DCOMPILER_47.dll
+             180067000 Import Address Table
+             180067930 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+
+                           1 D3DCompile
+
+    KERNEL32.dll
+             180067060 Import Address Table
+             180067990 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+
+                         3B8 IsProcessorFeaturePresent
+                         301 GetStartupInfoW
+                         5B8 SetUnhandledExceptionFilter
+                         5FB UnhandledExceptionFilter
+                         3B0 IsDebuggerPresent
+                         518 RtlVirtualUnwind
+                         511 RtlLookupFunctionEntry
+                         2A5 GetModuleHandleW
+                         5CA SleepConditionVariableSRW
+                         62D WakeAllConditionVariable
+                           0 AcquireSRWLockExclusive
+                         4EA ReleaseSRWLockExclusive
+                         482 QueryPerformanceFrequency
+                         481 QueryPerformanceCounter
+                          9D CloseHandle
+                         44A OutputDebugStringA
+                         509 RtlCaptureContext
+                         39A InitializeSListHead
+                         142 DisableThreadLibraryCalls
+                         31A GetSystemTimeAsFileTime
+                         241 GetCurrentProcess
+                         242 GetCurrentProcessId
+                         5D8 TerminateProcess
+                         246 GetCurrentThreadId
+
+    VCRUNTIME140.dll
+             180067380 Import Address Table
+             180067CB0 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+
+                          1B __current_exception
+                           8 __C_specific_handler
+                          3A memchr
+                          3E memset
+                          1C __current_exception_context
+                           1 _CxxThrowException
+                          23 __std_terminate
+                          21 __std_exception_copy
+                          22 __std_exception_destroy
+                          25 __std_type_info_destroy_list
+                          3D memmove
+                          3B memcmp
+                          3C memcpy
+
+    VCRUNTIME140_1.dll
+             180067450 Import Address Table
+             180067D80 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+
+                           0 __CxxFrameHandler4
+
+    api-ms-win-crt-runtime-l1-1-0.dll
+             180067520 Import Address Table
+             180067E50 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+
+                          36 _initterm
+                          37 _initterm_e
+                          3A _invoke_watson
+                          1D _crt_at_quick_exit
+                          1E _crt_atexit
+                          22 _execute_onexit_table
+                          67 terminate
+                          14 _beginthreadex
+                          3C _register_onexit_function
+                          34 _initialize_onexit_table
+                          16 _cexit
+                          33 _initialize_narrow_environment
+                          3F _seh_filter_dll
+                          18 _configure_narrow_argv
+
+    api-ms-win-crt-string-l1-1-0.dll
+             180067658 Import Address Table
+             180067F88 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+
+                          4A _wcsicmp
+                          9B towupper
+                          8B strlen
+                          A3 wcslen
+
+    api-ms-win-crt-stdio-l1-1-0.dll
+             1800675F8 Import Address Table
+             180067F28 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+
+                           F __stdio_common_vsprintf_s
+
+    api-ms-win-crt-heap-l1-1-0.dll
+             1800674B0 Import Address Table
+             180067DE0 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+
+                           8 _callnewh
+                          19 malloc
+                          18 free
+
+  Summary
+
+        1000 .00cfg
+        2000 .data
+        2000 .idata
+        3000 .pdata
+       1A000 .rdata
+        1000 .reloc
+       47000 .text
+        1000 .tls

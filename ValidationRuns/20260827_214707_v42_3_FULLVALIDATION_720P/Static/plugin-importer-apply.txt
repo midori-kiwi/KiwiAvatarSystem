@@ -1,0 +1,3 @@
+status=PASS
+mode=APPLY
+importer=1 native=1 preloaded=1 anyPlatform=0 editor=0 win64=1 cpu=x86_64 unity=6000.0.80f1

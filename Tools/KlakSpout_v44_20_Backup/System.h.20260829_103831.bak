@@ -1,0 +1,274 @@
+#pragma once
+
+#include "Common.h"
+#include <dxgi1_2.h>
+#include <d3d11_1.h>
+
+namespace KlakSpout {
+
+// Singleton system class that manages DX11/12 device/context objects.
+//
+// KiwiAvatarSystem v44.19 DX12 sender design:
+// - Preserve KlakSpout's original D3D11On12 device path for receiver/legacy use.
+// - Add a completely independent D3D11 device on the SAME adapter as Unity D3D12.
+// - Sender bridge traffic uses that independent D3D11 device.
+// - No D3D11On12 work is submitted to Unity's graphics queue by the sender path.
+class System final
+{
+public:
+
+    System(IUnityInterfaces* unity)
+      : _unity(unity),
+        isD3D12(getGraphics()->GetRenderer() == kUnityGfxRendererD3D12) {}
+
+    void shutdown()
+    {
+        _bridge_d3d11_device = nullptr;
+        _bridge_d3d11_context = nullptr;
+
+        _d3d11on12 = nullptr;
+        _d3d11_device = nullptr;
+        _d3d11_context = nullptr;
+    }
+
+    IUnityGraphics* getGraphics() const
+    {
+        return _unity->Get<IUnityGraphics>();
+    }
+
+    IUnityGraphicsD3D12v6* getUnityD3D12() const
+    {
+        return _unity->Get<IUnityGraphicsD3D12v6>();
+    }
+
+    WRL::ComPtr<ID3D12Device> getD3D12Device() const
+    {
+        auto unityD3D12 = getUnityD3D12();
+        return unityD3D12 ? unityD3D12->GetDevice() : nullptr;
+    }
+
+    ID3D12Fence* getUnityFrameFence() const
+    {
+        auto unityD3D12 = getUnityD3D12();
+        return unityD3D12 ? unityD3D12->GetFrameFence() : nullptr;
+    }
+
+    UINT64 executeUnityCommandList(
+      ID3D12GraphicsCommandList* commandList,
+      int stateCount,
+      UnityGraphicsD3D12ResourceState* states) const
+    {
+        auto unityD3D12 = getUnityD3D12();
+        return unityD3D12
+          ? unityD3D12->ExecuteCommandList(commandList, stateCount, states)
+          : 0;
+    }
+
+    // ---------------------------------------------------------------------
+    // Original KlakSpout D3D11 / D3D11On12 accessors.
+    // These are intentionally preserved for receiver compatibility.
+    // ---------------------------------------------------------------------
+
+    WRL::ComPtr<ID3D11On12Device> getD3D11On12Device()
+    {
+        if (!_d3d11_device) PrepareD3D11On12();
+
+        WRL::ComPtr<ID3D11On12Device> d3d11on12;
+        if (_d3d11_device) _d3d11_device.As(&d3d11on12);
+        return d3d11on12;
+    }
+
+    WRL::ComPtr<ID3D11Device> getD3D11Device()
+    {
+        if (isD3D12)
+        {
+            if (!_d3d11_device) PrepareD3D11On12();
+            return _d3d11_device;
+        }
+        else
+        {
+            return _unity->Get<IUnityGraphicsD3D11>()->GetDevice();
+        }
+    }
+
+    WRL::ComPtr<ID3D11DeviceContext> getD3D11Context()
+    {
+        if (isD3D12)
+        {
+            if (!_d3d11_context) PrepareD3D11On12();
+            return _d3d11_context;
+        }
+        else
+        {
+            WRL::ComPtr<ID3D11DeviceContext> ctx;
+            _unity->Get<IUnityGraphicsD3D11>()
+              ->GetDevice()->GetImmediateContext(&ctx);
+            return ctx;
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // v44.19 independent D3D11 bridge device.
+    // ---------------------------------------------------------------------
+
+    WRL::ComPtr<ID3D11Device> getBridgeD3D11Device()
+    {
+        if (!_bridge_d3d11_device) PrepareBridgeD3D11();
+        return _bridge_d3d11_device;
+    }
+
+    WRL::ComPtr<ID3D11Device1> getBridgeD3D11Device1()
+    {
+        if (!_bridge_d3d11_device) PrepareBridgeD3D11();
+
+        WRL::ComPtr<ID3D11Device1> device1;
+        if (_bridge_d3d11_device) _bridge_d3d11_device.As(&device1);
+        return device1;
+    }
+
+    WRL::ComPtr<ID3D11DeviceContext> getBridgeD3D11Context()
+    {
+        if (!_bridge_d3d11_context) PrepareBridgeD3D11();
+        return _bridge_d3d11_context;
+    }
+
+    // Unity owns source texture state tracking. v44.19 only needs pre-event
+    // Unity command buffers submitted before ExecuteCommandList. It never asks
+    // for direct access to Unity's graphics queue.
+    void configureD3D12SenderEvent(int eventID)
+    {
+        if (!isD3D12) return;
+
+        auto unityD3D12 = getUnityD3D12();
+        if (!unityD3D12) return;
+
+        UnityD3D12PluginEventConfig config = {};
+        config.graphicsQueueAccess = kUnityD3D12GraphicsQueueAccess_DontCare;
+        config.flags = kUnityD3D12EventConfigFlag_FlushCommandBuffers;
+        config.ensureActiveRenderTextureIsBound = false;
+        unityD3D12->ConfigureEvent(eventID, &config);
+    }
+
+private:
+
+    IUnityInterfaces* _unity;
+
+public:
+
+    spoutSenderNames spout;
+    const bool isD3D12;
+
+private:
+
+    // Original KlakSpout D3D11On12 objects.
+    WRL::ComPtr<ID3D11On12Device> _d3d11on12;
+    WRL::ComPtr<ID3D11Device> _d3d11_device;
+    WRL::ComPtr<ID3D11DeviceContext> _d3d11_context;
+
+    // v44.19 independent bridge objects.
+    WRL::ComPtr<ID3D11Device> _bridge_d3d11_device;
+    WRL::ComPtr<ID3D11DeviceContext> _bridge_d3d11_context;
+
+    static bool luidEqual(const LUID& a, const LUID& b)
+    {
+        return a.LowPart == b.LowPart && a.HighPart == b.HighPart;
+    }
+
+    void PrepareBridgeD3D11()
+    {
+        if (!isD3D12 || _bridge_d3d11_device) return;
+
+        auto device12 = getD3D12Device();
+        if (!device12) return;
+
+        const LUID targetLuid = device12->GetAdapterLuid();
+
+        WRL::ComPtr<IDXGIFactory1> factory;
+        auto hres = CreateDXGIFactory1(IID_PPV_ARGS(&factory));
+        if (FAILED(hres) || !factory) return;
+
+        WRL::ComPtr<IDXGIAdapter1> matchedAdapter;
+
+        for (UINT index = 0; ; ++index)
+        {
+            WRL::ComPtr<IDXGIAdapter1> candidate;
+            hres = factory->EnumAdapters1(index, &candidate);
+
+            if (hres == DXGI_ERROR_NOT_FOUND)
+                break;
+
+            if (FAILED(hres) || !candidate)
+                continue;
+
+            DXGI_ADAPTER_DESC1 desc = {};
+            if (FAILED(candidate->GetDesc1(&desc)))
+                continue;
+
+            if (luidEqual(desc.AdapterLuid, targetLuid))
+            {
+                matchedAdapter = candidate;
+                break;
+            }
+        }
+
+        if (!matchedAdapter) return;
+
+        D3D_FEATURE_LEVEL obtained = D3D_FEATURE_LEVEL_11_0;
+
+        hres = D3D11CreateDevice(
+          matchedAdapter.Get(),
+          D3D_DRIVER_TYPE_UNKNOWN,
+          nullptr,
+          D3D11_CREATE_DEVICE_BGRA_SUPPORT,
+          nullptr,
+          0,
+          D3D11_SDK_VERSION,
+          &_bridge_d3d11_device,
+          &obtained,
+          &_bridge_d3d11_context);
+
+        if (FAILED(hres))
+        {
+            _bridge_d3d11_device = nullptr;
+            _bridge_d3d11_context = nullptr;
+        }
+    }
+
+    void PrepareD3D11On12()
+    {
+        if (!isD3D12 || _d3d11_device) return;
+
+        auto unityD3D12 = getUnityD3D12();
+        auto device = getD3D12Device();
+        if (!unityD3D12 || !device) return;
+
+        IUnknown* queues[] = { unityD3D12->GetCommandQueue() };
+
+        auto hres = D3D11On12CreateDevice(
+          device.Get(),
+          D3D11_CREATE_DEVICE_BGRA_SUPPORT,
+          nullptr,
+          0,
+          queues,
+          1,
+          0,
+          &_d3d11_device,
+          &_d3d11_context,
+          nullptr);
+
+        if (FAILED(hres))
+        {
+            _d3d11_device = nullptr;
+            _d3d11_context = nullptr;
+            _d3d11on12 = nullptr;
+            return;
+        }
+
+        _d3d11_device.As(&_d3d11on12);
+    }
+};
+
+// Singleton instance
+inline std::unique_ptr<System> _system;
+
+} // namespace KlakSpout

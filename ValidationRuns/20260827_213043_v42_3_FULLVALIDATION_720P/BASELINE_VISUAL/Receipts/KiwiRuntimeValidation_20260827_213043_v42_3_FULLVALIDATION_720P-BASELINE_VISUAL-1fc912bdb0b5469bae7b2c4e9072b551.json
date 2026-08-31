@@ -1,0 +1,28 @@
+{
+    "version": "5.1.0-phase11",
+    "health": "Healthy",
+    "frame": 1253,
+    "realtime": 40.22860960306122,
+    "totalViolations": 0,
+    "activeViolations": 0,
+    "warnings": 0,
+    "errors": 0,
+    "criticals": 0,
+    "lastCode": "None",
+    "lastMessage": "-",
+    "provider": "",
+    "canonicalFrameId": 0,
+    "rigidTimestamp": -1,
+    "semanticTimestamp": -1,
+    "generation": {
+        "camera": 2,
+        "provider": 1,
+        "model": 1,
+        "config": 3,
+        "calibration": 3,
+        "session": 2,
+        "observation": 0,
+        "semantic": 0
+    },
+    "recent": []
+}

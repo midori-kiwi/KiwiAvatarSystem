@@ -1,0 +1,7 @@
+contract=KIWI_V5_1_PHASE16_20_33_V43_DIAGNOSTIC_OVERHEAD_ISOLATION
+projectRoot=D:\KiwiAvatarSystem
+target=D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\Validation\KiwiCadenceNoCsvProbe.cs
+sha256=e626be9cf3cd46f9a09da2f8365497b35374e5da61b40d128c685ca7ebb1ce2b
+backupDir=D:\KiwiAvatarSystem\KiwiBackups\v43_CadenceNoCsvProbe_20260828_175506
+changedExistingTrackingFiles=0
+addedObserverOnlyFile=1

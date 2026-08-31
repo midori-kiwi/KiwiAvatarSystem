@@ -1,0 +1,754 @@
+#pragma once
+
+#include "Common.h"
+#include "System.h"
+#include <array>
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
+#include "KiwiSpoutDiagnostics.h"
+
+namespace KlakSpout {
+
+// DX11/12 compatible Spout sender.
+//
+// KiwiAvatarSystem v44.19 DX12 diagnostic architecture:
+//
+//   Klak managed RenderTexture (Unity D3D12)
+//                |
+//                | ExecuteCommandList
+//                v
+//     8-slot D3D12 shared-resource ring
+//                |
+//      Unity frame fence CPU poll
+//          (GetCompletedValue only)
+//                |
+//                v
+//     independent same-adapter D3D11
+//                |
+//          CopyResource (max 1 in flight)
+//                |
+//      D3D11_QUERY_EVENT CPU poll
+//                |
+//                v
+//       Spout legacy shared texture
+//
+// There are NO queue Wait calls, NO CPU fence waits, NO D3D11On12 wrapping of
+// Unity textures, and NO FIFO of stale presentation work. Completed D3D12 frames
+// are coalesced to the newest one before the D3D11 presentation copy.
+class Sender final
+{
+public:
+
+    Sender(const char* name, int width, int height)
+      : _name(name), _width(width), _height(height)
+    {
+        KiwiDiagSenderCreateCount().fetch_add(1, std::memory_order_relaxed);
+        KiwiDiagState().store(10, std::memory_order_relaxed); // Sender constructed.
+    }
+
+    ~Sender()
+    {
+        if (_texture)
+            _system->spout.ReleaseSenderName(_name.c_str());
+
+        // Diagnostic lifecycle policy:
+        // The normal close path should arrive after rendering has stopped.
+        // We deliberately do not introduce a blocking fence wait here.
+        releaseBridgeResources();
+
+        _texture = nullptr;
+    }
+
+    void update(IUnknown* source)
+    {
+        if (!_texture) initialize();
+        if (!_texture || !source) return;
+
+        WRL::ComPtr<IUnknown> unknown(source);
+
+        if (_system->isD3D12)
+        {
+            WRL::ComPtr<ID3D12Resource> d3d12;
+            auto hres = unknown.As(&d3d12);
+            if (FAILED(hres) || !d3d12)
+            {
+                LogError("Query ID3D12Resource", _name, hres);
+                return;
+            }
+
+            updateTexture(d3d12.Get());
+        }
+        else
+        {
+            WRL::ComPtr<ID3D11Resource> d3d11;
+            auto hres = unknown.As(&d3d11);
+            if (FAILED(hres) || !d3d11)
+            {
+                LogError("Query ID3D11Resource", _name, hres);
+                return;
+            }
+
+            updateTexture(d3d11.Get());
+        }
+    }
+
+private:
+
+    static constexpr size_t kBridgeSlotCount = 8;
+
+    enum class BridgeState : uint8_t
+    {
+        Free = 0,
+        D3D12Pending,
+        D3D11Pending
+    };
+
+    struct BridgeSlot
+    {
+        WRL::ComPtr<ID3D12Resource> shared12;
+        WRL::ComPtr<ID3D11Texture2D> shared11;
+
+        WRL::ComPtr<ID3D12CommandAllocator> allocator;
+        WRL::ComPtr<ID3D12GraphicsCommandList> list;
+
+        WRL::ComPtr<ID3D11Query> d3d11Done;
+
+        UINT64 unityFenceValue = 0;
+        uint64_t serial = 0;
+        BridgeState state = BridgeState::Free;
+    };
+
+    std::string _name;
+    int _width, _height;
+
+    // Spout-visible legacy D3D11 shared texture.
+    WRL::ComPtr<ID3D11Texture2D> _texture;
+
+    std::array<BridgeSlot, kBridgeSlotCount> _bridge = {};
+    size_t _nextBridgeSlot = 0;
+
+    bool _dx12BridgeReady = false;
+    bool _loggedBridgeFailure = false;
+
+    uint64_t _submitSerial = 0;
+    uint64_t _submitCount = 0;
+    uint64_t _publishCount = 0;
+    uint64_t _completedDiscardCount = 0;
+    uint64_t _noFreeSlotSkipCount = 0;
+    uint64_t _updateCount = 0;
+
+    void initialize()
+    {
+        WRL::ComPtr<ID3D11Device> device11 =
+          _system->isD3D12
+            ? _system->getBridgeD3D11Device()
+            : _system->getD3D11Device();
+
+        if (!device11)
+        {
+            LogError("Get sender D3D11Device", _name, E_FAIL);
+            return;
+        }
+
+        D3D11_TEXTURE2D_DESC desc = {};
+        desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+        desc.Width = static_cast<UINT>(_width);
+        desc.Height = static_cast<UINT>(_height);
+        desc.MipLevels = 1;
+        desc.ArraySize = 1;
+        desc.SampleDesc.Count = 1;
+        desc.Usage = D3D11_USAGE_DEFAULT;
+        desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+        desc.CPUAccessFlags = 0;
+        desc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
+
+        auto hres = device11->CreateTexture2D(&desc, nullptr, &_texture);
+        if (FAILED(hres) || !_texture)
+        {
+            LogError("Create Spout texture", _name, hres);
+            _texture = nullptr;
+            return;
+        }
+
+        HANDLE handle = nullptr;
+        WRL::ComPtr<IDXGIResource> resource;
+        hres = _texture.As(&resource);
+
+        if (FAILED(hres) || !resource)
+        {
+            LogError("Query IDXGIResource", _name, hres);
+            _texture = nullptr;
+            return;
+        }
+
+        hres = resource->GetSharedHandle(&handle);
+
+        if (FAILED(hres) || !handle)
+        {
+            LogError("GetSharedHandle", _name, hres);
+            _texture = nullptr;
+            return;
+        }
+
+        const auto res = _system->spout.CreateSender(
+          _name.c_str(),
+          _width,
+          _height,
+          handle,
+          desc.Format);
+
+        if (!res)
+        {
+            LogError("CreateSender", _name, 0);
+            _texture = nullptr;
+            return;
+        }
+
+        if (_system->isD3D12)
+            initializeD3D12Bridge();
+    }
+
+    void initializeD3D12Bridge()
+    {
+        KiwiDiagState().store(20, std::memory_order_relaxed); // Bridge init started.
+        KiwiDiagStage().store(1, std::memory_order_relaxed);
+
+        auto device12 = _system->getD3D12Device();
+        auto device11 = _system->getBridgeD3D11Device();
+        auto device11v1 = _system->getBridgeD3D11Device1();
+
+        if (!device12 || !device11 || !device11v1)
+        {
+            logBridgeFailure("Bridge device initialization", E_FAIL);
+            return;
+        }
+
+        for (size_t index = 0; index < kBridgeSlotCount; ++index)
+        {
+            auto& slot = _bridge[index];
+
+            D3D12_HEAP_PROPERTIES heap = {};
+            heap.Type = D3D12_HEAP_TYPE_DEFAULT;
+            heap.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+            heap.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+            heap.CreationNodeMask = 1;
+            heap.VisibleNodeMask = 1;
+
+            D3D12_RESOURCE_DESC desc = {};
+            desc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+            desc.Alignment = 0;
+            desc.Width = static_cast<UINT64>(_width);
+            desc.Height = static_cast<UINT>(_height);
+            desc.DepthOrArraySize = 1;
+            desc.MipLevels = 1;
+            desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+            desc.SampleDesc.Count = 1;
+            desc.SampleDesc.Quality = 0;
+            desc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+            desc.Flags = D3D12_RESOURCE_FLAG_NONE;
+
+            auto hres = device12->CreateCommittedResource(
+              &heap,
+              D3D12_HEAP_FLAG_SHARED,
+              &desc,
+              D3D12_RESOURCE_STATE_COMMON,
+              nullptr,
+              IID_PPV_ARGS(&slot.shared12));
+
+            if (FAILED(hres) || !slot.shared12)
+            {
+                logBridgeFailure("CreateCommittedResource(shared)", hres);
+                releaseBridgeResources();
+                return;
+            }
+
+            HANDLE ntHandle = nullptr;
+            hres = device12->CreateSharedHandle(
+              slot.shared12.Get(),
+              nullptr,
+              GENERIC_ALL,
+              nullptr,
+              &ntHandle);
+
+            if (FAILED(hres) || !ntHandle)
+            {
+                logBridgeFailure("D3D12 CreateSharedHandle", hres);
+                releaseBridgeResources();
+                return;
+            }
+
+            hres = device11v1->OpenSharedResource1(
+              ntHandle,
+              IID_PPV_ARGS(&slot.shared11));
+
+            CloseHandle(ntHandle);
+            ntHandle = nullptr;
+
+            if (FAILED(hres) || !slot.shared11)
+            {
+                // This is a critical diagnostic result on the target driver.
+                logBridgeFailure("D3D11 OpenSharedResource1(D3D12 resource)", hres);
+                releaseBridgeResources();
+                return;
+            }
+
+            D3D11_TEXTURE2D_DESC openedDesc = {};
+            slot.shared11->GetDesc(&openedDesc);
+
+            if (openedDesc.Width != static_cast<UINT>(_width) ||
+                openedDesc.Height != static_cast<UINT>(_height) ||
+                openedDesc.Format != DXGI_FORMAT_R8G8B8A8_UNORM ||
+                openedDesc.MipLevels != 1 ||
+                openedDesc.ArraySize != 1 ||
+                openedDesc.SampleDesc.Count != 1)
+            {
+                logBridgeFailure("Opened D3D11 bridge desc mismatch", E_INVALIDARG);
+                releaseBridgeResources();
+                return;
+            }
+
+            hres = device12->CreateCommandAllocator(
+              D3D12_COMMAND_LIST_TYPE_DIRECT,
+              IID_PPV_ARGS(&slot.allocator));
+
+            if (FAILED(hres) || !slot.allocator)
+            {
+                logBridgeFailure("CreateCommandAllocator", hres);
+                releaseBridgeResources();
+                return;
+            }
+
+            hres = device12->CreateCommandList(
+              0,
+              D3D12_COMMAND_LIST_TYPE_DIRECT,
+              slot.allocator.Get(),
+              nullptr,
+              IID_PPV_ARGS(&slot.list));
+
+            if (FAILED(hres) || !slot.list)
+            {
+                logBridgeFailure("CreateCommandList", hres);
+                releaseBridgeResources();
+                return;
+            }
+
+            hres = slot.list->Close();
+
+            if (FAILED(hres))
+            {
+                logBridgeFailure("Initial CloseCommandList", hres);
+                releaseBridgeResources();
+                return;
+            }
+
+            D3D11_QUERY_DESC queryDesc = {};
+            queryDesc.Query = D3D11_QUERY_EVENT;
+            queryDesc.MiscFlags = 0;
+
+            hres = device11->CreateQuery(&queryDesc, &slot.d3d11Done);
+
+            if (FAILED(hres) || !slot.d3d11Done)
+            {
+                logBridgeFailure("Create D3D11_QUERY_EVENT", hres);
+                releaseBridgeResources();
+                return;
+            }
+
+            slot.state = BridgeState::Free;
+        }
+
+        _dx12BridgeReady = true;
+        KiwiDiagState().store(30, std::memory_order_relaxed); // READY.
+        KiwiDiagStage().store(0, std::memory_order_relaxed);
+        KiwiDiagLastHResult().store(0, std::memory_order_relaxed);
+
+        std::printf(
+          "[KiwiSpoutWaitFree] READY name=%s slots=%zu size=%dx%d "
+          "D3D11On12Sender=0 QueueWait=0 CpuFenceWait=0\n",
+          _name.c_str(),
+          kBridgeSlotCount,
+          _width,
+          _height);
+    }
+
+    void releaseBridgeResources()
+    {
+        _dx12BridgeReady = false;
+
+        for (auto& slot : _bridge)
+        {
+            slot.d3d11Done = nullptr;
+            slot.list = nullptr;
+            slot.allocator = nullptr;
+            slot.shared11 = nullptr;
+            slot.shared12 = nullptr;
+            slot.unityFenceValue = 0;
+            slot.serial = 0;
+            slot.state = BridgeState::Free;
+        }
+    }
+
+    void logBridgeFailure(const char* label, HRESULT hres)
+    {
+        KiwiDiagState().store(-1, std::memory_order_relaxed);
+        KiwiDiagLastHResult().store(
+          static_cast<long>(hres), std::memory_order_relaxed);
+
+        // Stable numeric stage IDs for managed Player.log telemetry.
+        int stage = 900;
+        if (std::strcmp(label, "Bridge device initialization") == 0) stage = 101;
+        else if (std::strcmp(label, "CreateCommittedResource(shared)") == 0) stage = 102;
+        else if (std::strcmp(label, "D3D12 CreateSharedHandle") == 0) stage = 103;
+        else if (std::strcmp(label, "D3D11 OpenSharedResource1(D3D12 resource)") == 0) stage = 104;
+        else if (std::strcmp(label, "Opened D3D11 bridge desc mismatch") == 0) stage = 105;
+        else if (std::strcmp(label, "CreateCommandAllocator") == 0) stage = 106;
+        else if (std::strcmp(label, "CreateCommandList") == 0) stage = 107;
+        else if (std::strcmp(label, "Initial CloseCommandList") == 0) stage = 108;
+        else if (std::strcmp(label, "Create D3D11_QUERY_EVENT") == 0) stage = 109;
+        else if (std::strcmp(label, "D3D11 GetData(EVENT)") == 0) stage = 201;
+        else if (std::strcmp(label, "ResetCommandAllocator") == 0) stage = 202;
+        else if (std::strcmp(label, "ResetCommandList") == 0) stage = 203;
+        else if (std::strcmp(label, "CloseCommandList") == 0) stage = 204;
+        else if (std::strcmp(label, "Unity ExecuteCommandList") == 0) stage = 205;
+        else if (std::strcmp(label, "DX12 source copy compatibility") == 0) stage = 206;
+
+        KiwiDiagStage().store(stage, std::memory_order_relaxed);
+
+        if (_loggedBridgeFailure) return;
+        _loggedBridgeFailure = true;
+
+        std::printf(
+          "[KiwiSpoutWaitFree] INIT_FAIL name=%s stage=%s hr=0x%08lx\n",
+          _name.c_str(),
+          label,
+          static_cast<unsigned long>(hres));
+    }
+
+    static D3D12_RESOURCE_BARRIER transitionBarrier(
+      ID3D12Resource* resource,
+      D3D12_RESOURCE_STATES before,
+      D3D12_RESOURCE_STATES after)
+    {
+        D3D12_RESOURCE_BARRIER barrier = {};
+        barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+        barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+        barrier.Transition.pResource = resource;
+        barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+        barrier.Transition.StateBefore = before;
+        barrier.Transition.StateAfter = after;
+        return barrier;
+    }
+
+    bool validateCopyCompatibility(ID3D12Resource* source) const
+    {
+        if (!source) return false;
+
+        const auto desc = source->GetDesc();
+
+        if (desc.Dimension != D3D12_RESOURCE_DIMENSION_TEXTURE2D)
+            return false;
+
+        if (desc.Width != static_cast<UINT64>(_width) ||
+            desc.Height != static_cast<UINT>(_height))
+            return false;
+
+        if (desc.DepthOrArraySize != 1 ||
+            desc.MipLevels != 1 ||
+            desc.SampleDesc.Count != 1)
+            return false;
+
+        // CopyResource requires format compatibility. KlakSpout's managed
+        // export buffer is expected to be RGBA8.
+        if (desc.Format != DXGI_FORMAT_R8G8B8A8_UNORM &&
+            desc.Format != DXGI_FORMAT_R8G8B8A8_UNORM_SRGB)
+            return false;
+
+        return true;
+    }
+
+    bool hasD3D11CopyInFlight() const
+    {
+        for (const auto& slot : _bridge)
+            if (slot.state == BridgeState::D3D11Pending)
+                return true;
+
+        return false;
+    }
+
+    void pollD3D11Completions()
+    {
+        auto ctx = _system->getBridgeD3D11Context();
+        if (!ctx) return;
+
+        for (auto& slot : _bridge)
+        {
+            if (slot.state != BridgeState::D3D11Pending)
+                continue;
+
+            BOOL done = FALSE;
+            const auto hres = ctx->GetData(
+              slot.d3d11Done.Get(),
+              &done,
+              sizeof(done),
+              D3D11_ASYNC_GETDATA_DONOTFLUSH);
+
+            if (hres == S_OK && done)
+            {
+                slot.state = BridgeState::Free;
+                slot.unityFenceValue = 0;
+                slot.serial = 0;
+            }
+            else if (FAILED(hres))
+            {
+                logBridgeFailure("D3D11 GetData(EVENT)", hres);
+            }
+        }
+    }
+
+    void publishNewestCompletedD3D12()
+    {
+        auto frameFence = _system->getUnityFrameFence();
+        auto ctx = _system->getBridgeD3D11Context();
+
+        if (!frameFence || !ctx)
+            return;
+
+        const UINT64 completed = frameFence->GetCompletedValue();
+
+        size_t newest = kBridgeSlotCount;
+        uint64_t newestSerial = 0;
+
+        for (size_t index = 0; index < kBridgeSlotCount; ++index)
+        {
+            const auto& slot = _bridge[index];
+
+            if (slot.state != BridgeState::D3D12Pending)
+                continue;
+
+            if (slot.unityFenceValue > completed)
+                continue;
+
+            if (newest == kBridgeSlotCount || slot.serial > newestSerial)
+            {
+                newest = index;
+                newestSerial = slot.serial;
+            }
+        }
+
+        if (newest == kBridgeSlotCount)
+            return;
+
+        // Coalesce all other completed D3D12 frames. They have never entered
+        // the D3D11 queue, so dropping them creates no stale FIFO.
+        for (size_t index = 0; index < kBridgeSlotCount; ++index)
+        {
+            if (index == newest)
+                continue;
+
+            auto& slot = _bridge[index];
+
+            if (slot.state == BridgeState::D3D12Pending &&
+                slot.unityFenceValue <= completed)
+            {
+                slot.state = BridgeState::Free;
+                slot.unityFenceValue = 0;
+                slot.serial = 0;
+                ++_completedDiscardCount;
+                KiwiDiagDiscardCount().fetch_add(1, std::memory_order_relaxed);
+            }
+        }
+
+        // At most one D3D11 presentation copy is allowed in flight. If one is
+        // still active, keep only the newest completed D3D12 frame for later.
+        if (hasD3D11CopyInFlight())
+            return;
+
+        auto& slot = _bridge[newest];
+
+        ctx->CopyResource(_texture.Get(), slot.shared11.Get());
+        ctx->End(slot.d3d11Done.Get());
+
+        // Flush is asynchronous; it submits work but does not wait for GPU
+        // completion. Completion is observed on a later update via EVENT query.
+        ctx->Flush();
+
+        slot.state = BridgeState::D3D11Pending;
+        ++_publishCount;
+        KiwiDiagPublishCount().fetch_add(1, std::memory_order_relaxed);
+    }
+
+    BridgeSlot* acquireFreeBridgeSlot()
+    {
+        for (size_t offset = 0; offset < kBridgeSlotCount; ++offset)
+        {
+            const size_t index =
+              (_nextBridgeSlot + offset) % kBridgeSlotCount;
+
+            auto& slot = _bridge[index];
+
+            if (slot.state == BridgeState::Free)
+            {
+                _nextBridgeSlot = (index + 1) % kBridgeSlotCount;
+                return &slot;
+            }
+        }
+
+        ++_noFreeSlotSkipCount;
+        KiwiDiagNoFreeSkipCount().fetch_add(1, std::memory_order_relaxed);
+        return nullptr;
+    }
+
+    bool submitD3D12Copy(ID3D12Resource* source)
+    {
+        auto slot = acquireFreeBridgeSlot();
+        if (!slot) return false;
+
+        auto hres = slot->allocator->Reset();
+
+        if (FAILED(hres))
+        {
+            logBridgeFailure("ResetCommandAllocator", hres);
+            return false;
+        }
+
+        hres = slot->list->Reset(slot->allocator.Get(), nullptr);
+
+        if (FAILED(hres))
+        {
+            logBridgeFailure("ResetCommandList", hres);
+            return false;
+        }
+
+        // Source contract:
+        // The dedicated Klak RenderTexture is a render target before/after the
+        // export copy. This matches the state proven by the earlier RT/RT
+        // diagnostic and avoids leaving Unity's texture in PRESENT/COPY_SOURCE.
+        auto sourceToCopy = transitionBarrier(
+          source,
+          D3D12_RESOURCE_STATE_RENDER_TARGET,
+          D3D12_RESOURCE_STATE_COPY_SOURCE);
+
+        auto destToCopy = transitionBarrier(
+          slot->shared12.Get(),
+          D3D12_RESOURCE_STATE_COMMON,
+          D3D12_RESOURCE_STATE_COPY_DEST);
+
+        D3D12_RESOURCE_BARRIER before[2] = { sourceToCopy, destToCopy };
+        slot->list->ResourceBarrier(2, before);
+
+        slot->list->CopyResource(slot->shared12.Get(), source);
+
+        auto sourceToRenderTarget = transitionBarrier(
+          source,
+          D3D12_RESOURCE_STATE_COPY_SOURCE,
+          D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+        auto destToCommon = transitionBarrier(
+          slot->shared12.Get(),
+          D3D12_RESOURCE_STATE_COPY_DEST,
+          D3D12_RESOURCE_STATE_COMMON);
+
+        D3D12_RESOURCE_BARRIER after[2] =
+          { sourceToRenderTarget, destToCommon };
+
+        slot->list->ResourceBarrier(2, after);
+
+        hres = slot->list->Close();
+
+        if (FAILED(hres))
+        {
+            logBridgeFailure("CloseCommandList", hres);
+            return false;
+        }
+
+        UnityGraphicsD3D12ResourceState sourceState = {};
+        sourceState.resource = source;
+        sourceState.expected = D3D12_RESOURCE_STATE_RENDER_TARGET;
+        sourceState.current = D3D12_RESOURCE_STATE_RENDER_TARGET;
+
+        const UINT64 fenceValue = _system->executeUnityCommandList(
+          slot->list.Get(),
+          1,
+          &sourceState);
+
+        if (fenceValue == 0)
+        {
+            logBridgeFailure("Unity ExecuteCommandList", E_FAIL);
+            return false;
+        }
+
+        slot->unityFenceValue = fenceValue;
+        slot->serial = ++_submitSerial;
+        slot->state = BridgeState::D3D12Pending;
+        ++_submitCount;
+        KiwiDiagSubmitCount().fetch_add(1, std::memory_order_relaxed);
+
+        return true;
+    }
+
+    void maybeLogStats()
+    {
+        ++_updateCount;
+
+        if ((_updateCount % 600) != 0)
+            return;
+
+        size_t freeCount = 0;
+        size_t pending12 = 0;
+        size_t pending11 = 0;
+
+        for (const auto& slot : _bridge)
+        {
+            if (slot.state == BridgeState::Free) ++freeCount;
+            if (slot.state == BridgeState::D3D12Pending) ++pending12;
+            if (slot.state == BridgeState::D3D11Pending) ++pending11;
+        }
+
+        std::printf(
+          "[KiwiSpoutWaitFree] STATS submit=%llu publish=%llu "
+          "discard=%llu noFreeSkip=%llu slotsFree=%zu pending12=%zu "
+          "pending11=%zu\n",
+          static_cast<unsigned long long>(_submitCount),
+          static_cast<unsigned long long>(_publishCount),
+          static_cast<unsigned long long>(_completedDiscardCount),
+          static_cast<unsigned long long>(_noFreeSlotSkipCount),
+          freeCount,
+          pending12,
+          pending11);
+    }
+
+    void updateTexture(ID3D11Resource* source)
+    {
+        auto ctx = _system->getD3D11Context();
+        if (!ctx || !_texture || !source) return;
+
+        ctx->CopyResource(_texture.Get(), source);
+    }
+
+    void updateTexture(ID3D12Resource* source)
+    {
+        if (!_dx12BridgeReady || !_texture || !source)
+            return;
+
+        if (!validateCopyCompatibility(source))
+        {
+            logBridgeFailure("DX12 source copy compatibility", E_INVALIDARG);
+            return;
+        }
+
+        // 1. Retire independent-D3D11 reads that are really GPU-complete.
+        pollD3D11Completions();
+
+        // 2. Publish only the newest Unity-complete bridge frame.
+        publishNewestCompletedD3D12();
+
+        // 3. Submit current source into any truly free bridge slot.
+        // If none is free, skip instead of waiting or queuing stale work.
+        submitD3D12Copy(source);
+
+        maybeLogStats();
+    }
+};
+
+} // namespace KlakSpout

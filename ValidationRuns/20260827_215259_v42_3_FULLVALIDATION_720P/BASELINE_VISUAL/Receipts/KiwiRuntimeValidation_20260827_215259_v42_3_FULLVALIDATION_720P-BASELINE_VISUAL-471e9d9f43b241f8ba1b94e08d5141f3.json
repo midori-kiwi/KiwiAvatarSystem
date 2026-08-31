@@ -1,0 +1,28 @@
+{
+    "version": "5.1.0-phase11",
+    "health": "Healthy",
+    "frame": 1248,
+    "realtime": 40.94433040011338,
+    "totalViolations": 0,
+    "activeViolations": 0,
+    "warnings": 0,
+    "errors": 0,
+    "criticals": 0,
+    "lastCode": "None",
+    "lastMessage": "-",
+    "provider": "Runner/MediaPipe",
+    "canonicalFrameId": 453,
+    "rigidTimestamp": 37061,
+    "semanticTimestamp": 37061,
+    "generation": {
+        "camera": 2,
+        "provider": 14,
+        "model": 1,
+        "config": 3,
+        "calibration": 3,
+        "session": 2,
+        "observation": 455,
+        "semantic": 404
+    },
+    "recent": []
+}

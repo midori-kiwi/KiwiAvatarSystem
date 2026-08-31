@@ -1,0 +1,76 @@
+#pragma once
+
+#include <atomic>
+#include <cstdint>
+
+namespace KlakSpout {
+
+// v44.19.1 diagnostics only.
+// These counters do not participate in GPU synchronization or resource lifetime.
+inline std::atomic<int>& KiwiDiagPluginLoaded()
+{
+    static std::atomic<int> value { 0 };
+    return value;
+}
+
+inline std::atomic<int>& KiwiDiagState()
+{
+    static std::atomic<int> value { 0 };
+    return value;
+}
+
+inline std::atomic<int>& KiwiDiagStage()
+{
+    static std::atomic<int> value { 0 };
+    return value;
+}
+
+inline std::atomic<long>& KiwiDiagLastHResult()
+{
+    static std::atomic<long> value { 0 };
+    return value;
+}
+
+inline std::atomic<unsigned long long>& KiwiDiagSenderCreateCount()
+{
+    static std::atomic<unsigned long long> value { 0 };
+    return value;
+}
+
+inline std::atomic<unsigned long long>& KiwiDiagSubmitCount()
+{
+    static std::atomic<unsigned long long> value { 0 };
+    return value;
+}
+
+inline std::atomic<unsigned long long>& KiwiDiagPublishCount()
+{
+    static std::atomic<unsigned long long> value { 0 };
+    return value;
+}
+
+inline std::atomic<unsigned long long>& KiwiDiagDiscardCount()
+{
+    static std::atomic<unsigned long long> value { 0 };
+    return value;
+}
+
+inline std::atomic<unsigned long long>& KiwiDiagNoFreeSkipCount()
+{
+    static std::atomic<unsigned long long> value { 0 };
+    return value;
+}
+
+inline void KiwiDiagResetRuntimeCounters()
+{
+    KiwiDiagState().store(1, std::memory_order_relaxed);
+    KiwiDiagStage().store(0, std::memory_order_relaxed);
+    KiwiDiagLastHResult().store(0, std::memory_order_relaxed);
+    KiwiDiagSenderCreateCount().store(0, std::memory_order_relaxed);
+    KiwiDiagSubmitCount().store(0, std::memory_order_relaxed);
+    KiwiDiagPublishCount().store(0, std::memory_order_relaxed);
+    KiwiDiagDiscardCount().store(0, std::memory_order_relaxed);
+    KiwiDiagNoFreeSkipCount().store(0, std::memory_order_relaxed);
+}
+
+} // namespace KlakSpout

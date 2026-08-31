@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "1.0.0",
+  "caseId": "ZEROCOPY_METRICS",
+  "mode": "ZEROCOPY",
+  "purpose": "METRICS",
+  "token": "20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-f1f90da299f14e5da25ab2e050f311c3",
+  "status": "COMPLETE",
+  "error": null,
+  "startedUtc": "2026-08-27T12:54:17.4882550Z",
+  "completedUtc": "2026-08-27T12:55:00.4554131Z",
+  "environment": {
+    "KIWI_VALIDATION_RUN_ID": "20260827_215259_v42_3_FULLVALIDATION_720P",
+    "KIWI_VALIDATION_CASE_ID": "ZEROCOPY_METRICS",
+    "KIWI_VALIDATION_TOKEN": "20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-f1f90da299f14e5da25ab2e050f311c3",
+    "KIWI_VALIDATION_MODE": "ZEROCOPY",
+    "KIWI_VALIDATION_PURPOSE": "METRICS",
+    "KIWI_ORT_DML_ZERO_COPY_SHADOW": "1"
+  },
+  "process": {
+    "executable": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_214847_v42_3_FULLVALIDATION_720P\\Build\\KiwiAvatarSystem_v42_3_DX12_AUTOMATED_VALIDATION.exe",
+    "arguments": [
+      "-force-d3d12",
+      "-screen-fullscreen",
+      "0",
+      "-screen-width",
+      "1280",
+      "-screen-height",
+      "720",
+      "-logFile",
+      "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_METRICS\\Logs\\KiwiStandalonePlayer_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-f1f90da299f14e5da25ab2e050f311c3.log",
+      "-crash-report-folder",
+      "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_METRICS\\Crash"
+    ],
+    "pid": 29084,
+    "startSucceeded": true,
+    "startupSurvived": true,
+    "readyMarkerSeen": true,
+    "completionMarkerSeen": true,
+    "receiptCommitted": true,
+    "exitObserved": true,
+    "exitCode": 0,
+    "forcedTermination": false,
+    "crashArtifactCount": 0
+  },
+  "artifacts": [
+    {
+      "type": "CASE_RECEIPT_JSON",
+      "sourcePath": "C:\\Users\\main\\AppData\\LocalLow\\MidoriKiwi\\KiwiAvatarSystem\\KiwiValidationHarness\\20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-f1f90da299f14e5da25ab2e050f311c3\\receipt.json",
+      "path": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_METRICS\\Receipts\\KiwiValidationReceipt_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-f1f90da299f14e5da25ab2e050f311c3.json",
+      "sha256": "137371202e43f462ad2997136e75687d0a3a749812486d8d365634cd62e178d8",
+      "bytes": 2244,
+      "createdUtc": "2026-08-27T12:55:00.4906288Z",
+      "tokenMatched": true,
+      "copyHashMatched": true
+    },
+    {
+      "type": "FRAME_COMPARISON_CSV",
+      "sourcePath": "C:\\Users\\main\\AppData\\LocalLow\\MidoriKiwi\\KiwiAvatarSystem\\KiwiFrameComparison\\KiwiFrameComparison_20260827_215429_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-f1f90da299f14e5da25ab2e050f311c3.csv",
+      "path": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_METRICS\\Telemetry\\KiwiFrameComparison_20260827_215429_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-f1f90da299f14e5da25ab2e050f311c3.csv",
+      "sha256": "365018ccd9612eb4dfb0356b31427692cef9d69e0e95c09c2fc328f0bf2624f3",
+      "bytes": 1723073,
+      "createdUtc": "2026-08-27T12:55:00.5407558Z",
+      "tokenMatched": true,
+      "copyHashMatched": true
+    },
+    {
+      "type": "RUNTIME_VALIDATION_JSON",
+      "sourcePath": "C:\\Users\\main\\AppData\\LocalLow\\MidoriKiwi\\KiwiAvatarSystem\\KiwiValidationHarness\\20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-f1f90da299f14e5da25ab2e050f311c3\\runtime.json",
+      "path": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_METRICS\\Receipts\\KiwiRuntimeValidation_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-f1f90da299f14e5da25ab2e050f311c3.json",
+      "sha256": "69ebab05afa0083c5a4d4b17c3a0a023c843b6e6257bb51a1601438a4498a42c",
+      "bytes": 633,
+      "createdUtc": "2026-08-27T12:55:00.5702960Z",
+      "tokenMatched": true,
+      "copyHashMatched": true
+    },
+    {
+      "type": "ZERO_COPY_CSV",
+      "sourcePath": "C:\\Users\\main\\AppData\\LocalLow\\MidoriKiwi\\KiwiAvatarSystem\\KiwiOrtDmlZeroCopy\\KiwiOrtDmlZeroCopyTelemetry_v42_3_20260827_215429.csv",
+      "path": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_METRICS\\Telemetry\\KiwiOrtDmlZeroCopyTelemetry_v42_3_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-f1f90da299f14e5da25ab2e050f311c3.csv",
+      "sha256": "eda908753b10136adb57174da4e1ec8a970e41834160df74fef79f0a218b1658",
+      "bytes": 178925,
+      "createdUtc": "2026-08-27T12:55:00.5864175Z",
+      "tokenMatched": true,
+      "copyHashMatched": true
+    },
+    {
+      "type": "PLAYER_LOG",
+      "sourcePath": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_METRICS\\Logs\\KiwiStandalonePlayer_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-f1f90da299f14e5da25ab2e050f311c3.log",
+      "path": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_METRICS\\Logs\\KiwiStandalonePlayer_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-f1f90da299f14e5da25ab2e050f311c3.log",
+      "sha256": "d9e198d8a21ea1a91322e71adf46d390de89bc2bc6115d6e3a48d4d11c6ec8d7",
+      "bytes": 183177,
+      "createdUtc": "2026-08-27T12:54:17.5782409Z",
+      "tokenMatched": true,
+      "copyHashMatched": true
+    },
+    {
+      "type": "GPU_CSV",
+      "sourcePath": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_METRICS\\GPU\\KiwiGpuTelemetry_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-f1f90da299f14e5da25ab2e050f311c3.csv",
+      "path": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_METRICS\\GPU\\KiwiGpuTelemetry_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-f1f90da299f14e5da25ab2e050f311c3.csv",
+      "sha256": "7d51085c09858ec3c68b37a2520d552d531f36f16ab03cb865695e9f35473fee",
+      "bytes": 16511,
+      "createdUtc": "2026-08-27T12:54:29.8045689Z",
+      "tokenMatched": true,
+      "copyHashMatched": true
+    },
+    {
+      "type": "GPU_META",
+      "sourcePath": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_METRICS\\GPU\\KiwiGpuTelemetry_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-f1f90da299f14e5da25ab2e050f311c3.meta.json",
+      "path": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_215259_v42_3_FULLVALIDATION_720P\\ZEROCOPY_METRICS\\GPU\\KiwiGpuTelemetry_20260827_215259_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-f1f90da299f14e5da25ab2e050f311c3.meta.json",
+      "sha256": "1ef2d1c21b652a5f770f9776f066595fca342393b71828a6c7b7a9efdf816702",
+      "bytes": 514,
+      "createdUtc": "2026-08-27T12:55:00.4716079Z",
+      "tokenMatched": true,
+      "copyHashMatched": true
+    }
+  ],
+  "videoCapture": {
+    "required": false,
+    "started": false,
+    "startedUtc": null
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "1.0.0",
+  "caseId": "BASELINE_METRICS",
+  "mode": "BASELINE",
+  "purpose": "METRICS",
+  "token": "20260827_214847_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-4cf7fc683699461d8f7e8c10a9b8bf7c",
+  "status": "COMPLETE",
+  "error": null,
+  "startedUtc": "2026-08-27T12:49:39.3823874Z",
+  "completedUtc": "2026-08-27T12:50:29.0244693Z",
+  "environment": {
+    "KIWI_VALIDATION_RUN_ID": "20260827_214847_v42_3_FULLVALIDATION_720P",
+    "KIWI_VALIDATION_CASE_ID": "BASELINE_METRICS",
+    "KIWI_VALIDATION_TOKEN": "20260827_214847_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-4cf7fc683699461d8f7e8c10a9b8bf7c",
+    "KIWI_VALIDATION_MODE": "BASELINE",
+    "KIWI_VALIDATION_PURPOSE": "METRICS",
+    "KIWI_ORT_DML_ZERO_COPY_SHADOW": "0"
+  },
+  "process": {
+    "executable": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_214847_v42_3_FULLVALIDATION_720P\\Build\\KiwiAvatarSystem_v42_3_DX12_AUTOMATED_VALIDATION.exe",
+    "arguments": [
+      "-force-d3d12",
+      "-screen-fullscreen",
+      "0",
+      "-screen-width",
+      "1280",
+      "-screen-height",
+      "720",
+      "-logFile",
+      "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_214847_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\Logs\\KiwiStandalonePlayer_20260827_214847_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-4cf7fc683699461d8f7e8c10a9b8bf7c.log",
+      "-crash-report-folder",
+      "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_214847_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\Crash"
+    ],
+    "pid": 2288,
+    "startSucceeded": true,
+    "startupSurvived": true,
+    "readyMarkerSeen": true,
+    "completionMarkerSeen": true,
+    "receiptCommitted": true,
+    "exitObserved": true,
+    "exitCode": 0,
+    "forcedTermination": false,
+    "crashArtifactCount": 0
+  },
+  "artifacts": [
+    {
+      "type": "CASE_RECEIPT_JSON",
+      "sourcePath": "C:\\Users\\main\\AppData\\LocalLow\\MidoriKiwi\\KiwiAvatarSystem\\KiwiValidationHarness\\20260827_214847_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-4cf7fc683699461d8f7e8c10a9b8bf7c\\receipt.json",
+      "path": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_214847_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\Receipts\\KiwiValidationReceipt_20260827_214847_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-4cf7fc683699461d8f7e8c10a9b8bf7c.json",
+      "sha256": "ce89c6d831ae2e222c0872fef90a25bd0fb3608ba7b21631581c20b14da0919b",
+      "bytes": 2033,
+      "createdUtc": "2026-08-27T12:50:29.0604594Z",
+      "tokenMatched": true,
+      "copyHashMatched": true
+    },
+    {
+      "type": "FRAME_COMPARISON_CSV",
+      "sourcePath": "C:\\Users\\main\\AppData\\LocalLow\\MidoriKiwi\\KiwiAvatarSystem\\KiwiFrameComparison\\KiwiFrameComparison_20260827_214958_20260827_214847_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-4cf7fc683699461d8f7e8c10a9b8bf7c.csv",
+      "path": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_214847_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\Telemetry\\KiwiFrameComparison_20260827_214958_20260827_214847_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-4cf7fc683699461d8f7e8c10a9b8bf7c.csv",
+      "sha256": "0aa42045737426f4883241112d8ae974df4c10455e11bfd8f453eeead9e09930",
+      "bytes": 1803445,
+      "createdUtc": "2026-08-27T12:50:29.0960049Z",
+      "tokenMatched": true,
+      "copyHashMatched": true
+    },
+    {
+      "type": "RUNTIME_VALIDATION_JSON",
+      "sourcePath": "C:\\Users\\main\\AppData\\LocalLow\\MidoriKiwi\\KiwiAvatarSystem\\KiwiValidationHarness\\20260827_214847_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-4cf7fc683699461d8f7e8c10a9b8bf7c\\runtime.json",
+      "path": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_214847_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\Receipts\\KiwiRuntimeValidation_20260827_214847_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-4cf7fc683699461d8f7e8c10a9b8bf7c.json",
+      "sha256": "f13470e924be1a730eb5fcc3d3bae80af5ed82ddae4d2ad003495dbf9a3df530",
+      "bytes": 635,
+      "createdUtc": "2026-08-27T12:50:29.1173426Z",
+      "tokenMatched": true,
+      "copyHashMatched": true
+    },
+    {
+      "type": "PLAYER_LOG",
+      "sourcePath": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_214847_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\Logs\\KiwiStandalonePlayer_20260827_214847_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-4cf7fc683699461d8f7e8c10a9b8bf7c.log",
+      "path": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_214847_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\Logs\\KiwiStandalonePlayer_20260827_214847_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-4cf7fc683699461d8f7e8c10a9b8bf7c.log",
+      "sha256": "24664887d35ad34b4c7868ea067b600a86fb2f300568bdeac8f52d87d94e1749",
+      "bytes": 175304,
+      "createdUtc": "2026-08-27T12:49:39.9250116Z",
+      "tokenMatched": true,
+      "copyHashMatched": true
+    },
+    {
+      "type": "GPU_CSV",
+      "sourcePath": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_214847_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\GPU\\KiwiGpuTelemetry_20260827_214847_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-4cf7fc683699461d8f7e8c10a9b8bf7c.csv",
+      "path": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_214847_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\GPU\\KiwiGpuTelemetry_20260827_214847_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-4cf7fc683699461d8f7e8c10a9b8bf7c.csv",
+      "sha256": "fdfb8cf0286f231ddc4c25f2eb4db96a66a59d07c069de869e85ed706397b46d",
+      "bytes": 16511,
+      "createdUtc": "2026-08-27T12:49:58.3826066Z",
+      "tokenMatched": true,
+      "copyHashMatched": true
+    },
+    {
+      "type": "GPU_META",
+      "sourcePath": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_214847_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\GPU\\KiwiGpuTelemetry_20260827_214847_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-4cf7fc683699461d8f7e8c10a9b8bf7c.meta.json",
+      "path": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_214847_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\GPU\\KiwiGpuTelemetry_20260827_214847_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-4cf7fc683699461d8f7e8c10a9b8bf7c.meta.json",
+      "sha256": "f9c6433b2e02724e468462d9226f1338f45975f79803d3cd77ea6181e6a6014e",
+      "bytes": 514,
+      "createdUtc": "2026-08-27T12:50:29.0404206Z",
+      "tokenMatched": true,
+      "copyHashMatched": true
+    }
+  ],
+  "videoCapture": {
+    "required": false,
+    "started": false,
+    "startedUtc": null
+  }
+}

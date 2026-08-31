@@ -1,0 +1,51 @@
+{
+    "contract": "KIWI_V5_1_PHASE16_20_32_V42_3_AUTOMATED_VALIDATION_V1",
+    "version": "v42.3",
+    "status": "ERROR",
+    "error": "Prerequisite lost during warmup: Canonical face tracking is not established; frame=1 provider=",
+    "runId": "20260827_214108_v42_3_FULLVALIDATION_720P",
+    "caseId": "BASELINE_METRICS",
+    "token": "20260827_214108_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-789fee38fdc6471f81daa16ee7403650",
+    "mode": "BASELINE",
+    "purpose": "METRICS",
+    "processId": 4480,
+    "graphicsApi": "Direct3D12",
+    "screenWidth": 1280,
+    "screenHeight": 720,
+    "startedUtc": "2026-08-27T12:41:31.8990023Z",
+    "startupReadyUtc": "2026-08-27T12:41:35.2326476Z",
+    "recordingStartedUtc": "",
+    "recordingStoppedUtc": "",
+    "committedUtc": "2026-08-27T12:41:35.3266345Z",
+    "warmupSeconds": 5.0,
+    "requestedRecordSeconds": 30.0,
+    "runtimeValidationErrors": 0,
+    "runtimeValidationCriticals": 0,
+    "camera": {
+        "active": true,
+        "width": 1920,
+        "height": 1080,
+        "targetFrameRate": 60,
+        "timestampCalibrationValid": true,
+        "sourceFrameCount": 38,
+        "presentedFrameCount": 8
+    },
+    "frameComparisonCsv": {
+        "path": "",
+        "bytes": 0,
+        "rows": 0,
+        "sha256": ""
+    },
+    "ortZeroCopyCsv": {
+        "path": "",
+        "bytes": 0,
+        "rows": 0,
+        "sha256": ""
+    },
+    "runtimeValidationJson": {
+        "path": "",
+        "bytes": 0,
+        "rows": 0,
+        "sha256": ""
+    }
+}

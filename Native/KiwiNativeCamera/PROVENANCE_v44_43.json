@@ -1,0 +1,24 @@
+{
+  "version": "v44.43",
+  "purpose": "Production mode 9 source formalization",
+  "runtimeValidatedSource": "v44.42",
+  "sourceSha256": "8C28F7A9E22DF9DA66455C37777069E5922037DB62AD7897DBDFEC8931975E03",
+  "abiSha256": "42F41F24B75E72A936A328FA79A314EEB59C8DB74BFD9EA1C94D4D55791B31B5",
+  "hlslSha256": "B12D97A9D96C269670A5EA2C4104BB84528A93CF58023FF085B3594EF000DB71",
+  "frozenRollbackDllSha256": "DB590279E63D50246BBB9F2A25E51D5C6EB36FB2F6F6C423447459628E8C2177",
+  "productionMode": 9,
+  "diagnosticModes1To8": "E_NOTIMPL; not reconstructed",
+  "validatedRuntimeSummary": {
+    "nativeSourceHz": 60.19,
+    "sourceTimestampMedianMs": 15.999,
+    "arrivalMedianMs": 16.059,
+    "captureGpuWaitDelta": 0,
+    "processingGpuWaitDelta": 0,
+    "processingFailureDelta": 0,
+    "crossSystemDiscardDelta": 0,
+    "epochViolationDelta": 0,
+    "faceTextureMissDelta": 0,
+    "faceTextureHoldDelta": 0,
+    "sharedResourceCompatibilityTier": 2
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "1.0.0",
+  "caseId": "BASELINE_VISUAL",
+  "mode": "BASELINE",
+  "purpose": "VISUAL",
+  "token": "20260827_213738_v42_3_FULLVALIDATION_720P-BASELINE_VISUAL-c63d0274dcc54dc0ad67762e9fb338b5",
+  "status": "FAILED",
+  "error": "Player exit code was 2.",
+  "startedUtc": "2026-08-27T12:39:15.8432412Z",
+  "completedUtc": "2026-08-27T12:39:28.0133106Z",
+  "environment": {
+    "KIWI_VALIDATION_RUN_ID": "20260827_213738_v42_3_FULLVALIDATION_720P",
+    "KIWI_VALIDATION_CASE_ID": "BASELINE_VISUAL",
+    "KIWI_VALIDATION_TOKEN": "20260827_213738_v42_3_FULLVALIDATION_720P-BASELINE_VISUAL-c63d0274dcc54dc0ad67762e9fb338b5",
+    "KIWI_VALIDATION_MODE": "BASELINE",
+    "KIWI_VALIDATION_PURPOSE": "VISUAL",
+    "KIWI_ORT_DML_ZERO_COPY_SHADOW": "0"
+  },
+  "process": {
+    "executable": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_213738_v42_3_FULLVALIDATION_720P\\Build\\KiwiAvatarSystem_v42_3_DX12_AUTOMATED_VALIDATION.exe",
+    "arguments": [
+      "-force-d3d12",
+      "-screen-fullscreen",
+      "0",
+      "-screen-width",
+      "1280",
+      "-screen-height",
+      "720",
+      "-logFile",
+      "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_213738_v42_3_FULLVALIDATION_720P\\BASELINE_VISUAL\\Logs\\KiwiStandalonePlayer_20260827_213738_v42_3_FULLVALIDATION_720P-BASELINE_VISUAL-c63d0274dcc54dc0ad67762e9fb338b5.log",
+      "-crash-report-folder",
+      "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_213738_v42_3_FULLVALIDATION_720P\\BASELINE_VISUAL\\Crash"
+    ],
+    "pid": 22584,
+    "startSucceeded": true,
+    "startupSurvived": true,
+    "readyMarkerSeen": true,
+    "completionMarkerSeen": false,
+    "receiptCommitted": false,
+    "exitObserved": true,
+    "exitCode": 2,
+    "forcedTermination": false,
+    "crashArtifactCount": 0
+  },
+  "artifacts": [],
+  "videoCapture": {
+    "required": true,
+    "started": false,
+    "startedUtc": null
+  }
+}

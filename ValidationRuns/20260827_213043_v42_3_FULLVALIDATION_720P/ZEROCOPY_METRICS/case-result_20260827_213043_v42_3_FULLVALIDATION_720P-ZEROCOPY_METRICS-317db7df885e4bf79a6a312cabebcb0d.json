@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "1.0.0",
+  "caseId": "ZEROCOPY_METRICS",
+  "mode": "ZEROCOPY",
+  "purpose": "METRICS",
+  "token": "20260827_213043_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-317db7df885e4bf79a6a312cabebcb0d",
+  "status": "FAILED",
+  "error": "Player exit code was 2.",
+  "startedUtc": "2026-08-27T12:32:37.6623303Z",
+  "completedUtc": "2026-08-27T12:33:20.5198564Z",
+  "environment": {
+    "KIWI_VALIDATION_RUN_ID": "20260827_213043_v42_3_FULLVALIDATION_720P",
+    "KIWI_VALIDATION_CASE_ID": "ZEROCOPY_METRICS",
+    "KIWI_VALIDATION_TOKEN": "20260827_213043_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-317db7df885e4bf79a6a312cabebcb0d",
+    "KIWI_VALIDATION_MODE": "ZEROCOPY",
+    "KIWI_VALIDATION_PURPOSE": "METRICS",
+    "KIWI_ORT_DML_ZERO_COPY_SHADOW": "1"
+  },
+  "process": {
+    "executable": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_213043_v42_3_FULLVALIDATION_720P\\Build\\KiwiAvatarSystem_v42_3_DX12_AUTOMATED_VALIDATION.exe",
+    "arguments": [
+      "-force-d3d12",
+      "-screen-fullscreen",
+      "0",
+      "-screen-width",
+      "1280",
+      "-screen-height",
+      "720",
+      "-logFile",
+      "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_213043_v42_3_FULLVALIDATION_720P\\ZEROCOPY_METRICS\\Logs\\KiwiStandalonePlayer_20260827_213043_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-317db7df885e4bf79a6a312cabebcb0d.log",
+      "-crash-report-folder",
+      "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_213043_v42_3_FULLVALIDATION_720P\\ZEROCOPY_METRICS\\Crash"
+    ],
+    "pid": 14404,
+    "startSucceeded": true,
+    "startupSurvived": true,
+    "readyMarkerSeen": true,
+    "completionMarkerSeen": false,
+    "receiptCommitted": false,
+    "exitObserved": true,
+    "exitCode": 2,
+    "forcedTermination": false,
+    "crashArtifactCount": 0
+  },
+  "artifacts": [
+    {
+      "type": "PLAYER_LOG",
+      "sourcePath": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_213043_v42_3_FULLVALIDATION_720P\\ZEROCOPY_METRICS\\Logs\\KiwiStandalonePlayer_20260827_213043_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-317db7df885e4bf79a6a312cabebcb0d.log",
+      "path": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_213043_v42_3_FULLVALIDATION_720P\\ZEROCOPY_METRICS\\Logs\\KiwiStandalonePlayer_20260827_213043_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-317db7df885e4bf79a6a312cabebcb0d.log",
+      "sha256": "54905cb23397dc8bfa577a7d31fd4d3897e2eeee64f1964cfe1d12f144e78545",
+      "bytes": 92947,
+      "createdUtc": "2026-08-27T12:32:37.7526748Z",
+      "tokenMatched": true,
+      "copyHashMatched": true
+    },
+    {
+      "type": "GPU_CSV",
+      "sourcePath": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_213043_v42_3_FULLVALIDATION_720P\\ZEROCOPY_METRICS\\GPU\\KiwiGpuTelemetry_20260827_213043_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-317db7df885e4bf79a6a312cabebcb0d.csv",
+      "path": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_213043_v42_3_FULLVALIDATION_720P\\ZEROCOPY_METRICS\\GPU\\KiwiGpuTelemetry_20260827_213043_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-317db7df885e4bf79a6a312cabebcb0d.csv",
+      "sha256": "b8e3cced3f0ea367d577f2ae100ebbad457c1f75efd7c8f23433534f0fa1e64c",
+      "bytes": 16511,
+      "createdUtc": "2026-08-27T12:32:49.7382581Z",
+      "tokenMatched": true,
+      "copyHashMatched": true
+    },
+    {
+      "type": "GPU_META",
+      "sourcePath": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_213043_v42_3_FULLVALIDATION_720P\\ZEROCOPY_METRICS\\GPU\\KiwiGpuTelemetry_20260827_213043_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-317db7df885e4bf79a6a312cabebcb0d.meta.json",
+      "path": "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_213043_v42_3_FULLVALIDATION_720P\\ZEROCOPY_METRICS\\GPU\\KiwiGpuTelemetry_20260827_213043_v42_3_FULLVALIDATION_720P-ZEROCOPY_METRICS-317db7df885e4bf79a6a312cabebcb0d.meta.json",
+      "sha256": "9f81e88c5edd9eb80a5577753ca2a068ee5bf53b8b5eab34f75a78daf897a393",
+      "bytes": 514,
+      "createdUtc": "2026-08-27T12:33:20.5336833Z",
+      "tokenMatched": true,
+      "copyHashMatched": true
+    }
+  ],
+  "videoCapture": {
+    "required": false,
+    "started": false,
+    "startedUtc": null
+  }
+}

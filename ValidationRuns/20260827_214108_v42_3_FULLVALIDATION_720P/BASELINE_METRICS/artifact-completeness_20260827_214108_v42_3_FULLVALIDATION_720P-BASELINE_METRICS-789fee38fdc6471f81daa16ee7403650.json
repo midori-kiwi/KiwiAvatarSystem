@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "1.0.0",
+  "caseId": "BASELINE_METRICS",
+  "token": "20260827_214108_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-789fee38fdc6471f81daa16ee7403650",
+  "status": "FAIL",
+  "checkedUtc": "2026-08-27T12:41:37.9951328Z",
+  "checks": [
+    {
+      "id": "artifact.required.FRAME_COMPARISON_CSV",
+      "status": "FAIL",
+      "expected": "exactly one existing, hash-matched, token-matched artifact",
+      "actual": "count=0",
+      "evidence": [
+        "count=0"
+      ]
+    },
+    {
+      "id": "artifact.required.GPU_CSV",
+      "status": "FAIL",
+      "expected": "exactly one existing, hash-matched, token-matched artifact",
+      "actual": "count=0",
+      "evidence": [
+        "count=0"
+      ]
+    },
+    {
+      "id": "artifact.required.GPU_META",
+      "status": "PASS",
+      "expected": "exactly one existing, hash-matched, token-matched artifact",
+      "actual": "count=1; path=D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_214108_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\GPU\\KiwiGpuTelemetry_20260827_214108_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-789fee38fdc6471f81daa16ee7403650.meta.json; sha256=6ba527da1c13ef1f0c74037ca54a5b034d9ca09e83d0464d6d1ad0a7ff4de75d; tokenMatched=True",
+      "evidence": [
+        "count=1",
+        "path=D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_214108_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\GPU\\KiwiGpuTelemetry_20260827_214108_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-789fee38fdc6471f81daa16ee7403650.meta.json",
+        "sha256=6ba527da1c13ef1f0c74037ca54a5b034d9ca09e83d0464d6d1ad0a7ff4de75d",
+        "tokenMatched=True"
+      ]
+    },
+    {
+      "id": "artifact.required.PLAYER_LOG",
+      "status": "PASS",
+      "expected": "exactly one existing, hash-matched, token-matched artifact",
+      "actual": "count=1; path=D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_214108_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\Logs\\KiwiStandalonePlayer_20260827_214108_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-789fee38fdc6471f81daa16ee7403650.log; sha256=0f1cc0c131a762f0d7e514a1a826988a04238282e370e60175358c9eece474d8; tokenMatched=True",
+      "evidence": [
+        "count=1",
+        "path=D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_214108_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\Logs\\KiwiStandalonePlayer_20260827_214108_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-789fee38fdc6471f81daa16ee7403650.log",
+        "sha256=0f1cc0c131a762f0d7e514a1a826988a04238282e370e60175358c9eece474d8",
+        "tokenMatched=True"
+      ]
+    },
+    {
+      "id": "artifact.required.RUNTIME_VALIDATION_JSON",
+      "status": "FAIL",
+      "expected": "exactly one existing, hash-matched, token-matched artifact",
+      "actual": "count=0",
+      "evidence": [
+        "count=0"
+      ]
+    },
+    {
+      "id": "artifact.required.CASE_RECEIPT_JSON",
+      "status": "PASS",
+      "expected": "exactly one existing, hash-matched, token-matched artifact",
+      "actual": "count=1; path=D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_214108_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\Receipts\\KiwiValidationReceipt_20260827_214108_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-789fee38fdc6471f81daa16ee7403650.json; sha256=a96947571c9da99fd5dbbc226ab5bdc2aef30e898f465b2ae6547d68899c6d3a; tokenMatched=True",
+      "evidence": [
+        "count=1",
+        "path=D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_214108_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\Receipts\\KiwiValidationReceipt_20260827_214108_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-789fee38fdc6471f81daa16ee7403650.json",
+        "sha256=a96947571c9da99fd5dbbc226ab5bdc2aef30e898f465b2ae6547d68899c6d3a",
+        "tokenMatched=True"
+      ]
+    },
+    {
+      "id": "artifact.rows.FRAME_COMPARISON_CSV",
+      "status": "FAIL",
+      "expected": 800,
+      "actual": null,
+      "evidence": [
+        "artifact missing"
+      ]
+    },
+    {
+      "id": "artifact.rows.GPU_CSV",
+      "status": "FAIL",
+      "expected": 100,
+      "actual": null,
+      "evidence": [
+        "artifact missing"
+      ]
+    },
+    {
+      "id": "receipt.identity",
+      "status": "FAIL",
+      "expected": "exact run/case/token/mode/purpose and status=OK",
+      "actual": "run=20260827_214108_v42_3_FULLVALIDATION_720P;case=BASELINE_METRICS;token=20260827_214108_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-789fee38fdc6471f81daa16ee7403650;mode=BASELINE;purpose=METRICS;status=ERROR",
+      "evidence": [
+        "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_214108_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\Receipts\\KiwiValidationReceipt_20260827_214108_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-789fee38fdc6471f81daa16ee7403650.json"
+      ]
+    },
+    {
+      "id": "player.log.contract",
+      "status": "FAIL",
+      "expected": "exact ready/completion markers and zero fatal patterns",
+      "actual": "ready=True;complete=False;fatal=2",
+      "evidence": [
+        "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_214108_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\Logs\\KiwiStandalonePlayer_20260827_214108_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-789fee38fdc6471f81daa16ee7403650.log",
+        "[KiwiValidationV1] ERROR",
+        "[KiwiValidation] FAILED error="
+      ]
+    },
+    {
+      "id": "process.lifecycle",
+      "status": "FAIL",
+      "expected": "clean lifecycle, exit=0, no forced termination, no crash artifacts",
+      "actual": "{\"executable\":\"D:\\\\KiwiAvatarSystem\\\\ValidationRuns\\\\20260827_213738_v42_3_FULLVALIDATION_720P\\\\Build\\\\KiwiAvatarSystem_v42_3_DX12_AUTOMATED_VALIDATION.exe\",\"arguments\":[\"-force-d3d12\",\"-screen-fullscreen\",\"0\",\"-screen-width\",\"1280\",\"-screen-height\",\"720\",\"-logFile\",\"D:\\\\KiwiAvatarSystem\\\\ValidationRuns\\\\20260827_214108_v42_3_FULLVALIDATION_720P\\\\BASELINE_METRICS\\\\Logs\\\\KiwiStandalonePlayer_20260827_214108_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-789fee38fdc6471f81daa16ee7403650.log\",\"-crash-report-folder\",\"D:\\\\KiwiAvatarSystem\\\\ValidationRuns\\\\20260827_214108_v42_3_FULLVALIDATION_720P\\\\BASELINE_METRICS\\\\Crash\"],\"pid\":4480,\"startSucceeded\":true,\"startupSurvived\":true,\"readyMarkerSeen\":true,\"completionMarkerSeen\":false,\"receiptCommitted\":true,\"exitObserved\":true,\"exitCode\":2,\"forcedTermination\":false,\"crashArtifactCount\":0}",
+      "evidence": [
+        "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_214108_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\case-result_20260827_214108_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-789fee38fdc6471f81daa16ee7403650.json"
+      ]
+    }
+  ],
+  "issues": [
+    {
+      "severity": "KNOWN_ISSUE",
+      "code": "sentis.compute_tensor_shutdown",
+      "message": "Known log pattern count=378 maximum=10000",
+      "caseId": "BASELINE_METRICS",
+      "evidence": [
+        "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_214108_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\Logs\\KiwiStandalonePlayer_20260827_214108_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-789fee38fdc6471f81daa16ee7403650.log",
+        "Found unreferenced, but undisposed ComputeTensorData"
+      ]
+    },
+    {
+      "severity": "KNOWN_ISSUE",
+      "code": "sentis.compute_buffer_gc_shutdown",
+      "message": "Known log pattern count=378 maximum=10000",
+      "caseId": "BASELINE_METRICS",
+      "evidence": [
+        "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_214108_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\Logs\\KiwiStandalonePlayer_20260827_214108_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-789fee38fdc6471f81daa16ee7403650.log",
+        "GarbageCollector disposing of ComputeBuffer"
+      ]
+    },
+    {
+      "severity": "KNOWN_ISSUE",
+      "code": "d3d12_upload_buffer_small",
+      "message": "Known log pattern count=1 maximum=10",
+      "caseId": "BASELINE_METRICS",
+      "evidence": [
+        "D:\\KiwiAvatarSystem\\ValidationRuns\\20260827_214108_v42_3_FULLVALIDATION_720P\\BASELINE_METRICS\\Logs\\KiwiStandalonePlayer_20260827_214108_v42_3_FULLVALIDATION_720P-BASELINE_METRICS-789fee38fdc6471f81daa16ee7403650.log",
+        "d3d12: upload buffer was too small"
+      ]
+    }
+  ]
+}

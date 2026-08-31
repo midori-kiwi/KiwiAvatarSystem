@@ -1,0 +1,1 @@
+source=D:\Users\main\Downloads\KiwiAvatarSystem_v44_SourceAuditCollector.zip :: Kiwi_v44_SourceAuditCollector/Collect-v44-SourceAudit.ps1 score=30 exactCurrentPathBSymbols=0 sha256=f4e0ab1a8290c7b76be745f8d8ef1ce808e0a7f6cafe6a105bbb5483ad8c81c9

@@ -1,0 +1,455 @@
+{
+  "schemaVersion": "1.0.0",
+  "profileId": "v42_3_shadow_720p_v1",
+  "status": "PROVISIONAL",
+  "description": "Initial fail-closed thresholds for v42.3 BASELINE versus ORT DirectML D3D12 Zero-Copy Shadow at a 1280x720 Player window. Review after the first controlled baseline run.",
+  "identity": {
+    "systemVersion": "v42.3",
+    "installedVersion": "5.1.0-phase16.20.32-v42.3",
+    "installedManifest": "Phase16_20_32_v42_3_NATIVE_PLUGIN_DEVICE_LIFECYCLE_ROOTFIX.json",
+    "unityVersion": "6000.0.80f1",
+    "scene": "Assets/Scenes/Face Landmark Detection.unity",
+    "graphicsApi": "Direct3D12",
+    "developmentBuildRequired": true,
+    "modelPath": "Assets/KiwiAvatarSystem/Resources/KiwiFaceLandmarkInference.onnx",
+    "modelSha256": "ed487104519b0a88cb2cb2ec3678e183f447fb9dd63560998e960ffbaa8fb335",
+    "resolution": {
+      "label": "720P",
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "execution": {
+    "startupTimeoutSeconds": 30,
+    "warmupDelaySeconds": 5,
+    "recordDurationSeconds": 30,
+    "analysisTrimStartSeconds": 2,
+    "analysisTrimEndSeconds": 1,
+    "gracefulQuitTimeoutSeconds": 15,
+    "forcedTerminationWaitSeconds": 5,
+    "caseCooldownSeconds": 10,
+    "gpuSampleIntervalMs": 200,
+    "metricsCases": [
+      "BASELINE_METRICS",
+      "ZEROCOPY_METRICS"
+    ],
+    "visualCases": [
+      "BASELINE_VISUAL",
+      "ZEROCOPY_VISUAL"
+    ],
+    "performanceCasesExcludeVideoCapture": true,
+    "finalVerdictRequiresVisualReview": true
+  },
+  "artifacts": {
+    "frameComparisonSourceDirectory": "%USERPROFILE%/AppData/LocalLow/MidoriKiwi/KiwiAvatarSystem/KiwiFrameComparison",
+    "zeroCopySourceDirectory": "%USERPROFILE%/AppData/LocalLow/MidoriKiwi/KiwiAvatarSystem/KiwiOrtDmlZeroCopy",
+    "rootCollectionDirectory": "D:/KiwiAvatarSystem",
+    "runCollectionDirectory": "D:/KiwiAvatarSystem/ValidationRuns",
+    "requiredByCase": {
+      "BASELINE_METRICS": [
+        "FRAME_COMPARISON_CSV",
+        "GPU_CSV",
+        "GPU_META",
+        "PLAYER_LOG",
+        "RUNTIME_VALIDATION_JSON",
+        "CASE_RECEIPT_JSON"
+      ],
+      "ZEROCOPY_METRICS": [
+        "FRAME_COMPARISON_CSV",
+        "ZERO_COPY_CSV",
+        "GPU_CSV",
+        "GPU_META",
+        "PLAYER_LOG",
+        "RUNTIME_VALIDATION_JSON",
+        "CASE_RECEIPT_JSON"
+      ],
+      "BASELINE_VISUAL": [
+        "FRAME_COMPARISON_CSV",
+        "GPU_CSV",
+        "GPU_META",
+        "PLAYER_LOG",
+        "RUNTIME_VALIDATION_JSON",
+        "CASE_RECEIPT_JSON",
+        "VIDEO_MP4",
+        "VIDEO_PROBE_JSON",
+        "VIDEO_FRAME_INDEX_CSV"
+      ],
+      "ZEROCOPY_VISUAL": [
+        "FRAME_COMPARISON_CSV",
+        "ZERO_COPY_CSV",
+        "GPU_CSV",
+        "GPU_META",
+        "PLAYER_LOG",
+        "RUNTIME_VALIDATION_JSON",
+        "CASE_RECEIPT_JSON",
+        "VIDEO_MP4",
+        "VIDEO_PROBE_JSON",
+        "VIDEO_FRAME_INDEX_CSV"
+      ]
+    },
+    "minimumFrameComparisonRows": 800,
+    "minimumZeroCopyRows": 800,
+    "minimumGpuRows": 100,
+    "minimumVideoFrames": 850,
+    "minimumVideoDurationSeconds": 29,
+    "maximumVideoDurationSeconds": 32
+  },
+  "absoluteThresholds": [
+    {
+      "id": "camera.native_source_hz.min",
+      "cases": ["BASELINE_METRICS", "ZEROCOPY_METRICS"],
+      "metric": "camera.nativeSourceHz",
+      "statistic": "value",
+      "operator": ">=",
+      "value": 58.0,
+      "unit": "Hz",
+      "severity": "FAIL"
+    },
+    {
+      "id": "render.fps.p50.min",
+      "cases": ["BASELINE_METRICS", "ZEROCOPY_METRICS"],
+      "metric": "render.fps",
+      "statistic": "p50",
+      "operator": ">=",
+      "value": 38.0,
+      "unit": "fps",
+      "severity": "FAIL"
+    },
+    {
+      "id": "sentis.request_to_done.p50.max",
+      "cases": ["BASELINE_METRICS", "ZEROCOPY_METRICS"],
+      "metric": "sentis.requestToDoneMs",
+      "statistic": "p50",
+      "operator": "<=",
+      "value": 80.0,
+      "unit": "ms",
+      "severity": "FAIL"
+    },
+    {
+      "id": "sentis.request_to_done.p95.max",
+      "cases": ["BASELINE_METRICS", "ZEROCOPY_METRICS"],
+      "metric": "sentis.requestToDoneMs",
+      "statistic": "p95",
+      "operator": "<=",
+      "value": 105.0,
+      "unit": "ms",
+      "severity": "FAIL"
+    },
+    {
+      "id": "tracking.accepted_source_age.p50.max",
+      "cases": ["BASELINE_METRICS", "ZEROCOPY_METRICS"],
+      "metric": "tracking.acceptedSourceAgeMs",
+      "statistic": "p50",
+      "operator": "<=",
+      "value": 95.0,
+      "unit": "ms",
+      "severity": "FAIL"
+    },
+    {
+      "id": "tracking.accepted_source_age.p95.max",
+      "cases": ["BASELINE_METRICS", "ZEROCOPY_METRICS"],
+      "metric": "tracking.acceptedSourceAgeMs",
+      "statistic": "p95",
+      "operator": "<=",
+      "value": 125.0,
+      "unit": "ms",
+      "severity": "FAIL"
+    },
+    {
+      "id": "tracking.canonical_hz.min",
+      "cases": ["BASELINE_METRICS", "ZEROCOPY_METRICS"],
+      "metric": "tracking.canonicalHz",
+      "statistic": "value",
+      "operator": ">=",
+      "value": 30.0,
+      "unit": "Hz",
+      "severity": "FAIL"
+    },
+    {
+      "id": "native.drop_count.zero",
+      "cases": ["BASELINE_METRICS", "ZEROCOPY_METRICS"],
+      "metric": "native.dropCountDelta",
+      "statistic": "value",
+      "operator": "==",
+      "value": 0,
+      "unit": "count",
+      "severity": "FAIL"
+    },
+    {
+      "id": "native.gpu_wait.zero",
+      "cases": ["BASELINE_METRICS", "ZEROCOPY_METRICS"],
+      "metric": "native.gpuWaitCountDelta",
+      "statistic": "value",
+      "operator": "==",
+      "value": 0,
+      "unit": "count",
+      "severity": "FAIL"
+    },
+    {
+      "id": "tracking.cross_system_discard.zero",
+      "cases": ["BASELINE_METRICS", "ZEROCOPY_METRICS"],
+      "metric": "tracking.crossSystemDiscardDelta",
+      "statistic": "value",
+      "operator": "==",
+      "value": 0,
+      "unit": "count",
+      "severity": "FAIL"
+    },
+    {
+      "id": "runtime.epoch_violation.zero",
+      "cases": ["BASELINE_METRICS", "ZEROCOPY_METRICS"],
+      "metric": "runtime.epochViolationDelta",
+      "statistic": "value",
+      "operator": "==",
+      "value": 0,
+      "unit": "count",
+      "severity": "FAIL"
+    },
+    {
+      "id": "runtime.error_critical.zero",
+      "cases": ["BASELINE_METRICS", "ZEROCOPY_METRICS"],
+      "metric": "runtime.errorCriticalCount",
+      "statistic": "value",
+      "operator": "==",
+      "value": 0,
+      "unit": "count",
+      "severity": "FAIL"
+    },
+    {
+      "id": "ort.inference.p50.max",
+      "cases": ["ZEROCOPY_METRICS"],
+      "metric": "ort.inferenceMs",
+      "statistic": "p50",
+      "operator": "<=",
+      "value": 30.0,
+      "unit": "ms",
+      "severity": "FAIL"
+    },
+    {
+      "id": "ort.inference.p95.max",
+      "cases": ["ZEROCOPY_METRICS"],
+      "metric": "ort.inferenceMs",
+      "statistic": "p95",
+      "operator": "<=",
+      "value": 35.0,
+      "unit": "ms",
+      "severity": "FAIL"
+    },
+    {
+      "id": "ort.effective_hz.min",
+      "cases": ["ZEROCOPY_METRICS"],
+      "metric": "ort.effectiveHz",
+      "statistic": "value",
+      "operator": ">=",
+      "value": 35.0,
+      "unit": "Hz",
+      "severity": "FAIL"
+    },
+    {
+      "id": "ort.failure_count.zero",
+      "cases": ["ZEROCOPY_METRICS"],
+      "metric": "ort.failureCountDelta",
+      "statistic": "value",
+      "operator": "==",
+      "value": 0,
+      "unit": "count",
+      "severity": "FAIL"
+    },
+    {
+      "id": "ort.skipped_count.zero",
+      "cases": ["ZEROCOPY_METRICS"],
+      "metric": "ort.skippedCountDelta",
+      "statistic": "value",
+      "operator": "==",
+      "value": 0,
+      "unit": "count",
+      "severity": "FAIL"
+    },
+    {
+      "id": "ort.ready_replacement.zero",
+      "cases": ["ZEROCOPY_METRICS"],
+      "metric": "ort.readyReplacementDelta",
+      "statistic": "value",
+      "operator": "==",
+      "value": 0,
+      "unit": "count",
+      "severity": "FAIL"
+    },
+    {
+      "id": "parity.landmark_normalized_mae.p95.max",
+      "cases": ["ZEROCOPY_METRICS"],
+      "metric": "parity.landmarkMaeNormalized",
+      "statistic": "p95",
+      "operator": "<=",
+      "value": 0.000001,
+      "unit": "normalized",
+      "severity": "FAIL"
+    },
+    {
+      "id": "parity.landmark_raw_max.p95.max",
+      "cases": ["ZEROCOPY_METRICS"],
+      "metric": "parity.landmarkMaxAbsRaw",
+      "statistic": "p95",
+      "operator": "<=",
+      "value": 0.0005,
+      "unit": "raw",
+      "severity": "FAIL"
+    },
+    {
+      "id": "parity.presence_abs_diff.p95.max",
+      "cases": ["ZEROCOPY_METRICS"],
+      "metric": "parity.presenceAbsDiff",
+      "statistic": "p95",
+      "operator": "<=",
+      "value": 0.00001,
+      "unit": "probability",
+      "severity": "FAIL"
+    },
+    {
+      "id": "gpu.utilization.p50.max",
+      "cases": ["BASELINE_METRICS", "ZEROCOPY_METRICS"],
+      "metric": "gpu.utilizationPercent",
+      "statistic": "p50",
+      "operator": "<=",
+      "value": 99.5,
+      "unit": "percent",
+      "severity": "FAIL"
+    },
+    {
+      "id": "gpu.utilization.p95.max",
+      "cases": ["BASELINE_METRICS", "ZEROCOPY_METRICS"],
+      "metric": "gpu.utilizationPercent",
+      "statistic": "p95",
+      "operator": "<=",
+      "value": 100.0,
+      "unit": "percent",
+      "severity": "FAIL"
+    }
+  ],
+  "relativeThresholds": [
+    {
+      "id": "ab.camera_hz.ratio.min",
+      "baselineCase": "BASELINE_METRICS",
+      "candidateCase": "ZEROCOPY_METRICS",
+      "metric": "camera.nativeSourceHz",
+      "statistic": "value",
+      "comparison": "ratio",
+      "operator": ">=",
+      "value": 0.98,
+      "unit": "ratio",
+      "severity": "FAIL"
+    },
+    {
+      "id": "ab.render_fps.ratio.min",
+      "baselineCase": "BASELINE_METRICS",
+      "candidateCase": "ZEROCOPY_METRICS",
+      "metric": "render.fps",
+      "statistic": "p50",
+      "comparison": "ratio",
+      "operator": ">=",
+      "value": 0.95,
+      "unit": "ratio",
+      "severity": "FAIL"
+    },
+    {
+      "id": "ab.canonical_hz.ratio.min",
+      "baselineCase": "BASELINE_METRICS",
+      "candidateCase": "ZEROCOPY_METRICS",
+      "metric": "tracking.canonicalHz",
+      "statistic": "value",
+      "comparison": "ratio",
+      "operator": ">=",
+      "value": 0.95,
+      "unit": "ratio",
+      "severity": "FAIL"
+    },
+    {
+      "id": "ab.sentis_latency.ratio.max",
+      "baselineCase": "BASELINE_METRICS",
+      "candidateCase": "ZEROCOPY_METRICS",
+      "metric": "sentis.requestToDoneMs",
+      "statistic": "p50",
+      "comparison": "ratio",
+      "operator": "<=",
+      "value": 1.10,
+      "unit": "ratio",
+      "severity": "FAIL"
+    },
+    {
+      "id": "ab.accepted_age.ratio.max",
+      "baselineCase": "BASELINE_METRICS",
+      "candidateCase": "ZEROCOPY_METRICS",
+      "metric": "tracking.acceptedSourceAgeMs",
+      "statistic": "p50",
+      "comparison": "ratio",
+      "operator": "<=",
+      "value": 1.10,
+      "unit": "ratio",
+      "severity": "FAIL"
+    },
+    {
+      "id": "ab.gpu_utilization.delta_pp.max",
+      "baselineCase": "BASELINE_METRICS",
+      "candidateCase": "ZEROCOPY_METRICS",
+      "metric": "gpu.utilizationPercent",
+      "statistic": "p50",
+      "comparison": "difference",
+      "operator": "<=",
+      "value": 3.0,
+      "unit": "percentage_points",
+      "severity": "FAIL"
+    }
+  ],
+  "logRules": {
+    "fatalPatterns": [
+      "Crash!!!",
+      "Native Crash",
+      "access violation",
+      "D3D12.*device.*removed",
+      "graphics device.*lost",
+      "DllNotFoundException",
+      "EntryPointNotFoundException",
+      "zero-copy shadow disabled",
+      "ABI mismatch",
+      "bridge did not become ready",
+      "\u005bKiwiValidationV1\u005d ERROR"
+    ],
+    "knownIssues": [
+      {
+        "id": "sentis.compute_tensor_shutdown",
+        "pattern": "Found unreferenced, but undisposed ComputeTensorData",
+        "maximumCount": 10000,
+        "shadowSeverity": "KNOWN_ISSUE",
+        "authoritySeverity": "FAIL"
+      },
+      {
+        "id": "sentis.compute_buffer_gc_shutdown",
+        "pattern": "GarbageCollector disposing of ComputeBuffer",
+        "maximumCount": 10000,
+        "shadowSeverity": "KNOWN_ISSUE",
+        "authoritySeverity": "FAIL"
+      },
+      {
+        "id": "d3d12_upload_buffer_small",
+        "pattern": "d3d12: upload buffer was too small",
+        "maximumCount": 10,
+        "shadowSeverity": "KNOWN_ISSUE",
+        "authoritySeverity": "KNOWN_ISSUE"
+      }
+    ]
+  },
+  "video": {
+    "captureBackend": "ffmpeg-gdigrab-hwnd",
+    "encoder": "libx264",
+    "preset": "ultrafast",
+    "pixelFormat": "yuv420p",
+    "captureFps": 30,
+    "requiredCodec": "h264",
+    "requireMonotonicPts": true,
+    "requireDecodeWithoutErrors": true,
+    "requiredVisualReviewCases": [
+      "BASELINE_VISUAL",
+      "ZEROCOPY_VISUAL"
+    ]
+  }
+}

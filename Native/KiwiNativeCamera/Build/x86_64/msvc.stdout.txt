@@ -1,0 +1,16 @@
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.37
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+KiwiNativeCameraPlugin.cpp
+D:\KiwiAvatarSystem\Tools\KlakSpout_v206_diag\Plugin\Unity\IUnityInterface.h(1): warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
+D:\KiwiAvatarSystem\Tools\KlakSpout_v206_diag\Plugin\Unity\IUnityGraphics.h(1): warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
+D:\KiwiAvatarSystem\Tools\KlakSpout_v206_diag\Plugin\Unity\IUnityGraphicsD3D12.h(1): warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
+D:\KiwiAvatarSystem\Native\KiwiNativeCamera\Source\KiwiNativeCameraPlugin.cpp(688): warning C4245: '引数': '__MIDL___MIDL_itf_mfreadwrite_0000_0001_0001' から 'DWORD' に変換しました。signed/unsigned が一致しません。
+D:\KiwiAvatarSystem\Native\KiwiNativeCamera\Source\KiwiNativeCameraPlugin.cpp(1226): warning C4245: '引数': '__MIDL___MIDL_itf_mfreadwrite_0000_0001_0001' から 'DWORD' に変換しました。signed/unsigned が一致しません。
+D:\KiwiAvatarSystem\Native\KiwiNativeCamera\Source\KiwiNativeCameraPlugin.cpp(1241): warning C4245: '引数': '__MIDL___MIDL_itf_mfreadwrite_0000_0001_0001' から 'DWORD' に変換しました。signed/unsigned が一致しません。
+D:\KiwiAvatarSystem\Native\KiwiNativeCamera\Source\KiwiNativeCameraPlugin.cpp(1244): warning C4245: '引数': '__MIDL___MIDL_itf_mfreadwrite_0000_0001_0001' から 'DWORD' に変換しました。signed/unsigned が一致しません。
+D:\KiwiAvatarSystem\Native\KiwiNativeCamera\Source\KiwiNativeCameraPlugin.cpp(1250): warning C4245: '引数': '__MIDL___MIDL_itf_mfreadwrite_0000_0001_0001' から 'DWORD' に変換しました。signed/unsigned が一致しません。
+D:\KiwiAvatarSystem\Native\KiwiNativeCamera\Source\KiwiNativeCameraPlugin.cpp(1283): warning C4245: '引数': '__MIDL___MIDL_itf_mfreadwrite_0000_0001_0001' から 'DWORD' に変換しました。signed/unsigned が一致しません。
+   ライブラリ KiwiNativeCamera.lib とオブジェクト KiwiNativeCamera.exp を作成中
+KiwiHlslCompileProbe.cpp

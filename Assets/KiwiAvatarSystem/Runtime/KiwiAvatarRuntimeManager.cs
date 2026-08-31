@@ -112,10 +112,46 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
         EnsureFallbackGeometry();
     }
 
-    private void Start()
+    private async void Start()
     {
         ScanModels();
-        SwitchToFallbackInternal(false);
+
+        busy = true;
+        status = "Preparing embedded avatar...";
+
+        try
+        {
+            // v44.7: keep the original high-detail mesh as Surface Fit authority,
+            // then move only meshoptimizer CPU work off the Unity main thread.
+            SwitchToFallbackInternal(false, false);
+
+            KiwiAvatarRenderMeshOptimizer.PreparedBatch embeddedBatch =
+                await KiwiAvatarRenderMeshOptimizer
+                    .PrepareOptimizedRenderMeshesAfterFitAsync(
+                        fallbackModel,
+                        "EmbeddedStartupAsync"
+                    );
+
+            KiwiAvatarRenderMeshOptimizer.CommitPreparedRenderMeshes(
+                embeddedBatch,
+                false
+            );
+        }
+        catch (Exception exception)
+        {
+            // Optimization is fail-open: a valid avatar remains usable with
+            // its original render mesh if the optional optimization fails.
+            Debug.LogWarning(
+                "[KiwiAvatarSystem] Embedded async mesh optimization failed: " +
+                exception.Message,
+                this
+            );
+        }
+        finally
+        {
+            busy = false;
+            status = "Ready";
+        }
 
         if (autoLoadLastAvatar)
         {
@@ -288,6 +324,7 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
         status = "Loading " + Path.GetFileName(path) + "...";
         RuntimeGltfInstance candidate = null;
         ActiveAvatarState previousState = CaptureActiveAvatarState();
+        IDisposable candidateRenderHold = null;
         bool candidateBound = false;
         bool swapCommitted = false;
 
@@ -325,16 +362,66 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
             _activeProfile = profile;
             candidateBound = true;
 
-            // Configure while the previous instance is still alive. Candidate
-            // ownership is retained until every operation that can invalidate
-            // the visible avatar has completed, allowing a complete rollback.
-            ApplyActiveProfile();
+            // Configure the candidate with the ORIGINAL mesh while the previous
+            // instance is still alive. This keeps Adaptive/Surface Fit authority
+            // unchanged from v44.6.1.
+            PrepareActiveProfileForMeshOptimization();
+            ActiveAvatarState candidateState = CaptureActiveAvatarState();
+
+            // Hide only the candidate renderers during background simplification.
+            // The previous avatar is restored and remains the visible authority.
+            candidateRenderHold =
+                KiwiAvatarRenderMeshOptimizer.HoldRendering(candidateRoot);
+
+            RestoreActiveAvatarState(previousState);
+            TryRestorePreviousAvatarPresentation(previousState);
+
+            status = "Optimizing " + Path.GetFileName(path) + "...";
+
+            KiwiAvatarRenderMeshOptimizer.PreparedBatch preparedBatch =
+                await KiwiAvatarRenderMeshOptimizer
+                    .PrepareOptimizedRenderMeshesAfterFitAsync(
+                        candidateRoot,
+                        "ExternalHotSwapAsync"
+                    );
+
+            if (candidate == null || candidate.Root == null || candidateRoot == null)
+            {
+                throw new InvalidOperationException(
+                    "Candidate avatar was destroyed during async mesh preparation."
+                );
+            }
+
+            // Return to candidate authority only after worker completion. No await
+            // occurs after this point before the presentation flip, so intermediate
+            // FaceAnchor/SurfaceFit state cannot become a rendered frame.
+            RestoreActiveAvatarState(candidateState);
+            ApplyFaceAnchorFit();
+            ApplySurfaceFit(candidateRoot, head, _activeFaceFitMethod);
+
+            KiwiAvatarRenderMeshOptimizer.CommitPreparedRenderMeshes(
+                preparedBatch,
+                true
+            );
+
+            CompleteActiveProfileAfterMeshOptimization();
+
+            // All fallible preparation has completed. The following operations are
+            // the transactional presentation commit.
+            swapCommitted = true;
+
+            if (previousState.model != null && previousState.model != candidateRoot)
+            {
+                previousState.model.gameObject.SetActive(false);
+            }
+
             if (fallbackModel != null)
             {
                 fallbackModel.gameObject.SetActive(false);
             }
 
-            swapCommitted = true;
+            candidateRenderHold.Dispose();
+            candidateRenderHold = null;
 
             // KIWI_V5_1_MODEL_GENERATION_COMMIT
             // Advance only after the transactional hot-swap has
@@ -376,6 +463,12 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
         }
         finally
         {
+            if (candidateRenderHold != null)
+            {
+                candidateRenderHold.Dispose();
+                candidateRenderHold = null;
+            }
+
             busy = false;
         }
     }
@@ -462,7 +555,9 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
             else
             {
                 RestoreFallbackFaceAnchor();
+                KiwiAvatarRenderMeshOptimizer.RestoreOriginalMeshesForFit(fallbackModel);
                 ApplySurfaceFit(fallbackModel, fallbackHead, "Embedded");
+                KiwiAvatarRenderMeshOptimizer.ApplyOptimizedRenderMeshesAfterFit(fallbackModel, "EmbeddedRollback");
                 if (faceMotion != null && motionRoot != null)
                 {
                     faceMotion.kiwiRoot = motionRoot;
@@ -490,7 +585,9 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
         }
     }
 
-    private void SwitchToFallbackInternal(bool clearLastAvatar)
+    private void SwitchToFallbackInternal(
+        bool clearLastAvatar,
+        bool applyRenderOptimization = true)
     {
         bool modelIdentityChanged =
             _activeModel != null ||
@@ -508,7 +605,16 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
             SetLayerRecursively(fallbackModel.gameObject, ResolveVtuberLayer());
         }
 
+        KiwiAvatarRenderMeshOptimizer.RestoreOriginalMeshesForFit(fallbackModel);
         ApplySurfaceFit(fallbackModel, fallbackHead, "Embedded");
+
+        if (applyRenderOptimization)
+        {
+            KiwiAvatarRenderMeshOptimizer.ApplyOptimizedRenderMeshesAfterFit(
+                fallbackModel,
+                "Embedded"
+            );
+        }
 
         if (_activeInstance != null && _activeInstance.Root != null)
         {
@@ -665,11 +771,22 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
 
     private void ApplyActiveProfile()
     {
+        PrepareActiveProfileForMeshOptimization();
+        KiwiAvatarRenderMeshOptimizer.ApplyOptimizedRenderMeshesAfterFit(
+            _activeModel,
+            "External"
+        );
+        CompleteActiveProfileAfterMeshOptimization();
+    }
+
+    private void PrepareActiveProfileForMeshOptimization()
+    {
         if (_activeModel == null || _activeHead == null || _activeProfile == null) return;
 
         _activeModel.localPosition = Vector3.zero;
         _activeModel.localRotation = Quaternion.identity;
         _activeModel.localScale = Vector3.one;
+        KiwiAvatarRenderMeshOptimizer.RestoreOriginalMeshesForFit(_activeModel);
         EnsureFallbackGeometry();
         _activeGeometry = AnalyzeGeometry(_activeModel, _activeHead);
 
@@ -705,6 +822,12 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
 
         ApplyFaceAnchorFit();
         ApplySurfaceFit(_activeModel, _activeHead, _activeFaceFitMethod);
+    }
+
+    private void CompleteActiveProfileAfterMeshOptimization()
+    {
+        if (_activeModel == null || _activeProfile == null) return;
+
         SetSpringComponentsEnabled(
             _activeModel,
             enableSpringBone && _activeProfile.springBoneEnabled

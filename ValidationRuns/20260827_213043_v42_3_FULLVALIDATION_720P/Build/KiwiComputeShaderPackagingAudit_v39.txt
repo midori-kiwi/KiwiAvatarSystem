@@ -1,0 +1,18 @@
+KiwiAvatarSystem v39 DX12 Compute Shader Packaging Audit
+contract=KIWI_V5_1_PHASE16_20_27_V39_DX12_COMPUTE_SHADER_PACKAGING_AUDIT
+unityVersion=6000.0.80f1
+buildTarget=StandaloneWindows64
+developmentBuild=1
+windowsAutoGraphicsApi=0
+windowsGraphicsApis=Direct3D12
+dx12OnlyConfigured=1
+computeShaderAssetCount=42
+compileCallbackCount=375
+editorHasTextureToTensorExact=1
+buildSawTextureToTensorExact=1
+textureToTensorExactVariants=2
+editorHasMatch=1
+buildSawMatch=1
+matchVariants=1
+textureToTensorExactAssetPaths=Packages/com.unity.ai.inference/Runtime/Core/Resources/Sentis/TextureConversion/TextureToTensor.compute
+matchAssetPaths=Assets/KiwiAvatarSystem/Resources/KiwiFacePartBlockMatch.compute

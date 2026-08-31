@@ -1,0 +1,11 @@
+﻿{
+    "Version":  "v44.44",
+    "ObserverOnly":  true,
+    "AuditSourceSHA256":  "BFB145A452E091CE8EE7E6F1A868D32A224EE323A35ECDF54AE49AE62A6FC0A3",
+    "ProductionDllSHA256":  "8091265D91993B0082BFC63D55FFF8A18CC18AACA9B1F907E874E7011D8017E2",
+    "ProductionNativeSourceSHA256":  "8C28F7A9E22DF9DA66455C37777069E5922037DB62AD7897DBDFEC8931975E03",
+    "HadPreviousAuditFile":  false,
+    "BackupDirectory":  "D:\\KiwiAvatarSystem\\KiwiBackups\\v44_44_20260830_105518",
+    "Build":  "D:\\KiwiAvatarSystem\\Builds\\v44_44_LANDMARKER_READMODE_AUDIT",
+    "Result":  "V44_44_APPLY_PASS"
+}

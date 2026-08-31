@@ -1,0 +1,1 @@
+source=D:\KiwiAvatarSystem\KiwiDiagnostics\v44_NativeProvenance_20260828_191820\Candidates\Candidate_001\REPORT.txt score=430 exactCurrentPathBSymbols=4 sha256=6974e79b943dcf61f47ba553f776f8873970077b54c3d94aa16d55c86b8d2c93
