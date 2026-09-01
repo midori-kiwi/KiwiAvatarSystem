@@ -1,0 +1,12 @@
+KiwiAvatarSystem v44.55.15 FIX5 Launch Proof
+projectRoot=D:\KiwiAvatarSystem
+editorLog=D:\KiwiAvatarSystem\KiwiValidation\KiwiV44_55_15_Editor.log
+audit=1
+seconds=60
+hz=1
+stableSeconds=8
+expectedTrianglesInformational=254296
+meshTriangleGateRequired=0
+cameraMode=PRODUCTION
+captureTransport=B
+productionAuthority=GPU_UNCHANGED

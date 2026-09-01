@@ -1,0 +1,22 @@
+KiwiAvatarSystem v44.55.15 FIX5 Static Validation
+contract=KIWI_V44_55_15_EXACT_HOSTTICKS_CPU_PREPROCESS_SEMANTIC_GATE_FIX5
+trackerSha=PASS
+runnerSha=PASS
+interopSha=PASS
+nativeDllSha=PASS
+validationSha=PASS
+observerOnly=PASS
+gpuAuthorityPreserved=PASS
+triangleGateRemoved=PASS
+triangleObservationOnly=PASS
+gateDiagnostics=PASS
+sameSnapshotIdentity=PASS
+bothCpuWorkers=PASS
+noGpuComputeObserver=PASS
+noIdentityNeighborDecision=PASS
+editModeSafeDestroy=PASS
+unityProcessExitCode=PASS
+unityCompileErrorsAbsent=PASS
+unityFatalErrorsAbsent=PASS
+unityCompile=PASS
+result=PASS

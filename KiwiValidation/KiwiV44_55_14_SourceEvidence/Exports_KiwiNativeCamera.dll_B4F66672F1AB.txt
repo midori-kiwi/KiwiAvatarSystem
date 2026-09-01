@@ -1,0 +1,95 @@
+
+Dump of file D:\KiwiAvatarSystem\Builds\v44_54MatchedBackendEquivalenceAudit\KiwiAvatarSystem_v44_54_MATCHED_BACKEND_EQUIVALENCE_Data\Plugins\x86_64\KiwiNativeCamera.dll
+
+File Type: DLL
+
+  Section contains the following exports for KiwiNativeCamera.dll
+
+    00000000 characteristics
+    FFFFFFFF time date stamp
+        0.00 version
+           1 ordinal base
+          71 number of functions
+          71 number of names
+
+    ordinal hint RVA      name
+
+          1    0 00007440 KiwiNativeCamera_CopyLatestCpuCropNchwFloat
+          2    1 00007450 KiwiNativeCamera_GetAllSlotsBusyDropFrameCount
+          3    2 00007460 KiwiNativeCamera_GetCaptureCopyGpuOutstandingDepth
+          4    3 00007470 KiwiNativeCamera_GetCaptureFrameCount
+          5    4 00007480 KiwiNativeCamera_GetCaptureGpuWaitCount
+          6    5 00007490 KiwiNativeCamera_GetCaptureTransportId
+          7    6 000074A0 KiwiNativeCamera_GetCpuAllSlotsBusyDropCount
+          8    7 000074B0 KiwiNativeCamera_GetCpuLatestReplacementCount
+          9    8 000074C0 KiwiNativeCamera_GetDroppedFrameCount
+         10    9 000074D0 KiwiNativeCamera_GetGpuUploadCount
+         11    A 000074E0 KiwiNativeCamera_GetIngestAcceptedFrameCount
+         12    B 000074F0 KiwiNativeCamera_GetIngestCompletedFenceValue
+         13    C 00007510 KiwiNativeCamera_GetIngestConsumerCompletedFenceValue
+         14    D 00007530 KiwiNativeCamera_GetIngestConsumerFenceLag
+         15    E 00007600 KiwiNativeCamera_GetIngestCopyFailureFrameCount
+         16    F 00007610 KiwiNativeCamera_GetIngestCopyFrameCount
+         17   10 00007620 KiwiNativeCamera_GetIngestProducerFenceLag
+         18   11 00007670 KiwiNativeCamera_GetLastErrorCode
+         19   12 000076E0 KiwiNativeCamera_GetLastErrorMessage
+         20   13 00007760 KiwiNativeCamera_GetLatestArrivalIntervalMicroseconds
+         21   14 00007770 KiwiNativeCamera_GetLatestCallbackCpuMicroseconds
+         22   15 00007780 KiwiNativeCamera_GetLatestCallbackToRequestNextMicroseconds
+         23   16 00007790 KiwiNativeCamera_GetLatestCaptureCopyGpuCompletionMicroseconds
+         24   17 000077A0 KiwiNativeCamera_GetLatestCaptureCopyGpuSubmitMicroseconds
+         25   18 000077B0 KiwiNativeCamera_GetLatestCaptureHostTicks
+         26   19 000077C0 KiwiNativeCamera_GetLatestCaptureSequence
+         27   1A 000077D0 KiwiNativeCamera_GetLatestCpuNv12CopyBytes
+         28   1B 000077E0 KiwiNativeCamera_GetLatestCpuNv12CopyMicroseconds
+         29   1C 000077F0 KiwiNativeCamera_GetLatestGpuUploadSubmitMicroseconds
+         30   1D 00007800 KiwiNativeCamera_GetLatestIngestCopySubmitMicroseconds
+         31   1E 00007810 KiwiNativeCamera_GetLatestIngestHostTicks
+         32   1F 00007820 KiwiNativeCamera_GetLatestIngestSequence
+         33   20 00007830 KiwiNativeCamera_GetLatestMfSampleResidenceMicroseconds
+         34   21 00007840 KiwiNativeCamera_GetLatestNativeCpuShadowCropMicroseconds
+         35   22 00007850 KiwiNativeCamera_GetLatestNativeCpuShadowCropSequence
+         36   23 00007860 KiwiNativeCamera_GetLatestProcessedSourceAgeMicroseconds
+         37   24 00007870 KiwiNativeCamera_GetLatestProcessingCpuMicroseconds
+         38   25 00007880 KiwiNativeCamera_GetLatestRequestNextCpuMicroseconds
+         39   26 00007890 KiwiNativeCamera_GetLatestSourceHostTicks
+         40   27 000078A0 KiwiNativeCamera_GetLatestSourceIntervalMicroseconds
+         41   28 000078B0 KiwiNativeCamera_GetLatestSourceSequence
+         42   29 000078C0 KiwiNativeCamera_GetLatestSourceTimestampIntervalMicroseconds
+         43   2A 000078D0 KiwiNativeCamera_GetNativeCpuShadowCropCount
+         44   2B 000078E0 KiwiNativeCamera_GetNativeCpuShadowCropFailureCount
+         45   2C 000078F0 KiwiNativeCamera_GetOldestReadyAgeMicroseconds
+         46   2D 000079E0 KiwiNativeCamera_GetPresentEventBase
+         47   2E 000079F0 KiwiNativeCamera_GetPresentedFrameCount
+         48   2F 00007A00 KiwiNativeCamera_GetProcessingFailureFrameCount
+         49   30 00007A10 KiwiNativeCamera_GetProcessingGpuWaitCount
+         50   31 000074F0 KiwiNativeCamera_GetProducerCompletedFenceValue
+         51   32 00007A20 KiwiNativeCamera_GetQpcFrequency
+         52   33 00007A30 KiwiNativeCamera_GetQpcNow
+         53   34 00007A60 KiwiNativeCamera_GetReadyReplacementFrameCount
+         54   35 00007A70 KiwiNativeCamera_GetReadyUnclaimedCount
+         55   36 00007B10 KiwiNativeCamera_GetRenderEventFunc
+         56   37 00007B20 KiwiNativeCamera_GetSharedResourceCompatibilityTier
+         57   38 00007BA0 KiwiNativeCamera_GetSourceFrameCount
+         58   39 00007BB0 KiwiNativeCamera_GetSupersededFrameCount
+         59   3A 00007BC0 KiwiNativeCamera_IsCaptureD3D11MultithreadProtected
+         60   3B 00007BD0 KiwiNativeCamera_IsCaptureDeviceIsolated
+         61   3C 00007BC0 KiwiNativeCamera_IsD3D11MultithreadProtected
+         62   3D 00007BE0 KiwiNativeCamera_IsProcessingWorkerRunning
+         63   3E 00007BF0 KiwiNativeCamera_IsRunning
+         64   3F 00007C00 KiwiNativeCamera_IsSupported
+         65   40 00007490 KiwiNativeCamera_IsSystemMemoryCaptureEnabled
+         66   41 00007C10 KiwiNativeCamera_RequestLatestPresent
+         67   42 00007C20 KiwiNativeCamera_Start
+         68   43 00007C40 KiwiNativeCamera_StartDiagnostic
+         69   44 00007CE0 KiwiNativeCamera_Stop
+         70   45 00007D40 UnityPluginLoad
+         71   46 00007DB0 UnityPluginUnload
+
+  Summary
+
+        1000 .data
+        1000 .pdata
+        7000 .rdata
+        1000 .reloc
+        9000 .text

@@ -1,0 +1,25 @@
+KiwiAvatarSystem v44.55.15 Exact-HostTicks CPU Preprocess Semantic Gate
+contract=KIWI_V44_55_15_EXACT_HOSTTICKS_CPU_PREPROCESS_SEMANTIC_GATE
+trackerSha=PASS
+runnerSha=PASS
+interopSha=PASS
+nativeDllSha=PASS
+validationSha=PASS
+observerOnly=PASS
+gpuAuthorityPreserved=PASS
+leftCurrentFloat=PASS
+rightMode2=PASS
+sameSnapshotIdentity=PASS
+bothCpuWorkers=PASS
+noIdentityNeighborDecision=PASS
+noGpuWorkerBackend=PASS
+noTrackingWrites=PASS
+noRoiWrites=PASS
+noAuthorityWrites=PASS
+noUpdateExternalTexture=PASS
+noWaitForCompletion=PASS
+unityProcessExitCode=PASS
+unityCompileErrorsAbsent=PASS
+unityFatalErrorsAbsent=PASS
+unityCompile=PASS
+result=PASS
