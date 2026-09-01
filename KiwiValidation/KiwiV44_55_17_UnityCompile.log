@@ -1,0 +1,409 @@
+[Licensing::Module] Trying to connect to existing licensing client channel...
+Built from '6000.0/staging' branch; Version is '6000.0.80f1 (2dfd32957da2) revision 3013938'; Using compiler version '193933523'; Build Type 'Release'
+OS: 'Windows 11  (10.0.26200) Core' Language: 'ja' Physical Memory: 65456 MB
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-main" at "2026-09-01T12:56:43.4006941Z"
+BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1
+System  architecture: x64
+Process architecture: x64
+Date: 2026-09-01T12:56:43Z
+
+COMMAND LINE ARGUMENTS:
+C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe
+-batchmode
+-quit
+-projectPath
+D:\KiwiAvatarSystem
+-logFile
+D:\KiwiAvatarSystem\KiwiValidation\KiwiV44_55_17_UnityCompile.log
+Successfully changed project path to: D:\KiwiAvatarSystem
+D:/KiwiAvatarSystem
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gfx=262144"
+Player connection [26872]  Target information:
+
+Player connection [26872]  * "[IP] 192.168.0.2 [Port] 55504 [Flags] 2 [Guid] 3933601627 [EditorId] 3933601627 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-THHVR4N) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+
+Player connection [26872] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [26872] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+[Package Manager] Connected to IPC stream "Upm-24940" after 0.3 seconds.
+Library Redirect Path: Library/
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+Refreshing native plugins compatible for Editor in 2.80 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Initialize engine version: 6000.0.80f1 (2dfd32957da2)
+[Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/6000.0.80f1/Editor/Data/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path D:/KiwiAvatarSystem/Assets
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.17.4+4293ba1
+  Session Id:              445c58e800034154993a3eaaf923c151
+  Correlation Id:          e0b79e7f076b07c61828b9fd2d2b1fb1
+  External correlation Id: 3146038540230253436
+  Machine Id:              V/5OP0sJ3emFiVKU6RQnxXlCy3U=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-main" (connect: 0.00s, validation: 0.00s, handshake: 1.00s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-main-notifications" at "2026-09-01T12:56:44.4060931Z"
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: 15669744273893-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.00
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] Licensing Background thread has ended after 1.01s
+d3d12: failed to query info queue interface (0x80004002).
+Direct3D:
+    Version:         Direct3D 12 [level 12.1]
+    Renderer:        NVIDIA GeForce RTX 4090 (ID=0x2684)
+    Vendor:          NVIDIA
+    VRAM:            24138 MB
+    App VRAM Budget: 23370 MB
+    Driver:          32.0.16.1088
+Initialize mono
+Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/6000.0.80f1/Editor/Data/Managed'
+Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/6000.0.80f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
+Mono config path = 'C:/Program Files/Unity/Hub/Editor/6000.0.80f1/Editor/Data/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56940
+Using cacheserver namespaces - metadata:defaultmetadata, artifacts:defaultartifacts
+Using cacheserver namespaces - metadata:defaultmetadata, artifacts:defaultartifacts
+ImportWorker Server TCP listen port: 0
+AcceleratorClientConnectionCallback - disconnected - :0
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.0.80f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+Registered in 0.003095 seconds.
+- Loaded All Assemblies, in  0.384 seconds
+Native extension for WindowsStandalone target not found
+Package Manager log level set to [2]
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.310 seconds
+Domain Reload Profiling: 692ms
+	BeginReloadAssembly (128ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (0ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (1ms)
+	RebuildCommonClasses (37ms)
+	RebuildNativeTypeToScriptingClass (10ms)
+	initialDomainReloadingComplete (50ms)
+	LoadAllAssembliesAndSetupDomain (157ms)
+		LoadAssemblies (125ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (154ms)
+			TypeCache.Refresh (152ms)
+				TypeCache.ScanAssembly (137ms)
+			BuildScriptInfoCaches (0ms)
+			ResolveRequiredComponents (1ms)
+	FinalizeReload (310ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (278ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (21ms)
+			SetLoadedEditorAssemblies (4ms)
+			BeforeProcessingInitializeOnLoad (57ms)
+			ProcessInitializeOnLoadAttributes (143ms)
+			ProcessInitializeOnLoadMethodAttributes (53ms)
+			AfterProcessingInitializeOnLoad (0ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (0ms)
+[Licensing::Client] Successfully resolved entitlement details
+Application.AssetDatabase Initial Refresh Start
+[Package Manager] Restoring resolved packages state from cache
+[Licensing::Client] Successfully resolved entitlement details
+[Package Manager] Registered 46 packages:
+  Packages from [https://packages.unity.com]:
+    com.unity.burst@1.8.29 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.burst@6bb9aca3ef38)
+    com.unity.collections@2.6.7 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.collections@31e963071226)
+    com.unity.mathematics@1.3.3 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.mathematics@19a9377c4ffa)
+    com.unity.ai.inference@2.4.1 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.ai.inference@587873fd5e1b)
+    com.unity.dt.app-ui@1.3.6 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.dt.app-ui@3bbd9e4c5c92)
+    com.unity.nuget.newtonsoft-json@3.2.2 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.nuget.newtonsoft-json@4dfd81071c64)
+    com.unity.nuget.mono-cecil@1.11.6 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.nuget.mono-cecil@ecb9724e46ff)
+    com.unity.test-framework.performance@3.5.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.test-framework.performance@8b56083ec0f0)
+  Packages from [https://registry.npmjs.com]:
+    jp.keijiro.klak.spout@2.0.6 (location: D:\KiwiAvatarSystem\Library\PackageCache\jp.keijiro.klak.spout@cd3751890357)
+  Built-in packages:
+    com.unity.test-framework@1.6.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.test-framework@082c24152fd4)
+    com.unity.ugui@2.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.ugui@4601c9db1b9b)
+    com.unity.modules.ai@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.ai)
+    com.unity.modules.androidjni@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.androidjni)
+    com.unity.modules.animation@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.animation)
+    com.unity.modules.assetbundle@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.assetbundle)
+    com.unity.modules.audio@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.audio)
+    com.unity.modules.cloth@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.cloth)
+    com.unity.modules.director@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.director)
+    com.unity.modules.imageconversion@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.imageconversion)
+    com.unity.modules.imgui@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.imgui)
+    com.unity.modules.jsonserialize@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.jsonserialize)
+    com.unity.modules.particlesystem@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.particlesystem)
+    com.unity.modules.physics@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.physics)
+    com.unity.modules.physics2d@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.physics2d)
+    com.unity.modules.screencapture@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.screencapture)
+    com.unity.modules.terrain@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.terrain)
+    com.unity.modules.terrainphysics@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.terrainphysics)
+    com.unity.modules.tilemap@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.tilemap)
+    com.unity.modules.ui@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.ui)
+    com.unity.modules.uielements@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.uielements)
+    com.unity.modules.umbra@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.umbra)
+    com.unity.modules.unityanalytics@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.unityanalytics)
+    com.unity.modules.unitywebrequest@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.unitywebrequest)
+    com.unity.modules.unitywebrequestassetbundle@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.unitywebrequestassetbundle)
+    com.unity.modules.unitywebrequestaudio@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.unitywebrequestaudio)
+    com.unity.modules.unitywebrequesttexture@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.unitywebrequesttexture)
+    com.unity.modules.unitywebrequestwww@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.unitywebrequestwww)
+    com.unity.modules.vehicles@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.vehicles)
+    com.unity.modules.video@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.video)
+    com.unity.modules.vr@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.vr)
+    com.unity.modules.wind@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.wind)
+    com.unity.modules.xr@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.xr)
+    com.unity.modules.hierarchycore@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.hierarchycore)
+    com.unity.ext.nunit@2.0.5 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.ext.nunit@031a54704bff)
+    com.unity.modules.subsystems@1.0.0 (location: D:\KiwiAvatarSystem\Library\PackageCache\com.unity.modules.subsystems)
+  Local Tarball packages:
+    com.github.homuler.mediapipe@file:D:\KiwiAvatarSystem\Packages\com.github.homuler.mediapipe-0.16.3.tgz (location: D:\KiwiAvatarSystem\Library\PackageCache\com.github.homuler.mediapipe@66127f8e750d)
+[Subsystems] No new subsystems found in resolved package list.
+[Package Manager] Done registering packages in 0.02 seconds
+Asset Packages/jp.keijiro.klak.spout/Plugin/KlakSpout_v206_ORIGINAL.dll has no meta file, but it's in an immutable folder. The asset will be ignored.
+[ScriptCompilation] Requested script compilation because: Assetdatabase observed changes in script compilation related files
+Duplicate assembly 'System.Runtime.CompilerServices.Unsafe.dll' with different versions detected, using 'Packages/com.unity.collections/Unity.Collections.Tests/System.Runtime.CompilerServices.Unsafe/System.Runtime.CompilerServices.Unsafe.dll, AssemblyName=System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' and ignoring 'Packages/com.github.homuler.mediapipe/Runtime/Plugins/Protobuf/System.Runtime.CompilerServices.Unsafe.dll, AssemblyName=System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'.Starting: C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Data\bee_backend.exe --ipc --defer-dag-verification --dagfile="Library/Bee/1900b0aE.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssemblies
+WorkingDir: D:/KiwiAvatarSystem
+DisplayProgressbar: Compiling Scripts
+Starting: C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Data\Tools\netcorerun\netcorerun.exe "C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Data\Tools\BuildPipeline\ScriptCompilationBuildProgram.exe" "Library/Bee/1900b0aE.dag.json" "Library/Bee/1900b0aE-inputdata.json" "Library\Bee\buildprogram0.traceevents"
+WorkingDir: D:/KiwiAvatarSystem
+ExitCode: 4 Duration: 0s262ms
+Rebuilding DAG because FileSignature timestamp changed: Library/Bee/1900b0aE-inputdata.json
+[515/654    0s] ILPP-Configuration Library/ilpp-configuration.nevergeneratedoutput
+*** Tundra requires additional run (0.22 seconds), 1 items updated, 514 evaluated
+ExitCode: 0 Duration: 0s735ms
+Starting: C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Data\bee_backend.exe --ipc --defer-dag-verification --dagfile="Library/Bee/1900b0aE.dag" --continue-on-failure --dagfilejson="Library\Bee\1900b0aE.dag.json" --profile="Library/Bee/backend2.traceevents" ScriptAssemblies
+WorkingDir: D:/KiwiAvatarSystem
+ExitCode: 0 Duration: 4s79ms
+Finished compiling graph: 657 nodes, 10387 flattened edges (8627 ToBuild, 100 ToUse), maximum node priority 653
+[380/654    0s] WriteText Library/Bee/artifacts/1900b0aE.dag/Assembly-CSharp.rsp
+[513/654    0s] ILPP-Configuration Library/ilpp-configuration.nevergeneratedoutput
+[646/654    2s] Csc Library/Bee/artifacts/1900b0aE.dag/Assembly-CSharp.dll (+2 others)
+warning CS8785: Generator 'AttributeBasedFieldGenerator' failed to generate source. It will not contribute to the output and compilation errors may occur as a result. Exception was of type 'IndexOutOfRangeException' with message 'Index was outside the bounds of the array.'
+
+Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiCommercialQualityGovernor.cs(354,17): warning CS0618: 'Resolution.refreshRate' is obsolete: 'Resolution.refreshRate is obsolete. Use refreshRateRatio instead.'
+
+Assets\Script\KiwiInferenceFaceTracker.cs(2183,42): warning CS0168: The variable 'exception' is declared but never used
+
+Assets\Script\FacePartShapeMask.cs(381,20): warning CS0414: The field 'FacePartShapeMask.debugSelectedEye' is assigned but its value is never used
+
+Assets\Script\KiwiInferenceFaceTracker.cs(286,21): warning CS0414: The field 'KiwiInferenceFaceTracker._recoveryLatencyCompletionStreak' is assigned but its value is never used
+
+Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiFacePartRigidCenterLock.cs(64,18): warning CS0414: The field 'KiwiFacePartRigidCenterLock.debugRecoveredPreviousWrite' is assigned but its value is never used
+
+Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiFacePartRigidCenterLock.cs(55,18): warning CS0414: The field 'KiwiFacePartRigidCenterLock.debugCalibrated' is assigned but its value is never used
+
+Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiCommercialPresentationTuner.cs(34,35): warning CS0414: The field 'KiwiCommercialPresentationTuner.debugCropperConfigured' is assigned but its value is never used
+
+Assets\Script\FacePartShapeMask.cs(406,18): warning CS0414: The field 'FacePartShapeMask.debugMouthCalibrated' is assigned but its value is never used
+
+Assets\Script\FacePartAngleLock.cs(153,18): warning CS0414: The field 'FacePartAngleLock.debugCalibrated' is assigned but its value is never used
+
+Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiFacePartQualityCoordinator.cs(174,37): warning CS0414: The field 'KiwiFacePartQualityCoordinator.debugFarEye' is assigned but its value is never used
+
+Assets\Script\FacePartAngleLock.cs(158,20): warning CS0414: The field 'FacePartAngleLock.debugTrackedPart' is assigned but its value is never used
+
+Assets\Script\KiwiInferenceFaceTracker.cs(284,21): warning CS0414: The field 'KiwiInferenceFaceTracker._highLatencyCompletionStreak' is assigned but its value is never used
+
+Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiOrtDmlZeroCopyRuntime.cs(80,18): warning CS0414: The field 'KiwiOrtDmlZeroCopyRuntime._initializing' is assigned but its value is never used
+
+Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiCommercialPresentationTuner.cs(36,35): warning CS0414: The field 'KiwiCommercialPresentationTuner.debugLiveMotionConfigured' is assigned but its value is never used
+
+Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiFacePartAnatomyGuard.cs(87,35): warning CS0414: The field 'KiwiFacePartAnatomyGuard.debugRectsValid' is assigned but its value is never used
+
+Assets\Script\KiwiInferenceFaceTracker.cs(285,21): warning CS0414: The field 'KiwiInferenceFaceTracker._severeLatencyCompletionStreak' is assigned but its value is never used
+
+Assets\KiwiAvatarSystem\Runtime\TrackingFoundation\KiwiTrackingProviderHub.cs(316,35): warning CS0414: The field 'KiwiTrackingProviderHub.debugCommercialFailoverDeferred' is assigned but its value is never used
+
+Assets\Script\KiwiInferenceFaceTracker.cs(283,21): warning CS0414: The field 'KiwiInferenceFaceTracker._lowLatencyCompletionStreak' is assigned but its value is never used
+
+Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiFacePartSharedTiltLock.cs(41,35): warning CS0414: The field 'KiwiFacePartSharedTiltLock.debugCalibrated' is assigned but its value is never used
+[647/654    0s] Csc Library/Bee/artifacts/1900b0aE.dag/Assembly-CSharp-Editor.dll (+2 others)
+warning CS8785: Generator 'AttributeBasedFieldGenerator' failed to generate source. It will not contribute to the output and compilation errors may occur as a result. Exception was of type 'IndexOutOfRangeException' with message 'Index was outside the bounds of the array.'
+[648/654    0s] ILPostProcess Library/Bee/artifacts/1900b0aE.dag/post-processed/Assembly-CSharp-Editor.dll (+pdb)
+Processing assembly Library/Bee/artifacts/1900b0aE.dag/Assembly-CSharp-Editor.dll, with 129 defines and 289 references
+
+processors: Unity.Jobs.CodeGen.JobsILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[649/654    0s] ILPostProcess Library/Bee/artifacts/1900b0aE.dag/post-processed/Assembly-CSharp.dll (+pdb)
+Processing assembly Library/Bee/artifacts/1900b0aE.dag/Assembly-CSharp.dll, with 131 defines and 277 references
+
+processors: Unity.Jobs.CodeGen.JobsILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[650/654    0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp-Editor.pdb
+[651/654    0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp.pdb
+[652/654    0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp.dll
+[653/654    0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp-Editor.dll
+*** Tundra build success (4.06 seconds), 10 items updated, 654 evaluated
+Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiCommercialQualityGovernor.cs(354,17): warning CS0618: 'Resolution.refreshRate' is obsolete: 'Resolution.refreshRate is obsolete. Use refreshRateRatio instead.'
+Assets\Script\KiwiInferenceFaceTracker.cs(2183,42): warning CS0168: The variable 'exception' is declared but never used
+Assets\Script\FacePartShapeMask.cs(381,20): warning CS0414: The field 'FacePartShapeMask.debugSelectedEye' is assigned but its value is never used
+Assets\Script\KiwiInferenceFaceTracker.cs(286,21): warning CS0414: The field 'KiwiInferenceFaceTracker._recoveryLatencyCompletionStreak' is assigned but its value is never used
+Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiFacePartRigidCenterLock.cs(64,18): warning CS0414: The field 'KiwiFacePartRigidCenterLock.debugRecoveredPreviousWrite' is assigned but its value is never used
+Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiFacePartRigidCenterLock.cs(55,18): warning CS0414: The field 'KiwiFacePartRigidCenterLock.debugCalibrated' is assigned but its value is never used
+Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiCommercialPresentationTuner.cs(34,35): warning CS0414: The field 'KiwiCommercialPresentationTuner.debugCropperConfigured' is assigned but its value is never used
+Assets\Script\FacePartShapeMask.cs(406,18): warning CS0414: The field 'FacePartShapeMask.debugMouthCalibrated' is assigned but its value is never used
+Assets\Script\FacePartAngleLock.cs(153,18): warning CS0414: The field 'FacePartAngleLock.debugCalibrated' is assigned but its value is never used
+Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiFacePartQualityCoordinator.cs(174,37): warning CS0414: The field 'KiwiFacePartQualityCoordinator.debugFarEye' is assigned but its value is never used
+Assets\Script\FacePartAngleLock.cs(158,20): warning CS0414: The field 'FacePartAngleLock.debugTrackedPart' is assigned but its value is never used
+Assets\Script\KiwiInferenceFaceTracker.cs(284,21): warning CS0414: The field 'KiwiInferenceFaceTracker._highLatencyCompletionStreak' is assigned but its value is never used
+Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiOrtDmlZeroCopyRuntime.cs(80,18): warning CS0414: The field 'KiwiOrtDmlZeroCopyRuntime._initializing' is assigned but its value is never used
+Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiCommercialPresentationTuner.cs(36,35): warning CS0414: The field 'KiwiCommercialPresentationTuner.debugLiveMotionConfigured' is assigned but its value is never used
+Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiFacePartAnatomyGuard.cs(87,35): warning CS0414: The field 'KiwiFacePartAnatomyGuard.debugRectsValid' is assigned but its value is never used
+Assets\Script\KiwiInferenceFaceTracker.cs(285,21): warning CS0414: The field 'KiwiInferenceFaceTracker._severeLatencyCompletionStreak' is assigned but its value is never used
+Assets\KiwiAvatarSystem\Runtime\TrackingFoundation\KiwiTrackingProviderHub.cs(316,35): warning CS0414: The field 'KiwiTrackingProviderHub.debugCommercialFailoverDeferred' is assigned but its value is never used
+Assets\Script\KiwiInferenceFaceTracker.cs(283,21): warning CS0414: The field 'KiwiInferenceFaceTracker._lowLatencyCompletionStreak' is assigned but its value is never used
+Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiFacePartSharedTiltLock.cs(41,35): warning CS0414: The field 'KiwiFacePartSharedTiltLock.debugCalibrated' is assigned but its value is never used
+AssetDatabase: script compilation time: 5.495691s
+Begin MonoManager ReloadAssembly
+Duplicate assembly 'System.Runtime.CompilerServices.Unsafe.dll' with different versions detected, using 'Packages/com.unity.collections/Unity.Collections.Tests/System.Runtime.CompilerServices.Unsafe/System.Runtime.CompilerServices.Unsafe.dll, AssemblyName=System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' and ignoring 'Packages/com.github.homuler.mediapipe/Runtime/Plugins/Protobuf/System.Runtime.CompilerServices.Unsafe.dll, AssemblyName=System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'.- Loaded All Assemblies, in  1.584 seconds
+Refreshing native plugins compatible for Editor in 5.12 ms, found 7 plugins.
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 4.05 ms, found 7 plugins.
+Duplicate assembly 'System.Runtime.CompilerServices.Unsafe.dll' with different versions detected, using 'Packages/com.unity.collections/Unity.Collections.Tests/System.Runtime.CompilerServices.Unsafe/System.Runtime.CompilerServices.Unsafe.dll, AssemblyName=System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' and ignoring 'Packages/com.github.homuler.mediapipe/Runtime/Plugins/Protobuf/System.Runtime.CompilerServices.Unsafe.dll, AssemblyName=System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'.Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  2.924 seconds
+Domain Reload Profiling: 4505ms
+	BeginReloadAssembly (301ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (12ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (145ms)
+	RebuildCommonClasses (39ms)
+	RebuildNativeTypeToScriptingClass (11ms)
+	initialDomainReloadingComplete (38ms)
+	LoadAllAssembliesAndSetupDomain (1191ms)
+		LoadAssemblies (1146ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (146ms)
+			TypeCache.Refresh (114ms)
+				TypeCache.ScanAssembly (103ms)
+			BuildScriptInfoCaches (25ms)
+			ResolveRequiredComponents (4ms)
+	FinalizeReload (2925ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (2792ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (13ms)
+			SetLoadedEditorAssemblies (6ms)
+			BeforeProcessingInitializeOnLoad (166ms)
+			ProcessInitializeOnLoadAttributes (2356ms)
+			ProcessInitializeOnLoadMethodAttributes (239ms)
+			AfterProcessingInitializeOnLoad (12ms)
+			EditorAssembliesLoaded (1ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (18ms)
+Refreshing native plugins compatible for Editor in 5.06 ms, found 7 plugins.
+Preloading 1 native plugins for Editor in 0.90 ms.
+Asset Pipeline Refresh (id=92f9f8c2376f1034cbe5bcdc40f00c1a): Total: 11.219 seconds - Initiated by InitialRefreshV2(ForceSynchronousImport)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=3785 ms
+		Asset DB Callback time: managed=132 ms, native=186 ms
+		Scripting: domain reloads=1, domain reload time=1584 ms, compile time=5498 ms, other=31 ms
+		Project Asset Count: scripts=835, non-scripts=938
+		Asset File Changes: new=1, changed=1, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokeCustomDependenciesCallbacks: 0.003ms
+	InvokePackagesCallback: 715.651ms
+	ApplyChangesToAssetFolders: 0.696ms
+	Scan: 87.549ms
+	OnSourceAssetsModified: 0.711ms
+	CategorizeAssetsWithTransientArtifact: 27.921ms
+	ProcessAssetsWithTransientArtifactChanges: 52.597ms
+	CategorizeAssets: 25.404ms
+	ImportOutOfDateAssets: 2940.529ms (-2558.522ms without children)
+		CompileScripts: 5498.325ms
+		ReloadNativeAssets: 0.001ms
+		UnloadImportedAssets: 0.155ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 0.296ms
+		InitializingProgressBar: 0.000ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.000ms
+		OnDemandSchedulerStart: 0.274ms
+	PostProcessAllAssets: 140.512ms
+	Hotreload: 13.372ms
+	GatherAllCurrentPrimaryArtifactRevisions: 0.002ms
+	UnloadStreamsBegin: 0.461ms
+	PersistCurrentRevisions: 0.038ms
+	UnloadStreamsEnd: 0.002ms
+	GenerateScriptTypeHashes: 6.042ms
+	Untracked: 7213.568ms
+
+Application.AssetDatabase Initial Refresh End
+Scanning for USB devices : 16.839ms
+Initializing Unity extensions:
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+[MODES] Loading mode Default (0) for mode-current-id-KiwiAvatarSystem
+Unloading 148 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 3850 unused Assets / (19.8 MB). Loaded Objects now: 4184.
+Memory consumption went from 161.9 MB to 142.1 MB.
+Total: 16.436300 ms (FindLiveObjects: 0.513100 ms CreateObjectMapping: 0.174400 ms MarkObjects: 8.573900 ms  DeleteObjects: 7.173600 ms)
+
+Batchmode quit successfully invoked - shutting down!
+[Physics::Module] Cleanup current backned.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input System polling thread exited.
+Input System module state changed to: Shutdown.
+[Licensing::IpcConnector] LicenseClient-main-notifications channel disconnected successfully.
+[Licensing::IpcConnector] LicenseClient-main channel disconnected successfully.
+AcceleratorClientConnectionCallback - disconnected - :0
+Cleanup mono
+Exiting batchmode successfully now!
+Exiting without the bug reporter. Application will terminate with return code 0

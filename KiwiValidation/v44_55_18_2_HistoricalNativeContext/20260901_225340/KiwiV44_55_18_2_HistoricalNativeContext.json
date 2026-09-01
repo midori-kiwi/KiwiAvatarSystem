@@ -1,0 +1,1176 @@
+﻿{
+    "contract":  "KIWI_V44_55_18_2_HISTORICAL_NATIVE_CONTEXT_RECOVERY",
+    "generated":  "2026-09-01T22:54:07.4459709+09:00",
+    "recoveryStatus":  "HISTORICAL_BUILD_CONTEXT_CANDIDATES_FOUND",
+    "writesToAssets":  0,
+    "writesToNative":  0,
+    "productionDllReplacement":  0,
+    "exactHistoricalDllCopies":  [
+                                     {
+                                         "FullName":  "D:\\KiwiAvatarSystem\\Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\\Plugins\\x86_64\\KiwiNativeCamera.dll",
+                                         "RelativePath":  "Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\\Plugins\\x86_64\\KiwiNativeCamera.dll",
+                                         "Length":  80896,
+                                         "LastWriteTimeUtc":  "2026-08-31T09:00:52.8371363Z",
+                                         "Sha256":  "82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5"
+                                     }
+                                 ],
+    "exactHistoricalDllCopyCount":  1,
+    "adjacentRecords":  [
+                            {
+                                "exactDll":  "Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\\Plugins\\x86_64\\KiwiNativeCamera.dll",
+                                "ancestorLevel":  0,
+                                "path":  "Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\\Plugins\\x86_64\\lib_burst_generated.pdb",
+                                "extension":  ".pdb",
+                                "length":  4042752,
+                                "sha256":  "6E75513DDA0C63D75ADE72D4BDC524698F165D5AB4BAE087B847FBB873334CEE",
+                                "buildSignal":  0,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "mentionsNativeName":  0
+                            },
+                            {
+                                "exactDll":  "Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\\Plugins\\x86_64\\KiwiNativeCamera.dll",
+                                "ancestorLevel":  3,
+                                "path":  "Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiStandalone_v44_55_12_SUBTEXEL.build.log",
+                                "extension":  ".log",
+                                "length":  550572,
+                                "sha256":  "97EC9BA7BB8D9DAD9A3B68DA9E783F9F45C13724898D06A497F5119E3CF0B263",
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "mentionsNativeName":  1
+                            },
+                            {
+                                "exactDll":  "Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\\Plugins\\x86_64\\KiwiNativeCamera.dll",
+                                "ancestorLevel":  4,
+                                "path":  "Builds\\KiwiStandalone_v43_CadenceProbe.build.log",
+                                "extension":  ".log",
+                                "length":  536796,
+                                "sha256":  "467F80220B43AF52CD50364501EAB7E68B6283DA829FA6BEBC51B1A6BE1F8DA4",
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "mentionsNativeName":  1
+                            },
+                            {
+                                "exactDll":  "Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\\Plugins\\x86_64\\KiwiNativeCamera.dll",
+                                "ancestorLevel":  4,
+                                "path":  "Builds\\KiwiStandalone_v44_10_StagedSnapshot.build.log",
+                                "extension":  ".log",
+                                "length":  545252,
+                                "sha256":  "B82AA66EFC06E9AFED5E15E02967EFAA2B2163E1F5DC30629098B4E2E34C8CAB",
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "mentionsNativeName":  1
+                            },
+                            {
+                                "exactDll":  "Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\\Plugins\\x86_64\\KiwiNativeCamera.dll",
+                                "ancestorLevel":  4,
+                                "path":  "Builds\\KiwiStandalone_v44_11_DirectMorph.build.log",
+                                "extension":  ".log",
+                                "length":  545324,
+                                "sha256":  "3B24A54E3162C9A96E8740541CD60AE737CF34774A647D897D296CBB3BBF2672",
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "mentionsNativeName":  1
+                            },
+                            {
+                                "exactDll":  "Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\\Plugins\\x86_64\\KiwiNativeCamera.dll",
+                                "ancestorLevel":  4,
+                                "path":  "Builds\\KiwiStandalone_v44_12_InferenceLifecycle.build.log",
+                                "extension":  ".log",
+                                "length":  547874,
+                                "sha256":  "4641C40E9403B3F6359FBC56452FA095815121A3CA010861B052A9485C93075B",
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "mentionsNativeName":  1
+                            },
+                            {
+                                "exactDll":  "Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\\Plugins\\x86_64\\KiwiNativeCamera.dll",
+                                "ancestorLevel":  4,
+                                "path":  "Builds\\KiwiStandalone_v44_13_InferenceShutdown.build.log",
+                                "extension":  ".log",
+                                "length":  545452,
+                                "sha256":  "C2C91A7DB11A1F47F2326D27B498F9877189DCDFAB79742DF5E4FCC5C8CCA223",
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "mentionsNativeName":  1
+                            },
+                            {
+                                "exactDll":  "Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\\Plugins\\x86_64\\KiwiNativeCamera.dll",
+                                "ancestorLevel":  4,
+                                "path":  "Builds\\KiwiStandalone_v44_14_ShutdownRT.build.log",
+                                "extension":  ".log",
+                                "length":  545395,
+                                "sha256":  "3E6D6DFD38F337AC9CF8E43ECB2E6C19F31AD05271CF7D7079E5F73233E65655",
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "mentionsNativeName":  1
+                            },
+                            {
+                                "exactDll":  "Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\\Plugins\\x86_64\\KiwiNativeCamera.dll",
+                                "ancestorLevel":  4,
+                                "path":  "Builds\\KiwiStandalone_v44_15_SurfaceFitUpload.build.log",
+                                "extension":  ".log",
+                                "length":  545691,
+                                "sha256":  "421D0696E4DAE9C36EFEF58CB1E3E80BC5D1FF94C372399A0AE60CD89C9379EF",
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "mentionsNativeName":  1
+                            },
+                            {
+                                "exactDll":  "Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\\Plugins\\x86_64\\KiwiNativeCamera.dll",
+                                "ancestorLevel":  4,
+                                "path":  "Builds\\KiwiStandalone_v44_16_PartitionedSurfaceFit.build.log",
+                                "extension":  ".log",
+                                "length":  545684,
+                                "sha256":  "B0778E7D69C3409B4FFBB5D2BBA7E3E19ADCFB1E33C16A9E79801D2208FF76C1",
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "mentionsNativeName":  1
+                            },
+                            {
+                                "exactDll":  "Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\\Plugins\\x86_64\\KiwiNativeCamera.dll",
+                                "ancestorLevel":  4,
+                                "path":  "Builds\\KiwiStandalone_v44_17_ParallelFastCook.build.log",
+                                "extension":  ".log",
+                                "length":  545382,
+                                "sha256":  "9390110B4A46A7B5BA9548558FFD7A863DD8ECE370A11E145BBF69EC69F02E90",
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "mentionsNativeName":  1
+                            },
+                            {
+                                "exactDll":  "Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\\Plugins\\x86_64\\KiwiNativeCamera.dll",
+                                "ancestorLevel":  4,
+                                "path":  "Builds\\KiwiStandalone_v44_2_1_WorkloadBreakdown.build.log",
+                                "extension":  ".log",
+                                "length":  547531,
+                                "sha256":  "761F303B9FEA27C8BA90C19359E201CB760AC8141FFD2CD2FE0320C435AD47E6",
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "mentionsNativeName":  1
+                            },
+                            {
+                                "exactDll":  "Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\\Plugins\\x86_64\\KiwiNativeCamera.dll",
+                                "ancestorLevel":  4,
+                                "path":  "Builds\\KiwiStandalone_v44_2_WorkloadBreakdown.build.log",
+                                "extension":  ".log",
+                                "length":  78159,
+                                "sha256":  "444AA1E0E5ACB6AC386693C0248FDE45FCF2D12469A47C4EF14034729B80A88C",
+                                "buildSignal":  0,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "mentionsNativeName":  1
+                            },
+                            {
+                                "exactDll":  "Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\\Plugins\\x86_64\\KiwiNativeCamera.dll",
+                                "ancestorLevel":  4,
+                                "path":  "Builds\\KiwiStandalone_v44_3_AvatarRenderIsolation.build.log",
+                                "extension":  ".log",
+                                "length":  545004,
+                                "sha256":  "6822063F679374D7D6B6948919B74BB4CE9B3128D9F7105419F159F8EDE421C4",
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "mentionsNativeName":  1
+                            },
+                            {
+                                "exactDll":  "Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\\Plugins\\x86_64\\KiwiNativeCamera.dll",
+                                "ancestorLevel":  4,
+                                "path":  "Builds\\KiwiStandalone_v44_5_AvatarMeshFeatureAudit.build.log",
+                                "extension":  ".log",
+                                "length":  547504,
+                                "sha256":  "4DB7B81F3B5FFBAA4A84369D3D68A3638C06CC80FDFC91505AA0B69158F1C8CC",
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "mentionsNativeName":  1
+                            },
+                            {
+                                "exactDll":  "Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\\Plugins\\x86_64\\KiwiNativeCamera.dll",
+                                "ancestorLevel":  4,
+                                "path":  "Builds\\KiwiStandalone_v44_6_1_MeshOptimizer.build.log",
+                                "extension":  ".log",
+                                "length":  546416,
+                                "sha256":  "4EDB4C49D4286B7E7BC31BE97CA7F34EED3FD41F7A8D24FC09F604371D9B2BD9",
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "mentionsNativeName":  1
+                            },
+                            {
+                                "exactDll":  "Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\\Plugins\\x86_64\\KiwiNativeCamera.dll",
+                                "ancestorLevel":  4,
+                                "path":  "Builds\\KiwiStandalone_v44_6_MeshOptimizer.build.log",
+                                "extension":  ".log",
+                                "length":  76930,
+                                "sha256":  "86F5721F9AF992FD2CFDC6CCA11DD101139A19036D524F7252E26E6E69260C50",
+                                "buildSignal":  0,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "mentionsNativeName":  1
+                            },
+                            {
+                                "exactDll":  "Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\\Plugins\\x86_64\\KiwiNativeCamera.dll",
+                                "ancestorLevel":  4,
+                                "path":  "Builds\\KiwiStandalone_v44_7_1_CostBreakdown.build.log",
+                                "extension":  ".log",
+                                "length":  545222,
+                                "sha256":  "184062C1343CD5837C08071CD64EC34A8B5E58AB962C6B62BCB4FDF328113560",
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "mentionsNativeName":  1
+                            },
+                            {
+                                "exactDll":  "Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\\Plugins\\x86_64\\KiwiNativeCamera.dll",
+                                "ancestorLevel":  4,
+                                "path":  "Builds\\KiwiStandalone_v44_7_AsyncMeshOptimizer.build.log",
+                                "extension":  ".log",
+                                "length":  545110,
+                                "sha256":  "1CB4B0732E98B20161D4B404E38636D11E87CBCD541ACBDBC2E27F30B7C923BA",
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "mentionsNativeName":  1
+                            },
+                            {
+                                "exactDll":  "Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\\Plugins\\x86_64\\KiwiNativeCamera.dll",
+                                "ancestorLevel":  4,
+                                "path":  "Builds\\KiwiStandalone_v44_8_InPlaceIndex.build.log",
+                                "extension":  ".log",
+                                "length":  545273,
+                                "sha256":  "F6441BC0604D493C121BAF5C8F64AF5CBC7F5256F5CAEAD17DF98167EDE24EDE",
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "mentionsNativeName":  1
+                            },
+                            {
+                                "exactDll":  "Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\\Plugins\\x86_64\\KiwiNativeCamera.dll",
+                                "ancestorLevel":  4,
+                                "path":  "Builds\\KiwiStandalone_v44_9_SurfaceFitTopology.build.log",
+                                "extension":  ".log",
+                                "length":  545275,
+                                "sha256":  "7BA61BE7671D4E46AD09440B04736C1B8AF8A1AD8A096BB447201A1EFAA50DC7",
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "mentionsNativeName":  1
+                            }
+                        ],
+    "adjacentStrongCount":  19,
+    "sourceSnapshots":  [
+                            {
+                                "path":  "Native\\KiwiNativeCamera\\Source\\KiwiNativeCameraPlugin.cpp",
+                                "sha256":  "636D76251F9CB3BB785F4497D3D0722033FC0CE36CB4A574B65EDA58B5ABE32A",
+                                "exactCanonicalHash":  1,
+                                "reconstructedMarker":  1,
+                                "length":  115514,
+                                "lastWriteTimeUtc":  "2026-08-31T09:00:09.6470322Z"
+                            },
+                            {
+                                "path":  "KiwiBackups\\v44_53_1_20260830_171211\\KiwiNativeCameraPlugin.cpp",
+                                "sha256":  "5902574795B3FDC1D56C4F222348636982872691ECABD042D2F17F5E4C57A586",
+                                "exactCanonicalHash":  0,
+                                "reconstructedMarker":  1,
+                                "length":  74896,
+                                "lastWriteTimeUtc":  "2026-08-30T05:16:19.4965688Z"
+                            },
+                            {
+                                "path":  "KiwiBackups\\v44_53_1_20260830_172607\\KiwiNativeCameraPlugin.cpp",
+                                "sha256":  "2B89C33031035457FB8FF9010D1176CEC0A36EE0CE6DD2E5F4A1919BB53CAAE8",
+                                "exactCanonicalHash":  0,
+                                "reconstructedMarker":  1,
+                                "length":  75291,
+                                "lastWriteTimeUtc":  "2026-08-30T08:11:59.2794516Z"
+                            },
+                            {
+                                "path":  "KiwiBackups\\v44_53_1_20260830_173637\\KiwiNativeCameraPlugin.cpp",
+                                "sha256":  "2B89C33031035457FB8FF9010D1176CEC0A36EE0CE6DD2E5F4A1919BB53CAAE8",
+                                "exactCanonicalHash":  0,
+                                "reconstructedMarker":  1,
+                                "length":  75291,
+                                "lastWriteTimeUtc":  "2026-08-30T08:25:54.6430745Z"
+                            },
+                            {
+                                "path":  "KiwiBackups\\v44_53_20260830_141634\\KiwiNativeCameraPlugin.cpp",
+                                "sha256":  "8C28F7A9E22DF9DA66455C37777069E5922037DB62AD7897DBDFEC8931975E03",
+                                "exactCanonicalHash":  0,
+                                "reconstructedMarker":  1,
+                                "length":  65508,
+                                "lastWriteTimeUtc":  "2026-08-30T01:25:31.1425385Z"
+                            },
+                            {
+                                "path":  "KiwiBackups\\v44_55_10_20260831_000103\\KiwiNativeCameraPlugin.cpp",
+                                "sha256":  "B6B0A0081AD427E19DE122E4322131B0FF1EA6B4ADD96215E51C19B3FFE7523F",
+                                "exactCanonicalHash":  0,
+                                "reconstructedMarker":  1,
+                                "length":  97116,
+                                "lastWriteTimeUtc":  "2026-08-30T13:58:44.5955539Z"
+                            },
+                            {
+                                "path":  "KiwiBackups\\v44_55_12_20260831_180020\\KiwiNativeCameraPlugin.cpp",
+                                "sha256":  "367D6407803220DD141587F16B2F8A4B76E908B53A1A558C67882BB6BE285959",
+                                "exactCanonicalHash":  0,
+                                "reconstructedMarker":  1,
+                                "length":  108513,
+                                "lastWriteTimeUtc":  "2026-08-30T15:00:51.2316233Z"
+                            },
+                            {
+                                "path":  "KiwiBackups\\v44_55_1_20260830_200931\\KiwiNativeCameraPlugin.cpp",
+                                "sha256":  "A432F0DB2946D8E8BF1544EC4A5CB504847A8F9A2DCDB1B071AC1F717ADAF460",
+                                "exactCanonicalHash":  0,
+                                "reconstructedMarker":  1,
+                                "length":  81011,
+                                "lastWriteTimeUtc":  "2026-08-30T10:55:01.5035357Z"
+                            },
+                            {
+                                "path":  "KiwiBackups\\v44_55_1_20260830_202237\\KiwiNativeCameraPlugin.cpp",
+                                "sha256":  "3C0A9443B2DCFE060E9C4D3F004C0EA31DA9FF4351FE3CAFDE151FE1D10BC16E",
+                                "exactCanonicalHash":  0,
+                                "reconstructedMarker":  1,
+                                "length":  90561,
+                                "lastWriteTimeUtc":  "2026-08-30T11:09:13.7724882Z"
+                            },
+                            {
+                                "path":  "KiwiBackups\\v44_55_20260830_195518\\KiwiNativeCameraPlugin.cpp",
+                                "sha256":  "2B89C33031035457FB8FF9010D1176CEC0A36EE0CE6DD2E5F4A1919BB53CAAE8",
+                                "exactCanonicalHash":  0,
+                                "reconstructedMarker":  1,
+                                "length":  75291,
+                                "lastWriteTimeUtc":  "2026-08-30T08:36:25.8519581Z"
+                            },
+                            {
+                                "path":  "KiwiBackups\\v44_55_8_20260830_225856\\KiwiNativeCameraPlugin.cpp",
+                                "sha256":  "3C0A9443B2DCFE060E9C4D3F004C0EA31DA9FF4351FE3CAFDE151FE1D10BC16E",
+                                "exactCanonicalHash":  0,
+                                "reconstructedMarker":  1,
+                                "length":  90561,
+                                "lastWriteTimeUtc":  "2026-08-30T11:22:25.9281622Z"
+                            }
+                        ],
+    "exactSourceOutsideCanonical":  [
+
+                                    ],
+    "exactSourceOutsideCanonicalCount":  0,
+    "buildCandidates":  [
+                            {
+                                "path":  "Native\\KiwiNativeCamera\\APPLY_STATE_v44_43_1.json",
+                                "sha256":  "618AE3DFE47EBAE9822F2339394D3CD3439B5BB17A43C0586EEF8E0161BB389D",
+                                "length":  997,
+                                "buildSignal":  2,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T01:42:08.8540319Z"
+                            },
+                            {
+                                "path":  "Native\\KiwiNativeCamera\\BuildProduction_v44_43.ps1",
+                                "sha256":  "48CF3B71EC59759B193B1F335B79E0DB570765CC1516BCDD724A1E32B6971C8D",
+                                "length":  12095,
+                                "buildSignal":  4,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T01:25:31.1325105Z"
+                            },
+                            {
+                                "path":  "Native\\KiwiNativeCamera\\README_v44_43.md",
+                                "sha256":  "2B36C0C1FE0541ADDA191FEC09513B9EA1A5DCE9B06FC4C44F0EC8DE16F86D20",
+                                "length":  1995,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T01:25:31.1233734Z"
+                            },
+                            {
+                                "path":  "Native\\KiwiNativeCamera\\Build\\x86_64\\build.cmd",
+                                "sha256":  "0B6D59C1BCD0C54656CD5C92678CF000F49E230ACB793F016BB6CD625CFC9D94",
+                                "length":  1514,
+                                "buildSignal":  4,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T01:25:49.0102092Z"
+                            },
+                            {
+                                "path":  "Native\\KiwiNativeCamera\\Build\\x86_64\\dumpbin.exports.txt",
+                                "sha256":  "6D0303CB3B5D75D6736B8AF2A3AE37C99952ABB99461DD29C0BAC9EC4DE33B97",
+                                "length":  8957,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T01:26:07.5960025Z"
+                            },
+                            {
+                                "path":  "Native\\KiwiNativeCamera\\Build\\x86_64\\dumpbin.imports.txt",
+                                "sha256":  "D616669876F7B25A9339D94D510F689F018F04F893797164782A4C88141D4A95",
+                                "length":  7361,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T01:26:07.6537918Z"
+                            },
+                            {
+                                "path":  "Native\\KiwiNativeCamera\\Build\\x86_64\\msvc.stdout.txt",
+                                "sha256":  "F4AC69C1E2C244B2B6C1B5485BEA4EBBBBB256A03272DC1E4F7CF28065D2E165",
+                                "length":  2409,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T01:26:04.2583708Z"
+                            },
+                            {
+                                "path":  "Builds\\KiwiStandalone_v43_CadenceProbe.build.log",
+                                "sha256":  "467F80220B43AF52CD50364501EAB7E68B6283DA829FA6BEBC51B1A6BE1F8DA4",
+                                "length":  536796,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-28T09:04:18.1397726Z"
+                            },
+                            {
+                                "path":  "Builds\\KiwiStandalone_v44_10_StagedSnapshot.build.log",
+                                "sha256":  "B82AA66EFC06E9AFED5E15E02967EFAA2B2163E1F5DC30629098B4E2E34C8CAB",
+                                "length":  545252,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-28T15:03:48.8094395Z"
+                            },
+                            {
+                                "path":  "Builds\\KiwiStandalone_v44_11_DirectMorph.build.log",
+                                "sha256":  "3B24A54E3162C9A96E8740541CD60AE737CF34774A647D897D296CBB3BBF2672",
+                                "length":  545324,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-28T15:22:22.3629991Z"
+                            },
+                            {
+                                "path":  "Builds\\KiwiStandalone_v44_12_InferenceLifecycle.build.log",
+                                "sha256":  "4641C40E9403B3F6359FBC56452FA095815121A3CA010861B052A9485C93075B",
+                                "length":  547874,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-28T15:58:02.8564949Z"
+                            },
+                            {
+                                "path":  "Builds\\KiwiStandalone_v44_13_InferenceShutdown.build.log",
+                                "sha256":  "C2C91A7DB11A1F47F2326D27B498F9877189DCDFAB79742DF5E4FCC5C8CCA223",
+                                "length":  545452,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-28T16:09:46.4546774Z"
+                            },
+                            {
+                                "path":  "Builds\\KiwiStandalone_v44_14_ShutdownRT.build.log",
+                                "sha256":  "3E6D6DFD38F337AC9CF8E43ECB2E6C19F31AD05271CF7D7079E5F73233E65655",
+                                "length":  545395,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-28T16:15:01.5666181Z"
+                            },
+                            {
+                                "path":  "Builds\\KiwiStandalone_v44_15_SurfaceFitUpload.build.log",
+                                "sha256":  "421D0696E4DAE9C36EFEF58CB1E3E80BC5D1FF94C372399A0AE60CD89C9379EF",
+                                "length":  545691,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-28T16:30:59.1074760Z"
+                            },
+                            {
+                                "path":  "Builds\\KiwiStandalone_v44_16_PartitionedSurfaceFit.build.log",
+                                "sha256":  "B0778E7D69C3409B4FFBB5D2BBA7E3E19ADCFB1E33C16A9E79801D2208FF76C1",
+                                "length":  545684,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-28T16:40:20.8457908Z"
+                            },
+                            {
+                                "path":  "Builds\\KiwiStandalone_v44_17_ParallelFastCook.build.log",
+                                "sha256":  "9390110B4A46A7B5BA9548558FFD7A863DD8ECE370A11E145BBF69EC69F02E90",
+                                "length":  545382,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-28T16:47:25.9543583Z"
+                            },
+                            {
+                                "path":  "Builds\\KiwiStandalone_v44_2_1_WorkloadBreakdown.build.log",
+                                "sha256":  "761F303B9FEA27C8BA90C19359E201CB760AC8141FFD2CD2FE0320C435AD47E6",
+                                "length":  547531,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-28T10:56:22.8504082Z"
+                            },
+                            {
+                                "path":  "Builds\\KiwiStandalone_v44_3_AvatarRenderIsolation.build.log",
+                                "sha256":  "6822063F679374D7D6B6948919B74BB4CE9B3128D9F7105419F159F8EDE421C4",
+                                "length":  545004,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-28T11:12:33.8640450Z"
+                            },
+                            {
+                                "path":  "Builds\\KiwiStandalone_v44_5_AvatarMeshFeatureAudit.build.log",
+                                "sha256":  "4DB7B81F3B5FFBAA4A84369D3D68A3638C06CC80FDFC91505AA0B69158F1C8CC",
+                                "length":  547504,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-28T11:42:24.2098088Z"
+                            },
+                            {
+                                "path":  "Builds\\KiwiStandalone_v44_6_1_MeshOptimizer.build.log",
+                                "sha256":  "4EDB4C49D4286B7E7BC31BE97CA7F34EED3FD41F7A8D24FC09F604371D9B2BD9",
+                                "length":  546416,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-28T12:24:47.6174910Z"
+                            },
+                            {
+                                "path":  "Builds\\KiwiStandalone_v44_7_1_CostBreakdown.build.log",
+                                "sha256":  "184062C1343CD5837C08071CD64EC34A8B5E58AB962C6B62BCB4FDF328113560",
+                                "length":  545222,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-28T14:09:06.0660197Z"
+                            },
+                            {
+                                "path":  "Builds\\KiwiStandalone_v44_7_AsyncMeshOptimizer.build.log",
+                                "sha256":  "1CB4B0732E98B20161D4B404E38636D11E87CBCD541ACBDBC2E27F30B7C923BA",
+                                "length":  545110,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-28T13:56:07.8470279Z"
+                            },
+                            {
+                                "path":  "Builds\\KiwiStandalone_v44_8_InPlaceIndex.build.log",
+                                "sha256":  "F6441BC0604D493C121BAF5C8F64AF5CBC7F5256F5CAEAD17DF98167EDE24EDE",
+                                "length":  545273,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-28T14:26:30.7108891Z"
+                            },
+                            {
+                                "path":  "Builds\\KiwiStandalone_v44_9_SurfaceFitTopology.build.log",
+                                "sha256":  "7BA61BE7671D4E46AD09440B04736C1B8AF8A1AD8A096BB447201A1EFAA50DC7",
+                                "length":  545275,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-28T14:37:02.9414509Z"
+                            },
+                            {
+                                "path":  "Builds\\v38Dx12DevelopmentStandalone\\KiwiStandalone_v38.build.log",
+                                "sha256":  "0601CED1F10BADCF27C460ABAA8E1A19F625E1519EB0D4C972AA2F899F629A7D",
+                                "length":  540411,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-26T06:17:01.1434465Z"
+                            },
+                            {
+                                "path":  "Builds\\v39Dx12DevelopmentStandalone\\KiwiStandalone_v39.build.log",
+                                "sha256":  "35A914DB0C8E54D80345EDE90E8EA74CC3259B32EF0E7EB60BA2528D2DF0A361",
+                                "length":  541862,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-26T09:10:38.1960986Z"
+                            },
+                            {
+                                "path":  "Builds\\v41OrtShadowDevelopmentStandalone\\KiwiStandalone_v41.build.log",
+                                "sha256":  "C457A7ABD46FD079DA323853840EB479DCC389D0AB17F8337FAC9BDE907E7E97",
+                                "length":  604787,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-26T12:28:26.8042290Z"
+                            },
+                            {
+                                "path":  "Builds\\v42OrtDmlZeroCopyDevelopmentStandalone\\KiwiStandalone_v42.build.log",
+                                "sha256":  "B6AA9C8F541496D557151341400ACB43A5F22AC2A522A983C0133C0D9E76616F",
+                                "length":  544483,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-26T14:44:53.8531113Z"
+                            },
+                            {
+                                "path":  "Builds\\v42_3OrtDmlZeroCopyDevelopmentStandalone\\KiwiStandalone_v42_3.build.log",
+                                "sha256":  "50A93A39D6D7A2CF3A48EAA09B9530E5FDD35550EDFE4D547860F00FF24BFBF3",
+                                "length":  535508,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-27T10:46:02.8643351Z"
+                            },
+                            {
+                                "path":  "Builds\\v44_48ProductionO25Default\\KiwiStandalone_v44_48_PRODUCTION_O25_DEFAULT.build.log",
+                                "sha256":  "D42F62726815E601F79F3CDEEF6F88A91328D62034719CCAEFEDF32C1C90181F",
+                                "length":  550070,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T03:35:19.6991048Z"
+                            },
+                            {
+                                "path":  "Builds\\v44_50InferenceGpuServiceBreakdown\\KiwiStandalone_v44_50_GPU_SERVICE_BREAKDOWN.build.log",
+                                "sha256":  "82B66F2722C877FC1EA32A870EEF1D4D6887F99D06997EFCF528B6D4C5A29A60",
+                                "length":  549965,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T03:53:08.4820112Z"
+                            },
+                            {
+                                "path":  "Builds\\v44_51CpuShadowInferenceAudit\\KiwiStandalone_v44_51_CPU_SHADOW_AUDIT.build.log",
+                                "sha256":  "5131C110FDC3CF091520D0542A20BD5115A5D0A204E3E12B97D310014E508DA8",
+                                "length":  550104,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T04:04:53.5146064Z"
+                            },
+                            {
+                                "path":  "Builds\\v44_52RealInputCpuShadowAudit\\KiwiStandalone_v44_52_REAL_CPU_SHADOW.build.log",
+                                "sha256":  "27D4D68C6B539880824B666C78EEF6F0E9D0D7CAB5A0DAE3AC1775F5CA0A5333",
+                                "length":  550167,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T04:16:57.4138937Z"
+                            },
+                            {
+                                "path":  "Builds\\v44_52_1RealInputCpuShadowAudit\\KiwiStandalone_v44_52_1_REAL_CPU_SHADOW.build.log",
+                                "sha256":  "2F7F7E83D2CED3D36F1909416F99765D616CEE95F15ADD6C43C7421CE0242509",
+                                "length":  548904,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T04:44:02.9448965Z"
+                            },
+                            {
+                                "path":  "Builds\\v44_53NativeCpuNv12ShadowAudit\\KiwiStandalone_v44_53_NATIVE_CPU_NV12_SHADOW.build.log",
+                                "sha256":  "C83826FE7B31F345A7B1E61D1A055998026662278FB217DFDDEF33F017F907C3",
+                                "length":  558008,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T05:17:17.7694661Z"
+                            },
+                            {
+                                "path":  "Builds\\v44_53_1StableSlotRetryAudit\\KiwiStandalone_v44_53_1_CPU_NV12_SHADOW.build.log",
+                                "sha256":  "A5EF8F39FC74978593F96686B3D292BBDD5654D8F2AB5B14CCD37005843A690C",
+                                "length":  546358,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T08:37:08.8232760Z"
+                            },
+                            {
+                                "path":  "Builds\\v44_54MatchedBackendEquivalenceAudit\\KiwiStandalone_v44_54_MATCHED_BACKEND_EQUIVALENCE.build.log",
+                                "sha256":  "711F125621B091EBA6ADF05E323B8646406A5B282E8185DB967D89F991D62698",
+                                "length":  552096,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T10:27:03.9277344Z"
+                            },
+                            {
+                                "path":  "Builds\\v44_55ProductionInputPreprocessAudit\\KiwiStandalone_v44_55_PREPROCESS_EQUIVALENCE.build.log",
+                                "sha256":  "5F09D961D9A7A70D4B04E307B593B467FEE0D8B9C277CEB4BCE3840B720974DC",
+                                "length":  550506,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T10:55:58.3839101Z"
+                            },
+                            {
+                                "path":  "Builds\\v44_55_10PresentationFrameIdentityAudit\\KiwiStandalone_v44_55_10_PRESENTATION_IDENTITY.build.log",
+                                "sha256":  "F9DF579A879712A759D76A654AFA267A3F365B96F98EEBF3395E88D7784656F6",
+                                "length":  550510,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T15:01:40.7219966Z"
+                            },
+                            {
+                                "path":  "Builds\\v44_55_11IdentityCorrectedOutputEquivalence\\KiwiStandalone_v44_55_11_IDENTITY_CORRECTED_OUTPUT_EQ.build.log",
+                                "sha256":  "56C53F860F39CE94BE697D12033342EB104AB08B2B147EC94D270CA67C2A6466",
+                                "length":  550670,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T15:25:05.7361164Z"
+                            },
+                            {
+                                "path":  "Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiStandalone_v44_55_12_SUBTEXEL.build.log",
+                                "sha256":  "97EC9BA7BB8D9DAD9A3B68DA9E783F9F45C13724898D06A497F5119E3CF0B263",
+                                "length":  550572,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-31T09:00:59.5328963Z"
+                            },
+                            {
+                                "path":  "Builds\\v44_55_1ArmedSnapshotPreprocessAudit\\KiwiStandalone_v44_55_1_PREPROCESS_EQUIVALENCE.build.log",
+                                "sha256":  "5448BF6A84A12F246F39895D378276AEC69DCDDF49DBC7732FFDFF9A4F34D6B9",
+                                "length":  546862,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T11:23:11.8490032Z"
+                            },
+                            {
+                                "path":  "Builds\\v44_55_2RowOrientationABAudit\\KiwiStandalone_v44_55_2_ROW_ORIENTATION_AB.build.log",
+                                "sha256":  "DA806DFBB8280D274FB37049AE2E8D337C91770F54629D7076FBACE2FEA7C3E9",
+                                "length":  550553,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T11:46:14.3325369Z"
+                            },
+                            {
+                                "path":  "Builds\\v44_55_3MatrixConventionABCD\\KiwiStandalone_v44_55_3_MATRIX_CONVENTION_ABCD.build.log",
+                                "sha256":  "04504F9E512DEB29D63802A990437C66F2668DFDF9D428897FC91C19A3A85DC2",
+                                "length":  550492,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T12:01:30.4117288Z"
+                            },
+                            {
+                                "path":  "Builds\\v44_55_4SourceHalfTexelCrossAudit\\KiwiStandalone_v44_55_4_SOURCE_HALF_TEXEL_CROSS.build.log",
+                                "sha256":  "060BE2EE8B2730A8F696FFDC6BAA0C75E45400D15160CE8F617056844C45A4EE",
+                                "length":  550578,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T12:39:14.8594793Z"
+                            },
+                            {
+                                "path":  "Builds\\v44_55_5CropTensorBoundaryAudit\\KiwiStandalone_v44_55_5_CROP_TENSOR_BOUNDARY.build.log",
+                                "sha256":  "0EC052EC29784022C1F0E2B7A6181DF62439ED13543A4EFB1E7796D6873F3BAE",
+                                "length":  550525,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T12:55:29.3065791Z"
+                            },
+                            {
+                                "path":  "Builds\\v44_55_6IndependentTextureConverterAudit\\KiwiStandalone_v44_55_6_INDEPENDENT_TEXTURE_CONVERTER.build.log",
+                                "sha256":  "0D5CB14F670D06892C0675D137870D8F86C22B9CF00AE874169259D114971D76",
+                                "length":  550664,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T13:10:33.4688921Z"
+                            },
+                            {
+                                "path":  "Builds\\v44_55_7SameFrameCpuGpuOutputEquivalence\\KiwiStandalone_v44_55_7_SAME_FRAME_OUTPUT_EQ.build.log",
+                                "sha256":  "F13317A4153766C9C1F86FEC97AE2724E4DA12582DE05475C3985615E8A2CC51",
+                                "length":  552049,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T13:36:54.8272708Z"
+                            },
+                            {
+                                "path":  "Builds\\v44_55_8ProductionUnorm8Parity\\KiwiStandalone_v44_55_8_UNORM8_PARITY.build.log",
+                                "sha256":  "0D9A9CE9C61FA68D49DF12530F95139DA1EE7941F27F23C43B22053ACD3237B8",
+                                "length":  550555,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T13:59:35.9043437Z"
+                            },
+                            {
+                                "path":  "Builds\\v44_55_9ExactPairCoherenceAudit\\KiwiStandalone_v44_55_9_PAIR_COHERENCE.build.log",
+                                "sha256":  "F256F51FC701B3D4D80B8B105449B428BFD0EB828062D93157D266FEB2D52CAE",
+                                "length":  546438,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T14:36:09.8159735Z"
+                            },
+                            {
+                                "path":  "KiwiBackups\\v44_43_20260830_102049\\ROLLBACK_MANIFEST_v44_43.json",
+                                "sha256":  "D0E93FDE608C5054AF8DFE50D8264CC0B9E489336FC5D00BCB4BD30BC9169A03",
+                                "length":  497,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T01:20:49.8203582Z"
+                            },
+                            {
+                                "path":  "KiwiBackups\\v44_43_20260830_102547\\ROLLBACK_MANIFEST_v44_43.json",
+                                "sha256":  "7D7ECD544FC3A37DFF61D314A01E9614A435388238049BCCFBE9113F269C29B8",
+                                "length":  497,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T01:25:47.6971817Z"
+                            },
+                            {
+                                "path":  "KiwiBackups\\v44_44_20260830_105518\\UnityBuild_v44_44.log",
+                                "sha256":  "252D8E7A4396B9A448FBABB15835AC97E11307A7C23596A60AFA431C2E68FC69",
+                                "length":  544881,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-30T01:55:56.5831223Z"
+                            },
+                            {
+                                "path":  "KiwiValidation\\KiwiV44_55_14_ProductionCpuInputProof.txt",
+                                "sha256":  "7147696E84A29A12329508453FE0F6E38344F7A369C16BCB168DFF611CC71AED",
+                                "length":  85168,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  1,
+                                "mentionsSourceSha":  1,
+                                "lastWriteTimeUtc":  "2026-08-31T13:06:05.5786823Z"
+                            },
+                            {
+                                "path":  "KiwiValidation\\KiwiV44_55_14_SourceEvidence.txt",
+                                "sha256":  "E1CBE2B5B479F22D48BDE7FC7F4F0041E61B96375F46AE86B28A06934985FA55",
+                                "length":  55795,
+                                "buildSignal":  2,
+                                "mentionsDllSha":  1,
+                                "mentionsSourceSha":  1,
+                                "lastWriteTimeUtc":  "2026-08-31T12:02:27.6154243Z"
+                            },
+                            {
+                                "path":  "KiwiValidation\\v44_55_13_critical_hashes.txt",
+                                "sha256":  "1EF07C06548538C5EDB76F462FBB916098A3BAE6065987D3031ACE30B3427565",
+                                "length":  724,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  1,
+                                "lastWriteTimeUtc":  "2026-08-31T09:59:05.9894556Z"
+                            },
+                            {
+                                "path":  "KiwiValidation\\v44_55_14_critical_hashes.txt",
+                                "sha256":  "9C0E5C12EC6FC6C4FF56C4EF0CA0663173DF20CCAE1C7F29CDD34B832A06775A",
+                                "length":  719,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  1,
+                                "lastWriteTimeUtc":  "2026-08-31T10:24:41.4905697Z"
+                            },
+                            {
+                                "path":  "KiwiValidation\\KiwiV44_55_14_SourceEvidence\\Exports_KiwiNativeCamera.dll_11208718FC98.txt",
+                                "sha256":  "1C939F1F7ADC7BADC153DECF79654C6A6D20C388A18E1E8FE908D8F6CB2E5932",
+                                "length":  5193,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-31T12:02:20.9375914Z"
+                            },
+                            {
+                                "path":  "KiwiValidation\\KiwiV44_55_14_SourceEvidence\\Exports_KiwiNativeCamera.dll_189681DD0700.txt",
+                                "sha256":  "F0D9A3DE0EC036630E07F70BE8A575A5B992822FA273A721EC9D18CB2436EA79",
+                                "length":  5989,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-31T12:02:27.0309838Z"
+                            },
+                            {
+                                "path":  "KiwiValidation\\KiwiV44_55_14_SourceEvidence\\Exports_KiwiNativeCamera.dll_3E5360DC53DF.txt",
+                                "sha256":  "13439A14A095B02D568F69B99C754ABF32B8DBB280F0EE14998B06296DC0527D",
+                                "length":  5679,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-31T12:02:27.1019151Z"
+                            },
+                            {
+                                "path":  "KiwiValidation\\KiwiV44_55_14_SourceEvidence\\Exports_KiwiNativeCamera.dll_3FBE80F23285.txt",
+                                "sha256":  "F06BACC0166024C4B1519F7BED3C0919AA1CB5239ABF30535DCBFADC0DD6BD0B",
+                                "length":  5285,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-31T12:02:25.3804296Z"
+                            },
+                            {
+                                "path":  "KiwiValidation\\KiwiV44_55_14_SourceEvidence\\Exports_KiwiNativeCamera.dll_442F0F7A79B2.txt",
+                                "sha256":  "7023A1F4A0C4C12CD2122889B92EC7C8CA1A3E48C46B835710E08E3255FF5105",
+                                "length":  5912,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-31T12:02:26.8990574Z"
+                            },
+                            {
+                                "path":  "KiwiValidation\\KiwiV44_55_14_SourceEvidence\\Exports_KiwiNativeCamera.dll_7BDD3263D056.txt",
+                                "sha256":  "2CB9F56EC988EA4963D940A2DE4176C03E4BD7BAD9FB1DC518904545A0A33B2B",
+                                "length":  5290,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-31T12:02:25.3137573Z"
+                            },
+                            {
+                                "path":  "KiwiValidation\\KiwiV44_55_14_SourceEvidence\\Exports_KiwiNativeCamera.dll_8091265D9199.txt",
+                                "sha256":  "D28D6C643C5072095E5A0DCA900C00DE690714A63C70082203A17E8DA687EB9B",
+                                "length":  8958,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-31T12:02:26.0158371Z"
+                            },
+                            {
+                                "path":  "KiwiValidation\\KiwiV44_55_14_SourceEvidence\\Exports_KiwiNativeCamera.dll_80B5F32EC3B4.txt",
+                                "sha256":  "CBA2E7F8B4A9B348A7FA154B7E91D33CB65CFC222D289CAFF8B66C2AA30B5746",
+                                "length":  6275,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-31T12:02:26.3522295Z"
+                            },
+                            {
+                                "path":  "KiwiValidation\\KiwiV44_55_14_SourceEvidence\\Exports_KiwiNativeCamera.dll_82D1FC291046.txt",
+                                "sha256":  "9AE3D37912CC6855C8CE7AABC7E54E787B5F988DE5B5F359F82B6B5D6172726C",
+                                "length":  6347,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-31T12:02:26.4300044Z"
+                            },
+                            {
+                                "path":  "KiwiValidation\\KiwiV44_55_14_SourceEvidence\\Exports_KiwiNativeCamera.dll_B4F66672F1AB.txt",
+                                "sha256":  "4DC6F39032E2B2D2D70B1AD5EBC1A45E4AA39722C5B85DCFD1CA64AE4055980A",
+                                "length":  5608,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-31T12:02:26.2138561Z"
+                            },
+                            {
+                                "path":  "KiwiValidation\\KiwiV44_55_14_SourceEvidence\\Exports_KiwiNativeCamera.dll_C48A427E8D7A.txt",
+                                "sha256":  "257B632E1458B988C97E0A1D690469AC95A9B39F44055B7CB723C4A4F8B62E66",
+                                "length":  5597,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-31T12:02:26.1507454Z"
+                            },
+                            {
+                                "path":  "KiwiValidation\\KiwiV44_55_14_SourceEvidence\\Exports_KiwiNativeCamera.dll_DB590279E63D.txt",
+                                "sha256":  "F320C1B64EAFFCF6423883E5A9745F57AB012A340F422E6D56B1279F13251193",
+                                "length":  5225,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-08-31T12:02:27.5808445Z"
+                            },
+                            {
+                                "path":  "KiwiValidation\\KiwiV44_55_14_SourceEvidence\\KiwiV44_55_14_SourceEvidence.txt",
+                                "sha256":  "E1CBE2B5B479F22D48BDE7FC7F4F0041E61B96375F46AE86B28A06934985FA55",
+                                "length":  55795,
+                                "buildSignal":  2,
+                                "mentionsDllSha":  1,
+                                "mentionsSourceSha":  1,
+                                "lastWriteTimeUtc":  "2026-08-31T12:02:27.6154243Z"
+                            },
+                            {
+                                "path":  "KiwiValidation\\v44_55_18_NativeProvenance\\20260901_223353\\Production_exports.txt",
+                                "sha256":  "07EDCD57F25716F22399645383D9A27A7E839E23B507812DBAFD68CE2625747E",
+                                "length":  6389,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-09-01T13:33:54.0147331Z"
+                            },
+                            {
+                                "path":  "KiwiValidation\\v44_55_18_NativeProvenance\\20260901_223353\\Production_headers.txt",
+                                "sha256":  "A7D07AB53A74374DD669855214A3E278D5F2F7114107CA66917058577BA376A4",
+                                "length":  5206,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-09-01T13:33:53.9869472Z"
+                            },
+                            {
+                                "path":  "KiwiValidation\\v44_55_18_NativeProvenance\\20260901_223353\\Production_imports.txt",
+                                "sha256":  "E79111E743EA98AAB61021202194389A93B9E469626FECD046CAD1E2090469A5",
+                                "length":  7428,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-09-01T13:33:54.0424031Z"
+                            },
+                            {
+                                "path":  "KiwiValidation\\v44_55_18_NativeProvenance\\20260901_223947\\KiwiV44_55_18_NativeProvenanceAudit.json",
+                                "sha256":  "F7D95405863647BA64B75CF9F8EFE2B4C81EFDD953A43530877938A834AB744F",
+                                "length":  6628,
+                                "buildSignal":  4,
+                                "mentionsDllSha":  1,
+                                "mentionsSourceSha":  1,
+                                "lastWriteTimeUtc":  "2026-09-01T13:39:48.9174231Z"
+                            },
+                            {
+                                "path":  "KiwiValidation\\v44_55_18_NativeProvenance\\20260901_223947\\KiwiV44_55_18_NativeProvenanceAudit.txt",
+                                "sha256":  "9AADF8123E78625FCCDCC6963A0F5F4531E38DCAEEC45F719CFF769804D375B1",
+                                "length":  2656,
+                                "buildSignal":  5,
+                                "mentionsDllSha":  1,
+                                "mentionsSourceSha":  1,
+                                "lastWriteTimeUtc":  "2026-09-01T13:39:48.9394626Z"
+                            },
+                            {
+                                "path":  "KiwiValidation\\v44_55_18_NativeProvenance\\20260901_223947\\Production_exports.txt",
+                                "sha256":  "07EDCD57F25716F22399645383D9A27A7E839E23B507812DBAFD68CE2625747E",
+                                "length":  6389,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-09-01T13:39:48.1980365Z"
+                            },
+                            {
+                                "path":  "KiwiValidation\\v44_55_18_NativeProvenance\\20260901_223947\\Production_headers.txt",
+                                "sha256":  "A7D07AB53A74374DD669855214A3E278D5F2F7114107CA66917058577BA376A4",
+                                "length":  5206,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-09-01T13:39:48.1739847Z"
+                            },
+                            {
+                                "path":  "KiwiValidation\\v44_55_18_NativeProvenance\\20260901_223947\\Production_imports.txt",
+                                "sha256":  "E79111E743EA98AAB61021202194389A93B9E469626FECD046CAD1E2090469A5",
+                                "length":  7428,
+                                "buildSignal":  1,
+                                "mentionsDllSha":  0,
+                                "mentionsSourceSha":  0,
+                                "lastWriteTimeUtc":  "2026-09-01T13:39:48.2223436Z"
+                            }
+                        ],
+    "strongBuildCandidates":  [
+                                  {
+                                      "path":  "KiwiValidation\\v44_55_18_NativeProvenance\\20260901_223947\\KiwiV44_55_18_NativeProvenanceAudit.txt",
+                                      "sha256":  "9AADF8123E78625FCCDCC6963A0F5F4531E38DCAEEC45F719CFF769804D375B1",
+                                      "length":  2656,
+                                      "buildSignal":  5,
+                                      "mentionsDllSha":  1,
+                                      "mentionsSourceSha":  1,
+                                      "lastWriteTimeUtc":  "2026-09-01T13:39:48.9394626Z"
+                                  },
+                                  {
+                                      "path":  "KiwiValidation\\v44_55_18_NativeProvenance\\20260901_223947\\KiwiV44_55_18_NativeProvenanceAudit.json",
+                                      "sha256":  "F7D95405863647BA64B75CF9F8EFE2B4C81EFDD953A43530877938A834AB744F",
+                                      "length":  6628,
+                                      "buildSignal":  4,
+                                      "mentionsDllSha":  1,
+                                      "mentionsSourceSha":  1,
+                                      "lastWriteTimeUtc":  "2026-09-01T13:39:48.9174231Z"
+                                  },
+                                  {
+                                      "path":  "KiwiValidation\\KiwiV44_55_14_SourceEvidence.txt",
+                                      "sha256":  "E1CBE2B5B479F22D48BDE7FC7F4F0041E61B96375F46AE86B28A06934985FA55",
+                                      "length":  55795,
+                                      "buildSignal":  2,
+                                      "mentionsDllSha":  1,
+                                      "mentionsSourceSha":  1,
+                                      "lastWriteTimeUtc":  "2026-08-31T12:02:27.6154243Z"
+                                  },
+                                  {
+                                      "path":  "KiwiValidation\\KiwiV44_55_14_SourceEvidence\\KiwiV44_55_14_SourceEvidence.txt",
+                                      "sha256":  "E1CBE2B5B479F22D48BDE7FC7F4F0041E61B96375F46AE86B28A06934985FA55",
+                                      "length":  55795,
+                                      "buildSignal":  2,
+                                      "mentionsDllSha":  1,
+                                      "mentionsSourceSha":  1,
+                                      "lastWriteTimeUtc":  "2026-08-31T12:02:27.6154243Z"
+                                  },
+                                  {
+                                      "path":  "KiwiValidation\\KiwiV44_55_14_ProductionCpuInputProof.txt",
+                                      "sha256":  "7147696E84A29A12329508453FE0F6E38344F7A369C16BCB168DFF611CC71AED",
+                                      "length":  85168,
+                                      "buildSignal":  1,
+                                      "mentionsDllSha":  1,
+                                      "mentionsSourceSha":  1,
+                                      "lastWriteTimeUtc":  "2026-08-31T13:06:05.5786823Z"
+                                  },
+                                  {
+                                      "path":  "KiwiValidation\\v44_55_13_critical_hashes.txt",
+                                      "sha256":  "1EF07C06548538C5EDB76F462FBB916098A3BAE6065987D3031ACE30B3427565",
+                                      "length":  724,
+                                      "buildSignal":  1,
+                                      "mentionsDllSha":  0,
+                                      "mentionsSourceSha":  1,
+                                      "lastWriteTimeUtc":  "2026-08-31T09:59:05.9894556Z"
+                                  },
+                                  {
+                                      "path":  "KiwiValidation\\v44_55_14_critical_hashes.txt",
+                                      "sha256":  "9C0E5C12EC6FC6C4FF56C4EF0CA0663173DF20CCAE1C7F29CDD34B832A06775A",
+                                      "length":  719,
+                                      "buildSignal":  1,
+                                      "mentionsDllSha":  0,
+                                      "mentionsSourceSha":  1,
+                                      "lastWriteTimeUtc":  "2026-08-31T10:24:41.4905697Z"
+                                  },
+                                  {
+                                      "path":  "Native\\KiwiNativeCamera\\Build\\x86_64\\build.cmd",
+                                      "sha256":  "0B6D59C1BCD0C54656CD5C92678CF000F49E230ACB793F016BB6CD625CFC9D94",
+                                      "length":  1514,
+                                      "buildSignal":  4,
+                                      "mentionsDllSha":  0,
+                                      "mentionsSourceSha":  0,
+                                      "lastWriteTimeUtc":  "2026-08-30T01:25:49.0102092Z"
+                                  },
+                                  {
+                                      "path":  "Native\\KiwiNativeCamera\\BuildProduction_v44_43.ps1",
+                                      "sha256":  "48CF3B71EC59759B193B1F335B79E0DB570765CC1516BCDD724A1E32B6971C8D",
+                                      "length":  12095,
+                                      "buildSignal":  4,
+                                      "mentionsDllSha":  0,
+                                      "mentionsSourceSha":  0,
+                                      "lastWriteTimeUtc":  "2026-08-30T01:25:31.1325105Z"
+                                  },
+                                  {
+                                      "path":  "Native\\KiwiNativeCamera\\APPLY_STATE_v44_43_1.json",
+                                      "sha256":  "618AE3DFE47EBAE9822F2339394D3CD3439B5BB17A43C0586EEF8E0161BB389D",
+                                      "length":  997,
+                                      "buildSignal":  2,
+                                      "mentionsDllSha":  0,
+                                      "mentionsSourceSha":  0,
+                                      "lastWriteTimeUtc":  "2026-08-30T01:42:08.8540319Z"
+                                  }
+                              ],
+    "strongBuildCandidateCount":  10,
+    "peHints":  [
+                    {
+                        "exactDll":  "Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\\Plugins\\x86_64\\KiwiNativeCamera.dll",
+                        "linkerVersion":  "14.44",
+                        "timeDateStampHex":  "6A9542A4",
+                        "pdbHints":  [
+
+                                     ],
+                        "headerDump":  "KiwiValidation\\v44_55_18_2_HistoricalNativeContext\\20260901_225340\\ExactDll_0_headers.txt"
+                    }
+                ],
+    "dumpbinPath":  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\dumpbin.exe"
+}

@@ -1,0 +1,182 @@
+KiwiAvatarSystem v44.55.12 Original Package Local File Provenance Audit
+Audit date: 2026-09-02 JST
+Method: local static inspection only; no package install, no native rebuild, no Unity launch, no runtime audit
+
+[SUMMARY]
+Result: Provenance Class B - Strongly Supported.
+The located local ZIP, its still-present original directory, the current Production Native source/Interop/DLL, the v44.55.12 standalone-build DLL, and later backup evidence form a continuous and internally consistent chain.
+The strongest facts are: ZIP contents equal the original Downloads directory for all 18 files; package Native source equals current Production Native source; package Interop equals current Production Interop; package DLL equals current Production DLL and the v44.55.12 standalone-build DLL; the package OBJ contains the v44.55.12 subtexel symbols; and the package EXP records the same MSVC 14.44.35207 linker path that is still installed.
+Class A is not assigned because the historical Unity PluginAPI and Windows SDK header inputs were not included or hashed, the compiler/SDK environment was not fully captured, build artifacts were omitted from SHA256SUMS.txt, the DLL is unsigned, and the build did not request deterministic /Brepro output. Source-to-DLL provenance is therefore very strong but not cryptographically closed.
+IsolatedRebuildFeasible=YES
+ExactByteIdenticalRebuildGuaranteed=NO
+AuditExtraction=D:\KiwiAvatarSystem\KiwiValidation\v44_55_12_OriginalPackageAudit\OriginalPackage_20260902_002643\Extracted
+Note: an earlier extraction attempt at OriginalPackage_20260902_002609 stopped on the Windows PowerShell 5.1 long-path limit and is excluded from evidence. No Production or Native file was touched by that attempt.
+
+[ZIP_IDENTITY]
+RequestedName=KiwiAvatarSystem_v44_55_12_D3DFixedPointSubtexelSamplingParityAudit(1).zip
+RequestedNameFound=NO
+LocatedUniqueEquivalentName=KiwiAvatarSystem_v44_55_12_D3DFixedPointSubtexelSamplingParityAudit.zip
+LocatedPath=D:\Users\main\Downloads\KiwiAvatarSystem_v44_55_12_D3DFixedPointSubtexelSamplingParityAudit.zip
+LengthBytes=267929
+SHA256=06666AF4E0FDA1013EC4E9E865C2FC97BE4CC8730F9F1CEACE47EB8F973D0DF2
+FileCreationJST=2026-09-02 00:16:55.847 +09:00
+FileLastWriteJST=2026-09-02 00:16:57.105 +09:00
+AlternateDataStreams=only unnamed :$DATA; no Zone.Identifier ADS was present
+SearchScope=D:\Users\main\Downloads recursively; exactly one matching v44.55.12 D3D fixed-point subtexel parity audit ZIP was found
+OriginalDirectory=D:\Users\main\Downloads\KiwiAvatarSystem_v44_55_12_D3DFixedPointSubtexelSamplingParityAudit
+OriginalDirectoryExists=YES
+OriginalDirectoryCreationJST=2026-08-31 18:00:09.500 +09:00
+OriginalDirectoryFileCount=18
+OriginalDirectoryVsZip=18/18 same path, size, and SHA256; ZIP-only=0; directory-only=0; mismatches=0
+ZIPEntryCount=27
+ZIPFileCount=18
+ZIPDirectoryCount=9
+ZIPTotalUncompressedBytes=1207879
+ZIPTotalCompressedBytes=258923
+UnsafeCanonicalPathCount=0
+DuplicateCanonicalPathCount=0
+EntryTimestampGroupsJST=17 entries at 2026-08-31 18:00:08; 2 entries at 18:00:16; 8 entries at 18:00:20
+
+[ZIP_CONTENTS]
+All 18 files are listed below as relativePath | bytes | SHA256 | ZIP last-write JST.
+Assets\KiwiAvatarSystem\Runtime\Validation\KiwiD3DFixedPointSubtexelSamplingParityAuditV44_55_12.cs | 120415 | BE98143C691D2980013599135FE7F5083EC446C709006CF5BCFF64A22F10EF58 | 2026-08-31 18:00:08
+Build\build_native_v44_55_12.cmd | 920 | F4EF732370E86D65E7BF5F534A17D70FBD806135868EC8A649AF7585E68AD480 | 2026-08-31 18:00:16
+Build\KiwiNativeCamera.dll | 80896 | 82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5 | 2026-08-31 18:00:20
+Build\KiwiNativeCamera.exp | 17523 | DF98463511B69F117E714DBBF5855751C8F1B9625B1E8D7C905F81C9831E707C | 2026-08-31 18:00:20
+Build\KiwiNativeCamera.lib | 30162 | 3DED4E41B7E88674FA31763C75ED24677669E7C2AD1709ED510A2ACD6D64F423 | 2026-08-31 18:00:20
+Build\KiwiNativeCamera_v44_55_12_build.txt | 868 | 01BE8B4DF7D1DEDB131DCCC0BB67CD7873323D9092D68923A58FE2AA58A13429 | 2026-08-31 18:00:20
+Build\KiwiNativeCameraPlugin.obj | 780670 | 51D6BFD52B63E020E93DF8CB55FFCD951C0B8166A0CA87A4AC71EEB74924A7A0 | 2026-08-31 18:00:20
+Build\native_stderr.txt | 5 | F01A374E9C81E3DB89B3A42940C4D6A5447684986A1296E42BF13F196EED6295 | 2026-08-31 18:00:20
+Build\native_stdout.txt | 573 | 6EC7CF325984CCF0D664726204EC3A20686BD6906E3777A22EBC57EAE9F8BC07 | 2026-08-31 18:00:20
+Installer\Apply-v44.55.12.ps1 | 4262 | C9D29A2ACCFE5AC12EF1D11C0F871AA05213CA295C0B84F1F6FA9B36D209FDE9 | 2026-08-31 18:00:08
+Installer\Build-KiwiNativeCamera-v44.55.12.ps1 | 3626 | 0016D5759F7DD0F87CC3E6A06F368D23BA4235605489B9EB7B73B98DD6827820 | 2026-08-31 18:00:08
+Installer\Rollback-v44.55.12.ps1 | 1590 | E148FC1BE6D9E743DCEA065FCE313C6F69D5F7D5E2497FAD9C6FDBDBF0810DB2 | 2026-08-31 18:00:08
+Installer\Validate-v44.55.12.ps1 | 3330 | 525F30BB03E608ECAD0BB81BE151161645A18710CB47962795FF3435E901386B | 2026-08-31 18:00:08
+Launch-v44.55.12-BuildAndAudit.ps1 | 3536 | 2719EC1D714E1A87B7E23126D5A055650583C0472988F019A01FD07C68A7BF3B | 2026-08-31 18:00:08
+Native\KiwiNativeCameraPlugin.cpp | 115514 | 636D76251F9CB3BB785F4497D3D0722033FC0CE36CB4A574B65EDA58B5ABE32A | 2026-08-31 18:00:08
+README.txt | 2832 | 57DF0AB3B21111FB53859082B831E2280FE430392E60C4EB6B619CF7A9286AE3 | 2026-08-31 18:00:08
+Runtime\KiwiNativeCameraInterop.cs | 40205 | AC473ADBADE5EDC89726211ECAF03D040B5CC00FCA39BEA4A0D16195FA53E8B5 | 2026-08-31 18:00:08
+SHA256SUMS.txt | 952 | D0CD4AAF75DEAFB22463DD5F8736BC4E1D9F10249A86BEC464A189FC2E181721 | 2026-08-31 18:00:08
+Package SHA256SUMS validation=9 listed, 9 matched, 0 failed.
+SHA256SUMS coverage limitation=Build/* artifacts, build logs, command file, and SHA256SUMS.txt itself are not covered by the package-provided checksum list. Their hashes above are this audit's direct measurements.
+
+[PRODUCTION_HASHES]
+Assets\Script\KiwiInferenceFaceTracker.cs | expected=52C046EE44B41A4FF50B85AEF503BC29DD31B57EAF58C0D160CCC33C5D4B7695 | actual=52C046EE44B41A4FF50B85AEF503BC29DD31B57EAF58C0D160CCC33C5D4B7695 | PASS
+Assets\Script\FaceLandmarkerRunner.cs | expected=6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93 | actual=6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93 | PASS
+Assets\KiwiAvatarSystem\Runtime\Camera\KiwiNativeCameraInterop.cs | expected=AC473ADBADE5EDC89726211ECAF03D040B5CC00FCA39BEA4A0D16195FA53E8B5 | actual=AC473ADBADE5EDC89726211ECAF03D040B5CC00FCA39BEA4A0D16195FA53E8B5 | PASS
+Assets\Plugins\x86_64\KiwiNativeCamera.dll | expected=82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5 | actual=82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5 | PASS
+Native\KiwiNativeCamera\Source\KiwiNativeCameraPlugin.cpp | expected=636D76251F9CB3BB785F4497D3D0722033FC0CE36CB4A574B65EDA58B5ABE32A | actual=636D76251F9CB3BB785F4497D3D0722033FC0CE36CB4A574B65EDA58B5ABE32A | PASS
+Historical standalone DLL=D:\KiwiAvatarSystem\Builds\v44_55_12D3DFixedPointSubtexelAudit\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\Plugins\x86_64\KiwiNativeCamera.dll | bytes=80896 | SHA256=82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5 | exact match to package and Production
+
+[NATIVE_SOURCE]
+Package Native SHA256=636D76251F9CB3BB785F4497D3D0722033FC0CE36CB4A574B65EDA58B5ABE32A
+Production Native SHA256=636D76251F9CB3BB785F4497D3D0722033FC0CE36CB4A574B65EDA58B5ABE32A
+Result=byte-identical.
+v44.55.11 base Native is preserved at KiwiBackups\v44_55_12_20260831_180020\KiwiNativeCameraPlugin.cpp with SHA256=367D6407803220DD141587F16B2F8A4B76E908B53A1A558C67882BB6BE285959, matching the README and Apply script base assertion.
+Base-to-v44.55.12 diff=240 insertions, 0 deletions.
+Added Native elements are diagnostic-only fixed-point subtexel support: IsValidDiagnosticSubtexelFractionBits; RoundToNearestEvenDiagnostic; SnapTexelCoordinateFixedDiagnostic; SampleNv12AsConvertedRgbBilinearSubtexelDiagnostic; CopyDiagnosticCpuIdentityCandidateCropNchwFloatSubtexel; and exported KiwiNativeCamera_CopyDiagnosticCpuIdentityCandidateCropNchwFloatSubtexel.
+The accepted fractional-bit candidates are 0/FULL_FLOAT, 8, 9, 10, and 12. Snapping occurs after texture-size scaling and -0.5, then uses round-to-nearest-even.
+Package Interop SHA256=AC473ADBADE5EDC89726211ECAF03D040B5CC00FCA39BEA4A0D16195FA53E8B5 and equals Production Interop.
+v44.55.11 base Interop SHA256=3309490628D44BA2FC57718E81B25C6C31E9672252E5127D51DA9D292738E163.
+Base-to-v44.55.12 Interop diff=85 insertions, 0 deletions, adding the matching DllImport and guarded wrapper.
+Package Observer SHA256=BE98143C691D2980013599135FE7F5083EC446C709006CF5BCFF64A22F10EF58 and equals the historical copy in KiwiBackups\v44_55_13_20260831_183329.
+
+[NATIVE_DLL]
+Package Build\KiwiNativeCamera.dll, Production Assets\Plugins\x86_64\KiwiNativeCamera.dll, and the v44.55.12 standalone-build DLL are byte-identical: 80896 bytes, SHA256=82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5.
+PE type=x64 PE32+ DLL; 5 sections; linker version=14.44; PE time/date stamp=2026-08-31 18:00:20 JST; checksum=0; Authenticode status=NotSigned.
+Export table=80 named functions. It includes KiwiNativeCamera_CopyDiagnosticCpuIdentityCandidateCropNchwFloatSubtexel.
+OBJ SHA256=51D6BFD52B63E020E93DF8CB55FFCD951C0B8166A0CA87A4AC71EEB74924A7A0. Its COFF symbol table contains RoundToNearestEvenDiagnostic, SnapTexelCoordinateFixedDiagnostic, the internal subtexel copy implementation, and the external exported subtexel symbol.
+OBJ @comp.id=0x0105899C; its low 16-bit build field is 35228, consistent with the installed cl.exe version 19.44.35228.0.
+EXP SHA256=DF98463511B69F117E714DBBF5855751C8F1B9625B1E8D7C905F81C9831E707C. It embeds the original Build working directory and C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\link.exe.
+LIB SHA256=3DED4E41B7E88674FA31763C75ED24677669E7C2AD1709ED510A2ACD6D64F423.
+Direct DLL dependencies include MF.dll, MFPlat.dll, MFReadWrite.dll, ole32.dll, d3d11.dll, D3DCOMPILER_47.dll, dxgi.dll, MSVCP140.dll, VCRUNTIME140.dll, VCRUNTIME140_1.dll, and Universal CRT API sets.
+No PDB is present in either the ZIP or the original directory. The command supplies /Fd but does not enable /Zi or /DEBUG.
+
+[BUILD_SCRIPT]
+Build-KiwiNativeCamera-v44.55.12.ps1 and generated Build\build_native_v44_55_12.cmd are internally consistent with the recorded original folder, output folder, VS Community VsDevCmd, and PluginAPI include path.
+Compile/link flags=/nologo /LD /std:c++17 /O2 /EHsc /MD /utf-8 /diagnostics:caret /DUNICODE /D_UNICODE /DUNITY_WIN=1 plus the Unity PluginAPI include; linked libraries=mf, mfplat, mfreadwrite, mfuuid, ole32, d3d11, d3d12, d3dcompiler, dxgi.
+Build record says ExitCode=0 and native_stderr contains no error text. The Visual Studio developer prompt identifies VS 2022 v17.14.37.
+Windows PowerShell 5.1 parser result=0 syntax errors for Apply, Build, Validate, Rollback, and Launch scripts.
+PS5.1 compatibility caveat=none of the package scripts enables Set-StrictMode; Build uses Set-Content -Encoding UTF8, which is BOM-producing in Windows PowerShell 5.1; output reading is sequential stdout then stderr with no timeout, which can deadlock for sufficiently large stderr; Process is not disposed explicitly.
+Safety caveat=Build hardcodes VS2022 Community and a Unity 6000.0.80f1 fallback; permits caller-selected output paths without project-root containment; does not hash source, PluginAPI, or SDK inputs; and does not compare the newly built DLL to the shipped DLL hash.
+Reproducibility caveat=no /Brepro, response file, cl /Bv output, explicit Windows SDK version, environment snapshot, header manifest, or signed build attestation is recorded.
+
+[TOOLCHAIN]
+Historical build-log evidence=Visual Studio 2022 Developer Command Prompt v17.14.37.
+Historical artifact evidence=PE linker 14.44; EXP linker path under MSVC 14.44.35207; OBJ @comp.id consistent with compiler build 35228.
+Current discovered cl.exe=C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\Hostx64\x64\cl.exe; file version 19.44.35228.0.
+Current discovered link.exe=same MSVC 14.44.35207 tree; file version 14.44.35228.0.
+Current Windows SDK=10.0.26100.0. Historical SDK selection was implicit and is not recorded in the package, so exact historical SDK identity remains unproven.
+Unity project version=6000.0.80f1 (revision 2dfd32957da2), matching the package's hardcoded Unity fallback path.
+Historical PluginAPI path=D:\KiwiAvatarSystem\Tools\KlakSpout_v206_diag\Plugin\Unity.
+Current relevant PluginAPI headers exist: IUnityInterface.h SHA256=E23E267B57C049B438307542D62C30FBCD3FA77B6DAC3B08842EAE0DF10B8239; IUnityGraphics.h SHA256=DFB6DD52EEF1F1B6A95A9D122CE4356E79AFF5D216282EE4CD90B69137BC1B1F; IUnityGraphicsD3D12.h SHA256=5651843E939FADBF8410DFECCBA5C2886EC7CC1FB05B45F81D3BBF8850E277B3. IUnityGraphicsD3D11.h also exists with SHA256=F64826555635F01EA391BF806A3909A386EEE090CAC0506A5F4B9807BC9E6529, although this source does not include it directly.
+The ZIP does not contain these headers or a historical header hash manifest. Current availability supports an isolated rebuild attempt but does not prove historical byte identity of inputs.
+
+[INSTALL_CHAIN]
+Apply-v44.55.12.ps1 accepts only the declared v44.55.11 or v44.55.12 source/Interop bases, invokes the package Build script, creates KiwiBackups\v44_55_12_<timestamp>, then copies Native source, Interop, Observer, and built DLL into the project and removes the old observer.
+The local backup KiwiBackups\v44_55_12_20260831_180020 exists and contains the exact asserted v44.55.11 base Native, Interop, old Observer, and previous DLL hashes. This is direct evidence that an Apply-style transition occurred at 18:00:20-21 JST.
+Apply safety gap=copies are sequential and non-transactional; no automatic rollback occurs after a partial copy failure; destination containment is not enforced; package inputs and built DLL are not all pre-hashed; final NewNative/NewInterop/NewObserver values are printed but not asserted; expected new DLL hash is not declared.
+Validate safety gap=it checks Native, Interop, and Observer hashes and source markers, but only checks that the DLL exists. It does not verify DLL SHA256, architecture, exports, or dependency set.
+Rollback safety gap=it chooses the newest matching backup by directory LastWriteTime rather than an explicit backup ID; performs non-transactional copies/removal; and does not verify restored hashes.
+Launch script safety gap=it deletes an existing executable and recursively deletes an existing Data directory under its computed build directory, then builds and launches Unity/player. It has no project-root canonical containment guard. This audit did not execute it.
+Existing standalone evidence=KiwiStandalone_v44_55_12_SUBTEXEL.build.log reports "Build Finished, Result: Success"; the executable and Data directory were created, and the embedded Native DLL is the exact package/Production DLL.
+
+[TIMELINE]
+2026-08-31 18:00:09.500 JST: original package directory creation recorded in Downloads.
+2026-08-31 18:00:09.575-18:00:09.688 JST: original Observer, installer scripts, launcher, Native source, README, Interop, and SHA256SUMS last-write sequence.
+2026-08-31 18:00:17.062 JST: generated native build CMD last-written.
+2026-08-31 18:00:20.555-18:00:20.952 JST: OBJ, EXP, LIB, DLL, stdout/stderr, and build record written; build record ExitCode=0.
+2026-08-31 18:00:20.989-18:00:21.016 JST: v44.55.12 backup directory and preserved v44.55.11 inputs created.
+2026-08-31 18:00:20.824 JST: Production DLL last-write equals original Build DLL last-write at subsecond resolution; hashes are identical.
+2026-08-31 18:00:22.339 JST: standalone build log created.
+2026-08-31 18:00:52.836-18:00:52.893 JST: standalone executable, Unity runtime files, and exact Native DLL materialized.
+2026-08-31 18:00:59.532 JST: standalone build log finalized with Success.
+2026-08-31 18:33:29.522 JST: v44.55.13 backup captured the exact v44.55.12 Observer.
+2026-09-02 00:16:55.847-00:16:57.105 JST: located ZIP created/last-written locally. This is later packaging/acquisition time, not native build time.
+2026-09-02 00:26:43 JST: successful read-only audit extraction directory allocated.
+
+[CONFIRMED_FACTS]
+1. The located no-suffix ZIP is the only matching ZIP in Downloads; the literal requested (1) filename is absent.
+2. Its original unzipped Downloads directory still exists and is an exact 18-file mirror of the ZIP by path, size, and SHA256.
+3. The package Native source and Interop are byte-identical to current Production.
+4. The package DLL is byte-identical to current Production and the historical v44.55.12 standalone DLL.
+5. The v44.55.11 base hashes asserted by the package are present in the timestamped v44.55.12 backup.
+6. The package OBJ contains compiled symbols for the v44.55.12 subtexel functions; the DLL exports the corresponding public entry point.
+7. Build log, COFF/PE timestamps, backup time, Production DLL time, and standalone-build times are mutually ordered and consistent.
+8. All five package PowerShell scripts parse under Windows PowerShell 5.1 with zero syntax errors.
+9. No package installer, build, Unity, player, or runtime audit was launched during this provenance audit.
+
+[INFERENCES]
+1. It is strongly supported that the package Build\KiwiNativeCamera.dll was built from the adjacent v44.55.12 Native source using the recorded build command and MSVC 14.44.35207 family. The OBJ's matching internal/external symbols and EXP's embedded tool/work paths materially strengthen this inference.
+2. It is strongly supported that Apply-v44.55.12.ps1, or an equivalent sequence using it, installed the package source/Interop/DLL around 18:00:20 JST. The exact backup name/content and Production timestamps are characteristic of that script.
+3. It is strongly supported that Launch-v44.55.12-BuildAndAudit.ps1, or an equivalent Unity command, produced the existing successful standalone build immediately afterward.
+4. The ZIP appears to be a later byte-faithful archive of the still-present original Downloads package directory, not the original moment-of-build container.
+5. Current MSVC/Unity/PluginAPI availability makes an isolated rebuild technically feasible. Byte-identical output is not assured because the linker timestamp is non-deterministic and the complete historical SDK/header environment was not sealed.
+
+[UNRESOLVED]
+1. The exact requested filename with suffix (1) does not exist locally; the audited ZIP has the same base name without (1). Content identity to an unseen (1) copy cannot be asserted.
+2. No digital signature, trusted timestamp, external artifact registry, or immutable build-system attestation binds the source, OBJ, DLL, and ZIP.
+3. Package SHA256SUMS.txt omits every Build artifact, including DLL/OBJ/LIB/EXP/log/CMD.
+4. The exact historical Windows SDK version and hashes of consumed Windows/CRT/Unity PluginAPI headers are not recorded.
+5. The exact compiler environment is strongly indicated but not fully captured by cl /Bv output or an environment manifest.
+6. No PDB is present, and the command did not enable debug information.
+7. No deterministic /Brepro build was requested, so an ordinary rebuild would encode a new PE timestamp and may differ byte-for-byte even with equivalent code generation.
+8. Existing evidence does not cryptographically prove that the adjacent source, rather than a same-symbol altered source, generated the OBJ. Closing that final gap requires a controlled isolated rebuild or an external trusted build record.
+
+[PROVENANCE_DECISION]
+Class=B
+Label=Strongly Supported
+Decision=The local original package provenance for v44.55.12 Native source and KiwiNativeCamera.dll is strongly supported and operationally coherent, but not fully closed to Class A standards.
+WhyNotA=historical SDK/PluginAPI inputs are not sealed; build artifacts are outside the package checksum list; the binary is unsigned; no deterministic build or trusted external attestation exists; and no isolated comparison rebuild was authorized or run.
+WhyNotCOrD=the ZIP exactly mirrors its original directory; package source/Interop/DLL exactly match Production; the DLL exactly matches a separate historical standalone copy; base backup hashes and timestamps align; OBJ/export/tool-path evidence correlates the source change with the binary; and the build/installation timeline is continuous.
+IsolatedExactSourceRebuildPossible=YES, as a controlled attempt using the original directory, current identical MSVC 14.44.35207 tool tree, current PluginAPI path, and a frozen audit output directory.
+ExactHistoricalByteReproductionGuaranteed=NO, until historical headers/SDK/environment are fixed and non-deterministic PE timestamp handling is addressed.
+
+[NEXT_ACTION]
+Do not rebuild or reinstall as part of this task; the requested provenance decision is complete.
+If a later task explicitly authorizes an isolated reproduction test, first copy the package and the currently referenced PluginAPI headers into a new KiwiValidation/TEMP-only workspace; record hashes for every source/header/library/tool; capture cl /Bv, link version, VsDevCmd environment, and Windows SDK selection; run the package command without touching Production; compare OBJ symbols, exports, imports, section hashes, and normalized PE content before evaluating raw SHA256. Keep Production installation as a separate, explicitly authorized step.
+The fastest path to Class A is not another ordinary rebuild; it is an independently controlled rebuild with a fully hashed input/toolchain manifest or recovery of a trusted historical build attestation/PDB/environment record.
+
+ProductionChanged 0
+NativeChanged 0
+RebuildLaunched 0

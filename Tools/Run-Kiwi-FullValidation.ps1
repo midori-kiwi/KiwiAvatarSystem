@@ -12,7 +12,7 @@ param(
     [string]$Executable
 )
 
-Set-StrictMode -Version Latest
+Set-StrictMode -Version 2.0
 $ErrorActionPreference = 'Stop'
 $PSNativeCommandUseErrorActionPreference = $false
 
@@ -177,7 +177,7 @@ foreach ($targetPath in $targetPaths) {
 }
 $transaction = [ordered]@{
     state = 'PREPARED'; startedUtc = Get-UtcNow; updatedUtc = Get-UtcNow
-    targets = @($transactionTargets); rollbackAttempted = $false; rollbackVerified = $false
+    targets = $transactionTargets.ToArray(); rollbackAttempted = $false; rollbackVerified = $false
 }
 Write-JsonAtomic $transactionPath $transaction
 
@@ -339,8 +339,8 @@ for ($i = 0; $i -lt $caseDefinitions.Count; $i++) {
     $caseReports.Add([ordered]@{
         caseId = $definition.Id; order = [int]$definition.Order; mode = [string]$caseResult.mode; purpose = [string]$caseResult.purpose
         status = [string]$caseResult.status; startedUtc = [string]$caseResult.startedUtc; completedUtc = [string]$caseResult.completedUtc
-        environment = $caseResult.environment; process = $caseResult.process; metrics = $metrics; gates = @($caseGates)
-        artifacts = @($allArtifacts | Where-Object caseId -eq $definition.Id); issues = @($caseIssues)
+        environment = $caseResult.environment; process = $caseResult.process; metrics = $metrics; gates = $caseGates.ToArray()
+        artifacts = @($allArtifacts | Where-Object caseId -eq $definition.Id); issues = $caseIssues.ToArray()
     })
 }
 
@@ -412,7 +412,7 @@ $nvidiaVersion = (& $NvidiaSmiPath --version | Select-Object -First 1)
 $report = [ordered]@{
     schemaVersion = '1.0.0'; harnessVersion = 'v42.3-validation-v1'; runId = $runId; profileId = [string]$thresholds.profileId
     status = if ($runComplete) { 'COMPLETE' } else { 'INCOMPLETE' }; automatedVerdict = $automatedVerdict; finalVerdict = $finalVerdict
-    blockingReasons = @($blockingReasons); createdUtc = $createdUtc; completedUtc = Get-UtcNow
+    blockingReasons = $blockingReasons.ToArray(); createdUtc = $createdUtc; completedUtc = Get-UtcNow
     identity = [ordered]@{
         systemVersion = 'v42.3'; installedVersion = [string]$manifest.version; installedManifest = $manifestPath; installedManifestSha256 = Get-Sha256 $manifestPath
         unityVersion = '6000.0.80f1'; scene = [string]$thresholds.identity.scene; graphicsApi = 'Direct3D12'; developmentBuild = $true
@@ -430,11 +430,11 @@ $report = [ordered]@{
         )
         thresholdsSha256 = Get-Sha256 $thresholdSnapshot; reportSchemaSha256 = Get-Sha256 $schemaSnapshot
     }
-    transaction = $transaction; cases = @($caseReports)
-    comparison = [ordered]@{ baselineCaseId = if ($null -ne $baseline) { 'BASELINE_METRICS' } else { $null }; candidateCaseId = if ($null -ne $candidate) { 'ZEROCOPY_METRICS' } else { $null }; evaluations = @($relativeEvaluations); status = $comparisonStatus }
-    gates = @($globalGates); artifacts = @($allArtifacts)
-    visualReview = [ordered]@{ required = $true; status = $visualStatus; cases = @($visualReviewCases) }
-    issues = @($allIssues)
+    transaction = $transaction; cases = $caseReports.ToArray()
+    comparison = [ordered]@{ baselineCaseId = if ($null -ne $baseline) { 'BASELINE_METRICS' } else { $null }; candidateCaseId = if ($null -ne $candidate) { 'ZEROCOPY_METRICS' } else { $null }; evaluations = $relativeEvaluations.ToArray(); status = $comparisonStatus }
+    gates = $globalGates.ToArray(); artifacts = $allArtifacts.ToArray()
+    visualReview = [ordered]@{ required = $true; status = $visualStatus; cases = $visualReviewCases.ToArray() }
+    issues = $allIssues.ToArray()
 }
 
 $reportPath = Join-Path $runDirectory 'report.json'

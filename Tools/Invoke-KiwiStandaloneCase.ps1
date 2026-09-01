@@ -29,7 +29,7 @@ param(
     [string]$GpuUuid = 'GPU-6efc5d27-d766-eeac-cb81-8aa14cebbfa3'
 )
 
-Set-StrictMode -Version Latest
+Set-StrictMode -Version 2.0
 $ErrorActionPreference = 'Stop'
 
 function Get-UtcNow {
@@ -385,7 +385,7 @@ $result = [ordered]@{
         forcedTermination = $forcedTermination
         crashArtifactCount = $crashArtifacts.Count
     }
-    artifacts = @($artifacts)
+    artifacts = $artifacts.ToArray()
     videoCapture = [ordered]@{
         required = ($purpose -eq 'VISUAL')
         started = ($null -ne $ffmpeg -or $null -ne $captureStartedUtc)

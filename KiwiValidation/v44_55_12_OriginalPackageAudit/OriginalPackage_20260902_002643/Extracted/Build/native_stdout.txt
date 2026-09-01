@@ -1,0 +1,7 @@
+﻿**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.37
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+KiwiNativeCameraPlugin.cpp
+   ライブラリ D:\Users\main\Downloads\KiwiAvatarSystem_v44_55_12_D3DFixedPointSubtexelSamplingParityAudit\Build\KiwiNativeCamera.lib とオブジェクト D:\Users\main\Downloads\KiwiAvatarSystem_v44_55_12_D3DFixedPointSubtexelSamplingParityAudit\Build\KiwiNativeCamera.exp を作成中
+

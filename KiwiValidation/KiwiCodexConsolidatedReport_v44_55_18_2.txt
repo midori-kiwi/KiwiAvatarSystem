@@ -1,0 +1,271 @@
+KiwiAvatarSystem v44.55.18.2 Codex Consolidated Report
+generated=2026-09-01T23:50:25+09:00
+scope=Native provenance internal audit + common Windows PowerShell 5.1 foundation + static/Unity verification
+
+[SUMMARY]
+status=REQUESTED_STATIC_SCOPE_COMPLETE_PROVENANCE_NOT_CLOSED
+recommendedAction=Do not rebuild or replace the Production Native DLL. Recover the original v44.55.12 package/build script from the original normal-chat attachment/export or a file-level backup, then verify its hashes and command line before one isolated rebuild.
+productionChanged=0
+nativeChanged=0
+nativeBuildLaunched=0
+productionDllReplacement=0
+powershellFoundation=IMPLEMENTED_AND_PS51_SMOKE_PASS
+repositoryPowerShellAudit=NO_BLOCKING_ERRORS_WITH_LEGACY_REVIEW_WARNINGS
+provenanceClosure=NOT_CLOSED_ORIGINAL_V44_55_12_BUILD_DEFINITION_MISSING
+
+[PRODUCTION_HASHES]
+before|Assets\Script\KiwiInferenceFaceTracker.cs|52C046EE44B41A4FF50B85AEF503BC29DD31B57EAF58C0D160CCC33C5D4B7695
+after |Assets\Script\KiwiInferenceFaceTracker.cs|52C046EE44B41A4FF50B85AEF503BC29DD31B57EAF58C0D160CCC33C5D4B7695
+before|Assets\Script\FaceLandmarkerRunner.cs|6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93
+after |Assets\Script\FaceLandmarkerRunner.cs|6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93
+before|Assets\KiwiAvatarSystem\Runtime\Camera\KiwiNativeCameraInterop.cs|AC473ADBADE5EDC89726211ECAF03D040B5CC00FCA39BEA4A0D16195FA53E8B5
+after |Assets\KiwiAvatarSystem\Runtime\Camera\KiwiNativeCameraInterop.cs|AC473ADBADE5EDC89726211ECAF03D040B5CC00FCA39BEA4A0D16195FA53E8B5
+before|Assets\Plugins\x86_64\KiwiNativeCamera.dll|82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+after |Assets\Plugins\x86_64\KiwiNativeCamera.dll|82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+before|Native\KiwiNativeCamera\Source\KiwiNativeCameraPlugin.cpp|636D76251F9CB3BB785F4497D3D0722033FC0CE36CB4A574B65EDA58B5ABE32A
+after |Native\KiwiNativeCamera\Source\KiwiNativeCameraPlugin.cpp|636D76251F9CB3BB785F4497D3D0722033FC0CE36CB4A574B65EDA58B5ABE32A
+
+[FILES_INSPECTED]
+KiwiValidation\v44_55_18_2_HistoricalNativeContext\20260901_225340\KiwiV44_55_18_2_HistoricalNativeContext.txt
+KiwiValidation\v44_55_18_2_HistoricalNativeContext\20260901_225340\KiwiV44_55_18_2_HistoricalNativeContext.json
+KiwiValidation\v44_55_18_2_HistoricalNativeContext\20260901_225340\ExactDll_0_headers.txt
+KiwiValidation\v44_55_18_NativeProvenance\20260901_223947\KiwiV44_55_18_NativeProvenanceAudit.txt/json
+KiwiValidation\KiwiV44_55_14_SourceEvidence.txt and collected export dumps
+KiwiValidation\KiwiV44_55_14_ProductionCpuInputProof.txt
+Builds\v44_55_12D3DFixedPointSubtexelAudit\KiwiStandalone_v44_55_12_SUBTEXEL.build.log
+Builds\v44_55_12D3DFixedPointSubtexelAudit\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\Plugins\x86_64\KiwiNativeCamera.dll
+Native\KiwiNativeCamera\Source\KiwiNativeCameraPlugin.cpp
+Native\KiwiNativeCamera\BuildProduction_v44_43.ps1
+Native\KiwiNativeCamera\Build\x86_64\build.cmd and BUILD_RESULT/msvc stdout/stderr/map/lib/exp/PDB
+Native\KiwiNativeCamera\PROVENANCE_v44_43.json, APPLY_STATE_v44_43_1.json, README_v44_43.md
+KiwiBackups native source/DLL/Interop snapshots, especially v44_55_12_20260831_180020
+KiwiDiagnostics v44 Native source/provenance/source-audit ZIP archives
+D:\Users\main\Downloads\KiwiAvatarSystem_v44_55_18_2_HistoricalNativeContextRecovery.zip
+Git Native/DLL history and reachable blob paths
+Relevant PowerShell history, Codex attachment cache, TEMP, and Recycle Bin filename/metadata matches
+
+[NATIVE_PROVENANCE]
+closureStatus=NOT_CLOSED_ORIGINAL_BUILD_DEFINITION_MISSING
+exactHistoricalDllCopyCount=1
+exactDll=Builds\v44_55_12D3DFixedPointSubtexelAudit\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\Plugins\x86_64\KiwiNativeCamera.dll
+exactDllSha256=82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+exactDllLength=80896
+exactDllEqualsProduction=1
+exactSourceOutsideCanonicalCount=0
+canonicalSourceReconstructedMarker=1
+abiParity=1
+nativeExportCount=78
+interopDllImportCount=78
+
+[NATIVE_PROVENANCE_STRONG_BUILD_CANDIDATES_10]
+01|KiwiValidation\v44_55_18_NativeProvenance\20260901_223947\KiwiV44_55_18_NativeProvenanceAudit.txt|REPORT_ONLY|no Native compile command/config
+02|KiwiValidation\v44_55_18_NativeProvenance\20260901_223947\KiwiV44_55_18_NativeProvenanceAudit.json|REPORT_ONLY|no Native compile command/config
+03|KiwiValidation\KiwiV44_55_14_SourceEvidence.txt|REPORT_ONLY|DLL/export/hash evidence, no build command/config
+04|KiwiValidation\KiwiV44_55_14_SourceEvidence\KiwiV44_55_14_SourceEvidence.txt|DUPLICATE_REPORT|same SHA/content role as item 03
+05|KiwiValidation\KiwiV44_55_14_ProductionCpuInputProof.txt|REPORT_ONLY|source/DLL hash and semantic evidence, no build command/config
+06|KiwiValidation\v44_55_13_critical_hashes.txt|HASH_RECORD_ONLY|canonical reconstructed source hash only
+07|KiwiValidation\v44_55_14_critical_hashes.txt|HASH_RECORD_ONLY|canonical reconstructed source hash only
+08|Native\KiwiNativeCamera\Build\x86_64\build.cmd|REAL_BUILD_COMMAND_BUT_V44_43|builds old reconstructed source SHA 8C28..., output DLL SHA 809126..., not v44.55.12
+09|Native\KiwiNativeCamera\BuildProduction_v44_43.ps1|REAL_BUILD_GENERATOR_BUT_V44_43|direct cl build; source/config/artifact do not match v44.55.12
+10|Native\KiwiNativeCamera\APPLY_STATE_v44_43_1.json|APPLY_RECEIPT_ONLY|records v44.43 source/DLL install, not v44.55.12
+strongCandidateConclusion=Only items 08/09 contain a real Native build definition, and they belong to the earlier reconstructed v44.43 chain. None of the 10 is the original v44.55.12 build definition.
+
+[NATIVE_PROVENANCE_ADJACENT_STRONG_19]
+01|...v44_55_12_SUBTEXEL_Data\Plugins\x86_64\lib_burst_generated.pdb|UNRELATED_BURST_PDB|not named for or linked to KiwiNativeCamera
+02|Builds\v44_55_12D3DFixedPointSubtexelAudit\KiwiStandalone_v44_55_12_SUBTEXEL.build.log|UNITY_PLAYER_BUILD_ONLY|2 KiwiNativeCamera text hits are C# asset-size listings; no cpp/cl/link/MSBuild Native command
+03|Builds\KiwiStandalone_v43_CadenceProbe.build.log|UNITY_PLAYER_BUILD_ONLY|same result
+04|Builds\KiwiStandalone_v44_10_StagedSnapshot.build.log|UNITY_PLAYER_BUILD_ONLY|same result
+05|Builds\KiwiStandalone_v44_11_DirectMorph.build.log|UNITY_PLAYER_BUILD_ONLY|same result
+06|Builds\KiwiStandalone_v44_12_InferenceLifecycle.build.log|UNITY_PLAYER_BUILD_ONLY|same result
+07|Builds\KiwiStandalone_v44_13_InferenceShutdown.build.log|UNITY_PLAYER_BUILD_ONLY|same result
+08|Builds\KiwiStandalone_v44_14_ShutdownRT.build.log|UNITY_PLAYER_BUILD_ONLY|same result
+09|Builds\KiwiStandalone_v44_15_SurfaceFitUpload.build.log|UNITY_PLAYER_BUILD_ONLY|same result
+10|Builds\KiwiStandalone_v44_16_PartitionedSurfaceFit.build.log|UNITY_PLAYER_BUILD_ONLY|same result
+11|Builds\KiwiStandalone_v44_17_ParallelFastCook.build.log|UNITY_PLAYER_BUILD_ONLY|same result
+12|Builds\KiwiStandalone_v44_2_1_WorkloadBreakdown.build.log|UNITY_PLAYER_BUILD_ONLY|same result
+13|Builds\KiwiStandalone_v44_3_AvatarRenderIsolation.build.log|UNITY_PLAYER_BUILD_ONLY|same result
+14|Builds\KiwiStandalone_v44_5_AvatarMeshFeatureAudit.build.log|UNITY_PLAYER_BUILD_ONLY|same result
+15|Builds\KiwiStandalone_v44_6_1_MeshOptimizer.build.log|UNITY_PLAYER_BUILD_ONLY|same result
+16|Builds\KiwiStandalone_v44_7_1_CostBreakdown.build.log|UNITY_PLAYER_BUILD_ONLY|same result
+17|Builds\KiwiStandalone_v44_7_AsyncMeshOptimizer.build.log|UNITY_PLAYER_BUILD_ONLY|same result
+18|Builds\KiwiStandalone_v44_8_InPlaceIndex.build.log|UNITY_PLAYER_BUILD_ONLY|same result
+19|Builds\KiwiStandalone_v44_9_SurfaceFitTopology.build.log|UNITY_PLAYER_BUILD_ONLY|same result
+adjacentConclusion=All 19 were inspected. Zero contains the v44.55.12 Native source compile/link/copy command. The first PDB is unrelated; the 18 logs are Unity Player build context only.
+
+[NATIVE_PROVENANCE_SOURCE]
+confirmed=Canonical source SHA 636D... is the only byte-identical copy found, and its header explicitly says RECONSTRUCTED_CANDIDATE / not recovered original / not bit-identical to the DLL.
+confirmed=Compared with KiwiBackups\v44_55_12_20260831_180020\KiwiNativeCameraPlugin.cpp SHA 367D..., the canonical v44.55.12 source adds 240 lines and removes 0 lines.
+confirmed=Those 240 lines implement the observer-only D3D fixed-point subtexel sampler, copy routine, and one new exported entry point.
+confirmed=Compared with the backed-up Interop, current Interop adds 85 lines and removes 0 lines for the matching DllImport/wrapper.
+confirmed=The exact DLL exposes the new entry point and has complete 78/78 ABI parity with current Interop.
+inference=The current reconstructed source is a strong semantic input candidate for the exact DLL, but ABI/export parity and source timing do not prove source-to-binary byte provenance.
+
+[NATIVE_PROVENANCE_TIMELINE]
+2026-08-31 00:01:02 JST|v44.55.10/11 DLL PE timestamp; SHA 80B5...; length 78848
+2026-08-31 18:00:09 JST|current v44.55.12 source and Interop artifact LastWriteTime
+2026-08-31 18:00:20 JST|exact DLL PE timestamp and Production artifact LastWriteTime
+2026-08-31 18:00:20.995 JST|backup v44_55_12_20260831_180020 files created, preserving prior source/DLL/Interop
+2026-08-31 18:00:40 JST|Unity Player build preflight begins after the Native/Interop install
+2026-08-31 18:00:52 JST|Unity copies the already-installed exact DLL into v44.55.12 Player output
+2026-08-31 19:31:56 JST|Git commit d3c78a9 records current Native source/DLL/build material; it does not contain the v44.55.12 installer/build script
+timelineInference=The exact DLL was produced before Unity Player build and then installed together with source/Interop/audit code. The original package/output directory and its install/build script are no longer present in the inspected locations.
+
+[NATIVE_PROVENANCE_PE_TOOLCHAIN]
+confirmedArchitecture=x64 PE32+
+confirmedLinkerMajorMinor=14.44
+confirmedPeTimestampHex=6A9542A4
+confirmedPeTimestamp=2026-08-31 18:00:20 JST
+confirmedDebugDirectory=coffgrp only; no CodeView/PDB path in exact DLL
+confirmedImports=MF.dll,MFPlat.DLL,MFReadWrite.dll,ole32.dll,d3d11.dll,D3DCOMPILER_47.dll,dxgi.dll,MSVCP140.dll,KERNEL32.dll,VCRUNTIME140.dll,VCRUNTIME140_1.dll,UCRT API sets
+confirmedRuntimeLinkage=dynamic MSVC/UCRT runtime imports, consistent with /MD
+confirmedRichHeader=contains build values 35228 and 35207; tool profile matches v44.55.10/11 except one additional linker-input count (81 versus 80)
+confirmedCurrentLocalCl=C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\Hostx64\x64\cl.exe|fileVersion=19.44.35228.0
+confirmedCurrentLocalLink=C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\Hostx64\x64\link.exe|version=14.44.35228.0
+confirmedCurrentLocalVs=Visual Studio 2022 17.14.37 (from preserved v44.43 msvc.stdout)
+confirmedCurrentLocalSdk=10.0.26100.0
+inferredExactPlatformToolset=v143, supported by VS2022/MSVC 14.44 and exact Rich/PE metadata; no vcxproj property exists
+inferredExactCompiler=MSVC 19.44.35228 family; artifact proves the 14.44 generation/build values but not the full original executable path
+inferredExactSdk=10.0.26100.0 is the only currently discovered local SDK and likely, but the DLL does not prove the SDK version
+inferredExactConfiguration=Release-like x64 direct cl invocation; there is no named MSBuild Configuration because no matching project file exists
+
+[NATIVE_PROVENANCE_BUILD_DEFINITION]
+confirmedInventoryAtAudit=vcxproj:0,sln:0,props:0,targets:0,CMakeLists:0,manifest:0
+confirmedMatchingNativePdb=0
+confirmedOnlyNamedNativePdb=Native\KiwiNativeCamera\Build\x86_64\KiwiNativeCamera.pdb from v44.43; it belongs to DLL SHA 809126... and old source SHA 8C28..., not the exact DLL
+confirmedHistoricalCommand=The only real retained command is v44.43: cl.exe /nologo /std:c++17 /EHsc /MD /O2 /W4 /permissive- /Zc:__cplusplus /DUNICODE /D_UNICODE /D_WIN32_WINNT=0x0A00 /I"D:\KiwiAvatarSystem\Tools\KlakSpout_v206_diag\Plugin\Unity" /LD <source> /Fe:"KiwiNativeCamera.dll" /link /DEBUG:FULL /PDB:<pdb> /MAP:<map>
+confirmedMismatch=The exact DLL cannot be attributed to that command verbatim: v44.43 uses source SHA 8C28..., produces SHA 809126.../421376 bytes, and has a matching PDB; the exact DLL is SHA 82D1.../80896 bytes and has no CodeView PDB record.
+inferredExactCompileFlags=/nologo /std:c++17 /EHsc /MD /O2 /W4 /permissive- /Zc:__cplusplus /DUNICODE /D_UNICODE /D_WIN32_WINNT=0x0A00 /I<project Unity PluginAPI> /LD, based on the sole retained recurring command, source requirements, runtime imports, and neighboring v44.55 PE profile
+inferredExactLinkFlags=/DLL and /OUT implied by /LD and /Fe; /DEBUG:FULL,/PDB,/MAP were probably omitted for v44.55.12 because the exact DLL has no CodeView/PDB path and is release-sized
+inferredIncludePath=D:\KiwiAvatarSystem\Tools\KlakSpout_v206_diag\Plugin\Unity, because it is the retained project Unity PluginAPI source used by v44.43 and current project inventory
+inferredLibPaths=VS2022 v143 + Windows SDK 10.0.26100 x64 defaults established by VsDevCmd; exact paths are not embedded in the DLL
+inferredOutputAndCopy=External/package temporary x64 output -> backup current files into KiwiBackups\v44_55_12_20260831_180020 -> copy source/Interop/DLL/audit code into canonical project paths -> Unity Player build copies Assets DLL into Builds
+unresolvedExactBuildCommand=1
+unresolvedOriginalBuildScript=1
+unresolvedOriginalOutputPath=1
+unresolvedExactSdkAndLibPaths=1
+unresolvedPdb=1
+
+[NATIVE_PROVENANCE_SEARCH_NEGATIVES]
+No original v44.55.12 build/install package or KiwiNativeCamera object/PDB was found in repository history roots, current Downloads, relevant Codex attachments, user TEMP matches, PowerShell history matches, or Recycle Bin filename/metadata matches.
+The attached recovery ZIP SHA256 is 06D2EAD5BA8783E392BDCE9B4E99EE1F064014208575F9D776D72AC7ED5623F4 and contains only MANIFEST/README plus the v44.55.18.2 recovery auditor/validator. It does not contain v44.55.12 source/build material.
+
+[NATIVE_PROVENANCE_BEST_ACTION]
+Recover the original v44.55.12 package/build script from the normal-chat attachment/export or file-level backup. Do not synthesize another build definition and do not run an isolated rebuild until that recovered script establishes source SHA, exact direct-cl command, toolchain/SDK initialization, output, copy/install path, and Production guards. Then run exactly one isolated rebuild and require SHA256 82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5 before considering closure.
+
+[POWERSHELL_AUDIT]
+foundationModule=Tools\KiwiPowerShell\KiwiPsCompat.psm1
+commonValidator=Installer\Validate-KiwiCommon.ps1
+selfTest=Installer\Test-KiwiPsCompat.ps1
+ps51Host=5.1.26100.9168 Desktop
+finalAudit=KiwiValidation\PowerShellAudit\Common_20260901_234651\KiwiPowerShellAudit.txt/json
+finalAuditStatus=WARN
+scriptAndModuleCount=11
+blockingErrorCount=0
+warningCount=32
+infoCount=23
+ps51ParseErrorCount=0
+forbiddenPs7OperatorCount=0
+genericListDangerCount=0
+reportVersionMismatchCount=0
+productionCriticalMismatchCount=0
+productionDllWriteDetection=PASS; known conditional v44.43 -Install path detected and reported
+nativeSourceWriteDetection=PASS; no canonical Native source mutation found
+writeTargetAudit=PASS_WITH_REVIEW_WARNINGS
+validatorCapabilities=PS5.1 parse, forbidden syntax, required tokens, Production SHA, write allowlist, Assets/Plugins replacement, Native source write, Copy/Move/Remove destination, Generic.List coercion, placeholder, obsolete version/path, report-version consistency
+
+[POWERSHELL_FOUNDATION_FUNCTIONS]
+ProjectRoot canonicalization and root-boundary assertions
+File existence and SHA256 assertions
+Size-limited safe text read and atomic transactional text write
+Visual Studio/vswhere/MSBuild/cl/link/dumpbin/VsDevCmd discovery
+Windows SDK discovery
+Collision-safe timestamped output directories
+Argument-array quoting and System.Diagnostics.Process execution
+Explicit exit code/timeout handling with stdout/stderr logs
+Protected Production SHA verification before and after subprocesses
+Transactional file copy, explicit rollback, SHA-verified restore, and commit cleanup
+PS5.1-safe Generic.List.ToArray() collection handling
+Deterministic report output
+
+[POWERSHELL_SELF_TEST]
+report=KiwiValidation\PowerShellCompatSmoke\Smoke_20260901_234647\KiwiPsCompatSmoke.txt
+status=PASS
+safeTextReadWrite=PASS
+pathBoundaryRejection=PASS
+transactionCopyRollbackCommit=PASS
+subprocessExitLogAndProtectedHashes=PASS
+subprocessNonZeroRejectedAndLogged=PASS
+nativeBuildToolDiscovery=PASS
+
+[POWERSHELL_INITIAL_FINDINGS_FIXED]
+Initial validator execution found 20 blocking Generic.List + @($list) PS5.1-danger patterns across existing Tools scripts.
+All 20 were converted to explicit .ToArray() without changing selection/filter pipelines.
+Set-StrictMode was normalized from Latest to 2.0 in six existing validation scripts and added to Set-MediaPipePackage.ps1.
+Final audit reports zero Generic.List coercion findings and zero PS5.1 parse errors.
+
+[POWERSHELL_REMAINING_WARNINGS]
+28|DYNAMIC_WRITE_TARGET|legacy scripts use parameter/variable-derived destinations that the static analyzer deliberately does not assume safe
+2|WRITE_TARGET_OUTSIDE_ALLOWLIST|legacy snapshot filename hints do not statically resolve their ValidationRuns parent
+1|KNOWN_LEGACY_PRODUCTION_INSTALLER|v44.43 BuildProduction has an explicit conditional -Install copy into Assets/Plugins and is detected by exact script hash
+1|REQUIRED_STRICT_MODE|historical Native v44.43 build definition is preserved unchanged as provenance evidence
+warningDisposition=Non-blocking for the new foundation. They remain visible rather than being silently allowlisted. New scripts should use KiwiPsCompat root assertions/transactions so their targets resolve cleanly.
+
+[CHANGES]
+NEW|Tools\KiwiPowerShell\KiwiPsCompat.psm1|AA72F60B45CD2041E3D970A86FB5679A9E33098648CEAB7354C236D5BD7DDE89|common PS5.1 compatibility/safety foundation
+NEW|Installer\Validate-KiwiCommon.ps1|DD3A82F75ACFB4F9B931D0542BB043DD3CC29F0CF93CC7A39BE31DAD8ADB6719|repository PowerShell static validator
+NEW|Installer\Test-KiwiPsCompat.ps1|BC8D66C2B45B656176D2BACC5CC3610B892166E3921905AC3D4C4E9A790FBC5F|executable PS5.1 smoke test
+MODIFIED|Tools\Analyze-KiwiTelemetry.ps1|CE97E2539DF1440ECFBD76AAD81D8987B49466052FD4CC7947138F9F093431DE|3 Generic.List conversions + StrictMode 2.0
+MODIFIED|Tools\Invoke-KiwiStandaloneCase.ps1|E2EC7DAF665CF1B028879269FDCB6B635A26C836E4D50D0628056AB69A4B196F|1 Generic.List conversion + StrictMode 2.0
+MODIFIED|Tools\Run-Kiwi-FullValidation.ps1|3CF6081AB4711F147C6F5A81C5633B0012A97CA6D823E28F9372E7A7106CB25D|10 Generic.List conversions + StrictMode 2.0
+MODIFIED|Tools\Set-KiwiVideoReview.ps1|B04E8634B598EDB05286BD837907A326C457780BC5B7889A9858454058FB930B|1 Generic.List conversion + StrictMode 2.0
+MODIFIED|Tools\Set-MediaPipePackage.ps1|55F2FA7B40E9C49EC977C0853669616A77335520DDAF77E675ABE678A608C5D4|StrictMode 2.0
+MODIFIED|Tools\Test-KiwiArtifactCompleteness.ps1|7C00E0A602EFA6F6EC05EA8E3C0F7834D588DC59200E5900D5E41BE13B06BFFD|4 Generic.List conversions + StrictMode 2.0
+MODIFIED|Tools\Test-KiwiVideo.ps1|AAAA777536771E64AE6B9C436864AAFC15A99D1D7491807BE1499AA5B5DD3AE4|1 Generic.List conversion + StrictMode 2.0
+NEW|KiwiValidation\KiwiCodexConsolidatedReport_v44_55_18_2.txt|this integrated handoff report
+productionFilesModified=0
+nativeFilesModified=0
+unityAssetsModifiedByCodex=0
+
+[STATIC_VALIDATION]
+status=PASS_WITH_NONBLOCKING_LEGACY_WARNINGS
+windowsPowerShell51Parse=PASS|11 scripts/modules|0 parse errors
+forbiddenSyntax=PASS|0
+requiredFoundationTokens=PASS
+genericListSafety=PASS|20 fixed|0 remaining
+placeholderAudit=PASS|guarded historical template reported as INFO
+versionAndReportFilenameAudit=PASS|0 mismatches
+productionHashesBeforeAfter=PASS
+writeTargetAudit=PASS_WITH_32_REVIEW_WARNINGS|0 blocking protected-path errors
+moduleSmoke=PASS
+gitDiffCheck=PASS|line-ending normalization notices only
+nativeBuild=NOT_RUN_BY_POLICY
+
+[UNITY_COMPILE]
+status=PASS
+unity=6000.0.80f1 (2dfd32957da2)
+mode=batchmode -quit -nographics
+log=KiwiValidation\KiwiV44_55_18_2_CodexUnityCompile.log
+tundra=build success|657 nodes|0.75 seconds final pass
+scriptCompilation=10.155696 seconds
+assetChanges=new:0,changed:0,moved:0,deleted:0
+compilerErrorScan=0 matches for error CS, scripts have compiler errors, compilation failed, or Tundra build failed
+exit=Batchmode quit successfully; return code 0
+nonBlockingUnityWarnings=immutable KlakSpout original DLL lacks meta and is ignored; duplicate System.Runtime.CompilerServices.Unsafe versions resolved to Collections test copy
+workspaceNote=Compile covered the current workspace, including pre-existing untracked v44.55.16/v44.55.17 validation C# files. Codex did not edit those files.
+
+[RUNTIME_REQUIRED]
+requiredForThisChange=no
+reason=Only PowerShell infrastructure and collection-safety behavior changed; no Unity runtime, tracking, camera, Native source, or Production DLL behavior changed.
+futureRequirement=If and only if the original v44.55.12 build definition is recovered and an isolated exact-SHA rebuild is later authorized, perform one Runtime camera/face validation run after static/ABI/hash gates pass.
+
+[UNRESOLVED_ITEMS]
+Original v44.55.12 source package/build/install script is missing.
+Exact compiler command, working/output directory, SDK selection, include/lib paths, link options, and copy/install command are not directly confirmed.
+No matching exact Native PDB/lib/exp/obj/map was recovered.
+Canonical source remains explicitly reconstructed; exact source-to-DLL provenance is not closed.
+The 32 legacy PowerShell destination/strictness warnings remain visible for later migration, but the newly implemented foundation has zero blocking errors and passes its executable PS5.1 tests.
+
+[UPLOAD_REQUIRED]
+count=1
+file=KiwiValidation\KiwiCodexConsolidatedReport_v44_55_18_2.txt
+No individual code file, audit JSON, Unity log, CSV, or MP4 is required for the normal-chat handoff at this stage.

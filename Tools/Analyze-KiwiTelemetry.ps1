@@ -11,7 +11,7 @@ param(
     [string]$OutputPath
 )
 
-Set-StrictMode -Version Latest
+Set-StrictMode -Version 2.0
 $ErrorActionPreference = 'Stop'
 $invariant = [Globalization.CultureInfo]::InvariantCulture
 
@@ -39,7 +39,7 @@ function Get-NumericValues([object[]]$Rows, [string]$Column) {
         $value = Convert-ToFiniteDouble $property.Value
         if ($null -ne $value) { $values.Add($value) }
     }
-    @($values)
+    $values.ToArray()
 }
 
 function Get-PositiveNumericValues([object[]]$Rows, [string]$Column) {
@@ -265,7 +265,7 @@ if ($caseResult.mode -eq 'ZEROCOPY') {
             $advantage.Add((($sentisTicks - $ortTicks) * 1000.0) / [Diagnostics.Stopwatch]::Frequency)
         }
     }
-    $advantageValues = @($advantage)
+    $advantageValues = $advantage.ToArray()
     $metrics['ort.advantageObservedMs'] = New-Metric 'ms' $advantageValues (Get-Statistics $advantageValues) $ortSha @('sentisArrivalHostTicks', 'ortObservedHostTicks') 'hostTicksDerived=(sentisArrivalHostTicks-ortObservedHostTicks)*1000/Stopwatch.Frequency; CSV ortMinusSentisObservedMs intentionally ignored'
 }
 
@@ -306,7 +306,7 @@ $analysis = [ordered]@{
     trim = [ordered]@{ startSeconds = [double]$thresholds.execution.analysisTrimStartSeconds; endSeconds = [double]$thresholds.execution.analysisTrimEndSeconds }
     sourceRowCounts = [ordered]@{ frameComparison = $frameRowsAll.Count; frameComparisonTrimmed = $frameRows.Count; gpu = $gpuRows.Count }
     metrics = $metrics
-    evaluations = @($evaluations)
+    evaluations = $evaluations.ToArray()
 }
 $analysis | ConvertTo-Json -Depth 100 | Set-Content -LiteralPath $OutputPath -Encoding utf8NoBOM
 Write-Output $OutputPath

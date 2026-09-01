@@ -12,7 +12,7 @@ param(
     [string]$FfprobePath = 'D:\KiwiAvatarSystem\Tools\ffmpeg\bin\ffprobe.exe'
 )
 
-Set-StrictMode -Version Latest
+Set-StrictMode -Version 2.0
 $ErrorActionPreference = 'Stop'
 
 function Get-Sha256([string]$Path) {
@@ -108,7 +108,7 @@ foreach ($artifact in @($caseResult.artifacts | Where-Object { $_.type -notin @(
 }
 Add-LocalArtifact $artifactList 'VIDEO_PROBE_JSON' $probePath ([string]$caseResult.token)
 Add-LocalArtifact $artifactList 'VIDEO_FRAME_INDEX_CSV' $frameIndexPath ([string]$caseResult.token)
-$caseResult.artifacts = @($artifactList)
+$caseResult.artifacts = $artifactList.ToArray()
 $caseResult | ConvertTo-Json -Depth 100 | Set-Content -LiteralPath $CaseResultPath -Encoding utf8NoBOM
 
 Write-Output $probePath

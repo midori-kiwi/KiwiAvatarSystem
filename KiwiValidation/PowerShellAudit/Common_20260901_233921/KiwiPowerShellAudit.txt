@@ -1,0 +1,102 @@
+KiwiAvatarSystem Common PowerShell 5.1 Audit
+contract=KIWI_V44_55_18_2_COMMON_POWERSHELL_51_VALIDATOR
+status=FAIL
+powershell=5.1.26100.9168|edition=Desktop|authoritativePs51Host=1
+scriptCount=9
+errorCount=20
+warningCount=32
+infoCount=22
+
+[FILES]
+path=Tools\Analyze-KiwiTelemetry.ps1|sha256=9F2B676CDBD5BC6E15AF58F757A8A13BA1F32823318DA136FFDC498CA05FD147|parseErrors=0|strictMode=0|errorPreference=1|writeCommands=1
+path=Tools\Invoke-KiwiStandaloneCase.ps1|sha256=339E2FD65868F7A3FBB20B05BE7431E5040D49529543128BA4F5F00108C5E0B3|parseErrors=0|strictMode=0|errorPreference=1|writeCommands=5
+path=Tools\KiwiPowerShell\KiwiPsCompat.psm1|sha256=AA72F60B45CD2041E3D970A86FB5679A9E33098648CEAB7354C236D5BD7DDE89|parseErrors=0|strictMode=1|errorPreference=1|writeCommands=0
+path=Tools\Run-Kiwi-FullValidation.ps1|sha256=D38A1351952358B3B1A29389F0B0ED77A69A1652713D36CCC651C207BF53FA89|parseErrors=0|strictMode=0|errorPreference=1|writeCommands=9
+path=Tools\Set-KiwiVideoReview.ps1|sha256=77909CBD6897481414F0AC84A27982A3924968631F57DE0C2C20D47A68CFDF59|parseErrors=0|strictMode=0|errorPreference=1|writeCommands=5
+path=Tools\Set-MediaPipePackage.ps1|sha256=3DA8DD5270A4503C40806991CFC1DE34715F810C235BC7A8C19DE521E994E60F|parseErrors=0|strictMode=0|errorPreference=1|writeCommands=1
+path=Tools\Test-KiwiArtifactCompleteness.ps1|sha256=45D82F1640EFEDDC1CCE6536D2BC642D42BFAE1AB306F95CC81E3C56BFEE0C30|parseErrors=0|strictMode=0|errorPreference=1|writeCommands=1
+path=Tools\Test-KiwiVideo.ps1|sha256=0FEA0537D15CC22ED98BFEBD03540E56E84086A28EECFA32DA9DDF5D7C4051E7|parseErrors=0|strictMode=0|errorPreference=1|writeCommands=3
+path=Installer\Validate-KiwiCommon.ps1|sha256=576A853B2A24E4E62A661455B26E4C1FF29FFA6D8D983DDD7629A2268525B62D|parseErrors=0|strictMode=1|errorPreference=1|writeCommands=0
+
+[FINDINGS]
+severity=WARN|code=REQUIRED_STRICT_MODE|file=Tools\Analyze-KiwiTelemetry.ps1|line=1|message=Set-StrictMode -Version 2.0 is missing.
+severity=ERROR|code=GENERIC_LIST_ARRAY_COERCION|file=Tools\Analyze-KiwiTelemetry.ps1|line=42|message=Use $values.ToArray() instead of @($values).
+severity=ERROR|code=GENERIC_LIST_ARRAY_COERCION|file=Tools\Analyze-KiwiTelemetry.ps1|line=268|message=Use $advantage.ToArray() instead of @($advantage).
+severity=ERROR|code=GENERIC_LIST_ARRAY_COERCION|file=Tools\Analyze-KiwiTelemetry.ps1|line=309|message=Use $evaluations.ToArray() instead of @($evaluations).
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Analyze-KiwiTelemetry.ps1|line=311|message=set-content destination could not be resolved statically.
+severity=WARN|code=REQUIRED_STRICT_MODE|file=Tools\Invoke-KiwiStandaloneCase.ps1|line=1|message=Set-StrictMode -Version 2.0 is missing.
+severity=ERROR|code=GENERIC_LIST_ARRAY_COERCION|file=Tools\Invoke-KiwiStandaloneCase.ps1|line=388|message=Use $artifacts.ToArray() instead of @($artifacts).
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Invoke-KiwiStandaloneCase.ps1|line=71|message=new-item destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Invoke-KiwiStandaloneCase.ps1|line=72|message=copy-item destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Invoke-KiwiStandaloneCase.ps1|line=116|message=new-item destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Invoke-KiwiStandaloneCase.ps1|line=293|message=set-content destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Invoke-KiwiStandaloneCase.ps1|line=396|message=set-content destination could not be resolved statically.
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=211|message=[System.IO.Directory]::CreateDirectory(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=227|message=[System.IO.File]::WriteAllText(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=230|message=[System.IO.File]::Replace(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=232|message=[System.IO.File]::Delete(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=236|message=[System.IO.File]::Move(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=241|message=[System.IO.File]::Delete(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=248|message=[System.IO.File]::Move(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=276|message=[System.IO.Directory]::CreateDirectory(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=284|message=[System.IO.Directory]::CreateDirectory(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=585|message=[System.IO.Directory]::CreateDirectory(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=690|message=[System.IO.Directory]::CreateDirectory(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=694|message=[System.IO.Directory]::CreateDirectory(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=704|message=[System.IO.File]::Copy(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=708|message=[System.IO.File]::Copy(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=717|message=[System.IO.File]::Copy(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=720|message=[System.IO.File]::Delete(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=753|message=[System.IO.File]::Copy(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=760|message=[System.IO.File]::Delete(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=764|message=[System.IO.File]::Delete(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=782|message=[System.IO.File]::Delete(
+severity=WARN|code=REQUIRED_STRICT_MODE|file=Tools\Run-Kiwi-FullValidation.ps1|line=1|message=Set-StrictMode -Version 2.0 is missing.
+severity=ERROR|code=GENERIC_LIST_ARRAY_COERCION|file=Tools\Run-Kiwi-FullValidation.ps1|line=180|message=Use $transactionTargets.ToArray() instead of @($transactionTargets).
+severity=ERROR|code=GENERIC_LIST_ARRAY_COERCION|file=Tools\Run-Kiwi-FullValidation.ps1|line=435|message=Use $allArtifacts.ToArray() instead of @($allArtifacts).
+severity=ERROR|code=GENERIC_LIST_ARRAY_COERCION|file=Tools\Run-Kiwi-FullValidation.ps1|line=437|message=Use $allIssues.ToArray() instead of @($allIssues).
+severity=ERROR|code=GENERIC_LIST_ARRAY_COERCION|file=Tools\Run-Kiwi-FullValidation.ps1|line=435|message=Use $globalGates.ToArray() instead of @($globalGates).
+severity=ERROR|code=GENERIC_LIST_ARRAY_COERCION|file=Tools\Run-Kiwi-FullValidation.ps1|line=433|message=Use $caseReports.ToArray() instead of @($caseReports).
+severity=ERROR|code=GENERIC_LIST_ARRAY_COERCION|file=Tools\Run-Kiwi-FullValidation.ps1|line=342|message=Use $caseGates.ToArray() instead of @($caseGates).
+severity=ERROR|code=GENERIC_LIST_ARRAY_COERCION|file=Tools\Run-Kiwi-FullValidation.ps1|line=343|message=Use $caseIssues.ToArray() instead of @($caseIssues).
+severity=ERROR|code=GENERIC_LIST_ARRAY_COERCION|file=Tools\Run-Kiwi-FullValidation.ps1|line=434|message=Use $relativeEvaluations.ToArray() instead of @($relativeEvaluations).
+severity=ERROR|code=GENERIC_LIST_ARRAY_COERCION|file=Tools\Run-Kiwi-FullValidation.ps1|line=436|message=Use $visualReviewCases.ToArray() instead of @($visualReviewCases).
+severity=ERROR|code=GENERIC_LIST_ARRAY_COERCION|file=Tools\Run-Kiwi-FullValidation.ps1|line=415|message=Use $blockingReasons.ToArray() instead of @($blockingReasons).
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Run-Kiwi-FullValidation.ps1|line=23|message=set-content destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Run-Kiwi-FullValidation.ps1|line=24|message=move-item destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Run-Kiwi-FullValidation.ps1|line=122|message=new-item destination could not be resolved statically.
+severity=WARN|code=WRITE_TARGET_OUTSIDE_ALLOWLIST|file=Tools\Run-Kiwi-FullValidation.ps1|line=138|message=copy-item target is outside the standard write allowlist. Hint=KiwiValidationThresholds.json
+severity=WARN|code=WRITE_TARGET_OUTSIDE_ALLOWLIST|file=Tools\Run-Kiwi-FullValidation.ps1|line=139|message=copy-item target is outside the standard write allowlist. Hint=KiwiValidationReport.schema.json
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Run-Kiwi-FullValidation.ps1|line=173|message=copy-item destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Run-Kiwi-FullValidation.ps1|line=209|message=copy-item destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Run-Kiwi-FullValidation.ps1|line=445|message=move-item destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Run-Kiwi-FullValidation.ps1|line=461|message=set-content destination could not be resolved statically.
+severity=WARN|code=REQUIRED_STRICT_MODE|file=Tools\Set-KiwiVideoReview.ps1|line=1|message=Set-StrictMode -Version 2.0 is missing.
+severity=ERROR|code=GENERIC_LIST_ARRAY_COERCION|file=Tools\Set-KiwiVideoReview.ps1|line=86|message=Use $blocking.ToArray() instead of @($blocking).
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Set-KiwiVideoReview.ps1|line=49|message=set-content destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Set-KiwiVideoReview.ps1|line=91|message=set-content destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Set-KiwiVideoReview.ps1|line=96|message=move-item destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Set-KiwiVideoReview.ps1|line=112|message=set-content destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Set-KiwiVideoReview.ps1|line=113|message=move-item destination could not be resolved statically.
+severity=WARN|code=REQUIRED_STRICT_MODE|file=Tools\Set-MediaPipePackage.ps1|line=1|message=Set-StrictMode -Version 2.0 is missing.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Set-MediaPipePackage.ps1|line=64|message=remove-item destination could not be resolved statically.
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\Set-MediaPipePackage.ps1|line=61|message=[System.IO.File]::WriteAllText(
+severity=WARN|code=REQUIRED_STRICT_MODE|file=Tools\Test-KiwiArtifactCompleteness.ps1|line=1|message=Set-StrictMode -Version 2.0 is missing.
+severity=ERROR|code=GENERIC_LIST_ARRAY_COERCION|file=Tools\Test-KiwiArtifactCompleteness.ps1|line=168|message=Use $checks.ToArray() instead of @($checks).
+severity=ERROR|code=GENERIC_LIST_ARRAY_COERCION|file=Tools\Test-KiwiArtifactCompleteness.ps1|line=169|message=Use $issues.ToArray() instead of @($issues).
+severity=ERROR|code=GENERIC_LIST_ARRAY_COERCION|file=Tools\Test-KiwiArtifactCompleteness.ps1|line=60|message=Use $evidence.ToArray() instead of @($evidence).
+severity=ERROR|code=GENERIC_LIST_ARRAY_COERCION|file=Tools\Test-KiwiArtifactCompleteness.ps1|line=125|message=Use $fatalHits.ToArray() instead of @($fatalHits).
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Test-KiwiArtifactCompleteness.ps1|line=171|message=set-content destination could not be resolved statically.
+severity=WARN|code=REQUIRED_STRICT_MODE|file=Tools\Test-KiwiVideo.ps1|line=1|message=Set-StrictMode -Version 2.0 is missing.
+severity=ERROR|code=GENERIC_LIST_ARRAY_COERCION|file=Tools\Test-KiwiVideo.ps1|line=111|message=Use $artifactList.ToArray() instead of @($artifactList).
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Test-KiwiVideo.ps1|line=72|message=export-csv destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Test-KiwiVideo.ps1|line=103|message=set-content destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Test-KiwiVideo.ps1|line=112|message=set-content destination could not be resolved statically.
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Installer\Validate-KiwiCommon.ps1|line=590|message=[System.IO.Directory]::CreateDirectory(
+
+[PRODUCTION_HASHES]
+path=Assets\KiwiAvatarSystem\Runtime\Camera\KiwiNativeCameraInterop.cs|sha256=AC473ADBADE5EDC89726211ECAF03D040B5CC00FCA39BEA4A0D16195FA53E8B5
+path=Assets\Plugins\x86_64\KiwiNativeCamera.dll|sha256=82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+path=Assets\Script\FaceLandmarkerRunner.cs|sha256=6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93
+path=Assets\Script\KiwiInferenceFaceTracker.cs|sha256=52C046EE44B41A4FF50B85AEF503BC29DD31B57EAF58C0D160CCC33C5D4B7695
+path=Native\KiwiNativeCamera\Source\KiwiNativeCameraPlugin.cpp|sha256=636D76251F9CB3BB785F4497D3D0722033FC0CE36CB4A574B65EDA58B5ABE32A

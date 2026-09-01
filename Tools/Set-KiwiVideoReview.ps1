@@ -15,7 +15,7 @@ param(
     [string[]]$Findings = @()
 )
 
-Set-StrictMode -Version Latest
+Set-StrictMode -Version 2.0
 $ErrorActionPreference = 'Stop'
 
 $caseResult = Get-Content -LiteralPath $CaseResultPath -Raw | ConvertFrom-Json -Depth 100
@@ -83,7 +83,7 @@ if (Test-Path -LiteralPath $reportPath -PathType Leaf) {
         $blocking.Add([string]$reason)
     }
     if ($visualStatus -ne 'PASS') { $blocking.Add("visual.review: $visualStatus") }
-    $report.blockingReasons = @($blocking)
+    $report.blockingReasons = $blocking.ToArray()
     $report.finalVerdict = if ($report.automatedVerdict -eq 'GO' -and $visualStatus -eq 'PASS') { 'GO' } else { 'NO_GO' }
     $report.completedUtc = [DateTime]::UtcNow.ToString('O')
 

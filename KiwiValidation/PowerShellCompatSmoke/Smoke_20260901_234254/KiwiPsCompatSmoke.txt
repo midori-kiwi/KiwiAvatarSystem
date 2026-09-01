@@ -1,0 +1,8 @@
+Kiwi PowerShell 5.1 Compatibility Smoke Test
+status=PASS
+powershell=5.1.26100.9168|edition=Desktop
+test=safeTextReadWrite|status=PASS
+test=pathBoundary|status=PASS
+test=transactionCopyRollbackCommit|status=PASS
+test=subprocessExitLogAndProtectedHashes|status=PASS
+test=nativeBuildToolDiscovery|status=PASS

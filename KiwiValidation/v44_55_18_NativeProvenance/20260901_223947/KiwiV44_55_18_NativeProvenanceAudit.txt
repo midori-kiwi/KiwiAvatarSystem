@@ -1,0 +1,58 @@
+﻿KiwiAvatarSystem v44.55.18 Native Provenance Closure Audit
+contract=KIWI_V44_55_18_NATIVE_PROVENANCE_CLOSURE_AUDIT
+generated=2026-09-01T22:39:48.8393970+09:00
+projectRoot=D:\KiwiAvatarSystem
+writesToAssets=0
+writesToNative=0
+productionDllReplacement=0
+closureStatus=NOT_CLOSED_RECONSTRUCTED_SOURCE
+
+[PRODUCTION]
+trackerSha256=52C046EE44B41A4FF50B85AEF503BC29DD31B57EAF58C0D160CCC33C5D4B7695
+runnerSha256=6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93
+interopSha256=AC473ADBADE5EDC89726211ECAF03D040B5CC00FCA39BEA4A0D16195FA53E8B5
+nativeSourceSha256=636D76251F9CB3BB785F4497D3D0722033FC0CE36CB4A574B65EDA58B5ABE32A
+nativeDllSha256=82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+nativeDllLength=80896
+architectureX64=1
+
+[SOURCE_RISK]
+reconstructedMarkerCount=2
+sampleAddRefCount=0
+unityD3D12QueueWaitCount=0
+updateExternalTextureCount=0
+
+[ABI]
+dllImportCount=78
+nativeExportCount=78
+missingExportCount=0
+extraExportCount=0
+abiParity=1
+
+[TOOLS]
+dumpbin=C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\Hostx64\x64\dumpbin.exe
+msbuild=C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe
+cl=C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\Hostx64\x64\cl.exe
+link=C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\Hostx64\x64\link.exe
+
+[BUILD_CONFIGURATION]
+vcxprojCandidateCount=0
+isolatedRebuildReady=0
+
+[HISTORICAL_EXACT_DLL]
+exactCopyCount=1
+path=Builds\v44_55_12D3DFixedPointSubtexelAudit\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\Plugins\x86_64\KiwiNativeCamera.dll|sha256=82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5|length=80896
+
+[EVIDENCE_HITS]
+count=5
+path=KiwiValidation\KiwiV44_55_14_ProductionCpuInputProof.txt|sourceShaMention=1|dllShaMention=1
+path=KiwiValidation\KiwiV44_55_14_SourceEvidence.txt|sourceShaMention=1|dllShaMention=1
+path=KiwiValidation\v44_55_13_critical_hashes.txt|sourceShaMention=1|dllShaMention=0
+path=KiwiValidation\v44_55_14_critical_hashes.txt|sourceShaMention=1|dllShaMention=0
+path=KiwiValidation\KiwiV44_55_14_SourceEvidence\KiwiV44_55_14_SourceEvidence.txt|sourceShaMention=1|dllShaMention=1
+
+[DECISION]
+Exact source->config->artifact->Production DLL provenance is CLOSED only by an isolated rebuild whose candidate DLL SHA256 exactly equals the Production DLL SHA256.
+ABI/export parity alone is NOT provenance closure.
+A reconstructed-source marker keeps the current chain untrusted until the rebuild evidence is resolved.
+No Production file was modified.

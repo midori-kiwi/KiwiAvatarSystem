@@ -11,7 +11,7 @@ param(
     [string]$OutputPath
 )
 
-Set-StrictMode -Version Latest
+Set-StrictMode -Version 2.0
 $ErrorActionPreference = 'Stop'
 
 function Get-Sha256([string]$Path) {
@@ -57,7 +57,7 @@ foreach ($type in $requiredTypes) {
         status = if ($passed) { 'PASS' } else { 'FAIL' }
         expected = 'exactly one existing, hash-matched, token-matched artifact'
         actual = $evidence -join '; '
-        evidence = @($evidence)
+        evidence = $evidence.ToArray()
     })
 }
 
@@ -122,7 +122,7 @@ if ($null -ne $logArtifact) {
         status = if ($logPassed) { 'PASS' } else { 'FAIL' }
         expected = 'exact ready/completion markers and zero fatal patterns'
         actual = "ready=$exactReady;complete=$exactComplete;fatal=$($fatalHits.Count)"
-        evidence = @([string]$logArtifact.path) + @($fatalHits)
+        evidence = @([string]$logArtifact.path) + $fatalHits.ToArray()
     })
 
     foreach ($known in @($thresholds.logRules.knownIssues)) {
@@ -165,8 +165,8 @@ $result = [ordered]@{
     token = [string]$caseResult.token
     status = if (@($checks | Where-Object status -eq 'FAIL').Count -eq 0) { 'PASS' } else { 'FAIL' }
     checkedUtc = [DateTime]::UtcNow.ToString('O')
-    checks = @($checks)
-    issues = @($issues)
+    checks = $checks.ToArray()
+    issues = $issues.ToArray()
 }
 $result | ConvertTo-Json -Depth 100 | Set-Content -LiteralPath $OutputPath -Encoding utf8NoBOM
 Write-Output $OutputPath

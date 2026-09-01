@@ -1,0 +1,84 @@
+KiwiAvatarSystem Common PowerShell 5.1 Audit
+contract=KIWI_V44_55_18_2_COMMON_POWERSHELL_51_VALIDATOR
+status=WARN
+powershell=5.1.26100.9168|edition=Desktop|authoritativePs51Host=1
+scriptCount=10
+errorCount=0
+warningCount=32
+infoCount=23
+
+[FILES]
+path=Tools\Analyze-KiwiTelemetry.ps1|sha256=CE97E2539DF1440ECFBD76AAD81D8987B49466052FD4CC7947138F9F093431DE|parseErrors=0|strictMode=1|errorPreference=1|writeCommands=1
+path=Tools\Invoke-KiwiStandaloneCase.ps1|sha256=E2EC7DAF665CF1B028879269FDCB6B635A26C836E4D50D0628056AB69A4B196F|parseErrors=0|strictMode=1|errorPreference=1|writeCommands=5
+path=Tools\KiwiPowerShell\KiwiPsCompat.psm1|sha256=AA72F60B45CD2041E3D970A86FB5679A9E33098648CEAB7354C236D5BD7DDE89|parseErrors=0|strictMode=1|errorPreference=1|writeCommands=0
+path=Tools\Run-Kiwi-FullValidation.ps1|sha256=3CF6081AB4711F147C6F5A81C5633B0012A97CA6D823E28F9372E7A7106CB25D|parseErrors=0|strictMode=1|errorPreference=1|writeCommands=9
+path=Tools\Set-KiwiVideoReview.ps1|sha256=B04E8634B598EDB05286BD837907A326C457780BC5B7889A9858454058FB930B|parseErrors=0|strictMode=1|errorPreference=1|writeCommands=5
+path=Tools\Set-MediaPipePackage.ps1|sha256=55F2FA7B40E9C49EC977C0853669616A77335520DDAF77E675ABE678A608C5D4|parseErrors=0|strictMode=1|errorPreference=1|writeCommands=1
+path=Tools\Test-KiwiArtifactCompleteness.ps1|sha256=7C00E0A602EFA6F6EC05EA8E3C0F7834D588DC59200E5900D5E41BE13B06BFFD|parseErrors=0|strictMode=1|errorPreference=1|writeCommands=1
+path=Tools\Test-KiwiVideo.ps1|sha256=AAAA777536771E64AE6B9C436864AAFC15A99D1D7491807BE1499AA5B5DD3AE4|parseErrors=0|strictMode=1|errorPreference=1|writeCommands=3
+path=Installer\Validate-KiwiCommon.ps1|sha256=B847B531BC112145C77136377F563AE370E427131B1D3DDFB3866D343B756F6F|parseErrors=0|strictMode=1|errorPreference=1|writeCommands=0
+path=Native\KiwiNativeCamera\BuildProduction_v44_43.ps1|sha256=48CF3B71EC59759B193B1F335B79E0DB570765CC1516BCDD724A1E32B6971C8D|parseErrors=0|strictMode=0|errorPreference=1|writeCommands=6
+
+[FINDINGS]
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Analyze-KiwiTelemetry.ps1|line=311|message=set-content destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Invoke-KiwiStandaloneCase.ps1|line=71|message=new-item destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Invoke-KiwiStandaloneCase.ps1|line=72|message=copy-item destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Invoke-KiwiStandaloneCase.ps1|line=116|message=new-item destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Invoke-KiwiStandaloneCase.ps1|line=293|message=set-content destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Invoke-KiwiStandaloneCase.ps1|line=396|message=set-content destination could not be resolved statically.
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=211|message=[System.IO.Directory]::CreateDirectory(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=227|message=[System.IO.File]::WriteAllText(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=230|message=[System.IO.File]::Replace(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=232|message=[System.IO.File]::Delete(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=236|message=[System.IO.File]::Move(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=241|message=[System.IO.File]::Delete(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=248|message=[System.IO.File]::Move(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=276|message=[System.IO.Directory]::CreateDirectory(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=284|message=[System.IO.Directory]::CreateDirectory(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=585|message=[System.IO.Directory]::CreateDirectory(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=690|message=[System.IO.Directory]::CreateDirectory(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=694|message=[System.IO.Directory]::CreateDirectory(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=704|message=[System.IO.File]::Copy(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=708|message=[System.IO.File]::Copy(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=717|message=[System.IO.File]::Copy(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=720|message=[System.IO.File]::Delete(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=753|message=[System.IO.File]::Copy(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=760|message=[System.IO.File]::Delete(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=764|message=[System.IO.File]::Delete(
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\KiwiPowerShell\KiwiPsCompat.psm1|line=782|message=[System.IO.File]::Delete(
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Run-Kiwi-FullValidation.ps1|line=23|message=set-content destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Run-Kiwi-FullValidation.ps1|line=24|message=move-item destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Run-Kiwi-FullValidation.ps1|line=122|message=new-item destination could not be resolved statically.
+severity=WARN|code=WRITE_TARGET_OUTSIDE_ALLOWLIST|file=Tools\Run-Kiwi-FullValidation.ps1|line=138|message=copy-item target is outside the standard write allowlist. Hint=KiwiValidationThresholds.json
+severity=WARN|code=WRITE_TARGET_OUTSIDE_ALLOWLIST|file=Tools\Run-Kiwi-FullValidation.ps1|line=139|message=copy-item target is outside the standard write allowlist. Hint=KiwiValidationReport.schema.json
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Run-Kiwi-FullValidation.ps1|line=173|message=copy-item destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Run-Kiwi-FullValidation.ps1|line=209|message=copy-item destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Run-Kiwi-FullValidation.ps1|line=445|message=move-item destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Run-Kiwi-FullValidation.ps1|line=461|message=set-content destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Set-KiwiVideoReview.ps1|line=49|message=set-content destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Set-KiwiVideoReview.ps1|line=91|message=set-content destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Set-KiwiVideoReview.ps1|line=96|message=move-item destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Set-KiwiVideoReview.ps1|line=112|message=set-content destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Set-KiwiVideoReview.ps1|line=113|message=move-item destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Set-MediaPipePackage.ps1|line=65|message=remove-item destination could not be resolved statically.
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Tools\Set-MediaPipePackage.ps1|line=62|message=[System.IO.File]::WriteAllText(
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Test-KiwiArtifactCompleteness.ps1|line=171|message=set-content destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Test-KiwiVideo.ps1|line=72|message=export-csv destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Test-KiwiVideo.ps1|line=103|message=set-content destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Tools\Test-KiwiVideo.ps1|line=112|message=set-content destination could not be resolved statically.
+severity=INFO|code=DOTNET_FILE_MUTATION_REVIEWED|file=Installer\Validate-KiwiCommon.ps1|line=590|message=[System.IO.Directory]::CreateDirectory(
+severity=WARN|code=REQUIRED_STRICT_MODE|file=Native\KiwiNativeCamera\BuildProduction_v44_43.ps1|line=1|message=Set-StrictMode -Version 2.0 is missing.
+severity=INFO|code=PLACEHOLDER_GUARDED|file=Native\KiwiNativeCamera\BuildProduction_v44_43.ps1|line=6976|message=Template placeholder tokens found: __BUILDROOT__,__EXPORTS__,__HLSL__,__IMPORTS__,__PROBEOUT__,__PROBESOURCE__,__SOURCE__,__UNITYHEADERS__,__VSDEVCMD__
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Native\KiwiNativeCamera\BuildProduction_v44_43.ps1|line=273|message=remove-item destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Native\KiwiNativeCamera\BuildProduction_v44_43.ps1|line=279|message=new-item destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Native\KiwiNativeCamera\BuildProduction_v44_43.ps1|line=378|message=set-content destination could not be resolved statically.
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Native\KiwiNativeCamera\BuildProduction_v44_43.ps1|line=492|message=new-item destination could not be resolved statically.
+severity=WARN|code=KNOWN_LEGACY_PRODUCTION_INSTALLER|file=Native\KiwiNativeCamera\BuildProduction_v44_43.ps1|line=498|message=copy-item can target Assets/Plugins. Hint=Assets\Plugins\x86_64\KiwiNativeCamera.dll
+severity=WARN|code=DYNAMIC_WRITE_TARGET|file=Native\KiwiNativeCamera\BuildProduction_v44_43.ps1|line=517|message=set-content destination could not be resolved statically.
+
+[PRODUCTION_HASHES]
+path=Assets\KiwiAvatarSystem\Runtime\Camera\KiwiNativeCameraInterop.cs|sha256=AC473ADBADE5EDC89726211ECAF03D040B5CC00FCA39BEA4A0D16195FA53E8B5
+path=Assets\Plugins\x86_64\KiwiNativeCamera.dll|sha256=82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+path=Assets\Script\FaceLandmarkerRunner.cs|sha256=6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93
+path=Assets\Script\KiwiInferenceFaceTracker.cs|sha256=52C046EE44B41A4FF50B85AEF503BC29DD31B57EAF58C0D160CCC33C5D4B7695
+path=Native\KiwiNativeCamera\Source\KiwiNativeCameraPlugin.cpp|sha256=636D76251F9CB3BB785F4497D3D0722033FC0CE36CB4A574B65EDA58B5ABE32A

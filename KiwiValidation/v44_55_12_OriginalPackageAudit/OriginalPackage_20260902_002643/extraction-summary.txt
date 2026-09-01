@@ -1,0 +1,10 @@
+status=PASS
+zip=D:\Users\main\Downloads\KiwiAvatarSystem_v44_55_12_D3DFixedPointSubtexelSamplingParityAudit.zip
+zipSha256=06666AF4E0FDA1013EC4E9E865C2FC97BE4CC8730F9F1CEACE47EB8F973D0DF2
+zipLength=267929
+entryCount=27
+fileCount=18
+extractRoot=D:\KiwiAvatarSystem\KiwiValidation\v44_55_12_OriginalPackageAudit\OriginalPackage_20260902_002643\Extracted
+productionChanged=0
+nativeChanged=0
+rebuildLaunched=0

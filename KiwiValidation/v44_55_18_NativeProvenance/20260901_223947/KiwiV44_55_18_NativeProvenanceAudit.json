@@ -1,0 +1,114 @@
+﻿{
+    "contract":  "KIWI_V44_55_18_NATIVE_PROVENANCE_CLOSURE_AUDIT",
+    "generated":  "2026-09-01T22:39:48.8393970+09:00",
+    "projectRoot":  "D:\\KiwiAvatarSystem",
+    "writesToAssets":  0,
+    "writesToNative":  0,
+    "productionDllReplacement":  0,
+    "production":  {
+                       "trackerSha256":  "52C046EE44B41A4FF50B85AEF503BC29DD31B57EAF58C0D160CCC33C5D4B7695",
+                       "runnerSha256":  "6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93",
+                       "interopSha256":  "AC473ADBADE5EDC89726211ECAF03D040B5CC00FCA39BEA4A0D16195FA53E8B5",
+                       "nativeSourceSha256":  "636D76251F9CB3BB785F4497D3D0722033FC0CE36CB4A574B65EDA58B5ABE32A",
+                       "nativeDllSha256":  "82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5",
+                       "nativeDllLength":  80896,
+                       "architectureX64":  1
+                   },
+    "sourceRisk":  {
+                       "reconstructedMarkerCount":  2,
+                       "sampleAddRefCount":  0,
+                       "unityD3D12QueueWaitCount":  0,
+                       "updateExternalTextureCount":  0
+                   },
+    "abi":  {
+                "dllImportCount":  78,
+                "nativeExportCount":  78,
+                "missingExports":  [
+
+                                   ],
+                "extraExports":  [
+
+                                 ],
+                "parity":  1
+            },
+    "tools":  {
+                  "dumpbin":  {
+                                  "path":  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\dumpbin.exe",
+                                  "fileVersion":  "14.44.35228.0",
+                                  "productVersion":  "14.44.35228.0",
+                                  "sha256":  "12A1CD87238BD66DFDB788B4FCDCB91CE4B3F81236AAB12A7A29E5AE1D85AF50"
+                              },
+                  "msbuild":  {
+                                  "path":  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe",
+                                  "fileVersion":  "17.14.51.32402",
+                                  "productVersion":  "17.14.51+25f168cee22fc5419a38fc8d2ffb6a8c0381b7a0",
+                                  "sha256":  "BA9E8C83C25F4CA9AB1F66290BE2CE429D8563EFB99B9EB699487D0D5AEF8DB7"
+                              },
+                  "cl":  {
+                             "path":  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+                             "fileVersion":  "19.44.35228.0",
+                             "productVersion":  "14.44.35228.0",
+                             "sha256":  "88C8344236A27A6E727E0A8EDC49AAA2690BDC7A9464B9D18CC7ABE70A9F1C0D"
+                         },
+                  "link":  {
+                               "path":  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\link.exe",
+                               "fileVersion":  "14.44.35228.0",
+                               "productVersion":  "14.44.35228.0",
+                               "sha256":  "CA11E6C45DEBD34BF652DFE984C5360A531A005ED78BF72852330C9C2590CF0D"
+                           }
+              },
+    "buildConfiguration":  {
+                               "candidateCount":  0,
+                               "candidate":  null,
+                               "files":  [
+                                             {
+                                                 "path":  "Native\\KiwiNativeCamera\\Build\\x86_64\\build.cmd",
+                                                 "sha256":  "0B6D59C1BCD0C54656CD5C92678CF000F49E230ACB793F016BB6CD625CFC9D94",
+                                                 "length":  1514
+                                             },
+                                             {
+                                                 "path":  "Native\\KiwiNativeCamera\\BuildProduction_v44_43.ps1",
+                                                 "sha256":  "48CF3B71EC59759B193B1F335B79E0DB570765CC1516BCDD724A1E32B6971C8D",
+                                                 "length":  12095
+                                             }
+                                         ]
+                           },
+    "historicalExactProductionDllCopies":  [
+                                               {
+                                                   "path":  "Builds\\v44_55_12D3DFixedPointSubtexelAudit\\KiwiAvatarSystem_v44_55_12_SUBTEXEL_Data\\Plugins\\x86_64\\KiwiNativeCamera.dll",
+                                                   "sha256":  "82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5",
+                                                   "length":  80896
+                                               }
+                                           ],
+    "historicalExactProductionDllCopyCount":  1,
+    "evidenceHits":  [
+                         {
+                             "path":  "KiwiValidation\\KiwiV44_55_14_ProductionCpuInputProof.txt",
+                             "sourceShaMention":  1,
+                             "dllShaMention":  1
+                         },
+                         {
+                             "path":  "KiwiValidation\\KiwiV44_55_14_SourceEvidence.txt",
+                             "sourceShaMention":  1,
+                             "dllShaMention":  1
+                         },
+                         {
+                             "path":  "KiwiValidation\\v44_55_13_critical_hashes.txt",
+                             "sourceShaMention":  1,
+                             "dllShaMention":  0
+                         },
+                         {
+                             "path":  "KiwiValidation\\v44_55_14_critical_hashes.txt",
+                             "sourceShaMention":  1,
+                             "dllShaMention":  0
+                         },
+                         {
+                             "path":  "KiwiValidation\\KiwiV44_55_14_SourceEvidence\\KiwiV44_55_14_SourceEvidence.txt",
+                             "sourceShaMention":  1,
+                             "dllShaMention":  1
+                         }
+                     ],
+    "evidenceHitCount":  5,
+    "isolatedRebuildReady":  0,
+    "closureStatus":  "NOT_CLOSED_RECONSTRUCTED_SOURCE"
+}

@@ -1,0 +1,4 @@
+Write-Error "KIWI_EXPECTED_FAILURE"; exit 7 : KIWI_EXPECTED_FAILURE
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException
+ 

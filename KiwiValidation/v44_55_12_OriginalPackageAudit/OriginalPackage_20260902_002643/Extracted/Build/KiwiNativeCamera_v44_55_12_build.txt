@@ -1,0 +1,16 @@
+﻿KiwiAvatarSystem v44.55.12 Native Diagnostic Build
+Source: D:\Users\main\Downloads\KiwiAvatarSystem_v44_55_12_D3DFixedPointSubtexelSamplingParityAudit\Native\KiwiNativeCameraPlugin.cpp
+PluginAPI: D:\KiwiAvatarSystem\Tools\KlakSpout_v206_diag\Plugin\Unity
+ExitCode: 0
+
+STDOUT:
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.37
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+KiwiNativeCameraPlugin.cpp
+   ライブラリ D:\Users\main\Downloads\KiwiAvatarSystem_v44_55_12_D3DFixedPointSubtexelSamplingParityAudit\Build\KiwiNativeCamera.lib とオブジェクト D:\Users\main\Downloads\KiwiAvatarSystem_v44_55_12_D3DFixedPointSubtexelSamplingParityAudit\Build\KiwiNativeCamera.exp を作成中
+
+
+STDERR:
+

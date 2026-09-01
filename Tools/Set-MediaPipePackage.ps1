@@ -3,6 +3,7 @@
     [string]$MediaPipeTgz
 )
 
+Set-StrictMode -Version 2.0
 $ErrorActionPreference = "Stop"
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 $ManifestPath = Join-Path $ProjectRoot "Packages\manifest.json"
