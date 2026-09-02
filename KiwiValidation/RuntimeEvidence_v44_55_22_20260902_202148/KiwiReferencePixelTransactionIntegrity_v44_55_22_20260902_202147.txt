@@ -1,0 +1,95 @@
+KiwiAvatarSystem v44.55.22 Reference Pixel Transaction Integrity Isolation
+contract=KIWI_V44_55_22_REFERENCE_PIXEL_TRANSACTION_INTEGRITY
+status=QUIT_BEFORE_DEPENDENCY_COMPLETE
+decision=INVALID_OBSERVER
+observerOnly=1
+productionWrites=0
+nativeWrites=0
+trackingMathChange=0
+thresholdChange=0
+addedWorker=0
+addedBlit=0
+addedRenderTexture=0
+addedReadback=1
+blockingWait=0
+performanceAuthority=0
+productionInputAuthority=ACTUAL_PRODUCTION_LANE_INPUT_TENSOR
+referenceAuthority=V44_55_20_FROZEN_REFERENCE_NCHW
+mode2Authority=V44_55_20_PRESENTATION_PLUS_FINAL_UNORM8_MODE2
+largeTailThresholdLsb=4
+minimumCompletedPairs=60
+minimumAnomalousPairs=3
+
+[COUNTS]
+dependencyRecordCount=38
+completedResultCount=38
+anomalousPairCount=0
+productionMatchesReferenceCount=0
+productionMatchesMode2Count=0
+ambiguousAnomalousPairCount=0
+observerFaultCount=0
+dependencyFaultCount=0
+attachMissCount=0
+arrayFreezeMismatchCount=0
+productionInputReadbackFailureCount=0
+productionInputNonFiniteCount=0
+laneIdentityMismatchAtRequestCount=0
+laneChangedBeforeReadbackCompletionCount=0
+duplicatePairRequestCount=0
+dependencyMissingFrames=28
+
+[PRODUCTION_INPUT_VS_V20_REFERENCE]
+pairCount=38
+count=4202496
+nonFinite=0
+exactRatio=0.034376713
+meanAbsLsb=17.324105254
+rmseLsb=25.665250630
+maxAbsLsb=160.000003763
+ge1Count=3790377
+ge2Count=3533132
+ge4Count=3069655
+ge8Count=2367137
+ge16Count=1559321
+ge32Count=736715
+
+[PRODUCTION_INPUT_VS_MODE2]
+pairCount=38
+count=4202496
+nonFinite=0
+exactRatio=0.034327457
+meanAbsLsb=17.324037675
+rmseLsb=25.665662048
+maxAbsLsb=160.000003763
+ge1Count=3789867
+ge2Count=3532623
+ge4Count=3069346
+ge8Count=2367249
+ge16Count=1559386
+ge32Count=736690
+
+[V20_REFERENCE_VS_MODE2]
+pairCount=38
+count=4202496
+nonFinite=0
+exactRatio=0.950125116
+meanAbsLsb=0.050273456
+rmseLsb=0.226043853
+maxAbsLsb=3.999999762
+ge1Count=6314
+ge2Count=82
+ge4Count=0
+ge8Count=0
+ge16Count=0
+ge32Count=0
+
+[DECISION_RULE]
+INVALID_OBSERVER if dependency/source/readback/pair-array identity contract fails.
+INSUFFICIENT_DATA if completedResultCount<60 after a valid dependency run.
+INSUFFICIENT_ANOMALY_REPRODUCTION if fewer than 3 pairs reproduce REF-vs-mode2 >=4 LSB elements.
+For each anomalous pair: PROD-vs-REF ge4=0 and PROD-vs-mode2 ge4>0 => PRODUCTION_MATCHES_REFERENCE.
+For each anomalous pair: PROD-vs-mode2 ge4=0 and PROD-vs-REF ge4>0 => PRODUCTION_MATCHES_MODE2.
+REFERENCE_TRANSACTION_INVALID_CONFIRMED only if every anomalous pair matches mode2 at the >=4 LSB boundary.
+REFERENCE_TRANSACTION_VALID_CONFIRMED only if every anomalous pair matches v44.55.20 REF at the >=4 LSB boundary.
+Otherwise => MIXED_TRANSACTION.
+No semantic threshold is changed and no Production CPU backend implementation is authorized by this observer alone.

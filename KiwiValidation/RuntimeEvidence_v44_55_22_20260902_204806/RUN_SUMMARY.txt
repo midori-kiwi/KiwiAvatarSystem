@@ -1,0 +1,15 @@
+KiwiAvatarSystem v44.55.22 Runtime Evidence
+start=2026-09-02T20:47:05.2752944+09:00
+end=2026-09-02T20:48:06.5226757+09:00
+playerExitCode=0
+completeDetected=1
+performanceAuthority=0
+v44.55.20=enabled
+v44.55.21=disabled
+v44.55.22=enabled
+files:
+  C:\Users\main\AppData\LocalLow\MidoriKiwi\KiwiAvatarSystem\KiwiFrameBottleneck\KiwiReferencePixelTransactionIntegrity_v44_55_22_20260902_204731.txt
+  C:\Users\main\AppData\LocalLow\MidoriKiwi\KiwiAvatarSystem\KiwiFrameBottleneck\KiwiReferencePixelTransactionIntegrity_v44_55_22_20260902_204731.csv
+  C:\Users\main\AppData\LocalLow\MidoriKiwi\KiwiAvatarSystem\KiwiFrameBottleneck\KiwiCommonTensorBackendStageIsolation_v44_55_20_20260902_204805.txt
+  C:\Users\main\AppData\LocalLow\MidoriKiwi\KiwiAvatarSystem\KiwiFrameBottleneck\KiwiCommonTensorBackendStageIsolation_v44_55_20_20260902_204805.csv
+  C:\Users\main\AppData\LocalLow\MidoriKiwi\KiwiAvatarSystem\Player.log

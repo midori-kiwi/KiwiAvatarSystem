@@ -84,3 +84,6 @@ KiwiValidation/**/*.zip
 
 # local runtime audit workspace
 KiwiValidation/LiveCameraPixelAudit/
+
+
+KiwiValidation/ChatReport/

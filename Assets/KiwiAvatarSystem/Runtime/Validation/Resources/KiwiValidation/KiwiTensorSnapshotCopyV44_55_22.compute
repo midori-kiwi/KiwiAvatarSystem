@@ -1,0 +1,18 @@
+#pragma kernel CopyTensorSnapshot
+
+StructuredBuffer<float> _Source;
+RWStructuredBuffer<float> _Destination;
+int _Count;
+
+[numthreads(256, 1, 1)]
+void CopyTensorSnapshot(uint3 id : SV_DispatchThreadID)
+{
+    uint index = id.x;
+
+    if (index >= (uint)_Count)
+    {
+        return;
+    }
+
+    _Destination[index] = _Source[index];
+}

@@ -1,0 +1,107 @@
+KiwiAvatarSystem v44.55.22 Reference Pixel Transaction Integrity Isolation
+contract=KIWI_V44_55_22_REFERENCE_PIXEL_TRANSACTION_INTEGRITY
+status=PRODUCTION_INPUT_TRANSACTION_CONTRACT_MISMATCH
+decision=INVALID_OBSERVER
+observerOnly=1
+productionWrites=0
+nativeWrites=0
+trackingMathChange=0
+thresholdChange=0
+addedWorker=0
+addedBlit=0
+addedRenderTexture=0
+addedReadback=1
+blockingWait=0
+performanceAuthority=0
+productionInputAuthority=OBSERVER_GPU_SNAPSHOT_OF_ACTUAL_PRODUCTION_LANE_INPUT_AFTER_PENDING_OUTPUT_READY
+snapshotCopyAuthority=COMPUTE_DISPATCH_SOURCE_PRODUCTION_INPUT_DEST_OBSERVER_OWNED_COMPUTEBUFFER
+snapshotReadbackAuthority=COMMAND_BUFFER_REQUEST_ASYNC_READBACK_OF_OBSERVER_OWNED_BUFFER
+productionOutputCompletionAuthority=EXISTING_PRODUCTION_PENDING_OUTPUT_ISREADBACKREQUESTDONE
+laneIdentityValidityPoint=SNAPSHOT_SUBMISSION
+laneReuseAfterSnapshotSubmission=ALLOWED_SOURCE_ALREADY_DECOUPLED
+earlyCompletionPoller=1
+referenceAuthority=V44_55_20_FROZEN_REFERENCE_NCHW
+mode2Authority=V44_55_20_PRESENTATION_PLUS_FINAL_UNORM8_MODE2
+largeTailThresholdLsb=4
+minimumCompletedPairs=60
+minimumAnomalousPairs=3
+
+[COUNTS]
+dependencyRecordCount=3
+completedResultCount=2
+anomalousPairCount=1
+productionMatchesReferenceCount=0
+productionMatchesMode2Count=0
+ambiguousAnomalousPairCount=1
+observerFaultCount=1
+dependencyFaultCount=0
+attachMissCount=0
+arrayFreezeMismatchCount=0
+productionInputReadbackFailureCount=0
+productionInputNonFiniteCount=0
+laneIdentityMismatchAtRequestCount=0
+laneChangedBeforeReadbackCompletionCount=3
+laneChangedBeforeReadbackCompletionRole=INFORMATIONAL_AFTER_OBSERVER_GPU_SNAPSHOT
+snapshotSubmissionIdentityMismatchCount=0
+snapshotDispatchFailureCount=0
+productionOutputReadyObservationFailureCount=0
+productionParityContractMismatchCount=1
+duplicatePairRequestCount=0
+dependencyMissingFrames=29
+
+[PRODUCTION_INPUT_VS_V20_REFERENCE]
+pairCount=2
+count=221184
+nonFinite=0
+exactRatio=0.506582755
+meanAbsLsb=18.006429470
+rmseLsb=33.148804608
+maxAbsLsb=176.000004234
+ge1Count=106616
+ge2Count=104062
+ge4Count=98690
+ge8Count=87417
+ge16Count=69656
+ge32Count=52067
+
+[PRODUCTION_INPUT_VS_MODE2]
+pairCount=2
+count=221184
+nonFinite=0
+exactRatio=0.484510634
+meanAbsLsb=18.021656611
+rmseLsb=33.140216190
+maxAbsLsb=176.000004234
+ge1Count=106938
+ge2Count=104053
+ge4Count=98659
+ge8Count=87377
+ge16Count=69613
+ge32Count=52061
+
+[V20_REFERENCE_VS_MODE2]
+pairCount=2
+count=221184
+nonFinite=0
+exactRatio=0.957347729
+meanAbsLsb=0.043285228
+rmseLsb=0.211542126
+maxAbsLsb=4.999999702
+ge1Count=579
+ge2Count=19
+ge4Count=3
+ge8Count=0
+ge16Count=0
+ge32Count=0
+
+[DECISION_RULE]
+INVALID_OBSERVER if dependency/source/readback/pair-array identity contract fails.
+INVALID_OBSERVER if REF-vs-mode2 ge4=0 while Production input is ge4>0 from both; such a pair never enters aggregate/classification.
+INSUFFICIENT_DATA if completedResultCount<60 after a valid dependency run.
+INSUFFICIENT_ANOMALY_REPRODUCTION if fewer than 3 pairs reproduce REF-vs-mode2 >=4 LSB elements.
+For each anomalous pair: PROD-vs-REF ge4=0 and PROD-vs-mode2 ge4>0 => PRODUCTION_MATCHES_REFERENCE.
+For each anomalous pair: PROD-vs-mode2 ge4=0 and PROD-vs-REF ge4>0 => PRODUCTION_MATCHES_MODE2.
+REFERENCE_TRANSACTION_INVALID_CONFIRMED only if every anomalous pair matches mode2 at the >=4 LSB boundary.
+REFERENCE_TRANSACTION_VALID_CONFIRMED only if every anomalous pair matches v44.55.20 REF at the >=4 LSB boundary.
+Otherwise => MIXED_TRANSACTION.
+No semantic threshold is changed and no Production CPU backend implementation is authorized by this observer alone.
