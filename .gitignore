@@ -73,3 +73,14 @@ crashlytics-build.properties
 
 # Generic installer files
 *.msi
+
+# KiwiValidation generated artifacts
+KiwiValidation/**/*.mp4
+KiwiValidation/**/*.log
+KiwiValidation/**/*.csv
+KiwiValidation/**/*.png
+KiwiValidation/**/*.jpg
+KiwiValidation/**/*.zip
+
+# local runtime audit workspace
+KiwiValidation/LiveCameraPixelAudit/
