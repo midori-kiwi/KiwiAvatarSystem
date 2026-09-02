@@ -28,6 +28,9 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
 
     private const int LandmarkTextureSize = 384;
     private const int CsvFlushIntervalFrames = 60;
+    private const float MinPreviewWidth = 260f;
+    private const float MaxPreviewWidth = 560f;
+    private const float PanelHorizontalPadding = 8f;
 
     private static readonly CultureInfo Invariant =
         CultureInfo.InvariantCulture;
@@ -40,8 +43,8 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
     public bool drawRigidAnchors = true;
     public bool showHelp = true;
 
-    [Range(260f, 560f)]
-    public float previewWidth = 420f;
+    [Range(MinPreviewWidth, MaxPreviewWidth)]
+    public float previewWidth = MaxPreviewWidth;
 
     [Header("Frame CSV")]
     public bool recordCsvOnStart = false;
@@ -136,14 +139,20 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
                     ? liveSourceTexture
                     : matchedTexture;
 
-            float width = Mathf.Clamp(previewWidth, 260f, 560f);
+            float width = Mathf.Floor(
+                Mathf.Clamp(
+                    previewWidth,
+                    MinPreviewWidth,
+                    MaxPreviewWidth));
             float sourceAspect =
                 aspectTexture != null && aspectTexture.height > 0
                     ? aspectTexture.width / (float)aspectTexture.height
                     : 16f / 9f;
 
             float preferredPreviewHeight = Mathf.Clamp(
-                width / Mathf.Max(0.25f, sourceAspect),
+                Mathf.Round(
+                    width /
+                    Mathf.Max(0.25f, sourceAspect)),
                 150f,
                 330f);
 
@@ -900,14 +909,20 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
                 ? liveSourceTexture
                 : matchedTexture;
 
-        float width = Mathf.Clamp(previewWidth, 260f, 560f);
+        float desiredPreviewWidth = Mathf.Floor(
+            Mathf.Clamp(
+                previewWidth,
+                MinPreviewWidth,
+                MaxPreviewWidth));
         float sourceAspect =
             aspectTexture != null && aspectTexture.height > 0
                 ? aspectTexture.width / (float)aspectTexture.height
                 : 16f / 9f;
 
         float desiredPreviewHeight = Mathf.Clamp(
-            width / Mathf.Max(0.25f, sourceAspect),
+            Mathf.Round(
+                desiredPreviewWidth /
+                Mathf.Max(0.25f, sourceAspect)),
             150f,
             330f);
 
@@ -922,22 +937,54 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
             footerHeight;
 
         Rect panel = CalculateNonOverlappingPanelRect(
-            width + 8f,
+            desiredPreviewWidth +
+            PanelHorizontalPadding * 2f,
             desiredPanelHeight);
 
         // The emergency small-window fallback may narrow/shorten the panel to
-        // preserve non-overlap. Split the remaining preview budget evenly so
-        // neither observer view can cover the telemetry panel.
-        width = Mathf.Max(1f, panel.width - 8f);
+        // preserve non-overlap. Derive one final pixel-aligned preview size and
+        // use it for both the panel content width and its source-aspect height.
+        // This removes the former second 8px subtraction from the draw Rect.
+        float availablePreviewWidth = Mathf.Max(
+            1f,
+            panel.width -
+            PanelHorizontalPadding * 2f);
         float availablePreviewHeight = Mathf.Max(
             2f,
             panel.height -
             firstPreviewHeaderHeight -
             secondPreviewHeaderHeight -
             footerHeight);
-        float previewHeight = Mathf.Min(
-            desiredPreviewHeight,
+        float availablePreviewHeightPerView = Mathf.Max(
+            1f,
             availablePreviewHeight * 0.5f);
+
+        float finalPreviewWidth = Mathf.Max(
+            1f,
+            Mathf.Floor(
+                Mathf.Min(
+                    desiredPreviewWidth,
+                    availablePreviewWidth)));
+        float finalPreviewHeight = Mathf.Max(
+            1f,
+            Mathf.Round(
+                finalPreviewWidth /
+                Mathf.Max(0.25f, sourceAspect)));
+
+        if (finalPreviewHeight > availablePreviewHeightPerView)
+        {
+            finalPreviewHeight = Mathf.Max(
+                1f,
+                Mathf.Floor(
+                    availablePreviewHeightPerView));
+            finalPreviewWidth = Mathf.Max(
+                1f,
+                Mathf.Min(
+                    finalPreviewWidth,
+                    Mathf.Round(
+                        finalPreviewHeight *
+                        Mathf.Max(0.25f, sourceAspect))));
+        }
 
         Color oldColor = GUI.color;
         GUI.color = new Color(0f, 0f, 0f, 0.76f);
@@ -945,9 +992,9 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
         GUI.color = oldColor;
 
         Rect liveTitleRect = new Rect(
-            panel.x + 8f,
+            panel.x + PanelHorizontalPadding,
             panel.y + 5f,
-            width - 8f,
+            finalPreviewWidth,
             22f);
 
         GUI.Label(
@@ -956,10 +1003,10 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
             _headerStyle);
 
         Rect livePreviewRect = new Rect(
-            panel.x + 8f,
+            panel.x + PanelHorizontalPadding,
             panel.y + firstPreviewHeaderHeight,
-            width - 8f,
-            previewHeight);
+            finalPreviewWidth,
+            finalPreviewHeight);
 
         DrawLiveCameraPreview(
             livePreviewRect,
@@ -971,9 +1018,9 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
             livePreviewRect.yMax + 4f;
 
         Rect matchedTitleRect = new Rect(
-            panel.x + 8f,
+            panel.x + PanelHorizontalPadding,
             matchedTitleY,
-            width - 8f,
+            finalPreviewWidth,
             22f);
 
         GUI.Label(
@@ -984,10 +1031,10 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
             _headerStyle);
 
         Rect matchedPreviewRect = new Rect(
-            panel.x + 8f,
+            panel.x + PanelHorizontalPadding,
             matchedTitleY + secondPreviewHeaderHeight,
-            width - 8f,
-            previewHeight);
+            finalPreviewWidth,
+            finalPreviewHeight);
 
         DrawMatchedLandmarkDebugPreview(
             matchedPreviewRect,
@@ -1016,7 +1063,11 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
             (previewEpochMatched ? "MATCHED" : "WAIT");
 
         GUI.Label(
-            new Rect(panel.x + 8f, textY, width - 8f, 20f),
+            new Rect(
+                panel.x + PanelHorizontalPadding,
+                textY,
+                finalPreviewWidth,
+                20f),
             line1,
             _bodyStyle);
 
@@ -1038,7 +1089,11 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
             KiwiRuntimeGenerationContext.ProviderGeneration;
 
         GUI.Label(
-            new Rect(panel.x + 8f, textY + 19f, width - 8f, 20f),
+            new Rect(
+                panel.x + PanelHorizontalPadding,
+                textY + 19f,
+                finalPreviewWidth,
+                20f),
             line2,
             _smallStyle);
 
@@ -1053,7 +1108,11 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
             debugRootRotationStep.ToString("F2", Invariant);
 
         GUI.Label(
-            new Rect(panel.x + 8f, textY + 38f, width - 8f, 20f),
+            new Rect(
+                panel.x + PanelHorizontalPadding,
+                textY + 38f,
+                finalPreviewWidth,
+                20f),
             line3,
             _smallStyle);
 
@@ -1078,7 +1137,11 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
         }
 
         GUI.Label(
-            new Rect(panel.x + 8f, textY + 57f, width - 8f, 20f),
+            new Rect(
+                panel.x + PanelHorizontalPadding,
+                textY + 57f,
+                finalPreviewWidth,
+                20f),
             line4,
             _smallStyle);
 
@@ -1090,14 +1153,22 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
                 : "CSV off";
 
         GUI.Label(
-            new Rect(panel.x + 8f, textY + 76f, width - 8f, 20f),
+            new Rect(
+                panel.x + PanelHorizontalPadding,
+                textY + 76f,
+                finalPreviewWidth,
+                20f),
             line5,
             _smallStyle);
 
         if (showHelp)
         {
             GUI.Label(
-                new Rect(panel.x + 8f, textY + 95f, width - 8f, 20f),
+                new Rect(
+                    panel.x + PanelHorizontalPadding,
+                    textY + 95f,
+                    finalPreviewWidth,
+                    20f),
                 "LIVE = current camera | MATCHED DEBUG = semantic epoch | F8/F9 when legacy input is enabled",
                 _smallStyle);
         }
