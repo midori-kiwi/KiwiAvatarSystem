@@ -77,7 +77,8 @@ crashlytics-build.properties
 # ============================================================
 
 /ServerData/
-/[Aa]ssets/[Ss]treaming[Aa]ssets/aa*
+/[Aa]ssets/[Ss]treaming[Aa]ssets/aa.meta
+/[Aa]ssets/[Ss]treaming[Aa]ssets/aa/
 /[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/link.xml*
 /[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
 /[Aa]ssets/[Aa]ddressables_[Tt]emp*
@@ -145,11 +146,22 @@ $RECYCLE.BIN/
 # Unity installers are local machine artifacts.
 /Tools/UnityInstallers/
 
-# Research source/scripts/notes should remain trackable. Only local downloaded or
-# generated research payload directories are ignored.
+# Research notes/scripts owned by Kiwi may remain trackable at Tools/Research root.
+# Known third-party working copies are kept out of the main repository; record
+# upstream URL/commit/license and any Kiwi-derived conclusions in tracked reports.
+/Tools/Research/FaceMeshBarracuda/
+/Tools/Research/OpenSeeFace/
+/Tools/Research/sentis-samples/
 /Tools/Research/Downloads/
 /Tools/Research/Cache/
 /Tools/Research/Temp/
+
+# Local KlakSpout diagnostic working copy. This contains an embedded .git repository,
+# native build products/intermediates, and historical diagnostic binaries.
+# Keep it out of the main Kiwi repository. If its custom source delta is needed for
+# provenance, preserve a patch/source-diff plus upstream commit and artifact SHA in a
+# tracked KiwiValidation report instead of vendoring this entire workspace.
+/Tools/KlakSpout_v206_diag/
 
 # Generic installer packages generated/downloaded locally.
 *.msi
@@ -161,6 +173,11 @@ $RECYCLE.BIN/
 # ============================================================
 # KiwiValidation - generated runtime evidence only
 # ============================================================
+
+# External comparative-audit source mirrors are reproducible third-party inputs,
+# not Kiwi Production source. Keep audit reports/manifests/scripts trackable while
+# excluding the mirrored upstream repositories themselves.
+/KiwiValidation/ExternalSourceAudit_*/sources/
 
 # Keep validation source, validators, reports (.md/.txt/.json where intentional),
 # manifests, and schemas trackable. Ignore bulky/generated runtime evidence.
