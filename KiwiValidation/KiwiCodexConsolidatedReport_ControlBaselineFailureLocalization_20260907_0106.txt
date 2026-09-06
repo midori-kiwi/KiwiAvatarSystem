@@ -1,0 +1,265 @@
+KIWI AVATAR SYSTEM
+CONTROL BASELINE FACEPART FAILURE LOCALIZATION
+CONSOLIDATED REPORT
+
+REPORT_JST=2026-09-07 01:06
+TARGET=CONTROL_BASELINE_FACEPART_FAILURE_LOCALIZATION
+REPORT_SCOPE=F3再開前のcurrent CONTROLにおけるFacePart failure boundary特定
+PRIMARY_REPORTED_SYMPTOM=actual Avatar eye/mouth texture missing; mask invalid; crop displaced/invalid
+
+============================================================
+0. REQUIRED RESULT FIELDS
+============================================================
+
+G0_LOCAL_AUTHORITY=HEAD 38ad8d23d14a3795f47b100a1003fc506dbfa003; branch work/raw-direct-motion; Unity 6000.0.80f1 revision 2dfd32957da2; enabled Product Scene Assets/Scenes/Face Landmark Detection.unity; current local Production source is Implementation Authority.
+
+PRODUCT_EFFECTIVE_DIFF_FROM_F3=YES. F3 snapshot後に、KiwiCommercialPresentationTuner、KiwiCommercialStartupReconciler、KiwiMatureVTuberSupervisor、KiwiTrackingQuality10ControllerがRAW_DIRECT_MOTION_V1 retired compatibility stubへ縮退し、KiwiInferenceRecoveryBootstrapへbaseline cadence ownershipが集約され、KiwiCanonicalTrackingFrameからKiwiCommercialLandmarkRefiner適用が撤去された。したがって旧F3 Runtimeはcurrent Production Runtime Authorityではない。
+
+PHASE_A_EXISTING_EVIDENCE_RESULT=INSUFFICIENT_TO_LOCALIZE. F3 CONTROL scalar CSVにはcanonicalFrameId/generation/rotation/cropper/source等はあるが、per-part transaction/crop/mask/actual presentation値がなく、F3 FrameComparison CSVも存在しない。旧F3 Player.logだけではA-Eのfirst orderingを閉じられない。
+
+NEW_RUNTIME_REQUIRED=YES
+
+OBSERVER_VALIDITY=PASS_WITH_STATED_LIMITATIONS. Opt-in Validation component 1個。arm absent時はobject install 0。capture hot pathは固定Sample[4096]へのmemory writeのみ。新semantic、landmark centroid、pose、crop geometry、normalization、predictionを計算しない。Product state/transform/material/texture/enable write、Blit、GPU readback、texture copy、queue、blocking waitなし。completion/shutdown後だけCreateNewで一括write。起動未取得をfailureと数えないmeasurementReady gateをcompile/build前に追加済み。
+
+OBSERVER_SYNC_IO_HOTPATH=NO_FOR_NEW_OBSERVER. 旧KiwiF3SingleSamplingRotationOwnerArmは10 Hz rowごとのStreamWriter.Flushを持つためYESだが、今回のtiming/causality observerには再利用していない。
+
+BUILD_AUTHORITY=PASS. KiwiStandaloneBuildDiagnostic.BuildWindows64; contract KIWI_V5_1_PHASE16_20_32_V42_3_DX12_PLAYER_BUILD_API_LOCK; Windows x64 Development; Direct3D12 only; mandatory Full Preflight PASS warning/error/critical=2/0/0; fingerprint 4be0ec0a98d1ba3e9648c3c81743df91364a383b5cfe8ccb512c178d7820aa9d; build gate bypass=0; Unity exit=0; build result=Succeeded; build errors=0.
+
+TRACE_STATUS=COMPLETE_BUFFER_CAPACITY_REACHED; samples=4096; measurementReady=3123; TRACE_WRITE_FAILED=0; raw CSV SHA256 1A03B0D6373038BB6A866F8A29445558441CD732A5C07BCC9799EC1C4F21AE94.
+
+CONTROL_FAILURE_REPRODUCED=NO. measurement-ready区間で全3部位non-renderableは起動直後59連続sampleのみ。事前固定したpersistent threshold 120に未達。以後、同時3部位欠落は0。旧F3で人が観測したeyes/mouth持続欠落、mask invalid、crop displacedの組合せはcurrent same-build Runtimeでは再現しなかった。
+
+CANONICAL_INPUT_STATUS=COHERENT_IN_3123_MEASUREMENT_READY_SAMPLES. canonicalAvailable/valid、semanticAvailable、rigidValid、matchedSubmissionTimingはいずれもfalse 0。canonicalFrameId decrease 0、semanticTimestamp decrease 0。duplicate canonicalFrameId 2085はdisplay frameが同一tracking sampleを読む通常のsample-and-holdでありout-of-orderではない。
+
+TRANSACTION_STATUS=COHERENT_IN_3123_MEASUREMENT_READY_SAMPLES. IsOperational、SceneBindingValid、StrictPresentation、latest committed texture availableはいずれもfalse 0。commit count 1→1038、miss 0→0、hold 0→0、external writer 0→0。nearest hostTicks match delta min/p95/max=0.0189/9.0022/18.2752 msで55 ms上限内。per-part acceptanceの短いrejectは存在するが、TextureTransaction自体のmiss/holdやidentity failureは観測されない。
+
+CROP_MASK_STATUS=COHERENT_IN_3123_MEASUREMENT_READY_SAMPLES. left/right/mouthすべてuv invalid 0、sampleRect unavailable 0、mask point invalid 0、maskVisibility off 0、poseVisibility off 0。ready区間のmask point countはeye 32、mouth 40。報告対象のmask invalid/crop invalidは再現しなかった。
+
+ACTUAL_PRESENTATION_STATUS=STARTUP_QUALITY_GUARD_HIDE_THEN_PREDOMINANTLY_RENDERABLE_WITH_TRANSIENT_SINGLE_EYE_QUALITY_GUARD. 起動ready先頭59 sampleは全3部位CanvasRenderer/resolver alpha 0、Reason=QualityGuard。その後mouth non-renderable 0。later left transientは12+10 sample、later right transientは57+6 sampleで、各区間はtexture nonzero、uv/sampleRect/mask/pose valid、transaction operational/strict/miss=0のままCanvasRenderer/resolver alphaのみ0付近、Reason=QualityGuardだった。
+
+FIRST_FAILURE_BOUNDARY=INCONCLUSIVE. Primary claimである旧F3の持続的eyes/mouth missing + mask invalid + crop displacedはcurrent CONTROLで再現せず、旧F3 evidenceにも不足fieldがあるため同一failureのfirst boundaryは決定不能。
+
+CURRENT_CONTROL_TRANSIENT_FIRST_FAILURE_BOUNDARY=FACEPART_PRESENTATION. current runで実測した短い単眼抑制だけにclaimを限定すると、Canonical/Transaction/Crop/Maskが整合した後、KiwiFacePartPresentationResolverのQualityGuard reasonとCanvasRenderer/resolver alpha低下が最初のfailure boundary。
+
+F2_EXACT_NATIVE_IDENTITY_PROVEN=NO
+F3_STATUS=FROZEN
+SHARED_TILT_LOCK_STATUS=KEEP
+PRODUCTION_CHANGE=NO
+NATIVE_CHANGE=NO
+TRACKING_MATH_CHANGE=NO
+COMMIT_PUSH=NO
+PRODUCTION_FIX=NOT_IN_THIS_TASK
+
+============================================================
+1. G0 / CLAIM-SCOPED AUTHORITY
+============================================================
+
+Implementation Authority:
+- current local Production source at HEAD 38ad8d23d14a3795f47b100a1003fc506dbfa003.
+- task changeはEditor-only Preflight validator 1ファイルと、arm-gated Validation observer 1ファイル + metaのみ。
+- tracked Production Runtime source差分は0。
+- Packages/manifest.json SHA256=35F00A89D31A8BF7EE50718F38D4BAC90236D8B691F516C5FC14CAB47AFBFEE1。
+- Packages/packages-lock.json SHA256=23845C132DBF51CB53A5CFDE4EF606FA68D10DCB53AE5FF21F4305613A5F9CE1。
+
+Runtime Authority:
+- same-build current CONTROL Player。
+- Player executable SHA256=98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81。
+- UnityPlayer.dll SHA256=A1C4F29041D783DF506E7C2892BC6AFA4ED45EF0D87AAFE0C7296BDC090681FC。
+- Player.log SHA256=321ACF6E8B65C368BE8BA1AC65325B6CE46AFCF715D9BEAC9880ACFE210CF7F6。
+- Unity 6000.0.80f1、Direct3D 12 level 12.1、NVIDIA GeForce RTX 4090。
+- native camera presentation sourceはKiwiNativeCameraPresentation、1920x1080。
+
+Package Source Authority:
+- installed com.github.homuler.mediapipe local tarball 0.16.3。
+- installed com.unity.ai.inference 2.4.1。
+
+Performance Authority:
+- NONE。このrunはDevelopment buildかつobserver/diagnosticあり。FPS、latency、throughputのclean Production benchmark結論に使用禁止。
+
+Visual Authority:
+- CURRENT SAME-BUILD HUMAN VISUAL=NOT_RECORDED。
+- MODEL_VISUAL_OBSERVATION=UNAVAILABLE。computer-use helperは初期化と1回の再初期化の両方で windows sandbox failed: helper_unknown_error: apply deny-read ACLs。
+- 旧F3 Human CONTROL visualは別build/別Productionのためcurrent Visual Authorityへ昇格しない。
+
+============================================================
+2. PHASE A — EXISTING EVIDENCE
+============================================================
+
+Confirmed:
+- Primary F3 report SHA256=ACD4086B5989E3D9D6C4A4D633ADE6C4B1BD4B6CC41D96834F7FCC6C2A473C47。
+- F3 Runtime ZIPは37/37 payload hashを再照合済みでmanifest failure 0だった。
+- F3 Human CONTROL visualはLIVE CAMERA good、actual Avatar eye/mouth texture/mask/crop NG、eyes/mouth absent、crop displacedだった。
+- F3 scalar telemetryはこのtaskのtransaction/crop/mask/presentation identityを持たない。
+- 指定Roadmap KiwiAvatarSystem_最新統合情報_ValidationReduction_R12_0906_1525.txtはlocalに存在せずUNKNOWN。近似旧版をcurrent Authorityとして代用しない。
+
+Decision:
+- NEW_RUNTIME=YES。Phase AだけでPASSまたはfailure boundaryを宣言しない。
+
+============================================================
+3. OBSERVER / VALIDATOR AUDIT
+============================================================
+
+Existing observers:
+- KiwiF3SingleSamplingRotationOwnerArm: per-row synchronous Flushあり。baseline causality observerとしてREJECTED_FOR_REUSE。
+- KiwiFrameComparisonOverlay: Development auto-install、LateUpdate、任意CSV、60-frame Flush。今回CSVはarmせず、Performance Authorityを汚すdiagnostic overheadとして扱う。
+- KiwiSpoutWaitFreeDiagnosticV44_20: RuntimeでEntryPointNotFoundを1回記録。Spout diagnostic contaminationでありFacePart Product failureではない。
+- KiwiCameraPreviewQualityService:今回mode=OFF、addedLivePreviewBlit=0、trackingInputChanged=0、nativeDllChanged=0、spoutChanged=0。
+
+New observer:
+- Source SHA256=14B4D54458FD02BF76B187B31607C4F1C8A3A1D92F26DEAB6FE4FF0262BD0EF3。
+- arm=KIWI_CONTROL_FACEPART_TRACE=1。
+- capture中I/O 0、GPU readback 0、texture copy 0、Product write 0。
+- fixed capacity 4096、overwriteなし、capacity到達で停止。
+- selected capture/history hostTicks、per-semantic Prepare result、per-part committed semantic identityはProductionに公開fieldがなくN/A。値を捏造していない。
+
+Validator defect and repair:
+- Initial formal buildはFull Preflight 2 warnings / 0 errors / 33 criticalでfail-closed。
+- 33 criticalはRAW_DIRECT_MOTION_V1でretire済み4 compatibility stubの旧owner marker 32件と、Canonicalから撤去済みlandmark-refiner marker 1件。
+- Editor-only validatorを、旧owner存在要求から次のfail-closed retirement contractへ更新した。
+  1) retired identity/stubをpositive check。
+  2) RuntimeInitialize/Awake/OnEnable/Start/Update/LateUpdate/FixedUpdate/onBeforeRender/sceneLoaded再導入をCritical。
+  3) retired componentのrelease scene配置をCritical。
+  4) Canonicalでrefiner call再導入をCritical。
+  5) identity-matched _semanticScratch direct publish欠落をCritical。
+- Repair後Preflightは2 warnings / 0 errors / 0 criticalでPASS。旧gateをbypass、disable、fake stamp化していない。
+
+============================================================
+4. RUNTIME FINDINGS
+============================================================
+
+Trace lifecycle:
+- TRACE_STARTED確認。
+- 4096/4096 sampleをpreallocated bufferへ記録。
+- completion_reason=BUFFER_CAPACITY_REACHED。
+- first_persistent_failure_candidate_index=-1。
+- normal termination signal後Player exited、PlayerConnection cleanup確認。
+
+Canonical:
+- ready 3123/4096。
+- ready first/last sample index=27/4064。
+- ready canonicalFrameId=1..1068。
+- invalid/unavailable/out-of-order decrease=0。
+
+Transaction:
+- commit 1..1038、miss/hold/external writer=0。
+- left reject counter 0..23、right 0..85、mouth 0..0。
+- per-part rejectとactual alpha抑制は常時同一ではない。Transaction defectへ自動帰属しない。
+
+Crop/Mask:
+- ready区間では3部位すべてtexture nonzero、uv valid、sampleRect available、mask point sufficient、mask/pose visibility positive。
+
+Actual presentation:
+- ready first 59は起動presentation lifecycleのQualityGuard hide。
+- stable後、mouthのhide再発0。
+- leftはlater 22 sample、rightはlater 63 sampleのみQualityGuard alpha低下。
+- 最大later single-eye streakはright 57 sample。
+- later区間で他2部位はrenderableであり、旧F3の3部位同時持続欠落ではない。
+
+============================================================
+5. DECISION
+============================================================
+
+Primary reported F3 failure:
+- CONTROL_FAILURE_REPRODUCED=NO。
+- FIRST_FAILURE_BOUNDARY=INCONCLUSIVE。
+- 理由は「正常と推測した」ためではなく、current same-build raw telemetryで対象failureが発生せず、旧runにはorderingを閉じるfieldがないため。
+
+Current transient claim:
+- FIRST_FAILURE_BOUNDARY=FACEPART_PRESENTATION。
+- 証拠順序はCanonical coherent → Transaction coherent → uv/sampleRect/mask coherent → resolver Reason=QualityGuard + CanvasRenderer/resolver alpha低下。
+- これはcurrent transient single-eye suppression限定の結論であり、旧F3 persistent failureの原因説明へ拡張しない。
+
+============================================================
+6. CHANGE ACCOUNTING
+============================================================
+
+WHAT_CHANGED:
+- opt-in Validation observerを追加。
+- obsolete Full Preflight marker contractをRAW_DIRECT retirement-aware fail-closed contractへ修正。
+
+WHAT_DID_NOT_CHANGE:
+- Production tracking/inference/camera/ROI/cadence/texture transaction/Root/Head/FacePart math。
+- Native DLL/source。
+- SharedTiltLock。
+- F3設定またはF3 runtime。
+- threshold、smoothing、Kalman、stale prediction。
+- commit/push。
+
+WHY_CHANGE_IS_BETTER_THAN_NO_CHANGE=Phase A evidenceに必要fieldがなく、NO_CHANGEではfirst-boundary claimを閉じられないため、Product writeのないbounded opt-in observerだけを追加した。Validator修正はretired ownerを復活させず、旧markerの偽装もせず、current architecture向けのpositive retirement/absence/scene/canonical checksへ置換してformal gateを維持した。
+
+PRODUCTION_FIX=NOT_IN_THIS_TASK。原因候補が見えてもmeasurement、boundary classification、minimal fix designを分離する。
+
+============================================================
+7. EVIDENCE IDENTITY
+============================================================
+
+EVIDENCE_DIRECTORY=KiwiValidation/ControlBaselineFacePartFailureLocalization_20260907_0106
+EVIDENCE_MANIFEST_SHA256=3B92CD25E91DAFEACD55EA14493780290AB3581461A75EE9AF2F1D7CFA41A3C4
+EVIDENCE_PAYLOAD_FILES=42
+ZIP_ENTRY_FILES=43
+ZIP_STREAM_VALIDATION=PASS
+RUNTIME_EVIDENCE_ZIP=KiwiValidation/KiwiRuntimeEvidence_ControlBaselineFailureLocalization_20260907_0106.zip
+RUNTIME_EVIDENCE_ZIP_SIZE=795212
+RUNTIME_EVIDENCE_ZIP_SHA256=06CBF19501FE8301D5A7639E093BB05C939F4CBCBD841E8FA6A967EC098D38DA
+
+Raw telemetry:
+- CONTROL/CONTROL_facepart_trace.csv SHA256=1A03B0D6373038BB6A866F8A29445558441CD732A5C07BCC9799EC1C4F21AE94
+- CONTROL/CONTROL_facepart_trace_summary.txt SHA256=4C8BF1AC4BA6773FC7D9B3C1FEC2BDDA89D2D4111E7911C72EC055C702556C59
+- CONTROL/Player.log SHA256=321ACF6E8B65C368BE8BA1AC65325B6CE46AFCF715D9BEAC9880ACFE210CF7F6
+
+Build:
+- formal build log SHA256=F07A04EE5F1B69C4CF86165E375D81AD57548AB9534D817DADFD111FE1C03180
+- final preflight SHA256=94F495CC94B8D8377C6DBBCCD0D8FCEC422B5B0275CA424F084137D9BFCC57CD
+- final build meta SHA256=E38B258EAF5FFA234ED02D83C54B55CFCEBA06C04FA4595851077E5C6286165F
+- build payload manifest files=290
+
+============================================================
+8. FINAL SEPARATION
+============================================================
+
+CONFIRMED_FACTS
+- current Product source differs materially from F3 freeze and invalidates old F3 Runtime as current Runtime Authority。
+- new observerはbounded、opt-in、memory-only during capture、Product non-writing。
+- formal same-source build、mandatory Full Preflight、DX12-only gateはPASS。
+- current CONTROLは3123 ready samplesで報告対象のpersistent all-part failureを再現しなかった。
+- current transient hideはactual CanvasRenderer/resolver alphaで発生し、ReasonはQualityGuard。
+
+STATIC_FINDINGS
+- Canonical→TextureTransaction→Cropper→ShapeMask→PresentationResolverのauthority/dataflowを確認。
+- per-part committed semantic identity、selected slot hostTicks、per-semantic Prepare resultはProduction公開fieldにない。
+- QualityGuard alphaのsingle final writerはKiwiFacePartPresentationResolver。
+- old F3 observerのsynchronous Flushによりbaseline causality再利用を拒否。
+
+RUNTIME_FINDINGS
+- Canonical coherent。
+- Transaction operational/bound/strict、miss/hold/external writer 0。
+- Crop/UV/Mask coherent。
+- Startup 59-sample all-part QualityGuard hide後は3部位同時failure 0。
+- later transientはsingle-eye presentation suppressionのみ。
+
+OBSERVER_LIMITATIONS
+- Development/diagnostic runでありPerformance Authorityではない。
+- F2 exact native sequenceは存在せず、nearest hostTicks correlationをexact identityと呼ばない。
+- Productに存在しないper-part identity/selected hostTicks/Prepare resultはN/A。
+- computer-use helper failureによりcurrent same-build visual screenshot/human checklistは未取得。
+- Development-active FrameComparison/Spout diagnosticはPerformanceとVisual UIを汚し得る。
+
+INFERENCES
+- later transientはQualityCoordinator/PresentationResolverのquality visibility policyに由来する可能性が高い。ただしこのtaskではpolicy入力の原因分解やfix designをしていない。
+- 旧F3 persistent failureがpost-F3 Product-effective retirementsで消えた可能性はあるが、same-failure A/B Runtime比較がないため未確認。
+
+UNKNOWN
+- 旧F3 persistent eye/mouth + mask + crop failureのfirst boundary。
+- current same-buildのhuman Visual判定。
+- per-part exact committed semantic/native sample identity。
+- 指定R12 Roadmapの内容と所在。
+
+REJECTED
+- old F3 telemetry不足をcurrent PASSへ昇格すること。
+- current transient FACEPART_PRESENTATIONをold persistent failureの原因と断定すること。
+- Build Gate bypass、fake stamp、obsolete markerのコメント再追加。
+- symptomをtracking math、smoothing、threshold、Native変更で隠すこと。
+
+NEXT_SINGLE_ACTION
+同じSHAのcurrent CONTROL buildをHuman Visualで1回だけ確認し、LIVE CAMERA、left/right eye、mouth、crop位置、mask、数秒後のsteady-state visibilityを記録する。正常なら旧F3 persistent failureはcurrent ProductでSUPERSEDED候補とし、F3再開前に新しい修正を入れない。持続failureが再現した場合だけ、同じobserverを再armして再現区間を取得し、そのrunのfirst boundaryを判定する。
+

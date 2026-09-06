@@ -1,0 +1,452 @@
+KIWI AVATAR SYSTEM
+MEDIAPIPE_ONLY_CAUSAL_ISOLATION
+CONSOLIDATED REPORT
+
+REPORT_JST=2026-09-07 07:54:48 +09:00
+TARGET=MEDIAPIPE_ONLY_CAUSAL_ISOLATION
+SCOPE=current CONTROL visual failureに対するRunner/InferenceEngine provider availabilityの1-factor causal isolation
+
+============================================================
+0. REQUIRED RESULT FIELDS
+============================================================
+
+G0_LOCAL_AUTHORITY=PASS
+STATIC_FIRST=COMPLETE
+DIAGNOSTIC_ISOLATION=PASS
+ONE_BUILD=PASS
+ONE_RUNTIME_RUN=PASS
+HUMAN_VISUAL_RUN_COUNT=1
+RUNTIME_PROVIDER_GATE=PASS
+
+INFERENCE_ENGINE_CAUSAL_CONTRIBUTOR=PARTIAL
+INFERENCE_ENGINE_PRIMARY_CAUSE=REJECTED_AS_SINGLE_CAUSE
+MOTION_JUMP_FREEZE_RESULT=IMPROVED
+CROP_MASK_RESULT=UNCHANGED_FROM_CONTROL_FAIL
+HEAD_ROOT_RESULT=UNKNOWN
+FIRST_TARGET_BOUNDARY=DOMAIN_SPLIT_REQUIRED
+MOTION_FIRST_TARGET_BOUNDARY=RUNNER_INFERENCEENGINE_OUTPUT_OR_PROVIDER_TRANSITION
+CROP_MASK_NEXT_BOUNDARY=MEDIAPIPE_CANONICAL_COMMON_SEMANTIC_BOUNDARY
+
+PRODUCTION_FIX=NOT_IN_THIS_TASK
+PERMANENT_INFERENCE_OFF=NO
+MEDIAPIPE_ONLY_PRODUCTION_ADOPTION=NO
+PERFORMANCE_DECISION=NONE
+COMMIT_PUSH=NO
+
+============================================================
+1. EXECUTIVE DECISION
+============================================================
+
+Confirmed causal result:
+- arm付きの1 runはRunner/ProviderHub/Canonicalの全観測frameがMediaPipe-onlyだった。
+- Human VisualではCONTROL比でjump/freezeが改善した。
+- 同じHuman Visualでcrop/maskはCONTROL FAILから不変だった。
+
+Decision:
+- InferenceEngine provider availabilityはvisual failure全体の単一原因ではない。
+- motionのjump/freeze domainではcausal contributorを支持する。
+- crop/mask domainではInference-only原因を棄却する。MediaPipe-onlyでも残るため、
+  MediaPipe/Canonical/FacePart transactionに共通するboundaryへ戻す必要がある。
+- Head/Rootのどちらが改善したかはHuman Visual回答が「わからない」のため断定しない。
+- Inference output semantics defectとprovider transition/arbitration effectは、このavailability
+  isolation単独では分離できない。既存traceのInference集中はoutput semanticsを強い候補にするが、
+  本runだけでFIRST_TARGET_BOUNDARY=INFERENCE_PROVIDER_OUTPUT_SEMANTICSとは確定しない。
+
+============================================================
+2. G0 / CLAIM-SCOPED AUTHORITY
+============================================================
+
+Implementation Authority:
+- branch=work/raw-direct-motion
+- HEAD=38ad8d23d14a3795f47b100a1003fc506dbfa003
+- Unity=6000.0.80f1 revision 2dfd32957da2
+- enabled scene=Assets/Scenes/Face Landmark Detection.unity
+- scene SHA256=E28B0B81F731B92B04B97D4AA7DB1187C8DD57C5A39F49B08B2E6799BBF5B3D1
+- ProjectVersion SHA256=EA333D8F6C87FFA35061EC92B7DEF6026D00D0131D7A6A05A23C53EB949B4F77
+- EditorBuildSettings SHA256=611BA53D1627847D786E714A7CC17EB8D5AE06C2EFBA4077DA1F396A81355EAE
+
+Package Source Authority:
+- Packages/manifest.json SHA256=35F00A89D31A8BF7EE50718F38D4BAC90236D8B691F516C5FC14CAB47AFBFEE1
+- Packages/packages-lock.json SHA256=23845C132DBF51CB53A5CFDE4EF606FA68D10DCB53AE5FF21F4305613A5F9CE1
+- com.github.homuler.mediapipe=0.16.3 local tarball
+  - tarball SHA256=CC3E77A219E0B99618AE3BE64C31A566197DEEDC69C1E136ACF52D65D7CF2E79
+  - installed package.json SHA256=EEBBFF4550FA9CA3C2C76AB05BD0EDBDB3A0A4C2800883E244DC9E40D8FF2A2D
+  - installed source=Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d
+- com.unity.ai.inference=2.4.1 registry package
+  - installed package.json SHA256=2F230C84E28A9E3AD516B1A49B79B6F83E172F1C16E6813E0F1DD6FA2B1790EE
+  - installed source=Library/PackageCache/com.unity.ai.inference@587873fd5e1b
+
+Protected Production/Native SHA256 before and after (unchanged):
+- Assets/Script/FaceLandmarkerRunner.cs
+  6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93
+- Assets/Script/KiwiInferenceFaceTracker.cs
+  CF860F4EF686BD5FDAC4140D4F3E73E64B6F390C3BC64204CF346011AC69380D
+- Assets/KiwiAvatarSystem/Runtime/Tracking/KiwiInferenceFaceTracker.cs
+  EFFCCCF5EE1BF407F065BFA95B491390AC96A55E9A75290A67C5AFAD32AFC1F1
+- Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiInferenceRecoveryBootstrap.cs
+  0767FE23849F4D724C70C3D4C33D1AED995BE332BDFF293DC8B86DE96D7326BD
+- Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiTrackingProviderHub.cs
+  A5C7DE387FA2E02862BCF64942363AECFB9C7830B52DF5B8953404DF884ECCB1
+- Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiCanonicalTrackingFrame.cs
+  458FF33E98E054B766F20EB17CE6BDD242C9AD9FD6E73AF53D60BD3961822AFA
+- Assets/Plugins/x86_64/KiwiNativeCamera.dll
+  82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+- Native/KiwiNativeCamera/Source/KiwiNativeCameraPlugin.cpp
+  636D76251F9CB3BB785F4497D3D0722033FC0CE36CB4A574B65EDA58B5ABE32A
+
+Pre-existing dirty state preserved:
+- tracked modified Assets/KiwiAvatarSystem/Editor/KiwiReleaseCandidatePreflight.cs
+- untracked KiwiControlBaselineFacePartTrace.cs/.meta and its existing CONTROL evidence/report
+- これらは本task開始前から存在し、本taskの変更として帰属しない。
+
+Runtime Authority:
+- one Windows x64 Development Player run
+- Direct3D 12 level 12.1 / NVIDIA GeForce RTX 4090
+- camera active=UGREEN Camera 4K 1920x1080@60
+- camera presentation source=KiwiNativeCameraPresentation 1920x1080
+- Human Visual=同じisolation runに対するユーザー回答
+
+Performance Authority:
+- NONE。Development build、Validation component、長時間visual reviewであり、FPS/latency/throughputを判定しない。
+
+============================================================
+3. STATIC FIRST — PROVIDER DATAFLOW
+============================================================
+
+3.1 FaceLandmarkerRunner / InferenceEngine publish
+
+Confirmed Static:
+- Update -> ProcessSentisFreshFrame。
+- ProcessSentisFreshFrameは_acceptTrackingResults、_sentisTracker、_sentisSourceTextureが揃う場合のみ動作。
+- KiwiInferenceFaceTracker.TryProcessAsyncがcompleted resultを返した時だけStoreSentisTrackingDataへ進む。
+- StoreSentisTrackingDataはlandmark count、quaternion、geometry、finite/coherenceを検査する。
+- accepted Inference outputはshared _nextPublishedTrackingFrameIdをincrementし、
+  backend=KiwiTrackingBackend.InferenceEngineで_latestPrecisionDataへpublishする。
+- accepted publish後に_sentisPrimaryActive=true。
+- publish failure 3 frameまたはtrackerがpending/trackingでない時にprimaryをreleaseする。
+- DisposeSentisTrackerはprimary=false、tracker.Dispose、tracker/source=null、latency/presence resetを行う。
+
+Timestamp/frame ownership:
+- Inference pathはcompletion sourceHostTicksをsubmissionHostTicksとして保持する。
+- StoreSentisTrackingDataのtimestampが_latestLandmarkTimestamp以下なら+1msへ単調化する。
+- Runner frameIdはMediaPipe/Inferenceで共通の_nextPublishedTrackingFrameId owner。
+
+3.2 FaceLandmarkerRunner / MediaPipe publish
+
+Confirmed Static:
+- StoreTrackingDataは_acceptTrackingResultsとcameraGeneration一致を入口gateにする。
+- no-face resultはtimestamp/generation-aware clear pathへ進む。
+- landmark count、rigid geometry、transformation rotation、expressionをsame resultから組み立てる。
+- stale callbackは_latestResultTimestampとcameraGenerationで棄却する。
+- _sentisPrimaryActive=true中のMediaPipe callbackはanchor/aux rotation/expressionのみ更新し、
+  older image landmarksをpublishしない。
+- primary=falseではlandmark array、rigid geometry、expressionをpublishし、
+  shared frameIdをincrementしてbackend=KiwiTrackingBackend.MediaPipeとする。
+- ShouldThrottleMediaPipeRefreshはprimary=falseならfalseで、通常MediaPipe cadenceを抑制しない。
+
+3.3 KiwiInferenceFaceTracker
+
+Confirmed Static:
+- canonical implementationはAssets/Script/KiwiInferenceFaceTracker.cs。
+- Runtime/Tracking側の同名fileはtype declarationを持たないcompatibility stub。
+- TryProcessAsyncはmulti-lane nonblocking latest-valid completion path。
+- newest valid source completionをcopyし、older completionをpublishしない。
+- このtrackerはProviderHubへ直接publishせず、Runnerへlandmarks/rotation/sourceHostTicksを返す。
+
+3.4 Official hybrid disable lifecycle
+
+Confirmed Static:
+- KiwiInferenceRecoveryBootstrapはBeforeSceneLoad auto-install、DefaultExecutionOrder(-32000)。
+- public enableHybridがApplyEarlySettingsからRunner.enableSentisHybridTrackingへ伝播する。
+- Runner.InitializeSentisTrackerは最初にDisposeSentisTrackerを呼び、
+  enableSentisHybridTracking=falseならnew trackerを作らずreturnする。
+- Runner.Runはimage source確定後に同じInitializeSentisTrackerを通る。
+- Runner.StopもDisposeSentisTrackerを通る。
+
+Isolation choice:
+- private reflectionで_sentisPrimaryActiveや_sentisTrackerを書き換えない。
+- provider priorityを書き換えない。
+- Bootstrap.enableHybrid=falseとenableRuntimeRecovery=falseをBeforeSceneLoadで設定する。
+- enableRuntimeRecovery=falseは、意図的に無効なproviderをwatchdogがrestartしないための
+  disable lifecycle一部であり、新owner/新tracking policyではない。
+- BootstrapがRunner.enableSentisHybridTracking=falseへ正式伝播する。
+- Runner.Run内の正式Initialize/Dispose pathがInference trackerを候補から外す。
+
+3.5 KiwiTrackingProviderHub arbitration
+
+Confirmed Static:
+- separate cached slots:
+  - Runner/MediaPipe: HeadPose+FaceGeometry+Expressions, priority=82
+  - Runner/InferenceEngine: HeadPose+FaceGeometry, priority=110
+- ObserveBuiltInRunnerはRunnerのnew frameIdだけを観測し、data.backendでslotを選ぶ。
+- source frame/timestamp/arrival/normalizationをUpdateSlotへ渡す。
+- candidate eligibilityはhasFrame、valid、capability、minimum geometry quality、mirror generation、
+  source age<=0.45s、arrival cadence freshnessを要求する。
+- scoreはpriority+geometry+source/arrival freshness+cadence。
+- active providerはminimum hold、score margin、independent frame confirmation、sticky authorityを通してswitchする。
+- actual provider identity changeだけがProviderGenerationをadvanceする。
+- accepted hub publishはHub-owned frameIdとObservationSequenceをadvanceする。
+
+Disable consequence:
+- new Runner framesがMediaPipe backendだけならInference slotは更新されない。
+- current scene/session resetはbuilt-in slotsをclearするため、previous sessionのInference cacheは残らない。
+- priority=110は変更されないが、fresh/valid Inference candidate自体が存在しない。
+
+3.6 KiwiCanonicalTrackingFrame
+
+Confirmed Static:
+- coordinator LateUpdateはRunner.Update後にHub selectionをrefreshし、FacePart consumer前にlatchする。
+- built-in semantic adoptionはproviderIdがRunner/MediaPipeまたはRunner/InferenceEngineで、
+  semanticPrecision.timestamp==rigid.timestampかつbackend一致を要求する。
+- canonical identity changeはproviderId、rigid source frameId、rigid timestamp、backend、mirror identityで判定。
+- canonicalFrameIdはCanonical owner。
+- runtime generation snapshotはKiwiRuntimeGenerationContext.Captureから保持する。
+- semanticTimestampはaccepted rigid timestampへ固定される。
+
+============================================================
+4. DIAGNOSTIC IMPLEMENTATION / STATIC VALIDATION
+============================================================
+
+Added:
+- Assets/KiwiAvatarSystem/Runtime/Validation/KiwiMediaPipeOnlyCausalIsolation.cs
+  SHA256=808B8C37F734548C810F293062AEE81602EF505ADA71BDCDD59FEC86B71BED7F
+- Assets/KiwiAvatarSystem/Runtime/Validation/KiwiMediaPipeOnlyCausalIsolation.cs.meta
+  SHA256=A31D38A77E501669F145DE6185B625582A211EF432E865AF9FFF2D5AD6335BF0
+
+Arm contract:
+- arm=KIWI_MEDIAPIPE_ONLY_ISOLATION=1
+- arm absentはenvironment read後にreturnし、GameObject/component/config write=0。
+- arm absent behavior=0はStatic確認であり、要求どおり追加CONTROL runは行っていない。
+
+Armed behavior:
+- existing KiwiInferenceRecoveryBootstrapを取得、なければ同じofficial componentを先行生成。
+- public enableHybrid=false、enableRuntimeRecovery=falseのみ設定。
+- Runner private state reflection=0。
+- provider priority write=0。
+- tracking/pose/crop/mask calculation=0。
+- Product transform/material/texture/FacePart write=0。
+- file I/O=0、GPU readback=0、texture copy=0、blocking wait=0。
+- read-only verifierがRunner/Hub/Canonicalのnew frame identityとprovider/backendだけをcount。
+
+Static checks:
+- new file trailing whitespace=0。
+- Reflection/BindingFlags/SetValue/private field write=0。
+- provider priority field write=0。
+- Graphics.Blit/RenderTexture/readback/blocking wait=0。
+- Production/Native/FacePart/Tracking math source SHA before/after一致。
+- git diff --check=PASS。
+
+WHY_CHANGE_IS_BETTER_THAN_NO_CHANGE=current same-source CONTROLのHuman Visual FAILと既存traceのInference集中だけでは相関と因果を分離できない。正式disable lifecycleをBeforeSceneLoadで1 factorだけarmするValidation componentにより、Production policyを変えずcausal contributionを1 runで判定できるため。
+
+============================================================
+5. ONE BUILD AUTHORITY
+============================================================
+
+Build command authority:
+- Unity 6000.0.80f1
+- KiwiStandaloneBuildDiagnostic.BuildWindows64
+- enabled release sceneをdeterministic使用
+- mandatory KiwiReleaseCandidatePreflight full preflight
+- Windows x64 Development / Direct3D12 only
+
+Build result:
+- Full Preflight passed=True
+- releaseCandidateReady=True
+- warning/error/critical=2/0/0
+- fingerprint=79e7b67fcab9fbc77b2743b5d82dca24da07b7d3fed64578f819fd2a31f67937
+- Build result=Succeeded
+- build warnings=203
+- build errors=0
+- Unity batchmode exit=0
+- additional build=0
+
+Build identity:
+- Player EXE SHA256=98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81
+- UnityPlayer.dll SHA256=A1C4F29041D783DF506E7C2892BC6AFA4ED45EF0D87AAFE0C7296BDC090681FC
+- Assembly-CSharp.dll SHA256=1EF11C38455137F2FBC579A47EAF9582C8B2BD260F7D55F1844AC6672634209D
+- preflight JSON SHA256=403FCDB521E8D8695FBB3A170290C48A527921219F8E58776B8D2E1CAD6A0B0E
+- build log SHA256=3B2106DE78007EC13BE1148DC64C701583D8193C84E2CB757AB94D28BFC73072
+
+Authority note:
+- CONTROLとisolationは同じcurrent Production source authority。
+- Assembly-CSharpはValidation-only arm component追加によりbinary identicalではない。
+- arm absent behavior=0はStatic contract、arm enabled時のintended runtime differenceはInference availability。
+- EXE stub SHA単独をbuild identityとせずAssembly-CSharp/preflight/build logを併記した。
+
+============================================================
+6. ONE RUNTIME RUN
+============================================================
+
+Authoritative runtime evidence:
+- KiwiValidation/KiwiRuntime_MediaPipeOnlyCausalIsolation_Player.log
+- size=141001 bytes
+- SHA256=2BAF1C7C468F14A7499172EDD26E7BF294C1C7AC654ACF7AC966E83AFA2565D0
+- additional isolation run=0
+
+Startup/correlation markers:
+- Direct3D 12 level 12.1 / RTX 4090。
+- [KiwiMediaPipeOnlyIsolation] ARMED。
+- bootstrap.enableHybrid=0。
+- bootstrap.enableRuntimeRecovery=0。
+- privateReflection=0。
+- providerPriorityWrite=0。
+- Native camera ACTIVE 1920x1080@60、stablePresentation=True、nonblocking producer fence。
+- LIVE CAMERA source=KiwiNativeCameraPresentation 1920x1080、addedLivePreviewBlit=0。
+- FIRST_MEDIAPIPE_FRAME frameId=2、runnerHybridEnabled=0、primaryActive=0。
+
+Completion marker:
+- completionReason=APPLICATION_QUIT。
+- runtimeGate=PASS。
+- runnerMediaPipeFrames=8366。
+- runnerInferenceFrames=0。
+- hubMediaPipeFrames=8365。
+- hubInferenceFrames=0。
+- hubOtherFrames=0。
+- canonicalMediaPipeFrames=8366。
+- canonicalInferenceFrames=0。
+- canonicalOtherFrames=0。
+- configurationViolations=0。
+
+Runtime contamination separated:
+- existing KiwiSpoutWaitFreeDiagnosticV44_20がEntryPointNotFoundを1件記録。
+- これはprior CONTROL reportでも既知のSpout diagnostic contaminationであり、
+  MediaPipe-only provider gate violationやtracking exceptionではない。
+- NullReferenceException=0、InvalidOperationException=0。
+
+RUNTIME_PROVIDER_GATE=PASSの理由:
+- arm/start/completionが同一logに存在。
+- Runner/Hub/Canonical全層でMediaPipe positive frame countあり。
+- 全層Inference frame count=0。
+- other provider count=0。
+- configuration violation=0。
+- Playerは通常終了しSUMMARYを書いた。
+
+============================================================
+7. HUMAN VISUAL — SAME ISOLATION RUN
+============================================================
+
+User-reported fields:
+- Head/Root=わからない -> UNKNOWN
+- jump/freeze=改善 -> IMPROVED
+- crop/mask=不変 -> UNCHANGED_FROM_CONTROL_FAIL
+
+Not reported; do not infer:
+- face detection/tracking overall=UNKNOWN
+- frontal stillness separated from jump/freeze=UNKNOWN
+- left eye=UNKNOWN
+- right eye=UNKNOWN
+- mouth=UNKNOWN
+- LIVE CAMERA human visual in isolation run=UNKNOWN
+
+Static/Runtime distinction:
+- Runtime log confirms camera/presentation source active; this is not Human Visual normality.
+- jump/freeze improvement is Human Visual evidence, not telemetry quantification。
+- crop/mask unchanged is Human Visual evidence; raw crop/mask transaction telemetry was not armed in this run。
+
+============================================================
+8. DOMAIN DECISION
+============================================================
+
+Motion / jump-freeze:
+- CONTROL: abnormal jump/freeze and prior trace concentration on Inference provider (user-provided A authority)。
+- ISOLATION: Inference unavailable at Runner/Hub/Canonical, Human Visual jump/freeze improved。
+- Decision: INFERENCE_ENGINE_CAUSAL_CONTRIBUTOR=SUPPORTED_FOR_MOTION_JUMP_FREEZE。
+- Limit: Head vs Root、Inference output semantics vs handoff/transitionは未分離。
+
+Crop / mask:
+- CONTROL: crop/mask broken (user-provided A authority)。
+- ISOLATION: MediaPipe-onlyでもunchanged。
+- Decision: INFERENCE_ENGINE_PRIMARY_CAUSE=REJECTED_FOR_CROP_MASK。
+- Next boundary: MediaPipe/Canonical共通semantic identity、crop/mask same-sample transaction、
+  presentation bindingの順へ戻る。tracking math変更で隠さない。
+
+Whole failure:
+- 一部改善と一部不変が同時に成立。
+- Decision: INFERENCE_ENGINE_CAUSAL_CONTRIBUTOR=PARTIAL。
+- Decision: INFERENCE_ENGINE_PRIMARY_CAUSE=REJECTED_AS_SINGLE_CAUSE。
+- Decision: FIRST_TARGET_BOUNDARY=DOMAIN_SPLIT_REQUIRED。
+
+Rejected conclusions:
+- MediaPipe-onlyをProduction採用する。
+- Inferenceを恒久OFFにする。
+- crop/mask不変を無視してInference outputだけで全failureを説明する。
+- jump/freeze改善だけからHeadまたはRoot owner defectを断定する。
+- 本Development/diagnostic runをPerformance Authorityにする。
+- threshold/smoothing/Kalman/prediction/Tracking math/FacePart/Nativeを変更する。
+
+============================================================
+9. CHANGE ACCOUNTING
+============================================================
+
+WHAT_CHANGED:
+- arm-gated Validation-only isolation/verifier 1 source + metaを追加。
+- one DX12 Development buildを生成。
+- one armed Player runを実行。
+- この統合REPORTを追加。
+
+WHAT_DID_NOT_CHANGE:
+- Production source。
+- Native source/DLL。
+- FacePart source/config/math。
+- Tracking math。
+- SharedTiltLock。
+- QualityGuard。
+- threshold/smoothing/Kalman/prediction。
+- Provider priority値。
+- canonical calculation/ownership。
+- commit/push。
+
+Diagnostic disposal/adoption status:
+- isolationはarm absent時runtime object/config write 0。
+- Production adoptionはしない。
+- 因果判定後もsourceはValidation-only、恒久Inference-off policyではない。
+
+============================================================
+10. CONFIRMED / STATIC / RUNTIME / VISUAL / INFERENCE / UNKNOWN
+============================================================
+
+CONFIRMED_FACTS
+- current source/package/scene/Unity/SHAをG0で再確認した。
+- official Bootstrap -> Runner Initialize/Dispose disable pathが存在する。
+- Production/Native/FacePart/Tracking protected SHAは前後一致した。
+- one buildはFull PreflightとWindows buildに成功した。
+- one runはRunner/Hub/CanonicalでMediaPipe-only provider gateを満たした。
+- Human Visualでjump/freeze改善、crop/mask不変だった。
+
+STATIC_FINDINGS
+- InferenceとMediaPipeはRunnerのshared current snapshot/frameId ownerを交替利用する。
+- Hubはbackend別slotを保持し、priority/freshness/hold/confirmationでarbitrateする。
+- Canonicalはprovider/backend/timestamp一致したsemanticだけをrigidと同じrender-cycleにlatchする。
+- enableSentisHybridTracking=falseのformal pathはtracker dispose/no-createを保証する。
+
+RUNTIME_FINDINGS
+- arm active、hybrid=0、primary=0。
+- Runner MP=8366 / IE=0。
+- Hub MP=8365 / IE=0 / other=0。
+- Canonical MP=8366 / IE=0 / other=0。
+- configuration violation=0、normal application quit。
+
+VISUAL_FINDINGS
+- jump/freeze=IMPROVED。
+- crop/mask=UNCHANGED_FROM_CONTROL_FAIL。
+- Head/Root attribution=UNKNOWN。
+
+INFERENCES
+- Inference provider availabilityはmotion jump/freezeへ因果寄与した可能性が高い。
+- existing traceのInference geometry jump集中と本isolation改善を合わせると、
+  Inference output semanticsはmotionのfirst diagnostic targetとして妥当。
+- ただしprovider transitionを独立除外していないためoutput semantics defect確定ではない。
+
+UNKNOWN
+- HeadとRootのどちらが改善したか。
+- left/right eye、mouth、detection/tracking、frontal stillness、isolation runのLIVE CAMERA Human Visual。
+- crop/mask defectのMediaPipe output、Canonical adoption、transaction、presentationのfirst boundary。
+- Inference motion defectがraw output semantics、Runner transformation、Hub handoff/transitionのどこか。
+
+============================================================
+11. NEXT SINGLE ACTION
+============================================================
+
+NEXT_SINGLE_ACTION=Production fixを入れず、motion domainに限定して同一sample identityのInference raw output -> Runner precision -> ProviderHub selected rigidを1本で相関し、output semantics defectとprovider transitionを分離する。その結果が閉じるまでInference修正とFace Landmarker Primary authority復帰のどちらもProduction決定しない。crop/maskはこのmotion判定へ混ぜず、別のMediaPipe/Canonical共通boundary issueとして保持する。
+
+END_OF_REPORT
