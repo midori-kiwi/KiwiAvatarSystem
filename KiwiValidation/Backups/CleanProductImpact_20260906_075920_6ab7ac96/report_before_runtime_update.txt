@@ -1,0 +1,712 @@
+KiwiAvatarSystem Consolidated Report
+AGENTS Cleanup -> Frozen-v31 Clean Product Impact -> Roadmap Reaudit
+Timestamp: 2026-09-06 02:40:57 JST
+Status: HUMAN REVIEW STOP / ROADMAP DECISION FREEZE PENDING
+
+===============================================================================
+1. Executive Summary
+===============================================================================
+
+AGENTS scope normalization is complete and its gate passes.
+
+- D:\KiwiAvatarSystem\AGENTS.md already contained the requested durable Kiwi map and hard
+  rails. It was not rewritten. Its SHA256 remains
+  B217232B8C25364A3CB1D5CB6BBD86D6732574748EE1BBCEFAA355376ECBDC24.
+- C:\Users\main\.codex\AGENTS.md was backed up byte-for-byte, then transactionally replaced.
+  Only clearly Kiwi-specific persona/path/environment/current-state/architecture/roadmap material
+  was removed. Generic and ambiguous user rules were kept.
+- Global stale Kiwi state, exact full-line duplicates, known conflicts, and missing critical
+  project rails all count zero.
+
+The exact frozen v44.55.31 build is resolved and correlated to the accepted Runtime ZIP.
+
+- The ZIP-internal build_identity.json is byte-identical to the external build identity.
+- CONTROL and PROBE run identities both reference that exact build-identity SHA and completed
+  with exit 0 without timeout.
+- The existing named build payload matches 288/288 manifest entries, with zero missing,
+  mismatched, or extra files.
+- The Unity launcher EXE SHA is not unique across builds. Exact authority therefore comes from
+  the named build path plus the complete payload manifest, not from EXE SHA alone.
+
+A one-command, Windows PowerShell 5.1 clean Product Impact runner is prepared and parser-valid.
+It has not been executed in this audit because the requested run requires the user to perform the
+same-build Human Visual checklist. Executing it without the user observing would consume the
+one-run design without producing Visual Authority.
+
+Current classification is therefore P2 / INCONCLUSIVE_PENDING_HUMAN_REVIEW. This is not a
+Runtime failure and is not a Product defect finding. v44.55.32 remains unauthorized. No
+Production fix is implemented. The single next action is the one prepared clean frozen-v31 run
+and return of its visual checklist. Final roadmap selection among product work and any further E2
+work remains deliberately unfrozen until that evidence exists.
+
+===============================================================================
+2. Authority Freeze
+===============================================================================
+
+Project=D:\KiwiAvatarSystem
+Environment=Unity 6000.0.80f1; Windows/DX12; MediaPipeUnityPlugin 0.16.3;
+Unity Inference Engine 2.4.1
+
+Accepted frozen Runtime=v44.55.31
+Accepted conclusion=E2_DIVERGENCE_PRESENT_BY_PRODUCER_TAIL_OR_COMMON_OBSERVATION_PATH
+Accepted scope=VALID_FOR_E2_AT_COARSE_OUTPUT_OBSERVATION_ENDPOINT_ONLY
+
+Frozen Runtime ZIP=
+D:\KiwiAvatarSystem\KiwiValidation\RuntimeEvidence_v44_55_31_20260905_165629_f05a2230.zip
+Frozen Runtime ZIP SHA256=
+FCA6097A4B01E725F8ED2203B330A259C2BBCE5549ABBC001B139ED9FEAD9B9E
+ZIP SHA verified in this audit=YES
+
+Accepted values retained without expansion:
+
+CONTROL Actual NEITHER=88/88
+PROBE Actual NEITHER=84/84
+PROBE producer snapshot NEITHER=84/84
+snapshot==Actual=84/84
+
+Still not proved:
+
+- exact faulty method or statement;
+- exact resource transition or queue-ownership defect;
+- exact producer-tail versus common observation/readback split;
+- Fence, Wait, queue flush, or async-disable necessity/location;
+- clean Product impact;
+- clean Performance;
+- Human Visual result.
+
+Fundamental Audit authority retained:
+
+FINAL_DECISION=DELETE_ONLY
+DIAGNOSTIC_DIRECTION=SIMPLIFY_DIAGNOSTIC_FRAMEWORK
+v30 diagnostic family=RETIRED_FROM_ACTIVE_PATH_REVERSIBLY
+
+===============================================================================
+3. AGENTS Before / After
+===============================================================================
+
+Preflight:
+
+GIT_HEAD=27281c622d7b8bf2ececf711b037fc8f9e029004
+GIT_STATUS=DIRTY_ACCEPTED_USER_OWNED
+TRACKED_MODIFIED=4
+UNTRACKED_AT_PERSISTED_PREFLIGHT=710
+GLOBAL_AGENTS_PATH=C:\Users\main\.codex\AGENTS.md
+PROJECT_AGENTS_PATH=D:\KiwiAvatarSystem\AGENTS.md
+PROJECTS_ROOT_STATUS=ABSENT_ACCEPTED
+
+Tracked modified files observed before this task and preserved:
+
+- Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiOrtDirectMLShadowRuntime.cs
+- Assets/KiwiAvatarSystem/Runtime/Validation/KiwiPairBoundShadowOutputSnapshotV44_55_24.cs
+- Assets/Script/KiwiInferenceFaceTracker.cs
+- Tools/KiwiPowerShell/KiwiPsCompat.psm1
+
+The dirty workspace is not attributed to this task. No reset, checkout, clean, commit, or push was
+performed.
+
+Project AGENTS:
+
+Before=present, untracked, 6,010 bytes, 176 lines
+After=present, unchanged
+SHA256=B217232B8C25364A3CB1D5CB6BBD86D6732574748EE1BBCEFAA355376ECBDC24
+Volatile v44/SHA/current Runtime/roadmap state embedded=0
+
+Global AGENTS before:
+
+Bytes=6,746
+Lines=45
+SHA256=4AA78D0A366C9BB8145C4FC257A5B1BE2196FB2CC396385F3C25DEC3872D2DC6
+
+Global AGENTS after:
+
+Bytes=2,047
+Lines=19
+SHA256=6500D37232B66B183555CBFED66B7F57E0AA27267F5E67A65BD425DB8FCFA59D
+
+Removed because statement scope was clearly Kiwi-specific:
+
+- KiwiAvatarSystem persona and D:\KiwiAvatarSystem environment map;
+- stale v44.55.29-current statement;
+- stale Stage1-ready/unexecuted roadmap statement;
+- Kiwi camera/Native/Inference/tracking/FacePart/avatar/external-reuse narrative;
+- Kiwi rearchitecture sequence and other project-only details now owned by project AGENTS.
+
+Preserved because generic or ambiguous user-owned guidance must not be deleted:
+
+- concise evidence-separated reporting;
+- Claim-Scoped Authority discipline;
+- explicit-only commit/push;
+- validation order and no Visual-to-Tracking inference;
+- PowerShell 5.1/transaction/rollback/validator discipline;
+- consolidated report workflow and Working Core caution.
+
+AMBIGUOUS_GLOBAL_RULE=KEEP_AND_REPORT
+
+Backup directory:
+D:\KiwiAvatarSystem\KiwiValidation\Backups\GlobalAgents_20260906_024057
+
+Backup original:
+D:\KiwiAvatarSystem\KiwiValidation\Backups\GlobalAgents_20260906_024057\AGENTS.md.before
+
+Backup original SHA256=
+4AA78D0A366C9BB8145C4FC257A5B1BE2196FB2CC396385F3C25DEC3872D2DC6
+BACKUP_SHA_MATCH=YES
+TRANSACTIONAL_REPLACEMENT=YES
+
+===============================================================================
+4. AGENTS Precedence Audit
+===============================================================================
+
+The effective hierarchy is now:
+
+1) global AGENTS: generic cross-project process/safety/evidence guidance only;
+2) D:\KiwiAvatarSystem\AGENTS.md: Kiwi-specific map and durable hard rails;
+3) two identical KlakSpout AGENTS files: only their external-audit/tool subtrees.
+
+No AGENTS file exists between the project root and
+KiwiValidation\CleanProductImpact. The project AGENTS therefore governs the runner/report.
+
+Automated plus manual Gate result:
+
+PROJECT_AGENTS_PRESENT=YES
+GLOBAL_KIWI_STALE_STATE_COUNT=0
+DUPLICATE_RULE_COUNT=0
+CONFLICT_COUNT=0
+CRITICAL_RAIL_EXPECTED=19
+CRITICAL_RAIL_LOSS_COUNT=0
+
+Gate=PASS
+
+Evidence:
+D:\KiwiAvatarSystem\KiwiValidation\Backups\GlobalAgents_20260906_024057\AgentsCleanupAudit_20260906_024057.json
+
+===============================================================================
+5. Frozen v31 Build Resolution
+===============================================================================
+
+V31_RUNTIME_ZIP_SHA=
+FCA6097A4B01E725F8ED2203B330A259C2BBCE5549ABBC001B139ED9FEAD9B9E
+
+V31_BUILD_IDENTITY_SOURCE=
+D:\KiwiAvatarSystem\KiwiValidation\v44_55_31_build_identity.json
+
+BUILD_IDENTITY_SHA256=
+DAA8C22A890DEEB128758D587359D4EDBF859631E3A8306D63F77D746949D7A8
+
+FROZEN_V31_BUILD_IDENTITY=KIWI_V44_55_31_BUILD
+BUILD_TIMESTAMP_UTC=2026-09-05T07:37:27.3738882Z
+BUILD_EXIT=0
+
+KNOWN_V31_BUILD_CANDIDATES=
+D:\KiwiAvatarSystem\Builds\v44_55_31AsyncProducerTailSnapshot
+
+FROZEN_V31_EXE=
+D:\KiwiAvatarSystem\Builds\v44_55_31AsyncProducerTailSnapshot\KiwiAvatarSystem_v44_55_31.exe
+
+FROZEN_V31_EXE_SHA256=
+98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81
+
+EXPECTED_EXE_SHA256=
+98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81
+
+EXE_BYTES=671744
+EXE_LAST_WRITE_UTC=2026-09-05T07:37:13.3260207Z
+
+Correlation chain:
+
+- ZIP-internal build_identity SHA=DAA8...D7A8
+- external build_identity SHA=DAA8...D7A8
+- internal/external bytes equal=YES
+- CONTROL run buildManifestSHA=DAA8...D7A8; exit=0; timeout=false
+- PROBE run buildManifestSHA=DAA8...D7A8; exit=0; timeout=false
+- existing build payload expected/matched=288/288
+- payload missing/mismatch/extra=0/0/0
+- actual build file count=288
+
+Important limitation: 83 historical Unity launcher EXEs under Builds share the same launcher SHA.
+The EXE SHA is necessary but not sufficient. The complete 288-file payload closure plus the named
+v31 path and run-to-manifest links establish the exact build.
+
+RUNTIME_ZIP_BUILD_CORRELATED=YES
+
+Current workspace versus v31 selected source manifest:
+
+- entries=290
+- exact matches=288
+- differences=2
+- differing files are only Tools\KiwiV44_55_31\Test-Validator.ps1 and
+  Tools\KiwiV44_55_31\Validate-Runtime.ps1
+- Production source difference observed in this selected manifest=NO
+
+This does not make the post-retirement current workspace the exact same build. Active diagnostic
+contents and compiled output differ after v30 retirement, and current workspace Runtime was not
+rerun.
+
+Evidence:
+D:\KiwiAvatarSystem\KiwiValidation\CleanProductImpact\FrozenV31BuildResolution_20260906_024057.json
+
+===============================================================================
+6. Clean Configuration
+===============================================================================
+
+Prepared runner:
+D:\KiwiAvatarSystem\KiwiValidation\CleanProductImpact\Run-FrozenV31-CleanProductImpact.ps1
+
+Runner SHA256=A07DAEBE6F4AC7178E1155875D137012C8CA90E2EB8361287C4B3F01468C23C8
+Windows PowerShell 5.1 parser errors=0
+Current workspace build invoked=NO
+Production/source/scene/package/native/shader modification=NO
+
+The runner performs these gates before launch:
+
+1) exact Runtime ZIP SHA verification;
+2) exact external build-identity SHA/contract/exit verification;
+3) exact frozen EXE SHA verification;
+4) full 288-file payload SHA closure and zero-extra check;
+5) inherited process-level KIWI_* snapshot;
+6) inherited KIWI_* removal for the child so stale shell overrides cannot leak;
+7) explicit collection OFF values shown below;
+8) Product execution-form overrides left unset so the frozen source applies its Windows/DX12
+   Product defaults;
+9) exact restoration of the caller's process environment in finally;
+10) raw Player.log, lifecycle identity, results, hashes, checklist, and one evidence ZIP.
+
+Explicit OFF:
+
+V20_COLLECTION=KIWI_V44_55_20_COMMON_TENSOR_AUDIT=0
+V24_COLLECTION=KIWI_V44_55_24_PAIR_BOUND_SHADOW_OUTPUT_AUDIT=0
+V25_COLLECTION=KIWI_V44_55_25_PRODUCTION_SCHEDULE_TRANSACTION_TRACE=0
+V27_COLLECTION=KIWI_V44_55_27_ACTUAL_PRODUCTION_VS_SHADOW_PAYLOAD_AUDIT=0
+V31_COLLECTION=KIWI_V44_55_31_COLLECTION=0
+V31_PRODUCER_TAIL_SNAPSHOT=0
+V29_AUTO_QUIT=0
+
+KIWI_INFERENCE_ASYNC_COMPUTE_PROBE=UNSET_FOR_FROZEN_BUILD_PRODUCT_DEFAULT
+KIWI_INFERENCE_COMMAND_BUFFER_GRAPHICS_PROBE=UNSET_FOR_FROZEN_BUILD_PRODUCT_DEFAULT
+
+The source-confirmed v44.22 startup policy enables the existing async-compute Product default only
+when the frozen Windows/DX12 runtime reports support. The runner does not pre-disable async and
+does not introduce an A/B mode.
+
+Forbidden additions made by runner=NONE
+
+- no GPU snapshot;
+- no AsyncGPUReadback;
+- no ComputeBuffer/RenderTexture/GPU copy;
+- no inference, queue, Fence, Wait, flush, or async-disable;
+- no Production telemetry source edit.
+
+PRODUCT_IDENTITY_DEPTH=LIMITED
+
+===============================================================================
+7. Runtime Automated Evidence
+===============================================================================
+
+The clean run is READY but intentionally NOT YET EXECUTED.
+
+Reason: same-build Human Visual observation is required during the single run. Running it without
+the user would not establish the requested authority and would encourage an unnecessary rerun.
+
+After execution the runner records:
+
+PROCESS_EXIT=<captured>
+TIMEOUT=<captured>
+PLAYER_ERROR_COUNT=<explicit fatal/error/exception pattern count>
+CAMERA_LIVENESS=<existing startup-active marker only, or NOT_OBSERVED>
+TRACKING_LIVENESS=<existing initialization marker only, or NOT_OBSERVED>
+CANONICAL_LIVENESS=NOT_OBSERVED unless an existing clean marker exists
+AVATAR_PRESENTATION_LIVENESS=NOT_OBSERVED unless an existing clean marker exists
+SPOUT_LIVENESS=<existing publish progress, or NOT_OBSERVED>
+AVAILABLE_IDENTITY_CONTINUITY=NOT_OBSERVED
+
+The runner does not reinterpret absent telemetry as PASS. Heavy-diagnostic activation markers are
+also counted; any such marker makes the run contaminated and nonzero-exit.
+
+PROCESS_EXIT=NOT_RUN
+TIMEOUT=NOT_RUN
+PLAYER_ERROR_COUNT=NOT_RUN
+CAMERA_LIVENESS=NOT_RUN
+TRACKING_LIVENESS=NOT_RUN
+CANONICAL_LIVENESS=NOT_RUN
+AVATAR_PRESENTATION_LIVENESS=NOT_RUN
+SPOUT_LIVENESS=NOT_RUN
+AVAILABLE_IDENTITY_CONTINUITY=NOT_RUN
+
+===============================================================================
+8. Human Visual Evidence
+===============================================================================
+
+HUMAN_REVIEW_REQUIRED=YES
+VISUAL_AUTHORITY=PENDING_HUMAN_REVIEW
+
+Run exactly once while the user can observe the visible application. Exercise the checklist, then
+close the application normally before the 600-second safety timeout.
+
+ONE_RUNTIME_COMMAND=
+& 'C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe' -NoProfile -ExecutionPolicy Bypass -File 'D:\KiwiAvatarSystem\KiwiValidation\CleanProductImpact\Run-FrozenV31-CleanProductImpact.ps1' -TimeoutSeconds 600
+
+EVIDENCE_OUTPUT=
+D:\KiwiAvatarSystem\KiwiValidation\CleanProductImpact\Run_<timestamp>_<token>\
+
+EVIDENCE_ZIP=
+D:\KiwiAvatarSystem\KiwiValidation\CleanProductImpact\Run_<timestamp>_<token>.zip
+
+The exact paths and ZIP SHA are printed after execution.
+
+VISUAL_CHECKLIST=
+
+HEAD_TRANSLATION=
+YAW=
+PITCH=
+ROLL=
+EYE=
+BLINK=
+MOUTH_OPEN=
+MOUTH_SHAPE_EXPRESSION=
+FRONTAL_STILLNESS=
+FAST_MOVEMENT_RESPONSE=
+OBVIOUS_LAG=
+STALE_OR_FREEZE=
+FACEPART_MISMATCH=
+TRANSITION_ARTIFACT=
+LIVE_CAMERA_REGRESSION=
+SPOUT_OUTPUT=
+OTHER=
+
+No Visual result is inferred from Runtime logs or prior acceptance.
+
+===============================================================================
+9. Product Impact Classification
+===============================================================================
+
+CURRENT_CLASS=P2
+PRODUCT_IMPACT=INCONCLUSIVE_PENDING_HUMAN_REVIEW
+IMPACT_REACHES=UNKNOWN
+
+Exact blocker=the clean frozen-v31 run and same-run Human Visual checklist have not yet been
+performed. This is the planned Human Review stop condition, not a claim that the application
+failed.
+
+P0 and P1 remain unavailable until automated evidence and Human Visual are correlated from this
+one clean run.
+
+No conclusion is made that E2 is false, impossible, fixed, reproduced in Product, or harmless.
+
+===============================================================================
+10. Authority Separation
+===============================================================================
+
+FROZEN_V31_E2_BUILD_AUTHORITY=
+YES_FOR_ACCEPTED_COARSE_E2_ONLY; exact ZIP/build/run correlation reverified
+
+FROZEN_V31_CLEAN_RUN_AUTHORITY=
+UNAVAILABLE_NOT_RUN
+
+CURRENT_WORKSPACE_IMPLEMENTATION_AUTHORITY=
+CURRENT_LOCAL_SOURCE_INSPECTED; selected v31 manifest differs only in two validator tools, but
+post-v31 diagnostic retirement means it is not the exact frozen build
+
+CURRENT_WORKSPACE_RUNTIME_AUTHORITY=
+UNAVAILABLE_NOT_RUN
+
+VISUAL_AUTHORITY=
+PENDING_HUMAN_REVIEW
+
+PERFORMANCE_AUTHORITY=
+UNAVAILABLE_NOT_A_DEDICATED_CLEAN_BENCHMARK
+
+PRODUCTION_CODE_CHANGED_BY_THIS_TASK=NO
+CURRENT_WORKSPACE_RUNTIME_VALIDATED=NO
+
+===============================================================================
+11. v31 E2 Reassessment
+===============================================================================
+
+Confirmed Runtime, frozen authority:
+
+E2_DIVERGENCE_PRESENT_BY_PRODUCER_TAIL_OR_COMMON_OBSERVATION_PATH
+VALID_FOR_E2_AT_COARSE_OUTPUT_OBSERVATION_ENDPOINT_ONLY
+
+Confirmed build provenance:
+
+- exact frozen build payload is available and correlated;
+- exact existing build may be used for the clean Product check;
+- no substitute build is required or authorized.
+
+Inference pending Product Impact:
+
+- coarse E2 alone does not justify expanding diagnostics;
+- whether E2 reaches accepted Canonical, Avatar, FacePart, or Presentation output remains unknown;
+- a clean run with diagnostic collectors off is the narrowest decision-changing evidence.
+
+Rejected promotion:
+
+- producer-tail exact root cause=NOT PROVED;
+- common readback exact root cause=NOT PROVED;
+- synchronization fix necessity=NOT PROVED;
+- Product impact=NOT PROVED;
+- Performance/Visual defect=NOT PROVED.
+
+===============================================================================
+12. F1-F5 Reassessment
+===============================================================================
+
+F1 Expression Canonical latch bypass
+STATUS=NEEDS_RUNTIME
+Evidence=Static candidate only. No same-build expression/Product incidence is available.
+
+F2 FacePart exact texture identity gap
+STATUS=NEEDS_RUNTIME
+Evidence=Static/identity-depth candidate only. Clean Product path has limited exact identity depth;
+no new observer is authorized for this run.
+
+F3 RigidSampleFrame / SharedTiltLock rotation ownership
+STATUS=NEEDS_RUNTIME
+Evidence=Static possible two-stage visual ownership. Human roll/yaw/pitch observation is required;
+blind owner removal carries visual-regression risk.
+
+F4 temporal layer plurality
+STATUS=NEEDS_RUNTIME
+Evidence=several layers exist but are substantially channel/purpose separated. Duplicate temporal
+ownership is not generally proved. Lag/stillness/fast-movement observation is required.
+
+F5 provider transition double ownership
+STATUS=REJECTED
+Evidence=current source gives Provider Switch authority to the hub; the FaceMotion legacy bridge
+is no-op under canonical handoff, and Resume remains distinct from Provider Switch.
+
+No Static candidate is promoted to Runtime defect or PRODUCT_PRIORITY before the clean evidence.
+
+===============================================================================
+13. Roadmap Candidate Comparison
+===============================================================================
+
+A STOP_OR_DEPRIORITIZE_E2_DIAGNOSTIC_BRANCH
+PRODUCT_VALUE=HIGH_IF_P0; avoids diagnostic curiosity displacing product work
+CORRECTNESS_VALUE=NEUTRAL_TO_POSITIVE; preserves frozen reproducibility without new mechanism
+AUTHORITY_GAP=clean Product/Visual result pending
+REGRESSION_RISK=LOW
+LATENCY_RISK=LOW
+RESOURCE_RISK=LOW
+IMPLEMENTATION_COMPLEXITY=LOW
+EVIDENCE_REQUIRED=current prepared run
+
+B FURTHER_RETIRE_SUPERSEDED_DIAGNOSTICS
+PRODUCT_VALUE=LOW_TO_MEDIUM
+CORRECTNESS_VALUE=POSITIVE only for truly superseded responsibilities
+AUTHORITY_GAP=v20/v24/v25/v27 remain part of the accepted v31 evidence chain
+REGRESSION_RISK=LOW_TO_MEDIUM
+LATENCY_RISK=LOW in default-off state
+RESOURCE_RISK=LOW
+IMPLEMENTATION_COMPLEXITY=LOW_TO_MEDIUM
+EVIDENCE_REQUIRED=closure/replacement of each unique claim dependency
+
+C V44_55_32_NARROW_BOUNDARY_DIAGNOSTIC
+PRODUCT_VALUE=CONDITIONAL; justified only if P1 reaches Product
+CORRECTNESS_VALUE=POTENTIALLY_HIGH for one-boundary localization
+AUTHORITY_GAP=Product impact and exact lower boundary absent
+REGRESSION_RISK=MEDIUM
+LATENCY_RISK=MEDIUM_TO_HIGH for observer contamination
+RESOURCE_RISK=MEDIUM_TO_HIGH
+IMPLEMENTATION_COMPLEXITY=MEDIUM_HIGH
+EVIDENCE_REQUIRED=P1 plus predeclared one-boundary contract
+CURRENT_DECISION=REJECT_NOT_AUTHORIZED
+
+D F1_F4_TARGETED_PRODUCT_VALIDATION
+PRODUCT_VALUE=MEDIUM_HIGH
+CORRECTNESS_VALUE=HIGH if a visible/semantic symptom selects one candidate
+AUTHORITY_GAP=same-build Product/Visual incidence absent
+REGRESSION_RISK=LOW for validation, HIGH for blind Production change
+LATENCY_RISK=LOW if existing telemetry/visual only
+RESOURCE_RISK=LOW
+IMPLEMENTATION_COMPLEXITY=MEDIUM
+EVIDENCE_REQUIRED=clean run and one selected symptom/boundary
+
+E CANONICAL_FACEPART_PROVIDER_PRESENTATION_CLOSURE
+PRODUCT_VALUE=HIGH
+CORRECTNESS_VALUE=HIGH
+AUTHORITY_GAP=F1-F4 incidence and exact responsibility overlap not closed
+REGRESSION_RISK=MEDIUM_HIGH
+LATENCY_RISK=MEDIUM
+RESOURCE_RISK=MEDIUM
+IMPLEMENTATION_COMPLEXITY=HIGH
+EVIDENCE_REQUIRED=targeted semantic/transition/golden evidence
+
+F AVATAR_FACEPART_PRODUCT_IMPLEMENTATION
+PRODUCT_VALUE=VERY_HIGH long-term
+CORRECTNESS_VALUE=HIGH with transactional adapter/profile architecture
+AUTHORITY_GAP=Product presentation/ownership closure and current visual result pending
+REGRESSION_RISK=HIGH if started before boundary freeze
+LATENCY_RISK=MEDIUM
+RESOURCE_RISK=MEDIUM
+IMPLEMENTATION_COMPLEXITY=HIGH
+EVIDENCE_REQUIRED=closure decision, profile/adapter contract, golden replay/visual acceptance
+
+G CLEAN_PERFORMANCE_OPTIMIZATION
+PRODUCT_VALUE=MEDIUM_HIGH only after a clean baseline identifies a bottleneck
+CORRECTNESS_VALUE=NEUTRAL
+AUTHORITY_GAP=no dedicated clean benchmark in this task
+REGRESSION_RISK=MEDIUM
+LATENCY_RISK=UNKNOWN until measured
+RESOURCE_RISK=UNKNOWN until measured
+IMPLEMENTATION_COMPLEXITY=VARIABLE
+EVIDENCE_REQUIRED=separate clean Production benchmark
+
+H COMPLETE_PREPARED_HUMAN_CLEAN_PRODUCT_IMPACT_GATE
+PRODUCT_VALUE=HIGHEST_IMMEDIATE; directly decides whether E2 deserves more product time
+CORRECTNESS_VALUE=HIGH decision-quality value without Production mutation
+AUTHORITY_GAP=requires user observation and returned evidence
+REGRESSION_RISK=LOW; frozen build, no source change
+LATENCY_RISK=LOW to Product; no added runtime mechanism
+RESOURCE_RISK=LOW; heavy collectors explicitly off
+IMPLEMENTATION_COMPLEXITY=LOW; runner ready
+EVIDENCE_REQUIRED=one user-observed execution
+
+Final A-G selection is not frozen before H completes. Doing so would violate the requested Human
+Review stop condition.
+
+===============================================================================
+14. Selected Next Single Action
+===============================================================================
+
+NEXT_SINGLE_ACTION=
+RUN_ONE_FROZEN_V31_CLEAN_PRODUCT_IMPACT_SESSION_AND_RETURN_THE_SAME_RUN_VISUAL_CHECKLIST
+
+This is candidate H and is the only current action. It resolves the exact P2 blocker. It does not
+authorize a second run, v44.55.32, a Production fix, or a benchmark.
+
+After the user returns the evidence directory/ZIP path and checklist values, this report should be
+updated in place with:
+
+- automated Runtime fields;
+- Human Visual authority;
+- P0/P1/P2 classification;
+- deepest evidence-supported IMPACT_REACHES;
+- final A-G roadmap comparison outcome;
+- exactly one post-freeze next action.
+
+===============================================================================
+15. Rejected Actions
+===============================================================================
+
+- current workspace rebuild as a substitute for frozen v31;
+- a second CONTROL/PROBE A/B;
+- any new GPU snapshot/readback/copy/buffer/render texture/inference/queue;
+- Fence, blocking Wait, queue flush, or async-disable;
+- Production C#, Native C++, DLL, Production shader, package, scene, tracking parameters,
+  avatar behavior, LIVE CAMERA, or Spout changes;
+- using EXE SHA alone as build authority;
+- interpreting missing clean telemetry as PASS;
+- Visual PASS inferred by Codex;
+- Performance PASS inferred from Visual or this Product-impact run;
+- v44.55.32 based on diagnostic momentum;
+- F1-F4 Production changes based on Static findings;
+- deleting ambiguous global user instructions;
+- resetting/cleaning/overwriting user-owned dirty files;
+- commit or push.
+
+===============================================================================
+16. Remaining Unknown
+===============================================================================
+
+1) Clean frozen-v31 process exit, lifecycle, and Player error result.
+2) Continuous camera/tracking/Canonical/avatar liveness beyond existing lightweight markers.
+3) Exact clean-path transaction/identity continuity; expected depth is LIMITED.
+4) Same-build human head/eye/blink/mouth/FacePart/presentation/LIVE CAMERA/Spout result.
+5) Whether coarse E2 has observable Product impact.
+6) If it does, the deepest affected Product boundary.
+7) Exact producer-tail versus common observation/readback split.
+8) F1-F4 Runtime incidence.
+9) Dedicated clean Performance baseline.
+10) Final A-G roadmap selection and post-freeze next single action.
+
+Unknown does not equal failure and does not equal PASS.
+
+===============================================================================
+17. Do Not Change
+===============================================================================
+
+Until the Human Review gate returns:
+
+- do not rebuild or replace frozen v31;
+- do not modify Production or Native;
+- do not add observers or deepen identity telemetry;
+- do not change Root/Head/Eye/Mouth ownership;
+- do not change provider/resume/temporal/prediction ownership;
+- do not change tracking math, ROI, threshold, cadence, smoothing, or texture transaction;
+- do not change async execution, Fence/Wait/flush, backend, scene, LIVE CAMERA, or Spout;
+- do not authorize v44.55.32;
+- do not claim Runtime, Visual, Performance, P0, or P1.
+
+===============================================================================
+18. Self-Audit
+===============================================================================
+
+- Was the dirty workspace preserved? YES.
+- Were initial tracked modifications overwritten or attributed to this task? NO.
+- Was project AGENTS rewritten unnecessarily? NO; valid existing content and SHA were preserved.
+- Was the global user-owned original backed up before change? YES; byte/SHA match verified.
+- Was global replacement transactional? YES.
+- Were ambiguous generic global rules deleted? NO; KEEP_AND_REPORT.
+- Are Kiwi volatile current-state claims left in global AGENTS? NO.
+- Were critical Kiwi rails lost? NO; 19/19 checks present.
+- Were nested third-party AGENTS treated as global Kiwi authority? NO.
+- Was exact v31 inferred from filename or EXE SHA alone? NO; 288-file payload and run links close it.
+- Was the current workspace rebuilt? NO.
+- Was frozen Runtime evidence rewritten? NO.
+- Was clean Runtime fabricated? NO; NOT_RUN.
+- Was Human Visual fabricated? NO; PENDING_HUMAN_REVIEW.
+- Was Performance inferred? NO; UNAVAILABLE.
+- Was Static promoted to Runtime? NO.
+- Was v44.55.32 authorized? NO.
+- Was a Production fix implemented? NO.
+- Was commit/push performed? NO.
+- Is exactly one current action selected? YES; the prepared Human-observed clean run.
+
+-------------------------------------------------------------------------------
+FINAL STATUS BLOCK
+-------------------------------------------------------------------------------
+
+AGENTS_CLEANUP_STATUS=PASS
+PROJECT_AGENTS_SHA256=B217232B8C25364A3CB1D5CB6BBD86D6732574748EE1BBCEFAA355376ECBDC24
+GLOBAL_AGENTS_BEFORE_SHA256=4AA78D0A366C9BB8145C4FC257A5B1BE2196FB2CC396385F3C25DEC3872D2DC6
+GLOBAL_AGENTS_AFTER_SHA256=6500D37232B66B183555CBFED66B7F57E0AA27267F5E67A65BD425DB8FCFA59D
+GLOBAL_KIWI_STALE_STATE_COUNT=0
+AGENTS_CONFLICT_COUNT=0
+
+FROZEN_V31_BUILD_RESOLVED=YES
+FROZEN_V31_EXE_SHA256=98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81
+FROZEN_V31_RUNTIME_CORRELATED=YES
+
+V20_COLLECTION=OFF_PREPARED_EXPLICIT_0
+V24_COLLECTION=OFF_PREPARED_EXPLICIT_0
+V25_COLLECTION=OFF_PREPARED_EXPLICIT_0
+V27_COLLECTION=OFF_PREPARED_EXPLICIT_0
+V31_COLLECTION=OFF_PREPARED_EXPLICIT_0
+HEAVY_DIAGNOSTICS_OFF=PREPARED_NOT_RUNTIME_VERIFIED
+CLEAN_RUNTIME_STATUS=READY_NOT_RUN_PENDING_HUMAN_OBSERVATION
+
+HUMAN_REVIEW_REQUIRED=YES
+PRODUCT_IMPACT_RESULT=INCONCLUSIVE_PENDING_HUMAN_REVIEW
+IMPACT_REACHES=UNKNOWN
+VISUAL_AUTHORITY=PENDING_HUMAN_REVIEW
+PERFORMANCE_AUTHORITY=UNAVAILABLE_NOT_A_DEDICATED_BENCHMARK
+
+V31_E2_AUTHORITY=VALID_FOR_E2_AT_COARSE_OUTPUT_OBSERVATION_ENDPOINT_ONLY
+CURRENT_WORKSPACE_RUNTIME_AUTHORITY=UNAVAILABLE_NOT_RUN
+
+F1_STATUS=NEEDS_RUNTIME
+F2_STATUS=NEEDS_RUNTIME
+F3_STATUS=NEEDS_RUNTIME
+F4_STATUS=NEEDS_RUNTIME
+F5_STATUS=REJECTED
+
+NEXT_DIAGNOSTIC_REQUIRED=NO_NOT_BEFORE_CLEAN_PRODUCT_IMPACT_RESULT
+V44_55_32_AUTHORIZED=NO
+
+ROADMAP_STATUS=PENDING_HUMAN_REVIEW_NOT_FROZEN
+NEXT_SINGLE_ACTION=RUN_ONE_FROZEN_V31_CLEAN_PRODUCT_IMPACT_SESSION_AND_RETURN_VISUAL_CHECKLIST
+
+PRODUCTION_SOURCE_CHANGED=NO
+PRODUCTION_FIX_IMPLEMENTED=NO
+COMMIT_PUSH=NO

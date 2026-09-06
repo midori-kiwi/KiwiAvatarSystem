@@ -1,0 +1,24 @@
+{
+    "contract":  "KIWI_V44_55_31_RUN",
+    "arm":  "PROBE",
+    "startedUtc":  "2026-09-05T07:58:56.8396882Z",
+    "endedUtc":  "2026-09-05T08:01:20.9485097Z",
+    "exitCode":  0,
+    "timedOut":  false,
+    "pid":  18660,
+    "buildManifestSHA":  "DAA8C22A890DEEB128758D587359D4EDBF859631E3A8306D63F77D746949D7A8",
+    "environment":  {
+                        "KIWI_INFERENCE_ASYNC_COMPUTE_PROBE":  "1",
+                        "KIWI_INFERENCE_COMMAND_BUFFER_GRAPHICS_PROBE":  "0",
+                        "KIWI_V44_55_20_COMMON_TENSOR_AUDIT":  "1",
+                        "KIWI_V44_55_20_COMMON_TENSOR_SECONDS":  "120",
+                        "KIWI_V44_55_20_COMMON_TENSOR_HZ":  "1",
+                        "KIWI_V44_55_20_STABLE_SECONDS":  "8",
+                        "KIWI_V44_55_24_PAIR_BOUND_SHADOW_OUTPUT_AUDIT":  "1",
+                        "KIWI_V44_55_25_PRODUCTION_SCHEDULE_TRANSACTION_TRACE":  "1",
+                        "KIWI_V44_55_27_ACTUAL_PRODUCTION_VS_SHADOW_PAYLOAD_AUDIT":  "1",
+                        "KIWI_V44_55_31_COLLECTION":  "1",
+                        "KIWI_V44_55_31_PRODUCER_TAIL_SNAPSHOT":  "1",
+                        "KIWI_V44_55_31_EVIDENCE_DIR":  "D:\\KiwiAvatarSystem\\KiwiValidation\\RuntimeEvidence_v44_55_31_20260905_165629_f05a2230\\PROBE"
+                    }
+}

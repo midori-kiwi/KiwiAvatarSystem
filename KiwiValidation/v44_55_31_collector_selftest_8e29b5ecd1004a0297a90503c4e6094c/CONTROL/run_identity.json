@@ -1,0 +1,10 @@
+{
+    "contract":  "KIWI_V44_55_31_RUN",
+    "arm":  "CONTROL",
+    "startedUtc":  "2026-09-05T07:36:18.1717475Z",
+    "endedUtc":  "2026-09-05T07:36:18.3666516Z",
+    "exitCode":  30,
+    "timedOut":  false,
+    "pid":  45336,
+    "synthetic":  true
+}

@@ -1,0 +1,31 @@
+KiwiAvatarSystem v44.55.29 composite fail-closed validation
+validatedJst=2026-09-04
+evidenceRoot=D:\KiwiAvatarSystem\KiwiValidation\RuntimeEvidence_v44_55_29_20260904_CORRELATED_VALID
+
+[IDENTITY_VALIDATOR]
+script=D:\KiwiAvatarSystem\Tools\KiwiV44_55_29\Validate-Runtime-Identity-PS51-KiwiV44_55_29.ps1
+sha256=F2F7235EBDCAB3DCC5FD0F68CD55D49012821D7CDC2FE11C0AFA868C589094C7
+exitCode=0
+result=KIWI_V44_55_29_RUNTIME_IDENTITY_VALIDATION_PASS
+scope=EXE, Assembly-CSharp, Inference Engine and MediaPipe assemblies, both models, built and Production Native DLLs, protected Production source, Packages manifest/lock, installed package.json files, package ZIPs, Run script, Runtime Validator
+
+[PAYLOAD_VALIDATOR]
+script=D:\KiwiAvatarSystem\Tools\KiwiV44_55_29\Validate-Runtime-KiwiV44_55_29.ps1
+sha256=27861ECC9FC1FDD5F134F4D8FD3BE44FAECF2FF1247EF574FA073DD9515CD9D8
+exitCode=0
+result=KIWI_V44_55_29_RUNTIME_VALIDATION_PASS
+decision=ASYNC_QUEUE_EXECUTION_CONTEXT_CAUSAL_CONTRIBUTOR_CANDIDATE
+commandBufferExecutionForm=REJECTED_AS_PRIMARY_CAUSE_FOR_THIS_SAME_BUILD_AB
+asyncQueueExecutionContext=SUPPORTED_AS_CAUSAL_CONTRIBUTOR_CANDIDATE
+
+[ARM_RESULTS]
+DIRECT_GRAPHICS=eligible:68,anomalousEligible:22,REF_ONLY:68,MODE2_ONLY:0,BOTH:0,NEITHER:0,exitCode:0
+COMMAND_BUFFER_GRAPHICS=eligible:88,anomalousEligible:13,REF_ONLY:88,MODE2_ONLY:0,BOTH:0,NEITHER:0,exitCode:0
+COMMAND_BUFFER_ASYNC=eligible:87,anomalousEligible:6,REF_ONLY:0,MODE2_ONLY:0,BOTH:0,NEITHER:87,exitCode:0
+
+[VALIDATOR_LIMITATION]
+The package payload validator reads EXE.sha256 while the strengthened runner records identity.EXE.sha256. Its generated V44_55_29_SUMMARY.txt therefore has an empty sameBuildExeSha256 display field. Do not use that empty field as same-build proof. The separate identity validator above validates the stronger 20-item cross-arm SHA set and is the identity authority. Payload counts, integrity gates, classification, and decision were validated by the payload validator.
+
+[CLAIM_SCOPE]
+Actual Production decode payload execution-form/queue isolation only.
+Canonical Semantic, performance, visual, complete lifecycle/recovery, fence necessity/location, Production async disable, and Production adoption remain unproven/not authorized.

@@ -1,0 +1,30 @@
+[
+    {
+        "name":  "KIWI_V44_55_20_COMMON_TENSOR_AUDIT",
+        "value":  "0"
+    },
+    {
+        "name":  "KIWI_V44_55_24_PAIR_BOUND_SHADOW_OUTPUT_AUDIT",
+        "value":  "0"
+    },
+    {
+        "name":  "KIWI_V44_55_25_PRODUCTION_SCHEDULE_TRANSACTION_TRACE",
+        "value":  "0"
+    },
+    {
+        "name":  "KIWI_V44_55_27_ACTUAL_PRODUCTION_VS_SHADOW_PAYLOAD_AUDIT",
+        "value":  "0"
+    },
+    {
+        "name":  "KIWI_V44_55_29_AUTO_QUIT",
+        "value":  "0"
+    },
+    {
+        "name":  "KIWI_V44_55_31_COLLECTION",
+        "value":  "0"
+    },
+    {
+        "name":  "KIWI_V44_55_31_PRODUCER_TAIL_SNAPSHOT",
+        "value":  "0"
+    }
+]

@@ -1,0 +1,10 @@
+[
+    {
+        "path":  "collection_failure.json",
+        "sha256":  "5140553DF253359BC69339EFBE8C2E146F53E830343F6C1B5B5533C92F28DA6B"
+    },
+    {
+        "path":  "CONTROL\\run_identity.json",
+        "sha256":  "2D713B7DF2CA84188215FC82D1FDAFDCF16B3684E9E17412B73A8E328E541DCE"
+    }
+]

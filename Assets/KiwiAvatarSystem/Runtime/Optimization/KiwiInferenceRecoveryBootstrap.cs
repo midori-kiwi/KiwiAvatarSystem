@@ -35,8 +35,6 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
     [Range(2f, 15f)]
     public float mediaPipeAuxRefreshHz = 5f;
 
-    [Tooltip("After startup, KiwiMatureVTuberSupervisor owns the runtime auxiliary MediaPipe cadence. This bootstrap keeps only the startup fallback value.")]
-    public bool deferRuntimeAuxCadenceToMatureSupervisor = true;
 
     [Range(0.10f, 0.70f)]
     public float inferencePresenceThreshold = 0.50f;
@@ -98,8 +96,6 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
     [SerializeField] private string debugStatus = "Waiting";
 
     private FaceLandmarkerRunner _runner;
-    private KiwiTrackingQuality10Controller _motionController;
-    private KiwiMatureVTuberSupervisor _matureSupervisor;
 
     private double _watchStartedRealtime;
     private double _lastScheduleProgressRealtime;
@@ -350,21 +346,7 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
             return;
         }
 
-        if (_motionController == null)
-        {
-            _motionController =
-                FindFirstObjectByType<
-                    KiwiTrackingQuality10Controller>(
-                    FindObjectsInactive.Include);
-        }
 
-        if (_matureSupervisor == null)
-        {
-            _matureSupervisor =
-                FindFirstObjectByType<
-                    KiwiMatureVTuberSupervisor>(
-                    FindObjectsInactive.Include);
-        }
 
         _runner.enableSentisHybridTracking =
             enableHybrid;
@@ -391,33 +373,18 @@ public sealed class KiwiInferenceRecoveryBootstrap : MonoBehaviour
         _runner.autoOptimizeCm831 =
             false;
 
-        if (
-            force ||
-            !deferRuntimeAuxCadenceToMatureSupervisor ||
-            _matureSupervisor == null
-        )
-        {
-            KiwiRuntimePolicyResolver.SubmitBaselineMediaPipeRefreshHz(
-                mediaPipeAuxRefreshHz,
-                KiwiRuntimePolicyResolver.RequestPriority.Bootstrap,
-                "InferenceRecoveryBootstrap");
-        }
+        // Fixed baseline cadence belongs to inference lifecycle/configuration,
+        // not to the retired appearance-driven Mature presentation policy.
+        KiwiRuntimePolicyResolver.SubmitBaselineMediaPipeRefreshHz(
+            mediaPipeAuxRefreshHz,
+            KiwiRuntimePolicyResolver.RequestPriority.Bootstrap,
+            "InferenceRecoveryBootstrap");
 
         KiwiRuntimePolicyResolver.SubmitBaselinePresenceThreshold(
             inferencePresenceThreshold,
             KiwiRuntimePolicyResolver.RequestPriority.Bootstrap,
             "InferenceRecoveryBootstrap");
 
-        if (
-            _motionController != null &&
-            (force || !adaptPresenceThreshold)
-        )
-        {
-            // This remains an input/preset value for Quality10. The actual
-            // Runner/tracker threshold is now written only by the resolver.
-            _motionController.inferencePresenceThreshold =
-                inferencePresenceThreshold;
-        }
     }
 
     private void ObserveTrackerProgress(

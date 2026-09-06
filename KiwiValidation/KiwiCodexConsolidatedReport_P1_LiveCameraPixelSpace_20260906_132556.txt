@@ -1,0 +1,377 @@
+KiwiAvatarSystem — P1 Consolidated REPORT
+LIVE CAMERA Pixel-Space Localization / Reaudited Final Instruction
+
+REPORT_TIMESTAMP_JST=2026-09-06 13:25:56 +09:00
+PROJECT=D:\KiwiAvatarSystem
+MODE=EXACT_FROZEN_V31_OBSERVER_RUN_NO_PRODUCTION_CHANGE
+AUTHORITY_MODEL=CLAIM_SCOPED_AUTHORITY
+AUTHORITY_BASIS=KiwiCodexConsolidatedReport_ProductFailureSpecification_SymptomBoundaryTriage_20260906_093659.txt
+
+===============================================================================
+1. Executive verdict
+===============================================================================
+
+The exact frozen-v31 Player contains and activates the exact current
+KiwiLiveCameraPixelSpaceAudit source. Runtime source/pixel metrics were obtained
+successfully from the 1920x1080 KiwiNativeCameraPresentation texture using
+DIRECT / color OFF, with no observer Blit or readback.
+
+However, the required causal claim is NOT_EVALUABLE. At the 1280x720 P1 run
+geometry, the default FrameComparisonOverlay LIVE surface is 448x252 while the
+PixelSpaceAudit FULL and 1:1 panes are each 560x315. The later audit panel and
+crop pane overlap the original LIVE CAMERA surface. Therefore the original
+symptom reproduction gate and the Audit FULL-to-original bridge gate cannot be
+judged independently from this run. Both attempted title-target screenshots
+were also occluded by other windows and were excluded from Visual Authority and
+from the Runtime ZIP.
+
+This is a measurement-surface defect, not evidence of a Production camera,
+Native, Bilinear, 560x315, OnGUI, tracking, inference, FacePart, or Spout defect.
+No Production fix is authorized or justified.
+
+WHY_CHANGE_IS_BETTER_THAN_NO_CHANGE=NOT_ESTABLISHED_FOR_PRODUCTION; NO_CHANGE
+
+===============================================================================
+2. Machine fields
+===============================================================================
+
+P1_AUTHORITY_PRECHECK=PASS_NO_PRODUCT_EFFECTIVE_DIFFERENCE
+P1_BUILD_CLASS=EXACT_FROZEN_V31_BUILD_DIAGNOSTIC_ACTIVATION
+PIXEL_SPACE_AUDIT_FROZEN_V31_INCLUDED=YES
+BUILD_PROVENANCE_CLOSED=YES_FOR_EXACT_SELECTED_PAYLOAD_AND_DIAGNOSTIC_SOURCE_NOT_REPRODUCIBLE_BUILD_CLASS_A
+OBSERVER_CONTRACT_PASS=NO_REQUIRED_VISUAL_SURFACE_INDEPENDENCE_FAILED_NONMUTATION_SUBCONTRACT_PASS
+HEAVY_COLLECTORS_OFF=YES
+RUNTIME_TECHNICALLY_VALID=YES_FOR_SOURCE_IDENTITY_AND_PIXEL_METRICS_ONLY_NOT_FOR_VISUAL_GATE
+ORIGINAL_LIVE_CAMERA_SYMPTOM=PENDING_HUMAN_REVIEW
+AUDIT_FULL_REPRESENTS_ORIGINAL=PENDING_HUMAN_REVIEW
+PAIRED_HUMAN_DECISION=PENDING_HUMAN_REVIEW
+DISPLAY_MINIFICATION_CLAIM=NOT_EVALUABLE
+PRODUCTION_BEHAVIOR_CHANGED=NO
+PRODUCTION_FIX=NO
+PERFORMANCE_AUTHORITY=NONE
+VISUAL_AUTHORITY=NONE
+COMMIT_PUSH=NO
+NEXT_SINGLE_ACTION=RERUN_EXACT_FROZEN_V31_AT_2560X1352_WITH_LIVE_HUMAN_REVIEW_AND_NO_REBUILD
+
+Additional machine fields:
+PIXEL_SPACE_AUDIT_FROZEN_V31_SOURCE_MANIFEST_LISTED=NO
+PIXEL_SPACE_AUDIT_PDB_SOURCE_SHA_MATCH=YES
+PIXEL_SPACE_AUDIT_RUNTIME_INIT_HOOK=YES
+OBSERVER_NONMUTATION_SUBCONTRACT=PASS
+ORIGINAL_SURFACE_GEOMETRY_BRIDGE=FAIL_AT_1280X720
+VISUAL_CAPTURE_ACCEPTED=NO
+RUNTIME_ZIP_SHA256=449D778BB7ADF345961BF6373F948A6B9E9918CB1E1D968B016D8724D4E7035F
+
+===============================================================================
+3. Authority precheck — Confirmed Static
+===============================================================================
+
+Git at precheck:
+- branch=main
+- HEAD=27281c622d7b8bf2ececf711b037fc8f9e029004
+- HEAD equals the P0 freeze HEAD.
+- full porcelain before P1 output=733 entries: tracked dirty=4, untracked=729.
+- P0 had 732 entries; the additional pre-run entry was the P0 consolidated
+  report itself. All user-owned dirty files were preserved.
+
+Frozen-v31 identity recheck:
+- compared entries=578
+- exact matches=576
+- payload differences=0; selected payload remains 288/288 exact.
+- the only two source differences remain the already-classified offline
+  validator corrections:
+  * Tools\KiwiV44_55_31\Test-Validator.ps1
+  * Tools\KiwiV44_55_31\Validate-Runtime.ps1
+- no new P1-decision-changing Product-effective difference was found.
+
+Relevant current identities:
+- KiwiLiveCameraPixelSpaceAudit.cs
+  AB41E4F296041DEB6BA800D62BCBE992048CE5CFB1E5AE2B7A82E1BA59EA1602
+- KiwiFrameComparisonOverlay.cs
+  6DF8CCC9B47A0E2E9BFF4807B4D7CAB4AB11911992A4624EF7A8E40436F39EDD
+- KiwiCameraPreviewQualityService.cs
+  717C1B1106CEBC0D1E0C37F5A3899A1C3D67007EB7B61DACCE64A39C1336043A
+- WindowsNativeWebCamSource.cs
+  D0DD9A78FA57AAB51D3E0C8606844C44F0207DC87277D0B26AEF3B43EF353533
+- FacePartCropper.cs
+  39C06FEC43B4EA47AD783C233991E830E10B18DA285148E7A34B0C13DAD52CFE
+- active Scene
+  E28B0B81F731B92B04B97D4AA7DB1187C8DD57C5A39F49B08B2E6799BBF5B3D1
+- EditorBuildSettings.asset
+  611BA53D1627847D786E714A7CC17EB8D5AE06C2EFBA4077DA1F396A81355EAE
+- Production KiwiNativeCamera.dll
+  82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+- Packages/manifest.json
+  35F00A89D31A8BF7EE50718F38D4BAC90236D8B691F516C5FC14CAB47AFBFEE1
+- Packages/packages-lock.json
+  23845C132DBF51CB53A5CFDE4EF606FA68D10DCB53AE5FF21F4305613A5F9CE1
+- installed MediaPipe package.json
+  EEBBFF4550FA9CA3C2C76AB05BD0EDBDB3A0A4C2800883E244DC9E40D8FF2A2D
+- installed Inference Engine package.json
+  2F230C84E28A9E3AD516B1A49B79B6F83E172F1C16E6813E0F1DD6FA2B1790EE
+
+===============================================================================
+4. PixelSpaceAudit build/payload authority
+===============================================================================
+
+The frozen-v31 selected source manifest does not list
+KiwiLiveCameraPixelSpaceAudit.cs. This fact is reported as NO rather than
+silently promoted to manifest authority.
+
+Independent exact-payload evidence closes inclusion and activation:
+- selected exact build:
+  Builds\v44_55_31AsyncProducerTailSnapshot\KiwiAvatarSystem_v44_55_31.exe
+- EXE SHA256:
+  98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81
+- complete selected payload remains 288/288 exact.
+- Assembly-CSharp.dll SHA256:
+  32064B0D9657A89A858E1888016DBE8F47A28FD924CD77B16B2B1B1A3E57AE86
+- exact portable PDB contains the source document and SHA256 checksum
+  AB41E4F2...EA1602, equal to the current source SHA.
+- RuntimeInitializeOnLoads.json contains
+  KiwiLiveCameraPixelSpaceAudit.Install / AfterSceneLoad.
+- Runtime logged exactly one READY activation for contract
+  KIWI_LIVE_CAMERA_PRESENTATION_PIXEL_SPACE_AUDIT_V1.
+
+This closes the diagnostic source/payload/activation claim for the selected
+exact Player. It is not a claim of globally reproducible toolchain output,
+Native Class-A provenance, or equivalence of arbitrary other builds.
+
+===============================================================================
+5. Observer contract — Confirmed Static and Runtime
+===============================================================================
+
+Static forbidden-call counts in the exact source document:
+- new RenderTexture=0
+- Graphics.Blit=0
+- AsyncGPUReadback=0
+- ReadPixels/GetPixels/SetPixels=0
+- Worker.Schedule=0
+- blocking Wait/CompleteAllPendingOperations/GraphicsFence=0
+- File/Directory/StreamWriter output=0
+
+Runtime READY and metrics reported:
+- observerOnly=1
+- additionalBlit=0
+- additionalReadback=0
+- trackingWrite=0
+- cameraWrite=0
+- inferenceWrite=0
+- faceTextureTransactionWrite=0
+- previewMode=DIRECT
+- colorMode=OFF
+- liveBlitsLastPrepare=0
+- observerBlit=0
+- observerReadback=0
+
+Thus the nonmutation/copy/readback contract passes. The overall observer
+contract does not pass because the observer cannot preserve the independent
+original LIVE CAMERA surface at the tested 1280x720 geometry.
+
+===============================================================================
+6. Activation state — Runtime
+===============================================================================
+
+The authoritative recapture run cleared every inherited KIWI_* variable, then
+explicitly set:
+- KIWI_LIVE_CAMERA_PIXEL_SPACE_AUDIT=1
+- KIWI_CAMERA_PREVIEW_MODE=DIRECT
+- KIWI_LIVE_CAMERA_COLOR_CORRECTION=OFF
+- v20 common tensor=0
+- v24 pair-bound output=0
+- v25 production schedule trace=0
+- v27 actual-vs-shadow=0
+- v31 collection=0
+- v31 producer-tail snapshot=0
+- inference async E2 probe=0
+- command-buffer graphics probe=0
+
+Heavy activation markers in raw Player.log are zero for v20/v24/v25/v27/v31.
+No v44.55.32 implementation or activation was introduced.
+
+Existing default-active services/observers were not removed. Relevant observed
+markers:
+- KiwiFramePacing=1
+- KiwiPreviewCostABC DIRECT=1
+- KiwiLiveCameraColorV44_29 OFF=1
+- KiwiSpoutWaitFreeDiagnosticV44_20=3
+
+This run is therefore not Performance Authority.
+
+===============================================================================
+7. Runtime pixel metrics — Confirmed Runtime
+===============================================================================
+
+Run identity:
+- D3D12 forced and active; GPU=NVIDIA GeForce RTX 4090.
+- window requested=1280x720; fullscreen=0.
+- exact Player exitCode=0; timedOut=false; graceful CloseMainWindow=true.
+- camera ACTIVE exactly once:
+  UGREEN Camera 4K, 1920x1080@60, MediaFoundation/NV12,
+  D3D11->D3D12CompatibilityReverseSharedRGBA, stablePresentation=True,
+  orientation=ProviderGpuYNormalized.
+- READY count=1; complete pixel metric records=2.
+
+Both metric records agree:
+- sourceTextureId=-558
+- comparisonTextureId=-558
+- relation=DIRECT_SAME_TEXTURE
+- sourceName=KiwiNativeCameraPresentation
+- source/comparison size=1920x1080
+- format=ARGB32; graphicsFormat=R8G8B8A8_UNorm
+- dimension=Tex2D
+- filterMode=Bilinear; mipmapCount=1; wrapMode=Clamp
+- texture color space=Linear; active project color space=Linear;
+  sourceIsDataSRGB=0
+- Audit FULL draw=560x315, aspect=1.777778
+- source aspect=1.777778
+- FULL scale=0.291667 x 0.291667
+- center 1:1 source texels=x680 y382 w560 h315
+- Audit crop draw=560x315 by source contract
+- mirrorX=1
+- same local Texture object=1
+- Unity frames observed=24 and 226
+
+No managed unhandled exception was found. The raw log does contain one D3D12
+info-queue query warning and one pre-existing mesh upload-buffer-size warning.
+They did not prevent camera activation, metrics, Spout progress, cleanup, or
+exit 0, but they are not erased or converted into a clean Performance claim.
+
+===============================================================================
+8. Observer-surface bridge defect — Confirmed Static applied to Runtime geometry
+===============================================================================
+
+At Screen 1280x720, source aspect 16:9, previewWidth=560, showHelp=true and
+default telemetry showOverlay=false:
+
+Original FrameComparisonOverlay:
+- desired panel=576x826
+- clamped panel=x686 y10 w576 h700
+- available height per preview=252
+- original LIVE draw Rect=x694 y38 w448 h252
+- effective original LIVE scale=448/1920=0.233333 X,
+  252/1080=0.233333 Y
+
+PixelSpaceAudit:
+- panel=x67 y179 w1146 h531
+- FULL Rect=x75 y211 w560 h315
+- crop Rect=x645 y211 w560 h315
+- Audit scale=0.291667 X/Y
+
+Overlap:
+- audit panel intersects original LIVE at x694..1142, y179..290.
+- audit crop draw intersects original LIVE at x694..1142, y211..290.
+- PixelSpaceAudit has DefaultExecutionOrder(36800), so its later OnGUI surface
+  can overwrite the original surface within this region.
+
+Consequences:
+1. Audit FULL is not the same layout geometry as the original 1280x720 LIVE
+   surface (560x315 vs 448x252).
+2. The original surface is partially contaminated by the audit itself.
+3. A Human cannot independently decide ORIGINAL_LIVE_CAMERA_SYMPTOM and
+   AUDIT_FULL_REPRESENTS_ORIGINAL from this surface.
+4. FULL-vs-1:1 within the audit may still be visually inspectable, but it cannot
+   be promoted to the requested original-surface causal localization.
+
+===============================================================================
+9. Visual evidence and Human authority
+===============================================================================
+
+Two title-target ffmpeg captures were attempted. Both desktop captures were
+occluded by non-target windows. They were rejected, excluded from the ZIP, and
+not shown or scored. The capture attempts are documented by hashes and the
+capture log only.
+
+Codex did not infer Human image quality. Therefore:
+- ORIGINAL_LIVE_CAMERA_SYMPTOM=PENDING_HUMAN_REVIEW
+- AUDIT_FULL_REPRESENTS_ORIGINAL=PENDING_HUMAN_REVIEW
+- PAIRED_HUMAN_DECISION=PENDING_HUMAN_REVIEW
+- VISUAL_AUTHORITY=NONE
+
+Because both prerequisite gates are not closed, the required decision rule
+forces DISPLAY_MINIFICATION_CLAIM=NOT_EVALUABLE.
+
+===============================================================================
+10. Rejected conclusions
+===============================================================================
+
+- REJECT: this run proves Bilinear is the root cause.
+- REJECT: 560x315 is the root cause.
+- REJECT: OnGUI is the root cause.
+- REJECT: Native source pixels are fully correct.
+- REJECT: PresentationTexture pixel content is fully correct.
+- REJECT: FULL-vs-1:1 difference can be attributed to the original LIVE surface
+  while the original surface geometry differs and is overlapped.
+- REJECT: screenshot presence alone is Visual Authority.
+- REJECT: exit 0 and metrics make this a clean Performance benchmark.
+- REJECT: start FacePart/F2, E2, v44.55.32, tracking, inference, ROI, camera,
+  Native, Spout, Fence/Wait/flush/FIFO/smoothing/prediction/threshold changes.
+
+===============================================================================
+11. Unknown / unresolved
+===============================================================================
+
+- Human classification of the original LIVE CAMERA symptom on a valid,
+  unoccluded same-build surface.
+- Human FULL-vs-1:1 classification using the fixed vocabulary.
+- Whether the first visible degradation is display scale/layout/sampling.
+- Exact sub-boundary inside A if FULL_ONLY_BAD is later established.
+- Physical monitor-pixel 1:1; not claimed.
+- Clean Production performance.
+
+===============================================================================
+12. What changed / what did not change
+===============================================================================
+
+Changed:
+- created this consolidated report.
+- created one Runtime Evidence ZIP.
+- executed the exact frozen-v31 Player; no build was created.
+
+Not changed:
+- Production source, Scene, package, Native DLL, shader/material/prefab.
+- camera settings, 560x315 policy, Bilinear, Native path.
+- tracking/inference/ROI/cadence/texture transaction/Root/Head authority.
+- FacePart/F2 instrumentation, E2, v44.55.32.
+- no Fence, Wait, queue flush, async disable, FIFO, permanent buffer, stale
+  prediction, Kalman, strong smoothing or threshold relaxation.
+- no commit or push.
+
+===============================================================================
+13. Runtime Evidence ZIP
+===============================================================================
+
+Path:
+D:\KiwiAvatarSystem\KiwiValidation\KiwiRuntimeEvidence_P1_LiveCameraPixelSpace_20260906_132556.zip
+
+SHA256:
+449D778BB7ADF345961BF6373F948A6B9E9918CB1E1D968B016D8724D4E7035F
+
+The ZIP contains the byte-preserved authoritative Player.log, run identity,
+exact build resolution, PDB/runtime-init activation evidence, current authority
+precheck, observer/geometry audit, independently recomputed runtime summary,
+visual-capture exclusion record, superseded first-run identity and an internal
+SHA256 manifest. It intentionally contains no invalid/occluded screenshot.
+
+===============================================================================
+14. Next single action
+===============================================================================
+
+Run the same exact frozen-v31 payload at 2560x1352 windowed, with the same
+PixelSpaceAudit-only environment and no rebuild, while a Human reviews the live
+Player directly.
+
+Static layout at 2560x1352 separates the surfaces:
+- original LIVE Rect=x1974 y38 w560 h315
+- Audit FULL Rect=x715 y843 w560 h315
+- Audit crop Rect=x1285 y843 w560 h315
+- no overlap between original LIVE and either audit pane.
+
+Use the fixed Human vocabulary only after confirming the original symptom:
+FULL_ONLY_BAD / BOTH_BAD_SIMILAR / ONE_TO_ONE_ONLY_BAD /
+DIFFERENT_GEOMETRY_ORIENTATION / NO_MEANINGFUL_DIFFERENCE / INCONCLUSIVE.
+
+Do not change Production. If a non-occluded 2560x1352 live review cannot be
+obtained, remain PENDING_HUMAN_REVIEW / NOT_EVALUABLE.
+
+END_OF_REPORT

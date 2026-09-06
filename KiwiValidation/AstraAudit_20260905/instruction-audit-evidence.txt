@@ -1,0 +1,33 @@
+Scope and evidence
+- Read-only instruction audit. No AGENTS/SKILL edits, cache deletion, package installation, builds, commits or pushes.
+- HOME and USERPROFILE C:\Users\main; CODEX_HOME environment unset. ~/Projects absent (root audit). D:\Users\main\Projects absent (root audit). D:\KiwiAvatarSystem root AGENTS absent; only two nested vendored KlakSpout AGENTS found by complete rg hidden/no-ignore project inventory.
+- Additional roots: global .codex/skills; plugins/cache; config.toml marketplace source .cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime; .codex/.tmp/bundled-marketplaces/openai-bundled.
+- 72 seeds: 69 SKILL and 3 AGENTS. 22 exact skill paths match session catalog; 47 are disk-only/unlisted. 54 skills in global/cache roots plus 15 marketplace source copies.
+- Recursive literal local Markdown filename-token traversal: 330 documents total, 910 edges, 107 unresolved token edges. This is an inventory closure for resolvable tokens, NOT exhaustive semantic proof for all possible natural-language, runtime, external, placeholder, or package-root-relative references. Several unresolved tokens are generated Artifact.md, generic SKILL.md, or example cloud docs, not proven broken links.
+- 258 resolved reference documents are hashed and line-counted. Audit reads do not invoke their workflows.
+- Original enumeration/hash extraction used default host subsequently identified by root as PowerShell7.6.5. Final hash recheck explicitly Windows PowerShell5.1. No Production scripts executed; host discrepancy is tooling evidence, not Production defect.
+Loading
+- Official AGENTS documentation: global override first, otherwise AGENTS; project root to cwd, at most one instruction per directory, deeper wins; default cap32KiB. This is published design, not runtime proof of every desktop injection.
+- Global Kiwi AGENTS body matches user-pasted session instructions; automatic file injection specifically is not independently proven.
+- Nested KlakSpout AGENTS are scoped to those vendored source subtrees, not global Kiwi release authorization.
+- Skill metadata visible does not mean body always loaded. Official skill documentation explicitly specifies progressive disclosure. Disk-only skills cannot be assumed active or safely redundant; configured enabled plugins likewise do not prove skill body loading.
+- Config includes enabled Slack/Google Calendar but session catalog lacks their skill entries. Treat as configured-versus-exposed mismatch/unknown, not installation failure.
+Findings with exact lines
+- C:\Users\main\.codex\AGENTS.md:20 says "v44.55.29 Runtime VALID"; line21 "Stage1 READY/未実行". Current task explicit v31 bounded authority supersedes these changing state claims. Put historical versions/results in evidence manifests/current report pointers, not persistent global claims.
+- Same global file lines10,13-17,24,30,36,39 retain Kiwi authority, source identity, lifecycle, ownership and PS5.1 rails. Model capability does not refute these.
+- Same file line1 "世界最高峰のQAエンジニア" is persona/motivational deletion candidate. Lines7/45 generic diligence portions can be reduced only while retaining commit restriction and evidence gate. No evidence establishes a necessary obsolete-model reasoning workaround.
+- Same file project scope is global: all its Kiwi instructions affect unrelated repositories under documented global mechanism. Proposal: relocate only Kiwi guidance to D:\KiwiAvatarSystem\AGENTS.md with exact canonical pointers, preserving user-global preferences separately. Do not perform merely to make file shorter.
+- Both KlakSpout AGENTS share SHA 4A4C9C1D42B6FA430B2C5446BE7FF9D5BBAAE9A043243032F278FF68D2967450. Lines8-10 synchronize package/root release docs; line33 commit/tag; lines53-58 push/release/npm. These are conditional upstream release instructions. In current read-only scope no trigger applies. Future application must respect explicit commit/push authorization. Keep vendored provenance; identical bytes do not justify deleting a source snapshot.
+- C:\Users\main\.codex\skills\.system\openai-docs\SKILL.md:12: "First substantive action:" requires official search/open before local inspection. Scope OpenAI documentation workflow. Conflicts current explicit inventory-first request and developer local-first OpenAI guidance. Current resolution: inventory/local first; record conflict; do not halt.
+- C:\Users\main\.codex\plugins\cache\openai-bundled\visualize\1.0.29\skills\visualize\SKILL.md:22-24: "Work silently unless blocked or the user explicitly asks for progress. Never send commentary or progress updates ... the final response must be your first user-facing message." Lines27-28 prohibit announcing skill. Scope only visualization workflow, NOT activated by audit. Potential conflict with higher-priority skill announcement/progress requirement; higher instruction controls if invoked. Do not delete visualization tool procedure for this conditional mismatch.
+- C:\Users\main\.codex\skills\.system\openai-docs\references\latest-model.md:3 explicitly non-authoritative fallback; lines5-14 GPT5.6 family. SKILL.md:35 preserves explicit requested model; line36 gates old migration guide to actual GPT5.6 migration. Therefore old-model document presence is not evidence of unwanted Astra scaffolding. Do not load as current Astra authority; no whole-skill deletion justified.
+- C:\Users\main\.codex\skills\.system\review-agent\SKILL.md is unlisted. Contains concrete review scope/output and merge-base workflow. Do not infer active prompting overhead or classify all of it as obsolete reasoning.
+Minimal map proposal (NOT applied)
+- Keep brief project authority/ownership/nonblocking/same-sample/Native provenance/write restrictions.
+- Replace dynamic current-state paragraph with pointers to one accepted claim-scoped runtime evidence manifest plus current audit report; select exact files only after root provenance verification.
+- Point build/test commands to existing actual entrypoints, not guessed or new generic test mandates.
+- Keep tool/plugin-specific skills progressive and narrow. Do not uninstall/delete global caches or create a new mega-skill.
+- No current old-model workaround deletion is evidence-justified. Instruction-only future scoped edit may improve freshness and unrelated-project isolation; it does not reduce Production state/owner/buffer/queue counts.
+Published loading sources checked live
+https://learn.chatgpt.com/docs/agent-configuration/agents-md (discovery section)
+https://learn.chatgpt.com/docs/build-skills (progressive disclosure and loading locations)

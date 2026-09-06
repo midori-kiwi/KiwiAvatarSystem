@@ -1,0 +1,43 @@
+{
+    "contract":  "ASTRA_EXISTING_EVIDENCE_INSPECTION",
+    "psVersion":  "5.1.26100.9168",
+    "utc":  "2026-09-05T12:40:23.5541630Z",
+    "runtimeRerun":  false,
+    "manifestFiles":  25,
+    "actualPayloadFiles":  25,
+    "zipSha256":  "FCA6097A4B01E725F8ED2203B330A259C2BBCE5549ABBC001B139ED9FEAD9B9E",
+    "zipFiles":  26,
+    "arms":  {
+                 "CONTROL":  {
+                                 "pairs":  88,
+                                 "csvPairs":  88,
+                                 "actualNeither":  88,
+                                 "snapshotEqualsActual":  0,
+                                 "snapshotNeither":  0,
+                                 "payloadWordsChecked":  370920,
+                                 "presenceBitsEqual":  88,
+                                 "otherIdentityFieldsEqual":  88,
+                                 "gpuHeaderMatches":  0,
+                                 "declaredClassificationMatches":  88,
+                                 "exitCode":  0,
+                                 "startedUtc":  "2026-09-05T07:56:30.6016989Z",
+                                 "endedUtc":  "2026-09-05T07:58:54.5849794Z"
+                             },
+                 "PROBE":  {
+                               "pairs":  84,
+                               "csvPairs":  84,
+                               "actualNeither":  84,
+                               "snapshotEqualsActual":  84,
+                               "snapshotNeither":  84,
+                               "payloadWordsChecked":  472080,
+                               "presenceBitsEqual":  84,
+                               "otherIdentityFieldsEqual":  84,
+                               "gpuHeaderMatches":  84,
+                               "declaredClassificationMatches":  84,
+                               "exitCode":  0,
+                               "startedUtc":  "2026-09-05T07:58:56.8396882Z",
+                               "endedUtc":  "2026-09-05T08:01:20.9485097Z"
+                           }
+             },
+    "limit":  "Independent offline recomputation of captured bytes; no independent GPU observation, no new runtime, performance or visual authority."
+}

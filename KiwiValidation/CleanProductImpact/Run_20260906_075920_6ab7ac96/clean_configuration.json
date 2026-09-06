@@ -1,0 +1,21 @@
+{
+    "contract":  "KIWI_FROZEN_V31_CLEAN_PRODUCT_IMPACT_ENVIRONMENT_V1",
+    "inheritedKiwiVariableCount":  0,
+    "inheritedKiwiVariablesRecorded":  true,
+    "sourceDefaultsRequested":  true,
+    "inferenceAsyncComputeOverride":  "UNSET_FOR_FROZEN_BUILD_PRODUCT_DEFAULT",
+    "commandBufferGraphicsOverride":  "UNSET_FOR_FROZEN_BUILD_PRODUCT_DEFAULT",
+    "heavyDiagnosticVariables":  {
+                                     "KIWI_V44_55_20_COMMON_TENSOR_AUDIT":  "0",
+                                     "KIWI_V44_55_24_PAIR_BOUND_SHADOW_OUTPUT_AUDIT":  "0",
+                                     "KIWI_V44_55_25_PRODUCTION_SCHEDULE_TRANSACTION_TRACE":  "0",
+                                     "KIWI_V44_55_27_ACTUAL_PRODUCTION_VS_SHADOW_PAYLOAD_AUDIT":  "0",
+                                     "KIWI_V44_55_31_COLLECTION":  "0"
+                                 },
+    "v20Collection":  "OFF_EXPLICIT_0",
+    "v24Collection":  "OFF_EXPLICIT_0",
+    "v25Collection":  "OFF_EXPLICIT_0",
+    "v27Collection":  "OFF_EXPLICIT_0",
+    "v31Collection":  "OFF_EXPLICIT_0",
+    "heavyDiagnosticsOffBeforeLaunch":  true
+}

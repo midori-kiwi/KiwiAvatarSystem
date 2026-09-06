@@ -1,0 +1,613 @@
+KiwiAvatarSystem v44.55.31 Runtime Validator Identity Failure Audit
+Report timestamp: 2026-09-05 20:44:37 JST
+Project: D:\KiwiAvatarSystem
+Audit mode: STATIC + EXISTING_RUNTIME_EVIDENCE_REVALIDATION_ONLY
+Runtime rerun: NO
+Build: NO
+Production modification: NO
+Commit/push: NO
+
+1 Executive Summary
+
+結論:
+- `Pair identity minimumPresenceBits` は実 Runtime の transaction identity divergence ではない。
+- 根因は M3_VALIDATOR_STRING_COMPARISON_DEFECT。v31 producer JSON の decimal JSON number と、v27 CSV の uppercase X8 hexadecimal string を、旧 validator が一般 identity field と同じ `[string]` 比較へ流していた。
+- 最初の失敗 pair は CONTROL recordIndex=1 / pairToken=4 / sequence=696。左は JSON `1056964608`、右は CSV `3F000000`。どちらも canonical UInt32=1056964608、float32=0.5、ULP distance=0。
+- CONTROL 88/88 と PROBE 84/84 は raw string が不一致だが、canonical 32-bit は全件一致。他 identity field、crop、v25-v27 trace identity も全件一致した。
+- validator のみを修正し、runtime-faithful X8 fixture を含む synthetic self-test 17/17 PASS を得た。
+- 同一 ZIP を Runtime 再実行なしで再検証し、exit code 0、`EVIDENCE_INTEGRITY_VALID`、E2=`DIVERGENCE_PRESENT_BY_PRODUCER_TAIL_OR_COMMON_OBSERVATION_PATH` を得た。
+- E2 の scope は `COARSE_OUTPUT_OBSERVATION_ENDPOINT_ONLY`。producer-tail と common observation path のどちらが exact cause か、fence/wait/flush/async-disable の必要性や挿入位置は未確定であり、Production 変更を正当化しない。
+
+2 Runtime ZIP Authority
+
+Runtime ZIP:
+  D:\KiwiAvatarSystem\KiwiValidation\RuntimeEvidence_v44_55_31_20260905_165629_f05a2230.zip
+SHA256:
+  FCA6097A4B01E725F8ED2203B330A259C2BBCE5549ABBC001B139ED9FEAD9B9E
+Bytes: 3,809,639
+
+Authority checks:
+- 指定された ZIP SHA256 と実測 SHA256 は一致。
+- 展開 manifest は payload 25件。25/25 hash PASS、unmanifested payload 0。
+- manifest 自身を含む展開ファイル総数は26。
+- evidence_manifest SHA256=28521559B5DD07827A786CE01D1752187810D378A82AF2817743C60254AE7048。
+- build_identity.json SHA256=DAA8C22A890DEEB128758D587359D4EDBF859631E3A8306D63F77D746949D7A8。
+- 修正版 validator による再検証後も Runtime ZIP SHA256 は不変。
+- raw Runtime evidence は編集していない。
+
+Authority classification:
+- Runtime: SAME-ZIP / SAME-BUILD evidence authority。
+- Validator revision: post-run offline validation authority。Runtime binary/build authorityとは分離。
+- Performance: observer-heavy diagnostic run のため authorityなし (`performanceAuthority=0`)。
+
+3 Raw Evidence Inventory
+
+Manifest payload 25件:
+01 build_identity.json | 167769 bytes | DAA8C22A890DEEB128758D587359D4EDBF859631E3A8306D63F77D746949D7A8
+02 CONTROL v27 csv | F9FEF72418E2FA2B428636007F959C6D7CC8BD7AFCC15D6701712ED993DE7E62
+03 CONTROL v27 txt | D35270E61C971D6B2C6402B53A35A1ABE399C7028DF7F877BB091EB3AE4173E5
+04 CONTROL v20 csv | 6A3CBD974AEEEF0A331DAC84948B97CC6E427DD9A733AE612C0E4AD4F6693993
+05 CONTROL v20 txt | 4266FBDF71E7DA9E154BAD50D0D30034C9B08E3E2ED1E4A954233528A0735910
+06 CONTROL v24 csv | 1309C5455A282497117651AA59DEA7FEDEED9FA99C49EE96B34D073A239EA964
+07 CONTROL v24 txt | 315EEE581B129E853A6C5F1DF26AF088DFE73E82F3DAC9A0E98CCF34F67101F8
+08 CONTROL v25 csv | E83F5C47E2E7FC01907A745076B7ADB681D80E4FF801E1AEB21C84C17CD66E4D
+09 CONTROL v25 txt | D086810E653E9014987DFA1955B418168BC3B36733E07124F55C0670C06291E4
+10 CONTROL Player.log | 4DB294D3A76AEB406074237599CBB6AB4866F9E1FA1BA4142686BE006DD32C67
+11 CONTROL producer_pairs.jsonl | 78EA8A172CC6223BD95A0A28B393F44B30F4E01DA848D7015AD7047B2906FB59
+12 CONTROL summary | 6601B423991A0E44F4096429FCA81E1F79718D384194A5EF70B54B7FE13FCF50
+13 CONTROL identity | 10E5B61DCD8018EE4FFAC334C8B4C71DCF4EFEF14BD6917A28277A650E360CC3
+14 PROBE v27 csv | B3589D8DDBE486F69F3D46C73B5B6B3E36CC2E32DED8F35717AB9FA7C97150DD
+15 PROBE v27 txt | A0A42160D258005D9D6AA722788672F5C72F6959C4EAC30964D1EF925F1B0700
+16 PROBE v20 csv | 9523020657ECB51984029CBC6EACEC429A7AA8A866B7274B4699C59C9ADA61CF
+17 PROBE v20 txt | EF2EE43F0D0AADABC1CDB979BE23B0F6F5B53729D0B78DBA4ADAF4B604E2EFBE
+18 PROBE v24 csv | 61BCA72C1F499C2932079C9ABE963E0D07D107F4C1C7C6CCE813A75F77788C41
+19 PROBE v24 txt | E0B22F78AD182DAA6C50FDF6F2975A28A5460E2194EC88268F4E0E5DF24B3241
+20 PROBE v25 csv | D11E12FD11C66473F5400EF92EF4DB4B45EC04F88FD7DC7A9F92C934FDE367D6
+21 PROBE v25 txt | A6F419327DF5FBF509AF2E1EFAB804D2ED96296E4A3FB87D425E43105D692287
+22 PROBE Player.log | 478F4470681A613376CD255A4A65ED2D39049550548C2489A6D00160C7FFFAB2
+23 PROBE producer_pairs.jsonl | BD2506CE52CF8DFB1A16C38C281766DD52ABB21F8FC20B2F9BE160796EE94AD6
+24 PROBE summary | 7A5AA4BEE43A6AACF9BA43A1CC5E4C409830DD0328B462569CF4F2C8EA04E459
+25 PROBE identity | BFA1900BCDA9BB9538481136662278728BF812EFC3755B876A070EFADADA7C5A
+
+4 First Failing Pair
+
+Arm: CONTROL
+recordIndex: 1
+pairToken: 4
+sequence: 696
+laneIndex: 1
+sourceHostTicks: 165683491
+scheduleBeginHostTicks: 165805914
+startedHostTicks: 165815833
+readbackRequestHostTicks: 165815846
+readbackRequestFrame: 863
+cameraGeneration: 2
+trackingSessionGeneration: 2
+trackerGeneration: 0
+anchorRevision: 1
+externalAnchorEpoch: 62
+laneIdentityToken: 5
+workerIdentityToken: 6
+pendingOutputIdentityToken: 8
+
+Left / v31 JSON raw minimumPresenceBits:
+  token: 1056964608
+  ConvertFrom-Json runtime type on Windows PowerShell 5.1.26100.9168: System.Int32
+  `[string]` representation: "1056964608"
+
+Right / v27 CSV raw minimumPresenceBits:
+  token: 3F000000
+  Import-Csv runtime type: System.String
+  `[string]` representation: "3F000000"
+
+Canonical comparison:
+  left UInt32: 1056964608 (0x3F000000)
+  right UInt32: 1056964608 (0x3F000000)
+  left float32: 0.5
+  right float32: 0.5
+  absolute float delta: 0
+  ULP distance: 0
+  SAME_TRANSACTION: YES
+  SAME_CAPTURE_PHASE: YES_FOR_SEMANTIC_CAPTURE
+  SAME_SERIALIZATION_PHASE: NO; JSON and CSV are serialized by separate observers/formats.
+  OTHER_IDENTITY_FIELDS_MATCH: YES
+  CROP_FIELDS_MATCH: YES
+
+5 minimumPresenceBits End-to-End Dataflow
+
+Production tracker:
+- `KiwiInferenceFaceTracker.InferenceLane.pendingMinimumPresence` is a float field (line 128).
+- public `MinimumPresence` property defaults to 0.5 (lines 430-431).
+- scheduling captures `Mathf.Clamp01(MinimumPresence)` into lane pending state (lines 2209-2210).
+- completion copies the pending float into a local completed value before pending state is cleared (lines 1689-1690; clear at 1725-1726).
+- decode receives the completed minimum and uses it for presence acceptance; the observed pair identity concerns the captured threshold bits, not an inferred textual value.
+
+v25 transaction trace:
+- TraceState stores `MinimumPresenceBits` as C# int (line 172).
+- attach captures `BitConverter.SingleToInt32Bits(ReadFloat(...pendingMinimumPresence))` (lines 741-742).
+- completion recaptures current lane bits and increments a mismatch counter if changed (lines 929-932).
+- CSV serialization converts that int through `Hex32(...)` (line 1796).
+- Runtime evidence reports `minimumPresenceMismatchCount=0` for both arms, so no observed within-transaction threshold mutation exists.
+
+v27 actual-vs-shadow authority:
+- v25 trace int is copied into the pair at line 598.
+- pair/trace identity checks the int exactly at lines 1232-1233.
+- CSV serializes the int using uppercase invariant X8 at lines 1122-1123.
+
+v31 producer-tail snapshot:
+- PROBE-side lane capture bit-converts `pendingMinimumPresence` at line 248.
+- record creation reads v27 pair `MinimumPresenceBits` as int at line 365.
+- exact pair check includes this int at line 381.
+- `JsonUtility.ToJson(row)` at line 407 serializes the public int as a decimal JSON number.
+
+Policy/lifecycle note:
+- Runtime Policy Resolver may update the active tracker property via reflection between transactions.
+- That legitimate between-transaction variability explains multiple observed bit patterns; it does not imply pair mismatch.
+- v25 completion counter and v27/v31 identity equality are the relevant within-transaction checks, and both are clean.
+
+6 Raw Values and Types
+
+JSON schema as emitted:
+- member: public C# int
+- serializer: Unity JsonUtility
+- lexical representation: decimal JSON number
+- PowerShell 5.1 parsed type for current observed values: System.Int32
+
+CSV schema as emitted:
+- source member: C# int
+- serializer: `ToString("X8", InvariantCulture)` / Hex32
+- lexical representation: uppercase eight-character hexadecimal
+- PowerShell Import-Csv type: System.String
+
+The two raw strings are intentionally not lexically equal. They represent the same 32-bit word. A validator must compare their declared canonical domain, not their raw text.
+
+7 Signed/Unsigned Analysis
+
+Confirmed for the supplied Runtime:
+- All observed `minimumPresenceBits` have high bit 0.
+- All JSON values therefore parse as non-negative System.Int32.
+- Signed-vs-unsigned interpretation does not cause the supplied Runtime failure.
+- M1_SIGNED_UNSIGNED_MISMATCH is rejected as the primary cause for this ZIP.
+
+Defensive validator requirement:
+- Any float32 bit pattern can occupy all 32 bits, including high-bit-set values.
+- JSON carries a signed Int32 decimal value while CSV carries an unsigned-looking X8 word.
+- Correct normalization is: validate JSON as exact Int32, reinterpret its bytes as UInt32; validate CSV as exact uppercase X8, parse as UInt32; compare UInt32.
+- The new self-test includes JSON -1082130432 against CSV BF800000, proving equivalent high-bit-set words compare equal without numeric-sign confusion.
+
+8 Serialization Analysis
+
+Confirmed serialization mismatch:
+- v31 JSON: `1056964608`
+- v27 CSV: `3F000000`
+- old validator: `[string]$row.minimumPresenceBits -ne [string]$v.minimumPresenceBits`
+- result: true, although both are the bit pattern 0x3F000000.
+
+This is a representation-schema boundary defect in the validator. It is not a schema-semantic mismatch in the producers: both producers document and carry `SingleToInt32Bits` for the same transaction field. The exact on-wire encodings differ by format and were not normalized.
+
+9 Pair Identity Cross-Check
+
+Independent raw-evidence cross-check, not copied from validator output:
+
+CONTROL:
+- v31 producer vs v27 other identity-field mismatch events: 0
+- v25 vs v27 common identity-field mismatch events: 0
+- crop identity mismatch events: 0
+- valid/v27Eligible/payloadEligible violations: 0
+- actual/reference/mode2 payload-shape violations: 0
+- CONTROL GPU schema violations: 0
+
+PROBE:
+- v31 producer vs v27 other identity-field mismatch events: 0
+- v25 vs v27 common identity-field mismatch events: 0
+- crop identity mismatch events: 0
+- valid/v27Eligible/payloadEligible violations: 0
+- actual/reference/mode2 payload-shape violations: 0
+- producer snapshot/header shape violations: 0
+
+Minimum presence:
+- v31-v27 raw string mismatch: every pair
+- v31-v27 canonical 32-bit mismatch: zero pairs
+- v25-v27 minimumPresenceBits mismatch: zero pairs
+- float delta: zero for every pair
+- ULP distance: zero for every pair
+
+10 CONTROL Distribution
+
+Pair count: 88
+raw-string match: 0
+raw-string mismatch: 88
+canonical UInt32 match: 88
+canonical UInt32 mismatch: 0
+v25-v27 minimumPresence mismatch: 0
+other identity mismatch: 0
+lane distribution:
+- lane 0: 25 pairs; raw mismatch 25; canonical mismatch 0
+- lane 1: 28 pairs; raw mismatch 28; canonical mismatch 0
+- lane 2: 35 pairs; raw mismatch 35; canonical mismatch 0
+
+Unique values (JSON decimal -> CSV X8 : count):
+- 1055678297 -> 3EEC5F59 : 1
+- 1055854830 -> 3EEF10EE : 1
+- 1055957976 -> 3EF0A3D8 : 1
+- 1056015919 -> 3EF1862F : 1
+- 1056146075 -> 3EF3829B : 1
+- 1056226412 -> 3EF4BC6C : 1
+- 1056461292 -> 3EF851EC : 1
+- 1056528404 -> 3EF95814 : 2
+- 1056569973 -> 3EF9FA75 : 1
+- 1056698182 -> 3EFBEF46 : 1
+- 1056742101 -> 3EFC9AD5 : 1
+- 1056762093 -> 3EFCE8ED : 1
+- 1056964608 -> 3F000000 : 75
+
+Float32 range: 0.46166494488716125 to 0.5.
+Interpretation: value variability is real between transactions; representation mismatch is systematic; identity divergence is absent.
+
+11 PROBE Distribution
+
+Pair count: 84
+raw-string match: 0
+raw-string mismatch: 84
+canonical UInt32 match: 84
+canonical UInt32 mismatch: 0
+v25-v27 minimumPresence mismatch: 0
+other identity mismatch: 0
+lane distribution:
+- lane 0: 25 pairs; raw mismatch 25; canonical mismatch 0
+- lane 1: 28 pairs; raw mismatch 28; canonical mismatch 0
+- lane 2: 31 pairs; raw mismatch 31; canonical mismatch 0
+
+Unique values (JSON decimal -> CSV X8 : count):
+- 1055286886 -> 3EE66666 : 1
+- 1055454660 -> 3EE8F5C4 : 1
+- 1055555322 -> 3EEA7EFA : 1
+- 1055689540 -> 3EEC8B44 : 1
+- 1055778478 -> 3EEDE6AE : 1
+- 1055857314 -> 3EEF1AA2 : 1
+- 1056206419 -> 3EF46E53 : 1
+- 1056313307 -> 3EF60FDB : 1
+- 1056346949 -> 3EF69345 : 1
+- 1056360630 -> 3EF6C8B6 : 1
+- 1056445371 -> 3EF813BB : 1
+- 1056626266 -> 3EFAD65A : 1
+- 1056629066 -> 3EFAE14A : 1
+- 1056717932 -> 3EFC3C6C : 1
+- 1056729728 -> 3EFC6A80 : 1
+- 1056742921 -> 3EFC9E09 : 1
+- 1056763284 -> 3EFCED94 : 1
+- 1056796840 -> 3EFD70A8 : 1
+- 1056806985 -> 3EFD9849 : 1
+- 1056850913 -> 3EFE43E1 : 1
+- 1056964608 -> 3F000000 : 64
+
+Float32 range: 0.44999998807907104 to 0.5.
+Interpretation: CONTROL と同じ systematic representation mismatch。PROBE hook 固有の identity corruption ではない。
+
+12 Validator Source Audit
+
+Pre-change defect:
+- v27 CSV was loaded via Import-Csv and v31 JSONL via ConvertFrom-Json.
+- generic identity loop compared `minimumPresenceBits` with `[string]` on both operands.
+- generic loop was correct only for fields whose lexical forms were intentionally identical.
+- `minimumPresenceBits` alone crosses decimal-number/X8-string encoding and needed typed normalization.
+
+Post-change behavior:
+- `Convert-JsonInt32BitsToUInt32` at Validate-Runtime.ps1 line 6 validates an exact integral JSON Int32 and reinterprets the signed bits as UInt32.
+- `Convert-CsvX8BitsToUInt32` at line 20 requires exact uppercase X8 and parses UInt32.
+- `minimumPresenceBits` is excluded from generic string identity comparison.
+- canonical UInt32 values are compared at lines 95-97.
+- null, string-typed JSON, non-integral JSON, out-of-Int32-range JSON, and non-X8/lowercase/semantic-float CSV forms fail closed.
+
+Validator SHA:
+- pre: 82E9FB0F7BD220888E35B362040801D27BA5AF7B855C07FF2A234E5D23174167
+- post: E05F2B5B9CCD767E4DD39DE4B77E8D324D4241CFB158D873E91CAF497FE260ED
+
+13 v30→v31 Delta Audit
+
+Confirmed static delta:
+- The faulty generic validator comparison already existed across the relevant validator lineage; v31 did not introduce a new `minimumPresenceBits` serialization contract.
+- v30 and v31 observer logic preserve the same minimum-presence capture semantics: pending float -> SingleToInt32Bits -> exact pair comparison.
+- v31 changes concern hook version selection and payload pre-release capture/measurement-contract repair, not minimum-presence identity encoding.
+- Therefore the v31 measurement fix did not cause this identity failure. It allowed validation to advance to a latent validator defect.
+
+Rejected interpretations:
+- “v31 hook changed MinimumPresence”: no supporting source or Runtime mismatch evidence.
+- “payload pre-release timing changed threshold bits”: v25 completion mismatch=0 and v27/v31 canonical equality reject it.
+- “wrong pair joined”: all other pair keys match, and mismatch is systematic for every pair solely at lexical encoding.
+
+14 Root Cause
+
+Primary root cause:
+  M3_VALIDATOR_STRING_COMPARISON_DEFECT
+
+Exact causal chain:
+1. Tracker captures float threshold into the transaction lane.
+2. v25 converts the float to a signed C# int bit word.
+3. v27 serializes that word as uppercase X8 CSV text.
+4. v31 reads the same pair int and JsonUtility serializes it as a decimal JSON number.
+5. PowerShell loads the JSON value as System.Int32 and CSV as System.String.
+6. Old validator converts both to string and compares lexical text.
+7. Decimal `1056964608` differs from hexadecimal `3F000000`, causing a false identity failure.
+
+Secondary root cause:
+  VALIDATOR_SELFTEST_FIXTURE_NOT_RUNTIME_FAITHFUL
+
+The previous fixture copied a common numeric value through Export-Csv, so both synthetic sides had the same lexical form. It did not reproduce v27's uppercase X8 production serializer and could not expose the defect.
+
+Root-cause class decisions:
+- M1 signed/unsigned mismatch: REJECTED_FOR_THIS_RUNTIME; retained as defensive test dimension.
+- M2 JSON parser/type defect: REJECTED; observed type is System.Int32 and is valid.
+- M3 validator string comparison defect: CONFIRMED PRIMARY.
+- M4 schema semantic mismatch: REJECTED; same bit semantics, different lexical encoding.
+- M5 wrong-pair join: REJECTED.
+- M6 capture timing/lifecycle divergence: REJECTED for minimumPresence identity.
+- M7 hook defect: REJECTED for this failure.
+- M8 real transaction identity defect: REJECTED for this failure.
+
+15 Measurement vs Production Separation
+
+Production behavior:
+- Not changed.
+- No camera, inference, ROI, cadence, decode, tracking, texture transaction, Root/Head, or presentation source was edited by this corrective action.
+- No fence, Wait, queue flush, blocking readback, async-disable, smoothing, or threshold change was introduced.
+
+Measurement/validator behavior:
+- Only offline comparison semantics for a declared 32-bit field changed.
+- Synthetic fixture now matches the Runtime wire formats.
+- Existing Runtime bytes were reused and preserved.
+
+Inference boundary:
+- The corrected identity result removes a false validator stop.
+- It does not itself prove why Actual is NEITHER at the coarse observation endpoint.
+- The Runtime E2 decision is valid at its declared coarse scope only.
+
+16 Change Decision
+
+Decision: VALIDATOR-ONLY_FIX_AUTHORIZED_AND_APPLIED.
+
+Reason:
+- Defect is proven in validation logic.
+- Fix is narrow, typed, fail-closed, and does not relax the identity gate.
+- Comparing canonical bits is stronger than lexical comparison because it matches the declared field semantics while separately enforcing each on-wire schema.
+- Production and observer changes are neither necessary nor justified for this failure.
+
+No-change decision:
+- Do not modify v31 observer for `minimumPresenceBits`.
+- Do not modify v27/v25 serialization in frozen Runtime evidence.
+- Do not rerun Runtime solely for this validator defect.
+- Do not rebuild the Player.
+
+17 Validator Changes
+
+Files changed:
+1. D:\KiwiAvatarSystem\Tools\KiwiV44_55_31\Validate-Runtime.ps1
+2. D:\KiwiAvatarSystem\Tools\KiwiV44_55_31\Test-Validator.ps1
+
+Validate-Runtime.ps1:
+- added strict JSON Int32-to-UInt32 bit normalization;
+- added strict CSV uppercase-X8-to-UInt32 normalization;
+- removed `minimumPresenceBits` from generic lexical identity comparison;
+- added exact canonical UInt32 comparison;
+- preserved fail-closed behavior for malformed or semantically wrong schemas.
+
+Test-Validator.ps1:
+- fixture now serializes v27 minimumPresenceBits as real X8;
+- added signed-positive equivalent case;
+- added signed-negative/high-bit equivalent case;
+- added one-bit difference rejection;
+- added wrong-pair rejection coverage;
+- added schema mismatch rejection.
+
+Test validator SHA:
+- pre: 4ED4B33CCABB7FE38DD62DEB02FDDA920F4EDC852053F16CE95D531CC4E88BF4
+- post: 5C5AFDBA67D8E56C4B161F4B760CED35A39A1477769D67CF6A24ECA235F7084A
+
+Unchanged common helper:
+- D:\KiwiAvatarSystem\Tools\KiwiV44_55_31\V31.Common.psm1
+- SHA256=E9009C6B7952573D9205E2C1D9CAB90A3BEB68A69BE47C8652AA6C95106E8B34
+
+Backups:
+- D:\KiwiAvatarSystem\KiwiValidation\Backups\v44_55_31_minimum_presence_validator_20260905
+
+18 Validator Self-Test
+
+Parser validation:
+- Validate-Runtime.ps1 parser errors: 0
+- Test-Validator.ps1 parser errors: 0
+
+Synthetic self-test:
+- result: PASS 17/17
+- root: D:\KiwiAvatarSystem\KiwiValidation\v44_55_31_validator_tests_2fd24772122c48eaa38087303dc4a518
+- test_summary SHA256=08F2C4837FBBBD445987FC234EB4849B3E7E4101F12A93E3289732A22A18B210
+- runtimeAuthority=false
+
+Important scope:
+- Self-test proves validator acceptance/rejection behavior only.
+- It is not Runtime evidence, performance authority, build authority, or visual authority.
+- Signed-negative case proves canonical bit equality handling but is not claimed to have occurred in the supplied Runtime.
+
+19 Existing Runtime Revalidation
+
+Input:
+- exact original extracted evidence root from the verified ZIP;
+- no Runtime rerun;
+- no Player invocation;
+- no build;
+- no raw-evidence rewrite.
+
+Corrected validator result:
+  status=EVIDENCE_INTEGRITY_VALID
+  decision=DIVERGENCE_PRESENT_BY_PRODUCER_TAIL_OR_COMMON_OBSERVATION_PATH
+  controlPairs=88
+  probePairs=84
+  performanceAuthority=0
+  contaminationAbsoluteFractionThreshold=0.1
+  controlNeitherMinimumFraction=0.95
+  scope=COARSE_OUTPUT_OBSERVATION_ENDPOINT_ONLY
+  exitCode=0
+
+Revalidation record:
+- D:\KiwiAvatarSystem\KiwiValidation\v44_55_31_runtime_revalidation_20260905_173717.json
+- SHA256=8B80D92BDDEEE1B037EB22813D057CBAAC9ACCAB7351BEDE2B061B686C06C0B2
+- runtimeRerun=false
+- rawEvidenceModified=false
+
+Runtime summaries:
+CONTROL:
+- COMPLETE; exit0; timedOut=false; PID19596.
+- final/eligible/payloadCapture=88; snapshots/copy/issued/completed=0.
+- integrity counters=0; payload pending/missing=0.
+- v20 completed88 fault0; v24 MIXED_TRANSACTION anomalous10; v25 coherent partial coverage with minimumPresenceMismatchCount0; v27 NEITHER confirmed 88/88.
+
+PROBE:
+- COMPLETE; exit0; timedOut=false; PID18660.
+- final/eligible/snapshot/payloadCapture=84; copy/issued/completed=239.
+- integrity counters=0; payload pending/missing=0.
+- v20 completed84 fault0; v24 MIXED_TRANSACTION anomalous31; v25 coherent partial coverage with minimumPresenceMismatchCount0; v27 NEITHER confirmed 84/84.
+- snapshotEqualsActual=84/84.
+
+20 E1/E2/E3/E4/E5 Result
+
+Selected result: E2.
+
+E1 (evidence/identity invalid): NOT SELECTED after validator correction.
+- manifest, build identity, pair identity, payload eligibility, and schemas pass.
+
+E2 (divergence present by producer-tail or common observation path): SELECTED.
+- CONTROL Actual is NEITHER 88/88.
+- PROBE Actual is NEITHER 84/84.
+- PROBE producer snapshot is NEITHER 84/84 and equals Actual 84/84.
+- CONTROL_ONLY classification is present for CONTROL pairs.
+- Corrected validator's predeclared decision is `DIVERGENCE_PRESENT_BY_PRODUCER_TAIL_OR_COMMON_OBSERVATION_PATH`.
+
+E3/E4/E5: NOT SELECTED by supplied validator contract and evidence.
+- No finer sub-boundary can be assigned from this coarse endpoint evidence.
+- No claim is made that CommandBuffer form alone, a specific async queue transition, or a missing fence is the exact cause.
+
+21 Runtime Authority Decision
+
+Runtime authority classification: VALID_FOR_E2_AT_COARSE_OUTPUT_OBSERVATION_ENDPOINT_ONLY
+
+Accepted claims:
+- supplied ZIP is internally intact and correlated;
+- both arms completed without declared observer faults;
+- minimumPresence identity passes when compared according to its declared bit semantics;
+- the corrected validator validly classifies the same Runtime as E2;
+- PROBE snapshot and Actual agree for all 84 eligible PROBE pairs;
+- coarse divergence is upstream of or common to those matching observation endpoints.
+
+Claims not authorized:
+- exact faulty method/instruction/resource transition;
+- exact queue ownership defect;
+- fence necessity or placement;
+- queue flush necessity;
+- async compute disablement;
+- Production fix readiness;
+- performance acceptance;
+- visual acceptance.
+
+22 Remaining Uncertainty
+
+Unresolved:
+- producer-tail versus common observation path exact split;
+- precise Blit/ToTensor/Schedule/queue/pending/readback/decode sub-boundary where expected and actual cease to agree;
+- whether async queue/execution context is causal, contributory, or merely correlated;
+- whether any synchronization is required, and if so its narrowest non-blocking ownership-safe form;
+- payload semantic correctness beyond the current actual/reference/mode2 authority fields;
+- clean Production performance and human visual outcome.
+
+Not unresolved for this audit:
+- cause of `Pair identity minimumPresenceBits` validator failure;
+- whether the supplied pair's bits differ;
+- whether a Runtime rerun is needed to correct that validation result;
+- whether the v31 hook must be changed for this failure.
+
+23 Next Single Action
+
+Freeze the v31 E2 Runtime authority and design the next narrower diagnostic for the producer-tail/common-observation sub-boundary without modifying Production.
+
+The diagnostic design must predeclare:
+- exact source/resource/queue/lifetime boundary;
+- pair identity and same-sample transaction key;
+- observer capture lifetime and release point;
+- expected E-result split;
+- fail-closed completeness gates;
+- no blocking wait/readback and no Production behavior change;
+- separate correctness, latency/resource, and visual authority.
+
+No new Runtime command is supplied in this report because rerun/build was explicitly excluded from this audit.
+
+24 Do Not Change
+
+- Do not change Production tracking, inference, ROI, cadence, decode, texture transaction, camera, Root/Head, Eye/Mouth, or presentation code based on this validator failure.
+- Do not add fence, Wait, queue flush, blocking GPU wait/readback, or async-disable based on E2 alone.
+- Do not relax identity, completeness, manifest, payload, or lifecycle gates.
+- Do not rewrite raw CSV/JSONL/logs to make schemas look equal.
+- Do not regenerate the Runtime ZIP.
+- Do not treat diagnostic FPS as clean performance authority.
+- Do not treat observer agreement as proof that the observer is outside the causal path.
+- Do not claim visual PASS without same-build human review.
+- Do not commit or push without explicit instruction.
+
+25 Self-Audit
+
+Confirmed facts are derived from:
+- SHA-verified Runtime ZIP and manifest;
+- raw JSONL/CSV/log/summary/identity evidence;
+- current local source and PowerShell validator source;
+- Windows PowerShell 5.1 type inspection;
+- corrected validator exit code and saved revalidation record;
+- independent all-pair canonical-bit cross-check.
+
+Inference explicitly bounded:
+- E2 localizes only to producer-tail or common observation path at a coarse endpoint.
+- It does not prove the exact execution-context defect or remedy.
+
+Safety audit:
+- Runtime rerun: NO
+- Unity/Player launch: NO
+- build: NO
+- Production edit: NO
+- observer edit: NO
+- raw Runtime evidence edit: NO
+- ZIP edit: NO
+- validator edit: YES, two files only
+- synthetic self-test: YES, not Runtime authority
+- offline Runtime revalidation: YES
+- commit/push: NO
+- ambient dirty-tree changes were neither modified nor attributed to this action.
+
+Final consistency checks:
+- First failing pair left/right canonical UInt32 equal: YES
+- First failing pair left/right float equal: YES
+- All CONTROL canonical minimumPresence pairs equal: YES, 88/88
+- All PROBE canonical minimumPresence pairs equal: YES, 84/84
+- All other compared identity fields equal: YES
+- v25 within-transaction minimumPresence mismatch: 0 both arms
+- Validator tests: PASS 17/17
+- Existing Runtime revalidation: exit0 / EVIDENCE_INTEGRITY_VALID
+- Decision: E2
+- Runtime authority scope stated: YES
+- Remaining uncertainty preserved: YES
+
+RUNTIME_ZIP_SHA256=FCA6097A4B01E725F8ED2203B330A259C2BBCE5549ABBC001B139ED9FEAD9B9E
+FIRST_FAILING_PAIR=CONTROL/recordIndex=1/pairToken=4/sequence=696/laneIndex=1
+LEFT_MINIMUM_PRESENCE_BITS=1056964608/0x3F000000
+RIGHT_MINIMUM_PRESENCE_BITS=3F000000/1056964608
+LEFT_FLOAT=0.5
+RIGHT_FLOAT=0.5
+OTHER_IDENTITY_FIELDS_MATCH=YES
+ROOT_CAUSE_CLASS=M3_VALIDATOR_STRING_COMPARISON_DEFECT
+VALIDATOR_DEFECT=YES_CONFIRMED
+HOOK_DEFECT=NO_EVIDENCE_FOR_THIS_FAILURE
+REAL_TRANSACTION_IDENTITY_DEFECT=NO_FOR_MINIMUM_PRESENCE_BITS
+CAN_REVALIDATE_EXISTING_RUNTIME_WITHOUT_RERUN=YES_COMPLETED
+VALIDATOR_CHANGE=TYPED_INT32_TO_UINT32_BIT_NORMALIZATION_PLUS_RUNTIME_FAITHFUL_X8_SELFTEST
+PRODUCTION_BEHAVIOR_CHANGED=NO
+RUNTIME_RERUN_REQUIRED=NO
+REVALIDATION_STATUS=EVIDENCE_INTEGRITY_VALID_EXIT_0
+E1_E2_E3_E4_E5=E2_DIVERGENCE_PRESENT_BY_PRODUCER_TAIL_OR_COMMON_OBSERVATION_PATH
+RUNTIME_AUTHORITY=VALID_FOR_E2_AT_COARSE_OUTPUT_OBSERVATION_ENDPOINT_ONLY
+NEXT_SINGLE_ACTION=FREEZE_E2_AND_DESIGN_THE_NEXT_NARROWER_DIAGNOSTIC_WITHOUT_PRODUCTION_CHANGE
+COMMIT_PUSH=NO

@@ -1,0 +1,73 @@
+{
+  "contract": "KIWI_FROZEN_V31_BUILD_RESOLUTION_V1",
+  "auditedUtc": "2026-09-05T17:53:12.4556660Z",
+  "runtimeZip": {
+    "path": "D:\\KiwiAvatarSystem\\KiwiValidation\\RuntimeEvidence_v44_55_31_20260905_165629_f05a2230.zip",
+    "sha256": "FCA6097A4B01E725F8ED2203B330A259C2BBCE5549ABBC001B139ED9FEAD9B9E",
+    "expectedSha256": "FCA6097A4B01E725F8ED2203B330A259C2BBCE5549ABBC001B139ED9FEAD9B9E",
+    "shaMatches": true
+  },
+  "buildIdentity": {
+    "externalPath": "D:\\KiwiAvatarSystem\\KiwiValidation\\v44_55_31_build_identity.json",
+    "externalSha256": "DAA8C22A890DEEB128758D587359D4EDBF859631E3A8306D63F77D746949D7A8",
+    "internalSha256": "DAA8C22A890DEEB128758D587359D4EDBF859631E3A8306D63F77D746949D7A8",
+    "bytesEqual": true,
+    "contract": "KIWI_V44_55_31_BUILD",
+    "builtUtc": "2026-09-05T07:37:27.3738882Z",
+    "exitCode": 0,
+    "log": "D:\\KiwiAvatarSystem\\KiwiValidation\\v44_55_31_build_20260905_163637.log"
+  },
+  "runCorrelation": {
+    "controlContract": "KIWI_V44_55_31_RUN",
+    "controlExit": 0,
+    "controlTimedOut": false,
+    "controlBuildManifestSha": "DAA8C22A890DEEB128758D587359D4EDBF859631E3A8306D63F77D746949D7A8",
+    "probeContract": "KIWI_V44_55_31_RUN",
+    "probeExit": 0,
+    "probeTimedOut": false,
+    "probeBuildManifestSha": "DAA8C22A890DEEB128758D587359D4EDBF859631E3A8306D63F77D746949D7A8"
+  },
+  "selectedBuild": {
+    "directory": "D:\\KiwiAvatarSystem\\Builds\\v44_55_31AsyncProducerTailSnapshot",
+    "exe": "D:\\KiwiAvatarSystem\\Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31.exe",
+    "exeSha256": "98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81",
+    "exeBytes": 671744,
+    "exeLastWriteUtc": "2026-09-05T07:37:13.3260207Z",
+    "payloadExpected": 288,
+    "payloadMatched": 288,
+    "payloadMissing": 0,
+    "payloadMismatch": 0,
+    "actualFileCount": 288,
+    "payloadExtra": 0,
+    "fullPayloadClosure": true
+  },
+  "knownV31BuildCandidates": [
+    "D:\\KiwiAvatarSystem\\Builds\\v44_55_31AsyncProducerTailSnapshot"
+  ],
+  "exeShaUniqueness": {
+    "unique": false,
+    "sameShellExeShaCount": 83,
+    "explanation": "Unity launcher EXE SHA is shared across multiple historical builds; exact authority comes from named path plus complete 288-file payload manifest, not EXE SHA alone."
+  },
+  "currentWorkspaceVsV31SelectedSource": {
+    "expectedCount": 290,
+    "differenceCount": 2,
+    "differences": [
+      {
+        "status": "MISMATCH",
+        "path": "Tools\\KiwiV44_55_31\\Test-Validator.ps1",
+        "expected": "4ED4B33CCABB7FE38DD62DEB02FDDA920F4EDC852053F16CE95D531CC4E88BF4",
+        "actual": "5C5AFDBA67D8E56C4B161F4B760CED35A39A1477769D67CF6A24ECA235F7084A"
+      },
+      {
+        "status": "MISMATCH",
+        "path": "Tools\\KiwiV44_55_31\\Validate-Runtime.ps1",
+        "expected": "82E9FB0F7BD220888E35B362040801D27BA5AF7B855C07FF2A234E5D23174167",
+        "actual": "E05F2B5B9CCD767E4DD39DE4B77E8D324D4241CFB158D873E91CAF497FE260ED"
+      }
+    ],
+    "productionSourceDifferenceObserved": false,
+    "note": "Only two v31 validator-tool scripts differ; current active-path diagnostic retirement is outside exact same-build authority."
+  },
+  "runtimeZipBuildCorrelated": true
+}

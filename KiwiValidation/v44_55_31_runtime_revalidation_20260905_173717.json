@@ -1,0 +1,27 @@
+{
+  "contract": "KIWI_V44_55_31_VALIDATOR_REVISION_REVALIDATION",
+  "validatedUtc": "2026-09-05T08:37:46.7010804Z",
+  "runtimeRerun": false,
+  "rawEvidenceModified": false,
+  "evidenceRoot": "D:\\KiwiAvatarSystem\\KiwiValidation\\RuntimeEvidence_v44_55_31_20260905_165629_f05a2230",
+  "runtimeZip": "D:\\KiwiAvatarSystem\\KiwiValidation\\RuntimeEvidence_v44_55_31_20260905_165629_f05a2230.zip",
+  "runtimeZipSha256": "FCA6097A4B01E725F8ED2203B330A259C2BBCE5549ABBC001B139ED9FEAD9B9E",
+  "evidenceManifestSha256": "28521559B5DD07827A786CE01D1752187810D378A82AF2817743C60254AE7048",
+  "buildIdentitySha256": "DAA8C22A890DEEB128758D587359D4EDBF859631E3A8306D63F77D746949D7A8",
+  "validatorPath": "D:\\KiwiAvatarSystem\\Tools\\KiwiV44_55_31\\Validate-Runtime.ps1",
+  "validatorPreSha256": "82E9FB0F7BD220888E35B362040801D27BA5AF7B855C07FF2A234E5D23174167",
+  "validatorRevisionSha256": "E05F2B5B9CCD767E4DD39DE4B77E8D324D4241CFB158D873E91CAF497FE260ED",
+  "validatorExitCode": 0,
+  "validatorSelfTest": "PASS_17_OF_17_SYNTHETIC_NOT_RUNTIME_AUTHORITY",
+  "validatorSelfTestSummarySha256": "08F2C4837FBBBD445987FC234EB4849B3E7E4101F12A93E3289732A22A18B210",
+  "result": {
+    "status": "EVIDENCE_INTEGRITY_VALID",
+    "decision": "DIVERGENCE_PRESENT_BY_PRODUCER_TAIL_OR_COMMON_OBSERVATION_PATH",
+    "controlPairs": 88,
+    "probePairs": 84,
+    "performanceAuthority": 0,
+    "contaminationAbsoluteFractionThreshold": 0.1,
+    "controlNeitherMinimumFraction": 0.95,
+    "scope": "COARSE_OUTPUT_OBSERVATION_ENDPOINT_ONLY"
+  }
+}

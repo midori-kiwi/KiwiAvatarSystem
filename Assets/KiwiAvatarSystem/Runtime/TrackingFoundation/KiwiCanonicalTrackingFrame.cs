@@ -573,7 +573,6 @@ public sealed class KiwiCanonicalTrackingFrameCoordinator : MonoBehaviour
     private KiwiTrackingProviderHub _hub;
     private FaceLandmarkerRunner _runner;
     private Vector2[] _semanticScratch;
-    private Vector2[] _semanticRefinedScratch;
 
     [Header("Diagnostics")]
     [SerializeField] private bool debugRigidValid;
@@ -634,7 +633,6 @@ public sealed class KiwiCanonicalTrackingFrameCoordinator : MonoBehaviour
         _hub = null;
         _runner = null;
         _semanticScratch = null;
-        _semanticRefinedScratch = null;
         RefreshReferences(true);
         KiwiCanonicalTrackingFrame.PublishUnavailable(
             KiwiRuntimeGenerationContext.Capture());
@@ -788,38 +786,6 @@ public sealed class KiwiCanonicalTrackingFrameCoordinator : MonoBehaviour
         FaceExpressionData expression = default;
         long expressionTimestamp = -1L;
 
-        Vector2[] semanticForPublish =
-            _semanticScratch;
-
-        // KIWI_V5_1_PHASE16_7_COMMERCIAL_LANDMARK_REFINER
-        // Refine only the already identity-matched semantic snapshot. The
-        // detector remains authoritative and rigid Root data is never replaced
-        // from Eye/Mouth semantics. Translation/roll/scale are solved out in a
-        // face-local basis so ordinary head motion passes without temporal lag.
-        if (semanticMatched)
-        {
-            bool refined =
-                KiwiCommercialLandmarkRefiner.TryRefine(
-                    _semanticScratch,
-                    semanticCount,
-                    semanticPrecision.timestamp,
-                    providerId,
-                    generation,
-                    semanticPrecision.geometryQuality,
-                    ref _semanticRefinedScratch,
-                    out int refinedCount);
-
-            if (refined && refinedCount == semanticCount)
-            {
-                semanticForPublish = _semanticRefinedScratch;
-            }
-            else
-            {
-                semanticMatched = false;
-                KiwiCanonicalTrackingFrame.RecordSemanticMismatch();
-            }
-        }
-
         if (semanticMatched && _runner != null)
         {
             _runner.TryGetLatestExpressionData(
@@ -835,7 +801,7 @@ public sealed class KiwiCanonicalTrackingFrameCoordinator : MonoBehaviour
         KiwiCanonicalTrackingFrame.Publish(
             rigid,
             providerId,
-            semanticForPublish,
+            _semanticScratch,
             semanticCount,
             semanticMatched,
             expression,

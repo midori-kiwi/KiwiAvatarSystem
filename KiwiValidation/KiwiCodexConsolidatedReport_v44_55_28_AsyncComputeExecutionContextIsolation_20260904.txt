@@ -1,0 +1,295 @@
+KiwiAvatarSystem v44.55.28
+Production Async-Compute Execution Context Isolation A/B
+Date: 2026-09-04 JST
+Project: D:\KiwiAvatarSystem
+Contract: KIWI_V44_55_28_ASYNC_COMPUTE_EXECUTION_CONTEXT_ISOLATION
+Final decision: INVALID_AB
+Supporting payload pattern: ASYNC_CONTEXT_CAUSAL_CONTRIBUTOR candidate
+Performance authority: NO
+
+Confirmed Facts
+===============
+1. Production source, observer source, model, built Player, and Native DLL were not changed for this A/B.
+2. The same v44.55.27 Player was used for the two authoritative completed measurements.
+3. The only A/B process-environment difference recorded by both identity files is
+   KIWI_INFERENCE_ASYNC_COMPUTE_PROBE=1 versus 0.
+4. Both runs used Direct3D12, supportsAsyncCompute=1, Path B SystemMemoryNV12,
+   UGREEN Camera 4K, 1920x1080@60, laneCount=3, and cadence budget disabled.
+5. The v27 all-row recount found:
+   ASYNC:    109/109 payload-eligible rows ACTUAL_EQUALS_NEITHER.
+   GRAPHICS: 63/63 payload-eligible rows ACTUAL_EQUALS_REF_ONLY.
+6. This is a strong within-run payload pattern consistent with the async execution-context
+   bundle being a causal contributor. It does not isolate a cross-queue hazard or fence defect.
+7. The authoritative final decision is nevertheless INVALID_AB because all required gates did
+   not pass:
+   - v20 returned INVALID_OBSERVER in both arms.
+   - ASYNC Player did not produce a captured normal exit code; it was forcibly closed only after
+     v27 COMPLETE and artifact completion because the first launcher version kept waiting for a
+     hidden window to close.
+8. No Production fix, fence, wait, queue flush, threshold change, ROI change, tracking change,
+   Native change, CPU Production switch, commit, or push was performed.
+
+Runtime
+=======
+ASYNC authoritative completed measurement:
+- Runtime interval: launch observed 2026-09-04 00:16:52 JST; v27 COMPLETE artifact
+  timestamp 00:19:18 JST.
+- v44.22: overridePreserved=1, value=1.
+- v38: requested=1, enabled=1, queue=ASYNC_COMPUTE_DEFAULT.
+- v39: requested=0, enabled=0, hz=0.
+- v27 status=COMPLETE; dependency/captured/completed/compared/eligible=109.
+- Player close status=POST_COMPLETE_FORCED_CLOSE. This occurred after reports and COMPLETE.
+- The raw Player.log was preserved before the GRAPHICS launch.
+- A preliminary launcher attempt at about 00:15:07 JST was stopped after a shared Player.log
+  read failure. It produced no authoritative report set and is excluded from both arms.
+
+GRAPHICS authoritative completed measurement:
+- Runtime interval: 2026-09-04 00:28:38.131 JST to 00:31:11.373 JST.
+- v44.22: overridePreserved=1, value=0.
+- v38: requested=0, enabled=0, queue=GRAPHICS_BASELINE.
+- v39: requested=0, enabled=0, hz=0.
+- v27 status=COMPLETE; dependency/captured/completed/compared/eligible=63.
+- Player exit code=0.
+
+Common Runtime:
+- graphicsApi=Direct3D12; supportsAsyncCompute=1.
+- camera=UGREEN Camera 4K; profile=1920x1080@60.
+- captureTransport=B:SystemMemoryNV12.
+- laneCount=3.
+- Both eligible counts satisfy the requested minimum of 60.
+- Observer-heavy timing/FPS/GPU-time values are not Production Performance Authority.
+
+Static
+======
+- Git HEAD: 27281c622d7b8bf2ececf711b037fc8f9e029004 (main).
+- The worktree was already dirty with v24-v27 diagnostic work and other user-owned files.
+  Ambient changes were preserved and are not attributed to v44.55.28.
+- Installed Inference Engine package version: 2.4.1.
+- KiwiInferenceAsyncComputeDefaultV44_22 preserves an explicit process override before
+  applying its default.
+- KiwiInferenceFaceTracker reads KIWI_INFERENCE_ASYNC_COMPUTE_PROBE and separately reads
+  KIWI_INFERENCE_CADENCE_BUDGET_HZ.
+- The async path sets CommandBufferExecutionFlags.AsyncCompute, records ToTensor and
+  ScheduleWorker in the CommandBuffer, then calls Graphics.ExecuteCommandBufferAsync
+  with ComputeQueueType.Default.
+- The graphics baseline uses the existing graphics-queue schedule path.
+- Installed package source states that Worker.PeekOutput is worker-owned and valid only
+  until the next Schedule, ScheduleIterable, or Dispose on that worker.
+- PowerShell 5.1 parser: PASS for runner and validator.
+- Validator decision-branch synthetic self-audit: PASS.
+- Protected SHA audit: PASS.
+- git diff --check for Tools/KiwiV44_55_28: PASS.
+- No GraphicsFence, WaitOnAsyncGraphicsFence, g_unityD3D12Queue wait, or blocking GPU
+  synchronization was added.
+
+Public Design Principles
+========================
+- Unity documents Graphics.ExecuteCommandBufferAsync as dispatching a CommandBuffer on the
+  selected async compute queue and guarantees commands inside that buffer execute on the same
+  queue:
+  https://docs.unity3d.com/cn/6000.0/ScriptReference/Graphics.ExecuteCommandBufferAsync.html
+- Unity documents CommandBufferExecutionFlags.AsyncCompute as an execution-intent/validation
+  flag for async-compatible commands:
+  https://docs.unity3d.com/ja/2022.3/ScriptReference/Rendering.CommandBufferExecutionFlags.html
+- Those public contracts support treating queue/execution form as a causal bundle. They do not
+  prove which internal dependency or synchronization boundary produced the observed payload.
+- A fence is one possible synchronization primitive, not an established fix here. No fence or
+  wait should be added until command form, queue transition, and Blit-to-ToTensor dependency
+  are isolated.
+
+Inference/Hypothesis
+====================
+- Strong supporting inference: switching the existing execution context from async compute to
+  graphics changes Actual from 109/109 NEITHER to 63/63 exact REF, while build/model/Native/env
+  identities remain fixed. The async execution-context bundle is therefore the leading causal
+  contributor candidate.
+- The effect is not a small numerical shift: ASYNC Actual-vs-REF mismatchCount is 1405/1405 for
+  every eligible row, while GRAPHICS Actual-vs-REF is bitwise exact for every eligible row.
+- REF-vs-MODE2 remains discriminating in both runs, so GRAPHICS closure to REF is meaningful.
+- Because v20 did not provide a valid canonical observer result and ASYNC did not have a normal
+  process exit, the candidate cannot be elevated to authoritative ASYNC_CONTEXT_CAUSAL_CONTRIBUTOR
+  under the requested all-gate rule.
+
+Unverified
+==========
+- The exact causal sub-boundary is unverified: CommandBuffer execution form, graphics-vs-async
+  queue transition, Blit-to-ToTensor resource dependency, or a combination.
+- A cross-queue hazard by itself is not proven.
+- Correct fence location/type/necessity is not proven.
+- Clean Production latency, FPS, GPU time, visual behavior, and thermal/resource effects with
+  async disabled are unverified.
+- Canonical Semantic, Avatar, lifecycle/recovery, visual, and product reliability closure are
+  not established by this raw payload A/B.
+- Cross-GPU/driver and repeated-run reproducibility are unverified; one completed measurement
+  per arm was used as requested.
+- The ASYNC post-COMPLETE process exit code is unavailable.
+- v20 canonicalComparable was 0 for ASYNC and 2 for GRAPHICS, so v20 canonical comparison is
+  not an authority for this decision.
+
+A/B environment diff
+====================
+- Diff count: 1.
+- ASYNC:    ENV.KIWI_INFERENCE_ASYNC_COMPUTE_PROBE=1.
+- GRAPHICS: ENV.KIWI_INFERENCE_ASYNC_COMPUTE_PROBE=0.
+- KIWI_INFERENCE_CADENCE_BUDGET_HZ=<UNSET> in both.
+- All other recorded KIWI_* variables have identical values.
+- Active observers and durations were identical:
+  v20=1, seconds=120, Hz=1, stableSeconds=8; v24=1; v25=1; v27=1.
+
+same-build proof
+================
+- EXE SHA256:
+  98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81
+- Assembly-CSharp.dll SHA256:
+  CB00626ACB12427075D340D28301156AA948B4E394D0D78EBDDA6E6579EA53BF
+- KiwiFaceLandmarkInference.onnx SHA256:
+  ED487104519B0A88CB2CB2EC3678E183F447FB9DD63560998E960FFBAA8FB335
+- face_landmarker_v2_with_blendshapes.bytes SHA256:
+  B261925D4AAD812B47A0E8D58C1BAA1223270A5D1F663D78338BC881C003879D
+- Built and Production KiwiNativeCamera.dll SHA256:
+  82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+- Both identity files contain the same SHA for every identity.*.sha256 field.
+- Unique evidence stamps:
+  ASYNC v20/v24=20260904_001910, v25/v27=20260904_001918.
+  GRAPHICS v20/v24=20260904_003102, v25/v27=20260904_003110.
+
+Observer/Validator audit
+========================
+v27 primary payload observer:
+- Both reports status=COMPLETE.
+- dependencyTraceCount equals completedPairCount in both arms.
+- all 1405 logical floats were recounted for Actual-vs-REF, Actual-vs-MODE2,
+  and REF-vs-MODE2 on every CSV row.
+- row classification was independently recomputed from the bitwise exact fields.
+- observerFault, identityMismatch, duplicate decode/shadow, alias, field mapping, shape,
+  non-finite, partial capture, and pending-at-completion counters are all zero.
+- anomalous REF-vs-MODE2 exact count is zero in both arms.
+
+Auxiliary observer limitations:
+- v20 ASYNC: status=COMPLETE, decision=INVALID_OBSERVER, pairCompleted=109,
+  canonicalComparable=0, snapshotMatchTimeout=10, presentedButNotScheduled=10.
+- v20 GRAPHICS: status=COMPLETE, decision=INVALID_OBSERVER, pairCompleted=63,
+  canonicalComparable=2, snapshotMatchTimeout=45, presentedButNotScheduled=45.
+- v20 observerFault/sourceIdentity/reflection/freeze/readback/non-finite counters listed in
+  the report are zero, but its own decision gate is authoritative for the v20 claim.
+- v24 ASYNC: MIXED_TRANSACTION; completed=109; anomalous=11; observer/duplicate counters=0.
+- v24 GRAPHICS: REFERENCE_TRANSACTION_VALID_CONFIRMED; completed=63; anomalous=9;
+  observer/duplicate counters=0.
+- v25 both: INSUFFICIENT_PUBLISHED_ANOMALOUS_DATA; observer/duplicate/partial counters=0.
+- The final validator includes v20/v24/v25 audits and normal-exit gating. It exits nonzero
+  with RUNTIME_VALIDATION_FAIL_CLOSED for INVALID_AB.
+
+all-decode results
+==================
+Metric                         ASYNC                 GRAPHICS
+eligible                       109                   63
+Actual=REF only                0                     63
+Actual=MODE2 only              0                     0
+Actual=Both                    0                     0
+Actual=Neither                 109                   0
+Actual-vs-REF meanAbs median   67.7478346149739      0
+Actual-vs-REF meanAbs range    3.64205143881988..    0..0
+                               79.9714741690754
+Actual-vs-REF mismatch range   1405..1405            0..0
+Actual-vs-MODE2 meanAbs median 67.9151878441833      0.441453320869772
+Actual-vs-MODE2 meanAbs range  3.63812693247565..    0.0841104550797532..
+                               79.9863365341389      14.2623967387259
+Actual-vs-MODE2 mismatch       1405..1405            1404..1405
+REF-vs-MODE2 meanAbs median    0.687991604977867     0.441453320869772
+REF-vs-MODE2 meanAbs range     0.1682775955687..     0.0841104550797532..
+                               2.24900290924936      14.2623967387259
+REF-vs-MODE2 mismatch          1405..1405            1404..1405
+
+published subset
+================
+- ASYNC: published eligible=0; all four classification counts=0.
+- GRAPHICS: published eligible=1; REF_ONLY=1; MODE2_ONLY/BOTH/NEITHER=0.
+- Published anomalous eligible=0 in both.
+- This subset is reported separately and is not used to replace the all-payload population.
+
+anomalous subset
+================
+- ASYNC: anomalous eligible=11; NEITHER=11; all other classes=0.
+- GRAPHICS: anomalous eligible=9; REF_ONLY=9; all other classes=0.
+- Both satisfy the supporting minimum of 3.
+- anomalousShadowExactCount=0 in both.
+- The anomalous subset supports the all-payload pattern but does not cure failed auxiliary or
+  exit gates.
+
+before/after SHA
+================
+Protected files (before == after):
+- KiwiInferenceFaceTracker.cs:
+  52C046EE44B41A4FF50B85AEF503BC29DD31B57EAF58C0D160CCC33C5D4B7695
+- FaceLandmarkerRunner.cs:
+  6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93
+- KiwiFaceMotion.cs:
+  D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6
+- v20:
+  1F5D5BD6018C293529B9E8034B24F2168A377E6F697203A3D1504FFD4C8211B3
+- v24:
+  1F8F26D21DEA1DE17DE43A0A7B8FFA0513C1C9E23A65A1AEDFCFF7BA54AB26EC
+- v25:
+  90CEF88267EC14B5DD67DF35D0AE446C9469E6EC1058D1E8CADCF878BE18C814
+- v27:
+  B8E215D1C3D4103996B7B30BFD8B26DB508782AC6529D12BEF2617E9C65C8B86
+- KiwiOrtDirectMLShadowRuntime.cs:
+  D30A700A7B9E3C3D09BC64FA0CA5722729EE41821DE1F1B5E30E30D986B947C2
+- KiwiInferenceAsyncComputeDefaultV44_22.cs:
+  6F92C065BE426222FE591165551B4EB8B197A66998A3964A0D555F1564357801
+- KiwiNativeCamera.dll:
+  82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+- KiwiPsCompat.psm1:
+  6D6560DB47C2E9E4544FE67F4CB96C50B697D8A86974A8A7DADA798035EAB061
+- installed package.json:
+  2F230C84E28A9E3AD516B1A49B79B6F83E172F1C16E6813E0F1DD6FA2B1790EE
+
+v44.55.28 tools:
+- Run script before final timeout/window hardening:
+  947DD7492B3E9502213DA24EFBB34DADC9E3C5046036E6D55381DADA78CFC12E
+- Run script after:
+  F9A258FC8B433258B1CC75BB8CBA814D92DAED235DC570D9B4B116D41828F834
+- Validator before full auxiliary/exit fail-closed audit:
+  A9BDBB3BCCE4EDACF5DFC925056D693C2B642F6E7DF4AA7255168F435BB7797D
+- Validator after:
+  03014693ECD0E371122BC352FEF697E7300E03FC1526E0B48ED8B86C2DD9CD60
+- README before == after:
+  A7EE18DFA365C0FC44AFB1A83F1FC664A568BA717D136700884DE263EA9995D0
+
+Regression Risks
+================
+- Turning async compute off may restore payload correctness on this machine yet reduce clean
+  throughput or increase graphics-queue contention; this run cannot quantify that.
+- Adding a fence or blocking wait without isolating the dependency can hide the boundary and
+  add latency/deadlock/resource-lifetime risk.
+- Treating the GRAPHICS REF closure as a complete Canonical/Avatar PASS would overclaim because
+  v20 canonical comparison is invalid and published anomalous coverage is absent.
+- Reusing the first launcher behavior can create post-COMPLETE lifecycle ambiguity.
+- Observer load changes scheduling and sample availability; timing values must not be promoted
+  to clean Production performance evidence.
+- A single GPU/driver and one measurement per arm may not establish portability or repeatability.
+
+Production Decision
+===================
+INVALID_AB.
+
+Do not ship a Production source change and do not remove async compute based only on this v28.
+The v27 payload evidence is a strong causal-contributor candidate, but the requested all-gate
+acceptance is not met because v20 is INVALID_OBSERVER in both arms and ASYNC lacks a normal
+captured process exit. Production remains unchanged. No PASS is claimed for Canonical Semantic,
+performance, visual, lifecycle/recovery, or product reliability.
+
+Next Action
+===========
+1. Repair only the validation execution so both arms exit normally and v20 obtains a valid
+   observer result; do not change Production behavior.
+2. Re-run a fresh same-build A/B only if authorization allows replacing this invalid run set.
+3. If the causal pattern reproduces with every gate valid, isolate the next sub-boundaries in
+   separate experiments:
+   A. CommandBuffer execution form.
+   B. graphics-vs-async queue transition.
+   C. Blit-to-ToTensor resource dependency.
+4. Do not add a fence, blocking wait, queue flush, or Production clone fix until one of those
+   sub-boundaries is demonstrated.
+5. After semantic closure, run clean Production Performance A/B, same-build visual review,
+   lifecycle/recovery, and resource correctness gates before any Production adoption.

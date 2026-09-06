@@ -1,0 +1,773 @@
+[
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\API_DOCS.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\API_DOCS.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\help.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\help.md"
+    ]
+  },
+  {
+    "Count": 4,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\domain_guidance\\marketing_advertising.md",
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\excel-live-control\\domain_guidance\\marketing_advertising.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\domain_guidance\\marketing_advertising.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\excel-live-control\\domain_guidance\\marketing_advertising.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\sites\\0.1.57\\skills\\sites-hosting\\references\\environment.md",
+      "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\sites\\skills\\sites-hosting\\references\\environment.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\styles.spec.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\styles.spec.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\references\\template_following.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\references\\template_following.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\routing\\google_sheets.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\routing\\google_sheets.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\connectors.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\connectors.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\fields_update.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\fields_update.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\captions_crossrefs.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\captions_crossrefs.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\template-creator\\26.904.11930\\skills\\template-creator\\SKILL.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\template-creator\\skills\\template-creator\\SKILL.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\master.spec.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\master.spec.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\visualize\\1.0.29\\skills\\visualize\\SKILL.md",
+      "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\visualize\\skills\\visualize\\SKILL.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\examples\\end_to_end_smoke_test.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\examples\\end_to_end_smoke_test.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\fill.spec.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\fill.spec.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\comments_manage.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\comments_manage.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\navigation_internal_links.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\navigation_internal_links.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\headings_numbering.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\headings_numbering.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\troubleshooting\\run_splitting.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\troubleshooting\\run_splitting.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\sections_layout.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\sections_layout.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\theme.spec.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\theme.spec.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\sites\\0.1.57\\skills\\sites-hosting\\SKILL.md",
+      "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\sites\\skills\\sites-hosting\\SKILL.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\excel-live-control\\SKILL.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\excel-live-control\\SKILL.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\fixtures_edge_cases.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\fixtures_edge_cases.md"
+    ]
+  },
+  {
+    "Count": 4,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\domain_guidance\\corporate_finance_fpa.md",
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\excel-live-control\\domain_guidance\\corporate_finance_fpa.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\domain_guidance\\corporate_finance_fpa.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\excel-live-control\\domain_guidance\\corporate_finance_fpa.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\images_figures.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\images_figures.md"
+    ]
+  },
+  {
+    "Count": 4,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\workflows\\edit_workflows.md",
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\excel-live-control\\workflows\\edit_workflows.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\workflows\\edit_workflows.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\excel-live-control\\workflows\\edit_workflows.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "D:\\KiwiAvatarSystem\\Tools\\KlakSpout_v206_diag\\AGENTS.md",
+      "D:\\KiwiAvatarSystem\\KiwiValidation\\ExternalSourceAudit_v44_55_25\\sources\\KlakSpout_2.0.6\\AGENTS.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\slide.spec.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\slide.spec.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\shapes.spec.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\shapes.spec.md"
+    ]
+  },
+  {
+    "Count": 4,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\workflows\\create_workflows.md",
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\excel-live-control\\workflows\\create_workflows.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\workflows\\create_workflows.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\excel-live-control\\workflows\\create_workflows.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\sites\\0.1.57\\skills\\sites-building\\references\\sqlite.md",
+      "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\sites\\skills\\sites-building\\references\\sqlite.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\artifact_tool_docs\\API_QUICK_START.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\artifact_tool_docs\\API_QUICK_START.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\layout.spec.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\layout.spec.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\privacy_scrub_metadata.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\privacy_scrub_metadata.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\clean_tracked_changes.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\clean_tracked_changes.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\footnotes_endnotes.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\footnotes_endnotes.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\references\\native_bullets.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\references\\native_bullets.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\comments.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\comments.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\references\\cover_art_direction.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\references\\cover_art_direction.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\cookbook\\layout.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\cookbook\\layout.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\speaker-notes.spec.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\speaker-notes.spec.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\references\\implementation.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\references\\implementation.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\references\\finalization.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\references\\finalization.md"
+    ]
+  },
+  {
+    "Count": 4,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\domain_guidance\\financial_models.md",
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\excel-live-control\\domain_guidance\\financial_models.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\domain_guidance\\financial_models.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\excel-live-control\\domain_guidance\\financial_models.md"
+    ]
+  },
+  {
+    "Count": 4,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\references\\image-references.md",
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\excel-live-control\\references\\image-references.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\references\\image-references.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\excel-live-control\\references\\image-references.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\computer-use\\26.901.41600\\skills\\computer-use\\SKILL.md",
+      "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\computer-use\\skills\\computer-use\\SKILL.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\ooxml\\hyperlinks_and_fields.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\ooxml\\hyperlinks_and_fields.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "D:\\KiwiAvatarSystem\\Tools\\KlakSpout_v206_diag\\README.md",
+      "D:\\KiwiAvatarSystem\\KiwiValidation\\ExternalSourceAudit_v44_55_25\\sources\\KlakSpout_2.0.6\\README.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\ooxml\\tracked_changes.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\ooxml\\tracked_changes.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\troubleshooting\\libreoffice_headless.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\troubleshooting\\libreoffice_headless.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\accessibility_a11y.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\accessibility_a11y.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\cookbook\\imported-deck.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\cookbook\\imported-deck.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\protection_restrict_editing.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\protection_restrict_editing.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\multi_doc_merge.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\multi_doc_merge.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\style_lint_normalize.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\style_lint_normalize.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\sites\\0.1.57\\skills\\sites-building\\references\\webmcp.md",
+      "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\sites\\skills\\sites-building\\references\\webmcp.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\references\\native_evidence.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\references\\native_evidence.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\references\\template-elicitation.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\references\\template-elicitation.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\images.spec.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\images.spec.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\jsx.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\jsx.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\computer-use\\26.901.41600\\docs\\confirmations.md",
+      "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\computer-use\\docs\\confirmations.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\routing\\google_slides.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\routing\\google_slides.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\pdf\\26.904.11930\\skills\\pdf\\SKILL.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\pdf\\skills\\pdf\\SKILL.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\sites\\0.1.57\\skills\\sites-building\\references\\environment.md",
+      "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\sites\\skills\\sites-building\\references\\environment.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\watermarks_background.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\watermarks_background.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\SKILL.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\SKILL.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\domain_guidance\\finance.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\domain_guidance\\finance.md"
+    ]
+  },
+  {
+    "Count": 4,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\features\\charts.md",
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\excel-live-control\\features\\charts.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\features\\charts.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\excel-live-control\\features\\charts.md"
+    ]
+  },
+  {
+    "Count": 4,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\references\\read_only_qna.md",
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\excel-live-control\\references\\read_only_qna.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\references\\read_only_qna.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\excel-live-control\\references\\read_only_qna.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\templates_style_packs.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\templates_style_packs.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\create_edit.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\create_edit.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\tokens.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\tokens.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\ooxml\\comments.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\ooxml\\comments.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\charts.spec.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\charts.spec.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "D:\\KiwiAvatarSystem\\Tools\\KlakSpout_v206_diag\\CHANGELOG.md",
+      "D:\\KiwiAvatarSystem\\KiwiValidation\\ExternalSourceAudit_v44_55_25\\sources\\KlakSpout_2.0.6\\CHANGELOG.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\toc_workflow.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\toc_workflow.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\computer-use\\26.901.41600\\docs\\guidance.md",
+      "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\computer-use\\docs\\guidance.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\SKILL.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\SKILL.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\SKILL.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\SKILL.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\style_guidelines.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\style_guidelines.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\rich-text.spec.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\rich-text.spec.md"
+    ]
+  },
+  {
+    "Count": 4,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\domain_guidance\\healthcare.md",
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\excel-live-control\\domain_guidance\\healthcare.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\domain_guidance\\healthcare.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\excel-live-control\\domain_guidance\\healthcare.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\tables.spec.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\tables.spec.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\computer-use\\26.901.41600\\docs\\api.md",
+      "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\computer-use\\docs\\api.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\API_QUICK_START.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\API_QUICK_START.md"
+    ]
+  },
+  {
+    "Count": 4,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\domain_guidance\\scientific_research.md",
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\excel-live-control\\domain_guidance\\scientific_research.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\domain_guidance\\scientific_research.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\excel-live-control\\domain_guidance\\scientific_research.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\excel-live-control\\officejs.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\excel-live-control\\officejs.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\forms_content_controls.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\forms_content_controls.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\sites\\0.1.57\\skills\\sites-building\\references\\authentication.md",
+      "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\sites\\skills\\sites-building\\references\\authentication.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\visualize\\1.0.29\\skills\\visualize\\tweak.md",
+      "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\visualize\\skills\\visualize\\tweak.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\ooxml\\rels_and_content_types.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\ooxml\\rels_and_content_types.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\sites\\0.1.57\\skills\\sites-building\\references\\persistence-and-storage.md",
+      "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\sites\\skills\\sites-building\\references\\persistence-and-storage.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\template-distill.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\template-distill.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\presentation.spec.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\presentation.spec.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\redaction_anonymization.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\redaction_anonymization.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\sites\\0.1.57\\skills\\sites-building\\references\\library-selection.md",
+      "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\sites\\skills\\sites-building\\references\\library-selection.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\compare_diff.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\compare_diff.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\auto-layout.spec.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\auto-layout.spec.md"
+    ]
+  },
+  {
+    "Count": 4,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\style_guidelines.md",
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\excel-live-control\\style_guidelines.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\style_guidelines.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\excel-live-control\\style_guidelines.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\verify_render.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\verify_render.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\read_review.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\read_review.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\tables_spreadsheets.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\tables_spreadsheets.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\template-create.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\template-create.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\sites\\0.1.57\\skills\\sites-building\\SKILL.md",
+      "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\sites\\skills\\sites-building\\SKILL.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\writing_quality.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\writing_quality.md"
+    ]
+  },
+  {
+    "Count": 2,
+    "Paths": [
+      "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\inspect.md",
+      "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\inspect.md"
+    ]
+  }
+]

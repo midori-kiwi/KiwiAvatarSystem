@@ -1,0 +1,22 @@
+#pragma kernel CopyPackedOutput
+#pragma target 5.0
+// Same 32-bit storage interpretation: no float arithmetic or numerical conversion.
+StructuredBuffer<uint> _ProductionOutput;
+RWStructuredBuffer<uint> _ObserverSnapshot;
+int _ObserverToken, _Lane, _SourceLow, _SourceHigh;
+[numthreads(64, 1, 1)]
+void CopyPackedOutput(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x < 1405) _ObserverSnapshot[8 + id.x] = _ProductionOutput[id.x];
+    if (id.x == 0)
+    {
+        _ObserverSnapshot[0] = 0x4B333150;
+        _ObserverSnapshot[1] = 31;
+        _ObserverSnapshot[2] = asuint(_ObserverToken);
+        _ObserverSnapshot[3] = asuint(_Lane);
+        _ObserverSnapshot[4] = 1405;
+        _ObserverSnapshot[5] = asuint(_SourceLow);
+        _ObserverSnapshot[6] = asuint(_SourceHigh);
+        _ObserverSnapshot[7] = asuint(_ObserverToken) ^ 0xA55A31;
+    }
+}

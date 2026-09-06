@@ -1,0 +1,20 @@
+{
+  "contract": "KIWI_CLEAN_PRODUCT_IMPACT_RUNNER_POSTPROCESS_RECOVERY_V1",
+  "recordedUtc": "2026-09-05T23:02:06.7425535Z",
+  "runDirectory": "D:\\KiwiAvatarSystem\\KiwiValidation\\CleanProductImpact\\Run_20260906_075920_6ab7ac96",
+  "rerunPerformed": false,
+  "applicationProcessExit": 0,
+  "applicationTimedOut": false,
+  "runnerCommandExit": 1,
+  "failureBoundary": "POST_PROCESSING_AFTER_RUN_IDENTITY_AND_ENVIRONMENT_RESTORATION",
+  "failure": "PowerShell parameter binding rejected empty-string Player.log lines because AllowEmptyString was absent.",
+  "sourceFix": "Added AllowEmptyString to the three temporary runner Lines parameters.",
+  "runnerBeforeSha256": "A07DAEBE6F4AC7178E1155875D137012C8CA90E2EB8361287C4B3F01468C23C8",
+  "runnerAfterSha256": "5507263E889643691AEA34C35344EE457B1B34589CC50DA171A3DAF3D45CB3F8",
+  "playerLogSha256BeforeRecovery": "EF8CB75B7CE7A08D14C2421B9C31B90BF8ECB36F406B56825B8150268C1A99C2",
+  "playerLogSha256AfterRecovery": "EF8CB75B7CE7A08D14C2421B9C31B90BF8ECB36F406B56825B8150268C1A99C2",
+  "playerLogRewritten": false,
+  "environmentRestored": true,
+  "postProcessingRecovered": true,
+  "manifestAndFinalZipDeferredUntilHumanVisual": true
+}

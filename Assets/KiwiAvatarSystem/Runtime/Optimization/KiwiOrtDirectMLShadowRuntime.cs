@@ -374,6 +374,22 @@ public sealed class KiwiOrtDirectMLShadowRuntime : MonoBehaviour
         Unity.InferenceEngine.Tensor<float> packedOutput,
         long sentisArrivalHostTicks)
     {
+        // KIWI_V44_55_26_PRODUCTION_DECODE_PAYLOAD_TRANSACTION_CLOSURE
+        // Reads only the CPU tensor already created by ReadbackAndClone.
+        KiwiProductionDecodePayloadTransactionTraceV44_55_26.RecordDecodePayload(
+            sourceHostTicks,
+            packedOutput,
+            sentisArrivalHostTicks);
+
+        // KIWI_V44_55_27_ACTUAL_PRODUCTION_VS_SHADOW_PAYLOAD_AUTHORITY
+        // Reuses the same already CPU-readable tensor seam. Only the enabled
+        // observer copies it; v26 and v27 are never enabled together.
+        KiwiActualProductionVsShadowPayloadAuthorityV44_55_27
+            .RecordActualDecodePayload(
+                sourceHostTicks,
+                packedOutput,
+                sentisArrivalHostTicks);
+
         KiwiOrtDirectMLShadowRuntime instance = _instance;
 
         if (

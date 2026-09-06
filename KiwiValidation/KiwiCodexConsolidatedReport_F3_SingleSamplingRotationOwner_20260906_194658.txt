@@ -1,0 +1,225 @@
+KiwiCodexConsolidatedReport_F3_SingleSamplingRotationOwner_20260906_194658
+PROJECT=D:\KiwiAvatarSystem
+TARGET=F3_SINGLE_SAMPLING_ROTATION_OWNER
+MODE=CHANGE_LOCAL_RUNTIME_VISUAL_GATE
+PRODUCTION_CHANGE=NO
+COMMIT_PUSH=NO
+
+================================================================================
+DECISION
+================================================================================
+RESULT=F3_INCONCLUSIVE
+RETIREMENT_DECISION=NO_PRODUCTION_CHANGE
+SHARED_TILT_SAMPLING_OWNER_RETIREMENT=NO_GO_NOT_AUTHORIZED
+PRODUCTION_RETIREMENT=NO
+WHY_CHANGE_IS_BETTER_THAN_NO_CHANGE=UNPROVEN_BY_REQUIRED_VISUAL_AND_LIFECYCLE_EVIDENCE
+
+The probe proved the requested one-factor scalar neutralization in the same local
+Unity source/Editor runtime, but the required same-Product-build visual comparison,
+scenario coverage, Lost/Reacquire, restart-after-run stale-state proof, and human
+Visual review were not completed. The pre-registered rule therefore yields
+INCONCLUSIVE, not PASS. SharedTiltLock is retained and no Scene/component/source
+retirement is performed.
+
+================================================================================
+G0 LOCAL AUTHORITY FREEZE
+================================================================================
+Git HEAD=27281c622d7b8bf2ececf711b037fc8f9e029004
+Git status=DIRTY, user-owned pre-existing changes preserved.
+Tracked pre-existing modifications observed before F3:
+  Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiOrtDirectMLShadowRuntime.cs
+  Assets/KiwiAvatarSystem/Runtime/Validation/KiwiPairBoundShadowOutputSnapshotV44_55_24.cs
+  Assets/Script/KiwiInferenceFaceTracker.cs
+  Tools/KiwiPowerShell/KiwiPsCompat.psm1
+F3 additions are diagnostic/build helpers only and are listed below. No existing
+Production file was overwritten or deleted. No reset/checkout/clean/commit/push.
+Unity ProjectVersion=6000.0.80f1 (2dfd32957da2)
+Product-effective enabled Scene=Assets/Scenes/Face Landmark Detection.unity
+EditorBuildSettings has exactly one enabled Scene: that path.
+SharedTiltLock and RigidSampleFrame are runtime auto-installed; their script GUIDs
+were not present in the Product scene. FacePartAngleLock is present in the scene at
+serialized component locations 408, 835, and 1025 and is suppressed by SharedTiltLock.
+
+P2 authority report:
+  KiwiValidation/KiwiCodexConsolidatedReport_P2_CameraMediaPipeCanonicalSimplification_20260906_184245.txt
+  SHA256=E4A66A7217E27929EAD51B6AEE4125E3B563E9CD44A06B8BFEB1B09DAC10D6AB
+P2 conclusion used here: STATIC_DOUBLE_OWNER=CONFIRMED;
+RUNTIME_DEFECT=NOT_PROVEN; RigidSampleFrame=KEEP; SharedTiltLock=RETIRE_CANDIDATE;
+P2 did not execute Runtime/Build and recorded F3 as needs change-local evidence.
+
+Relevant local SHA256 (captured before/after F3; unchanged Production sources):
+  578CE2ED93A2A78EE1B19D8FF309A115A2FA53596E79BAAB0534A27AC10077C0  Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiFacePartRigidSampleFrame.cs
+  0BCCA0B7BD6982B78C0FC18058ACD54D073D786820F7B027B8C2F218EF2CAE70  Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiFacePartSharedTiltLock.cs
+  1EA5B0493A48BE9B64AFD6316C8FBD4A4EC172848F06F8879BA733BB73535167  Assets/Script/SurfaceFittedRawImage.cs
+  EB6CDCBE0B838053FB5A563641328E42C1BAAFB935D61F367913208D9638E921  Assets/Shader/FacePartSoftMask.shader
+  EE07BF928AC816C4989BFE81C6BE89E1A58979DCE0C6565EDC01C9078052D454  Assets/Script/FacePartAngleLock.cs
+  39C06FEC43B4EA47AD783C233991E830E10B18DA285148E7A34B0C13DAD52CFE  Assets/Script/FacePartCropper.cs
+  822D18059988F390F52C40F60DA5F11E8ECF7577008D640272C5CF8D1557D4A6  Assets/Script/FacePartShapeMask.cs
+  DC78488DCD1D2E45E5AA6F40065D4983087014B501B5FD5A8E37B6D8E0F68849  Assets/KiwiAvatarSystem/Runtime/Presentation/KiwiFacePartTextureTransaction.cs
+  D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6  Assets/Script/KiwiFaceMotion.cs
+  CF860F4EF686BD5FDAC4140D4F3E73E64B6F390C3BC64204CF346011AC69380D  Assets/Script/KiwiInferenceFaceTracker.cs [pre-existing DIRTY]
+  6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93  Assets/Script/FaceLandmarkerRunner.cs
+  E28B0B81F731B92B04B97D4AA7DB1187C8DD57C5A39F49B08B2E6799BBF5B3D1  Assets/Scenes/Face Landmark Detection.unity
+  88CB3F68F275E1A7DCBF1FEA8C59D123F50743C6F93B0F861E1FD653865EC6AA  ProjectSettings/ProjectSettings.asset
+
+================================================================================
+STATIC OWNER GRAPH AND DISABLE SEMANTICS
+================================================================================
+Confirmed from current local source:
+  KiwiFacePartRigidSampleFrame.cs:79 AutoInstall; :96 Awake; :114 OnDisable;
+  :130 LateUpdate; :340-350 writes SurfaceFittedRawImage sample-frame rotation;
+  :356-374 resets all cached part rotations. It is the retained mesh/UV sample-frame
+  owner and exposes IsOperational/EyeLineAngleDegrees/AppliedRotationDegrees.
+  KiwiFacePartSharedTiltLock.cs:61 AutoInstall; :75 Awake; :83 OnEnable;
+  :88-91 OnDestroy unregisters scene callback and resets shader rotation;
+  :102 LateUpdate; :116-122 always calls DisableIndependentAngleLocks then, when
+  enableSharedTiltLock=false, writes zero to all three shader materials;
+  :213-227 sets every FacePartAngleLock.enableAngleLock=false;
+  :320-380 writes _SamplePivot, _SourceAspect, and _SampleRotationRad;
+  :412-436 ResetCalibration/ResetShaderRotation neutralize the shader.
+  FacePartSoftMask.shader:83 and :272 declare _SampleRotationRad; :398-404 apply it
+  in shader UV sampling. SurfaceFittedRawImage.cs:207-238 owns mesh UV sample rotation.
+  FacePartAngleLock.cs:470-502 writes neutral only when disabled, and :1925-1930
+  OnDisable resets shader state, but it is not the active owner while SharedTiltLock
+  runs.
+
+Simple component OFF was rejected. SharedTiltLock has no OnDisable; disabling the
+component stops LateUpdate and therefore does not guarantee material neutralization.
+The F3 Probe instead kept the component enabled and selected the existing false
+branch, preserving lifecycle, legacy-lock suppression, and per-frame neutral writes.
+This satisfies the one-factor requirement for the sampling contribution only.
+
+================================================================================
+DIAGNOSTIC ARM DESIGN
+================================================================================
+Added opt-in files only:
+  Assets/KiwiAvatarSystem/Runtime/Validation/KiwiF3SingleSamplingRotationOwnerArm.cs
+  Assets/KiwiAvatarSystem/Editor/KiwiF3EditorRuntimeRunner.cs
+  Assets/KiwiAvatarSystem/Editor/KiwiBuildF3SingleSamplingRotationOwner.cs
+No Scene serialization change. When KIWI_F3_SAMPLING_ROTATION_ARM is absent,
+Bootstrap returns and no object/observer is installed. Accepted values are CONTROL
+and PROBE; invalid values install nothing and log an error.
+
+CONTROL:
+  Shared component enabled=1, enableSharedTiltLock=1;
+  RigidSampleFrame untouched; AngleLock suppression path unchanged.
+PROBE:
+  Shared component enabled=1, enableSharedTiltLock=0;
+  the same Shared LateUpdate still suppresses FacePartAngleLock and writes neutral
+  _SampleRotationRad=0; RigidSampleFrame remains enabled/unchanged.
+Both arms use the same source and same Unity Editor binary. The observer is scalar
+only, bounded to 1,200 rows, flushes each row, reads material scalar properties only,
+and performs no GPU content readback, tensor dump, or full-frame capture.
+
+The Player build entrypoint was attempted with Unity 6000.0.80f1. It compiled
+Assembly-CSharp without F3 CS errors, but the existing KiwiReleaseCandidateBuildGate
+blocked Player generation because the saved fingerprint changed and no current
+passing full-preflight stamp existed. Full Product preflight was intentionally not
+rerun for this F3 task. Therefore the Runtime authority below is explicitly
+CHANGE_LOCAL_EDITOR_RUNTIME, not Product Player Runtime.
+
+================================================================================
+RUNTIME SCALAR EVIDENCE — EDITOR, SAME SOURCE/EDITOR BUILD
+================================================================================
+Evidence directory:
+  KiwiValidation/F3_SingleSamplingRotationOwner_Editor_20260906
+CONTROL CSV SHA256=262703502927F8C8F1768C900C3BBFA4E25513D865CE20F0E66E47228097E4B8
+PROBE CSV SHA256=06F983B397514D8DF8A3E13103957DF71A74D18408B4FA141E81DEABE2BE0325
+Each CSV has header + 1,200 data rows. The two runs are separate live-camera runs;
+CanonicalFrameId/time sequences are not identical and are not treated as paired input.
+
+CONTROL aggregate:
+  sharedSamplingEnabled unique=1
+  nonzero leftShaderRotationRad rows=1,189/1,200
+  max abs shader rotation=0.9599311 rad (55.0 deg)
+  left/right/mouth shader rotation mismatch rows=0
+  angleLockEnabledCount nonzero rows=0
+  rigidOperational rows=1,191/1,200
+  sourceTextureFound rows=1,194/1,200
+  cameraGeneration=1/2; trackingSessionGeneration=2; CanonicalFrameId=0..1837
+
+PROBE aggregate:
+  sharedSamplingEnabled unique=0
+  nonzero leftShaderRotationRad rows=0/1,200
+  max abs shader rotation=0.0000000 rad
+  left/right/mouth shader rotation mismatch rows=0
+  angleLockEnabledCount nonzero rows=0
+  rigidOperational rows=1,192/1,200
+  sourceTextureFound rows=1,194/1,200
+  cameraGeneration=1/2; trackingSessionGeneration=2; CanonicalFrameId=0..3305
+
+One-factor proof status:
+  PROBE Shared contribution actually applied to all three sampled materials=0: CONFIRMED
+  PROBE component lifecycle remains enabled=1: CONFIRMED
+  Rigid SampleFrame remains operational in both arms: CONFIRMED for observed rows
+  FacePartAngleLock effective enabled count remains 0 in both arms: CONFIRMED
+  Texture+mask shader scalar coherence within each arm: CONFIRMED (zero mismatches)
+  CONTROL/PROBE exact same input identity: NOT PROVEN (separate live runs)
+
+================================================================================
+LIFECYCLE / VISUAL / PERFORMANCE
+================================================================================
+Lifecycle scalar observations:
+  Both runs show startup sourceTextureFound 0 then 1 and cameraGeneration 1 then 2.
+  No controlled Lost -> Reacquire scenario was injected or operator-confirmed.
+  No controlled scene reload or post-restart stale-material readback was completed.
+  Process termination after the bounded 1,200-row collection was used because the
+  batch Editor stop callback did not fire during Play; termination was of the
+  diagnostic Unity PID only. This is not a clean lifecycle PASS.
+
+Required F3 scenarios (frontal, slow/moderate/fast roll, translation, yaw, crop edge,
+Lost/Reacquire, restart): NOT COMPLETED as a controlled scenario set.
+Human Visual texture orientation/mask/crop comparison=INCONCLUSIVE. Computer-use
+screen capture was unavailable in this environment, and no human reviewer compared
+same-camera CONTROL/PROBE frames. No Visual PASS/FAIL is inferred from scalar data.
+Performance=NOT CLAIMED; no clean benchmark was run.
+
+Observer validity:
+  bounded scalar-only observer, no content readback, no tensor dump, no full-frame
+  capture, no Product-state write when arm env is absent. CSV raw bytes and logs are
+  preserved in the Evidence ZIP.
+
+================================================================================
+PRE-REGISTERED GATE RESULT
+================================================================================
+PASS conditions 1-4: scalar arm/neutral/coherence portions supported.
+PASS condition 5: double-rotation/residual/crop visual worsening not measured.
+PASS condition 6: Human Visual EQUIVALENT/BETTER not measured.
+PASS condition 7: Lost/Reacquire/restart stale shader state not proven.
+PASS condition 8: no new stale/freeze/resource/lifecycle failure not established for
+controlled scenario coverage.
+
+FINAL=F3_INCONCLUSIVE
+GO/NO_GO=NO_PRODUCTION_CHANGE
+PRODUCTION_CHANGE=NO
+SHARED_TILT_LOCK_DELETE=NO
+SCENE_DELETE=NO
+LEGACY_FACE_PART_ANGLE_LOCK_DELETE=NO
+VALIDATOR_DELETE=NO
+COMMIT_PUSH=NO
+
+================================================================================
+DELIVERABLES AND PROVENANCE
+================================================================================
+Report=this file
+Runtime Evidence ZIP:
+  KiwiValidation/KiwiRuntimeEvidence_F3_SingleSamplingRotationOwner_Editor_20260906.zip
+  SHA256=596B54E7DC7D5A19E8591239A6703919FEEF108D41067D43A43788EC03A24B81
+  Contains raw CONTROL/PROBE CSV, Editor logs, blocked Player-build log, source
+  copies, ProjectVersion/EditorBuildSettings copies, and SHA256 manifest.
+Editor CONTROL log SHA256=E5D6045DC180B5DD318328E1D2DA82B7606866E75D26A9672175CA0D4F23B804
+Editor PROBE log SHA256=6D56BA80F34B50A1F264224B6FB26D3933B0A3EFDB1617A8BD11855B3519F4FE
+Player-build attempt log SHA256=EF5F361B376DEEE6899C60F9014634B875677A8C5D1DFB6EF5048E9B1B0CF381
+Arm source SHA256=E61CD3C996C20B9964FBFBA6351E8BB6196472EB9198474A74924C94B4E0C07B
+Editor runner SHA256=EEE6F1E00B910C2031E043A26DCA5B35ED9D29242041491EF92DB6CCBBCC40FF
+Build helper SHA256=9F4F75CB7F1AD7FD88323A10891F9512FB237840FC728447476C23FAA8AB8F13
+
+================================================================================
+RECOMMENDED NEXT SINGLE ACTION
+================================================================================
+After an authorized same-source Player build can pass the existing build gate,
+repeat only this F3 change-local gate with one operator-controlled, same-build
+CONTROL/PROBE capture: identical camera conditions and scenario order, human review
+of texture+mask orientation/crop-edge/roll-stop behavior, then controlled
+Lost->Reacquire and one restart with scalar stale-state checks. Do not delete
+SharedTiltLock or alter Production until that gate produces PASS.

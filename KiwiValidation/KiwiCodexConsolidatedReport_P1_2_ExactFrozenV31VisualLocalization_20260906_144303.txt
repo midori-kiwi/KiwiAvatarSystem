@@ -1,0 +1,451 @@
+KiwiAvatarSystem — P1-2 Consolidated REPORT
+Exact Frozen-v31 Non-Overlapping LIVE CAMERA Visual Localization
+
+REPORT_TIMESTAMP_JST=2026-09-06 14:43:03 +09:00
+PROJECT=D:\KiwiAvatarSystem
+MODE=EXACT_FROZEN_V31_BUILD_DIAGNOSTIC_ACTIVATION
+AUTHORITY_MODEL=CLAIM_SCOPED_AUTHORITY
+AUTHORITY_BASIS=KiwiCodexConsolidatedReport_P1_LiveCameraPixelSpace_20260906_132556.txt
+PRODUCTION_CHANGE_AUTHORIZED=NO
+
+===============================================================================
+1. Executive verdict
+===============================================================================
+
+The exact frozen-v31 Player was run once with the requested D3D12, windowed,
+PixelSpaceAudit-only activation. External Win32 GetClientRect measured the
+actual Player client as 1706x901, not the requested 2560x1352. The exact current
+source formulas were therefore recomputed using 1706x901.
+
+At that actual client geometry:
+- Original LIVE Rect=x1120 y38 w560 h315
+- Audit FULL Rect=x288 y392 w560 h315
+- Audit 1:1 Rect=x858 y392 w560 h315
+- the three required draw surfaces do not overlap;
+- Original LIVE and Audit FULL both preserve 560x315;
+- SURFACE_GEOMETRY_INDEPENDENT=YES.
+
+Runtime produced 108 complete PixelSpaceAudit metric records. All 108 reported
+the same source/comparison Texture ID, DIRECT_SAME_TEXTURE, 1920x1080,
+ARGB32/R8G8B8A8_UNorm, Bilinear, Linear, mirrorX=1, observerBlit=0,
+observerReadback=0, and liveBlitsLastPrepare=0.
+
+The live Human review then reported, in the required order:
+- Original symptom: REPRODUCED
+- Audit FULL represents Original: YES
+- FULL vs 1:1: BOTH_BAD_SIMILAR
+
+Therefore the primary display-minification/layout-only claim is not supported.
+The maximum permitted result is:
+
+DISPLAY_MINIFICATION_CLAIM=REJECTED_OR_STRONGLY_WEAKENED
+
+This does not prove a Native, PresentationTexture, F2, F1, F4, Bilinear,
+tracking, inference, ROI, camera, or Spout root cause. In particular it does not
+authorize automatic progression to F2 or any Production change.
+
+WHY_CHANGE_IS_BETTER_THAN_NO_CHANGE=NOT_ESTABLISHED_FOR_PRODUCTION; NO_CHANGE
+
+===============================================================================
+2. Required machine fields
+===============================================================================
+
+P1_AUTHORITY_PRECHECK=PASS_NO_DECISION_CHANGING_PRODUCT_EFFECTIVE_DIFFERENCE
+P1_BUILD_CLASS=EXACT_FROZEN_V31_BUILD_DIAGNOSTIC_ACTIVATION
+EXE_SHA256=98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81
+ACTUAL_CLIENT_WIDTH=1706
+ACTUAL_CLIENT_HEIGHT=901
+SURFACE_GEOMETRY_INDEPENDENT=YES
+ORIGINAL_LIVE_RECT=x1120 y38 w560 h315
+AUDIT_FULL_RECT=x288 y392 w560 h315
+AUDIT_1TO1_RECT=x858 y392 w560 h315
+OBSERVER_NONMUTATION_PASS=YES_108_OF_108_RUNTIME_METRICS_AND_STATIC_CONTRACT
+DIRECT_SAME_TEXTURE=YES_108_OF_108_SOURCE_ID_EQUALS_COMPARISON_ID
+ORIGINAL_LIVE_CAMERA_SYMPTOM=REPRODUCED
+AUDIT_FULL_REPRESENTS_ORIGINAL=YES
+PAIRED_HUMAN_DECISION=BOTH_BAD_SIMILAR
+DISPLAY_MINIFICATION_CLAIM=REJECTED_OR_STRONGLY_WEAKENED
+D3D12_UPLOAD_BUFFER_WARNING_COUNT=1
+D3D12_UPLOAD_BUFFER_WARNING_STATUS=OPEN_UNCORRELATED
+RUNTIME_TECHNICALLY_VALID=YES_FOR_LIVE_VISUAL_SOURCE_GEOMETRY_AND_OBSERVER_CLAIMS; FULL_OS_EXIT_CODE_CLOSURE=NO
+VISUAL_AUTHORITY=LIVE_HUMAN_REVIEW
+PERFORMANCE_AUTHORITY=NONE
+PRODUCTION_BEHAVIOR_CHANGED=NO
+PRODUCTION_FIX=NO
+COMMIT_PUSH=NO
+NEXT_SINGLE_ACTION=RERANK_P0_CANDIDATES_A_UPSTREAM_B_F2_D_F1_E_F4_USING_THIS_1TO1_BAD_EVIDENCE_BEFORE_SELECTING_ANY_NEW_OBSERVER
+
+Additional fail-closed fields:
+REQUESTED_CLIENT_SIZE=2560x1352
+PLAYER_EXIT_CODE=UNAVAILABLE_AFTER_EXTERNAL_CLOSE
+PLAYER_EXIT_CODE_INFERRED=NO
+GRACEFUL_SHUTDOWN_MARKERS=LIFECYCLE_BEGIN_1_LIFECYCLE_END_1_SPOUT_FINAL_1
+MANAGED_UNHANDLED_EXCEPTION_COUNT=0
+CRASH_MARKER_COUNT=0
+VISUAL_CAPTURE=NOT_ATTEMPTED_LIVE_HUMAN_PRIMARY
+
+===============================================================================
+3. Authority precheck — Confirmed Static
+===============================================================================
+
+Git and dirty-state precheck:
+- branch=main
+- HEAD=27281c622d7b8bf2ececf711b037fc8f9e029004
+- HEAD equals the P1-1 freeze HEAD.
+- pre-run global porcelain=734 entries: tracked dirty=4, untracked=730.
+- required P1-2 source/Scene/Native paths had no relevant dirty entry.
+- ambient user-owned dirty state was preserved.
+
+Frozen-v31 complete payload rehash:
+- build identity SHA256:
+  DAA8C22A890DEEB128758D587359D4EDBF859631E3A8306D63F77D746949D7A8
+- expected payload entries=288
+- matched=288
+- missing=0
+- mismatch=0
+- actual payload files=288
+- complete payload closure=YES
+
+Current workspace versus the frozen source manifest:
+- expected source entries=290
+- matched=288
+- missing=0
+- mismatch=2
+- the only two mismatches are the same already-classified offline validator
+  corrections from P1-1:
+  * Tools\KiwiV44_55_31\Test-Validator.ps1
+  * Tools\KiwiV44_55_31\Validate-Runtime.ps1
+- no Product-effective or P1-2 decision-changing difference was found.
+
+Required identities:
+- exact EXE:
+  98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81
+- Assembly-CSharp.dll:
+  32064B0D9657A89A858E1888016DBE8F47A28FD924CD77B16B2B1B1A3E57AE86
+- Assembly-CSharp.pdb:
+  91A71C04D5BB36F7C89D4BBF5E420E4D5D6CB6B1A55268AFD3F94ACCFC3259F2
+- KiwiLiveCameraPixelSpaceAudit.cs:
+  AB41E4F296041DEB6BA800D62BCBE992048CE5CFB1E5AE2B7A82E1BA59EA1602
+- PDB-recorded PixelSpaceAudit source checksum, verified by P1-1 and retained
+  under the unchanged exact PDB/source identities:
+  AB41E4F296041DEB6BA800D62BCBE992048CE5CFB1E5AE2B7A82E1BA59EA1602
+- KiwiFrameComparisonOverlay.cs:
+  6DF8CCC9B47A0E2E9BFF4807B4D7CAB4AB11911992A4624EF7A8E40436F39EDD
+- KiwiCameraPreviewQualityService.cs:
+  717C1B1106CEBC0D1E0C37F5A3899A1C3D67007EB7B61DACCE64A39C1336043A
+- active Scene, Assets\Scenes\Face Landmark Detection.unity:
+  E28B0B81F731B92B04B97D4AA7DB1187C8DD57C5A39F49B08B2E6799BBF5B3D1
+- Production KiwiNativeCamera.dll:
+  82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+
+P1-1 authority basis hashes:
+- P1-1 consolidated report:
+  E8673B5204D5DAD97821964D8733B9E3DC5B0383C81EBBC208A29DA18BAE04D9
+- P1-1 Runtime Evidence ZIP:
+  449D778BB7ADF345961BF6373F948A6B9E9918CB1E1D968B016D8724D4E7035F
+
+===============================================================================
+4. Exact Player and activation — Confirmed Runtime
+===============================================================================
+
+Player:
+D:\KiwiAvatarSystem\Builds\v44_55_31AsyncProducerTailSnapshot\KiwiAvatarSystem_v44_55_31.exe
+
+Launch request:
+-force-d3d12 -screen-width 2560 -screen-height 1352 -screen-fullscreen 0
+
+Before launch, every inherited process-scope KIWI_* environment variable was
+cleared. The launcher then applied only these explicit values:
+- KIWI_LIVE_CAMERA_PIXEL_SPACE_AUDIT=1
+- KIWI_CAMERA_PREVIEW_MODE=DIRECT
+- KIWI_LIVE_CAMERA_COLOR_CORRECTION=OFF
+- KIWI_V44_55_20_COMMON_TENSOR_AUDIT=0
+- KIWI_V44_55_24_PAIR_BOUND_SHADOW_OUTPUT_AUDIT=0
+- KIWI_V44_55_25_PRODUCTION_SCHEDULE_TRANSACTION_TRACE=0
+- KIWI_V44_55_27_ACTUAL_PRODUCTION_VS_SHADOW_PAYLOAD_AUDIT=0
+- KIWI_V44_55_31_COLLECTION=0
+- KIWI_V44_55_31_PRODUCER_TAIL_SNAPSHOT=0
+- KIWI_INFERENCE_ASYNC_COMPUTE_PROBE=0
+- KIWI_INFERENCE_COMMAND_BUFFER_GRAPHICS_PROBE=0
+
+Runtime activation evidence:
+- D3D12 forced and active=1
+- PixelSpaceAudit READY=1
+- v20 active marker=0
+- v24 active marker=0
+- v25 active marker=0
+- v27 active marker=0
+- v31 producer-tail active marker=0
+- Inference E2 requested=0 enabled=0 marker=1
+- CommandBuffer Graphics probe requested=0 enabled=0 marker=1
+
+Existing default-active services/observers were not deleted or disabled.
+This run is not Performance Authority.
+
+===============================================================================
+5. Actual client geometry gate — Confirmed External Runtime + Static formula
+===============================================================================
+
+The requested command-line dimensions were not promoted to Runtime fact.
+
+Win32 measurement after Player startup:
+- three consecutive stable GetClientRect observations
+- requested=2560x1352
+- actual client=1706x901
+- outer window Rect=x335 y139 right2056 bottom1078 w1721 h939
+
+Exact formula inputs:
+- source=1920x1080; aspect=16:9
+- overlay previewWidth=560
+- showHelp=true
+- telemetry overlay=false
+- FrameComparisonOverlay SHA and PixelSpaceAudit SHA are the identities listed
+  in section 3.
+
+Recomputed geometry from actual 1706x901:
+- Original panel=x1112 y10 w576 h826
+- Original LIVE=x1120 y38 w560 h315
+- Audit panel=x280 y360 w1146 h531
+- Audit FULL=x288 y392 w560 h315
+- Audit 1:1=x858 y392 w560 h315
+
+Pairwise draw-surface overlap:
+- Original LIVE vs Audit FULL=NO
+- Original LIVE vs Audit 1:1=NO
+- Audit FULL vs Audit 1:1=NO
+- Original LIVE remains 560x315=YES
+- Audit FULL remains 560x315=YES
+
+SURFACE_GEOMETRY_INDEPENDENT=YES
+
+The approximately 1.5x difference between requested and actual client size is
+not assigned a root cause here. It did not invalidate the gate because the gate
+was recomputed from the actual external Win32 measurement as instructed.
+
+===============================================================================
+6. Observer validity — Confirmed Static and Runtime
+===============================================================================
+
+Static observer contract retained from the exact unchanged PixelSpaceAudit
+source/PDB authority:
+- new RenderTexture=0
+- Graphics.Blit=0
+- AsyncGPUReadback=0
+- ReadPixels/GetPixels/SetPixels=0
+- Worker.Schedule=0
+- blocking Wait=0
+- Product file/state write=0
+
+Runtime READY contract:
+- observerOnly=1
+- additionalBlit=0
+- additionalReadback=0
+- trackingWrite=0
+- cameraWrite=0
+- inferenceWrite=0
+- faceTextureTransactionWrite=0
+
+Final Player.log metrics:
+- complete PixelSpaceAudit metric records=108
+- DIRECT_SAME_TEXTURE=108/108
+- sourceTextureId equals comparisonTextureId=108/108
+- unique Texture ID=-558
+- source/comparison size=1920x1080 in 108/108
+- format=ARGB32; graphicsFormat=R8G8B8A8_UNorm in 108/108
+- filterMode=Bilinear; texture/project color space=Linear in 108/108
+- FULL draw=560x315; central crop=x680 y382 w560 h315 in 108/108
+- mirrorX=1 in 108/108
+- previewMode=DIRECT; colorMode=OFF in 108/108
+- liveBlitsLastPrepare=0; observerBlit=0; observerReadback=0 in 108/108
+
+Therefore the same-Texture/nonmutation observer contract passes for the live
+Visual claim. No new RT, Blit, GPU readback, CPU pixel copy, or Product write
+was introduced by the observer.
+
+===============================================================================
+7. Human Visual Authority — Confirmed live Human input
+===============================================================================
+
+Review order and accepted answers:
+
+Gate A — Original symptom:
+ORIGINAL_LIVE_CAMERA_SYMPTOM=REPRODUCED
+
+Gate B — Surface bridge:
+AUDIT_FULL_REPRESENTS_ORIGINAL=YES
+
+Gate C — FULL versus same-source 1:1 central crop:
+PAIRED_HUMAN_DECISION=BOTH_BAD_SIMILAR
+
+Codex did not auto-classify image quality. The Human answers were supplied
+after the actual-client geometry gate and observer identity gate had passed.
+
+Primary Visual Authority=LIVE_HUMAN_REVIEW
+
+No screenshot was attempted or included. The live review is primary, and no
+guaranteed Player-client-only unoccluded capture mechanism was used.
+
+===============================================================================
+8. Decision rule application
+===============================================================================
+
+For BOTH_BAD_SIMILAR, the required decision rule is:
+
+DISPLAY_MINIFICATION_CLAIM=REJECTED_OR_STRONGLY_WEAKENED
+
+Confirmed interpretation:
+- The visible problem is not isolated to the difference between the FULL
+  1920x1080-to-560x315 view and the same-source 1:1 central crop.
+- Therefore display minification/layout alone is not supported as the first
+  visible degradation boundary by this Human evidence.
+
+Not established:
+- whether the Native source pixels are correct or incorrect;
+- whether the full PresentationTexture pixel content is correct or incorrect;
+- whether the visible issue begins in A-upstream, B/F2, D/F1, E/F4, or another
+  still-open boundary;
+- whether Bilinear, OnGUI, crop coordinates, orientation, or mirror contribute;
+- whether F2 should be selected next;
+- any Production fix.
+
+Rejected action:
+- automatic progression to F2 based only on BOTH_BAD_SIMILAR.
+
+===============================================================================
+9. D3D12 warnings — Claim-scoped Runtime handling
+===============================================================================
+
+Raw Player.log contains:
+- d3d12 upload-buffer-too-small warning count=1
+- D3D12 info-queue query warning count=1
+
+Status:
+D3D12_UPLOAD_BUFFER_WARNING_STATUS=OPEN_UNCORRELATED
+
+Neither warning is attributed to mesh, LIVE CAMERA, Native, the Visual result,
+or the P1 display-minification claim. They are not converted into Performance
+PASS/FAIL. PERFORMANCE_AUTHORITY=NONE.
+
+===============================================================================
+10. Exit-status limitation — Confirmed and fail-closed
+===============================================================================
+
+After Human review, PID 22560 was already absent when Codex attempted to request
+CloseMainWindow. Because the launching shell had exited and did not retain the
+terminated process object, its OS exit code could not be retrieved afterward.
+
+PLAYER_EXIT_CODE=UNAVAILABLE_AFTER_EXTERNAL_CLOSE
+PLAYER_EXIT_CODE_INFERRED=NO
+
+Correlated final Player.log evidence nevertheless contains:
+- SHUTDOWN_CLEANUP_BEGIN count=1
+- SHUTDOWN_CLEANUP_END count=1
+- Spout final=1 count=1
+- managed unhandled exception count=0
+- crash marker count=0
+
+Thus graceful shutdown is strongly supported, but OS exit-code closure is not
+claimed. This limitation prevents a global unqualified Runtime PASS. It does
+not erase the already-completed live Human review or the 108 same-run observer
+records; RUNTIME_TECHNICALLY_VALID is therefore deliberately claim-scoped as
+stated in section 2.
+
+===============================================================================
+11. Production and protected boundaries
+===============================================================================
+
+Not changed:
+- Production source
+- Scene
+- packages
+- Native source or DLL
+- 560x315 policy
+- Bilinear
+- camera settings/path
+- tracking/inference/ROI/cadence/texture transactions
+- KiwiFaceMotion or KiwiInferenceFaceTracker behavior
+- Root/Head/FacePart authority
+- F2 instrumentation
+- E2
+- v44.55.32
+- Fence, blocking Wait, queue flush, async disable, FIFO, buffers
+- smoothing, Kalman, prediction, or thresholds
+
+No rebuild was performed. No commit or push was performed.
+
+PRODUCTION_BEHAVIOR_CHANGED=NO
+PRODUCTION_FIX=NO
+COMMIT_PUSH=NO
+
+===============================================================================
+12. Runtime Evidence ZIP
+===============================================================================
+
+Path:
+D:\KiwiAvatarSystem\KiwiValidation\KiwiRuntimeEvidence_P1_2_ExactFrozenV31VisualLocalization_20260906_144303.zip
+
+SHA256:
+55A0BCE2D4A16F21E6E6770D1B920C596306E9E93901BE281DADF865DEE24092
+
+Entries=11
+
+The ZIP contains:
+- byte-preserved authoritative Player.log
+- launch and external GetClientRect identity
+- authority/source/payload precheck
+- actual-client geometry gate
+- activation evidence
+- independently recomputed runtime summary
+- live Human review record
+- decision-rule result
+- exit-status and graceful-shutdown limitation
+- visual-capture status
+- internal SHA256 manifest
+
+The copied Player.log SHA equals the authoritative stage Player.log SHA:
+4FC6849BA7BA6452C7599753DEC4CC38B6F8152A22FB0A38EDC607FAF44EB880
+
+No invalid or occluded screenshot is included.
+
+===============================================================================
+13. Final classification
+===============================================================================
+
+Confirmed Static:
+- exact required source/build/Scene/Native identities match P1-1.
+- frozen payload closure is 288/288.
+- only the same two offline validator script differences remain.
+
+Confirmed Runtime:
+- actual external client=1706x901.
+- surface geometry is independent.
+- D3D12 and PixelSpaceAudit activation are correlated.
+- 108/108 observer records satisfy same-Texture/nonmutation requirements.
+- the original symptom was reproduced and FULL represented Original according
+  to live Human review.
+- Human paired decision=BOTH_BAD_SIMILAR.
+
+Inference:
+- display minification/layout alone is not supported as the first visible
+  degradation boundary.
+
+Unknown:
+- the exact upstream/semantic/presentation sub-boundary responsible for the
+  issue visible in both FULL and 1:1.
+- OS exit code for this run.
+- clean Production performance.
+
+Final P1-2 result:
+PRIMARY_CLAIM=REJECTED_OR_STRONGLY_WEAKENED
+PRODUCTION_DECISION=NO_CHANGE
+
+===============================================================================
+14. Next single action
+===============================================================================
+
+Re-rank the remaining P0 candidates — A upstream, B/F2, D/F1, and E/F4 — using
+the new same-build evidence that the problem is visible in both FULL and the
+same-source 1:1 crop. Select only one next observer after that re-ranking; do
+not automatically start F2 and do not change Production.
+
+END_OF_REPORT

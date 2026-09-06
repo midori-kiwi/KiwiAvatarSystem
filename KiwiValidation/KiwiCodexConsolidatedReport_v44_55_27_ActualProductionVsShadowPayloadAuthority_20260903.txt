@@ -1,0 +1,557 @@
+KiwiAvatarSystem v44.55.27
+Actual Production Decode Payload vs Pair-Bound Shadow Output Authority
+Codex Consolidated Report
+Date: 2026-09-03 JST
+Project: D:\KiwiAvatarSystem
+Git branch: main
+Git HEAD: 27281c622d7b8bf2ececf711b037fc8f9e029004
+
+FINAL CLAIM-SCOPED DECISION
+===========================
+v44.55.27 observer/validator claim: PASS
+Payload result: ACTUAL_EQUALS_NEITHER_CONFIRMED
+REFERENCE_PAYLOAD_AUTHORITY_CONFIRMED: NOT MET
+MODE2_PAYLOAD_AUTHORITY_CONFIRMED: NOT MET
+Production Semantic PASS: NOT ESTABLISHED
+Production adoption/fix decision: NO_GO / NO PRODUCTION FIX APPLIED
+Performance authority: 0
+Visual authority: not in scope; no MP4 was requested or produced
+
+The only closed claim is that, in this same-Production run, the logical 1405-float
+payload actually passed from Production's existing ReadbackAndClone result to
+DecodeReadableOutput was bitwise equal to neither the same-pair REF_FROZEN_GPU
+payload nor the same-pair MODE2 B_GPU payload. This is payload authority only.
+
+
+Confirmed Facts
+===============
+1. Critical Production files were not modified by v44.55.27:
+   - Assets\Script\KiwiInferenceFaceTracker.cs
+     SHA256 52C046EE44B41A4FF50B85AEF503BC29DD31B57EAF58C0D160CCC33C5D4B7695
+   - Assets\Script\FaceLandmarkerRunner.cs
+     SHA256 6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93
+   - Assets\Script\KiwiFaceMotion.cs
+     SHA256 D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6
+   - Assets\Plugins\x86_64\KiwiNativeCamera.dll
+     SHA256 82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+
+2. Installed package authority is local PackageCache:
+   Library\PackageCache\com.unity.ai.inference@587873fd5e1b\package.json
+   name=com.unity.ai.inference, version=2.4.1
+   package.json SHA256 2F230C84E28A9E3AD516B1A49B79B6F83E172F1C16E6813E0F1DD6FA2B1790EE
+
+3. The actual Production source seam is one object and one order:
+   KiwiInferenceFaceTracker.cs:1791-1824 performs
+   completedOutput.ReadbackAndClone() -> local readableOutput ->
+   KiwiOrtDirectMLShadowRuntime.RecordSentisPackedOutput(..., readableOutput, ...)
+   -> DecodeReadableOutput(readableOutput, ...).
+   No second Production ReadbackAndClone was introduced.
+
+4. v26 re-audit did not find V26_OBSERVER_INVALID:
+   - The callback receives that same readableOutput object.
+   - v26 copies the logical 1405 values during the callback into a newly allocated
+     observer-owned float[] and retains no Tensor reference.
+   - v26 SHA remained unchanged during v27 work.
+
+5. v24 REF/MODE2 capture is pair-bound and lifetime-closed:
+   - capture requires _pairPending=true and _commonScheduled=true;
+   - record object, pairToken, record index, sequence, native/managed/lane-start
+     identity are checked before, between, and after shadow capture;
+   - its already-existing GPU snapshot mechanism copies exactly 1405 floats into
+     three separate readonly CaptureState arrays;
+   - v27 adds no Worker, Schedule, GPU copy, AsyncGPUReadback, or wait.
+
+6. The rejected v24 Production GPU snapshot is not a comparison side in v27.
+   It is handed to v27 only so ReferenceEquals can reject any REF/MODE2/Production
+   source-array alias. It is never indexed by v27 and is not passed to parity math.
+
+7. v26 was explicitly disabled in the v27 process environment. Therefore the
+   shared readableOutput seam did not deep-copy the same payload into both v26 and
+   v27 during the authoritative run.
+
+8. No commit or push was performed. The repository was already dirty with v25,
+   v26, KiwiPsCompat, and unrelated diagnostic artifacts; ambient changes were
+   preserved and are not attributed to v27.
+
+
+Runtime Evidence
+================
+Authoritative run files:
+  v20 stamp: 20260903_233159
+  v24 stamp: 20260903_233200
+  v25 stamp: 20260903_233208
+  v27 stamp: 20260903_233208
+
+Player.log proves observer startup and dependency binding:
+  [Kiwi v44.55.27 ActualVsShadow] WAIT_DEPENDENCY
+  [Kiwi v44.55.27 ActualVsShadow] DEPENDENCY_BOUND
+  v20/v24/v25 startup, pair attachment, schedule/output binding, shadow capture,
+  actual-vs-shadow SAMPLE rows, and v27 COMPLETE are present.
+Run harness observed v27 COMPLETE and Player exit code 0.
+
+v27 authoritative result:
+  status=COMPLETE
+  decision=ACTUAL_EQUALS_NEITHER_CONFIRMED
+  dependencyTraceCount=103
+  capturedPairCount=103
+  completedPairCount=103
+  comparedPairCount=103
+  payloadEligiblePairCount=103
+  anomalousPairCount=16
+  anomalousPayloadEligiblePairCount=16
+  actualEqualsRefOnlyCount=0
+  actualEqualsMode2OnlyCount=0
+  actualEqualsBothCount=0
+  actualEqualsNeitherCount=103
+  anomalousActualEqualsRefOnlyCount=0
+  anomalousActualEqualsMode2OnlyCount=0
+  anomalousActualEqualsBothCount=0
+  anomalousActualEqualsNeitherCount=16
+  anomalousShadowExactCount=0
+
+Integrity counters, all zero:
+  noDecodePayloadCoverageCount
+  observerFaultCount
+  identityMismatchCount
+  duplicateDecodePayloadCount
+  duplicateShadowPayloadCount
+  arrayAliasCount
+  fieldMappingMismatchCount
+  payloadShapeMismatchCount
+  nonFinitePayloadCount
+  partialCaptureCount
+  pendingAtCompletion
+
+v24 supporting dependency:
+  status=COMPLETE, dependencyStatus=COMPLETE, completed=103/103,
+  anomalous=16, observer/identity/snapshot/shape/finite/duplicate/pending faults=0.
+  Its legacy Production-snapshot result was MIXED_TRANSACTION with 2 REF-exact,
+  0 MODE2-exact, 0 both, 14 neither anomalous pairs. This result is retained only
+  as historical evidence and is not used as v27 Production payload authority.
+
+v25 supporting dependency:
+  status=COMPLETE, completedTraceCount=103, dependencyPairCount=103,
+  anomalousPairCount=16, all schedule/identity/partial/observer fault counters=0.
+  canonicalPublicationBoundCount=24, bound anomalous=5,
+  canonicalPublicationMissCount=79.
+
+v20 dependency limitation:
+  status=COMPLETE but overall decision=INVALID_OBSERVER because its separate
+  transitOutcome=INSUFFICIENT_DATA. It also recorded two decode/acceptance/
+  canonical-validity hard-invariant pairs. This is not promoted to semantic PASS.
+  For v27, v20 authority is limited to the raw pair record and existing shadow
+  captures. That limited dependency contract passed: pairError=0,
+  observerFault=0, sourceIdentityMismatch=0, reference freeze/readback/finite
+  faults=0; v24 independently closed 103/103 pair records and all snapshot identity
+  gates. The v20 overall decision remains unresolved and is not hidden.
+
+Evidence directory:
+  KiwiValidation\RuntimeEvidence_v44_55_27_20260903_233208
+  12 byte-preserving copied raw files + SHA256_MANIFEST.txt = 13 files.
+  Source/destination SHA comparison before packaging: 12/12 equal.
+
+Evidence ZIP:
+  KiwiValidation\RuntimeEvidence_v44_55_27_20260903_233208.zip
+  entries=13
+  bytes=1429001
+  SHA256 8B83337AC3D546786C88159294796487907035DA3D08FAA17113D63F3D39B0A7
+
+
+Static Evidence
+===============
+1. v27 is observer-only and DEVELOPMENT_BUILD/UNITY_EDITOR gated.
+2. Static forbidden-operation audit passed:
+   new Worker=0; new Schedule=0; repeated inference=0; new GPU copy=0;
+   new AsyncGPUReadback=0; new Production ReadbackAndClone=0; blocking wait=0;
+   lane.input oracle=0; Production writes=0.
+3. v27 logical count is fixed at 1405. Backing capacity is not used as the logical
+   comparison length.
+4. PowerShell 5.1 parser passed for v27 scripts. KiwiPsCompat.psm1 is imported;
+   canonical project roots, write-target containment, protected SHA checks,
+   explicit subprocess exit checks, and stale/generated output refusal are used.
+5. STATIC_VALIDATION_PASS, VALIDATOR_SELF_AUDIT_PASS,
+   PROTECTED_SHA_PASS, POWERSHELL_5_1_PARSER_PASS, and
+   RUNTIME_VALIDATION_PASS were all obtained after the final validator correction.
+6. git diff --check exited successfully with no whitespace error. Git emitted only
+   the existing LF-to-CRLF advisory for KiwiPsCompat.psm1.
+7. Unity 6000.0.80f1 Full Preflight passed: errors=0, critical=0, warnings=2.
+   The two warnings are com.unity.ugui resolved-version drift and unverified
+   UniVRM/UniGLTF package version; neither is silently treated as resolved.
+8. Win64 Development + StrictMode build passed: result=Succeeded, errors=0,
+   warnings=205. Build output filename and v44.55.27 contract are exact.
+9. Runtime startup WAIT_DEPENDENCY -> DEPENDENCY_BOUND confirms the development
+   observer bootstrap is present and active in the built Player; no serialized
+   scene component was assumed.
+10. Build artifacts:
+   EXE SHA256 98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81
+   Assembly-CSharp.dll SHA256 CB00626ACB12427075D340D28301156AA948B4E394D0D78EBDDA6E6579EA53BF
+
+
+Public Design Principles
+========================
+1. Installed Inference Engine 2.4.1 Worker source states that PeekOutput returns a
+   reference valid only until the next Schedule, ScheduleIterable, or Dispose on
+   that Worker. Therefore post-record reuse of a Worker-owned output cannot be
+   assumed to preserve the completed transaction.
+2. Installed Tensor source implements ReadbackAndClone by creating a new tensor,
+   downloading logical count values, creating CPU tensor data, and copying those
+   values. The Production call already exists; v27 does not add another call.
+3. Claim-scoped authority requires payload ownership and transaction identity to
+   be closed before comparing numeric results. A validator string, approximate
+   numeric similarity, latest artifact, or canonical publication proxy alone does
+   not establish actual decode payload authority.
+4. Correctness observation must not perturb scheduling. v27 therefore consumes
+   existing CPU-owned payloads and existing v24 snapshots without adding a Worker,
+   Schedule, GPU copy, queue, fence, or blocking wait.
+
+
+Inference/Hypothesis
+====================
+1. The v24 Production GPU snapshot does not represent the payload actually decoded
+   by Production. This is strongly supported by v26's independent mismatch and by
+   v27 record 0, where v24 called Production==REF but actual Production decode
+   payload was unequal to both REF and MODE2 across all 1405 elements.
+2. Since actual decode payload is unequal to both shadows for every eligible pair,
+   the remaining boundary is not a choice between REF and MODE2 authority. It is a
+   fixed-transaction semantic difference between the actual Production execution/
+   output path and both independently scheduled shadow executions.
+3. These observations do not identify whether that difference originates at
+   input materialization, Worker execution/backend state, output ownership/
+   lifecycle, or another pre-decode boundary. Any one of those is still a
+   hypothesis, not a confirmed defect.
+
+
+Unverified
+==========
+1. Root cause of the actual-vs-both-shadow semantic difference.
+2. Canonical semantic correctness of Actual, REF, or MODE2.
+3. Meaning and product impact of v25's 79 NO_CANONICAL_PUBLICATION_OBSERVED rows.
+   They are not treated as raw payload defects, but publication coverage remains
+   incomplete.
+4. v20 transit validation and its two hard-invariant pairs remain unresolved.
+5. Clean Production performance, long-run resource behavior, lifecycle/recovery,
+   visual quality, and product reliability were not evaluated by this observer-
+   heavy run.
+6. The two Full Preflight warnings and 205 build warnings were not remediated in
+   this task.
+
+
+Observer/Validator audit
+========================
+Observer re-audit:
+  A. Same readableOutput object: confirmed by direct source order at
+     KiwiInferenceFaceTracker.cs:1791-1824 and the unchanged bridge signature.
+  B. v26 immediate deep copy: confirmed; new float[1405], value loop in callback,
+     no Tensor retained.
+  C. v24 shadow ownership: confirmed; three distinct CaptureState float[1405]
+     arrays are populated in AsyncGPUReadback completion before handoff.
+  D. Pair-bound window: confirmed; _pairPending, _commonScheduled, record identity,
+     pairToken, sequence, and lifecycle are checked around both captures.
+  E. Field/alias reuse: confirmed; REF, MODE2, rejected Production are distinct;
+     v27 deep-copies only REF/MODE2 and rejects every source/owned-array alias.
+  Result: V26_OBSERVER_INVALID was not triggered.
+
+Actual callback identity audit:
+  sourceHostTicks is used only to find a unique candidate trace. Acceptance is not
+  based on that timestamp alone. The trace must have v25 schedule boundaries A/B/C,
+  then all transaction fields must remain bitwise/identity equal, and the v24
+  callback must match recordIndex + pairToken + sequence + sourceHostTicks +
+  shadowSnapshotRecordIndex. Duplicate or ambiguous candidates fail closed.
+
+Validator self-audit:
+  Synthetic cases independently exercised all seven outcomes:
+    REFERENCE_PAYLOAD_AUTHORITY_CONFIRMED
+    MODE2_PAYLOAD_AUTHORITY_CONFIRMED
+    ACTUAL_SHADOW_MIXED
+    ACTUAL_EQUALS_NEITHER_CONFIRMED
+    SHADOWS_NOT_DISCRIMINATING
+    INSUFFICIENT_ANOMALOUS_COVERAGE
+    INVALID_OBSERVER
+  The validator reparses every CSV row and recomputes counts, classifications,
+  published subsets, integrity total, and final decision; the report decision
+  string alone cannot pass.
+
+Validator defect found and corrected:
+  The first final-validator invocation stopped in PowerShell 5.1 because a
+  Where-Object simplified-syntax predicate used a hashtable expression as Value.
+  It was replaced with an explicit script-block predicate. No decision rule or
+  Runtime data changed. The corrected validator then passed static, synthetic,
+  protected-SHA, parser, all-row recount, and final-decision checks.
+
+Superseded observer run:
+  Initial v27 stamp 20260903_202218 returned INVALID_OBSERVER with
+  identityMismatchCount=38 because v27 finalized rows while v25 still exposed the
+  provisional CANONICAL_PUBLICATION_PENDING classification. That provisional state
+  was incorrectly treated as final. v27 now defers it until v25's final disposition
+  is available. The pre-fix build was isolated at:
+  Builds\v44_55_27ActualProductionVsShadowPayloadAuthority_preFinalV25DispositionFix_20260903_2022JST
+  The initial run/build is not acceptance evidence.
+
+
+Array ownership/deep-copy proof
+===============================
+Side A:
+  Production creates readableOutput with its existing ReadbackAndClone.
+  The same Tensor<float> object is passed to the diagnostic bridge and then to
+  DecodeReadableOutput. v27 immediately allocates float[1405] and copies indexes
+  0..1404 in the callback. It retains no Tensor reference.
+
+Sides B/C:
+  v24 CaptureState constructs separate readonly ReferenceOutput and Mode2Output
+  float[1405] arrays. Existing AsyncGPUReadback callbacks copy each snapshot into
+  the corresponding array. v24 hands those CPU-owned arrays to v27 only after
+  pair finalization. v27 then allocates two additional float[1405] arrays and uses
+  Array.Copy for REF and MODE2.
+
+Alias and disposal safety:
+  v27 verifies that v24 REF, MODE2, and rejected Production arrays are mutually
+  non-aliased; verifies that its owned copies do not alias the source arrays or
+  each other; verifies that A/B/C owned arrays are mutually non-aliased; computes
+  all three comparisons; then nulls/releases all three payload arrays immediately.
+  Runtime arrayAliasCount=0 and partialCaptureCount=0.
+
+
+Exact transaction map
+=====================
+Primary trace identity recorded and revalidated:
+  recordIndex
+  sequence
+  pairToken
+  nativeHostTicks
+  managedHostTicks
+  sourceHostTicks
+  laneIndex
+  laneStartedHostTicks
+  scheduleBeginHostTicks
+  startedHostTicks
+  readbackRequestHostTicks
+  readbackRequestFrame
+  anchorRevision
+  externalAnchorEpoch
+  trackerGeneration
+  cameraGeneration
+  trackingSessionGeneration
+  minimumPresence exact Float32 bits
+  cropMatrix all 16 exact Float32 bit patterns
+  lane identity token
+  Worker identity token
+  pendingOutput identity token
+
+v24 handoff additionally checks/records:
+  shadowSnapshotPairToken
+  shadowSnapshotRecordIndex
+  shadowSnapshotSequence
+  REF snapshot frame/identity
+  MODE2 snapshot frame/identity
+
+v25 supplies the final schedule transaction classification. Canonical publication
+is not primary payload eligibility. TRANSACTION_COHERENT and final
+NO_CANONICAL_PUBLICATION_OBSERVED rows are both eligible if all other gates close;
+published TRANSACTION_COHERENT rows are reported as a separate supporting subset.
+
+
+Three-way comparison
+====================
+A = ACTUAL_PRODUCTION_DECODE_PAYLOAD
+B = REF_FROZEN_GPU_PAIR_BOUND
+C = MODE2_B_GPU_PAIR_BOUND
+Logical length = 1405 float values; bitwise comparison.
+
+All 103 payload-eligible rows:
+  A vs B: exact rows=0; mismatchCount per row min=max=1405;
+          meanAbs average=9.384624392, range=0.965283773..67.523192341;
+          maximum observed maxAbs=166.837672234.
+  A vs C: exact rows=0; mismatchCount per row min=max=1405;
+          meanAbs average=9.367001903, range=0.958876173..67.420680675;
+          maximum observed maxAbs=166.907374382.
+  B vs C: exact rows=0; mismatchCount per row=1404..1405;
+          meanAbs average=0.371164819, range=0.033037126..5.229871351;
+          maximum observed maxAbs=13.939910889.
+
+Discriminating anomalous 16 rows, selector fixed before Runtime as
+REF-vs-MODE2 input >=4 LSB:
+  classification ACTUAL_EQUALS_REF_ONLY=0
+  classification ACTUAL_EQUALS_MODE2_ONLY=0
+  classification ACTUAL_EQUALS_BOTH=0
+  classification ACTUAL_EQUALS_NEITHER=16
+  B==C bitwise rows=0
+  A vs B meanAbs average=9.946832049
+  A vs C meanAbs average=9.836880653
+  B vs C meanAbs average=1.517149066
+
+The minimum gates passed without cross-run aggregation:
+  payload eligible 103 >= 60
+  anomalous payload eligible 16 >= 3
+Therefore the exact decision is ACTUAL_EQUALS_NEITHER_CONFIRMED.
+
+
+Published subset vs all decode subset
+=====================================
+Primary all-decode subset:
+  103 eligible, 16 anomalous, 103 neither, anomalous 16 neither.
+
+Supporting published subset:
+  24 eligible, 5 anomalous, 24 neither, anomalous 5 neither.
+  REF-only=0, MODE2-only=0, both=0 in both all and anomalous published subsets.
+
+Non-published final subset:
+  79 NO_CANONICAL_PUBLICATION_OBSERVED rows. These remain eligible for the raw
+  decode-payload claim and are not labeled payload defects. Their exclusion from
+  the supporting published subset does not change the result.
+
+
+v44.55.26 independent 38/7 re-count
+====================================
+The preserved raw v26 CSV at stamp 20260903_192624 was independently re-imported;
+the v26 summary decision string was not trusted.
+  total rows=63
+  eligible=45
+  bitwise exact=7
+  bitwise mismatch=38
+  partial/no-canonical coverage=18
+  eligible anomalous=2: exact=1, mismatch=1
+  bad exact rows=0
+  bad mismatch classifications=0
+  count closure: 45 = 7 + 38
+
+Thus the previously reported 38 mismatch / 7 exact reversal is reproduced from
+raw rows. It independently supports retiring the v24 Production GPU snapshot as
+an actual decode-payload proxy. It does not select REF or MODE2 authority.
+
+
+Before/After SHA
+================
+Unchanged protected Production/dependencies:
+  KiwiInferenceFaceTracker.cs
+    before 52C046EE44B41A4FF50B85AEF503BC29DD31B57EAF58C0D160CCC33C5D4B7695
+    after  52C046EE44B41A4FF50B85AEF503BC29DD31B57EAF58C0D160CCC33C5D4B7695
+  FaceLandmarkerRunner.cs
+    before/after 6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93
+  KiwiFaceMotion.cs
+    before/after D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6
+  KiwiNativeCamera.dll
+    before/after 82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+  v20 observer
+    before/after 1F5D5BD6018C293529B9E8034B24F2168A377E6F697203A3D1504FFD4C8211B3
+  v25 observer
+    before/after 90CEF88267EC14B5DD67DF35D0AE446C9469E6EC1058D1E8CADCF878BE18C814
+  v26 observer
+    before/after A4CDF5A9FF424E56D0ADA15D09AD0BED00B8BEE6B517F59463A2C15E068845DC
+
+Diagnostic files intentionally changed:
+  v24 observer
+    before CC6918E20708DD490AA0E7758CDF9BC5F9D03885A248B4078FC1F0FD70665FDA
+    after  1F8F26D21DEA1DE17DE43A0A7B8FFA0513C1C9E23A65A1AEDFCFF7BA54AB26EC
+  diagnostic bridge
+    before B1D0A24F9DE459FA9AE1E7B420B4CE73C15585042B662C2E92DEE4A9165DE436
+    after  D30A700A7B9E3C3D09BC64FA0CA5722729EE41821DE1F1B5E30E30D986B947C2
+  v27 observer
+    before NEW
+    after  B8E215D1C3D4103996B7B30BFD8B26DB508782AC6529D12BEF2617E9C65C8B86
+  v27 meta
+    before NEW
+    after  3FF3511AAA2EA67E8177C7CCAC7FF4990CE20286B5DBA973303CEE33D7FB809A
+
+v27 tools, all NEW:
+  Build-KiwiV44_55_27.ps1
+    1EB58DCC3DB739EDF647762F62A148B047FEF7A644AB7B60C9D8C086DF6CFAA5
+  Run-KiwiV44_55_27.ps1
+    FD887F314C9F651FBC852DFB415F74A819230706EE23976844B8C56D5A6FD39E
+  Validate-KiwiV44_55_27.ps1
+    99AA06A1D5BFFEC9FFB767876E95F713187DE096CB9A3767467A573C2A37BB5E
+  README.txt
+    FCA3D184EEC1949CF74B4DA913E40B2CF56079B6BA0A647D3EEA1C3E543D8234
+
+
+Changed Files
+=============
+v27 source/tool changes:
+  M Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiOrtDirectMLShadowRuntime.cs
+  M Assets\KiwiAvatarSystem\Runtime\Validation\KiwiPairBoundShadowOutputSnapshotV44_55_24.cs
+  A Assets\KiwiAvatarSystem\Runtime\Validation\KiwiActualProductionVsShadowPayloadAuthorityV44_55_27.cs
+  A Assets\KiwiAvatarSystem\Runtime\Validation\KiwiActualProductionVsShadowPayloadAuthorityV44_55_27.cs.meta
+  A Tools\KiwiV44_55_27\Build-KiwiV44_55_27.ps1
+  A Tools\KiwiV44_55_27\Run-KiwiV44_55_27.ps1
+  A Tools\KiwiV44_55_27\Validate-KiwiV44_55_27.ps1
+  A Tools\KiwiV44_55_27\README.txt
+
+Generated artifacts:
+  A KiwiValidation\KiwiPreflight_v44_55_27.json
+  A KiwiValidation\RuntimeEvidence_v44_55_27_20260903_233208\...
+  A KiwiValidation\RuntimeEvidence_v44_55_27_20260903_233208.zip
+  A this consolidated report
+  A Builds\v44_55_27ActualProductionVsShadowPayloadAuthority\...
+
+Production decision code change=NONE.
+Rollback is isolated to the v27 conditional bridge/handoff additions and new v27
+observer/tools/artifacts. No Production tracking, inference, camera, ROI, threshold,
+smoothing, prediction, authority, texture transaction, backend, or Native file must
+be reverted. The pre-fix build was archived instead of destructively overwritten.
+
+
+Regression Risks
+================
+1. Correctness-observer overhead is non-zero: v27 copies three 1405-float arrays
+   per compared pair and v24 retains its existing observer GPU snapshot/readback.
+   Therefore this run is not Performance Authority.
+2. Reflection into v24/v25 private fields is version-coupled and fail-closed; field
+   renames or layout changes will invalidate the observer rather than silently pass.
+3. The bridge calls both conditional observer entrypoints, but the v27 harness
+   explicitly disables v26. A future harness enabling both would create two CPU
+   observer copies and invalidate the intended measurement configuration.
+4. Initial lookup of the actual callback uses a unique sourceHostTicks candidate.
+   Its safety depends on uniqueness plus the subsequent full-transaction and v24
+   multi-field checks; duplicate candidates fail closed. This is diagnostic design,
+   not a permanent ScheduleTransactionId.
+5. Runtime completion covers one bounded run, not soak, recovery, device matrix, or
+   long-session allocation behavior.
+
+
+Superseded Conclusions
+======================
+1. v24 Production GPU snapshot is permanently AUTHORITY_REJECTED as a Production
+   decode-payload comparison side. Its REF/MODE2 pair-bound arrays remain usable
+   under the independently checked lifetime/identity contract.
+2. v24 MIXED_TRANSACTION must not be interpreted as actual Production semantic
+   authority. The v27 direct payload result supersedes that proxy interpretation.
+3. v26's actual-vs-rejected-snapshot mismatch remains valid after re-audit and raw
+   38/7 recount, but it never selected REF or MODE2 authority.
+4. The initial v27 20260903_202218 INVALID_OBSERVER run and pre-fix build are
+   superseded and excluded from final evidence.
+5. No historical conclusion is upgraded to Production Semantic PASS.
+
+
+Production Decision
+===================
+Payload claim gate: PASS as ACTUAL_EQUALS_NEITHER_CONFIRMED.
+Reference payload authority: NO_GO.
+Mode2 payload authority: NO_GO.
+Immediate MODE2 or REF Production adoption: NO_GO.
+GPU fence wait, blocking wait, Production clone ownership fix, CPU Production,
+permanent ScheduleTransactionId, BackendEpoch propagation, new queue/buffer,
+smoothing, Kalman, threshold relaxation, and unrelated refactor: NOT AUTHORIZED
+and not added.
+
+The current Production working core remains unchanged. v44.55.27 demonstrates a
+real fixed-transaction semantic boundary to investigate; it does not prove which
+payload is semantically correct and does not justify a Production fix yet.
+
+
+Next Action
+===========
+Proceed to one bounded observer design for the next boundary:
+  actual Production execution/output ownership versus both shadow executions at the
+  already closed v25 transaction, while preserving the existing ReadbackAndClone,
+  no lane.input readback oracle, no new Worker/Schedule, and no fence/wait.
+
+The design should first prove where the three paths cease sharing the same semantic
+input/execution contract. Prefer writer-side or already-owned input evidence and
+deterministic replay over reading Production lane.input. Separate:
+  1. pre-Schedule input materialization/transform contract,
+  2. actual Worker instance + pendingOutput ownership/lifecycle,
+  3. independently scheduled REF/MODE2 worker execution,
+  4. actual readable decode payload.
+
+Only after that boundary is closed should Canonical Semantic be rerun against the
+confirmed actual Production authority. Do not add a GPU wait or Production clone
+fix merely because Actual differs from both shadows.

@@ -1,0 +1,522 @@
+KiwiAvatarSystem v44.55.31 CONTROL Measurement Contract Fix — Consolidated Audit Report
+Generated: 2026-09-05 16:48:51 JST
+Scope: v44.55.30 CONTROL exitCode=30 / timedOut=False exact-cause audit and diagnostic-only v44.55.31 readiness
+Project: D:\KiwiAvatarSystem
+
+1. Executive Summary
+
+CONFIRMED RUNTIME FACT — v44.55.30 CONTROL did not fail through the launcher timeout. The Player itself exited with code 30. The failed Runtime ZIP is byte-preserved and its SHA256 equals the user-specified value.
+
+CONFIRMED PRIMARY CAUSE — C2_V30_OBSERVER_LOGIC_DEFECT. v27 calculated parity and then intentionally released its observer-owned payload arrays. Later, v27 FinishPair called v30 RecordFinalPair. v30 RecordCore tried to bit-copy those already-null arrays. All 42 callbacks raised "Payload length". v30 had already inserted each record index into finalRecords before the exception, so finalPairs became 42 while eligiblePairs remained 0 and producer_pairs.jsonl remained empty.
+
+CONFIRMED SECONDARY CAUSE — C4_LIFECYCLE_COMPLETION_DEFECT. v20 and v27 bootstrap hosts use HideFlags.DontSave. v30 Update tried to find them with FindFirstObjectByType<T>(). Unity 6000 documentation states that FindFirstObjectByType does not return objects with HideFlags.DontSave. v30 therefore never observed v27._reportWritten=true and did not enter its dependency-complete branch. At elapsed > 270 seconds it selected Finish("TIMEOUT") and Application.Quit(30).
+
+SECONDARY OBSERVATION — C1_RUNTIME_INPUT_COVERAGE. The target run produced 42 eligible v27 pairs, below the fixed minimum 60. This is not the primary exit-30 explanation because the observer had already faulted 42/42 pairs and could not bind v27 completion. A separate immediately preceding CONTROL from the same v30 build identity produced 107 v20/v27 pairs in the same 120-second collection window, proving that the 60-pair gate is not intrinsically impossible. The target run's lower coverage remains runtime-variable and is not repaired or relaxed here.
+
+DECISION — CHANGE_MEASUREMENT_SYSTEM. v44.55.31 is diagnostic-only and named by contract KIWI_V44_55_31_CONTROL_MEASUREMENT_CONTRACT_FIX. Production inference, publication, camera, tracking, ROI, thresholds, FacePart, Provider, Spout, Native DLL, Inference package, backend, cadence, queue, and synchronization semantics were not changed.
+
+Runtime was not rerun. v44.55.31 is statically validated, compiled, built, identity-pinned, DX12-copy-tested, collector-self-tested, validator-self-tested, and ready for one user-run CONTROL→PROBE acquisition.
+
+2. Authority / Git / SHA
+
+Claim-scoped authority:
+- Failed Runtime authority: exact v44.55.30 ZIP and its manifest-correlated raw files.
+- Implementation authority: current local v31 diagnostic source at the hashes below; shared callsite preimages are preserved in KiwiValidation\Backups\v44_55_31_20260905.
+- Build authority: v44.55.31 build_identity.json with 290 source rows and 288 payload rows, all rehashed successfully after build.
+- Package authority: locally used Unity Inference Engine package source is included in the 290-row source identity. No package source or binary was modified.
+- Runtime authority for v44.55.31: NONE; Runtime has deliberately not been run.
+- Performance authority: NONE; observer-heavy evidence and synthetic tests are not performance authority.
+- Visual authority: NONE; no v31 visual run was performed.
+
+Git:
+- Branch: main
+- HEAD: 27281c622d7b8bf2ececf711b037fc8f9e029004
+- Worktree was already dirty/user-owned before this audit. No broad clean-tree claim is made.
+- Scoped status after work: KiwiInferenceFaceTracker.cs modified; v25/v27 diagnostic files, v31 files, v31 Tools, and v31 backups are untracked in this checkout.
+- No commit and no push were performed.
+
+Critical authority hashes:
+- Failed ZIP SHA256: D875A49007B21C1E176EB8C29EAD6AC2E5CB7B37CE80DBBE94F7A0522D9CED22
+- v30 build identity SHA256: 7F0F40E097FD393EDD8E9A928189A2A78DCECE2A78996D71FF564926B47808E6
+- v30 Assembly-CSharp.dll SHA256: 7DF4BFFF6CF8DA36AF1E3324598518A9CCBF6044A42874D7292459D772AB458C
+- v30 observer source SHA256: 9F8A555AA54042E96C6DF3CF463A73A1797405DC01E70A0036FFB0DFAA2D41D9
+- v31 build identity SHA256: DAA8C22A890DEEB128758D587359D4EDBF859631E3A8306D63F77D746949D7A8
+- v31 Assembly-CSharp.dll SHA256: 32064B0D9657A89A858E1888016DBE8F47A28FD924CD77B16B2B1B1A3E57AE86
+- Protected FaceLandmarkerRunner.cs: 6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93
+- Protected KiwiFaceMotion.cs: D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6
+- Protected KiwiNativeCamera.dll: 82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+
+3. Failed Runtime Identity
+
+- Contract: KIWI_V44_55_30_RUN
+- Arm: CONTROL
+- Started UTC: 2026-09-05T07:04:13.8427993Z (16:04:13 JST)
+- Ended UTC: 2026-09-05T07:08:47.6130231Z (16:08:47 JST)
+- PID: 54916
+- Player exitCode: 30
+- Launcher timedOut: false
+- Build manifest SHA: 7F0F40E097FD393EDD8E9A928189A2A78DCECE2A78996D71FF564926B47808E6
+- CONTROL flag: KIWI_V44_55_30_PRODUCER_TAIL_SNAPSHOT=0
+- Collection flag: KIWI_V44_55_30_COLLECTION=1
+- v20 duration/hz: 120 seconds / 1 Hz
+- PROBE: NOT_RUN because the CONTROL normal-exit gate failed.
+- E1/E2/E3/E4/E5: NOT_REACHED.
+
+4. Raw Evidence Inventory
+
+The archive contains one normalized common root. The extracted root was checked byte-for-byte against the ZIP manifest. There are 14 manifested evidence files plus SHA256_MANIFEST.json; all hashes passed. Raw evidence was not rewritten.
+
+build_identity.json | 167545 bytes | 7F0F40E097FD393EDD8E9A928189A2A78DCECE2A78996D71FF564926B47808E6
+collection_failure.json | 98 | 56A7241E1F1D48A0C2AF8BA4091CD5B81B9FC552B76F4C5594127A1DDD604E29
+CONTROL\KiwiActualProductionVsShadowPayloadAuthority_v44_55_27_20260905_160636.csv | 23517 | 7A00D84DDCF0D23186AF8FC90B22D472F5FCD2921A01F9A943113E4178B2014D
+CONTROL\KiwiActualProductionVsShadowPayloadAuthority_v44_55_27_20260905_160636.txt | 2897 | 8A648AFCD3D0067E61A493B5B350EE68EC0120B7FB8E3B6EB187E60859527766
+CONTROL\KiwiCommonTensorBackendStageIsolation_v44_55_20_20260905_160628.csv | 57950 | 7FBFA1D53AAB86B19EF34FDF7C09A0C5225E5D63E929586142F6E9E3B10732A3
+CONTROL\KiwiCommonTensorBackendStageIsolation_v44_55_20_20260905_160628.txt | 51032 | C434D37D7987C072B9F678F5A1938DBA6BA11B8E8BE69F08A3EC75BB7AC41FBF
+CONTROL\KiwiPairBoundShadowOutputSnapshot_v44_55_24_20260905_160628.csv | 6905 | 88E70C17BD88ECD74B4E566D67406ABE1940A9304CDDE773A77B4B3DA96CF163
+CONTROL\KiwiPairBoundShadowOutputSnapshot_v44_55_24_20260905_160628.txt | 2097 | 054D45CD1ADA9FDC6D309151DA37331B483E525DB7F50C952B7FBA1066B750C4
+CONTROL\KiwiProductionScheduleTransactionTrace_v44_55_25_20260905_160636.csv | 17096 | 9AB504FD691A5CDDFB07DAD203DD9EF1DAA60FE3BD46EA74C35B9C52389CDE58
+CONTROL\KiwiProductionScheduleTransactionTrace_v44_55_25_20260905_160636.txt | 2672 | F41C81CF2888BE8878FA5899B777C7C931FB6CA2BBF1384A0C280B8CF0A48DD5
+CONTROL\Player.log | 1403880 | BE434FADE37B8301FBF5DE8C1707C535BF78E83C8027385C1615D0844F3E92D9
+CONTROL\producer_pairs.jsonl | 0 | E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855
+CONTROL\producer_summary.txt | 462 | 1CCC4D4F1CCC3207DC2F7356FAEB8C6466E38DB74F1326444D66DDF42A446CE0
+CONTROL\run_identity.json | 1344 | CD4CBA483E3A41737BE91AA3334C016E18B4BA476E2E51E20D9B675E0B4F0AAA
+SHA256_MANIFEST.json | 2500 | 0F485D4C4011E0F8AC8476D7EAC1C89025247B90879F0878CFAD828B0EB75B0C
+
+Environment capture and process exit metadata are embedded in CONTROL\run_identity.json. collection_failure.json contains exactly the Player-normal-exit failure classification. The v20 auxiliary top-outlier/heatmap derivatives referenced by its report were not copied by the collector's prefix allowlist; they are not needed to prove this exit path, and no claim depending on them is made.
+
+5. Exact Exit-30 Path
+
+EXACT_EXIT_PATH=KiwiAsyncProducerTailSnapshotV44_55_30.Update elapsed>270 -> Finish("TIMEOUT") -> Application.Quit(30) -> Player exit 30 -> Run-KiwiV44_55_30 records timedOut=False/exitCode=30 -> collection_failure.json + manifest + ZIP -> collector rethrows -> validator skipped -> PROBE not run
+
+EXACT_FAILING_CONDITION=C2: v30 RecordCore requires non-null float[1405] ActualPayload/ReferencePayload/Mode2Payload after v27 has already nulled them; 42/42 RecordFinalPair callbacks faulted "Payload length". C4: v30 FindFirstObjectByType could not discover the HideFlags.DontSave v27 host, so the _reportWritten completion branch was never entered; elapsed became 270.017 seconds and the timeout branch was true.
+
+SOURCE_FILE=Assets/KiwiAvatarSystem/Runtime/Validation/KiwiAsyncProducerTailSnapshotV44_55_30.cs
+METHOD=RecordCore; Update; Finish
+STATEMENT_OR_BRANCH=RecordCore lines 329-348, especially finalRecords.Add before Bits(Read<float[]>(...)); Update lines 387-410, especially FindFirstObjectByType and elapsed>270; Finish lines 426-445
+OBSERVED_VALUE=finalPairs=42; eligiblePairs=0; observerFault=42; producer_pairs.jsonl length=0; elapsedMs=270017; status=TIMEOUT; Player exitCode=30; timedOut=false
+EXPECTED_VALUE=Each v27 eligible final pair must retain or provide a bit-exact observer-owned payload snapshot until v30 correlation consumes it; v30 must discover the active loaded v27 dependency and evaluate _reportWritten before the 270-second fallback.
+RAW_EVIDENCE_SOURCE=CONTROL/producer_summary.txt; CONTROL/producer_pairs.jsonl; CONTROL/Player.log lines 1718-1729 and 11539-11547; CONTROL/run_identity.json; collection_failure.json; v27 txt/csv; v30 source and v27 pre-change backup
+
+Statement chain:
+- v27 pre-change TryCompare lines 653-654: pair.Compared=true; ReleasePayloadArrays(pair).
+- v27 ReleasePayloadArrays lines 707-713: ActualPayload, ReferencePayload, and Mode2Payload are set to null.
+- v27 FinishPair lines 844-850: RecordFinalPair(pair), ReleasePayloadArrays(pair), then _results.Add(pair).
+- v30 RecordCore lines 329-331: finalRecords.Add(index) succeeds before payload access.
+- v30 RecordCore lines 346-348: eligible pair calls Bits on the three released float arrays.
+- v30 Bits lines 131-136: null or non-1405 input throws InvalidOperationException("Payload length").
+- v30 RecordFinalPair line 325 catches the exception and increments observerFault through Fault, so the Player continues rather than exiting immediately.
+- Player.log line 1725-1729 directly shows Fault -> v30 RecordFinalPair -> v27 FinishPair -> TryFinalizePairs -> v27 Update.
+- v30 Update lines 387-388 uses FindFirstObjectByType for v20/v27.
+- v27 Bootstrap lines 168-177 and v20 Bootstrap line 827 use HideFlags.DontSave.
+- Unity 6000 official API documentation states FindFirstObjectByType does not return objects with HideFlags.DontSave: https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Object.FindFirstObjectByType.html
+- v30 Update lines 409-410 selects TIMEOUT and Application.Quit(30) when elapsed>270.
+- Player.log lines 11546-11547 directly records Finish from Update at the timeout source lines.
+
+6. Failed Gate
+
+The first actual terminating gate was the v30 internal 270-second fallback, not the launcher's process timeout and not the validator.
+
+Failed internal prerequisites before that branch:
+- Observer integrity: faults must be zero; observed 42.
+- CPU correlation sidecar: eligible rows must be emitted; observed 0 because payload copy faulted before Emit.
+- v27 lifecycle binding: v27 must be non-null and _reportWritten must be observed; v27 completed in raw log, but v30 lookup could not bind the DontSave host.
+- Coverage: eligiblePairs>=60; target v27 eligible count was 42. This would independently make the completed decision INCONCLUSIVE if the completion branch were reached, but it did not cause the observed TIMEOUT branch and is not repaired.
+
+Because CONTROL exited nonzero, Run-KiwiV44_55_30.ps1 line 73 threw before the arm loop could start PROBE. The Runtime validator at line 86 was also intentionally skipped after evidence preservation.
+
+7. Observed vs Expected
+
+field | observed | CONTROL expectation | assessment
+status | TIMEOUT | COMPLETE or explicit INCONCLUSIVE after v27 completion | FAIL; lifecycle completion defect
+probe | 0 | 0 | PASS
+finalPairs | 42 | equals v27 results count | numerically matched, but only because index insertion preceded payload fault
+eligiblePairs | 0 | equals v27 payloadEligiblePairCount (42), and >=60 for PASS | FAIL; v30 observer defect plus target coverage shortfall
+snapshotPairs | 0 | 0 | PASS
+observerFault | 42 | 0 | FAIL; exact Payload length fault
+identityMismatch | 0 | 0 | PASS
+duplicate | 0 | 0 | PASS
+outOfOrder | 0 | 0 | PASS
+missingPair | 0 | 0 | PASS
+headerErrors | 0 | 0 | PASS
+hasError | 0 | 0 | PASS
+busySkip | 0 | 0 | PASS
+partialCapture | 0 | 0 | PASS
+copyCount | 0 | 0 | PASS
+issuedRequests | 0 | 0 | PASS
+completedRequests | 0 | 0 | PASS
+pendingAtCompletion | 0 | 0 | PASS
+renderFrames | 28184 | >0, diagnostic only | PASS
+elapsedMs | 270017 | completion shortly after v27 report, below fallback | FAIL; exact fallback observed
+
+CONTROL's producer-copy GPU observer was correctly off. No CONTROL snapshot-specific requirement caused the failure.
+
+8. Dependency Timeline
+
+- 16:04:13 JST: CONTROL process started; [KiwiV30] START probe=0 appears at Player.log line 105.
+- v20 stabilizes and starts measuring; fixed duration 120 seconds, minimum 60 pairs.
+- 16:06:28 artifact timestamp: v20 COMPLETE with 42 completed pairs; v24 COMPLETE with 42 pairs and 6 anomalous pairs.
+- 16:06:36 artifact timestamp: v25 COMPLETE with 42 traces; v27 COMPLETE with 42 completed/eligible pairs and 6 anomalous pairs.
+- Throughout v27 finalization: exactly 42 v30 FINAL_PAIR Payload length faults are logged.
+- v30 does not observe v27._reportWritten because its dependency reference remains null.
+- 16:08:46/47 JST: elapsedMs=270017; v30 Update enters TIMEOUT, writes summary once, and quits with code 30.
+- Launcher finishes normally with respect to its own timeout: timedOut=false, then classifies the nonzero Player exit as collection failure.
+
+9. v20/v24/v25/v27 Correlation
+
+v20:
+- status=COMPLETE; decision=INSUFFICIENT_DATA
+- pairAttemptCount=44; pairCompletedCount=42
+- observerFaultCount=0; source identity/decode/acceptance/canonical/nonfinite/reflection integrity counters are zero.
+
+v24:
+- status=COMPLETE; decision=INSUFFICIENT_DATA
+- completedPairCount=42; dependencyRecordCount=42; anomalousPairCount=6
+- observerFaultCount=0; capturesPending=0; all listed snapshot/identity/completeness integrity counters are zero.
+
+v25:
+- status=COMPLETE; decision=OBSERVER_INVALID
+- completedTraceCount=42; dependencyPairCount=42; anomalousPairCount=6
+- observerFaultCount=0; tracesPending=0; all pair/schedule/output identity counters are zero.
+- canonicalPublicationMissCount=34 and bound count=8 are reported as coverage vocabulary; no Production defect is inferred.
+
+v27:
+- status=COMPLETE; decision=INVALID_OBSERVER
+- dependencyTraceCount=capturedPairCount=completedPairCount=comparedPairCount=payloadEligiblePairCount=42
+- anomalousPairCount=6; all 42 actual classifications are ACTUAL_EQUALS_NEITHER
+- observerFaultCount=0; pendingAtCompletion=0; every listed integrity counter is zero.
+- Source DetermineDecision lines 905-921 marks invalid when expected or eligible count is below MinimumCompletedPairs=60. Therefore the reported INVALID_OBSERVER is explained by 42<60, not by a nonzero v27 integrity counter.
+
+Cross-stage cardinality is coherent at 42. The v30 finalRecords=42 equality is not proof that v30 consumed 42 valid rows: v30 inserts an index before dereferencing payload, catches the later exception, and emits no JSONL row.
+
+Same-build corroboration, not target authority:
+- D:\KiwiAvatarSystem\KiwiValidation\RuntimeEvidence_v44_55_30_20260905_155319_fbe10586
+- same buildManifestSHA=7F0F40E0...
+- v20 pairAttemptCount=109; pairCompletedCount=107; v30 finalPairs=107; observerFault=107
+- This rejects "120 seconds can never reach 60". It does not replace target evidence or make a v31 Runtime claim.
+
+10. CONTROL-specific Audit
+
+A. v27 results count vs v30 finalRecords
+- v27 calls RecordFinalPair exactly once inside FinishPair before _results.Add. Every finalized pair, including an ineligible pair, follows this callback location. The intended one-callback-per-result structure is valid.
+- The count check alone is insufficient. v30 must also successfully consume/emit each eligible row. Target count equality (42==42) masked 42 payload faults.
+
+B. eligiblePairs>=60
+- The fixed gate is consistent with a same-build 107-pair run. It is not relaxed.
+- Target run has only 42, so a correctly completed v31 CONTROL may still return INCONCLUSIVE if the user/runtime input again yields <60. That would be a new, valid coverage result rather than this measurement defect.
+
+C. v20/v27 measuring-state dependency
+- AppendCore is PROBE-only, but CONTROL completion still depends on binding v27 and seeing _reportWritten. The dependency lookup defect therefore affects CONTROL directly.
+- v20 lookup is a latent PROBE defect: v20 is also a DontSave host, so the old v30 Append path could not obtain its measuring state through FindFirstObjectByType.
+
+D. Application.Quit ordering
+- Finish sets written=true before writing evidence and before Application.Quit.
+- OnApplicationQuit, OnDisable, and OnDestroy only call Finish when written is false. Therefore TIMEOUT was not overwritten by QUIT_INCONCLUSIVE/DISABLED/DESTROYED and no second summary write occurred.
+
+E. expected count timing
+- When v27 is bound and _reportWritten=true, v27 has already executed WriteReport after finalization; reading _results.Count is then stable on the main thread.
+- In v30 the branch was never reached because binding failed. v31 preserves this timing and changes only how the loaded active instance is located.
+
+F. Conditional hooks in built assemblies
+- v30 built Assembly-CSharp.dll was inspected with Mono.Cecil. AfterPending, Append, BindTrace, and RecordFinalPair each have exactly one call instruction from the expected method. v30 Assembly SHA matches build identity.
+- Runtime log independently proves RecordFinalPair executed.
+- v31 built Assembly-CSharp.dll was inspected similarly. AfterPending, Append, BindTrace, CapturePayloadsBeforeRelease, and RecordFinalPair each have exactly one call instruction from the expected method. Audit artifact SHA256=7D3F1ADE77433697ED343B5A203DF180E90F8B3E4B561F44D28503F56224557E.
+- Result: C7_BUILD_OR_CONDITIONAL_HOOK_DEFECT is rejected.
+
+11. Collector Audit
+
+CONFIRMED CORRECT:
+- Lines 54-59 distinguish launcher WaitForExit timeout from the child's actual ExitCode and record both.
+- Lines 61-69 copy only fresh stage artifacts and hash-check source versus copy.
+- Lines 71-73 recheck build source/payload identity before classifying the arm exit.
+- Lines 75-78 catch the nonzero child exit and write collection_failure.json.
+- Lines 79-84 manifest, verify, ZIP, and print the ZIP SHA even after failure.
+- Line 85 rethrows the stored collection error. Therefore line 86 validator execution and the next PROBE arm are not reached.
+- Stopping PROBE after failed CONTROL is consistent with the requested two-arm gate and avoids a confounded comparison.
+
+NOT A DEFECT:
+- Treating Player exitCode 30 with timedOut=false as collection failure is correct.
+- Validator skip on incomplete two-arm collection is intentional; the raw failure ZIP is still preserved.
+
+LIMITATION:
+- The allowlist does not include v20 top-outlier/heatmap derivative filenames. These files are not needed for the exit-30 proof. If a future claim needs spatial derivative authority, collector scope would need a separately reviewed change; no such expansion is made here.
+
+v31 collector self-test:
+- Synthetic child exit=30, timedOut=false was preserved as run_identity + collection_failure + manifest + ZIP.
+- Self-test ZIP SHA256=A25B0E38AFE75BB49DF50AE398138A18B105D6ECDDBC5D276004D9D1CA358C46.
+- This is collector behavior evidence, not Runtime authority.
+
+12. Validator Audit
+
+v30 validator:
+- Requires both CONTROL and PROBE run identities with exitCode=0 before classification; therefore it correctly had no opportunity to classify this failed collection.
+- Reads producer_pairs.jsonl and v27 CSV independently, requires cardinality agreement, unique identities, complete 1405-int payloads, matrix identity, independent Actual classification, ordering, and environment equivalence.
+- PROBE alone requires 8-word GPU header and 1405-word snapshot; CONTROL explicitly requires producerClassification=OBSERVER_OFF. It does not incorrectly require snapshots in CONTROL.
+- It does not blindly trust producer_summary for payload/classification.
+
+v31 validator:
+- Adds contract KIWI_V44_55_31_CONTROL_MEASUREMENT_CONTRACT_FIX.
+- Requires payloadSnapshotPending=0 and payloadMissing=0; payloadCaptureCount must equal raw row count and v27 eligible count.
+- CONTROL must have snapshotPairs/copyCount/issuedRequests/completedRequests all exactly zero.
+- PROBE alone requires snapshot cardinality and independently reconstructs header/token/source/payload classification.
+
+Self-test:
+- 12 synthetic cases PASS: positive E1/E2/E3; negative token/source/bits/size/environment/contract/payload-missing/CONTROL-GPU; contaminated E5.
+- test_summary.json SHA256=DEFA4C68F12485AAEE2A64382187006B5BD89FD19D17F7363BF0EB59DCD69D38.
+- runtimeAuthority=false is explicit. Synthetic PASS does not establish v31 Runtime schema or E1-E5 outcome.
+
+13. Root Cause Classification
+
+PRIMARY: C2_V30_OBSERVER_LOGIC_DEFECT
+- Exact defect: v30 consumes v27 payload arrays after v27 intentionally releases them.
+- Runtime proof: 42/42 FINAL_PAIR Payload length faults; empty JSONL; source/stack correlation.
+
+SECONDARY: C4_LIFECYCLE_COMPLETION_DEFECT
+- Exact defect: FindFirstObjectByType cannot return the DontSave v27/v20 hosts.
+- Runtime effect: v27 completion was not observed and the 270-second TIMEOUT branch produced exit 30.
+- Latent PROBE effect: v20 measuring-state lookup would also fail.
+
+SECONDARY/UNRESOLVED INPUT CONDITION: C1_RUNTIME_INPUT_COVERAGE
+- Target count 42<60 is real and would prevent PASS.
+- Same-build 107-pair run shows the gate is feasible; no threshold/duration change is justified.
+
+REJECTED AS EXIT CAUSE:
+- C3_HOOK_PAIRING_DEFECT: built calls and callback/result structure verified; no duplicate/missing/out-of-order counter.
+- C5_COLLECTOR_DEFECT: no; child exit and failure preservation are correct.
+- C6_VALIDATOR_DEFECT: no; validator was not run and cannot have caused Player exit.
+- C7_BUILD_OR_CONDITIONAL_HOOK_DEFECT: no; built IL and Runtime log prove hooks.
+- C8_ENVIRONMENT_OR_CAMERA_RUNTIME_FAILURE: not proven; nonzero 42-pair input existed.
+- C9_PRODUCTION_RUNTIME_FAILURE: not proven.
+- C10_OTHER: none needed for the exact exit.
+
+14. Production vs Measurement Separation
+
+Confirmed measurement defects are confined to diagnostic observers and their completion contract. The v30 evidence cannot decide the producer-tail E1-E5 hypothesis because no valid v30 pair row was emitted and PROBE never ran.
+
+No evidence here proves a Production async queue/execution-context defect, a need for a fence, an inference payload defect, or a camera/tracking defect. v27's ACTUAL_EQUALS_NEITHER result remains its own prior diagnostic finding; it is not upgraded into a v30/v31 producer-tail root cause by this audit.
+
+Production behavior invariants retained:
+- No new Worker and no repeated Schedule.
+- No input tensor readback and no lane.input access.
+- No Production output mutation or publication path change.
+- No synchronization, queue, backend, camera, tracking, ROI, FacePart, Provider, Spout, Native, or package change.
+- Protected file hashes are unchanged.
+
+15. Change Decision
+
+CHANGE_DECISION=CHANGE_MEASUREMENT_SYSTEM
+
+Gate rationale:
+- Statement-level observer defects are proven by raw Runtime log plus exact source order.
+- The repair is scoped to observer-owned payload lifetime and observer dependency discovery.
+- Claim scope remains the same coarse producer-tail observation endpoint.
+- Production cause is explicitly not prejudged.
+
+Version:
+- v44.55.30 failed build and Runtime ZIP were not overwritten.
+- New diagnostic version: v44.55.31.
+- Summary contract: KIWI_V44_55_31_CONTROL_MEASUREMENT_CONTRACT_FIX.
+
+16. Changes Performed
+
+1) Pre-release observer payload snapshot
+- v27 TryCompare now calls v31 CapturePayloadsBeforeRelease after all three parity calculations and immediately before the existing ReleasePayloadArrays.
+- v31 copies only the three float payload bit patterns into observer-owned int[1405] arrays, keyed by the bounded record index.
+- v27 releases the original float arrays at the same lifecycle point as before.
+- v31 RecordFinalPair consumes and removes the bit snapshot. Missing/duplicate/capacity cases fail closed.
+
+2) Loaded diagnostic dependency lookup
+- v31 replaces FindFirstObjectByType with Resources.FindObjectsOfTypeAll<T>(), filtered to active/enabled/in-hierarchy components.
+- Zero matches means keep waiting; more than one active match throws an ambiguity fault.
+- Lookup occurs only until each dependency is bound.
+
+3) Explicit lifecycle telemetry/gates
+- Added payloadCaptureCount, payloadSnapshotPending, and payloadMissing.
+- PASS requires faults=0, payloadMissing=0, payloadSnapshots.Count=0, exact result cardinality, and the unchanged >=60 gate.
+
+4) Versioned callsites and tooling
+- Tracker AfterPending/Append, v25 BindTrace, and v27 RecordFinalPair point to v31.
+- Added v31 compute shader, build/copy-test editor scripts, PS5.1 build/run/static/runtime/self-test tooling.
+- v31 shader identity uses Magic=0x4B333150, version=31, xor=0xA55A31.
+
+17. Files / SHA before-after
+
+Shared diagnostic callsites:
+- Assets/Script/KiwiInferenceFaceTracker.cs
+  before B89005B71C3DD0A3BFFE67144B7C6B8F92ACCE6729FB0D67CB5DF7AD0D410E88
+  after  CF860F4EF686BD5FDAC4140D4F3E73E64B6F390C3BC64204CF346011AC69380D
+  exact change: v30->v31 for AfterPending and Append only.
+- Assets/KiwiAvatarSystem/Runtime/Validation/KiwiProductionScheduleTransactionTraceV44_55_25.cs
+  before F0786D4F6A26D87F0867663ED0630145C9E79CB27517C9E1A516E9BA7DBADF9F
+  after  1A0692C683F258B95F5910409888B98B6E3F9777B3C50AB95FA7575308AE5316
+  exact change: v30->v31 for BindTrace only.
+- Assets/KiwiAvatarSystem/Runtime/Validation/KiwiActualProductionVsShadowPayloadAuthorityV44_55_27.cs
+  before 03F3AAC36639A57D0DC2018BE9E256865F3E30A88F1631428C52EB159A497071
+  after  DD13D1170218C23CA80E721EAFB77D6D745254F5E28E06A93343331B921B42B6
+  exact change: add CapturePayloadsBeforeRelease immediately before release; v30->v31 for RecordFinalPair.
+
+New v31 source:
+- KiwiAsyncProducerTailSnapshotV44_55_31.cs | 0962DFF52A319806D3845FBD499DBE49878DF2444F714C47137E34B410A762FC
+- KiwiProducerTailSnapshotV44_55_31.compute | A333894F1A9DA77387A8BE7AD6D990B420689502E33361192942B99D1EEEEBA0
+- KiwiProducerTailSnapshotV44_55_31.compute.meta | 52C6C2B210F7D068729B8F1ECDB1D3AEF1FEC0B3F960ADCD95CBB1572774E225
+- KiwiBuildV44_55_31.cs | ED54377B408B12FC715EE6F2CB8596855D4933CCB268479579B73F153E8689B3
+- KiwiSnapshotCopyTestV44_55_31.cs | A3937E3169DB9412730CD524C4FB31B90350246C39FFC06FBD2E2E52600FBA58
+
+Tools\KiwiV44_55_31:
+- Build-KiwiV44_55_31.ps1 | DEE4AD491603E79925E2F28A81272A851908BA53E3783F7ACD514D0B8BF9E932
+- README.txt | C693DD983B95865E7357E5984744F1ACF013C90C277876048D82CE6182EC3EC2
+- Run-KiwiV44_55_31.ps1 | 5C4E7B508642FDC6C945488EAC4EBD585F4B26F3659EE1A847952AD82648ADAB
+- Test-Collector.ps1 | 8BA5AC3E0F108AC22D24210C7BF2A70F385E63AC9B8FB79265BC8A2C4D536D23
+- Test-Validator.ps1 | 4ED4B33CCABB7FE38DD62DEB02FDDA920F4EDC852053F16CE95D531CC4E88BF4
+- V31.Common.psm1 | E9009C6B7952573D9205E2C1D9CAB90A3BEB68A69BE47C8652AA6C95106E8B34
+- Validate-Runtime.ps1 | 82E9FB0F7BD220888E35B362040801D27BA5AF7B855C07FF2A234E5D23174167
+- Validate-Static.ps1 | 44349BF7DB32A13850263DC8844442849746CE95C0B36205E65AB7F696B4A54E
+
+18. Static Validation
+
+Final result:
+V31_STATIC_PASS protected=3 preSHA=3 sourceEditReconstruction=3 sourceIdentities=290 observerLifecycle=BOUNDED_NONBLOCKING_RETIREMENT_STATIC
+
+Checks include:
+- PowerShell 5.1 parser: 7 scripts/modules, 0 parser errors.
+- Protected SHA: 3/3 PASS.
+- Pre-change backups: 3/3 pinned.
+- Source-edit reconstruction: reversing the v31 hook substitutions and pre-release callback reconstructs all three preimages exactly.
+- Current source identity: 290/290 PASS.
+- Forbidden v31 observer source scan: GraphicsFence=0; WaitOnAsyncGraphicsFence=0; WaitForCompletion=0; queue flush=0; lane.input=0; RequestAsyncReadback=0; SetData=0; Schedule(...)=0.
+- Bounded declarations: SlotCount=6, MaxCandidates=64, MaxPairs=192.
+- Active loaded dependency lookup and payload lifecycle gates required.
+
+19. Compile / Build
+
+Unity: 6000.0.80f1, Windows Development Player, DX12-targeted diagnostic build.
+
+Build result:
+- V31_BUILD_PASS compile=PASS shader=PASS Development=1 protected=UNCHANGED
+- Build log line 416/7354: STATIC_SHADER_PASS logicalWords=1405 headerWords=8
+- Build log line 449: FULL_PREFLIGHT_PASS warning/error/critical=2/0/0
+- Build log line 7366: BUILD_SUCCESS errors=0 size=276956568
+- Build log SHA256: 0239542744283F9B5F229F8A26CDC9C31A1B829CCD82B005972B20272025993A
+- Build identity: source 290, payload 288, all rows rehashed PASS.
+- Build identity SHA256: DAA8C22A890DEEB128758D587359D4EDBF859631E3A8306D63F77D746949D7A8
+
+DX12 copy test:
+- [KiwiV31CopyTest] PASS logical=1405 header=8 tailCanary=4 specialFloatBits=preserved inferenceCount=0
+- Log SHA256: 4539C6A50346D892154032F4934725C1E3BCD720EB641541265B4E02EDE10CB8
+
+Key built payloads:
+- KiwiAvatarSystem_v44_55_31.exe | 98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81
+- Assembly-CSharp.dll | 32064B0D9657A89A858E1888016DBE8F47A28FD924CD77B16B2B1B1A3E57AE86
+- Unity.InferenceEngine.dll | E326B5C5906CADCC8786DC5B821E96C59B714B6CDAB92F8D9C3A347CB15CB20D
+- KiwiNativeCamera.dll | 82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+- KiwiFaceLandmarkInference.onnx | ED487104519B0A88CB2CB2EC3678E183F447FB9DD63560998E960FFBAA8FB335
+- face_landmarker_v2_with_blendshapes.bytes | B261925D4AAD812B47A0E8D58C1BAA1223270A5D1F663D78338BC881C003879D
+
+Warnings retained, not hidden:
+- Unity licensing refresh messages and a D3D12 info-queue query message appeared, but build and explicit copy test succeeded.
+- Existing compiler warnings included source generator CS8785, unused local CS0168, and unused field CS0414. There were zero compile errors. This audit does not claim warning-free Production.
+
+20. Lifecycle / Resource Audit
+
+Payload lifetime:
+- v27 original float arrays are not retained longer. They are copied after parity completion and released at the original boundary.
+- v31 owns only int bit arrays. Maximum payload snapshot storage is 192 * 3 * 1405 * 4 = 3,237,120 bytes plus managed-array/dictionary overhead.
+- Each eligible final pair removes its snapshot before classification. Ineligible final pairs remove any snapshot. Duplicate/capacity/missing cases fault closed.
+- PASS requires payloadSnapshots.Count=0 and payloadMissing=0, so silent retention or missed capture cannot become PASS.
+
+GPU observer lifetime:
+- CONTROL does not issue copies or readbacks.
+- PROBE retains the existing 6-slot bounded nonblocking design.
+- No fence, CPU/GPU wait, queue flush, or async disable was added.
+- Resolved callbacks retire buffers; unresolved resources remain bounded and rooted until callback or process teardown rather than being released while in flight.
+
+Dependency lifetime:
+- Loaded-object lookup runs only until v20/v27 binding succeeds.
+- Only active/enabled/in-hierarchy candidates qualify.
+- Multiple candidates are rejected as ambiguous; no arbitrary first-instance selection.
+
+Authority/lifecycle consequence:
+- The repair closes observer-owned data lifetime and completion discovery only.
+- It does not alter Production output lifetime, worker lifetime, transaction identity, or publication ownership.
+
+21. Runtime Status
+
+V44_55_30_RUNTIME_STATUS=INCONCLUSIVE_CONTROL
+V44_55_30_PROBE_STATUS=NOT_RUN
+V44_55_30_PRODUCTION_CAUSE_DECISION=NOT_REACHED
+
+V44_55_31_RUNTIME_STATUS=NOT_RUN
+V44_55_31_CONTROL_STATUS=READY_NOT_RUN
+V44_55_31_PROBE_STATUS=READY_NOT_RUN
+
+Readiness gates:
+EXACT_CONTROL_FAILURE_IDENTIFIED=YES
+MEASUREMENT_CONTRACT_UNDERSTOOD=YES
+PRODUCTION_CAUSE_NOT_PREJUDGED=YES
+STATIC_PASS=YES
+COMPILE_PASS=YES
+BUILD_PASS=YES
+IDENTITY_PINNED=YES
+COLLECTOR_READY=YES
+VALIDATOR_READY=YES
+
+22. Remaining Uncertainty
+
+- v31 Runtime behavior is unverified until the user runs the command below. Static/build/synthetic evidence cannot be converted into Runtime PASS.
+- The target run's 42-pair coverage may recur. If it does, the unchanged >=60 gate should correctly produce INCONCLUSIVE; do not relax the threshold post hoc.
+- PROBE producer-tail E1/E2/E3/E4/E5 outcome remains completely unresolved.
+- Whether async queue/execution context is a causal contributor remains outside this control-contract repair and requires valid paired v31 Runtime evidence.
+- No visual judgment, clean performance benchmark, or resource profiler capture exists for v31.
+- The Unity build emitted warnings documented in section 19. No causal connection to exit 30 was found.
+- v20 top-outlier/heatmap derivatives are absent from the failed ZIP; no claim in this report depends on them.
+
+23. Next Single Action
+
+Run exactly this one Windows PowerShell 5.1 command and remain in camera view until the Player exits. The script will execute CONTROL first and PROBE only if CONTROL succeeds:
+
+& 'C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe' -NoProfile -ExecutionPolicy Bypass -File 'D:\KiwiAvatarSystem\Tools\KiwiV44_55_31\Run-KiwiV44_55_31.ps1'
+
+Do not run a separate PROBE command. Preserve the resulting one Runtime ZIP and its printed SHA256.
+
+24. Do Not Change
+
+Do not add or change any of the following based on this report:
+- GraphicsFence or WaitOnAsyncGraphicsFence
+- CPU/GPU blocking wait or queue flush
+- async compute disable or backend selection
+- repeated inference or lane.input readback
+- tracking threshold, smoothing, prediction, or ROI
+- camera path
+- FacePart, Provider, or Spout
+- Native DLL or Inference package
+- fixed >=60 coverage gate or 120-second measurement duration
+- Production tracker/inference behavior to hide a measurement failure
+
+25. Self-Audit
+
+- The required v44.55.30 ZIP SHA was verified before diagnosis and again after all work; it remains exact.
+- The extracted v30 evidence manifest and every raw file hash passed; raw evidence was not modified.
+- Exact source statement, Runtime stack, condition, status, process exit, collector order, and validator non-execution were correlated.
+- Primary/secondary/input-coverage causes are separated; Production defect is not inferred.
+- v30 Conditional hooks and v31 Conditional hooks were verified in built assemblies, not only source.
+- The v31 change was compared against three byte-pinned preimages; source-edit reconstruction passed.
+- Protected 3/3, source 290/290, and payload 288/288 identities passed after build.
+- PS5.1 parser, static guard, compile, DX12 shader/copy, Development build, build identity, payload identity, lifecycle audit, collector failure-path self-test, validator 12-case self-test, and CONTROL-only dry schema coverage are complete.
+- v31 Runtime was not run; no Runtime PASS is claimed.
+- No commit or push was performed.
+
+FAILED_RUNTIME_ZIP_SHA256=D875A49007B21C1E176EB8C29EAD6AC2E5CB7B37CE80DBBE94F7A0522D9CED22
+EXACT_EXIT_PATH=KiwiAsyncProducerTailSnapshotV44_55_30.Update elapsed>270 -> Finish("TIMEOUT") -> Application.Quit(30) -> Player exit 30 -> Run-KiwiV44_55_30 records timedOut=False/exitCode=30 -> collection failure ZIP -> validator skipped -> PROBE not run
+EXACT_FAILING_CONDITION=C2: v27 released ActualPayload/ReferencePayload/Mode2Payload before v30 RecordCore Bits(), causing 42/42 Payload length faults; C4: FindFirstObjectByType could not discover the HideFlags.DontSave v27 host, so elapsed>270 selected TIMEOUT
+ROOT_CAUSE_CLASS=PRIMARY:C2_V30_OBSERVER_LOGIC_DEFECT;SECONDARY:C4_LIFECYCLE_COMPLETION_DEFECT;SECONDARY_UNRESOLVED:C1_RUNTIME_INPUT_COVERAGE
+MEASUREMENT_DEFECT=YES
+PRODUCTION_DEFECT_PROVEN=NO
+CHANGE_DECISION=CHANGE_MEASUREMENT_SYSTEM
+PRODUCTION_BEHAVIOR_CHANGED=NO
+STATIC_STATUS=PASS
+COMPILE_STATUS=PASS
+BUILD_STATUS=PASS
+CONTROL_READY=YES
+PROBE_READY=YES
+RUNTIME_STATUS=V44_55_31_NOT_RUN;V44_55_30_INCONCLUSIVE_CONTROL;PROBE_NOT_RUN
+NEXT_SINGLE_ACTION=& 'C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe' -NoProfile -ExecutionPolicy Bypass -File 'D:\KiwiAvatarSystem\Tools\KiwiV44_55_31\Run-KiwiV44_55_31.ps1'
+COMMIT_PUSH=NO

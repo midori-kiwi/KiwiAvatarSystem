@@ -1,0 +1,14 @@
+KiwiAvatarSystem v44.55.29 correlated valid-arm evidence
+createdJst=2026-09-04
+copyMode=byte-preserving Copy-Item with immediate SHA256 source/destination equality check
+
+DIRECT_GRAPHICS.source=D:\KiwiAvatarSystem\KiwiValidation\RuntimeEvidence_v44_55_29_20260904_212043\DIRECT_GRAPHICS
+COMMAND_BUFFER_GRAPHICS.source=D:\KiwiAvatarSystem\KiwiValidation\RuntimeEvidence_v44_55_29_20260904_212958\COMMAND_BUFFER_GRAPHICS
+COMMAND_BUFFER_ASYNC.source=D:\KiwiAvatarSystem\KiwiValidation\RuntimeEvidence_v44_55_29_20260904_212043\COMMAND_BUFFER_ASYNC
+
+reason=The first COMMAND_BUFFER_GRAPHICS measurement in the 212043 ALL run completed normally but had 56 payload-eligible pairs, below the fixed minimum of 60. It remains preserved as invalid. A fresh same-build, same-120-second-condition COMMAND_BUFFER_GRAPHICS run produced 88 eligible pairs and is used here.
+
+invalid_dependency_run=D:\KiwiAvatarSystem\KiwiValidation\RuntimeEvidence_v44_55_29_20260904_211247
+invalid_coverage_run=D:\KiwiAvatarSystem\KiwiValidation\RuntimeEvidence_v44_55_29_20260904_212043\COMMAND_BUFFER_GRAPHICS
+
+No raw arm artifact was rewritten. The three run_identity files independently bind the same EXE, Assembly-CSharp, package assemblies, models, Native DLLs, Production source, installed package source, package ZIPs, and diagnostic harness SHA.

@@ -1,0 +1,374 @@
+KiwiCodexConsolidatedReport_F3_SingleSamplingRotationOwner_Player_20260906_204801
+PROJECT=D:\KiwiAvatarSystem
+TARGET=F3_SINGLE_SAMPLING_ROTATION_OWNER
+MODE=SAME_BINARY_DX12_PLAYER_RUNTIME_VISUAL_GATE
+PRIMARY_AUTHORITY=KiwiValidation/KiwiCodexConsolidatedReport_F3_SingleSamplingRotationOwner_20260906_194658.txt
+REPORT_TIME_JST=2026-09-06T20:48:01+09:00
+
+================================================================================
+REQUIRED RESULT FIELDS
+================================================================================
+BUILD_AUTHORITY_PATH=B
+BUILD_GATE_CONTRACT=CONFIRMED
+PLAYER_BUILD_AUTHORITY=PASS
+SAME_BINARY_CONTROL_PROBE=PASS
+PLAYER_ARM_SCALAR=PASS
+PLAYER_VISUAL=INCONCLUSIVE
+LIFECYCLE=NOT_RUN
+F3_FINAL=INCONCLUSIVE
+PRODUCTION_CHANGE=NO
+COMMIT_PUSH=NO
+
+RESULT=F3_INCONCLUSIVE
+SHARED_TILT_SAMPLING_OWNER_RETIREMENT=NO_GO_NOT_AUTHORIZED
+PRODUCTION_RETIREMENT=NO
+WHY_CHANGE_IS_BETTER_THAN_NO_CHANGE=UNPROVEN_BECAUSE_THE_REQUIRED_COMPARABLE_PRODUCT_VISUAL_BASELINE_DID_NOT_EXIST
+
+The authorized same-binary Player build and minimum scalar smoke closed the build
+and arm-identity gaps. They did not close Product Visual authority. The human
+CONTROL observation found the avatar eye/mouth texture, mask, and crop all invalid;
+the human PROBE observation found LandMarker motion while still and position jumps.
+These are different failure dimensions, so they cannot honestly be ranked as
+BETTER, EQUIVALENT, or WORSE for F3. The pre-registered rule therefore yields
+INCONCLUSIVE and forbids the additional lifecycle run. SharedTiltLock is retained.
+
+================================================================================
+AUTHORITY AND G0 CURRENT-LOCAL FREEZE
+================================================================================
+Authority classes used:
+  Implementation=current local Production source and SHA256.
+  Runtime=same built Player, same build payload, arm marker and raw Player logs/CSV.
+  Visual=human observation of that same Player build only.
+  Performance=not claimed; no clean benchmark was requested or run.
+
+Git HEAD=27281c622d7b8bf2ececf711b037fc8f9e029004
+Git state=DIRTY; user-owned state preserved. No reset/checkout/clean/commit/push.
+Tracked modifications present before this continuation and still present:
+  Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiOrtDirectMLShadowRuntime.cs
+  Assets/KiwiAvatarSystem/Runtime/Validation/KiwiPairBoundShadowOutputSnapshotV44_55_24.cs
+  Assets/Script/KiwiInferenceFaceTracker.cs
+  Tools/KiwiPowerShell/KiwiPsCompat.psm1
+
+Active/Product-effective Scene=Assets/Scenes/Face Landmark Detection.unity
+Unity version=6000.0.80f1
+EditorBuildSettings enabled Scene count=1; Face Landmark Detection.unity only.
+No Unity or F3 Player process remained when final evidence packaging began.
+
+No F3-relevant Production source SHA changed from the Primary Authority report:
+  578CE2ED93A2A78EE1B19D8FF309A115A2FA53596E79BAAB0534A27AC10077C0  Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiFacePartRigidSampleFrame.cs
+  0BCCA0B7BD6982B78C0FC18058ACD54D073D786820F7B027B8C2F218EF2CAE70  Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiFacePartSharedTiltLock.cs
+  1EA5B0493A48BE9B64AFD6316C8FBD4A4EC172848F06F8879BA733BB73535167  Assets/Script/SurfaceFittedRawImage.cs
+  EB6CDCBE0B838053FB5A563641328E42C1BAAFB935D61F367913208D9638E921  Assets/Shader/FacePartSoftMask.shader
+  EE07BF928AC816C4989BFE81C6BE89E1A58979DCE0C6565EDC01C9078052D454  Assets/Script/FacePartAngleLock.cs
+  39C06FEC43B4EA47AD783C233991E830E10B18DA285148E7A34B0C13DAD52CFE  Assets/Script/FacePartCropper.cs
+  822D18059988F390F52C40F60DA5F11E8ECF7577008D640272C5CF8D1557D4A6  Assets/Script/FacePartShapeMask.cs
+  DC78488DCD1D2E45E5AA6F40065D4983087014B501B5FD5A8E37B6D8E0F68849  Assets/KiwiAvatarSystem/Runtime/Presentation/KiwiFacePartTextureTransaction.cs
+  D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6  Assets/Script/KiwiFaceMotion.cs
+  CF860F4EF686BD5FDAC4140D4F3E73E64B6F390C3BC64204CF346011AC69380D  Assets/Script/KiwiInferenceFaceTracker.cs [pre-existing DIRTY]
+  6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93  Assets/Script/FaceLandmarkerRunner.cs
+  E28B0B81F731B92B04B97D4AA7DB1187C8DD57C5A39F49B08B2E6799BBF5B3D1  Assets/Scenes/Face Landmark Detection.unity
+  88CB3F68F275E1A7DCBF1FEA8C59D123F50743C6F93B0F861E1FD653865EC6AA  ProjectSettings/ProjectSettings.asset
+
+ProjectSettings.asset received a build-time LastWriteTime update, but its SHA256
+remained exactly the Primary Authority value above. The diagnostic build helper
+restored the Windows graphics configuration after building; the Player metadata
+and runtime logs both show Direct3D12 only.
+
+Current diagnostic/build source identities:
+  E61CD3C996C20B9964FBFBA6351E8BB6196472EB9198474A74924C94B4E0C07B  Assets/KiwiAvatarSystem/Runtime/Validation/KiwiF3SingleSamplingRotationOwnerArm.cs
+  EEE6F1E00B910C2031E043A26DCA5B35ED9D29242041491EF92DB6CCBBCC40FF  Assets/KiwiAvatarSystem/Editor/KiwiF3EditorRuntimeRunner.cs
+  9F4F75CB7F1AD7FD88323A10891F9512FB237840FC728447476C23FAA8AB8F13  Assets/KiwiAvatarSystem/Editor/KiwiBuildF3SingleSamplingRotationOwner.cs
+  47F1D6DFAA21AD3B94DA9C2707EFF06790CFC03BF143E4A702B5B727CFF20A7B  Assets/KiwiAvatarSystem/Editor/KiwiReleaseCandidateBuildGate.cs
+  DBBCA8AD9C9C11FF41FB891573A3A972D563BA548092C54818A123BDA1E0327A  Assets/KiwiAvatarSystem/Editor/KiwiReleaseCandidatePreflight.cs
+  4139BCBF05D31B7559604C8C397E1DBDCE1005B90F258D743B443668868DBE23  Assets/KiwiAvatarSystem/Editor/KiwiStandaloneBuildDiagnostic.cs
+
+================================================================================
+BUILD AUTHORITY PATH AUDIT
+================================================================================
+A. Fingerprint inputs=CONFIRMED. ComputeProjectFingerprint binds PreflightVersion,
+   Unity version, active build target, ordered EditorBuildSettings scenes,
+   MonoScript dependencies under Assets/KiwiAvatarSystem and Assets/Script,
+   selected runtime resources, Packages/manifest.json, packages-lock.json, and
+   registered package names/versions.
+
+B. F3 diagnostic-only additions change the fingerprint=CONFIRMED. The F3 runtime
+   arm and Editor/build helpers are MonoScripts in fingerprinted roots. Diagnostic
+   intent does not exempt them from source identity.
+
+C. Passing stamp binding=CONFIRMED. The stamp stores the full-preflight fingerprint;
+   HasCurrentPassingStamp recomputes current project/scene/package identity and
+   rejects mismatch.
+
+D. Full Preflight requirement=CONFIRMED. KiwiReleaseCandidateBuildGate runs for
+   BuildPipeline builds and requires HasCurrentPassingStamp. Development builds
+   skip only the later final-runtime RC gate; they do not skip full-preflight stamp
+   validation.
+
+E. Existing formal safe path=CONFIRMED. KiwiStandaloneBuildDiagnostic.BuildWindows64
+   resolves the release Scene deterministically, configures DX12 only, runs one
+   mandatory full preflight, requires the fresh matching stamp, and invokes normal
+   BuildPipeline.BuildPlayer with the gate still active.
+
+F. Narrower existing authorized path=NOT FOUND. The F3 helper itself calls normal
+   BuildPipeline and therefore remains subject to the same gate. No existing
+   change-local validation can create a Player while satisfying the normal build
+   callback without a current full-preflight stamp.
+
+G. Classification=BUILD_PATH_B. The current gate contract itself proves that one
+   Full Preflight is required. No bypass, disable, fake stamp, manual fingerprint
+   rewrite, or stale stamp reuse was performed.
+
+BUILD_AUTHORITY_PATH=B
+BUILD_GATE_CONTRACT=CONFIRMED
+
+================================================================================
+AUTHORIZED PLAYER BUILD
+================================================================================
+Formal entrypoint=KiwiStandaloneBuildDiagnostic.BuildWindows64
+Build output=Builds/F3SingleSamplingRotationOwner_Player_20260906_202009/KiwiAvatarSystem_F3.exe
+Unity batch exit code=0
+Full Preflight=PASS
+  version=5.1.0-phase16.19.5.1
+  generatedUtc=2026-09-06T11:20:35.6357629Z
+  fingerprint=8e0a88330352ac1c762b18615ca67d13919b0a0a1cc79ec26613084366f6ecec
+  scenes/objects/components=1/50/61
+  warnings/errors/critical=2/0/0
+  passed=true; releaseCandidateReady=true
+Build=Succeeded; totalSize=276810338; warnings=205; errors=0
+Build configuration=Windows x64 Development, Direct3D12 only, no profiler
+autoconnect, no deep profiling, no script debugging, diagnosticOnly=1,
+mandatoryFullPreflight=1, buildGateBypassed=0.
+
+PLAYER_BUILD_AUTHORITY=PASS
+
+Build payload identities:
+  98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81  KiwiAvatarSystem_F3.exe
+  A1C4F29041D783DF506E7C2892BC6AFA4ED45EF0D87AAFE0C7296BDC090681FC  UnityPlayer.dll
+  B652BD7706851755228F6F405DDE329874E60E6118EC3B1AD9DE70F5EC177881  KiwiAvatarSystem_F3_Data/Managed/Assembly-CSharp.dll
+  82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5  KiwiAvatarSystem_F3_Data/Plugins/x86_64/KiwiNativeCamera.dll
+  95366724919F4E95ECC60010912ED538AD9804B6683FBD0AAD389749102834B9  KiwiAvatarSystem_F3_Data/Plugins/x86_64/onnxruntime.dll
+
+================================================================================
+SAME-BINARY PLAYER ARM IDENTITY AND MINIMUM SCALAR SMOKE
+================================================================================
+CONTROL and PROBE were launched from the one exact EXE path above. No second Player
+build was created. Therefore EXE, Managed payload, Native DLL, Scene, package, and
+project configuration were one shared payload. Only the existing F3 arm environment
+value differed. Human runs used the same EXE path and identical Player arguments;
+the arm markers in the raw logs confirm selection.
+
+CONTROL arm marker:
+  ARM_SELECTED=CONTROL SHARED_COMPONENT_ENABLED=1 SHARED_SAMPLING_ENABLED=1
+  RIGID_UNCHANGED=1 ANGLE_LOCK_SUPPRESSION_SAME=1 PRODUCT_DEFAULT_PRESERVED=1
+PROBE arm marker:
+  ARM_SELECTED=PROBE SHARED_COMPONENT_ENABLED=1 SHARED_SAMPLING_ENABLED=0
+  RIGID_UNCHANGED=1 ANGLE_LOCK_SUPPRESSION_SAME=1 PRODUCT_DEFAULT_PRESERVED=1
+
+SAME_BINARY_CONTROL_PROBE=PASS
+
+CONTROL CSV, 139 data rows:
+  sharedComponentEnabled unique=1
+  sharedSamplingEnabled unique=1
+  rigidOperational rows=128/139
+  FacePartAngleLock enabled-count nonzero rows=0
+  sourceTextureFound rows=132/139
+  nonzero left shader rotation rows=117/139
+  max abs shader rotation=0.9599311 rad
+  left/right/mouth shader rotation mismatch rows=0
+
+PROBE CSV, 201 data rows:
+  sharedComponentEnabled unique=1
+  sharedSamplingEnabled unique=0
+  rigidOperational rows=193/201
+  FacePartAngleLock enabled-count nonzero rows=0
+  sourceTextureFound rows=195/201
+  nonzero left shader rotation rows=0/201
+  max abs shader rotation=0.0000000 rad
+  left/right/mouth shader rotation mismatch rows=0
+
+The startup rows before source/Rigid readiness are retained in the raw CSV. No row
+was filtered or rewritten. The minimum claim is supported: PROBE kept the Shared
+component and suppression path enabled while neutralizing its shader sampling
+rotation across left/right/mouth. This scalar result is not Visual authority.
+
+PLAYER_ARM_SCALAR=PASS
+
+================================================================================
+DEFAULT-ACTIVE COMPONENT CHECK
+================================================================================
+KiwiSpoutWaitFreeDiagnosticV44_20:
+  Current source auto-installs on Windows and polls native counters at a two-second
+  cadence. Both human arms logged one EntryPointNotFound for the unavailable
+  KiwiSpoutDiagGetPluginLoaded export; the catch sets _nativeUnavailable=true, so
+  further polling stops. This diagnostic did trigger the Development Console UI,
+  which the human reviewer closed. It did not distinguish CONTROL from PROBE and
+  does not write F3 shader/tracking state. Classification=OBSERVER_ONLY_FOR_F3,
+  with UI contamination explicitly retained as a Visual caveat.
+
+KiwiCameraPreviewQualityService:
+  Current source defaults to preview mode DIRECT and color correction OFF when its
+  environment controls are absent. Both arms logged mode=OFF, source=
+  KiwiNativeCameraPresentation, addedLivePreviewBlit=0, trackingInputChanged=0,
+  nativeDllChanged=0, and spoutChanged=0. Classification=OBSERVER_PRESENTATION_ONLY
+  under the observed defaults; no arm difference.
+
+KiwiFrameComparisonOverlay:
+  Auto-installs in a Development Player. Its MATCHED LANDMARK DEBUG intentionally
+  fails closed to WAITING unless the watched semantic timestamp exactly matches the
+  committed FacePart texture transaction; diagnostic/render cadence can differ.
+  The reviewer observed WAITING/flicker while LIVE CAMERA looked good. F8 hides only
+  the UI; the component and LateUpdate observation remain active. This is not proof
+  of a Product FacePart failure and is separated from the avatar observations below.
+  Classification=OBSERVER_ONLY_FOR_F3, same binary/default in both arms.
+
+No default-active component was removed, disabled, or changed for either arm.
+
+================================================================================
+HUMAN VISUAL — SAME BUILD, NON-COMPARABLE FAILURE STATES
+================================================================================
+CONTROL human observation:
+  - LIVE CAMERA looked good.
+  - MATCHED LANDMARK DEBUG displayed WAITING FOR WATCHED/MATCHED FRAME and flickered.
+  - On the actual avatar, eye/mouth texture, mask, and crop were all judged NG:
+    eyes and mouth were not displayed and crop ranges were displaced.
+
+CONTROL Runtime context:
+  Direct3D12; UGREEN Camera 4K; 1920x1080@60; stable native presentation.
+  Surface fit completed 628/653 vertices (96.2%); topology refit did not log a
+  failed-binding count or exception that explains the visible missing/displaced
+  FaceParts. Repeated watchdog messages reported Inference Engine face presence
+  confidence while MediaPipe remained Primary. These facts do not prove the cause.
+
+PROBE human observation:
+  - LandMarker moved on its own while the subject was still.
+  - LandMarker position jumped.
+
+PROBE Runtime context:
+  Direct3D12; same camera/profile/presentation path and same Player payload.
+  Surface fit completed 641/653 vertices (98.2%). Watchdog messages reported
+  Inference Engine presence confidence 0.77, 0.72, and 0.80 while MediaPipe remained
+  Primary. The log contains no direct measurement that identifies whether the
+  observed LandMarker was canonical Product state, the strict matched-debug view,
+  or a visualization/projection result.
+
+F3 causality boundary:
+  The F3 arm changes SharedTiltLock.enableSharedTiltLock, which the scalar evidence
+  shows changes only the Shared shader rotation contribution while keeping the
+  component, Rigid owner, and legacy AngleLock suppression path in place. Landmarks
+  are upstream of that shader sampling property. Therefore the PROBE LandMarker
+  drift/jump is a real Visual blocker but is NOT proven to be caused by F3.
+  The watchdog correlation points to a possible upstream geometry/publish/authority
+  boundary, not a confirmed defect and not permission to add smoothing or alter
+  tracking math.
+
+Comparison decision:
+  CONTROL and PROBE did not present one valid, comparable Product FacePart baseline.
+  The required seven-scenario orientation/mask/crop comparison was not completed in
+  a state where both arms were otherwise valid. Calling the two different failures
+  EQUIVALENT would convert incomplete evidence into PASS; calling PROBE WORSE would
+  invent a common measured axis. The only supported classification is INCONCLUSIVE.
+
+PLAYER_VISUAL=INCONCLUSIVE
+
+================================================================================
+LIFECYCLE / PERFORMANCE / FINAL GATE
+================================================================================
+The pre-registered contract permits Lost -> Reacquire and restart only when Visual
+is BETTER or EQUIVALENT. Visual was INCONCLUSIVE, so neither lifecycle scenario was
+run. Both human Players did exit cleanly on a normal CloseMainWindow request; those
+shutdown logs are not substituted for the prohibited restart/reacquire gate.
+
+LIFECYCLE=NOT_RUN
+PERFORMANCE=NOT_RUN_NOT_CLAIMED
+
+GO conditions closed:
+  authorized Player build=PASS
+  exact same binary CONTROL/PROBE=PASS
+  Player scalar arm identity=PASS
+  Rigid operational within sampled ready rows=PASS
+  FacePartAngleLock suppression state unchanged=PASS
+  PROBE Shared shader contribution zero=PASS
+
+GO conditions not closed:
+  Human Visual BETTER/EQUIVALENT=NO; INCONCLUSIVE
+  controlled Lost/Reacquire=NOT_RUN_BY_CONTRACT
+  controlled restart and stale-rotation check=NOT_RUN_BY_CONTRACT
+  F3-related regression absence=NOT ESTABLISHED
+
+F3_FINAL=INCONCLUSIVE
+RESULT=F3_INCONCLUSIVE
+SHARED_TILT_SAMPLING_OWNER_RETIREMENT=NO_GO_NOT_AUTHORIZED
+PRODUCTION_CHANGE=NO
+COMMIT_PUSH=NO
+
+================================================================================
+WHAT CHANGED / WHAT DID NOT CHANGE
+================================================================================
+Changed by this continuation:
+  - One authorized DX12 Development diagnostic Player artifact was built through
+    the existing full-preflight/build-gate path.
+  - Raw minimum CONTROL/PROBE scalar evidence and two human-run Player logs were
+    captured.
+  - This consolidated report and its Runtime Evidence ZIP were created.
+
+Not changed:
+  - No Production source, Scene serialization, Native camera code/DLL, Face
+    Landmarker, Runner freshness, Sentis, Canonical, FacePart transaction,
+    RigidSampleFrame, SharedTiltLock Production behavior, FacePartAngleLock,
+    tracking math, Root/Head authority, ROI, thresholds, smoothing, prediction,
+    provider/resume handling, or ReleaseCandidateBuildGate was edited.
+  - No new GPU readback, tensor dump, heavy observer, blocking wait, FIFO, buffer,
+    fake stamp, bypass, commit, or push was introduced.
+
+WHY_CHANGE_IS_BETTER_THAN_NO_CHANGE=UNPROVEN
+The evidence supports NO_CHANGE. Retaining the current Production owner is safer
+than retiring it while the actual Product visual baseline is invalid and the
+observed LandMarker failure boundary is unresolved.
+
+================================================================================
+RAW EVIDENCE IDENTITIES
+================================================================================
+  D9D8B89231C9A82DD5E5ACF3E5AF717AB0B6F1BF3ED44EA5D00D6AE1EB0B536E  F3_player_build.log
+  BBEC807F9853BBAA4B47583883058AC4BA6B148CCB79C0F1E8C467376E186EAE  CONTROL/F3_SingleSamplingRotationOwner_CONTROL.csv
+  6A910C17B449332477FA30EF559698ED2DF0A5AC4A6C959B4FE898677ADE402E  CONTROL/Player.log
+  7726372617A16C3751920AEEB6C1FE47AF19DAC5A6A3AE90B0E877C5BAD476D9  PROBE/F3_SingleSamplingRotationOwner_PROBE.csv
+  712A63769E15E515B07FD569FFF106D69814827EF8C3A9E3DE7C4FB5F2750FCF  PROBE/Player.log
+  F143A6DCA4A176B5C76B0BB1EA01D5D846C07D0F05E7690E2DD069924D7CE59D  HUMAN_CONTROL/Player.log
+  0E94D79EC2A2763BEE6A2EDADFFF0574903702CAF0B7EF15A16C2C4853C90E3D  HUMAN_PROBE/Player.log
+  90182E85DAA298535EA5C7CAB55F35D2AD5D11D12DF757FF49FFA980B4693961  KiwiStandalone_v42_3.preflight.json
+  782A26E18CD6B2360713D96C5A7AF5FF1AFC0992C9491F5F74E36EB868AEBB45  KiwiStandalone_v42_3.build.meta.txt
+  9FC234C858F3ED00AFD79515CD91FBA92F81A68CFBB818C2D0897C3E19F2FF2C  KiwiComputeShaderPackagingAudit_v39.json
+  2DAEAB76DFF8721EB27A8BD5CD1BB99A3DF6A8E077412FF64F9B982DB8857AFC  KiwiComputeShaderPackagingAudit_v39.txt
+
+================================================================================
+NEXT SINGLE ACTION
+================================================================================
+Before rerunning F3 or changing SharedTiltLock, isolate the current baseline failure
+with one observer-only, same-build still-state trace that distinguishes:
+  actual canonical/Primary landmark centroid and pose;
+  MATCHED DEBUG watched/committed semantic identity;
+  FacePart texture transaction timestamp/canonical frame identity;
+  actual avatar FacePart visibility/crop commit.
+
+The purpose is to decide whether the visible jump/missing FaceParts originate at
+Model Semantic, Canonical/Primary publish, transaction identity, or observer
+projection. Do not add smoothing or change tracking math. Resume F3 only after a
+valid CONTROL Product visual baseline exists.
+
+================================================================================
+DELIVERABLES
+================================================================================
+Consolidated REPORT:
+  KiwiValidation/KiwiCodexConsolidatedReport_F3_SingleSamplingRotationOwner_Player_20260906_204801.txt
+
+Runtime Evidence ZIP:
+  KiwiValidation/KiwiRuntimeEvidence_F3_SingleSamplingRotationOwner_Player_20260906_204801.zip
+  SHA256=46188ED4203F890C2FC1A55677A2CB9D5B25587044F0B08C6938DBD7E4737718
+  Size=310097 bytes
+  Manifest verification=PASS, 37 manifested payload files plus MANIFEST_SHA256.txt
+  ZIP entry stream SHA256 verification=PASS, 38/38 file entries
+
+The final REPORT is intentionally outside the ZIP so it can state the immutable
+ZIP SHA256 without circular self-reference. The ZIP contains the Primary Authority
+report, human observation record, all raw Player/build logs and CSV, build identity,
+current source snapshots, ProjectSettings snapshots, payload SHA256, and a manifest.

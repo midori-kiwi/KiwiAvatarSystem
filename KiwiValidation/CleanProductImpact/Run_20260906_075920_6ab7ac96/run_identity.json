@@ -1,0 +1,18 @@
+{
+    "contract":  "KIWI_FROZEN_V31_CLEAN_PRODUCT_IMPACT_RUN_V1",
+    "startedUtc":  "2026-09-05T22:59:21.0184091Z",
+    "endedUtc":  "2026-09-05T23:00:10.7873780Z",
+    "durationSeconds":  49.769,
+    "pid":  2812,
+    "processExit":  0,
+    "timedOut":  false,
+    "frozenExe":  "D:\\KiwiAvatarSystem\\Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31.exe",
+    "frozenExeSha256":  "98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81",
+    "buildIdentitySha256":  "DAA8C22A890DEEB128758D587359D4EDBF859631E3A8306D63F77D746949D7A8",
+    "frozenRuntimeZipSha256":  "FCA6097A4B01E725F8ED2203B330A259C2BBCE5549ABBC001B139ED9FEAD9B9E",
+    "runtimeZipBuildCorrelated":  true,
+    "heavyDiagnosticsRequestedOff":  true,
+    "environmentRestored":  true,
+    "playerLog":  "D:\\KiwiAvatarSystem\\KiwiValidation\\CleanProductImpact\\Run_20260906_075920_6ab7ac96\\Player.log",
+    "humanReviewRequired":  true
+}

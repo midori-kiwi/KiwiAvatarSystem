@@ -1,4 +1,8 @@
-﻿# Unity generated folders
+# ============================================================
+# Unity generated folders / caches
+# ============================================================
+
+.utmp/
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/
@@ -9,15 +13,31 @@
 /[Mm]emoryCaptures/
 /[Rr]ecordings/
 
-# IDE / Visual Studio / Rider
+# Unity / test generated logs and crash files
+*.log
+sysinfo.txt
+mono_crash.*
+InitTestScene*.unity*
+/[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+
+# Blender backup files imported by Unity do not need version control
+*.blend1
+*.blend1.meta
+
+# ============================================================
+# Unity generated project / IDE files
+# ============================================================
+
 .vs/
 .idea/
 .gradle/
 ExportedObj/
 .consulo/
+
 *.csproj
 *.unityproj
 *.sln
+*.slnx
 *.suo
 *.tmp
 *.user
@@ -29,61 +49,134 @@ ExportedObj/
 *.mdb
 *.opendb
 *.VC.db
+*.DotSettings.user
 
-# Unity generated
-sysinfo.txt
+# Unity-generated metadata for generated debug/project artifacts
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+
+# Auto-generated JetBrains Rider Unity plugin
+/[Aa]ssets/[Pp]lugins/[Ee]ditor/[Jj]et[Bb]rains*
+
+# ============================================================
+# Unity build/package outputs
+# ============================================================
+
 *.apk
 *.aab
 *.unitypackage
+*.unitypackage.meta
 *.app
 
-# OS
-.DS_Store
-Thumbs.db
-Desktop.ini
-
-# Crash reports
+# Crashlytics generated file
 crashlytics-build.properties
 
-# Addressables temporary files
-/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
+# ============================================================
+# Addressables / Visual Scripting generated content
+# ============================================================
 
-# Auto-generated StreamingAssets
-/[Aa]ssets/[Ss]treamingAssets/aa.meta
-/[Aa]ssets/[Ss]treamingAssets/aa/*
+/ServerData/
+/[Aa]ssets/[Ss]treaming[Aa]ssets/aa*
+/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/link.xml*
+/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
+/[Aa]ssets/[Aa]ddressables_[Tt]emp*
+
+/[Aa]ssets/[Uu]nity.[Vv]isual[Ss]cripting.[Gg]enerated/[Vv]isual[Ss]cripting.[Ff]low/[Uu]nit[Oo]ptions.db
+/[Aa]ssets/[Uu]nity.[Vv]isual[Ss]cripting.[Gg]enerated/[Vv]isual[Ss]cripting.[Ff]low/[Uu]nit[Oo]ptions.db.meta
+/[Aa]ssets/[Uu]nity.[Vv]isual[Ss]cripting.[Gg]enerated/[Vv]isual[Ss]cripting.[Cc]ore/[Pp]roperty [Pp]roviders
+/[Aa]ssets/[Uu]nity.[Vv]isual[Ss]cripting.[Gg]enerated/[Vv]isual[Ss]cripting.[Cc]ore/[Pp]roperty [Pp]roviders.meta
+/[Aa]ssets/[Ss]cene[Dd]ependency[Cc]ache*
 
 # ============================================================
-# KiwiAvatarSystem - Local backups / installers / external tools
+# OS / editor leftovers
+# ============================================================
+
+.DS_Store
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.stackdump
+*.orig
+*.orig.meta
+
+# ============================================================
+# Secrets / private credentials
+# ============================================================
+
+# Local environment files may contain API keys or credentials.
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+
+# Private keys / signing credentials must never be committed to this public repo.
+*.pfx
+*.p12
+*.pem
+*.key
+*.keystore
+*.jks
+
+# IMPORTANT:
+# Do NOT blanket-ignore *.dll or *.exe.
+# KiwiAvatarSystem may intentionally track Production artifacts such as
+# Assets/Plugins/x86_64/KiwiNativeCamera.dll for provenance/rollback authority.
+
+# ============================================================
+# KiwiAvatarSystem - local backups / installers / external artifacts
 # ============================================================
 
 # Project backup archives
 /Backups/
 
-# Local MediaPipe package archives
+# Local MediaPipe/package archives. Keep Packages/manifest.json and
+# Packages/packages-lock.json tracked.
 /Packages/*.tgz
 /Packages/*.tar.gz
 
-# FFmpeg binaries
-/Tools/ffmpeg/bin/*.exe
+# Local third-party executable payloads. Keep wrapper scripts/configuration tracked.
+/Tools/ffmpeg/bin/
 
-# Unity installers
+# Unity installers are local machine artifacts.
 /Tools/UnityInstallers/
 
-/Tools/Research/
+# Research source/scripts/notes should remain trackable. Only local downloaded or
+# generated research payload directories are ignored.
+/Tools/Research/Downloads/
+/Tools/Research/Cache/
+/Tools/Research/Temp/
 
-# Generic installer files
+# Generic installer packages generated/downloaded locally.
 *.msi
+*.msix
+*.msm
+*.msp
+*.cab
 
-# KiwiValidation generated artifacts
+# ============================================================
+# KiwiValidation - generated runtime evidence only
+# ============================================================
+
+# Keep validation source, validators, reports (.md/.txt/.json where intentional),
+# manifests, and schemas trackable. Ignore bulky/generated runtime evidence.
 KiwiValidation/**/*.mp4
 KiwiValidation/**/*.log
 KiwiValidation/**/*.csv
 KiwiValidation/**/*.png
 KiwiValidation/**/*.jpg
+KiwiValidation/**/*.jpeg
+KiwiValidation/**/*.webp
 KiwiValidation/**/*.zip
 
-# local runtime audit workspace
-KiwiValidation/LiveCameraPixelAudit/
-
-
+# Chat archive output is managed separately from source control.
 KiwiValidation/ChatReport/
+
+# NOTE:
+# Do not ignore KiwiValidation/LiveCameraPixelAudit/ as a whole. Generated files
+# inside it are already excluded by the artifact-extension rules above, while any
+# future scripts/source/report files remain visible to Git.

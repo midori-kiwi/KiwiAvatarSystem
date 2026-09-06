@@ -1,0 +1,71 @@
+KiwiAvatarSystem v44.55.25 Production Schedule Transaction Trace
+contract=KIWI_V44_55_25_PRODUCTION_SCHEDULE_TRANSACTION_TRACE
+status=BIND_FAIL
+decision=OBSERVER_INVALID
+dependencyStatus=NOT_BOUND
+observerOnly=1
+productionWrites=0
+productionInputContentReadback=0
+productionOutputContentReadbackAdded=0
+repeatedInference=0
+newWorker=0
+blockingWait=0
+newGpuSnapshot=0
+v24SnapshotStateComposed=1
+referenceIdentityAuthority=ReferenceEquals
+objectTokensDiagnosticOnly=1
+cropMatrixComparison=BITWISE_ALL_16_FLOATS
+minimumPresenceComparison=BITWISE_FLOAT32
+performanceAuthority=0
+thresholdsLockedBeforeRuntime=1
+
+[COUNTS]
+completedTraceCount=0
+dependencyPairCount=0
+anomalousPairCount=0
+scheduleAttachMissCount=0
+ambiguousLaneMatchCount=0
+laneIdentityMismatchCount=0
+workerIdentityMismatchCount=0
+inputTensorIdentityMismatchCount=0
+pendingOutputIdentityMismatchCount=0
+sourceHostTicksMismatchCount=0
+scheduleBeginTicksMismatchCount=0
+startedHostTicksMismatchCount=0
+readbackRequestTicksMismatchCount=0
+readbackRequestFrameMismatchCount=0
+anchorRevisionMismatchCount=0
+externalAnchorEpochMismatchCount=0
+trackerGenerationMismatchCount=0
+cameraGenerationMismatchCount=0
+trackingSessionGenerationMismatchCount=0
+minimumPresenceMismatchCount=0
+cropMatrixMismatchCount=0
+v24PairIdentityMismatchCount=0
+outputReadyObservationMissCount=0
+snapshotBindingMissCount=0
+canonicalPublicationMissCount=0
+canonicalPublicationIdentityInvalidCount=0
+canonicalPublicationBoundCount=0
+canonicalPublicationBoundAnomalousCount=0
+canonicalPublicationDuplicateCount=0
+duplicateTraceCount=0
+partialTraceCount=0
+observerFaultCount=1
+tracesPending=0
+
+[FIXED_RUNTIME_GATE]
+dependencyStatusRequired=COMPLETE
+minimumCompletedTraceCount=60
+dependencyPairCountMustEqualCompletedTraceCount=1
+minimumAnomalousPairCount=3
+observerIntegrityCountersMustBeZero=1
+findingCountersMustMatchDecision=1
+
+[DECISION_RULE]
+TRANSACTION_COHERENT=all valid pairs have exact pair+schedule+pendingOutput+v24 snapshot binding coherence
+SCHEDULE_TRANSACTION_MISMATCH=at least one valid anomalous pair has a schedule/output transaction mismatch
+PUBLISHED_TRANSACTION_COHERENT_PARTIAL_COVERAGE=all observed InferenceEngine publishes bind exactly; some v24 packed outputs were not observed as canonical publishes
+INSUFFICIENT_PUBLISHED_ANOMALOUS_DATA=fewer than the fixed minimum anomalous pairs were observed as InferenceEngine canonical publishes
+CANONICAL_PUBLICATION_IDENTITY_INVALID=an observed InferenceEngine publication has invalid matched timing identity
+OBSERVER_INVALID=observer miss, ambiguity, lifecycle, ordering, dependency, or validator failure

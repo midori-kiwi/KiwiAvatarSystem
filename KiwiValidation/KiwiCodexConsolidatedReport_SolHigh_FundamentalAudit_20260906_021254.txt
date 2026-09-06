@@ -1,0 +1,885 @@
+KiwiAvatarSystem Fundamental Audit / Simplification / Optimization
+Consolidated Report
+Generated: 2026-09-06 02:12:54 JST
+Model requested by task: GPT-5.6 Sol High
+
+===============================================================================
+1. Executive Summary
+===============================================================================
+
+FINAL DECISION=DELETE_ONLY
+DIAGNOSTIC DIRECTION=SIMPLIFY_DIAGNOSTIC_FRAMEWORK
+
+第一原理から再導出した必要最小経路と current local source を、Production、
+Diagnostic、installed package source、同一buildに相関した既存v31 Runtime、公開source、
+商用製品の公開境界に分けて比較した。
+
+確認済み結論:
+
+- Working Production Core を変更する根拠はない。Native camera、FaceLandmarkerRunner、
+  KiwiInferenceFaceTracker、KiwiFaceMotion、ROI、Root/Head、LIVE CAMERA、Spout、Native DLL、
+  Inference packageは変更していない。
+- v31は、coarse output observation endpointにおいて、PROBEのproducer snapshotとActualが
+  84/84で同一NEITHERであることを示す。これは
+  E2_DIVERGENCE_PRESENT_BY_PRODUCER_TAIL_OR_COMMON_OBSERVATION_PATH を支持するが、exact
+  method/resource transition/queue ownership/fixを確定しない。
+- v30はv31に機能的にsupersedeされ、active call site、独立GUID参照、非archive依存がない。
+  そのためv30の15ファイル、75,544 bytesをactive Assets/Toolsから削除し、SHAを保持した
+  可逆archiveへ退役した。永久削除ではなく、active-path deletionである。
+- v20/v24/v25/v27/v31は現在のv31 evidence chainを構成するため、一部だけの削除は不適切。
+- F1-F4はStatic conditionまたは責務重複候補であって、Runtime defectではない。F5の
+  provider transition double ownershipはcurrent source上でREJECTED。
+- v30退役後、Unity 6000.0.80f1 batch compileはexit 0、Tundra build success、error CS=0。
+  v31 static validatorもPASS。Build、Runtime、Performance、Visualは再実行していない。
+
+このDELETE_ONLYはProduction挙動を変えず、active diagnostic surface、compiled code、shader、
+editor/build/runner/validatorの重複だけを減らす。新owner、新buffer、新queue、新copy、
+workaroundは追加していない。
+
+===============================================================================
+2. Authority / Evidence Ledger
+===============================================================================
+
+AUTHORITY FREEZE
+
+Project=D:\KiwiAvatarSystem
+Unity=6000.0.80f1 revision 2dfd32957da2
+Platform=Windows / DX12
+Git branch=main
+GIT_HEAD=27281c622d7b8bf2ececf711b037fc8f9e029004
+GIT_STATUS=DIRTY_USER_OWNED
+Git porcelain entries at freeze=706
+Tracked modified at freeze=4:
+  Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiOrtDirectMLShadowRuntime.cs
+  Assets\KiwiAvatarSystem\Runtime\Validation\KiwiPairBoundShadowOutputSnapshotV44_55_24.cs
+  Assets\Script\KiwiInferenceFaceTracker.cs
+  Tools\KiwiPowerShell\KiwiPsCompat.psm1
+Untracked=large pre-existing validation/build/report corpus, including v29-v35 material
+Repository reset/checkout/clean=NOT PERFORMED
+
+Current/build-correlated identities:
+
+Build identity SHA256=DAA8C22A... (existing v31 build identity; built
+2026-09-05T07:37:27Z; recorded exit 0; 290 source entries)
+Production aggregate SHA256=C34BC1BF8778AABC0F33654EC4B186660F7AB29084ABFEDFB94060DFB5C6FDB6
+Package-source aggregate SHA256=426CF5286D1661407B5B45532B067CA6EBE80E479837108DD69248C80E746C0F
+Diagnostic aggregate SHA256=519D3D6B8BDA81DD3093693859A883AB33D0F26FE1A4ABD87EA985D3D3FB70E0
+Aggregate definition=SHA256(UTF8(sorted relative-path=uppercase-file-SHA joined by LF))
+Build comparison=Production 59/59 match; installed package source 216/216 match;
+Diagnostic 13/15 match, with only Test-Validator.ps1 and Validate-Runtime.ps1 differing
+from the pre-runtime build identity because of subsequent validator corrections.
+
+Protected identities after v30 active retirement:
+
+FaceLandmarkerRunner.cs
+  SHA256=6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93
+KiwiInferenceFaceTracker.cs
+  SHA256=CF860F4EF686BD5FDAC4140D4F3E73E64B6F390C3BC64204CF346011AC69380D
+KiwiFaceMotion.cs
+  SHA256=D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6
+Assets\Scenes\Face Landmark Detection.unity
+  SHA256=E28B0B81F731B92B04B97D4AA7DB1187C8DD57C5A39F49B08B2E6799BBF5B3D1
+Assets\Plugins\x86_64\KiwiNativeCamera.dll
+  bytes=80896
+  SHA256=82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+RuntimeEvidence_v44_55_31_20260905_165629_f05a2230.zip
+  bytes=3809639
+  SHA256=FCA6097A4B01E725F8ED2203B330A259C2BBCE5549ABBC001B139ED9FEAD9B9E
+
+Installed package identities:
+
+Packages\manifest.json SHA256=35F00A...
+Packages\packages-lock.json SHA256=23845C...
+com.unity.ai.inference=2.4.1, cache fingerprint 587873fd5e1b,
+  package.json SHA256=2F230C...
+MediaPipeUnityPlugin=0.16.3, cache fingerprint 66127f...,
+  package.json SHA256=EEBBFF..., tarball SHA256=CC3E77A2...
+KlakSpout=2.0.6, cache/revision 849e..., package.json SHA256=DE3D55...
+UniVRM/VRM=0.130.1, package.json SHA256=9403A15...
+UniGLTF=0.130.1, package.json SHA256=1CDA3F...
+UnityEngine.CoreModule.dll SHA256=00B07D5C...
+
+LATEST_RUNTIME_EVIDENCE=v31 frozen ZIP above; no new Runtime run in this audit.
+WRITE_TARGETS:
+  KiwiValidation\RetiredDiagnostics\v44_55_30\... (15 moved files)
+  KiwiValidation\KiwiFundamentalAudit_v30Retirement_UnityCompile_20260906.log
+  this consolidated report
+Unity Library/ScriptAssemblies were regenerated by the compile verification.
+
+EVIDENCE LEDGER
+
+CONFIRMED=
+  current Git/SHA/package identities; current method/dataflow; v30 active references absent;
+  v30 archive 15/15 size+SHA equality; protected SHA unchanged; Unity compile exit 0;
+  current v31 static validator PASS.
+RUNTIME=
+  frozen same-build v31: CONTROL Actual NEITHER 88/88; PROBE Actual NEITHER 84/84;
+  PROBE producer snapshot NEITHER 84/84; snapshot==Actual 84/84. v24 anomaly:
+  CONTROL anomalous=10, PROBE anomalous=31. No Runtime rerun here.
+STATIC_ONLY=
+  exact execution/resource/lifetime trace; F1-F4; v30 supersession/reachability;
+  diagnostics activation gates; ownership maps.
+PACKAGE_SOURCE=
+  Inference Engine 2.4.1, MediaPipeUnityPlugin 0.16.3, UniVRM 0.130.1,
+  KlakSpout 2.0.6 actual installed source inspected.
+EXTERNAL_PUBLIC_SOURCE=
+  MediaPipe, homuler, OpenSeeFace, Kalidokit, UniVRM, KlakSpout and published
+  public API/docs comparisons. Closed commercial internals excluded.
+INFERENCE=
+  v31 establishes E2 only at coarse output observation endpoint. Exact cause and
+  Production remedy are not closed.
+REJECTED=
+  external CommandBuffer form alone as primary cause; provider double ownership in
+  current source; blind Fence/Wait/flush/async-disable; tracker replacement; big-bang rewrite.
+UNKNOWN=
+  exact E2 method/transition/queue fault; producer-tail versus common observer dependency;
+  current clean performance; same-build visual/product impact; F1-F4 Runtime incidence.
+SUPERSEDED=
+  v30 diagnostic implementation by v31; stale global instruction statements that call
+  v29 current and Stage1 unexecuted.
+
+===============================================================================
+3. pvncher + OpenAI Guidance Audit
+===============================================================================
+
+Requested post=https://x.com/pvncher/status/2095991462416490862
+PVNCHER_SOURCE_ACCESS=DIRECT_UNAVAILABLE
+
+Direct X access returned HTTP 403. Exact status ID and author/topic searches did not expose a
+lawful indexed copy sufficient to reconstruct the post. Therefore the post body and any claimed
+recommendation are UNVERIFIED. No wording, model-specific behavior, or instruction-deletion
+claim from that post was used as authority.
+
+OpenAI official sources actually opened:
+
+- GPT-5.6 Sol model:
+  https://developers.openai.com/api/docs/models/gpt-5.6-sol
+- Current model guidance:
+  https://developers.openai.com/api/docs/guides/latest-model
+- AGENTS.md guidance:
+  https://learn.chatgpt.com/docs/agent-configuration/agents-md
+- Skills guidance:
+  https://learn.chatgpt.com/docs/build-skills
+
+Officially supported points:
+
+- GPT-5.6 Sol supports reasoning levels including high and supports skills/tools.
+- AGENTS instructions are hierarchical; global instructions apply first, project-root-to-cwd
+  files add/override closer to the working directory; one instruction file per directory is used;
+  combined discovery has a default byte cap.
+- Skills use progressive disclosure and the complete SKILL.md is loaded when invoked.
+- Current latest-model page contains Astra-specific guidance. It explicitly discusses behavior
+  relative to earlier models, but those Astra-specific characteristics were not projected onto
+  GPT-5.6 Sol.
+
+Classification of unavailable pvncher claims=UNVERIFIED
+Classification of hierarchy/progressive-disclosure claims=SUPPORTED_BY_OPENAI_OFFICIAL
+Classification of any universal prescription to delete all detailed instructions=UNSUPPORTED
+Classification of concise map+hard-rails advice=CONTEXT_DEPENDENT; it is useful only after
+preserving project-specific safety, authority, build, lifecycle, and ownership constraints.
+
+===============================================================================
+4. ~/Projects Skills / AGENTS Audit
+===============================================================================
+
+Resolved ~/Projects=C:\Users\main\Projects
+Existence=NO
+Alternative path substitution=NO
+PROJECTS_SKILL_AUDIT_STATUS=NOT_APPLICABLE_PATH_ABSENT
+
+The requested recursive ~/Projects audit could not run because the exact path does not exist.
+No other repository was silently substituted.
+
+Current global instruction file:
+
+PATH=C:\Users\main\.codex\AGENTS.md
+SCOPE=global; therefore Kiwi-specific guidance leaks into unrelated repositories
+PRECEDENCE=global before project-local instructions
+LOAD_CONDITION=normal Codex instruction discovery
+PROJECT_SPECIFIC=mostly YES
+LINES=45
+SHA256=4AA78D0A366C9BB8145C4FC257A5B1BE2196FB2CC396385F3C25DEC3872D2DC6
+STALE=YES: statements naming v29 as current and Stage1 as unexecuted conflict with accepted v31
+DUPLICATE=YES: architecture narrative duplicates source/reports in places
+CONFLICT=scope conflict, not a direct rail conflict
+MODEL_WORKAROUND=persona preamble is a deletion candidate; no evidence it is required by Sol
+
+Repository-root AGENTS.md=ABSENT
+Nested AGENTS.md found only in vendored KlakSpout scope; it does not govern repository root.
+Prior instruction inventory found 72 seeds (69 SKILL.md, 3 AGENTS.md); 22 matched the session
+catalog and 47 were disk-only/unlisted. Disk presence alone was not treated as automatic loading.
+
+AGENT_INSTRUCTION_DELETE_CANDIDATE_MATRIX
+
+1) Global line 1 persona text
+   SCOPE=global; STALE=not time-stale; DUPLICATE/generic=YES; DECISION=DELETE_CANDIDATE
+2) Global current-state lines naming v29 and Stage1 unexecuted
+   SCOPE=global; STALE=YES; DECISION=DELETE_CANDIDATE
+3) Kiwi architecture narrative duplicated by current source/reports
+   SCOPE=global; STALE_RISK=HIGH; DECISION=RELOCATE_AND_CONDENSE_CANDIDATE
+4) Hard rails concerning authority, protected writes, Native/inference lifetime,
+   ownership, validation, and commit/push
+   PROJECT_SPECIFIC=YES; SAFETY_VALUE=HIGH; DECISION=KEEP
+5) Exact project/build/test entrypoints and canonical document pointers
+   VALUE=HIGH when current; DECISION=KEEP_AND_SCOPE_TO_PROJECT
+
+No instruction file was edited. Deleting global Kiwi material before a project-scoped map+rails
+exists would remove safety authority from this project. Creating that replacement would exceed
+the selected DELETE_ONLY implementation and affect Codex behavior beyond Production source.
+
+===============================================================================
+5. First-Principles Target
+===============================================================================
+
+Frozen necessary-minimum dataflow:
+
+Newest valid Camera sample
+-> Face Landmarker (Primary / Source of Truth)
+-> Canonical semantic state
+-> Model Profile / stateless mapping
+-> atomic Avatar / FacePart binding
+-> Presentation
+-> Spout
+
+Required invariants:
+
+- Latest valid sample wins; no unbounded or latency-growing FIFO.
+- session epoch, frame sequence, timestamp, host ticks, and provider generation remain distinct.
+- Invalid, duplicate, out-of-order, stale, mixed-epoch, or broken-transaction publication is
+  locally rejected; healthy samples do not acquire arbitrary delay.
+- Face texture/crop/mask/landmarks/FacePart state are one sample transaction.
+- Face Landmarker is semantic authority; Provider normalization has one owner.
+- Head is the one rigid authority. Root translation, Head rotation, Eye/Blink, Mouth/Expression
+  remain separate channels.
+- Temporal presentation and prediction each have at most one owner per channel.
+- Resource ownership and output lifetime are explicit; GPU/CPU transitions are bounded and
+  nonblocking on the realtime path unless correctness proves synchronization necessary.
+- New filters, smoothing, stale prediction, queue growth, permanent frame delay, Fence/Wait,
+  flush, and async disable require boundary-specific evidence.
+
+===============================================================================
+6. Actual Production + Diagnostic Dataflow
+===============================================================================
+
+PRODUCTION, current source:
+
+1) Native Path B captures SystemMemoryNV12 into a bounded latest-frame system and publishes
+   sequence/host ticks/generation while maintaining a fixed Unity-visible presentation texture.
+2) FaceLandmarkerRunner.Update consumes a fresh source. MediaPipe path keeps one in-flight task;
+   Sentis path calls ProcessSentisFreshFrame.
+3) KiwiInferenceFaceTracker.TryProcessAsync selects a free lane from a fixed three-lane set.
+4) A 192x192 crop/preprocess RenderTexture is filled by Graphics.Blit.
+5) Direct mode uses the package's internal TextureConverter CommandBuffer then Worker execution.
+   CB Graphics mode appends conversion and scheduling to one external graphics CommandBuffer.
+   CB Async mode appends them to an external AsyncCompute CommandBuffer.
+6) Worker.PeekOutput returns a borrowed output reference valid only until the next Schedule,
+   ScheduleIterable, or Dispose. Current normal lane does not reuse the lane before CPU clone.
+7) After submission, AsyncGPUReadback.Request observes output. Completion is polled; then
+   ReadbackAndClone copies the logical 1,405 values to observer-owned CPU data and Decode runs.
+8) Runner stores result -> provider Hub -> Canonical state -> KiwiFaceMotion and avatar/FacePart.
+9) VTuberCamera renders -> VTuberOutput -> KlakSpout persistent output at end of frame.
+
+Static lifetime concern: after-submit early-return/exception paths can leave a pending lane or
+borrowed lifetime unresolved. This is not promoted to an observed Runtime failure here.
+
+DIAGNOSTIC attachment points:
+
+- v20 common tensor/backend stage isolation: opt-in environment gate, default inactive.
+- v24 pair-bound shadow output: opt-in, default inactive.
+- v25 production schedule transaction trace: opt-in, default inactive.
+- v27 actual-vs-shadow payload authority: Debug build plus opt-in behavior in current chain.
+- v31 producer-tail snapshot: Debug build + KIWI_V44_55_31_COLLECTION=1; captures payload bits
+  before v27 releases arrays and correlates at pair completion.
+- v30: superseded producer-tail snapshot; now absent from active Assets/Tools.
+- Collectors/validators/build scripts: out-of-player tools, not Production dependencies.
+
+Activation nuance: v20/v24/v25 are default false by environment but lack the same explicit
+Debug.isDebugBuild guard used by v27/v31. They remain compiled conditional diagnostic surface.
+
+===============================================================================
+7. Ownership / State / Buffer / Queue / Copy Map
+===============================================================================
+
+OWNERSHIP_MAP
+
+Camera sample owner=Native camera/session; fixed presentation texture exposed to Unity.
+Inference lane owner=KiwiInferenceFaceTracker until completed clone/release.
+Worker output owner=Inference Engine Worker; PeekOutput consumer borrows only.
+Result/provider owner=FaceLandmarkerRunner -> provider Hub.
+Provider switching owner=Hub; canonical handoff enabled makes legacy FaceMotion bridge a no-op.
+Canonical semantic owner=canonical path.
+Root/Head presentation owner=KiwiFaceMotion; one Root writer observed in audited path.
+Expression owner mismatch candidate=ExpressionReaction reads Runner directly, not Canonical.
+FacePart texture transaction owner=transaction component with closest capture within +/-55 ms,
+but exact native sequence is not attached to every texture slot.
+Spout buffer owner=KlakSpout persistent RT/end-of-frame presenter.
+
+STATE_MAP
+
+Native: session epoch, frame sequence, timestamps/host ticks, generation, latest slot.
+Inference: lane state, submission/pending/readback/completion, resource generation.
+Provider: source generation and handoff state.
+Canonical: accepted semantic frame and presentation state.
+FaceMotion: accepted/display/late-latch state by channel.
+Diagnostics: pair tokens and bit-exact snapshots; opt-in only.
+
+BUFFER_MAP
+
+Bounded Native latest-frame slots; fixed camera presentation RT; fixed three inference lanes;
+preprocess/crop RT per lane; Worker tensors; one AsyncGPUReadback request per submitted lane;
+CPU clone for decode; FacePart pinned transaction RT; Spout persistent RT.
+No unbounded Production FIFO was found.
+
+QUEUE_MAP
+
+Native latest-wins bounded publication; MediaPipe one-in-flight; Inference free-lane pool=3;
+Graphics queue for Direct/CB Graphics; AsyncCompute queue for CB Async; AsyncGPUReadback
+completion polling. No justification found for adding another queue or blocking wait.
+
+COPY_MAP / READBACK_MAP
+
+System-memory NV12 -> Unity presentation upload; camera texture -> 192 crop Blit;
+TextureConverter -> input tensor GPU work; Worker -> output tensor; output tensor ->
+AsyncGPUReadback -> CPU clone -> decode; camera/avatar -> presentation RT -> Spout RT.
+The output readback is architecturally required by CPU decode today. Removing it requires a
+different decode/consumer boundary and is not justified by this audit.
+
+===============================================================================
+8. Official / OSS / Commercial Comparison
+===============================================================================
+
+AUTHORITY TIERS
+
+Tier A=actual public source, method/statement/dataflow comparison.
+Tier B=public API/component boundary comparison.
+Tier C=closed commercial docs and lawful surface observation only.
+
+Installed/official source comparisons:
+
+- Inference Engine 2.4.1 actual source: TextureConverter direct path creates/executes an
+  internal graphics CommandBuffer; external-CB path appends commands. CommandBuffer worker sets
+  the external buffer then schedules nonblocking. GPUCompute switches internal-buffer behavior.
+  ComputeTensorData uses AsyncGPUReadback.Request. PeekOutput lifetime ends at next schedule or
+  dispose. This supports Kiwi's lifetime audit but does not identify the v31 E2 fault.
+- Unity 6000.0.80f1 actual assembly/API: current project assembly identity was recorded; no
+  alternate queue or implicit synchronization behavior was assumed beyond inspected APIs.
+- MediaPipe face_landmarker.cc LIVE_STREAM path uses a FlowLimiter and preserves input timestamp.
+  Kiwi's latest-frame/one-in-flight policy is compatible with low-latency bounded processing.
+- homuler 0.16.3 sample uses a TextureFrame pool and CPUAsync readback behavior. It is an example,
+  not authority to add a pool/FIFO/readback to Kiwi's already-bounded path.
+- UniVRM 0.130.1 expression runtime validates weights and applies separated eye/expression
+  responsibilities. This supports channel separation, not a wholesale mapping replacement.
+- KlakSpout 2.0.6 uses a persistent RT and end-of-frame capture/update, matching Kiwi's output
+  boundary. No replacement benefit was identified.
+
+Public source repositories inspected at fixed local clone heads:
+
+google-ai-edge/mediapipe HEAD 5257839e...
+  https://github.com/google-ai-edge/mediapipe
+homuler/MediaPipeUnityPlugin v0.16.3 HEAD cf4c11d...
+  https://github.com/homuler/MediaPipeUnityPlugin/tree/v0.16.3
+OpenSeeFace HEAD 85aa70f...
+  https://github.com/emilianavt/OpenSeeFace
+Kalidokit HEAD 6437947...
+  https://github.com/yeemachine/kalidokit
+UniVRM v0.130.1 HEAD c7212c...
+  https://github.com/vrm-c/UniVRM/tree/v0.130.1
+KlakSpout 2.0.6 HEAD 849e7b...
+  https://github.com/keijiro/KlakSpout
+
+Boundary lessons:
+
+- OpenSeeFace uses worker-queue and explicit feature filtering. This is evidence that filtering
+  must have an explicit owner, not evidence to add its queue or smoothing to Kiwi.
+- Kalidokit separates head/eye/mouth and makes blink smoothing optional. This supports Kiwi's
+  channel separation and rejects hidden smoothing.
+- MediaPipe's timestamped live-stream boundary supports freshness and identity rails.
+
+Commercial/public boundary audit:
+
+- Webcam Motion Capture current installed surface:
+  C:\Program Files\Webcam Motion Capture; closed main executable; bundled Python 3.11,
+  MediaPipe 0.10.35 and OpenCV observed. Official surface advertises head/expression/gaze/blink/
+  lipsync/body and VMC. Private queue, smoothing, and inference internals remain UNKNOWN.
+  https://webcammotioncapture.info/
+- VTube Studio public API exposes explicit parameter ownership; one plugin can own a parameter
+  and injection can be time-limited. Useful principle: explicit owner and liveness.
+  https://github.com/DenchiSoft/VTubeStudio
+- Warudo documents VMC and separate tracker/blueprint boundaries with explicit smoothing/source
+  controls. It supports boundary clarity, not hidden normalization.
+  https://docs.warudo.app/docs/mocap/vmc
+- VSeeFace documents a separate tracking process, VMC and Spout capability. Extra process and
+  serialization are costs Kiwi should not adopt without a net responsibility reduction.
+  https://www.vseeface.icu/
+- Animaze documentation prioritizes webcam FPS and exposes tracker configuration; no private
+  implementation claim was made.
+  https://www.animaze.us/manual/appmanual/webcamtracker
+- TikTok Effect House and Snap Lens Studio public face-binding/tracking surfaces support
+  per-face/per-channel binding concepts; internal commercial scheduling remains UNKNOWN.
+- VNyan direct internal documentation evidence was unavailable; classified Tier C UNKNOWN.
+
+EXTERNAL_REUSE_DECISION=SELECTIVE_EVIDENCE_GATED
+No external tracker or WMC Primary Core replacement is accepted. Mature boundary components are
+adoptable only when Kiwi responsibility and bug surface decrease without adding permanent copy,
+queue, process/thread hop, serialization, readback/upload, previous-frame dependency, smoothing,
+normalization, or authority owner.
+
+===============================================================================
+9. Unsupported Assumptions / Excess Complexity
+===============================================================================
+
+UNSUPPORTED:
+
+- "CB Async NEITHER means external CommandBuffer form is the cause." Direct and CB Graphics are
+  REF exact; v29 rejected CommandBuffer form alone.
+- "v31 proves AsyncCompute queue ownership is the exact defect." v31 localizes only to
+  producer-tail/common observation at a coarse endpoint.
+- "A Fence, blocking Wait, queue flush, or async-disable is required." Necessity and location are
+  unproved; each could add latency or conceal the actual boundary.
+- "v24 CONTROL10/PROBE31 proves E5/observer perturbation." It is relevant, but not sufficient.
+- "F1-F4 are user-visible Runtime defects." They remain Static conditions without correlated
+  current Runtime/product evidence.
+- "Closed commercial tools use a particular private queue/filter/normalizer." Not claimed.
+- "All discovered SKILL.md files automatically load." Disk presence is not activation evidence.
+
+EXCESS COMPLEXITY CONFIRMED:
+
+- v30 duplicated v31's diagnostic responsibility, code, compute shader, editor build/test, and
+  PowerShell collector/validator surface while having no active unique dependency.
+- Global AGENTS contains stale current-state narrative and project-specific material at global
+  scope. It is an instruction-maintenance risk, but was not changed in this DELETE_ONLY pass.
+
+EXCESS COMPLEXITY NOT CONFIRMED:
+
+- three inference lanes, readback, FaceMotion temporal state, texture transaction pinning,
+  persistent Spout RT, Native bounded slots. Each currently protects a concrete responsibility;
+  evidence is insufficient to delete it.
+
+===============================================================================
+10. Delete Candidate Matrix
+===============================================================================
+
+COMPONENT=v30 producer-tail diagnostic family
+METHOD=runtime observer + compute shader + editor build/test + Tools/KiwiV44_55_30
+ACTIVE=source compiled before retirement; collection inactive by default; no current call site
+RESPONSIBILITY=producer-tail snapshot experiment
+OWNER=v30 diagnostic
+DUPLICATE_OWNER=v31, with stricter observer-owned copy and correlation gates
+EVIDENCE=v30->v31 source diff; current nonarchive refs absent; GUID refs self-only; compiled v31
+hook audit has exactly five v31 calls and no v30 calls
+DELETION_BENEFIT=15 active files and 75,544 bytes removed; fewer compiled types/shader/editor/tools
+CORRECTNESS_RISK=LOW; rollback archive is bit-identical
+LATENCY_EFFECT=Production default none; smaller conditional diagnostic surface
+LIFECYCLE_EFFECT=removes superseded hook/resource lifecycle
+DECISION=DELETE, IMPLEMENTED AS REVERSIBLE ACTIVE-PATH RETIREMENT
+
+COMPONENT=v20/v24/v25/v27
+ACTIVE=compiled, opt-in default false
+RESPONSIBILITY=stage/pair/schedule/payload evidence required by v31 chain
+DUPLICATE_OWNER=partially overlapping but claim-specific
+EVIDENCE=v31 binds and validates their correlated artifacts
+DELETION_BENEFIT=some surface reduction
+CORRECTNESS_RISK=HIGH to v31 evidence reproduction/interpretation
+DECISION=KEEP until v31 claim is formally closed or successor evidence contract replaces them
+
+COMPONENT=v31
+ACTIVE=Debug + environment opt-in
+RESPONSIBILITY=current accepted E2 evidence
+DUPLICATE_OWNER=v30 was duplicate and retired
+EVIDENCE=frozen Runtime and source/IL hook audit
+DELETION_BENEFIT=diagnostic surface reduction
+CORRECTNESS_RISK=loss of current accepted reproduction path
+DECISION=KEEP
+
+COMPONENT=global AGENTS persona and stale v29/Stage1 statements
+ACTIVE=global instruction scope
+RESPONSIBILITY=style/current-state guidance
+DUPLICATE_OWNER=source/reports and supplied task instructions
+EVIDENCE=current 45-line file and official hierarchy
+DELETION_BENEFIT=less stale prompt scaffolding/global leakage
+CORRECTNESS_RISK=LOW for stale lines, but project rails need scoped replacement first
+DECISION=NEEDS_SCOPED_INSTRUCTION_CHANGE; NOT IMPLEMENTED
+
+COMPONENT=F1 Expression Canonical latch bypass
+ACTIVE=Production
+RESPONSIBILITY=expression consumption from Runner
+DUPLICATE_OWNER=Canonical candidate
+EVIDENCE=Static only
+DELETION_BENEFIT=one semantic owner if proven
+CORRECTNESS_RISK=HIGH without expression Runtime/transition evidence
+DECISION=NEEDS_RUNTIME
+
+COMPONENT=F2 FacePart texture identity gap
+ACTIVE=Production
+RESPONSIBILITY=closest-time texture transaction
+DUPLICATE_OWNER=none proven
+EVIDENCE=no exact native sequence in slot; +/-55 ms pinning
+DELETION_BENEFIT=unknown; likely requires identity correction, not blind deletion
+DECISION=NEEDS_RUNTIME
+
+COMPONENT=F3 RigidSampleFrame + SharedTiltLock rotation
+ACTIVE=Production presentation
+RESPONSIBILITY=mesh eye-line alignment and shader tilt
+DUPLICATE_OWNER=possible two-stage visual rotation
+EVIDENCE=Static only
+DELETION_BENEFIT=one rotation owner if same responsibility is proven
+CORRECTNESS_RISK=HIGH visual regression risk
+DECISION=NEEDS_RUNTIME
+
+COMPONENT=F4 temporal layers
+ACTIVE=Production
+RESPONSIBILITY=accepted/display/late-latch/channel-specific presentation
+DUPLICATE_OWNER=not generally proven; Q10 disables duplicate FaceMotion prediction
+DECISION=KEEP; individual channel overlap NEEDS_RUNTIME
+
+COMPONENT=F5 provider transition double ownership
+ACTIVE=current source
+EVIDENCE=Hub owns switch; FaceMotion legacy bridge is no-op under canonical handoff; Resume is
+distinct from Provider Switch
+DECISION=KEEP; historical defect hypothesis REJECTED for current source
+
+===============================================================================
+11. Optimization Candidate Matrix
+===============================================================================
+
+1) Retire v30 diagnostic family
+   HOT_PATH=not default active; compiled diagnostic surface
+   BENEFIT=fewer types/resources/scripts/validators and no new mechanism
+   RISK=low with SHA archive
+   DECISION=IMPLEMENTED
+
+2) Remove/merge output AsyncGPUReadback
+   HOT_PATH=yes
+   BENEFIT=potentially fewer CPU/GPU transitions
+   RISK=CPU Decode currently requires values; replacement would be boundary rearchitecture
+   DECISION=REJECT NOW
+
+3) Reduce inference lanes or Native bounded slots
+   BENEFIT=fewer buffers
+   RISK=backpressure, freshness, lifetime regression; no clean benchmark proof
+   DECISION=REJECT NOW
+
+4) Add Fence/Wait/flush or disable async
+   BENEFIT=hypothetical correctness isolation
+   COST=sync/latency and possible masking of fault
+   DECISION=REJECT WITHOUT EXACT BOUNDARY EVIDENCE
+
+5) Merge F1/F3/F4 owners
+   BENEFIT=fewer semantic/temporal/rotation owners if duplication is real
+   RISK=Runtime/visual behavior unknown
+   DECISION=NEEDS_RUNTIME, NO CHANGE
+
+6) Remove reflection/telemetry hooks after E2 closure
+   BENEFIT=smaller compiled diagnostic framework
+   RISK=loses reproduction before exact claim closure
+   DECISION=DEFER; simplify by removing superseded versions first
+
+OPTIMIZATION_DECISION=NO_PRODUCTION_HOT_PATH_OPTIMIZATION_JUSTIFIED
+
+===============================================================================
+12. Stage1A/B + v31 E2 Reassessment
+===============================================================================
+
+STAGE1A INFERENCE/TRANSACTION CRITICAL PATH
+
+The installed 2.4.1 source confirms:
+
+- Direct TextureConverter and external CommandBuffer forms differ in command ownership/execution.
+- Worker scheduling is nonblocking.
+- PeekOutput is borrowed until next schedule/iterable/dispose.
+- AsyncGPUReadback is a common observation dependency after output production.
+- Current normal lane blocks reuse logically until completed CPU clone, but static exception/
+  early-return gaps remain candidates.
+- CPU sidecars carry host ticks/generations; GPU tensor resources are not self-describing.
+
+STAGE1B WHOLE SYSTEM
+
+F1=STATIC_CONDITION + NEEDS_RUNTIME
+F2=STATIC_CONDITION + NEEDS_RUNTIME
+F3=STATIC_CONDITION + NEEDS_RUNTIME
+F4=STATIC_CONDITION; largely channel-separated; KEEP/NEEDS_RUNTIME
+F5=REJECTED for current source
+
+v31 E2 RECOMPUTATION
+
+Frozen ZIP was independently recomputed without rewriting raw evidence:
+
+CONTROL Actual NEITHER=88/88
+PROBE Actual NEITHER=84/84
+PROBE producer snapshot NEITHER=84/84
+PROBE snapshot equals Actual=84/84
+Pair identity/presence gates=PASS
+Collector/validator process exit=0
+
+An earlier minimumPresence failure was a validator lexical representation defect: decimal JSON
+was compared with X8 CSV text. The corrected validator compares typed canonical bits. Synthetic
+suite=17/17 PASS. Same frozen ZIP then validates as E2 without altering evidence bytes.
+
+v24 CONTROL anomalous=10 versus PROBE anomalous=31 remains relevant evidence of either
+perturbation, path difference, or an unresolved common dependency. It is not ignored and is not
+promoted to E5.
+
+V31_E2_ASSESSMENT=
+E2_DIVERGENCE_PRESENT_BY_PRODUCER_TAIL_OR_COMMON_OBSERVATION_PATH;
+VALID_FOR_E2_AT_COARSE_OUTPUT_OBSERVATION_ENDPOINT_ONLY
+
+Not established: exact faulty method, transition, queue owner, producer-tail versus common
+observation, Fence location/necessity, Wait/flush necessity, async-disable validity, performance,
+or visual/product impact.
+
+===============================================================================
+13. Final Architecture / Diagnostic Decision
+===============================================================================
+
+CURRENT_ARCHITECTURE_ASSESSMENT=WORKING_CORE_NECESSARY_SUFFICIENT_AT_CURRENT_EVIDENCE_SCOPE
+DELETE_DECISION=DELETE_SUPERSEDED_V30_FROM_ACTIVE_PATH_ONLY
+FINAL_DECISION=DELETE_ONLY
+DIAGNOSTIC_DIRECTION=SIMPLIFY_DIAGNOSTIC_FRAMEWORK
+
+WHY_CHANGE_IS_BETTER_THAN_NO_CHANGE=
+
+v30 has no active unique consumer and v31 contains its responsibility plus required lifecycle and
+correlation corrections. Keeping both expands compiled code, shader resources, editor/build
+entrypoints, PowerShell scripts, validators, and future ambiguity without preserving a unique
+claim. Removing v30 from active paths therefore strictly reduces responsibility and bug surface,
+while protected Production SHA remains unchanged and compile/static gates pass.
+
+No Production boundary rearchitecture is justified. E2 does not prove a Production correction,
+and F1-F4 lack Runtime incidence. Big-bang rewrite is rejected.
+
+NEXT_DIAGNOSTIC_REQUIRED=NO_NOT_BEFORE_PRODUCT_IMPACT_RECONFIRMATION
+
+===============================================================================
+14. Changes + Deleted Responsibilities
+===============================================================================
+
+Only v30 active diagnostic responsibility was retired.
+
+Moved, preserving relative paths and SHA, from active Assets/Tools into:
+D:\KiwiAvatarSystem\KiwiValidation\RetiredDiagnostics\v44_55_30
+
+Files=15
+Bytes=75,544
+Active Assets matches for v44_55_30/v44.55.30 after move=0
+Archive count/size/SHA equality=15/15 PASS
+
+Retired contents:
+
+- Assets\KiwiAvatarSystem\Editor\KiwiBuildV44_55_30.cs (+meta)
+- Assets\KiwiAvatarSystem\Editor\KiwiSnapshotCopyTestV44_55_30.cs (+meta)
+- Assets\KiwiAvatarSystem\Resources\KiwiProducerTailSnapshotV44_55_30.compute (+meta)
+- Assets\KiwiAvatarSystem\Runtime\Validation\KiwiAsyncProducerTailSnapshotV44_55_30.cs (+meta)
+- Tools\KiwiV44_55_30\Build-KiwiV44_55_30.ps1
+- Tools\KiwiV44_55_30\README.txt
+- Tools\KiwiV44_55_30\Run-KiwiV44_55_30.ps1
+- Tools\KiwiV44_55_30\Test-Validator.ps1
+- Tools\KiwiV44_55_30\V30.Common.psm1
+- Tools\KiwiV44_55_30\Validate-Runtime.ps1
+- Tools\KiwiV44_55_30\Validate-Static.ps1
+
+Representative archive hashes:
+
+KiwiAsyncProducerTailSnapshotV44_55_30.cs
+  9F8A555AA54042E96C6DF3CF463A73A1797405DC01E70A0036FFB0DFAA2D41D9
+KiwiProducerTailSnapshotV44_55_30.compute
+  BF3DA80BD223F059F39160FEBDF673CEEA3BBF9C399D281F095EB175794BB812
+KiwiBuildV44_55_30.cs
+  3AD6F22C8C57A602EBE87742E2A4BB0DF5A2C48E330A710E3C591FE4F711E838
+KiwiSnapshotCopyTestV44_55_30.cs
+  F7439DD74133162B2903D64E26FE3D3177CA0BA5B8A0C08D277BE7F6B39BAC92
+
+Recovery=move these exact archived files back to their recorded relative paths. Permanent delete
+was not used, so recovery remains byte-preserving. v30/v31 raw Runtime evidence, reports, and
+build identities were not removed or rewritten.
+
+PRODUCTION_BEHAVIOR_CHANGED=NO
+NEW OWNER/STATE/BUFFER/QUEUE/COPY=NONE
+COMMIT/PUSH=NOT PERFORMED
+
+===============================================================================
+15. Before / After Complexity
+===============================================================================
+
+Metric                                      Before              After
+Active v30 files                            15                  0
+Active v30 bytes                            75,544              0
+Reversible evidence copies                  existing active     15 SHA-preserved archive files
+Compiled v30 type-name token                present pre-move    0 in Assembly-CSharp.dll
+Compiled v31 type-name token                present             7 occurrences after compile
+Production source files changed             0                   0
+Production owners/states/buffers/queues      unchanged           unchanged
+New wrappers/validators                      0                   0
+
+The complexity reduction is diagnostic-only. It does not claim a measured Production latency,
+allocation, GPU, or visual improvement.
+
+===============================================================================
+16. Static / Compile / Build / Runtime Status
+===============================================================================
+
+STATIC_STATUS=PASS_FOR_V30_RETIREMENT
+
+- active v30 references: 0
+- archive 15/15 size+SHA equality: PASS
+- protected source/DLL/evidence SHA: unchanged
+- existing Tools\KiwiV44_55_31\Validate-Static.ps1 under Windows PowerShell 5.1: PASS
+  protected=3; sourceEditReconstruction=3; sourceIdentities=290; observer lifecycle bounded and
+  nonblocking checks PASS
+
+COMPILE_STATUS=PASS
+
+Unity=6000.0.80f1
+Log=KiwiValidation\KiwiFundamentalAudit_v30Retirement_UnityCompile_20260906.log
+Log bytes=31,899
+Log SHA256=654C617ACEE3CD67B85BE543B254AB0F04AF9BD9329CC1D83170F006415982EC
+Process exit=0
+Tundra build success=observed
+error CS count=0
+Warnings=present, pre-existing/deprecation class; not attributed to v30 retirement
+Assembly-CSharp.dll SHA256 after compile=0C64E2CD...
+
+BUILD_STATUS=NOT_RERUN
+
+Reason: the existing v31 target is intentionally build-once and correlated to frozen evidence.
+Rebuilding it would overwrite/change provenance or require a new harness. Removing an inactive,
+superseded diagnostic was compile-validated; no Production build claim is made.
+
+RUNTIME_STATUS=NOT_RERUN_EXISTING_V31_EVIDENCE_ONLY
+
+Reason: Production source and behavior were not changed. A new observer-heavy run would not be
+performance authority and would not by itself close exact E2 cause. No RUNTIME_PASS is claimed.
+
+DX12 shader status=v30 shader removed from active Resources; current Production shaders unchanged.
+Write-target audit=only stated retirement archive, Unity-generated compile artifacts/log, report.
+
+===============================================================================
+17. Performance / Visual Authority
+===============================================================================
+
+PERFORMANCE_AUTHORITY=UNAVAILABLE_NOT_MEASURED
+VISUAL_AUTHORITY=UNAVAILABLE_NOT_OBSERVED
+
+No clean Production benchmark was executed. No latency/FPS/GPU/CPU/allocation improvement is
+claimed. Observer-heavy v31 evidence is explicitly not performance authority.
+
+No same-build human visual review was executed. LIVE CAMERA accepted 560x315/16:9/Bilinear path
+was not changed. No visual PASS and no visual regression claim is made.
+
+===============================================================================
+18. Rejected Changes / Deliberately Unchanged
+===============================================================================
+
+REJECTED:
+
+- Fence, blocking Wait, queue flush, or async-disable as a guessed v31 fix.
+- Changing tracking math, ROI, thresholds, smoothing, prediction, Root/Head, camera/display cadence,
+  texture transaction, Native camera, Native DLL, Inference package, LIVE CAMERA, or Spout.
+- FIFO, stale queue/cache, permanent frame delay, queue growth, arbitrary debounce, Kalman,
+  threshold relaxation, rotating texture identity, UpdateExternalTexture, IMFSample retention,
+  D3D11On12 1080p, and external tracker replacement.
+- Deleting v20/v24/v25/v27/v31 piecemeal while v31 remains the accepted evidence chain.
+- Merging F1/F3/F4 based on Static code alone.
+- Big-bang rewrite or architecture wrapper addition.
+- Inferring private WMC/commercial implementation.
+- Resetting/cleaning user-owned dirty files.
+
+DELIBERATELY UNCHANGED:
+
+FaceLandmarkerRunner, KiwiInferenceFaceTracker, KiwiFaceMotion, Native Path B, FacePart transaction,
+Provider/Resume behavior, avatar binding, presentation, Spout, package versions, active scene,
+v31 raw evidence, existing reports/build identity, and global AGENTS.md.
+
+===============================================================================
+19. Remaining Unknown
+===============================================================================
+
+1) Exact v31 E2 faulty method or statement.
+2) Exact resource state transition and execution/queue ownership at failure.
+3) Whether divergence originates in producer tail or common AsyncGPUReadback/observation path.
+4) Whether any fence is necessary; if so, the narrow location and nonblocking alternative.
+5) Whether v31 NEITHER manifests in accepted Canonical/avatar/product output.
+6) Clean Production performance and resource cost.
+7) Same-build visual acceptance/regression.
+8) Runtime incidence and product impact of F1, F2, F3, and per-channel F4 overlap.
+9) Cause/significance of v24 CONTROL10 versus PROBE31.
+10) Private commercial tool internals and VNyan documentation details.
+11) Final desired scope/location for a condensed project AGENTS map+hard-rails replacement.
+
+Unknown does not equal failure and does not equal PASS. None justifies a Production modification.
+
+===============================================================================
+20. Next Single Action
+===============================================================================
+
+NEXT_SINGLE_ACTION=RUN_ONE_CLEAN_SAME_BUILD_PRODUCT_IMPACT_AND_VISUAL_RECONFIRMATION_WITH_ALL_
+V20_V24_V25_V27_V31_COLLECTION_DISABLED
+
+Purpose: establish whether the coarse v31 E2 observation corresponds to a current user-visible or
+Canonical-semantic product defect before authorizing another diagnostic or any Production fix.
+
+Acceptance design:
+
+- Same Production SHA/build identity must be recorded before and after.
+- All diagnostic collection environment gates must be explicitly off.
+- Correlate Native frame identity -> Face Landmarker result -> Canonical frame -> avatar/FacePart
+  commit -> presentation, without reusing v31's output payload observation as the sole oracle.
+- Record startup/completion/process exit and preserve raw evidence.
+- Visual review must be human and same-build; performance is separately measured only in clean
+  Production mode.
+- If no product impact is reproduced, stop expanding E2 diagnostics and retain only the minimal
+  v31 reproducibility set. If impact is reproduced, design one lower-boundary diagnostic; do not
+  add Fence/Wait/flush/async-disable before that boundary is closed.
+
+This action is specified, not executed, because this audit did not have a newly authorized visual
+session and must not fabricate Runtime/Visual authority.
+
+===============================================================================
+21. Self-Audit
+===============================================================================
+
+- Did the audit defend or redesign current code by default? NO.
+- Was Static promoted to Runtime? NO; F1-F4 and lifetime gaps remain Static/Needs Runtime.
+- Was v31 coarse E2 promoted to exact root cause? NO.
+- Was v24 anomaly ignored? NO; retained as unresolved, not mislabeled E5.
+- Were observer/validator assumptions audited? YES; the lexical bit validator defect was found,
+  corrected outside raw evidence, synthetic-tested, and frozen evidence recomputed.
+- Were closed commercial internals inferred? NO.
+- Were important Kiwi rails deleted? NO.
+- Were state/owner/buffer/queue merely moved to a wrapper? NO new wrapper was added.
+- Was a validator added instead of complexity removed? NO; v30 validator/tool family was retired.
+- Was NO_CHANGE avoided just to make a change? NO; v30 deletion has a unique, source-proven
+  benefit and low rollback risk. No Production change was manufactured.
+- Was the archive falsely called permanent deletion? NO; active-path deletion and recoverability
+  are explicit.
+- Were dirty user files reset/cleaned or attributed to this task? NO.
+- Were commit/push performed? NO.
+- Was a build/runtime/performance/visual PASS fabricated? NO.
+- Is further investigation likely to change the present DELETE_ONLY decision? Not without the
+  next product-impact evidence. Therefore this audit stops here.
+
+-------------------------------------------------------------------------------
+FINAL STATUS BLOCK
+-------------------------------------------------------------------------------
+
+MODEL_EXECUTION_MODE=GPT_5_6_SOL_HIGH
+AUDIT_STATUS=COMPLETE_DELETE_ONLY_WITH_EXPLICIT_RUNTIME_UNKNOWN
+PVNCHER_SOURCE_ACCESS=DIRECT_UNAVAILABLE
+PROJECTS_SKILL_AUDIT_STATUS=NOT_APPLICABLE_EXACT_PATH_ABSENT
+AGENTS_AUDIT_STATUS=COMPLETE_NO_INSTRUCTION_EDIT
+AGENT_INSTRUCTION_DELETE_DECISION=DEFER_UNTIL_PROJECT_SCOPED_RAILS_EXIST
+CURRENT_ARCHITECTURE_ASSESSMENT=WORKING_CORE_NECESSARY_SUFFICIENT_AT_CURRENT_EVIDENCE_SCOPE
+DELETE_DECISION=V30_ACTIVE_DIAGNOSTIC_FAMILY_RETIRED_REVERSIBLY
+OPTIMIZATION_DECISION=NO_PRODUCTION_HOT_PATH_OPTIMIZATION_JUSTIFIED
+V31_E2_ASSESSMENT=COARSE_ENDPOINT_E2_CONFIRMED_EXACT_CAUSE_UNPROVED
+NEXT_DIAGNOSTIC_REQUIRED=NO_NOT_BEFORE_PRODUCT_IMPACT_RECONFIRMATION
+DIAGNOSTIC_DIRECTION=SIMPLIFY_DIAGNOSTIC_FRAMEWORK
+PRODUCTION_BEHAVIOR_CHANGED=NO
+STATIC_STATUS=PASS_FOR_V30_RETIREMENT
+COMPILE_STATUS=PASS_UNITY_6000_0_80F1_EXIT_0_ERROR_CS_0
+BUILD_STATUS=NOT_RERUN_EXISTING_V31_BUILD_PROVENANCE_PRESERVED
+RUNTIME_STATUS=NOT_RERUN_EXISTING_FROZEN_V31_EVIDENCE_ONLY
+PERFORMANCE_AUTHORITY=UNAVAILABLE
+VISUAL_AUTHORITY=UNAVAILABLE
+EXTERNAL_REUSE_DECISION=SELECTIVE_EVIDENCE_GATED_NO_PRIMARY_REPLACEMENT
+NEXT_SINGLE_ACTION=CLEAN_SAME_BUILD_PRODUCT_IMPACT_AND_VISUAL_RECONFIRMATION_DIAGNOSTICS_OFF
+COMMIT_PUSH=NO

@@ -1,0 +1,1982 @@
+[
+  {
+    "Path": "C:\\Users\\main\\.codex\\skills\\.system\\skill-installer\\SKILL.md",
+    "Before": "2892D8B2FB11631132118F340AED80AE17E59D5A571FC2C4F4A4A7E73F139D52",
+    "After": "2892D8B2FB11631132118F340AED80AE17E59D5A571FC2C4F4A4A7E73F139D52",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\skills\\.system\\plugin-creator\\SKILL.md",
+    "Before": "9DBA03C079ABFBC680E8FCA146069F054C1B0C5E9BCB5E5A9EFFCF86A95F67C6",
+    "After": "9DBA03C079ABFBC680E8FCA146069F054C1B0C5E9BCB5E5A9EFFCF86A95F67C6",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\skills\\.system\\imagegen\\SKILL.md",
+    "Before": "706D4D96E1D5C9E6023FE3CCABBA1BB34B364024D344FD25B8515EC7D28FE3C4",
+    "After": "706D4D96E1D5C9E6023FE3CCABBA1BB34B364024D344FD25B8515EC7D28FE3C4",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\skills\\.system\\skill-creator\\SKILL.md",
+    "Before": "CCCD291077EC57C6F50CA6529F0F3FB93212DA09473EFFB2FCEC808E81B21288",
+    "After": "CCCD291077EC57C6F50CA6529F0F3FB93212DA09473EFFB2FCEC808E81B21288",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\skills\\.system\\openai-docs\\SKILL.md",
+    "Before": "4371FCC6652D78309CCF5E7710A4FD22314AD7F1F4928A6C172DDAE80C87CC87",
+    "After": "4371FCC6652D78309CCF5E7710A4FD22314AD7F1F4928A6C172DDAE80C87CC87",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\skills\\.system\\review-agent\\SKILL.md",
+    "Before": "BB46315F6BC4B7051C05F807D19B1689B20418AC6C42590406D805C10FA2FD1A",
+    "After": "BB46315F6BC4B7051C05F807D19B1689B20418AC6C42590406D805C10FA2FD1A",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\template-creator\\26.904.11930\\skills\\template-creator\\SKILL.md",
+    "Before": "244BFEF01D3E17C6013952CCF34621A90DDFEE9C7828058245C3C46F51114944",
+    "After": "244BFEF01D3E17C6013952CCF34621A90DDFEE9C7828058245C3C46F51114944",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated\\slack\\11c74d6b\\skills\\slack-daily-digest\\SKILL.md",
+    "Before": "48309FBBB5938296611B85281B43031CDD231325BCA805FB715D1950CDBDEF16",
+    "After": "48309FBBB5938296611B85281B43031CDD231325BCA805FB715D1950CDBDEF16",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated\\slack\\11c74d6b\\skills\\slack-notification-triage\\SKILL.md",
+    "Before": "6A4DFF3C4C3E743DE44EDAEAE40510D1FAF4461651D226E68D16286CB7DBC9B9",
+    "After": "6A4DFF3C4C3E743DE44EDAEAE40510D1FAF4461651D226E68D16286CB7DBC9B9",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated\\slack\\11c74d6b\\skills\\slack-reply-drafting\\SKILL.md",
+    "Before": "990F6F118D890521022EDEF5BCAD954CC4B0E983CA14DCCDB621E86144B92734",
+    "After": "990F6F118D890521022EDEF5BCAD954CC4B0E983CA14DCCDB621E86144B92734",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\pdf\\26.904.11930\\skills\\pdf\\SKILL.md",
+    "Before": "9E429BFC5ADA20CCF25A531484E3DCC5DA59811D936A7CC5DFD23DBF2DFADD31",
+    "After": "9E429BFC5ADA20CCF25A531484E3DCC5DA59811D936A7CC5DFD23DBF2DFADD31",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated\\google-calendar\\11c74d6b\\skills\\google-calendar-meeting-prep\\SKILL.md",
+    "Before": "4BB79DC0240A565A6A0B08D0F689E2EF06AC1D74A238DA6B1BCB9144DE8BD26C",
+    "After": "4BB79DC0240A565A6A0B08D0F689E2EF06AC1D74A238DA6B1BCB9144DE8BD26C",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\visualize\\1.0.29\\skills\\visualize\\SKILL.md",
+    "Before": "25F8B5C2C882F26C65DED05D0485984FCBC07C13F0363ABFC3B3A9704D997008",
+    "After": "25F8B5C2C882F26C65DED05D0485984FCBC07C13F0363ABFC3B3A9704D997008",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated\\slack\\11c74d6b\\skills\\slack\\SKILL.md",
+    "Before": "EA2BA119D90B56B6C4893616C3FA0FBE5CBEECE3DE0E3377EE73AD27C0D97197",
+    "After": "EA2BA119D90B56B6C4893616C3FA0FBE5CBEECE3DE0E3377EE73AD27C0D97197",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\SKILL.md",
+    "Before": "B2477F39319682CF156C8FAA36EAC9F039AAEA03A5F09AE72111C76910AE4E75",
+    "After": "B2477F39319682CF156C8FAA36EAC9F039AAEA03A5F09AE72111C76910AE4E75",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated\\slack\\11c74d6b\\skills\\slack-outgoing-message\\SKILL.md",
+    "Before": "EE4BA4E26BB5BA0DB5C868FFEF4C0A3E3D8F3033100A8BAAE2792C1ECBEE9CA4",
+    "After": "EE4BA4E26BB5BA0DB5C868FFEF4C0A3E3D8F3033100A8BAAE2792C1ECBEE9CA4",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated\\google-calendar\\11c74d6b\\skills\\google-calendar-group-scheduler\\SKILL.md",
+    "Before": "70028029DD059CEFEF0B2C32E82A821E876C543F3FB4BF921DB5A21B15FA485D",
+    "After": "70028029DD059CEFEF0B2C32E82A821E876C543F3FB4BF921DB5A21B15FA485D",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\computer-use\\26.901.41600\\skills\\computer-use\\SKILL.md",
+    "Before": "8211E4B11A19A0DC4F0ACE91096C74C5B36037CA4CB2C8988F0F535BB209E951",
+    "After": "8211E4B11A19A0DC4F0ACE91096C74C5B36037CA4CB2C8988F0F535BB209E951",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated\\slack\\11c74d6b\\skills\\slack-channel-summarization\\SKILL.md",
+    "Before": "22C850678F86FA51C81777E4BB8113837EC6A72850CFFEE549747DF386DDBFF2",
+    "After": "22C850678F86FA51C81777E4BB8113837EC6A72850CFFEE549747DF386DDBFF2",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated\\google-calendar\\11c74d6b\\skills\\google-calendar-free-up-time\\SKILL.md",
+    "Before": "A4F42210C8E951D285D7E13C8A98988093E4D3740735941C8CAE40F1ACE58E13",
+    "After": "A4F42210C8E951D285D7E13C8A98988093E4D3740735941C8CAE40F1ACE58E13",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated\\google-calendar\\11c74d6b\\skills\\google-calendar\\SKILL.md",
+    "Before": "E8626B2DDCAD251176D96A64971670C1CF172C8067B36C56CCFDACC1BC307143",
+    "After": "E8626B2DDCAD251176D96A64971670C1CF172C8067B36C56CCFDACC1BC307143",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\sites\\0.1.57\\skills\\sites-hosting\\SKILL.md",
+    "Before": "3DFB59FA4F08DC5E5CACA99C5E2BF7182851990B3F6197996EEF87B7A55CBFD7",
+    "After": "3DFB59FA4F08DC5E5CACA99C5E2BF7182851990B3F6197996EEF87B7A55CBFD7",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated\\google-calendar\\11c74d6b\\skills\\google-calendar-daily-brief\\SKILL.md",
+    "Before": "683B87CA5024404FD82DB7F0A12574A36708FE24AFA046CF8D4466A5846CBCDD",
+    "After": "683B87CA5024404FD82DB7F0A12574A36708FE24AFA046CF8D4466A5846CBCDD",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\plugin-management\\0.1.0\\skills\\plugin-management\\SKILL.md",
+    "Before": "653841CC21205269F08B0CE135891E1518DAC616A766BCFB0B57D788D3F68B10",
+    "After": "653841CC21205269F08B0CE135891E1518DAC616A766BCFB0B57D788D3F68B10",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\sites\\0.1.57\\skills\\sites-building\\SKILL.md",
+    "Before": "F036A18BE47D3012CA8993C82EED2350CB8920FFACD4576C99849846952EA880",
+    "After": "F036A18BE47D3012CA8993C82EED2350CB8920FFACD4576C99849846952EA880",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\SKILL.md",
+    "Before": "9FCC13C3CC34746B134D4ECF4A3C96C9F464D59944FCC99862B2E69AC953F19E",
+    "After": "9FCC13C3CC34746B134D4ECF4A3C96C9F464D59944FCC99862B2E69AC953F19E",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\excel-live-control\\SKILL.md",
+    "Before": "3E87AE705DDF2F5110F7C2DE11BC3827DDB26984BBC159D4858EBB69D8DEE7FA",
+    "After": "3E87AE705DDF2F5110F7C2DE11BC3827DDB26984BBC159D4858EBB69D8DEE7FA",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\deep-research-work\\0.1.14\\skills\\deep-research\\SKILL.md",
+    "Before": "C7B924A736D715BF90941C5E75460B3387EC90B1FDB3A7C79D3E9BFB10427DC6",
+    "After": "C7B924A736D715BF90941C5E75460B3387EC90B1FDB3A7C79D3E9BFB10427DC6",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\openai-templates\\0.1.1\\skills\\artifact-template-operating-calendar\\SKILL.md",
+    "Before": "33BB660791A0B9A21628A42C34934932220203B6AABD84E98CB1B45327D0384C",
+    "After": "33BB660791A0B9A21628A42C34934932220203B6AABD84E98CB1B45327D0384C",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-slides\\SKILL.md",
+    "Before": "FD14974D7C4EA9FF134BCC21CD32B2B1D61EEAA77C6DC757075B07EEF6BEDBDB",
+    "After": "FD14974D7C4EA9FF134BCC21CD32B2B1D61EEAA77C6DC757075B07EEF6BEDBDB",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\openai-templates\\0.1.1\\skills\\artifact-template-three-statement-forecast\\SKILL.md",
+    "Before": "74F4A5CCCEC0107B861548B157E04C51D9B58EC13A990C86394B4C529B8ECF41",
+    "After": "74F4A5CCCEC0107B861548B157E04C51D9B58EC13A990C86394B4C529B8ECF41",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-docs\\SKILL.md",
+    "Before": "8E5C26053D800E2980B74AB82C2CE95DB94A17FBB443F8F6E30BAEB442F1D464",
+    "After": "8E5C26053D800E2980B74AB82C2CE95DB94A17FBB443F8F6E30BAEB442F1D464",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-drive\\SKILL.md",
+    "Before": "DABAE8A192C861B76CF7B5742BDF14F8ED35E67D8E6CACFD5F746FFBEFD6DA5C",
+    "After": "DABAE8A192C861B76CF7B5742BDF14F8ED35E67D8E6CACFD5F746FFBEFD6DA5C",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-sheets\\SKILL.md",
+    "Before": "54D160C27532E4FF610E9C5A7870FB80DC496B2D1D3F302996C21C505419C862",
+    "After": "54D160C27532E4FF610E9C5A7870FB80DC496B2D1D3F302996C21C505419C862",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\SKILL.md",
+    "Before": "B1A05947DD5A98D40C7E9BEEE2596A09A9FF475D2B1138E6E3A8D60B04EF1823",
+    "After": "B1A05947DD5A98D40C7E9BEEE2596A09A9FF475D2B1138E6E3A8D60B04EF1823",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\openai-templates\\0.1.1\\skills\\artifact-template-minimal-letterhead\\SKILL.md",
+    "Before": "880EF094D4D0C89A7BDE5CE9BBE4086625C186651E9E6EFC8BA8BDD7CC77F9D5",
+    "After": "880EF094D4D0C89A7BDE5CE9BBE4086625C186651E9E6EFC8BA8BDD7CC77F9D5",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\openai-templates\\0.1.1\\skills\\artifact-template-team-alignment\\SKILL.md",
+    "Before": "26D7CAFDCD1899A937B325C5D02AC57C162D45002153BE33A934D35F81EB6110",
+    "After": "26D7CAFDCD1899A937B325C5D02AC57C162D45002153BE33A934D35F81EB6110",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-drive-comments\\SKILL.md",
+    "Before": "A3077375A8F7558B9E052C98047747B8A4A1A90A9A90B552009C28FCDADFE94A",
+    "After": "A3077375A8F7558B9E052C98047747B8A4A1A90A9A90B552009C28FCDADFE94A",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\openai-templates\\0.1.1\\skills\\artifact-template-experiment-analysis\\SKILL.md",
+    "Before": "0B05EFFC47DF0A14F8E0C3E3597E6722224747435546385D38A2CAE279BD20B9",
+    "After": "0B05EFFC47DF0A14F8E0C3E3597E6722224747435546385D38A2CAE279BD20B9",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\openai-templates\\0.1.1\\skills\\artifact-template-business-review\\SKILL.md",
+    "Before": "27721FC1D67D1B41949CAA75AC8F94F81952FF124406878AF6524047929E60D2",
+    "After": "27721FC1D67D1B41949CAA75AC8F94F81952FF124406878AF6524047929E60D2",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\openai-templates\\0.1.1\\skills\\artifact-template-design-report\\SKILL.md",
+    "Before": "563722F53854E606F8A9F87E37E72D7EF70A22D46D5836B8E4D6ABFB1B79E9E0",
+    "After": "563722F53854E606F8A9F87E37E72D7EF70A22D46D5836B8E4D6ABFB1B79E9E0",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\openai-templates\\0.1.1\\skills\\artifact-template-analytics-dashboard\\SKILL.md",
+    "Before": "CF5360FD8B197673BB237C52C603C97FA319C875C3DFA2CD8EFFF52D4422F513",
+    "After": "CF5360FD8B197673BB237C52C603C97FA319C875C3DFA2CD8EFFF52D4422F513",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\openai-templates\\0.1.1\\skills\\artifact-template-investment-committee-memo\\SKILL.md",
+    "Before": "68ABD08CFE5E073E3C446A3F675F44C5BF98F57434DBA679E8ACD8A763379A8B",
+    "After": "68ABD08CFE5E073E3C446A3F675F44C5BF98F57434DBA679E8ACD8A763379A8B",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\openai-templates\\0.1.1\\skills\\artifact-template-system-design\\SKILL.md",
+    "Before": "87F7B7ED1B0D8410F5E5971CD7F7DB9A4165E2F37069E97E52DBFB469B75A57C",
+    "After": "87F7B7ED1B0D8410F5E5971CD7F7DB9A4165E2F37069E97E52DBFB469B75A57C",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\openai-templates\\0.1.1\\skills\\artifact-template-financial-budget\\SKILL.md",
+    "Before": "C0B6B7A62A15597AAF2B1EC679E21DA48F533B756127F0AEF957CDFE9F3DA738",
+    "After": "C0B6B7A62A15597AAF2B1EC679E21DA48F533B756127F0AEF957CDFE9F3DA738",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\openai-templates\\0.1.1\\skills\\artifact-template-market-trends-report\\SKILL.md",
+    "Before": "D58D019B89CB6F292AC3AB991D561489EEF477FF53CE05FB024A0C936F5AF26A",
+    "After": "D58D019B89CB6F292AC3AB991D561489EEF477FF53CE05FB024A0C936F5AF26A",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\openai-templates\\0.1.1\\skills\\artifact-template-legal-memorandum\\SKILL.md",
+    "Before": "51FB9D21BAF6119C4CCB1903638A6BAC0E859210DE63460FFFA7025D52E997E0",
+    "After": "51FB9D21BAF6119C4CCB1903638A6BAC0E859210DE63460FFFA7025D52E997E0",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\openai-templates\\0.1.1\\skills\\artifact-template-project-kickoff\\SKILL.md",
+    "Before": "AA893EBD89E7C8D1DB4261D01CC2B1ADD35D78D00785871CCAAA5FC8DB783EC9",
+    "After": "AA893EBD89E7C8D1DB4261D01CC2B1ADD35D78D00785871CCAAA5FC8DB783EC9",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\openai-templates\\0.1.1\\skills\\artifact-template-sales-pipeline\\SKILL.md",
+    "Before": "15CFEEEDF440021F16ED3F3AD8C7C1EF6D48898B9447741E223D2FB41CFC9800",
+    "After": "15CFEEEDF440021F16ED3F3AD8C7C1EF6D48898B9447741E223D2FB41CFC9800",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\openai-templates\\0.1.1\\skills\\artifact-template-project-tracker\\SKILL.md",
+    "Before": "D97D5BE20189B7F53DD269B6E1C5F694EAF53E5A72F6559FCB1578911B7CDA82",
+    "After": "D97D5BE20189B7F53DD269B6E1C5F694EAF53E5A72F6559FCB1578911B7CDA82",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\openai-templates\\0.1.1\\skills\\artifact-template-operating-review\\SKILL.md",
+    "Before": "6D63C5CD025FFE936E7BAB5DB3023672BBAEC26AF55C2BB8B057D38C202C9C32",
+    "After": "6D63C5CD025FFE936E7BAB5DB3023672BBAEC26AF55C2BB8B057D38C202C9C32",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\openai-templates\\0.1.1\\skills\\artifact-template-strategy-memorandum\\SKILL.md",
+    "Before": "51D7882AC94E8E57B323394825728C33925AF878806E37277217C2DC12A912E5",
+    "After": "51D7882AC94E8E57B323394825728C33925AF878806E37277217C2DC12A912E5",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\openai-templates\\0.1.1\\skills\\artifact-template-simple-dark-mode\\SKILL.md",
+    "Before": "B7C8D0C05F75878B9BC21E56A57C41EC1AA29700ACA0A24822BE0F9F1BD53207",
+    "After": "B7C8D0C05F75878B9BC21E56A57C41EC1AA29700ACA0A24822BE0F9F1BD53207",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\openai-templates\\0.1.1\\skills\\artifact-template-simple-light-mode\\SKILL.md",
+    "Before": "7C68430C6CF57B55B457D4735DBD1A46B889BEF135A32222902DD0848B6E1752",
+    "After": "7C68430C6CF57B55B457D4735DBD1A46B889BEF135A32222902DD0848B6E1752",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\pdf\\skills\\pdf\\SKILL.md",
+    "Before": "9E429BFC5ADA20CCF25A531484E3DCC5DA59811D936A7CC5DFD23DBF2DFADD31",
+    "After": "9E429BFC5ADA20CCF25A531484E3DCC5DA59811D936A7CC5DFD23DBF2DFADD31",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\template-creator\\skills\\template-creator\\SKILL.md",
+    "Before": "244BFEF01D3E17C6013952CCF34621A90DDFEE9C7828058245C3C46F51114944",
+    "After": "244BFEF01D3E17C6013952CCF34621A90DDFEE9C7828058245C3C46F51114944",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\SKILL.md",
+    "Before": "B2477F39319682CF156C8FAA36EAC9F039AAEA03A5F09AE72111C76910AE4E75",
+    "After": "B2477F39319682CF156C8FAA36EAC9F039AAEA03A5F09AE72111C76910AE4E75",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\SKILL.md",
+    "Before": "9FCC13C3CC34746B134D4ECF4A3C96C9F464D59944FCC99862B2E69AC953F19E",
+    "After": "9FCC13C3CC34746B134D4ECF4A3C96C9F464D59944FCC99862B2E69AC953F19E",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\SKILL.md",
+    "Before": "B1A05947DD5A98D40C7E9BEEE2596A09A9FF475D2B1138E6E3A8D60B04EF1823",
+    "After": "B1A05947DD5A98D40C7E9BEEE2596A09A9FF475D2B1138E6E3A8D60B04EF1823",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\excel-live-control\\SKILL.md",
+    "Before": "3E87AE705DDF2F5110F7C2DE11BC3827DDB26984BBC159D4858EBB69D8DEE7FA",
+    "After": "3E87AE705DDF2F5110F7C2DE11BC3827DDB26984BBC159D4858EBB69D8DEE7FA",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\chrome\\skills\\control-chrome\\SKILL.md",
+    "Before": "CDB6DA4F346033427AA8544CFDE60DEB5444F48B1DF0ACDC1E62B3F9970F08A6",
+    "After": "CDB6DA4F346033427AA8544CFDE60DEB5444F48B1DF0ACDC1E62B3F9970F08A6",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\sites\\skills\\sites-hosting\\SKILL.md",
+    "Before": "3DFB59FA4F08DC5E5CACA99C5E2BF7182851990B3F6197996EEF87B7A55CBFD7",
+    "After": "3DFB59FA4F08DC5E5CACA99C5E2BF7182851990B3F6197996EEF87B7A55CBFD7",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\visualize\\skills\\visualize\\SKILL.md",
+    "Before": "25F8B5C2C882F26C65DED05D0485984FCBC07C13F0363ABFC3B3A9704D997008",
+    "After": "25F8B5C2C882F26C65DED05D0485984FCBC07C13F0363ABFC3B3A9704D997008",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\browser\\skills\\control-in-app-browser\\SKILL.md",
+    "Before": "B115AC6D7EB3E74D3A8650105851A2C4C8DBA72F268E34F71300DA7EB28C448E",
+    "After": "B115AC6D7EB3E74D3A8650105851A2C4C8DBA72F268E34F71300DA7EB28C448E",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\latex\\skills\\texlive-runtime-installer\\SKILL.md",
+    "Before": "82E904DF125642FC2272E1105D74450D6E9CF74E5945B73DACE56BAB0986B7D0",
+    "After": "82E904DF125642FC2272E1105D74450D6E9CF74E5945B73DACE56BAB0986B7D0",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\sites\\skills\\sites-building\\SKILL.md",
+    "Before": "F036A18BE47D3012CA8993C82EED2350CB8920FFACD4576C99849846952EA880",
+    "After": "F036A18BE47D3012CA8993C82EED2350CB8920FFACD4576C99849846952EA880",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\latex\\skills\\latex-doctor\\SKILL.md",
+    "Before": "F9146D54A36E4FE3262E7A6368C289DA985B64D63BD36D6B662D92AF87C6E8A6",
+    "After": "F9146D54A36E4FE3262E7A6368C289DA985B64D63BD36D6B662D92AF87C6E8A6",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\latex\\skills\\latex-compile\\SKILL.md",
+    "Before": "BF5E3837BD494EDDA28D512F653CB5097687AA12D061EA3C16115B56F5B9D1A1",
+    "After": "BF5E3837BD494EDDA28D512F653CB5097687AA12D061EA3C16115B56F5B9D1A1",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\computer-use\\skills\\computer-use\\SKILL.md",
+    "Before": "8211E4B11A19A0DC4F0ACE91096C74C5B36037CA4CB2C8988F0F535BB209E951",
+    "After": "8211E4B11A19A0DC4F0ACE91096C74C5B36037CA4CB2C8988F0F535BB209E951",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\AGENTS.md",
+    "Before": "4AA78D0A366C9BB8145C4FC257A5B1BE2196FB2CC396385F3C25DEC3872D2DC6",
+    "After": "4AA78D0A366C9BB8145C4FC257A5B1BE2196FB2CC396385F3C25DEC3872D2DC6",
+    "Equal": true
+  },
+  {
+    "Path": "D:\\KiwiAvatarSystem\\Tools\\KlakSpout_v206_diag\\AGENTS.md",
+    "Before": "4A4C9C1D42B6FA430B2C5446BE7FF9D5BBAAE9A043243032F278FF68D2967450",
+    "After": "4A4C9C1D42B6FA430B2C5446BE7FF9D5BBAAE9A043243032F278FF68D2967450",
+    "Equal": true
+  },
+  {
+    "Path": "D:\\KiwiAvatarSystem\\KiwiValidation\\ExternalSourceAudit_v44_55_25\\sources\\KlakSpout_2.0.6\\AGENTS.md",
+    "Before": "4A4C9C1D42B6FA430B2C5446BE7FF9D5BBAAE9A043243032F278FF68D2967450",
+    "After": "4A4C9C1D42B6FA430B2C5446BE7FF9D5BBAAE9A043243032F278FF68D2967450",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\skills\\.system\\plugin-creator\\references\\installing-and-updating.md",
+    "Before": "476850A165CD63F8F3DEF5968B302C77E3CD5250AF4DF2DEC1575A2EB4B51467",
+    "After": "476850A165CD63F8F3DEF5968B302C77E3CD5250AF4DF2DEC1575A2EB4B51467",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\skills\\.system\\plugin-creator\\references\\plugin-json-spec.md",
+    "Before": "254F18EB2CF9390C0B85F0B885DB3B1FACF90E060257CDE70B6E55E21797382E",
+    "After": "254F18EB2CF9390C0B85F0B885DB3B1FACF90E060257CDE70B6E55E21797382E",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\skills\\.system\\imagegen\\references\\prompting.md",
+    "Before": "D957A45CB24FE2CF1A85858674FC533F15A5F4621355F559A13A93168999C2DD",
+    "After": "D957A45CB24FE2CF1A85858674FC533F15A5F4621355F559A13A93168999C2DD",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\skills\\.system\\imagegen\\references\\sample-prompts.md",
+    "Before": "76CC8A2988EFB6E844A99FF9908B2B11CC07467510FC909002ABCC0EE3F0701B",
+    "After": "76CC8A2988EFB6E844A99FF9908B2B11CC07467510FC909002ABCC0EE3F0701B",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\skills\\.system\\imagegen\\references\\cli.md",
+    "Before": "29DC8C1E3E5D9A20AEE587FEDB46A464552B6EC118D93BBD90C8D86E30502C8C",
+    "After": "29DC8C1E3E5D9A20AEE587FEDB46A464552B6EC118D93BBD90C8D86E30502C8C",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\skills\\.system\\imagegen\\references\\image-api.md",
+    "Before": "695909437B792AFF171477DBA127476A11235C220BEB06533CCE7C1495A042C8",
+    "After": "695909437B792AFF171477DBA127476A11235C220BEB06533CCE7C1495A042C8",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\skills\\.system\\imagegen\\references\\codex-network.md",
+    "Before": "CBA3B4D24D30F38ADF8021B6E9B49EC5261A9E45E7DF31047EC451C916C99B0A",
+    "After": "CBA3B4D24D30F38ADF8021B6E9B49EC5261A9E45E7DF31047EC451C916C99B0A",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\skills\\.system\\skill-creator\\references\\openai_yaml.md",
+    "Before": "7039D465B05342CBACF861F08D20192AB1EEEE112BC5D8FF0FB66234756887A9",
+    "After": "7039D465B05342CBACF861F08D20192AB1EEEE112BC5D8FF0FB66234756887A9",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\skills\\.system\\openai-docs\\references\\mcp-diagnostics.md",
+    "Before": "E9DF2B2F8FAA28930DB4A2937CDB3665B4548AC958E80A8601A5DD0DA1E6FAD0",
+    "After": "E9DF2B2F8FAA28930DB4A2937CDB3665B4548AC958E80A8601A5DD0DA1E6FAD0",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\skills\\.system\\openai-docs\\references\\model-migration.md",
+    "Before": "C3CC7848BF52E9ED2F03CB3A1466BD0406D7965B7782452B7D946376084FC91D",
+    "After": "C3CC7848BF52E9ED2F03CB3A1466BD0406D7965B7782452B7D946376084FC91D",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\skills\\.system\\openai-docs\\references\\model-selection.md",
+    "Before": "CE020100A28004500C927ABCD57CFF154C5C360EB72D918EF7D72492E2484CCE",
+    "After": "CE020100A28004500C927ABCD57CFF154C5C360EB72D918EF7D72492E2484CCE",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\skills\\.system\\openai-docs\\references\\official-docs.md",
+    "Before": "B2301D72B8092BE5F5727D8D1CBC75740887D836F4F13B469F40C1DB16B39FE3",
+    "After": "B2301D72B8092BE5F5727D8D1CBC75740887D836F4F13B469F40C1DB16B39FE3",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\skills\\.system\\openai-docs\\references\\codex-self-knowledge.md",
+    "Before": "F945BF2A7CEA6892D7A11AC38FB18B744FEFD6D273654A8410C4C79E9F647FBE",
+    "After": "F945BF2A7CEA6892D7A11AC38FB18B744FEFD6D273654A8410C4C79E9F647FBE",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\skills\\.system\\openai-docs\\references\\latest-model.md",
+    "Before": "8BE54126EE4DEEC66D8257AE191AE0ECBD2C1022B2A47C6E959B11AE34AA5C97",
+    "After": "8BE54126EE4DEEC66D8257AE191AE0ECBD2C1022B2A47C6E959B11AE34AA5C97",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\skills\\.system\\openai-docs\\references\\upgrading-to-gpt-5p6-sol.md",
+    "Before": "1F77377C26C5754A0BFEAAD72C9AC16FFCF25684AA51E220987A0A873AAB9CA0",
+    "After": "1F77377C26C5754A0BFEAAD72C9AC16FFCF25684AA51E220987A0A873AAB9CA0",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\skills\\.system\\openai-docs\\references\\prompting-guide.md",
+    "Before": "31743BE488F243B3FA59F8B73E4AAF6C2359E224AC642F93F9719A931ACF16D5",
+    "After": "31743BE488F243B3FA59F8B73E4AAF6C2359E224AC642F93F9719A931ACF16D5",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\visualize\\1.0.29\\skills\\visualize\\tweak.md",
+    "Before": "D5685421B1455F4C1B0CFB8C438E200C9C23C6574CFC47805F3FB4D00875BB41",
+    "After": "D5685421B1455F4C1B0CFB8C438E200C9C23C6574CFC47805F3FB4D00875BB41",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated\\slack\\11c74d6b\\skills\\slack\\references\\markdown.md",
+    "Before": "70957CAC4DAB14A3E01B5FCE54C1B4F9F3D32E7ADE77EB1D430586B23DC464E0",
+    "After": "70957CAC4DAB14A3E01B5FCE54C1B4F9F3D32E7ADE77EB1D430586B23DC464E0",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\routing\\google_sheets.md",
+    "Before": "187712AD3479CE82F0333D0843CB18DE929F4DC8EBA44A08923F2CEE787B39C1",
+    "After": "187712AD3479CE82F0333D0843CB18DE929F4DC8EBA44A08923F2CEE787B39C1",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\workflows\\edit_workflows.md",
+    "Before": "49411841A43A8F81E2D85AC4C39CEB87221952045A6CF5F092FE09088AB133F6",
+    "After": "49411841A43A8F81E2D85AC4C39CEB87221952045A6CF5F092FE09088AB133F6",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\workflows\\create_workflows.md",
+    "Before": "5BEE6BB1A58E9CE34212865948A8537B7689EAE5FD308F175EDABCD299F0FD5E",
+    "After": "5BEE6BB1A58E9CE34212865948A8537B7689EAE5FD308F175EDABCD299F0FD5E",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\artifact_tool_docs\\API_QUICK_START.md",
+    "Before": "5F930088FBE66A138F7674444D09FF3C92DA62A38060860272FBF3C3730B0F3F",
+    "After": "5F930088FBE66A138F7674444D09FF3C92DA62A38060860272FBF3C3730B0F3F",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\style_guidelines.md",
+    "Before": "E9337C2A0E41F8FE9DE5AB3AF326EAABC0227D543ED0799C37F8FD796DD30D5E",
+    "After": "E9337C2A0E41F8FE9DE5AB3AF326EAABC0227D543ED0799C37F8FD796DD30D5E",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\references\\template-elicitation.md",
+    "Before": "9B1E7A631A5A08ABABE54209E3F01EF4FF11C3443789805AD263382AC46B32DF",
+    "After": "9B1E7A631A5A08ABABE54209E3F01EF4FF11C3443789805AD263382AC46B32DF",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\references\\image-references.md",
+    "Before": "7FE546860468950ED80F428C79EEA269383AA30F421B957546666EE15161E6B8",
+    "After": "7FE546860468950ED80F428C79EEA269383AA30F421B957546666EE15161E6B8",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\references\\read_only_qna.md",
+    "Before": "A4E4C6AB94A78D84D0475707B111F8A5B884FB8F5E3B2F6EE14BAA25D4BD2027",
+    "After": "A4E4C6AB94A78D84D0475707B111F8A5B884FB8F5E3B2F6EE14BAA25D4BD2027",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\features\\charts.md",
+    "Before": "A28352630824AA742F8B60387E2254C0AA6845A249F870A2DDC4E57978396B40",
+    "After": "A28352630824AA742F8B60387E2254C0AA6845A249F870A2DDC4E57978396B40",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\domain_guidance\\financial_models.md",
+    "Before": "7C48D3499627E4B33D5AF4E8BBBFB1B2434A2D899A8B31D0B007A3169A4F62A9",
+    "After": "7C48D3499627E4B33D5AF4E8BBBFB1B2434A2D899A8B31D0B007A3169A4F62A9",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\domain_guidance\\corporate_finance_fpa.md",
+    "Before": "458B75190A3C5F62AFF70A6A55450973314DFAF49A2D9D7811F0F7F252FACA03",
+    "After": "458B75190A3C5F62AFF70A6A55450973314DFAF49A2D9D7811F0F7F252FACA03",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\domain_guidance\\healthcare.md",
+    "Before": "BA5F11DCC852332CB01035CBA03A3322B3B53DBACC1DEC11637D410CE9B0705D",
+    "After": "BA5F11DCC852332CB01035CBA03A3322B3B53DBACC1DEC11637D410CE9B0705D",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\domain_guidance\\marketing_advertising.md",
+    "Before": "0F1DB7DF7DEFEC1E775AFD155829B991F4F0B3A7900D1ADF96739ED553E48F99",
+    "After": "0F1DB7DF7DEFEC1E775AFD155829B991F4F0B3A7900D1ADF96739ED553E48F99",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\spreadsheets\\domain_guidance\\scientific_research.md",
+    "Before": "CB22357995B80675B23DF0BE42AA8BA3DB77726ECFE6FB3CE6304E94F096BBF1",
+    "After": "CB22357995B80675B23DF0BE42AA8BA3DB77726ECFE6FB3CE6304E94F096BBF1",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\computer-use\\26.901.41600\\docs\\guidance.md",
+    "Before": "B171B26BC19F49226BB594BF3ED3F36666E5DD063A996C297986B2B461AC8EFD",
+    "After": "B171B26BC19F49226BB594BF3ED3F36666E5DD063A996C297986B2B461AC8EFD",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\computer-use\\26.901.41600\\docs\\api.md",
+    "Before": "C36D005FB98ED79837A1A5D4605EBAD036CEC95864E5646F451425163D5C16AF",
+    "After": "C36D005FB98ED79837A1A5D4605EBAD036CEC95864E5646F451425163D5C16AF",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\computer-use\\26.901.41600\\docs\\confirmations.md",
+    "Before": "9C45B3EB20E4A7FB14860E50F635E200B321A52FEF6D26F39F7B936BD44BE11A",
+    "After": "9C45B3EB20E4A7FB14860E50F635E200B321A52FEF6D26F39F7B936BD44BE11A",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\sites\\0.1.57\\skills\\sites-hosting\\references\\environment.md",
+    "Before": "0FC8F43A9833A19BDAC5D34F79FC1CB4797A14E8FE039C46968BED838FF20DF1",
+    "After": "0FC8F43A9833A19BDAC5D34F79FC1CB4797A14E8FE039C46968BED838FF20DF1",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\sites\\0.1.57\\skills\\sites-building\\references\\environment.md",
+    "Before": "9E6D4B2A73E707EE33A2D8BF200726DBF320ADDA8EF0BE165E92468208654A88",
+    "After": "9E6D4B2A73E707EE33A2D8BF200726DBF320ADDA8EF0BE165E92468208654A88",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\sites\\0.1.57\\skills\\sites-building\\references\\library-selection.md",
+    "Before": "DFB92E7819F88F8C66EA67D68B407431A447C39AF4A23CF9E9A12D21760AA65C",
+    "After": "DFB92E7819F88F8C66EA67D68B407431A447C39AF4A23CF9E9A12D21760AA65C",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\sites\\0.1.57\\skills\\sites-building\\references\\webmcp.md",
+    "Before": "9A2AA8F5095C982FB0125A9DC2E5CE07D55612260EDF2CCA46E39646D3FC4AF8",
+    "After": "9A2AA8F5095C982FB0125A9DC2E5CE07D55612260EDF2CCA46E39646D3FC4AF8",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\sites\\0.1.57\\skills\\sites-building\\references\\persistence-and-storage.md",
+    "Before": "D996CB6DAD9BB0115E58F3022930E797FFB5FFEF67D61CAC9334E1471186384E",
+    "After": "D996CB6DAD9BB0115E58F3022930E797FFB5FFEF67D61CAC9334E1471186384E",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\sites\\0.1.57\\skills\\sites-building\\references\\sqlite.md",
+    "Before": "5CEA25C7007B9A31A8BAC2DDDA60EB4C78749EF826E3836FBD420CFCE0AEB35E",
+    "After": "5CEA25C7007B9A31A8BAC2DDDA60EB4C78749EF826E3836FBD420CFCE0AEB35E",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-bundled\\sites\\0.1.57\\skills\\sites-building\\references\\authentication.md",
+    "Before": "D2C254A7510810F33FD80BE166237AFDFB6E48C2093CB8390818BC6B52391A42",
+    "After": "D2C254A7510810F33FD80BE166237AFDFB6E48C2093CB8390818BC6B52391A42",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\writing_quality.md",
+    "Before": "F3B37E02E3A2B4890F036AE9F279C2F3CE673B9B2C2D0DD893B998B028261129",
+    "After": "F3B37E02E3A2B4890F036AE9F279C2F3CE673B9B2C2D0DD893B998B028261129",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\template-distill.md",
+    "Before": "DD01E59B5FFC7FB28F43FD4BD0EEB02A7D0E881F7D24780D195E6B3F6FC1F658",
+    "After": "DD01E59B5FFC7FB28F43FD4BD0EEB02A7D0E881F7D24780D195E6B3F6FC1F658",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\template-create.md",
+    "Before": "F02DF8F6FA8F764DE7A9B0ED4DCD38AE3560DF364EDD259B127BF53C3F496DD3",
+    "After": "F02DF8F6FA8F764DE7A9B0ED4DCD38AE3560DF364EDD259B127BF53C3F496DD3",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\read_review.md",
+    "Before": "ED1BCE5450E03011225DBD2974F307CD5DEC6FA48BDE0A071E4907FD06F6BB16",
+    "After": "ED1BCE5450E03011225DBD2974F307CD5DEC6FA48BDE0A071E4907FD06F6BB16",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\create_edit.md",
+    "Before": "A842B20C8709F8BC19526DE246E9F8722B4304D30C7A3D9FB7B111FDD6F8EC65",
+    "After": "A842B20C8709F8BC19526DE246E9F8722B4304D30C7A3D9FB7B111FDD6F8EC65",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\verify_render.md",
+    "Before": "E94DB9FEFDA34EEFB65EA527467D8307EB0E834DCA2705B04D027A426EBC9D9B",
+    "After": "E94DB9FEFDA34EEFB65EA527467D8307EB0E834DCA2705B04D027A426EBC9D9B",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\accessibility_a11y.md",
+    "Before": "951DCA7BA7E520792776A636C22E512A9A3C53699C6DA80C5C3E47B0690C1374",
+    "After": "951DCA7BA7E520792776A636C22E512A9A3C53699C6DA80C5C3E47B0690C1374",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\comments_manage.md",
+    "Before": "2EC577FCA8EF24D2EE3DF9BBD3268EDA9CA54A84169499C2FBB293D08A3BBBE0",
+    "After": "2EC577FCA8EF24D2EE3DF9BBD3268EDA9CA54A84169499C2FBB293D08A3BBBE0",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\protection_restrict_editing.md",
+    "Before": "97024DCC16AF3B3666A2D1FC7AE8199F18D881EA62CDB367BD4D37AD0E9E8F53",
+    "After": "97024DCC16AF3B3666A2D1FC7AE8199F18D881EA62CDB367BD4D37AD0E9E8F53",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\privacy_scrub_metadata.md",
+    "Before": "6A1360D873BCADE5DD2989F5406EA1C415DBCB52DA25CC6C3580DA3126880B93",
+    "After": "6A1360D873BCADE5DD2989F5406EA1C415DBCB52DA25CC6C3580DA3126880B93",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\multi_doc_merge.md",
+    "Before": "9706902B4F91FD8E9AF87297A8A66E2767C512A357511CA3AE9BCC56F1A4CD35",
+    "After": "9706902B4F91FD8E9AF87297A8A66E2767C512A357511CA3AE9BCC56F1A4CD35",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\style_lint_normalize.md",
+    "Before": "993BB9C5129DC6CCB63D28B95F4E3BC5F716EEE9FD6A6C75C106031ED42B12E8",
+    "After": "993BB9C5129DC6CCB63D28B95F4E3BC5F716EEE9FD6A6C75C106031ED42B12E8",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\forms_content_controls.md",
+    "Before": "D09C066658B0FD8CDA6FC51413D57F37DFC12D6828799F52A6137CBA20568EC7",
+    "After": "D09C066658B0FD8CDA6FC51413D57F37DFC12D6828799F52A6137CBA20568EC7",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\captions_crossrefs.md",
+    "Before": "20A50A2663B2D020D8A7E1BD3A31AE60A45BA41E40B437C9ADA4E958987C421F",
+    "After": "20A50A2663B2D020D8A7E1BD3A31AE60A45BA41E40B437C9ADA4E958987C421F",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\redaction_anonymization.md",
+    "Before": "DF3B89D5BACC8405E73F4EC16056A78DC655C6D181086A1B37464038CAE2BD02",
+    "After": "DF3B89D5BACC8405E73F4EC16056A78DC655C6D181086A1B37464038CAE2BD02",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\clean_tracked_changes.md",
+    "Before": "6BD628BCE5A571B73B59993A474BAE039A7EA2E63E85F1292996688E1E2FA446",
+    "After": "6BD628BCE5A571B73B59993A474BAE039A7EA2E63E85F1292996688E1E2FA446",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\compare_diff.md",
+    "Before": "E06551FBFADD651AA761BA497C04C98449150DDD61AE1221F0EC6F9947FE30A9",
+    "After": "E06551FBFADD651AA761BA497C04C98449150DDD61AE1221F0EC6F9947FE30A9",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\templates_style_packs.md",
+    "Before": "A75DB63FCDFD135BAB27B164FE7747ADDA75C63501E6300D7EB5D56B9FC6A580",
+    "After": "A75DB63FCDFD135BAB27B164FE7747ADDA75C63501E6300D7EB5D56B9FC6A580",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\watermarks_background.md",
+    "Before": "9F87E23D4B5E54EDB1560367E231BB3C0A6EF88193C600AF8842D8537DCB9757",
+    "After": "9F87E23D4B5E54EDB1560367E231BB3C0A6EF88193C600AF8842D8537DCB9757",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\footnotes_endnotes.md",
+    "Before": "6E8BD0A290FC5261E85C2DFCFCDE483C685A0CACD00B24950F1FADAD8B7B7072",
+    "After": "6E8BD0A290FC5261E85C2DFCFCDE483C685A0CACD00B24950F1FADAD8B7B7072",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\fixtures_edge_cases.md",
+    "Before": "41718F5B067990CA5E32F4065BB24EC152B3E9EC110FAD6E81E81CC08AF48CEF",
+    "After": "41718F5B067990CA5E32F4065BB24EC152B3E9EC110FAD6E81E81CC08AF48CEF",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\navigation_internal_links.md",
+    "Before": "33EE4FA5C4E051A0216728A43F92D4DE8319169080834B008C48A837BC5ACDBD",
+    "After": "33EE4FA5C4E051A0216728A43F92D4DE8319169080834B008C48A837BC5ACDBD",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\ooxml\\tracked_changes.md",
+    "Before": "9293157ADE79498DB26FDB79B3D7835896F4F87EBB73C28EDDC6A5E48AAE47F3",
+    "After": "9293157ADE79498DB26FDB79B3D7835896F4F87EBB73C28EDDC6A5E48AAE47F3",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\ooxml\\comments.md",
+    "Before": "AA8004A76499C36A4046041EAFF8966FD3EC43FAB3A48E1B158E95534EC61557",
+    "After": "AA8004A76499C36A4046041EAFF8966FD3EC43FAB3A48E1B158E95534EC61557",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\ooxml\\hyperlinks_and_fields.md",
+    "Before": "88B8615AABD48727086208D981958DC1D74A4432B81060707D97C3DED9D7764C",
+    "After": "88B8615AABD48727086208D981958DC1D74A4432B81060707D97C3DED9D7764C",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\ooxml\\rels_and_content_types.md",
+    "Before": "D64FE64DC3DAA56F4C90BAA9098F94F6FCF52E5D4CE041AB548392E06C9691C2",
+    "After": "D64FE64DC3DAA56F4C90BAA9098F94F6FCF52E5D4CE041AB548392E06C9691C2",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\troubleshooting\\libreoffice_headless.md",
+    "Before": "929B2B124CE2E65B3DE17565A8AAD2FF9D569F38AE648EC7CA0E3BED87041AE8",
+    "After": "929B2B124CE2E65B3DE17565A8AAD2FF9D569F38AE648EC7CA0E3BED87041AE8",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\troubleshooting\\run_splitting.md",
+    "Before": "37DF942902847797E8060308121D3DB10273F71FD9DAC748E0157E3C29624B85",
+    "After": "37DF942902847797E8060308121D3DB10273F71FD9DAC748E0157E3C29624B85",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\examples\\end_to_end_smoke_test.md",
+    "Before": "2ABD9BDEC48F2DCB905BF950423E021B61CA8169F56BCFF58B4B3131663AEC50",
+    "After": "2ABD9BDEC48F2DCB905BF950423E021B61CA8169F56BCFF58B4B3131663AEC50",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\sections_layout.md",
+    "Before": "3B36B7F96EE095C66D4E3D24681B0B9CD1B6B82B1B3B5491AEB748545C89F5CF",
+    "After": "3B36B7F96EE095C66D4E3D24681B0B9CD1B6B82B1B3B5491AEB748545C89F5CF",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\headings_numbering.md",
+    "Before": "36BBF196FECAC25E2E8C1239356FA2AF6994A8939048EB7B59F14D2C5BC1999C",
+    "After": "36BBF196FECAC25E2E8C1239356FA2AF6994A8939048EB7B59F14D2C5BC1999C",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\images_figures.md",
+    "Before": "482E14799B7021A9C191B320C60E492AB58F6F36A16187586C7F5BFF38C85B45",
+    "After": "482E14799B7021A9C191B320C60E492AB58F6F36A16187586C7F5BFF38C85B45",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\tables_spreadsheets.md",
+    "Before": "EEB08BC4D64DB98679A5648A041F7786DCA160F35C0909A10B7963E1AF3F88DB",
+    "After": "EEB08BC4D64DB98679A5648A041F7786DCA160F35C0909A10B7963E1AF3F88DB",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\fields_update.md",
+    "Before": "1EA14774B8E39B37884187E98059E0829E6BC9E0DB502B26D4AEA38AB68A4148",
+    "After": "1EA14774B8E39B37884187E98059E0829E6BC9E0DB502B26D4AEA38AB68A4148",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\documents\\26.904.11930\\skills\\documents\\tasks\\toc_workflow.md",
+    "Before": "AE2C36431D7BA8F7BE1FAD51C5AF79831F4E38441060CA5FB0058247A54E9AB9",
+    "After": "AE2C36431D7BA8F7BE1FAD51C5AF79831F4E38441060CA5FB0058247A54E9AB9",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\excel-live-control\\features\\charts.md",
+    "Before": "A28352630824AA742F8B60387E2254C0AA6845A249F870A2DDC4E57978396B40",
+    "After": "A28352630824AA742F8B60387E2254C0AA6845A249F870A2DDC4E57978396B40",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\excel-live-control\\style_guidelines.md",
+    "Before": "E9337C2A0E41F8FE9DE5AB3AF326EAABC0227D543ED0799C37F8FD796DD30D5E",
+    "After": "E9337C2A0E41F8FE9DE5AB3AF326EAABC0227D543ED0799C37F8FD796DD30D5E",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\excel-live-control\\officejs.md",
+    "Before": "CB3D4292191D6A6ADFC5251B88EA5A62AAB75BB5C9C863FC1ED546B881045955",
+    "After": "CB3D4292191D6A6ADFC5251B88EA5A62AAB75BB5C9C863FC1ED546B881045955",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\excel-live-control\\workflows\\edit_workflows.md",
+    "Before": "49411841A43A8F81E2D85AC4C39CEB87221952045A6CF5F092FE09088AB133F6",
+    "After": "49411841A43A8F81E2D85AC4C39CEB87221952045A6CF5F092FE09088AB133F6",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\excel-live-control\\workflows\\create_workflows.md",
+    "Before": "5BEE6BB1A58E9CE34212865948A8537B7689EAE5FD308F175EDABCD299F0FD5E",
+    "After": "5BEE6BB1A58E9CE34212865948A8537B7689EAE5FD308F175EDABCD299F0FD5E",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\excel-live-control\\references\\image-references.md",
+    "Before": "7FE546860468950ED80F428C79EEA269383AA30F421B957546666EE15161E6B8",
+    "After": "7FE546860468950ED80F428C79EEA269383AA30F421B957546666EE15161E6B8",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\excel-live-control\\references\\read_only_qna.md",
+    "Before": "A4E4C6AB94A78D84D0475707B111F8A5B884FB8F5E3B2F6EE14BAA25D4BD2027",
+    "After": "A4E4C6AB94A78D84D0475707B111F8A5B884FB8F5E3B2F6EE14BAA25D4BD2027",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\excel-live-control\\domain_guidance\\financial_models.md",
+    "Before": "7C48D3499627E4B33D5AF4E8BBBFB1B2434A2D899A8B31D0B007A3169A4F62A9",
+    "After": "7C48D3499627E4B33D5AF4E8BBBFB1B2434A2D899A8B31D0B007A3169A4F62A9",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\excel-live-control\\domain_guidance\\corporate_finance_fpa.md",
+    "Before": "458B75190A3C5F62AFF70A6A55450973314DFAF49A2D9D7811F0F7F252FACA03",
+    "After": "458B75190A3C5F62AFF70A6A55450973314DFAF49A2D9D7811F0F7F252FACA03",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\excel-live-control\\domain_guidance\\healthcare.md",
+    "Before": "BA5F11DCC852332CB01035CBA03A3322B3B53DBACC1DEC11637D410CE9B0705D",
+    "After": "BA5F11DCC852332CB01035CBA03A3322B3B53DBACC1DEC11637D410CE9B0705D",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\excel-live-control\\domain_guidance\\marketing_advertising.md",
+    "Before": "0F1DB7DF7DEFEC1E775AFD155829B991F4F0B3A7900D1ADF96739ED553E48F99",
+    "After": "0F1DB7DF7DEFEC1E775AFD155829B991F4F0B3A7900D1ADF96739ED553E48F99",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\spreadsheets\\26.904.11930\\skills\\excel-live-control\\domain_guidance\\scientific_research.md",
+    "Before": "CB22357995B80675B23DF0BE42AA8BA3DB77726ECFE6FB3CE6304E94F096BBF1",
+    "After": "CB22357995B80675B23DF0BE42AA8BA3DB77726ECFE6FB3CE6304E94F096BBF1",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-docs\\references\\reference-template-preservation-and-edit-scope.md",
+    "Before": "87552B6699DB28A47A2FEF5C00BF4D26A99FA7676D6F1DFDD9799653F4605C66",
+    "After": "87552B6699DB28A47A2FEF5C00BF4D26A99FA7676D6F1DFDD9799653F4605C66",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-docs\\references\\reference-native-create-direct.md",
+    "Before": "458F26FFC83CD168C2E38FD3216D47DCF817018596D69E7AF80BA37EFC7C4068",
+    "After": "458F26FFC83CD168C2E38FD3216D47DCF817018596D69E7AF80BA37EFC7C4068",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-docs\\references\\reference-import-docx-to-native-docs.md",
+    "Before": "75D396905976CBC38C162317D29AD76B4E1CA88A0695B993002BEAF9A0553274",
+    "After": "75D396905976CBC38C162317D29AD76B4E1CA88A0695B993002BEAF9A0553274",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-docs\\references\\reference-trusted-read-wrapper.md",
+    "Before": "5908DA48D2B09619C3741F11BCCA35BA061EE48055FCC2349FFD423059939C6B",
+    "After": "5908DA48D2B09619C3741F11BCCA35BA061EE48055FCC2349FFD423059939C6B",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-docs\\references\\reference-dropdown-code-mode.md",
+    "Before": "A5CEB032E30D966A62C34A7EE0A00F96AE2F3243E6FD11EB281794DFAA1C0397",
+    "After": "A5CEB032E30D966A62C34A7EE0A00F96AE2F3243E6FD11EB281794DFAA1C0397",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-docs\\references\\reference-citations-and-hyperlinks.md",
+    "Before": "176945BEC5F7B5875E3D096ED2A71947B4FC51779B65CB6018337E813C25B6AF",
+    "After": "176945BEC5F7B5875E3D096ED2A71947B4FC51779B65CB6018337E813C25B6AF",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-docs\\references\\reference-smart-chips-and-building-blocks.md",
+    "Before": "FB8E3D1FDE87432B15010B37FA9E79C954C49BCD2ACD597121EF242F425447D8",
+    "After": "FB8E3D1FDE87432B15010B37FA9E79C954C49BCD2ACD597121EF242F425447D8",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-docs\\references\\reference-direct-request-composition.md",
+    "Before": "F4A5B9FE0BE81930C982F9FA28D6CB6ED0C421D116CDD42DA52F3586A339D2F8",
+    "After": "F4A5B9FE0BE81930C982F9FA28D6CB6ED0C421D116CDD42DA52F3586A339D2F8",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-docs\\references\\reference-meeting-notes-direct.md",
+    "Before": "AAFB77DF09868005862EA81AF6734C8A6E28D25C92DEBA77FE524B3F0B656384",
+    "After": "AAFB77DF09868005862EA81AF6734C8A6E28D25C92DEBA77FE524B3F0B656384",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-docs\\references\\reference-connector-runtime-and-safety.md",
+    "Before": "C77AB1262BE6F74EDC6C521A5079DE422566C9CE4D776957EA04E820C30D414A",
+    "After": "C77AB1262BE6F74EDC6C521A5079DE422566C9CE4D776957EA04E820C30D414A",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-docs\\references\\reference-foreground-guard.md",
+    "Before": "29311EDE3744C97DB5CA87EC36B991A12E785DDE84D8DBDCBDC9B983CF9D614C",
+    "After": "29311EDE3744C97DB5CA87EC36B991A12E785DDE84D8DBDCBDC9B983CF9D614C",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-docs\\references\\reference-request-shapes-and-write-safety.md",
+    "Before": "F31053A6BDB33FA43AA718785C9EE7BFE33CD3BDD647EF8007BC4DA75C53B712",
+    "After": "F31053A6BDB33FA43AA718785C9EE7BFE33CD3BDD647EF8007BC4DA75C53B712",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-docs\\references\\reference-response-and-list-format.md",
+    "Before": "D3696EA316BD2CF90EC32060A1F5F00F26D2420AACB91B91654D0552BF2CD723",
+    "After": "D3696EA316BD2CF90EC32060A1F5F00F26D2420AACB91B91654D0552BF2CD723",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-docs\\references\\reference-table-formatting-deep-dive.md",
+    "Before": "E810853AD7310704B3BA47EC2AD82E90091247CCC0EDC41C67F2A2C9530D24BE",
+    "After": "E810853AD7310704B3BA47EC2AD82E90091247CCC0EDC41C67F2A2C9530D24BE",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-docs\\references\\reference-section-completeness-and-final-pass.md",
+    "Before": "9629E4E744E51B355D9F3EA738D66831B9C4DE2B690CA621EF0EE118C6F6BCFC",
+    "After": "9629E4E744E51B355D9F3EA738D66831B9C4DE2B690CA621EF0EE118C6F6BCFC",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-docs\\references\\reference-pdf-export-visual-qa.md",
+    "Before": "29BF6C64E1CD15AD0EA16D7D20297E0EED9D522575E5B3CF5D4A7F1FE507144C",
+    "After": "29BF6C64E1CD15AD0EA16D7D20297E0EED9D522575E5B3CF5D4A7F1FE507144C",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-docs\\references\\reference-headings-and-question-format.md",
+    "Before": "970F1CA6C30E7DB8CBB7AFB74E7515AD79A12DFC5FC5ACD18AD673DCA8941AB7",
+    "After": "970F1CA6C30E7DB8CBB7AFB74E7515AD79A12DFC5FC5ACD18AD673DCA8941AB7",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-docs\\references\\reference-figures-and-image-insertion.md",
+    "Before": "079525400CA9A709DC78CA32EDBEC73CA50C1AA1858AC62082FDBD7FD1F4C3FC",
+    "After": "079525400CA9A709DC78CA32EDBEC73CA50C1AA1858AC62082FDBD7FD1F4C3FC",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-sheets\\references\\style-profiles.md",
+    "Before": "A3AFA692E57BB2BCD91AA3EA540147FC0789CE576215D587B2EE55DF30E32C65",
+    "After": "A3AFA692E57BB2BCD91AA3EA540147FC0789CE576215D587B2EE55DF30E32C65",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-sheets\\references\\reference-visual-quality.md",
+    "Before": "869601926708D005D8A9CE7E2EBAC859BD31D54D42150B0B8D6F1F2D01B93129",
+    "After": "869601926708D005D8A9CE7E2EBAC859BD31D54D42150B0B8D6F1F2D01B93129",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-sheets\\references\\reference-edit-workflow.md",
+    "Before": "66C6845A16547D65AC3EAF2AE8B7762FB534F2ACFB5700716827B21CFF9B149A",
+    "After": "66C6845A16547D65AC3EAF2AE8B7762FB534F2ACFB5700716827B21CFF9B149A",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-sheets\\references\\reference-live-read-search-safety.md",
+    "Before": "BD13045E10FD7F8CB5389512EAD5DC3482AA04BA328CD95DA87A9A09D0B3C981",
+    "After": "BD13045E10FD7F8CB5389512EAD5DC3482AA04BA328CD95DA87A9A09D0B3C981",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-sheets\\references\\reference-native-cell-structure.md",
+    "Before": "989E30E41EC064712B45966DD88AEA8613631653FA981559038D4E0549338E47",
+    "After": "989E30E41EC064712B45966DD88AEA8613631653FA981559038D4E0549338E47",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-sheets\\references\\reference-batch-update-recipes.md",
+    "Before": "18E645B4F05F4F399CEFF0C2EE62501A38609709B087E7140457EEF2C60C8E9E",
+    "After": "18E645B4F05F4F399CEFF0C2EE62501A38609709B087E7140457EEF2C60C8E9E",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-sheets\\references\\reference-import-spreadsheet-to-native-sheets.md",
+    "Before": "8CBE578B2FA55F1276B16C4BCC343928D9AFD3DFC6934E6A02FE9CB4A35C61ED",
+    "After": "8CBE578B2FA55F1276B16C4BCC343928D9AFD3DFC6934E6A02FE9CB4A35C61ED",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-sheets\\references\\reference-formula-patterns.md",
+    "Before": "749791A220C1E1AB18F99C0F0BE56DE106E9E4701D28B82385B673C8F9D1CC56",
+    "After": "749791A220C1E1AB18F99C0F0BE56DE106E9E4701D28B82385B673C8F9D1CC56",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-curated-remote\\google-drive\\0.1.16\\skills\\google-sheets\\references\\reference-chart-recipes.md",
+    "Before": "F8428DB55E2CDDEE66BF1BF7CED1CBEFF75B06893F1477BF175AF56BB2026EAC",
+    "After": "F8428DB55E2CDDEE66BF1BF7CED1CBEFF75B06893F1477BF175AF56BB2026EAC",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\references\\template_following.md",
+    "Before": "16CE4367C3029497BB441C850C577DBFB8DE767CB450D52D8C0BE9688DCD0649",
+    "After": "16CE4367C3029497BB441C850C577DBFB8DE767CB450D52D8C0BE9688DCD0649",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\style_guidelines.md",
+    "Before": "B682D1BEB638B6CE77ECAB86F83AFCBDE7A68207A749BC7994D8FD805FEEC619",
+    "After": "B682D1BEB638B6CE77ECAB86F83AFCBDE7A68207A749BC7994D8FD805FEEC619",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\routing\\google_slides.md",
+    "Before": "9D7C457194CCCCB3DB9089EFFBD57C28D471494D8AB64010319604F2E81313D5",
+    "After": "9D7C457194CCCCB3DB9089EFFBD57C28D471494D8AB64010319604F2E81313D5",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\references\\implementation.md",
+    "Before": "797DE82FBE324FF30229190C433CCB13122EB2570040C747CD76D9B78A09D4A4",
+    "After": "797DE82FBE324FF30229190C433CCB13122EB2570040C747CD76D9B78A09D4A4",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\API_QUICK_START.md",
+    "Before": "C375DE120D6DF12778A401A1FCCFFAD517BD190BEBCC3B78EC5C093A3AF09ACF",
+    "After": "C375DE120D6DF12778A401A1FCCFFAD517BD190BEBCC3B78EC5C093A3AF09ACF",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\references\\cover_art_direction.md",
+    "Before": "753E58EFD6DA31FC68076C554AE919E46893D7A0A15F37C4CF357E7C41025D00",
+    "After": "753E58EFD6DA31FC68076C554AE919E46893D7A0A15F37C4CF357E7C41025D00",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\references\\native_evidence.md",
+    "Before": "9AADD5BFB102663A9B4CF1B9282FA209645E6CE1906381C2C9E0E573659B4CC3",
+    "After": "9AADD5BFB102663A9B4CF1B9282FA209645E6CE1906381C2C9E0E573659B4CC3",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\references\\native_bullets.md",
+    "Before": "727FC17AF9A12FB6937B1A7AC41BA6D99CE0E28CED94C06DF3C05FD33ECCA15D",
+    "After": "727FC17AF9A12FB6937B1A7AC41BA6D99CE0E28CED94C06DF3C05FD33ECCA15D",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\domain_guidance\\finance.md",
+    "Before": "A0C1799721DEAB74867B624B15BEE44F80A4BD7A6813DB2F0BCD61AD90C6B41A",
+    "After": "A0C1799721DEAB74867B624B15BEE44F80A4BD7A6813DB2F0BCD61AD90C6B41A",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\API_DOCS.md",
+    "Before": "01AD12DF21F3A9D23A70553CB99A538625C03DCAC5C4FD1E201F4D4879958E0B",
+    "After": "01AD12DF21F3A9D23A70553CB99A538625C03DCAC5C4FD1E201F4D4879958E0B",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\references\\finalization.md",
+    "Before": "7A4F6609E928041DC6338DFF0E8632B936B05C8358D2A937796C5ECE8846DAA1",
+    "After": "7A4F6609E928041DC6338DFF0E8632B936B05C8358D2A937796C5ECE8846DAA1",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\routing\\google_sheets.md",
+    "Before": "187712AD3479CE82F0333D0843CB18DE929F4DC8EBA44A08923F2CEE787B39C1",
+    "After": "187712AD3479CE82F0333D0843CB18DE929F4DC8EBA44A08923F2CEE787B39C1",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\workflows\\edit_workflows.md",
+    "Before": "49411841A43A8F81E2D85AC4C39CEB87221952045A6CF5F092FE09088AB133F6",
+    "After": "49411841A43A8F81E2D85AC4C39CEB87221952045A6CF5F092FE09088AB133F6",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\workflows\\create_workflows.md",
+    "Before": "5BEE6BB1A58E9CE34212865948A8537B7689EAE5FD308F175EDABCD299F0FD5E",
+    "After": "5BEE6BB1A58E9CE34212865948A8537B7689EAE5FD308F175EDABCD299F0FD5E",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\artifact_tool_docs\\API_QUICK_START.md",
+    "Before": "5F930088FBE66A138F7674444D09FF3C92DA62A38060860272FBF3C3730B0F3F",
+    "After": "5F930088FBE66A138F7674444D09FF3C92DA62A38060860272FBF3C3730B0F3F",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\style_guidelines.md",
+    "Before": "E9337C2A0E41F8FE9DE5AB3AF326EAABC0227D543ED0799C37F8FD796DD30D5E",
+    "After": "E9337C2A0E41F8FE9DE5AB3AF326EAABC0227D543ED0799C37F8FD796DD30D5E",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\references\\template-elicitation.md",
+    "Before": "9B1E7A631A5A08ABABE54209E3F01EF4FF11C3443789805AD263382AC46B32DF",
+    "After": "9B1E7A631A5A08ABABE54209E3F01EF4FF11C3443789805AD263382AC46B32DF",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\references\\image-references.md",
+    "Before": "7FE546860468950ED80F428C79EEA269383AA30F421B957546666EE15161E6B8",
+    "After": "7FE546860468950ED80F428C79EEA269383AA30F421B957546666EE15161E6B8",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\references\\read_only_qna.md",
+    "Before": "A4E4C6AB94A78D84D0475707B111F8A5B884FB8F5E3B2F6EE14BAA25D4BD2027",
+    "After": "A4E4C6AB94A78D84D0475707B111F8A5B884FB8F5E3B2F6EE14BAA25D4BD2027",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\features\\charts.md",
+    "Before": "A28352630824AA742F8B60387E2254C0AA6845A249F870A2DDC4E57978396B40",
+    "After": "A28352630824AA742F8B60387E2254C0AA6845A249F870A2DDC4E57978396B40",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\domain_guidance\\financial_models.md",
+    "Before": "7C48D3499627E4B33D5AF4E8BBBFB1B2434A2D899A8B31D0B007A3169A4F62A9",
+    "After": "7C48D3499627E4B33D5AF4E8BBBFB1B2434A2D899A8B31D0B007A3169A4F62A9",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\domain_guidance\\corporate_finance_fpa.md",
+    "Before": "458B75190A3C5F62AFF70A6A55450973314DFAF49A2D9D7811F0F7F252FACA03",
+    "After": "458B75190A3C5F62AFF70A6A55450973314DFAF49A2D9D7811F0F7F252FACA03",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\domain_guidance\\healthcare.md",
+    "Before": "BA5F11DCC852332CB01035CBA03A3322B3B53DBACC1DEC11637D410CE9B0705D",
+    "After": "BA5F11DCC852332CB01035CBA03A3322B3B53DBACC1DEC11637D410CE9B0705D",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\domain_guidance\\marketing_advertising.md",
+    "Before": "0F1DB7DF7DEFEC1E775AFD155829B991F4F0B3A7900D1ADF96739ED553E48F99",
+    "After": "0F1DB7DF7DEFEC1E775AFD155829B991F4F0B3A7900D1ADF96739ED553E48F99",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\spreadsheets\\domain_guidance\\scientific_research.md",
+    "Before": "CB22357995B80675B23DF0BE42AA8BA3DB77726ECFE6FB3CE6304E94F096BBF1",
+    "After": "CB22357995B80675B23DF0BE42AA8BA3DB77726ECFE6FB3CE6304E94F096BBF1",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\writing_quality.md",
+    "Before": "F3B37E02E3A2B4890F036AE9F279C2F3CE673B9B2C2D0DD893B998B028261129",
+    "After": "F3B37E02E3A2B4890F036AE9F279C2F3CE673B9B2C2D0DD893B998B028261129",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\template-distill.md",
+    "Before": "DD01E59B5FFC7FB28F43FD4BD0EEB02A7D0E881F7D24780D195E6B3F6FC1F658",
+    "After": "DD01E59B5FFC7FB28F43FD4BD0EEB02A7D0E881F7D24780D195E6B3F6FC1F658",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\template-create.md",
+    "Before": "F02DF8F6FA8F764DE7A9B0ED4DCD38AE3560DF364EDD259B127BF53C3F496DD3",
+    "After": "F02DF8F6FA8F764DE7A9B0ED4DCD38AE3560DF364EDD259B127BF53C3F496DD3",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\read_review.md",
+    "Before": "ED1BCE5450E03011225DBD2974F307CD5DEC6FA48BDE0A071E4907FD06F6BB16",
+    "After": "ED1BCE5450E03011225DBD2974F307CD5DEC6FA48BDE0A071E4907FD06F6BB16",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\create_edit.md",
+    "Before": "A842B20C8709F8BC19526DE246E9F8722B4304D30C7A3D9FB7B111FDD6F8EC65",
+    "After": "A842B20C8709F8BC19526DE246E9F8722B4304D30C7A3D9FB7B111FDD6F8EC65",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\verify_render.md",
+    "Before": "E94DB9FEFDA34EEFB65EA527467D8307EB0E834DCA2705B04D027A426EBC9D9B",
+    "After": "E94DB9FEFDA34EEFB65EA527467D8307EB0E834DCA2705B04D027A426EBC9D9B",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\accessibility_a11y.md",
+    "Before": "951DCA7BA7E520792776A636C22E512A9A3C53699C6DA80C5C3E47B0690C1374",
+    "After": "951DCA7BA7E520792776A636C22E512A9A3C53699C6DA80C5C3E47B0690C1374",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\comments_manage.md",
+    "Before": "2EC577FCA8EF24D2EE3DF9BBD3268EDA9CA54A84169499C2FBB293D08A3BBBE0",
+    "After": "2EC577FCA8EF24D2EE3DF9BBD3268EDA9CA54A84169499C2FBB293D08A3BBBE0",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\protection_restrict_editing.md",
+    "Before": "97024DCC16AF3B3666A2D1FC7AE8199F18D881EA62CDB367BD4D37AD0E9E8F53",
+    "After": "97024DCC16AF3B3666A2D1FC7AE8199F18D881EA62CDB367BD4D37AD0E9E8F53",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\privacy_scrub_metadata.md",
+    "Before": "6A1360D873BCADE5DD2989F5406EA1C415DBCB52DA25CC6C3580DA3126880B93",
+    "After": "6A1360D873BCADE5DD2989F5406EA1C415DBCB52DA25CC6C3580DA3126880B93",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\multi_doc_merge.md",
+    "Before": "9706902B4F91FD8E9AF87297A8A66E2767C512A357511CA3AE9BCC56F1A4CD35",
+    "After": "9706902B4F91FD8E9AF87297A8A66E2767C512A357511CA3AE9BCC56F1A4CD35",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\style_lint_normalize.md",
+    "Before": "993BB9C5129DC6CCB63D28B95F4E3BC5F716EEE9FD6A6C75C106031ED42B12E8",
+    "After": "993BB9C5129DC6CCB63D28B95F4E3BC5F716EEE9FD6A6C75C106031ED42B12E8",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\forms_content_controls.md",
+    "Before": "D09C066658B0FD8CDA6FC51413D57F37DFC12D6828799F52A6137CBA20568EC7",
+    "After": "D09C066658B0FD8CDA6FC51413D57F37DFC12D6828799F52A6137CBA20568EC7",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\captions_crossrefs.md",
+    "Before": "20A50A2663B2D020D8A7E1BD3A31AE60A45BA41E40B437C9ADA4E958987C421F",
+    "After": "20A50A2663B2D020D8A7E1BD3A31AE60A45BA41E40B437C9ADA4E958987C421F",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\redaction_anonymization.md",
+    "Before": "DF3B89D5BACC8405E73F4EC16056A78DC655C6D181086A1B37464038CAE2BD02",
+    "After": "DF3B89D5BACC8405E73F4EC16056A78DC655C6D181086A1B37464038CAE2BD02",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\clean_tracked_changes.md",
+    "Before": "6BD628BCE5A571B73B59993A474BAE039A7EA2E63E85F1292996688E1E2FA446",
+    "After": "6BD628BCE5A571B73B59993A474BAE039A7EA2E63E85F1292996688E1E2FA446",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\compare_diff.md",
+    "Before": "E06551FBFADD651AA761BA497C04C98449150DDD61AE1221F0EC6F9947FE30A9",
+    "After": "E06551FBFADD651AA761BA497C04C98449150DDD61AE1221F0EC6F9947FE30A9",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\templates_style_packs.md",
+    "Before": "A75DB63FCDFD135BAB27B164FE7747ADDA75C63501E6300D7EB5D56B9FC6A580",
+    "After": "A75DB63FCDFD135BAB27B164FE7747ADDA75C63501E6300D7EB5D56B9FC6A580",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\watermarks_background.md",
+    "Before": "9F87E23D4B5E54EDB1560367E231BB3C0A6EF88193C600AF8842D8537DCB9757",
+    "After": "9F87E23D4B5E54EDB1560367E231BB3C0A6EF88193C600AF8842D8537DCB9757",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\footnotes_endnotes.md",
+    "Before": "6E8BD0A290FC5261E85C2DFCFCDE483C685A0CACD00B24950F1FADAD8B7B7072",
+    "After": "6E8BD0A290FC5261E85C2DFCFCDE483C685A0CACD00B24950F1FADAD8B7B7072",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\fixtures_edge_cases.md",
+    "Before": "41718F5B067990CA5E32F4065BB24EC152B3E9EC110FAD6E81E81CC08AF48CEF",
+    "After": "41718F5B067990CA5E32F4065BB24EC152B3E9EC110FAD6E81E81CC08AF48CEF",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\navigation_internal_links.md",
+    "Before": "33EE4FA5C4E051A0216728A43F92D4DE8319169080834B008C48A837BC5ACDBD",
+    "After": "33EE4FA5C4E051A0216728A43F92D4DE8319169080834B008C48A837BC5ACDBD",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\ooxml\\tracked_changes.md",
+    "Before": "9293157ADE79498DB26FDB79B3D7835896F4F87EBB73C28EDDC6A5E48AAE47F3",
+    "After": "9293157ADE79498DB26FDB79B3D7835896F4F87EBB73C28EDDC6A5E48AAE47F3",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\ooxml\\comments.md",
+    "Before": "AA8004A76499C36A4046041EAFF8966FD3EC43FAB3A48E1B158E95534EC61557",
+    "After": "AA8004A76499C36A4046041EAFF8966FD3EC43FAB3A48E1B158E95534EC61557",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\ooxml\\hyperlinks_and_fields.md",
+    "Before": "88B8615AABD48727086208D981958DC1D74A4432B81060707D97C3DED9D7764C",
+    "After": "88B8615AABD48727086208D981958DC1D74A4432B81060707D97C3DED9D7764C",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\ooxml\\rels_and_content_types.md",
+    "Before": "D64FE64DC3DAA56F4C90BAA9098F94F6FCF52E5D4CE041AB548392E06C9691C2",
+    "After": "D64FE64DC3DAA56F4C90BAA9098F94F6FCF52E5D4CE041AB548392E06C9691C2",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\troubleshooting\\libreoffice_headless.md",
+    "Before": "929B2B124CE2E65B3DE17565A8AAD2FF9D569F38AE648EC7CA0E3BED87041AE8",
+    "After": "929B2B124CE2E65B3DE17565A8AAD2FF9D569F38AE648EC7CA0E3BED87041AE8",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\troubleshooting\\run_splitting.md",
+    "Before": "37DF942902847797E8060308121D3DB10273F71FD9DAC748E0157E3C29624B85",
+    "After": "37DF942902847797E8060308121D3DB10273F71FD9DAC748E0157E3C29624B85",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\examples\\end_to_end_smoke_test.md",
+    "Before": "2ABD9BDEC48F2DCB905BF950423E021B61CA8169F56BCFF58B4B3131663AEC50",
+    "After": "2ABD9BDEC48F2DCB905BF950423E021B61CA8169F56BCFF58B4B3131663AEC50",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\sections_layout.md",
+    "Before": "3B36B7F96EE095C66D4E3D24681B0B9CD1B6B82B1B3B5491AEB748545C89F5CF",
+    "After": "3B36B7F96EE095C66D4E3D24681B0B9CD1B6B82B1B3B5491AEB748545C89F5CF",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\headings_numbering.md",
+    "Before": "36BBF196FECAC25E2E8C1239356FA2AF6994A8939048EB7B59F14D2C5BC1999C",
+    "After": "36BBF196FECAC25E2E8C1239356FA2AF6994A8939048EB7B59F14D2C5BC1999C",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\images_figures.md",
+    "Before": "482E14799B7021A9C191B320C60E492AB58F6F36A16187586C7F5BFF38C85B45",
+    "After": "482E14799B7021A9C191B320C60E492AB58F6F36A16187586C7F5BFF38C85B45",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\tables_spreadsheets.md",
+    "Before": "EEB08BC4D64DB98679A5648A041F7786DCA160F35C0909A10B7963E1AF3F88DB",
+    "After": "EEB08BC4D64DB98679A5648A041F7786DCA160F35C0909A10B7963E1AF3F88DB",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\fields_update.md",
+    "Before": "1EA14774B8E39B37884187E98059E0829E6BC9E0DB502B26D4AEA38AB68A4148",
+    "After": "1EA14774B8E39B37884187E98059E0829E6BC9E0DB502B26D4AEA38AB68A4148",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\documents\\skills\\documents\\tasks\\toc_workflow.md",
+    "Before": "AE2C36431D7BA8F7BE1FAD51C5AF79831F4E38441060CA5FB0058247A54E9AB9",
+    "After": "AE2C36431D7BA8F7BE1FAD51C5AF79831F4E38441060CA5FB0058247A54E9AB9",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\references\\template_following.md",
+    "Before": "16CE4367C3029497BB441C850C577DBFB8DE767CB450D52D8C0BE9688DCD0649",
+    "After": "16CE4367C3029497BB441C850C577DBFB8DE767CB450D52D8C0BE9688DCD0649",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\style_guidelines.md",
+    "Before": "B682D1BEB638B6CE77ECAB86F83AFCBDE7A68207A749BC7994D8FD805FEEC619",
+    "After": "B682D1BEB638B6CE77ECAB86F83AFCBDE7A68207A749BC7994D8FD805FEEC619",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\routing\\google_slides.md",
+    "Before": "9D7C457194CCCCB3DB9089EFFBD57C28D471494D8AB64010319604F2E81313D5",
+    "After": "9D7C457194CCCCB3DB9089EFFBD57C28D471494D8AB64010319604F2E81313D5",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\references\\implementation.md",
+    "Before": "797DE82FBE324FF30229190C433CCB13122EB2570040C747CD76D9B78A09D4A4",
+    "After": "797DE82FBE324FF30229190C433CCB13122EB2570040C747CD76D9B78A09D4A4",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\API_QUICK_START.md",
+    "Before": "C375DE120D6DF12778A401A1FCCFFAD517BD190BEBCC3B78EC5C093A3AF09ACF",
+    "After": "C375DE120D6DF12778A401A1FCCFFAD517BD190BEBCC3B78EC5C093A3AF09ACF",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\references\\cover_art_direction.md",
+    "Before": "753E58EFD6DA31FC68076C554AE919E46893D7A0A15F37C4CF357E7C41025D00",
+    "After": "753E58EFD6DA31FC68076C554AE919E46893D7A0A15F37C4CF357E7C41025D00",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\references\\native_evidence.md",
+    "Before": "9AADD5BFB102663A9B4CF1B9282FA209645E6CE1906381C2C9E0E573659B4CC3",
+    "After": "9AADD5BFB102663A9B4CF1B9282FA209645E6CE1906381C2C9E0E573659B4CC3",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\references\\native_bullets.md",
+    "Before": "727FC17AF9A12FB6937B1A7AC41BA6D99CE0E28CED94C06DF3C05FD33ECCA15D",
+    "After": "727FC17AF9A12FB6937B1A7AC41BA6D99CE0E28CED94C06DF3C05FD33ECCA15D",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\domain_guidance\\finance.md",
+    "Before": "A0C1799721DEAB74867B624B15BEE44F80A4BD7A6813DB2F0BCD61AD90C6B41A",
+    "After": "A0C1799721DEAB74867B624B15BEE44F80A4BD7A6813DB2F0BCD61AD90C6B41A",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\API_DOCS.md",
+    "Before": "01AD12DF21F3A9D23A70553CB99A538625C03DCAC5C4FD1E201F4D4879958E0B",
+    "After": "01AD12DF21F3A9D23A70553CB99A538625C03DCAC5C4FD1E201F4D4879958E0B",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\references\\finalization.md",
+    "Before": "7A4F6609E928041DC6338DFF0E8632B936B05C8358D2A937796C5ECE8846DAA1",
+    "After": "7A4F6609E928041DC6338DFF0E8632B936B05C8358D2A937796C5ECE8846DAA1",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\excel-live-control\\features\\charts.md",
+    "Before": "A28352630824AA742F8B60387E2254C0AA6845A249F870A2DDC4E57978396B40",
+    "After": "A28352630824AA742F8B60387E2254C0AA6845A249F870A2DDC4E57978396B40",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\excel-live-control\\style_guidelines.md",
+    "Before": "E9337C2A0E41F8FE9DE5AB3AF326EAABC0227D543ED0799C37F8FD796DD30D5E",
+    "After": "E9337C2A0E41F8FE9DE5AB3AF326EAABC0227D543ED0799C37F8FD796DD30D5E",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\excel-live-control\\officejs.md",
+    "Before": "CB3D4292191D6A6ADFC5251B88EA5A62AAB75BB5C9C863FC1ED546B881045955",
+    "After": "CB3D4292191D6A6ADFC5251B88EA5A62AAB75BB5C9C863FC1ED546B881045955",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\excel-live-control\\workflows\\edit_workflows.md",
+    "Before": "49411841A43A8F81E2D85AC4C39CEB87221952045A6CF5F092FE09088AB133F6",
+    "After": "49411841A43A8F81E2D85AC4C39CEB87221952045A6CF5F092FE09088AB133F6",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\excel-live-control\\workflows\\create_workflows.md",
+    "Before": "5BEE6BB1A58E9CE34212865948A8537B7689EAE5FD308F175EDABCD299F0FD5E",
+    "After": "5BEE6BB1A58E9CE34212865948A8537B7689EAE5FD308F175EDABCD299F0FD5E",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\excel-live-control\\references\\image-references.md",
+    "Before": "7FE546860468950ED80F428C79EEA269383AA30F421B957546666EE15161E6B8",
+    "After": "7FE546860468950ED80F428C79EEA269383AA30F421B957546666EE15161E6B8",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\excel-live-control\\references\\read_only_qna.md",
+    "Before": "A4E4C6AB94A78D84D0475707B111F8A5B884FB8F5E3B2F6EE14BAA25D4BD2027",
+    "After": "A4E4C6AB94A78D84D0475707B111F8A5B884FB8F5E3B2F6EE14BAA25D4BD2027",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\excel-live-control\\domain_guidance\\financial_models.md",
+    "Before": "7C48D3499627E4B33D5AF4E8BBBFB1B2434A2D899A8B31D0B007A3169A4F62A9",
+    "After": "7C48D3499627E4B33D5AF4E8BBBFB1B2434A2D899A8B31D0B007A3169A4F62A9",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\excel-live-control\\domain_guidance\\corporate_finance_fpa.md",
+    "Before": "458B75190A3C5F62AFF70A6A55450973314DFAF49A2D9D7811F0F7F252FACA03",
+    "After": "458B75190A3C5F62AFF70A6A55450973314DFAF49A2D9D7811F0F7F252FACA03",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\excel-live-control\\domain_guidance\\healthcare.md",
+    "Before": "BA5F11DCC852332CB01035CBA03A3322B3B53DBACC1DEC11637D410CE9B0705D",
+    "After": "BA5F11DCC852332CB01035CBA03A3322B3B53DBACC1DEC11637D410CE9B0705D",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\excel-live-control\\domain_guidance\\marketing_advertising.md",
+    "Before": "0F1DB7DF7DEFEC1E775AFD155829B991F4F0B3A7900D1ADF96739ED553E48F99",
+    "After": "0F1DB7DF7DEFEC1E775AFD155829B991F4F0B3A7900D1ADF96739ED553E48F99",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\spreadsheets\\skills\\excel-live-control\\domain_guidance\\scientific_research.md",
+    "Before": "CB22357995B80675B23DF0BE42AA8BA3DB77726ECFE6FB3CE6304E94F096BBF1",
+    "After": "CB22357995B80675B23DF0BE42AA8BA3DB77726ECFE6FB3CE6304E94F096BBF1",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\sites\\skills\\sites-hosting\\references\\environment.md",
+    "Before": "0FC8F43A9833A19BDAC5D34F79FC1CB4797A14E8FE039C46968BED838FF20DF1",
+    "After": "0FC8F43A9833A19BDAC5D34F79FC1CB4797A14E8FE039C46968BED838FF20DF1",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\visualize\\skills\\visualize\\tweak.md",
+    "Before": "D5685421B1455F4C1B0CFB8C438E200C9C23C6574CFC47805F3FB4D00875BB41",
+    "After": "D5685421B1455F4C1B0CFB8C438E200C9C23C6574CFC47805F3FB4D00875BB41",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\sites\\skills\\sites-building\\references\\environment.md",
+    "Before": "9E6D4B2A73E707EE33A2D8BF200726DBF320ADDA8EF0BE165E92468208654A88",
+    "After": "9E6D4B2A73E707EE33A2D8BF200726DBF320ADDA8EF0BE165E92468208654A88",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\sites\\skills\\sites-building\\references\\library-selection.md",
+    "Before": "DFB92E7819F88F8C66EA67D68B407431A447C39AF4A23CF9E9A12D21760AA65C",
+    "After": "DFB92E7819F88F8C66EA67D68B407431A447C39AF4A23CF9E9A12D21760AA65C",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\sites\\skills\\sites-building\\references\\webmcp.md",
+    "Before": "9A2AA8F5095C982FB0125A9DC2E5CE07D55612260EDF2CCA46E39646D3FC4AF8",
+    "After": "9A2AA8F5095C982FB0125A9DC2E5CE07D55612260EDF2CCA46E39646D3FC4AF8",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\sites\\skills\\sites-building\\references\\persistence-and-storage.md",
+    "Before": "D996CB6DAD9BB0115E58F3022930E797FFB5FFEF67D61CAC9334E1471186384E",
+    "After": "D996CB6DAD9BB0115E58F3022930E797FFB5FFEF67D61CAC9334E1471186384E",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\sites\\skills\\sites-building\\references\\sqlite.md",
+    "Before": "5CEA25C7007B9A31A8BAC2DDDA60EB4C78749EF826E3836FBD420CFCE0AEB35E",
+    "After": "5CEA25C7007B9A31A8BAC2DDDA60EB4C78749EF826E3836FBD420CFCE0AEB35E",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\sites\\skills\\sites-building\\references\\authentication.md",
+    "Before": "D2C254A7510810F33FD80BE166237AFDFB6E48C2093CB8390818BC6B52391A42",
+    "After": "D2C254A7510810F33FD80BE166237AFDFB6E48C2093CB8390818BC6B52391A42",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\computer-use\\docs\\guidance.md",
+    "Before": "B171B26BC19F49226BB594BF3ED3F36666E5DD063A996C297986B2B461AC8EFD",
+    "After": "B171B26BC19F49226BB594BF3ED3F36666E5DD063A996C297986B2B461AC8EFD",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\computer-use\\docs\\api.md",
+    "Before": "C36D005FB98ED79837A1A5D4605EBAD036CEC95864E5646F451425163D5C16AF",
+    "After": "C36D005FB98ED79837A1A5D4605EBAD036CEC95864E5646F451425163D5C16AF",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled\\plugins\\computer-use\\docs\\confirmations.md",
+    "Before": "9C45B3EB20E4A7FB14860E50F635E200B321A52FEF6D26F39F7B936BD44BE11A",
+    "After": "9C45B3EB20E4A7FB14860E50F635E200B321A52FEF6D26F39F7B936BD44BE11A",
+    "Equal": true
+  },
+  {
+    "Path": "D:\\KiwiAvatarSystem\\Tools\\KlakSpout_v206_diag\\README.md",
+    "Before": "8C4D3FE9E359521D4ACCB7E13AC6CBB7A2E93F5CAB1DC58D57C774CFFB5D5136",
+    "After": "8C4D3FE9E359521D4ACCB7E13AC6CBB7A2E93F5CAB1DC58D57C774CFFB5D5136",
+    "Equal": true
+  },
+  {
+    "Path": "D:\\KiwiAvatarSystem\\Tools\\KlakSpout_v206_diag\\CHANGELOG.md",
+    "Before": "AD34C9A90684D511E3F378C8BA74EE578832E34E9CC7BCEE26085B86DB373C80",
+    "After": "AD34C9A90684D511E3F378C8BA74EE578832E34E9CC7BCEE26085B86DB373C80",
+    "Equal": true
+  },
+  {
+    "Path": "D:\\KiwiAvatarSystem\\KiwiValidation\\ExternalSourceAudit_v44_55_25\\sources\\KlakSpout_2.0.6\\README.md",
+    "Before": "8C4D3FE9E359521D4ACCB7E13AC6CBB7A2E93F5CAB1DC58D57C774CFFB5D5136",
+    "After": "8C4D3FE9E359521D4ACCB7E13AC6CBB7A2E93F5CAB1DC58D57C774CFFB5D5136",
+    "Equal": true
+  },
+  {
+    "Path": "D:\\KiwiAvatarSystem\\KiwiValidation\\ExternalSourceAudit_v44_55_25\\sources\\KlakSpout_2.0.6\\CHANGELOG.md",
+    "Before": "AD34C9A90684D511E3F378C8BA74EE578832E34E9CC7BCEE26085B86DB373C80",
+    "After": "AD34C9A90684D511E3F378C8BA74EE578832E34E9CC7BCEE26085B86DB373C80",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\cookbook\\imported-deck.md",
+    "Before": "960250650C69106A2C9539F31DA7ECC20B645C748E8C9972960235DE250EF988",
+    "After": "960250650C69106A2C9539F31DA7ECC20B645C748E8C9972960235DE250EF988",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\master.spec.md",
+    "Before": "25F5032926C3BD7345CA46CA4BC7401D837E8C3D4645853EBD0C21E4D842AC4F",
+    "After": "25F5032926C3BD7345CA46CA4BC7401D837E8C3D4645853EBD0C21E4D842AC4F",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\layout.spec.md",
+    "Before": "68EAA0C7917606B25D7843CC7EA5BE87A8B71ABA9B3AC2C9F289306B3A657C2B",
+    "After": "68EAA0C7917606B25D7843CC7EA5BE87A8B71ABA9B3AC2C9F289306B3A657C2B",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\inspect.md",
+    "Before": "F6FC114BD681164A1707BB4396C2C3415A22C7C82ADED6934E20D8E7E8270B82",
+    "After": "F6FC114BD681164A1707BB4396C2C3415A22C7C82ADED6934E20D8E7E8270B82",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\tables.spec.md",
+    "Before": "BDA6B14AC9815EB78600014DB6A761EE902E94D40CEF1AB2653EA6D3B1F96A76",
+    "After": "BDA6B14AC9815EB78600014DB6A761EE902E94D40CEF1AB2653EA6D3B1F96A76",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\charts.spec.md",
+    "Before": "AAE6B1C6B775DC4E8267C81D380149D3BCD7F27C7FB220D94BD1B823535C63C5",
+    "After": "AAE6B1C6B775DC4E8267C81D380149D3BCD7F27C7FB220D94BD1B823535C63C5",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\cookbook\\layout.md",
+    "Before": "75484D640897D2EC8614AEFCEE6E17BB714B54EB2744C707562A632267E57264",
+    "After": "75484D640897D2EC8614AEFCEE6E17BB714B54EB2744C707562A632267E57264",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\jsx.md",
+    "Before": "9C2E19CD311AFEF6B0367D6E8F54FADAB5F49FA0883BEE995112FDF4EDED0D0B",
+    "After": "9C2E19CD311AFEF6B0367D6E8F54FADAB5F49FA0883BEE995112FDF4EDED0D0B",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\tokens.md",
+    "Before": "AA7601C6E7156D45CEEBA151AD48633F8556A080678B7EE44DAA74C32B42C478",
+    "After": "AA7601C6E7156D45CEEBA151AD48633F8556A080678B7EE44DAA74C32B42C478",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\presentation.spec.md",
+    "Before": "DE32F33D55ADCE36532DE2FF4586CE198F8094CAC99EE2AE65EC95BD411E7BFB",
+    "After": "DE32F33D55ADCE36532DE2FF4586CE198F8094CAC99EE2AE65EC95BD411E7BFB",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\slide.spec.md",
+    "Before": "4BB61D90BB2491301F5835ACA8E74058FB9E02FDEEEFEEFAE14C86CBD1803B69",
+    "After": "4BB61D90BB2491301F5835ACA8E74058FB9E02FDEEEFEEFAE14C86CBD1803B69",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\help.md",
+    "Before": "087277C6B7C572DFD7B52ECC6C8CC9AFFBF33AB56C0B928651B18F476E03E044",
+    "After": "087277C6B7C572DFD7B52ECC6C8CC9AFFBF33AB56C0B928651B18F476E03E044",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\theme.spec.md",
+    "Before": "3C30018DE19AF6D2908AAA0F84F5098A8881ED2413577057ADB5C77625D9319C",
+    "After": "3C30018DE19AF6D2908AAA0F84F5098A8881ED2413577057ADB5C77625D9319C",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\styles.spec.md",
+    "Before": "142D7ABD0E54404FA49067F9A294BF20512540B89D304174386C4DB90A73E74C",
+    "After": "142D7ABD0E54404FA49067F9A294BF20512540B89D304174386C4DB90A73E74C",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\rich-text.spec.md",
+    "Before": "B68CC411E5106D2FC309917B6EFDEC10BCBD1F193B74CC60A7E10AF9FA1B3469",
+    "After": "B68CC411E5106D2FC309917B6EFDEC10BCBD1F193B74CC60A7E10AF9FA1B3469",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\shapes.spec.md",
+    "Before": "5AFBE2CEA704055D737FDDFAE2D678836FC065706B9BB58D1224632E532C809C",
+    "After": "5AFBE2CEA704055D737FDDFAE2D678836FC065706B9BB58D1224632E532C809C",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\connectors.md",
+    "Before": "1BB0EF8F48E82D24BE7E28EB1B5AB8B2AA662304E6D024246E651058DD8FC725",
+    "After": "1BB0EF8F48E82D24BE7E28EB1B5AB8B2AA662304E6D024246E651058DD8FC725",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\fill.spec.md",
+    "Before": "2D4ED7FE6EB20FEB2EDC3EE807A9C4366F96C1B890878620869145BC1EEC3E28",
+    "After": "2D4ED7FE6EB20FEB2EDC3EE807A9C4366F96C1B890878620869145BC1EEC3E28",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\images.spec.md",
+    "Before": "9B57F40B2D85A84EE4D935EDC2F1E23FBCC6A64B0476BC712DB56F87DC7DB4E2",
+    "After": "9B57F40B2D85A84EE4D935EDC2F1E23FBCC6A64B0476BC712DB56F87DC7DB4E2",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\comments.md",
+    "Before": "7289CF3218CA948898F3D38A0A7951062B719277472C18CE2F672314DEA0C416",
+    "After": "7289CF3218CA948898F3D38A0A7951062B719277472C18CE2F672314DEA0C416",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\auto-layout.spec.md",
+    "Before": "E58AC421E5AED6E944CAB4FB3E59E3D5B33874844485FE89571EE2B6E3319051",
+    "After": "E58AC421E5AED6E944CAB4FB3E59E3D5B33874844485FE89571EE2B6E3319051",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.codex\\plugins\\cache\\openai-primary-runtime\\presentations\\26.904.11930\\skills\\presentations\\artifact_tool_docs\\api\\references\\speaker-notes.spec.md",
+    "Before": "770EFEB887A9F0145F34F0A41990ED49C7D613E28035225682A33B7EBEAAA6B4",
+    "After": "770EFEB887A9F0145F34F0A41990ED49C7D613E28035225682A33B7EBEAAA6B4",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\cookbook\\imported-deck.md",
+    "Before": "960250650C69106A2C9539F31DA7ECC20B645C748E8C9972960235DE250EF988",
+    "After": "960250650C69106A2C9539F31DA7ECC20B645C748E8C9972960235DE250EF988",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\master.spec.md",
+    "Before": "25F5032926C3BD7345CA46CA4BC7401D837E8C3D4645853EBD0C21E4D842AC4F",
+    "After": "25F5032926C3BD7345CA46CA4BC7401D837E8C3D4645853EBD0C21E4D842AC4F",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\layout.spec.md",
+    "Before": "68EAA0C7917606B25D7843CC7EA5BE87A8B71ABA9B3AC2C9F289306B3A657C2B",
+    "After": "68EAA0C7917606B25D7843CC7EA5BE87A8B71ABA9B3AC2C9F289306B3A657C2B",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\inspect.md",
+    "Before": "F6FC114BD681164A1707BB4396C2C3415A22C7C82ADED6934E20D8E7E8270B82",
+    "After": "F6FC114BD681164A1707BB4396C2C3415A22C7C82ADED6934E20D8E7E8270B82",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\tables.spec.md",
+    "Before": "BDA6B14AC9815EB78600014DB6A761EE902E94D40CEF1AB2653EA6D3B1F96A76",
+    "After": "BDA6B14AC9815EB78600014DB6A761EE902E94D40CEF1AB2653EA6D3B1F96A76",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\charts.spec.md",
+    "Before": "AAE6B1C6B775DC4E8267C81D380149D3BCD7F27C7FB220D94BD1B823535C63C5",
+    "After": "AAE6B1C6B775DC4E8267C81D380149D3BCD7F27C7FB220D94BD1B823535C63C5",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\cookbook\\layout.md",
+    "Before": "75484D640897D2EC8614AEFCEE6E17BB714B54EB2744C707562A632267E57264",
+    "After": "75484D640897D2EC8614AEFCEE6E17BB714B54EB2744C707562A632267E57264",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\jsx.md",
+    "Before": "9C2E19CD311AFEF6B0367D6E8F54FADAB5F49FA0883BEE995112FDF4EDED0D0B",
+    "After": "9C2E19CD311AFEF6B0367D6E8F54FADAB5F49FA0883BEE995112FDF4EDED0D0B",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\tokens.md",
+    "Before": "AA7601C6E7156D45CEEBA151AD48633F8556A080678B7EE44DAA74C32B42C478",
+    "After": "AA7601C6E7156D45CEEBA151AD48633F8556A080678B7EE44DAA74C32B42C478",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\presentation.spec.md",
+    "Before": "DE32F33D55ADCE36532DE2FF4586CE198F8094CAC99EE2AE65EC95BD411E7BFB",
+    "After": "DE32F33D55ADCE36532DE2FF4586CE198F8094CAC99EE2AE65EC95BD411E7BFB",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\slide.spec.md",
+    "Before": "4BB61D90BB2491301F5835ACA8E74058FB9E02FDEEEFEEFAE14C86CBD1803B69",
+    "After": "4BB61D90BB2491301F5835ACA8E74058FB9E02FDEEEFEEFAE14C86CBD1803B69",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\help.md",
+    "Before": "087277C6B7C572DFD7B52ECC6C8CC9AFFBF33AB56C0B928651B18F476E03E044",
+    "After": "087277C6B7C572DFD7B52ECC6C8CC9AFFBF33AB56C0B928651B18F476E03E044",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\theme.spec.md",
+    "Before": "3C30018DE19AF6D2908AAA0F84F5098A8881ED2413577057ADB5C77625D9319C",
+    "After": "3C30018DE19AF6D2908AAA0F84F5098A8881ED2413577057ADB5C77625D9319C",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\styles.spec.md",
+    "Before": "142D7ABD0E54404FA49067F9A294BF20512540B89D304174386C4DB90A73E74C",
+    "After": "142D7ABD0E54404FA49067F9A294BF20512540B89D304174386C4DB90A73E74C",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\rich-text.spec.md",
+    "Before": "B68CC411E5106D2FC309917B6EFDEC10BCBD1F193B74CC60A7E10AF9FA1B3469",
+    "After": "B68CC411E5106D2FC309917B6EFDEC10BCBD1F193B74CC60A7E10AF9FA1B3469",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\shapes.spec.md",
+    "Before": "5AFBE2CEA704055D737FDDFAE2D678836FC065706B9BB58D1224632E532C809C",
+    "After": "5AFBE2CEA704055D737FDDFAE2D678836FC065706B9BB58D1224632E532C809C",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\connectors.md",
+    "Before": "1BB0EF8F48E82D24BE7E28EB1B5AB8B2AA662304E6D024246E651058DD8FC725",
+    "After": "1BB0EF8F48E82D24BE7E28EB1B5AB8B2AA662304E6D024246E651058DD8FC725",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\fill.spec.md",
+    "Before": "2D4ED7FE6EB20FEB2EDC3EE807A9C4366F96C1B890878620869145BC1EEC3E28",
+    "After": "2D4ED7FE6EB20FEB2EDC3EE807A9C4366F96C1B890878620869145BC1EEC3E28",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\images.spec.md",
+    "Before": "9B57F40B2D85A84EE4D935EDC2F1E23FBCC6A64B0476BC712DB56F87DC7DB4E2",
+    "After": "9B57F40B2D85A84EE4D935EDC2F1E23FBCC6A64B0476BC712DB56F87DC7DB4E2",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\comments.md",
+    "Before": "7289CF3218CA948898F3D38A0A7951062B719277472C18CE2F672314DEA0C416",
+    "After": "7289CF3218CA948898F3D38A0A7951062B719277472C18CE2F672314DEA0C416",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\auto-layout.spec.md",
+    "Before": "E58AC421E5AED6E944CAB4FB3E59E3D5B33874844485FE89571EE2B6E3319051",
+    "After": "E58AC421E5AED6E944CAB4FB3E59E3D5B33874844485FE89571EE2B6E3319051",
+    "Equal": true
+  },
+  {
+    "Path": "C:\\Users\\main\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime\\plugins\\presentations\\skills\\presentations\\artifact_tool_docs\\api\\references\\speaker-notes.spec.md",
+    "Before": "770EFEB887A9F0145F34F0A41990ED49C7D613E28035225682A33B7EBEAAA6B4",
+    "After": "770EFEB887A9F0145F34F0A41990ED49C7D613E28035225682A33B7EBEAAA6B4",
+    "Equal": true
+  }
+]

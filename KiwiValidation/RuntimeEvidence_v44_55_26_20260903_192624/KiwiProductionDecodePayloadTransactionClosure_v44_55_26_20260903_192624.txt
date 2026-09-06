@@ -1,0 +1,51 @@
+KiwiAvatarSystem v44.55.26 Production Decode Payload Transaction Closure
+contract=KIWI_V44_55_26_PRODUCTION_DECODE_PAYLOAD_TRANSACTION_CLOSURE
+status=COMPLETE_WITH_COVERAGE
+decision=DECODE_PAYLOAD_MISMATCH
+observerOnly=1
+developmentDiagnosticOnly=1
+existingReadbackAndClone=1
+newReadbackAndClone=0
+productionInputOracle=0
+newWorker=0
+repeatedInference=0
+newGpuCopy=0
+blockingWait=0
+logicalFloatCount=1405
+performanceAuthority=0
+
+[COUNTS]
+dependencyTraceCount=63
+capturedPairCount=63
+completedPairCount=63
+comparedPairCount=63
+eligiblePairCount=45
+anomalousPairCount=6
+eligibleAnomalousPairCount=2
+decodePayloadExactCount=7
+decodePayloadMismatchCount=38
+partialCoverageCount=18
+noDecodePayloadCoverageCount=0
+noCanonicalPublicationCoverageCount=18
+observerFaultCount=0
+identityMismatchCount=0
+duplicateDecodePayloadCount=0
+duplicateSnapshotPayloadCount=0
+payloadShapeMismatchCount=0
+nonFinitePayloadCount=0
+partialCaptureCount=0
+pendingAtCompletion=0
+
+[FIXED_RUNTIME_GATE]
+minimumCompletedPairCount=60
+minimumEligibleAnomalousPairCount=1
+dependencyCountMustEqualCompletedCount=1
+observerIntegrityCountersMustBeZero=1
+decisionAndRowsMustAgree=1
+
+[DECISION_RULE]
+DECODE_PAYLOAD_EXACT=all eligible logical 1405-float comparisons are bitwise exact and at least one anomalous eligible pair exists
+DECODE_PAYLOAD_MISMATCH=at least one exact-transaction eligible payload differs bitwise
+PARTIAL_COVERAGE=no eligible anomalous comparison without observer-integrity failure
+INSUFFICIENT_ANOMALOUS_COVERAGE=dependency produced zero anomalous pairs
+INVALID_OBSERVER=identity duplicate partial shape finite dependency or count contract failed

@@ -1,0 +1,1713 @@
+KiwiAvatarSystem 最新統合情報源 / 全体ロードマップ全面再監査版
+更新基準: 2026-09-06
+Project: D:\KiwiAvatarSystem
+対象: Windows / DX12 Production completion
+状態: ROADMAP_REAUDIT_COMPLETE_R11 / PRODUCT_CORRECTNESS_REOPENED
+
+==================================================
+0. Executive Summary
+==================================================
+
+今回の再々監査で、2026-09-04版のExecution Context-first roadmapと、
+2026-09-06前版のF2-first / current-workspace-baseline-first表現の両方を補正する。
+
+確認済み:
+1. Stage1A/1Bのmethod/statement/dataflow監査は完了。
+2. v44.55.31で
+   E2_DIVERGENCE_PRESENT_BY_PRODUCER_TAIL_OR_COMMON_OBSERVATION_PATH
+   がcoarse output observation endpointで成立。
+3. exact E2 root cause / Fence / Wait / flush / async-disableは未証明。
+4. Sol High Fundamental AuditではProduction hot pathの変更根拠はなく、
+   superseded v30 diagnostic familyのみactive pathから可逆退役。
+5. exact frozen-v31 buildをheavy v20/v24/v25/v27/v31 collection OFFで実行し、
+   Human Visualで要求品質未達、広範な挙動とcrop問題を確認。
+6. E2とVisual NGの因果は未相関。
+7. current post-v30-retirement workspaceのexact Runtime/Visual Authorityは未取得。
+8. ただしlatest auditではProduction sourceはfrozen v31 lineageと一致し、
+   current差分はvalidator/toolおよびsuperseded diagnostic retirementが中心。
+   よってcurrent workspaceを自動的に再build/runする前に、
+   Product-effective equivalenceをStatic/identityで判定する価値がある。
+
+新しい最重要方針:
+
+Authority / Product-Effective Equivalence Preflight
+→ Product Failure Specification / Symptom-to-Boundary Triage
+→ First Target Boundary Localization
+→ Proven Minimal Correctness Decision/Fix
+→ Canonical / Ownership / Transaction / Lifecycle Contract Closure
+→ Deterministic Replay
+→ Architecture / Security / External-Reuse Contract Freeze
+→ 必要時のみIncremental Re-architecture
+→ Core Clean Performance Regression Gate
+→ Avatar Runtime / Productization
+→ Final Backend / Performance / Visual / Release
+
+CURRENT NEXT ACTION:
+
+PRODUCT_FAILURE_SPECIFICATION_AND_SYMPTOM_TO_BOUNDARY_TRIAGE
+
+これはread-onlyを原則とする。
+
+Product-effective equivalenceは独立した主要Phaseではなく、各作業開始時のAuthority Preflightとする。
+2026-09-06 latest report snapshotでは、Production sourceにv31 lineageとのProduct-effective差分は確認されず、
+v30 retirementもdiagnostic-onlyであるため、planning equivalenceは強く支持される。
+ただしcurrent workspace Runtime/Visual Authorityへは昇格しない。
+
+Preflightで新しいProduct-effective差分が見つかった場合だけ、current workspace Product baselineを1回取得する。heavy collectorsはOFFにし、default-active serviceのProduct effectを記録する。
+差分がなければbaseline再取得目的だけのbuild/runは行わない。
+
+P0ではHuman all-NGをroot-cause evidenceとして扱わず、
+再現scenario / expected behavior / symptom domain / first plausible owner boundaryへ分解する。
+F1 / F2 / F3 / F4 + Camera / Presentationを同一criteriaでrankする。
+
+F2:
+FacePart mismatch checklist + Static identity gapを持つ有力candidate。
+ただしuserの「crop」記述はLIVE CAMERA/camera-crop/FacePart cropのどれを指すか単独では確定しない。
+A Camera/LIVE CAMERA/crop と B FacePart transactionをP0で分離して扱う。
+pre-authorized root causeではない。
+
+v44.55.32:
+NOT AUTHORIZED。
+
+E2 branch:
+DEPRIORITIZED / FROZEN EVIDENCE RETAINED。
+
+Big-Bang rewrite:
+REJECT。
+
+Production fix:
+NOT YET AUTHORIZED。
+
+==================================================
+1. Current Environment
+==================================================
+
+Project:
+D:\KiwiAvatarSystem
+
+Unity:
+6000.0.80f1
+
+Primary:
+Windows / DX12
+
+MediaPipeUnityPlugin:
+0.16.3
+
+Unity Inference Engine:
+2.4.1
+
+Historical host hardware:
+Ryzen 9 5950X
+RTX 4090
+
+Camera:
+UGREEN Camera 4K
+1920x1080@60
+Native NV12
+
+Active scene:
+Face Landmark Detection
+
+Face Landmarker:
+Primary / Source of Truth
+
+==================================================
+2. Claim-Scoped Authority
+==================================================
+
+単一の総合順位ではなくClaim-Scoped Authorityを使う。
+
+Implementation:
+current local Production source + SHA
+
+Runtime:
+same-build / same-Production correlated Runtime
+
+Package:
+actually installed source
+
+Performance:
+clean Production benchmark only
+
+Visual:
+same-build human observation
+
+Provenance:
+source
+→ build definition/toolchain
+→ artifact
+→ installed SHA
+→ Runtime evidence
+
+Static conditionをRuntime defectへ昇格しない。
+VisualだけでTracking Coreを変更しない。
+Observer / Validator / Benchmark / REPORTも監査対象。
+EXE SHA単独をUnity build authorityにしない。
+GitHub mainがcurrent localより古ければProduction Authorityにしない。
+SHA推測禁止。
+
+通常チャットからlocal live projectを直接確認できない場合:
+NORMAL_CHAT_LIVE_LOCAL_PRODUCTION_NOT_DIRECTLY_VERIFIED。
+
+Codex REPORTでlocal source/SHAがfreezeされている場合:
+CODEX_CURRENT_LOCAL_SNAPSHOT_VERIFIED_AT_REPORT_TIME。
+
+==================================================
+3. Latest Authority Freeze
+==================================================
+
+Git HEAD reported by latest Codex audits:
+27281c622d7b8bf2ececf711b037fc8f9e029004
+
+Workspace:
+DIRTY_USER_OWNED。
+reset / checkout / clean禁止。
+
+Latest Codex current-local key identities at Fundamental Audit freeze:
+Production aggregate SHA256:
+C34BC1BF8778AABC0F33654EC4B186660F7AB29084ABFEDFB94060DFB5C6FDB6
+
+Package-source aggregate SHA256:
+426CF5286D1661407B5B45532B067CA6EBE80E479837108DD69248C80E746C0F
+
+Diagnostic aggregate SHA256:
+519D3D6B8BDA81DD3093693859A883AB33D0F26FE1A4ABD87EA985D3D3FB70E0
+
+FaceLandmarkerRunner.cs:
+6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93
+
+KiwiInferenceFaceTracker.cs:
+CF860F4EF686BD5FDAC4140D4F3E73E64B6F390C3BC64204CF346011AC69380D
+
+KiwiFaceMotion.cs:
+D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6
+
+KiwiNativeCamera.dll:
+82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+
+これらはSol High Fundamental Audit時点のlocal snapshot Authority。
+以後local変更があれば再計算する。
+
+Latest project AGENTS:
+D:\KiwiAvatarSystem\AGENTS.md
+SHA256:
+B217232B8C25364A3CB1D5CB6BBD86D6732574748EE1BBCEFAA355376ECBDC24
+
+Global AGENTS normalized:
+before:
+4AA78D0A366C9BB8145C4FC257A5B1BE2196FB2CC396385F3C25DEC3872D2DC6
+after:
+6500D37232B66B183555CBFED66B7F57E0AA27267F5E67A65BD425DB8FCFA59D
+
+Global stale Kiwi state:
+0
+
+AGENTS conflict:
+0
+
+~/Projects:
+ABSENT_ACCEPTED。
+このために新directory / Skillを作らない。
+
+--------------------------------------------------
+Frozen v31 Runtime Authority
+--------------------------------------------------
+
+Runtime ZIP:
+RuntimeEvidence_v44_55_31_20260905_165629_f05a2230.zip
+
+SHA256:
+FCA6097A4B01E725F8ED2203B330A259C2BBCE5549ABBC001B139ED9FEAD9B9E
+
+Build identity:
+KIWI_V44_55_31_BUILD
+
+Build identity SHA256:
+DAA8C22A890DEEB128758D587359D4EDBF859631E3A8306D63F77D746949D7A8
+
+Frozen executable:
+D:\KiwiAvatarSystem\Builds\v44_55_31AsyncProducerTailSnapshot\KiwiAvatarSystem_v44_55_31.exe
+
+EXE SHA256:
+98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81
+
+重要:
+EXE SHAだけではauthorityにしない。
+288/288 complete build payload correlationとRuntime buildManifest linkでv31 exact buildを確定。
+
+v31 accepted E2:
+
+CONTROL:
+Actual NEITHER 88/88
+
+PROBE:
+Actual NEITHER 84/84
+
+Producer snapshot:
+NEITHER 84/84
+
+snapshot == Actual:
+84/84
+
+Decision:
+E2_DIVERGENCE_PRESENT_BY_PRODUCER_TAIL_OR_COMMON_OBSERVATION_PATH
+
+Scope:
+VALID_FOR_E2_AT_COARSE_OUTPUT_OBSERVATION_ENDPOINT_ONLY
+
+未証明:
+* exact faulty method/statement
+* exact resource transition
+* exact queue ownership defect
+* producer-tail vs common observation exact split
+* Fence necessity/location
+* Wait necessity
+* queue flush necessity
+* async-disable fix
+* E2→Product Visual causality
+* clean Performance
+
+Validator authority note:
+* initial `Pair identity minimumPresenceBits` failureはRuntime transaction divergenceではなく、
+  v31 JSON decimal numberとv27 CSV uppercase X8をraw string比較したValidator defect。
+* canonical UInt32比較ではCONTROL 88/88、PROBE 84/84一致。
+* Validator修正はpost-run offline validation authorityであり、frozen Player/build authorityとは分離する。
+* original v31 Runtime ZIP bytesは変更せず再validationした。
+
+--------------------------------------------------
+Heavy-Diagnostic-Off frozen-v31 Product Impact Authority
+--------------------------------------------------
+
+Heavy collection explicitly OFF:
+v20 / v24 / v25 / v27 / v31
+v29 auto-quit OFF。
+
+Application:
+exit 0
+timeout false
+explicit Player errors 0
+
+Spout:
+publish progress observed
+maximum publish count 3110
+
+Continuous Native→Canonical→Avatar identity:
+NOT_OBSERVED。
+新しいobserverは追加していない。
+
+Run classification:
+HEAVY_DIAGNOSTIC_OFF_PRODUCT_IMPACT_RUN。
+heavy v20/v24/v25/v27/v31 collectionをOFFにしたProduct-impact runであり、
+observer-free / diagnostic-component-free Production benchmarkではない。
+
+Runtime ZIPのPlayer.logで少なくとも以下のdefault-active component/method実行が観測される:
+* KiwiSpoutWaitFreeDiagnosticV44_20::PollAndLog / Update
+* KiwiCameraPreviewQualityService::PrepareFrame / PrepareCorrectedLivePreview 等
+
+これらがProduct data/presentationを変更するcomponentか、observer/quality-serviceかは
+current sourceでclaim-scopedに分類するまで推測しない。
+Performance Authorityには使用しない。Human Visualはこのexact tested build/scenarioにのみ有効。
+
+Heavy-diagnostic-off Product Impact evidence ZIP (artifact/run contract name retains "CleanProductImpact"):
+Run_20260906_075920_6ab7ac96.zip
+
+SHA256:
+BD703CD9000D23B9DCD2257D34F9BAA9146F1EECDB41E34EAE2163D97A5F0872
+
+Player.log SHA256:
+EF8CB75B7CE7A08D14C2421B9C31B90BF8ECB36F406B56825B8150268C1A99C2
+
+Human Visual:
+FAIL。
+
+User classified all requested checklist items NG:
+* Head translation
+* Yaw
+* Pitch
+* Roll
+* Eye
+* Blink
+* Mouth open
+* Mouth shape/expression
+* Frontal stillness
+* Fast movement response
+* Obvious lag
+* Stale/freeze
+* FacePart mismatch
+* Transition artifact
+* LIVE CAMERA
+* Spout output
+
+User statement summary:
+要求品質に達しておらず、ほぼ全ての挙動とcropに問題あり。
+
+Authority:
+PRODUCT_IMPACT=REPRODUCED_IN_TESTED_CLEAN_SCENARIO
+IMPACT_REACHES=PRESENTATION
+VISUAL_AUTHORITY=HUMAN_REVIEW_FAIL_ALL_REQUESTED_ITEMS
+
+`IMPACT_REACHES=PRESENTATION`は「最終表示で品質FAILを観測した」というdeepest-observed-boundary表現であり、
+upstream defectがPresentationまで因果伝播したことやPresentation自体がroot causeであることを意味しない。
+
+ただし:
+E2_TO_VISUAL_CAUSAL_AUTHORITY=UNAVAILABLE_NOT_CORRELATED。
+
+Performance:
+UNAVAILABLE_NOT_A_DEDICATED_CLEAN_BENCHMARK。
+
+Current post-v30-retirement workspace Runtime:
+UNAVAILABLE_NOT_RUN。
+
+==================================================
+4. Major Superseded / Rejected Decisions
+==================================================
+
+SUPERSEDED:
+STAGE1_READY / STAGE1_EXECUTED=NO。
+→ Stage1A/1B source/dataflow audits were subsequently executed.
+
+SUPERSEDED:
+Current P0 = Execution Context causal closure。
+→ v31 E2をfreezeし、Product quality failureがHuman Visualで確認されたため
+  E2 branchを次P0から外す。
+
+SUPERSEDED:
+v29 latest Runtime authority。
+→ latest accepted diagnostic Runtime authorityはv31。
+
+SUPERSEDED:
+v30 producer-tail diagnostic implementation。
+→ v31にsupersede。
+  v30 active 15 files / 75,544 bytesはSHA-preserved archiveへ可逆退役。
+
+REOPENED:
+LIVE CAMERA quality acceptance。
+→ 最新frozen-v31 Human VisualでLIVE CAMERA/crop requested quality未達が確認された。
+  ただしprior accepted baselineからのvisual regression発生時点・原因は未証明。
+  560x315 / exact 16:9 / Bilinear configuration自体を即変更する根拠はまだない。
+  Camera/Crop/Presentation geometry・sampling・identityを分離して確認する。
+  Tracking変更で画質を隠すことは禁止。
+
+REJECT:
+CommandBuffer execution form単独をprimary causeとする。
+
+REJECT:
+v31 E2からFence / Wait / flush / async-disableを推定する。
+
+REJECT:
+全Human NGを1つの原因に統合する。
+
+REJECT:
+F1-F4をStaticだけでRuntime defectと断定する。
+
+REJECT:
+External tracker / WMC Primary Core replacement。
+
+REJECT:
+Big-Bang rewrite。
+
+REJECT:
+Performance改善をCorrectnessより先に行う。
+
+==================================================
+5. Evidence-Protected Core
+==================================================
+
+Evidence-Protected Coreとは:
+working/validated behaviorを理由なく再設計しない。
+ただし新Evidenceでdefectが出たboundaryは保護対象ではなく監査対象に戻る。
+
+Face Landmarker:
+Primary / Source of Truth。
+
+基本:
+* latest-frame
+* FIFO禁止
+* stale accumulation禁止
+* bounded resources
+* freshness / liveness / source age明示
+* persistent ROI
+* tracking/display cadence分離
+* threshold無根拠変更禁止
+* stale prediction禁止
+* strong smoothing/Kalmanで上流defectを隠さない
+
+Root / Head / Eye / Mouth:
+authority分離。
+
+Head:
+single rigid authority。
+
+禁止:
+Yaw/Pitch/Roll→Root translation。
+Eye/Blink/Mouth→Root translation。
+
+Provider normalization:
+owner=1。
+
+Resume:
+Provider Switchと別event。
+
+Temporal Presentation:
+owner=1/channel。
+
+Prediction:
+owner=1/channel。
+
+Publish:
+duplicate/out-of-order/stale/mixed epoch禁止。
+
+Product behavior direction contract:
+* tracked screen-right translation → avatar output screen-right translation
+* tracked screen-left translation → avatar output screen-left translation
+* face right/left → Head yaw follows the same intended direction
+* lean right/left → Head roll follows the same intended direction
+* look/lean down-right等のcombined orientation → Head orientationへ反映
+* Yaw/Pitch/RollをRoot translationへ混ぜない
+* Eye/Blink/Mouth/ExpressionをRoot translationへ混ぜない
+* frontal stillnessは不要な揺れを最小化しつつ、normal movementはnear-raw responsivenessを維持
+
+これらはP0 Product Failure Specificationのexpected behaviorとして使用する。
+
+Texture / Crop / Mask / FacePart:
+same-sample transactionをrequired contractとして扱う。必要fieldはEvidenceで最小化する。
+
+==================================================
+6. Native Camera
+==================================================
+
+Baseline:
+Native Path B SystemMemoryNV12。
+
+保持する設計原則:
+* latest-frame
+* fixed Unity-visible texture identity
+* explicit timestamp
+* camera generation/session epoch
+* session epoch != frame sequence
+* nonblocking
+* bounded slots
+
+過去Evidenceなしに復活禁止:
+* FIFO/stale accumulation
+* UpdateExternalTexture
+* IMFSample cross-callback retention
+* blocking D3D12 queue Wait
+* rotating Unity-visible texture identity
+* D3D11On12 1080p Production
+
+Historical boundary evidence retained:
+* standalone MF/DXGI NV12 1080p60 capability established
+* D3D11 shared CopyResource bridge ~60fps capability established
+* D3D11On12 1080p Production path rejected
+* Native v13-v18 isolation + fixed Presentation Texture + timestamp/session epoch established
+
+これらはcurrent Human crop/LIVE CAMERA NGの原因をNativeに固定するEvidenceではない。
+Native/Camera問題をTracking mathで隠さない。
+
+最新Human Visualのcrop/LIVE CAMERA NGは、
+Native root causeを証明しない。
+まずCamera sample identity / crop geometry / presentation boundaryを分離する。
+
+==================================================
+7. Inference / v31 E2
+==================================================
+
+Stage1A installed Inference Engine 2.4.1 source auditで確認した概略:
+
+Runner fresh source
+→ ProcessSentisFreshFrame
+→ TryProcessAsync
+→ TryScheduleNewestSource
+→ ScheduleModel
+→ crop Blit
+→ ToTensor
+→ Worker.Schedule
+→ output
+→ AsyncGPUReadback
+→ CPU clone
+→ Decode
+
+Direct Graphics:
+REF exact。
+
+CommandBuffer Graphics:
+REF exact。
+
+CommandBuffer Async:
+NEITHER。
+
+v31 producer-tail snapshot:
+Actualとsame NEITHER。
+
+これにより:
+「通常readbackだけが単独で壊れている」
+という単純仮説は弱くなった。
+
+ただしproducer-tailとcommon observation/readback dependencyのexact splitはOPEN。
+
+Observer/path caution:
+v24 evidenceでは CONTROL MIXED_TRANSACTION anomalous=10、PROBE anomalous=31。
+これはobserver perturbation / path difference / common dependencyのいずれも単独では証明しない。
+E2 branchを再開する場合、この差を無視してobserver resultをcausal authorityへ昇格しない。
+
+Disposition:
+E2 evidenceをfreezeし再現可能性を保持。
+Product symptomとの因果がない限り次診断P0にしない。
+
+v44.55.32:
+NOT AUTHORIZED。
+
+==================================================
+8. Diagnostic Framework
+==================================================
+
+v20/v24/v25/v27/v31:
+frozen v31 evidence chainとして現時点KEEP。
+
+v30:
+RETIRED_FROM_ACTIVE_PATH_REVERSIBLY。
+
+原則:
+* Production / Diagnostic分離
+* opt-in
+* claimがclosed/supersededしたら退役
+* same claimのobserver/validator重複を増やさない
+* observer-heavy runをPerformance Authorityにしない
+* measurement defectならProduction fixを積み上げず測定設計へ戻る
+
+Harness findings to preserve:
+* v31 minimumPresenceBits false identity failureはrepresentation-aware typed comparisonで修正済み。
+* frozen-v31 Product-impact runnerはapplication exit=0後のpost-processでempty Player.log lineを許容せずrunner exit=1となった。
+  raw Player.logを変更せずoffline recoveryし、同run evidenceを使用。Runtime再実行は不要だった。
+* Harness/Validator failureをProduction defectへ昇格しない。
+
+次のProduct boundary validationでは、
+既存identityを優先。
+新GPU content observer:
+原則禁止。
+
+identity不足時:
+不足boundaryだけを埋める最小non-content identity observerを設計。
+Production behaviorは変更しない。
+
+==================================================
+9. F1-F5 Current Status
+==================================================
+
+F1:
+Expression Canonical latch bypass。
+
+Status:
+PRODUCT_PRIORITY / STATIC CONDITION。
+
+Human relevance:
+Eye/Blink/Mouth/Expression NG。
+
+未証明:
+F1がRuntime causeか。
+
+--------------------------------------------------
+
+F2:
+FacePart exact texture/crop transaction identity gap。
+
+Status:
+PRODUCT_PRIORITY / STATIC_IDENTITY_GAP_WITH_RELATED_FACEPART_SYMPTOM。
+
+Human relevance:
+FacePart mismatch checklistはNG。
+Userはcrop問題も明示したが、そのcropがLIVE CAMERA/camera-crop/FacePart cropのどれかは単独では確定しない。
+したがってCamera/LIVE CAMERA/crop boundaryとFacePart transaction boundaryを分離してtriageする。
+F2を最初のroot-cause boundaryに固定しない。
+
+Authority gap:
+exact Camera sample
+→ selected texture/crop
+→ mask
+→ FacePartState/commit
+→ Presentation
+のidentityが未閉鎖。
+
+未証明:
+cross-sample mismatchなのか、
+crop geometryなのか、
+maskなのか、
+mapping/presentation semanticsなのか。
+
+--------------------------------------------------
+
+F3:
+RigidSampleFrame / SharedTiltLock two-stage rotation condition。
+
+Status:
+PRODUCT_PRIORITY / STATIC CONDITION。
+
+Human relevance:
+Yaw/Pitch/Roll/Head NG。
+
+未証明:
+harmful double correctionか。
+
+--------------------------------------------------
+
+F4:
+temporal layer plurality。
+
+Status:
+PRODUCT_PRIORITY / STATIC CONDITION。
+
+Human relevance:
+Stillness / fast response / lag / stale/freeze / transition NG。
+
+現在:
+layersは複数存在するがchannel/purpose separationもある。
+duplicate temporal ownershipは未証明。
+
+--------------------------------------------------
+
+F5:
+Provider transition double ownership。
+
+Status:
+REJECTED_CURRENT_SOURCE。
+
+Current:
+Hub owns Provider Switch。
+Canonical handoff有効時FaceMotion legacy bridgeはno-op。
+Resume != Provider Switch。
+
+Human broad NGだけでは覆さない。
+
+==================================================
+10. Product Architecture
+==================================================
+
+維持するtarget:
+
+Evidence-Protected Core
++
+Avatar Adapter
++
+Model Profile
++
+Runtime Import
++
+Transactional Hot Swap
+
+FacePart target:
+
+Native Camera
+→ Face Landmarker
+→ Canonical
+→ Model Profile / stateless mapping
+→ FacePartState
+→ atomic commit
+→ Presentation
+→ Spout
+
+Neural face replacement:
+Primary path外。
+
+External tracker:
+Primary replacementしない。
+
+Model-specific behavior:
+Tracking Core外。
+
+Avatar本格実装は、
+Canonical semantic / transaction / ownership contractが閉じる前に開始しない。
+
+==================================================
+11. External Comparative / Reuse Decision
+==================================================
+
+比較済み/対象:
+* MediaPipe
+* MediaPipeUnityPlugin
+* OpenSeeFace
+* Kalidokit
+* UniVRM
+* KlakSpout
+* Webcam Motion Capture
+* VTube Studio
+* Warudo
+* VNyan
+* Animaze
+* VSeeFace
+* TikTok Effect House
+* Snap Lens Studio
+
+公開depth:
+Tier A public source:
+method/statement/dataflow。
+
+Tier B public API/component:
+boundary。
+
+Tier C closed commercial:
+docs + lawful black-box only。
+
+非公開内部を推測しない。
+
+Current decision:
+SELECTIVE_EVIDENCE_GATED。
+
+External comparative status:
+SUFFICIENT_FOR_CURRENT_ARCHITECTURE_DECISIONS_NOT_EXHAUSTIVE。
+Closed commercial internalsや一部public documentationにはunknownが残る。
+今後は変更boundaryごとにdecisionを変え得る差分だけrefreshする。
+
+採用条件:
+Kiwi独自責務とbug surfaceを減らす。
+
+原則Reject:
+* extra copy
+* FIFO/permanent buffer
+* extra process/thread hop
+* serialization
+* CPU-GPU roundtrip
+* extra readback/upload
+* previous-frame dependency
+* hidden smoothing/normalization
+* extra authority owner
+* high resource/lifecycle risk
+
+WMC:
+比較benchmarkとして重要。
+Primary Core置換はREJECT。
+
+==================================================
+12. New Overall Roadmap — Reaudit Revision 11
+==================================================
+
+旧Execution Context-first critical pathは廃止。
+F2-first固定も廃止。
+current workspace再baseline取得も自動必須にしない。
+Product-effective equivalenceは主要PhaseではなくAuthority Preflightへ降格する。
+
+--------------------------------------------------
+G0 — AUTHORITY / PRODUCT-EFFECTIVE EQUIVALENCE PREFLIGHT
+--------------------------------------------------
+
+各Runtime/変更taskの開始時に短く確認する。
+
+比較:
+* current Production source identity
+* active Scene / serialized Product defaults
+* installed package identities
+* Native DLL
+* DEFAULT_ACTIVE Product component set
+* diagnostic/quality-service activation/defaults and whether they are Product-effective
+* user-owned dirty changesがProduct pathへ届くか
+
+Current evidence:
+latest 2026-09-06 report snapshotでは、v31 selected Product sourceとの差はProduct behaviorへ届くものとして確認されず、
+v30 retirementもsuperseded diagnostic-only active-path deletionである。
+
+Current planning classification:
+EQUIVALENT_FOR_PRODUCT_PLANNING_STRONGLY_SUPPORTED_AT_LATEST_SNAPSHOT。
+
+これはcurrent workspace Runtime/Visual equivalenceを意味しない。
+
+新しいProduct-effective差分が見つかった場合のみ:
+* current workspace clean build/runtime/human baselineを1回取得
+* heavy diagnostic collection OFF
+* new Product observerなし
+* Performance benchmarkと混同しない
+
+差分がなければbaseline再取得目的だけのbuild/runをしない。
+
+--------------------------------------------------
+TRACK A — Product Failure Specification / Correctness Localization
+--------------------------------------------------
+
+P0:
+PRODUCT_FAILURE_SPECIFICATION_AND_SYMPTOM_TO_BOUNDARY_TRIAGE。
+
+目的:
+最新Human VisualのBROAD_QUALITY_FAILを、後付け判定なしで検証可能なProduct claimsへ分解する。
+
+最初にscenario/expected behaviorを定義:
+* frontal stillness
+* horizontal/vertical translation
+* yaw/pitch/roll
+* eye/gaze/blink
+* mouth open/shape/expression
+* fast movement / stop / response
+* crop / LIVE CAMERA
+* FacePart texture/mask/commit
+* transition/reacquire
+* Spout/final presentation
+
+各scenarioについて:
+* user-visible expected behavior
+* observed latest symptom
+* source-of-truth input
+* first owner
+* first transformation
+* timestamp/sample identity availability
+* temporal owner
+* final writer
+* existing observability
+* plausible first failure boundary
+を整理する。
+
+重要:
+Human all-NGは各domainのquality failure authorityにはなるが、root-cause strengthは同一ではない。
+Explicit narrativeで特にcrop/広範挙動が指摘されているため、その情報量をcheckboxと分離する。
+
+Candidate domains:
+A Camera source / LIVE CAMERA / crop geometry-quality
+B FacePart texture / mask / same-sample transaction
+C Root / Head translation-rotation
+D Eye / Blink / Mouth / Expression semantic
+E Temporal stillness / response / lag / stale / transition
+F Spout / final presentation
+  ※ Spout publish liveness=confirmed。Visual NGはtransport failureを意味しない。
+
+Cross-cutting execution-surface check:
+* KiwiCameraPreviewQualityService
+* KiwiSpoutWaitFreeDiagnosticV44_20
+* その他default-active Validation/Quality component
+をsourceで分類し、Product data/presentation writerかobserver/logging-onlyかを明示する。
+名前にDiagnostic/Qualityが含まれることだけで無害/有害を推定しない。
+
+Ranking criteria:
+* direct Human evidence specificity
+* source/static evidence strength
+* identity/ownership gap
+* hypothesis falsifiability
+* observer contamination risk
+* Product value
+* regression risk
+* measurement cost
+
+Parallel read-only:
+F1 / F2 / F3 / F4 + Camera / Presentation source triage。
+
+P0 Exit:
+1. symptom scenario/expected-behavior matrix frozen for the selected P1 validation
+2. symptom-to-owner/boundary matrix complete
+3. default-active validation/quality services classified for Product effect
+4. first target boundary selected OR exact selection blocker identified
+5. additional current baseline run necessity decided by G0
+6. Production behavior changed=NO
+
+--------------------------------------------------
+P1:
+FIRST_TARGET_BOUNDARY_LOCALIZATION。
+
+P0から最もProduct valueとEvidence densityが高いboundaryを1つ選ぶ。
+F2は有力候補だがpre-authorizedしない。
+
+まずcurrent source / serialized state / existing evidenceでclaimを閉じられるか確認する。
+StaticだけでPASS/REJECTできるclaimに新Runtime observerを追加しない。
+Runtimeが必要なremaining claimだけを1-factorで測定する。
+
+F2選択時:
+Camera sample identity
+→ crop source texture
+→ crop geometry / UV / aspect / orientation / mirror
+→ mask
+→ FacePartState
+→ atomic commit
+→ final presentation identity。
+
+LIVE CAMERA独立選択時:
+Native source
+→ Presentation Texture
+→ scale/filter/format/layout
+→ LIVE CAMERA display
+をFacePart transactionと分離。
+
+F1選択時:
+Runner expression / Canonical expression
+→ timestamp/sample identity
+→ Eye/Blink/Mouth/Expression final owner。
+
+F3選択時:
+RigidSampleFrame / SharedTiltLock
+→ angle/source/writer
+→ final head/mesh/presentation rotation。
+
+F4選択時:
+accepted/display/late-latch/prediction
+→ channel ownership
+→ actual presentation latency/staleness。
+
+Existing identity first。
+不足時のみ最小non-content identity observer。
+同taskでProduction fixをしない。
+
+Exit:
+first PASS / FAIL / INCONCLUSIVE boundaryをclaim-scopedに特定。
+
+--------------------------------------------------
+P2:
+PROVEN_BOUNDARY DECISION + MINIMAL CORRECTNESS FIX IF JUSTIFIED。
+
+P1結果ごとにまず:
+FIX_NOW / DEFER_TO_CONTRACT_CLOSURE / NO_CHANGE
+を選ぶ。
+
+FIX_NOWは、boundary-specific Runtime/identity/geometry/ownership defect、または
+output contractに対する明白なdeterministic source defectが証明され、
+局所修正がowner/contractを悪化させない場合だけ。
+Static candidateや症状一致だけではFIX_NOWにしない。
+
+原則:
+* one owner
+* one transaction
+* latest valid sample
+* minimum state
+* minimum copy
+* old responsibility retire
+
+修正後:
+same claim validation PASS。
+unrelated channel regressionなし。
+
+--------------------------------------------------
+P3:
+MODEL / CANONICAL SEMANTIC + OWNERSHIP CLOSURE。
+
+Face Landmarker Source of Truthから、raw/model semantic interpretationを確認してから
+Canonical semantic stateへ閉じる。Presentation ownershipそのものはP4で閉じる。
+
+対象:
+* raw/model semantic meaning and coordinate conventions
+* Presence / landmark / rotation semantics
+* F1 / F3 / F4の採用/棄却
+* Head single rigid authority
+* Root translation contaminationなし
+* semantic timestamp/sample identity
+* Eye/Blink/Mouth/Expression semantic ownership
+* normal sample near-raw responsiveness
+
+Model Semanticを飛ばしてCanonicalだけPASS扱いしない。
+Visual tuning目的のtracking filter追加禁止。
+
+もしここでInference output semantic mismatchがProduct failureと相関した場合だけ、
+frozen E2 branchをtargeted evidenceとして再昇格できる。v44.55.32は自動承認しない。
+
+--------------------------------------------------
+P4:
+TRANSACTION / PRESENTATION / LIFECYCLE CONTRACT CLOSURE。
+
+正式contract:
+* sample identity
+* timestamp/hostTicks
+* generation/session epoch
+* crop/texture/mask
+* semantic state
+* FacePartState
+* Provider / Resume
+* Presentation / Spout commit
+* Lost / Reacquire
+* Camera restart
+* Provider switch
+* Model switch
+* Backend switch
+* shutdown / recovery
+* state/epoch ownership
+
+LifecycleをArchitecture Freeze後へ先送りしない。
+ここではtarget contractとexpected transition semanticsを閉じる。
+
+--------------------------------------------------
+TRACK B — Determinism / Architecture Freeze
+--------------------------------------------------
+
+P5:
+DETERMINISTIC REPLAY / GOLDEN CORPUS。
+
+P0-P4で得たaccepted-correct claimsのみから作成。
+
+含む:
+* frontal still
+* translation
+* yaw/pitch/roll
+* eye/blink
+* mouth/open/shape
+* fast motion
+* crop/FacePart
+* presentation
+
+P4でcontractだけ定義され、P7でimplementation closure予定の
+Lost/Reacquire / restart / provider/model/backend transitionは、
+この時点ではaccepted-runtime Goldenに混ぜない。
+未実装/未検証transitionはEXPECTED_TRANSITION_FIXTUREとして別管理し、
+P7でRuntime PASSした後にGoldenへ昇格する。
+
+Goldenはfull camera/GPU replayを必須としない。
+claimに応じてinput/sample/model-semantic/canonical/transaction corpusを分離してよい。
+bad current behaviorをGoldenとして固定しない。
+
+--------------------------------------------------
+P6:
+ARCHITECTURE / SECURITY / EXTERNAL-REUSE CONTRACT FREEZE。
+
+ここでfreezeするのはtarget interface / ownership / trust contractであり、
+current concrete implementationを永久固定することではない。
+
+freeze:
+* Canonical contract
+* Transaction contract
+* Lifecycle/epoch contract
+* FacePart contract
+* Provider/Resume contract
+* Presentation ownership
+* Avatar binding contract
+* Backend correctness eligibility
+* Runtime Import trust boundary
+* extension allowlist + actual format/magic validation
+* file/path/asset acceptance policy and path-traversal defense
+* file/texture/mesh/material/node resource limits
+* external-path restriction / generated storage name
+* cancellation / memory budget / parse-failure isolation
+* rollback/error ownership
+* External reuse boundary decisions
+
+External comparative statusは:
+SUFFICIENT_FOR_CURRENT_ARCHITECTURE_DECISIONS_NOT_EXHAUSTIVE。
+変更boundaryにdecisionを変え得る差分だけrefresh。
+
+--------------------------------------------------
+P7:
+LIFECYCLE IMPLEMENTATION CLOSURE
++ CONDITIONAL EVIDENCE-PRESERVED SIMPLIFICATION / RE-ARCHITECTURE。
+
+必須:
+P4でfreezeしたcritical lifecycle/recovery semanticsをProduction implementationで閉じる。
+
+条件付き候補:
+* duplicate owner removal
+* temporal owner consolidation
+* transaction identity propagation
+* inactive/legacy retirement
+* stateless mapping boundary
+* diagnostic retirement
+
+Big-Bang rewrite禁止。
+
+手順:
+Golden
+→ one boundary change
+→ そのboundaryのlifecycle semanticsも同時実装
+→ replay
+→ same-build integration
+→ lifecycle/resource gate
+→ old responsibility retire。
+
+P7は「現architectureへlifecycleを二重実装してから再設計する」Phaseではない。
+変更boundaryではownershipとlifecycleを同じchange unitで閉じる。
+NO_CHANGEが最善なre-architectureはskip。
+Avatar Runtime前にcritical lifecycle/recovery implementationを閉じる。
+
+--------------------------------------------------
+P8:
+CORE PERFORMANCE BUDGET / REGRESSION GATE
++ BACKEND ELIGIBILITY。
+
+Avatar/Product負荷を加える前のCore基準として、結果を見る前に定義:
+* core correctness acceptance scenarios
+* latency metrics
+* source/canonical/display cadence
+* accepted source age
+* CPU/GPU/resource
+* allocation/resource leak
+* primary target camera modes
+* primary Windows hardware baseline
+* correctness-qualified backend eligibility
+
+ここではFinal Product SLO / Support MatrixやFinal backendをfreezeしない。
+速度だけでbackend採用しない。
+
+--------------------------------------------------
+TRACK C — Avatar Product
+--------------------------------------------------
+
+P9:
+AVATAR RUNTIME SYSTEM。
+
+P6 security/architecture contract + P7 lifecycle closure + P8 core gateを使用。
+
+* VRM 0.x / 1.0
+* secure Runtime Import
+* Model Profile
+* generic per-part FacePart Binding
+* non-spherical AutoFit
+* Transactional Hot Swap
+* rollback
+* Spring/Dangle
+
+Tracking Coreへmodel固有処理を入れない。
+
+--------------------------------------------------
+P10:
+CONFIGURATION / CALIBRATION / SAFE MODE / USER TUNING。
+
+* atomic config
+* migration
+* backup
+* last-known-good
+* tuning boundaries
+* safe fallback
+
+--------------------------------------------------
+P11:
+PRODUCT UI / DIAGNOSTICS / SECURITY-PRIVACY UX。
+
+* Model Browser
+* camera/tracking/output health
+* clear error/recovery
+* support bundle
+* secure import UX
+* privacy controls
+
+Security contract自体はP6で定義済みとする。
+
+--------------------------------------------------
+TRACK D — Final Performance / Acceptance
+--------------------------------------------------
+
+P12:
+INTEGRATED QUALITY PROFILE / SLO / SUPPORT MATRIX
++ CORRECTNESS-QUALIFIED FINAL BACKEND SELECTION
++ CLEAN PERFORMANCE OPTIMIZATION。
+
+Avatar Runtime / Configuration / Product UIを含む統合負荷で、
+P8 eligibilityを満たしたbackendのみ対象。
+
+結果を見る前にfreeze:
+* Product latency / cadence / source-age SLO
+* supported camera modes
+* representative Windows GPU/driver support scope
+* CPU/GPU/resource/allocation budgets
+* fallback / degraded-mode policy
+
+数値Gateは測定前固定。
+Correctness/Lifecycle/Resourceを速度より優先。
+P13 compatibility結果でSupport Matrixを確定更新し、基準を後付け変更しない。
+
+--------------------------------------------------
+P13:
+RECOVERY / SOAK / COMPATIBILITY。
+
+* long run
+* camera restart
+* Lost/Reacquire
+* provider/model/backend lifecycle
+* resource leak
+* representative Windows GPU/driver
+
+--------------------------------------------------
+P14:
+FINAL VISUAL QA。
+
+same-build Human Visual。
+
+全channel:
+Head / Root / Eye / Blink / Mouth / Expression /
+FacePart / Crop / LIVE CAMERA / Spout。
+
+Correctness/Performance PASS後にfinal tuning。
+VisualだけでTracking Coreを変更しない。
+
+--------------------------------------------------
+P15:
+RELEASE ENGINEERING / SUPPLY CHAIN / INSTALLER。
+
+* dependency/license/SHA inventory
+* clean Release Candidate
+* signing where applicable
+* install/upgrade/repair/uninstall/reinstall
+* rollback
+* smoke
+
+--------------------------------------------------
+P16:
+WINDOWS PRODUCTION ACCEPTANCE。
+
+Definition of Doneを全閉鎖。
+
+--------------------------------------------------
+P17:
+ANDROID / iOS PREPARATION。
+
+Windows Production Acceptance後。
+
+Android:
+* Runtime Import / camera / storage / permissions
+* pause-resume / lifecycle
+* memory/resource fallback
+* rendering/performance profile
+
+iOS:
+* implementation / static validation
+* Unity-Xcode preparation
+* 現要求では実機testを必須条件にしない
+
+Mobile都合でWindows Coreを壊さない。
+
+==================================================
+13. Parallel / Optional Work
+==================================================
+
+Critical pathをblockしない範囲でparallel可能:
+
+* public-source research
+* WMC/OSS comparative audit
+* documentation/archive cleanup
+* security/import threat model
+* Avatar contract/interface design
+* UI wireframe
+
+P5以前にcurrent runtime pathへ
+未確定Avatar architectureを接続しない。
+
+Optional / non-blocking:
+* Hand / Body
+* VMC / OSC / mocopi adapters
+* neural effects
+* telemetry upload
+* auto update
+
+==================================================
+14. Current G0 / P0 Acceptance Design — Revision 11
+==================================================
+
+G0は独立した長期Phaseではない。
+新しいRuntime/変更task前の短いAuthority preflight。
+
+G0-Q1:
+latest frozen-v31 planning baselineとcurrent workspaceの間に、
+次decisionを変え得るProduct-effective差分があるか。
+
+Current evidence:
+2026-09-06 latest report snapshotでは
+Production source差分によるProduct behavior changeは確認されず、
+v30 retirementはdiagnostic-only。
+よってplanning equivalenceはSTRONGLY_SUPPORTED。
+
+ただしcurrent workspace Runtime/Visual Authorityにはしない。
+
+新しい差分がなければbaseline再取得だけのrunをしない。
+差分がある/不明ならcurrent Product baselineを1回だけ取得。heavy collectors OFFとdefault-active service classificationを明記する。
+
+P0はProduct failure specification + symptom triage。
+
+P0-Q1 Product scenario definition:
+各Human NGを再現可能なscenarioとexpected behaviorへ変換できるか。
+
+P0-Q2 Evidence granularity:
+Human all-NGを各root causeの証明に誤用していないか。
+Explicit narrativeのcrop/広範挙動とcheckbox evidenceを分離してweightする。
+
+P0-Q3 Boundary ranking:
+A Camera/LIVE CAMERA/crop
+B FacePart transaction
+C Root/Head
+D Eye/Mouth/Expression
+E Temporal
+F Spout/Presentation
+を同じcriteriaでrankする。
+
+Ranking criteria:
+* Human evidence specificity
+* source/static evidence strength
+* identity/ownership gap
+* falsifiability
+* observer contamination risk
+* Product value
+* regression risk
+* measurement cost
+
+P0-Q4 First runtime claim:
+P1で閉じるclaimを1つに限定できるか。
+
+P0 PASS:
+* G0 authority preflight complete
+* product scenario/expected-behavior matrix complete
+* symptom-to-boundary matrix complete
+* default-active validation/quality services classified for Product effect
+* first target selected OR exact blocker identified
+* Production behavior changed=NO
+
+P0 FAIL:
+* Authority mismatch
+* active Product-path difference unresolved
+* selected claimがHuman/Product relevanceを持たない
+* measurementが新しい大きなobserverを必要とする
+
+同taskでProduction fixしない。
+
+==================================================
+15. Definition of Done Order
+==================================================
+
+A Source Identity
+
+B Timestamp / Transaction Identity
+
+C Model Semantic Correctness
+
+D Canonical Semantic Correctness
+
+E Authority / Ownership Safety
+
+F Lifecycle / Recovery
+
+G Resource Correctness
+
+H Replay / Regression Protection
+
+I Security / Privacy
+
+J Clean Performance
+
+K Compatibility
+
+L Visual Acceptance
+
+M Product UX
+
+N Distribution / Supply Chain
+
+O Windows Production Acceptance
+
+順序原則:
+Correctness / identity / ownershipを先に閉じる。
+PerformanceとVisualは独立Authority。
+Visual NGをfilterで隠さない。
+
+==================================================
+16. Do Not Change Without New Evidence
+==================================================
+
+* Face Landmarker Primary
+* latest-frame / bounded/nonblocking principle
+* Native Path Bを原因未証明で置換しない
+* Root/Head/Eye/Mouth separation
+* Provider normalization owner=1
+* Resume != Provider Switch
+* same-sample transaction principle
+* external tracker replacement REJECT
+* Big-Bang rewrite REJECT
+* strong smoothing/Kalman/stale prediction REJECT as workaround
+* FIFO/permanent frame delay REJECT
+* Fence/Wait/flush/async-disable REJECT without exact evidence
+* Tracking mathでcamera/inference/presentation問題を隠さない
+* commit/pushは明示指示時のみ
+
+注意:
+「Do Not Change」は監査免除ではない。
+新Evidenceで該当boundary defectが証明されたら最小変更対象になる。
+
+==================================================
+17. Current Unknowns
+==================================================
+
+1. exact crop texture/sample/geometry identity at presentation。
+2. crop NGがtransaction mismatch / geometry / mask / mapping / presentationのどこか。
+3. F1 Runtime incidence。
+4. F3 harmful double rotation incidence。
+5. F4 actual duplicate temporal ownership incidence。
+6. Canonical semantic correctness in the frozen-v31 heavy-diagnostic-off Product run。
+7. continuous Native→Landmarker→Canonical→Avatar identity in clean run。
+8. E2とProduct NGの因果。
+9. exact E2 producer-tail/common observation split。
+10. dedicated clean Performance。
+11. current post-v30-retirement workspace Runtime/Visual。
+12. all Visual NGが複数独立defectか共通boundary defectか。
+
+Unknown != Failure。
+Unknown != PASS。
+
+==================================================
+18. Current Single Action — Revision 11
+==================================================
+
+NEXT_SINGLE_ACTION:
+
+PRODUCT_FAILURE_SPECIFICATION_AND_SYMPTOM_TO_BOUNDARY_TRIAGE
+PLUS_DEFAULT_ACTIVE_SERVICE_CLASSIFICATION
+
+PRECHECK:
+AUTHORITY_PRODUCT_EFFECTIVE_EQUIVALENCE_G0
+
+Read-only first。
+
+Step 1 — G0 Precheck:
+latest snapshot以降にProduct-effective差分が追加されていないかだけ短く確認。
+差分がなければplanning equivalenceを継続し、baseline再取得目的のbuild/runはしない。
+
+Step 2:
+Human Visual broad failを
+Camera/LIVE CAMERA/crop
+FacePart
+Root/Head
+Eye/Mouth/Expression
+Temporal
+Spout/Presentation
+へ分解してsource ownership/identity boundaryと対応付ける。
+
+Step 3:
+F1/F2/F3/F4 + Camera/Presentationを横並びrank。
+
+Step 4:
+current workspace Product baseline runがtarget selectionに必要か判定。
+
+Step 5:
+P1で閉じるfirst target boundaryを1つ選択。
+
+F2:
+HIGH-VALUE CANDIDATE。
+まだpre-authorized root causeではない。
+
+Production behavior:
+NO CHANGE。
+
+v44.55.32:
+NO。
+
+E2:
+freeze / deprioritize。
+
+Performance optimization:
+NO。
+
+Avatar broad implementation:
+NO until core correctness/contract/lifecycle gate。
+
+Expected output:
+Consolidated REPORT 1個。
+RuntimeはP0で必要性が証明された場合のみ。
+
+==================================================
+19. Agent / Instruction Architecture
+==================================================
+
+Global AGENTS:
+generic cross-project rails only。
+
+Project:
+D:\KiwiAvatarSystem\AGENTS.md
+owns durable Kiwi-specific rails。
+
+Volatile:
+version/SHA/current Runtime/current roadmapをAGENTSへ固定しない。
+
+Current state:
+latest consolidated report / build identity / Runtime evidence / current sourceから取得。
+
+New Skill:
+具体的なrepeatable workflowが必要になるまで作らない。
+
+~/Projects absence:
+Accepted。
+新設不要。
+
+
+==================================================
+20. PowerShell / Validator / Installer Rails
+==================================================
+
+Windows PowerShell 5.1固定。
+
+共通化対象:
+* SHA256
+* safe I/O / root containment
+* tool discovery
+* subprocess stdout/stderr/exit code
+* transactional replacement
+* rollback
+* write-target guard
+
+禁止:
+* PS7-only syntax
+* ambiguous cardinality
+* unsafe Remove/Move/Copy
+* obsolete path/version
+* placeholder/validator-version mismatch
+
+Generic Listは::new() + .ToArray()を基本。
+Validator自身も独立性・schema・failure modeをauditする。
+
+Installer/Distribution変更時:
+exact SHA
+→ backup
+→ transactional replace
+→ validate
+→ rollback。
+
+Native変更時はsource → build definition/toolchain → artifact → installed SHA → Runtimeのprovenance chainを同時に更新する。
+推測Rebuild禁止。
+
+==================================================
+21. Reporting / Archive Workflow
+==================================================
+
+重要作業区切り:
+1 major theme = 1 permanent report/archive。
+
+Codex:
+Consolidated REPORT 1個を優先。
+
+Runtime:
+Evidence ZIP 1個を優先。
+
+Visual:
+必要時のみMP4 / screenshots。
+
+通常チャット:
+Codex REPORT / Runtime Evidenceを再監査してProduction Decision。
+
+Reportでは必ず分離:
+* Confirmed
+* Runtime
+* Static
+* Package Source
+* External Public
+* Inference
+* Rejected
+* Unknown
+* Superseded
+
+Performance Authority:
+observer-heavy run不可。
+
+Visual Authority:
+same-build human review。
+
+Current integrated-information artifact naming:
+`KiwiAvatarSystem_最新統合情報_<用途>_MMDD_HHMM.txt`
+
+Volatile current-stateをAGENTSへ複製せず、この統合情報源 / current source / build identity / Runtime evidenceで更新する。
+
+==================================================
+22. Source Basis for This Revision
+==================================================
+
+Primary latest sources:
+
+1.
+KiwiCodexConsolidatedReport_AgentsCleanup_CleanProductImpact_RoadmapReaudit_20260906_024057.txt
+
+2.
+Run_20260906_075920_6ab7ac96.zip
+
+3.
+KiwiCodexConsolidatedReport_SolHigh_FundamentalAudit_20260906_021254.txt
+
+4.
+KiwiCodexConsolidatedReport_v44_55_31_MinimumPresenceBitsIdentityAudit_20260905_204437.txt
+
+5.
+KiwiAvatarSystem-最新統合情報源_ロードマップ再監査版_20260904_2201JST.txt
+
+6.
+KiwiAvatarSystem-最新統合情報源_再監査改訂版_20260904_2024JST.txt
+
+Authority transition:
+
+2026-09-04:
+v29 / Stage1 / Execution Context-first。
+
+2026-09-05:
+v31 E2 coarse endpoint closure。
+
+2026-09-06:
+Fundamental Audit
+→ v30 diagnostic retirement
+→ AGENTS normalization
+→ exact frozen-v31 heavy-diagnostic-off Product-impact run
+→ Human Visual FAIL
+→ Product-correctness-first roadmap。
+
+==================================================
+23. Final Status — Reaudit Revision 11
+==================================================
+
+ROADMAP_REAUDIT_STATUS=COMPLETE_REAUDITED_REVISION_11
+LATEST_INTEGRATED_INFORMATION_STATUS=UPDATED_2026_09_06_REAUDITED_R11
+
+EXTERNAL_COMPARATIVE_STATUS=
+SUFFICIENT_FOR_CURRENT_ARCHITECTURE_DECISIONS_NOT_EXHAUSTIVE_REFRESH_PER_CHANGED_BOUNDARY
+
+CURRENT_PRODUCT_QUALITY=
+FAIL_IN_TESTED_FROZEN_V31_HEAVY_DIAGNOSTIC_OFF_SCENARIO
+
+CURRENT_HUMAN_SYMPTOM_GRANULARITY=
+BROAD_QUALITY_FAIL_NOT_ROOT_CAUSE_SPECIFIC
+
+PRODUCT_IMPACT_REACHES=
+PRESENTATION
+
+PRODUCT_IMPACT_OBSERVED_AT=
+PRESENTATION_NOT_CAUSAL_LOCATION
+
+E2_STATUS=
+VALID_COARSE_ENDPOINT_ONLY_DEPRIORITIZED
+
+E2_TO_VISUAL_CAUSALITY=
+NOT_ESTABLISHED
+
+V44_55_32=
+NOT_AUTHORIZED
+
+F1=
+PRODUCT_PRIORITY_STATIC_CANDIDATE
+
+F2=
+PRODUCT_PRIORITY_STATIC_IDENTITY_GAP_RELATED_FACEPART_SYMPTOM_NOT_PREAUTHORIZED
+
+F3=
+PRODUCT_PRIORITY_STATIC_CANDIDATE
+
+F4=
+PRODUCT_PRIORITY_STATIC_CANDIDATE
+
+F5=
+REJECTED_CURRENT_SOURCE
+
+PRODUCTION_FIX=
+NOT_AUTHORIZED_UNTIL_BOUNDARY_EVIDENCE
+
+CURRENT_WORKSPACE_RUNTIME=
+UNAVAILABLE_NOT_RUN
+
+CURRENT_WORKSPACE_VISUAL=
+UNAVAILABLE_NOT_RUN
+
+CURRENT_V31_TO_WORKSPACE_PRODUCT_EFFECTIVE_EQUIVALENCE=
+STRONGLY_SUPPORTED_FOR_PLANNING_AT_LATEST_SNAPSHOT_NOT_RUNTIME_VISUAL_AUTHORITY
+
+PERFORMANCE_AUTHORITY=
+UNAVAILABLE
+
+VISUAL_AUTHORITY=
+HUMAN_REVIEW_FAIL_FROZEN_V31_ONLY
+
+LIVE_CAMERA_QUALITY=
+REOPENED_REQUESTED_QUALITY_NOT_MET
+
+LIVE_CAMERA_PRIOR_BASELINE_REGRESSION=
+NOT_ESTABLISHED
+
+BIG_BANG_REWRITE=
+REJECT
+
+EXTERNAL_TRACKER_REPLACEMENT=
+REJECT
+
+NEXT_SINGLE_ACTION=
+PRODUCT_FAILURE_SPECIFICATION_AND_SYMPTOM_TO_BOUNDARY_TRIAGE_PLUS_DEFAULT_ACTIVE_SERVICE_CLASSIFICATION
+
+NEXT_ACTION_PRECHECK=
+AUTHORITY_PRODUCT_EFFECTIVE_EQUIVALENCE_G0
+
+COMMIT_PUSH=
+NO

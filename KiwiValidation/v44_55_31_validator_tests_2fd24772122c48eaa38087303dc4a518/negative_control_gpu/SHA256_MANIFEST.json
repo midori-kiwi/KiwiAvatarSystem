@@ -1,0 +1,54 @@
+[
+    {
+        "path":  "build_identity.json",
+        "sha256":  "B92C7F03B54A458A144F9718428AD9E835BB54441C19BC2B4EB8012A82AE72B3"
+    },
+    {
+        "path":  "CONTROL\\KiwiActualProductionVsShadowPayloadAuthority_v44_55_27_SYNTHETIC.csv",
+        "sha256":  "792EFBF92C8CEF760CFE3CDEED592B9366485FC9B30B921B88AC7B4B81C078F2"
+    },
+    {
+        "path":  "CONTROL\\KiwiActualProductionVsShadowPayloadAuthority_v44_55_27_SYNTHETIC.txt",
+        "sha256":  "6E46EAFE9B11F2BB99F4C8C7262E63BC373110947DE0FAA6F80FA0B9774F0A92"
+    },
+    {
+        "path":  "CONTROL\\Player.log",
+        "sha256":  "B7619C0642ECA8DEFECEFE98FA960012F665F2774E1FD571EF588F4F80670108"
+    },
+    {
+        "path":  "CONTROL\\producer_pairs.jsonl",
+        "sha256":  "F8200F8D2A396167A1CDE8CCDFD1C139994347C4082578781D21952DC613C4AD"
+    },
+    {
+        "path":  "CONTROL\\producer_summary.txt",
+        "sha256":  "5596A793086CF9B3006A7CF77B73AA98FC9421C42FA4CAB6AAFF9E70A0EAEFA3"
+    },
+    {
+        "path":  "CONTROL\\run_identity.json",
+        "sha256":  "610E83D431768C9B3D1981F50E12159BD27887A3B95250C54BA4C8D6E34F857F"
+    },
+    {
+        "path":  "PROBE\\KiwiActualProductionVsShadowPayloadAuthority_v44_55_27_SYNTHETIC.csv",
+        "sha256":  "792EFBF92C8CEF760CFE3CDEED592B9366485FC9B30B921B88AC7B4B81C078F2"
+    },
+    {
+        "path":  "PROBE\\KiwiActualProductionVsShadowPayloadAuthority_v44_55_27_SYNTHETIC.txt",
+        "sha256":  "6E46EAFE9B11F2BB99F4C8C7262E63BC373110947DE0FAA6F80FA0B9774F0A92"
+    },
+    {
+        "path":  "PROBE\\Player.log",
+        "sha256":  "FE2F45FA8EE19F0B880E4BD616AF3B85A257C92BE764D02436EDD16E23F41CA0"
+    },
+    {
+        "path":  "PROBE\\producer_pairs.jsonl",
+        "sha256":  "CA14E9F91A746A876CF2D5A42A458128535BDAE3CBDE5EBD3433AE30C24827B5"
+    },
+    {
+        "path":  "PROBE\\producer_summary.txt",
+        "sha256":  "3C14FB320F3C8ECD56446EDA3D0490A95E897491B0985A696635A2850B713101"
+    },
+    {
+        "path":  "PROBE\\run_identity.json",
+        "sha256":  "D83B48742DEAC00FBD39EB20ADB1EFB88F042BFED96FE68FB46FFD497453982C"
+    }
+]

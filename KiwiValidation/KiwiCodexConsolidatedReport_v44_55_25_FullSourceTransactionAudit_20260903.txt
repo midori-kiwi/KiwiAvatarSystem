@@ -1,0 +1,626 @@
+KiwiAvatarSystem Codex Consolidated Report
+v44.55.25 Production Schedule Transaction Closure + Full Source Cross Audit
+Date: 2026-09-03 JST
+Project: D:\KiwiAvatarSystem
+
+Labels: CONFIRMED FACT / RUNTIME EVIDENCE / STATIC EVIDENCE /
+PUBLIC DESIGN PRINCIPLE / INFERENCE-HYPOTHESIS / UNVERIFIED.
+
+# 1. Executive Summary
+
+v44.55.25: PASS (claim-scoped published-transaction observer)
+Production-vs-Shadow Transaction Semantic: STILL OPEN
+Root Cause: PARTIALLY_CONFIRMED
+Observer: VALID (claim-scoped; performance non-authority)
+Production Code Change: NONE
+OSS Full Source Audit: PARTIAL
+Production OSS Integration: HOLD
+CPU Production: BLOCKED
+Production Adoption: HOLD
+
+CONFIRMED FACT:
+- v44.55.24 evidence was rerun: 76/76, anomalous=8, Production=REF exact=2,
+  Production=MODE2 exact=0, Neither exact=6, decision=MIXED_TRANSACTION.
+- Installed Inference Engine 2.4.1 makes PeekOutput Worker-owned and valid only
+  until next Schedule/ScheduleIterable/Dispose. Logical count is not capacity.
+- Pre-existing v25 closed pair/lane/Worker/pendingOutput/v24 snapshot, but not
+  FacePrecisionTrackingData canonical publication.
+- Its validator accepted SCHEDULE_TRANSACTION_MISMATCH while requiring every
+  mismatch counter to be zero and every row coherent: classification defect.
+- Diagnostic Boundary D now binds existing atomic frameId/backend/
+  submissionHostTicks/timestamp/arrival once per new frameId. Production core was
+  not changed. Validator now separates observer integrity from valid findings.
+- Windows PowerShell 5.1 static checks and guarded Unity build passed.
+
+RUNTIME EVIDENCE:
+- Rebuilt Player bound v20/v24/v25. reflectionValid=1, nativeRunning=1,
+  systemMemoryCapture=1, pathB=1.
+- Final exact-stamp run completed 104/104 dependency pairs with 12 anomalous
+  pairs. All schedule, integrity, observer-fault, partial and pending counters
+  were zero.
+- 88 transactions, including 10 anomalous transactions and the one v24
+  ANOMALOUS_NEITHER_EXACT pair, were bound to an exact InferenceEngine canonical
+  publication. The other 16 packed candidates had no observed canonical publish;
+  this is coverage, not automatically a defect, because Production may reject or
+  supersede a candidate before publication.
+- Final decision=PUBLISHED_TRANSACTION_COHERENT_PARTIAL_COVERAGE; v25 TXT/CSV
+  and final Player.log were copied byte-preserving under KiwiValidation.
+
+Selected direction: retain observer-only Boundary D only as diagnostic evidence;
+next investigate the remaining GPU execution/order or numerical/preprocess cause
+and, only if required, add a bounded publication-rejection reason. No Production
+fix/permanent ID/CPU switch/OSS integration is yet justified.
+
+# 2. Production Authority
+
+CONFIRMED FACT:
+- Root D:\KiwiAvatarSystem; branch main;
+  HEAD 27281c622d7b8bf2ececf711b037fc8f9e029004.
+- Unity 6000.0.80f1 revision 2dfd32957da2.
+- Scene Assets\Scenes\Face Landmark Detection.unity.
+- Windows x86_64, Linear, explicit Direct3D12, automatic graphics API off.
+- Native baseline Path B SystemMemoryNV12.
+- LIVE CAMERA baseline 560x315 exact 16:9 Bilinear.
+
+Authority applied: local Production+SHA > same-Production runtime > installed
+PackageCache source > KiwiValidation > pinned official source > local Git.
+No commit/push/reset/checkout/clean. Ambient untracked v25 files were preserved.
+
+# 3. Local Git / SHA / Package Provenance
+
+Final relevant status:
+ M Tools/KiwiPowerShell/KiwiPsCompat.psm1
+?? Assets/KiwiAvatarSystem/Runtime/Validation/KiwiProductionScheduleTransactionTraceV44_55_25.cs(.meta)
+?? KiwiValidation/ExternalSourceAudit_v44_55_25/
+?? KiwiValidation/KiwiPreflight_v44_55_25.json
+?? KiwiValidation/PowerShellCompatSmoke/Smoke_20260903_173044/
+?? Tools/KiwiV44_55_25/
+?? Tools/KlakSpout_v206_diag/ (pre-existing, not modified by this audit)
+
+Critical SHA256:
+- Assets\Script\KiwiInferenceFaceTracker.cs
+  52C046EE44B41A4FF50B85AEF503BC29DD31B57EAF58C0D160CCC33C5D4B7695
+- Assets\Script\FaceLandmarkerRunner.cs
+  6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93
+- Assets\Script\KiwiFaceMotion.cs
+  D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6
+- v25 observer
+  90CEF88267EC14B5DD67DF35D0AE446C9469E6EC1058D1E8CADCF878BE18C814
+- installed KiwiNativeCamera.dll
+  82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+- Native source KiwiNativeCameraPlugin.cpp
+  636D76251F9CB3BB785F4497D3D0722033FC0CE36CB4A574B65EDA58B5ABE32A
+- checked-in Native Build DLL
+  8091265D91993B0082BFC63D55FFF8A18CC18AACA9B1F907E874E7011D8017E2
+- Packages manifest / lock
+  35F00A89D31A8BF7EE50718F38D4BAC90236D8B691F516C5FC14CAB47AFBFEE1 /
+  23845C132DBF51CB53A5CFDE4EF606FA68D10DCB53AE5FF21F4305613A5F9CE1
+
+Native provenance is not cryptographically closed: Build DLL != installed DLL.
+No Native file was changed/rebuilt; ABI parity was not treated as provenance.
+
+Installed packages inspected first:
+- Inference Engine 2.4.1: Library\PackageCache\com.unity.ai.inference@587873fd5e1b;
+  package repository revision de8961cc....
+- MediaPipeUnityPlugin 0.16.3:
+  Library\PackageCache\com.github.homuler.mediapipe@66127f8e750d.
+- KlakSpout 2.0.6: Library\PackageCache\jp.keijiro.klak.spout@cd3751890357.
+- UniVRM assemblies are present; installed PM version remains UNVERIFIED.
+- manifest requests uGUI 1.0.0, lock resolves built-in 2.0.0: warning, not cause.
+
+# 4. Latest Runtime Revalidation
+
+RUNTIME EVIDENCE:
+- v24 TXT: LocalLow\MidoriKiwi\KiwiAvatarSystem\KiwiFrameBottleneck\
+  KiwiPairBoundShadowOutputSnapshot_v44_55_24_20260902_220948.txt
+  SHA prefix 1018367A; paired CSV SHA prefix F684B19B.
+- Validate-KiwiV44_55_24.ps1 -EvidenceStamp 20260902_220948: PASS.
+- Independent CSV recount: rows=76; NORMAL_NO_GE4=68;
+  ANOMALOUS_PRODUCTION_EQUALS_REFERENCE=2; ANOMALOUS_NEITHER_EXACT=6; faults=0.
+
+STATIC+RUNTIME interpretation:
+- v24 snapshots pendingOutput while the exact pair is pending; therefore simple
+  post-record Worker reuse is not the complete explanation.
+- That “Production” value is packed pendingOutput GPU snapshot authority, not the
+  later canonical FacePrecisionTrackingData publication.
+- v20/v24 correctness observers add diagnostic work; performance is non-authority.
+
+Final same-Production rerun:
+- v20/v24 exact stamp 20260903_181553; v25 exact stamp 20260903_181601.
+- v24: rows=104; anomalous=12; Production=REF exact=11;
+  Production=MODE2 exact=0; Neither exact=1; decision=MIXED_TRANSACTION.
+- v25: rows=104; exact canonical publication=88; no observed canonical
+  publication=16; invalid publication identity=0; schedule mismatch=0;
+  observerFault/partial/pending=0.
+
+# 5. v44.55.25 Transaction Boundary Map
+
+Production static path:
+latest camera source -> sourceHostTicks/camera+session generation -> bounded Lane
+-> cropTexture/crop matrix -> ToTensor -> lane.worker.Schedule(lane.input)
+-> lane.pendingOutput=PeekOutput -> pending metadata -> ReadbackRequest
+-> IsReadbackRequestDone -> copy metadata, clear lane pending state
+-> pre-decode stale generation/anchor/source/session reject
+-> ReadbackAndClone -> DecodeReadableOutput -> newest valid source wins
+-> TryProcessAsync returns landmarks/rotation/completedSourceHostTicks
+-> StoreSentisTrackingData -> atomic _trackingLock swap
+-> frameId++, backend=InferenceEngine, submissionHostTicks, timestamp, arrival
+-> coherent consumer snapshot.
+
+Already present: camera/session/tracker/anchor generations, sourceHostTicks, lane,
+Worker/input/pendingOutput references, schedule/start/readback ticks, readback frame,
+minimum-presence bits, crop matrix, logical output count, canonical frameId/backend/
+submissionHostTicks/timestamp/arrivalHostTicks.
+
+Missing permanent fields: schedule ordinal/transaction ID, GPU submission/fence ID,
+backend epoch. These remain Evidence Gate items and were not added.
+
+Observer boundaries:
+A exact v20 pair -> one lane and frozen references/metadata.
+B early probe verifies ready state, ReferenceEquals and exact values before ordinary
+  Production Update.
+C exact v24 capture/result/snapshot bind.
+D once per new canonical frameId, require InferenceEngine backend and exact
+  submissionHostTicks pair bind. No tensor content/new GPU copy/new inference.
+
+# 6. Unity Inference Engine 2.4.1 Source Audit
+
+STATIC EVIDENCE from actual installed source:
+- Schedule is non-blocking and storage DisposeOnExecute runs before next execution.
+- PeekOutput reference is valid only until next Schedule/ScheduleIterable/Dispose.
+- Tensor count/shape is separate from dataOnBackend/maxCapacity.
+- TensorPool may reset logical count while reusing storage.
+- ComputeTensorData.ReadbackRequest covers m_Buffer.count; logical downloads may
+  request fewer elements. Synchronous paths contain WaitForCompletion.
+- Production waits for IsReadbackRequestDone before ReadbackAndClone and does not
+  reschedule a Lane while readbackPending. v25 adds no wait or lifetime extension.
+
+Conclusions:
+- logical size != backing capacity: CONFIRMED FACT.
+- output reuse capability and finite PeekOutput lifetime: CONFIRMED FACT.
+- reuse-only as complete v24 cause: REJECTED.
+- pair-specific alias/reuse contribution: UNVERIFIED.
+- lane.input direct oracle: REJECTED and not reintroduced.
+
+# 7. MediaPipe Full Source Findings
+
+Snapshot: https://github.com/google-ai-edge/mediapipe.git;
+commit 5257839eaa6a34dcf5df65f2121c33b2f3e7fada;
+commit date 2026-09-02T21:20:44-07:00; clone/fetch 2026-09-03;
+Git tree files=4,736; audited high-value files=8; sparse target checkout.
+Breakdown: cc=1252, h=920, extensionless=502, proto=331, py=298, java=226,
+pbtxt=215, ts=142, mm=107. Manifests: BUILD.bazel, MODULE.bazel, WORKSPACE.
+Index: face_landmarker.{cc,h}, face_landmarker_graph.*, face_landmarker_test.cc,
+flow_limiter_calculator.* and options proto. Excluded: unrelated tasks/examples,
+generated/vendor/binary/testdata; reason=bounded transaction audit.
+
+PUBLIC DESIGN PRINCIPLE:
+- LIVE_STREAM inserts FlowLimiterCalculator to bound frames in flight; official
+  tests expect fewer outputs than submitted inputs.
+- Explicit packet timestamps, bounded flow and Close lifecycle are applicable.
+- MediaPipe graph behavior does not prove Kiwi Sentis output ownership/publication.
+
+EXHAUSTIVE_FULL_SOURCE_AUDIT = NOT COMPLETE.
+
+# 8. MediaPipeUnityPlugin Full Source Findings
+
+Snapshot: https://github.com/homuler/MediaPipeUnityPlugin.git; tag v0.16.3;
+commit cf4c11d8eef724fe24111b7cd795d55ba490aeec;
+date 2025-11-08T13:50:10+09:00; clone 2026-09-03; files=1,535;
+audited high-value files=4. Breakdown: meta=770, cs=459, extensionless=50,
+prefab=39, h=34, cc=32, asset=23, diff=16, yml=14, json=12.
+Manifests: package/Packages manifests, WORKSPACE/BUILD and asmdef.
+Index: FaceLandmarkerRunner.cs, TaskApiRunner.cs, VisionTaskApiRunner.cs,
+BaseVisionTaskApi.cs. Excluded native generated/platform binaries/most samples/tests.
+
+Actual installed authority:
+- Installed BaseVisionTaskApi.cs SHA
+  30BC1806E34DB11B63D524272DEEFFB292BCACD25972C546C24933C0FB4E6B3A
+  exactly equals pinned v0.16.3.
+- Sample uses TextureFramePool=10, GPU/CPU image construction and DetectAsync with
+  stopwatch ms. GPU path has an admitted not-guaranteed one-frame wait workaround.
+- Stop disposes frame pool; API Close closes TaskRunner; Dispose closes if needed.
+
+Classification: explicit ownership/lifecycle=B; pool size and one-frame wait=D/E
+for Kiwi Production; actual package source authority was honored.
+EXHAUSTIVE_FULL_SOURCE_AUDIT = NOT COMPLETE.
+
+# 9. OpenSeeFace Findings
+
+Snapshot: https://github.com/emilianavt/OpenSeeFace.git;
+commit 85aa70fc67582d046e771ea73625182a0d8f7475;
+date 2025-12-28T12:52:30+01:00; clone 2026-09-03; files=117;
+audited files=3. Breakdown: meta=24, dll=15, cs=14, txt=12, onnx=11,
+png=11, py=9, cpp=3. Manifest pyproject.toml.
+Index: facetracker.py, tracker.py, Unity/OpenSee.cs. Excluded models/media/plugins.
+
+STATIC EVIDENCE:
+- Windows dshow/OpenCV/video input, Python threads/queues and confidence/failure
+  heuristics; Unity receives timestamped UDP records on a dedicated thread.
+- Shutdown uses Thread.Join before socket close, a blocking lifecycle pattern.
+
+Classification: timestamped producer/consumer and face identity=B; OpenCV camera,
+external tracker replacement, FIFO-like transport, blocking realtime join and
+copied smoothing/thresholds=D/E. No tracker/Native Path replacement is justified.
+EXHAUSTIVE_FULL_SOURCE_AUDIT = NOT COMPLETE.
+
+# 10. Kalidokit Findings
+
+Snapshot: https://github.com/yeemachine/kalidokit.git;
+commit 6437947da2f889fdf241b84745b53082f9e881a8;
+date 2025-08-18T14:10:47-07:00; clone 2026-09-03; files=78;
+audited high-value files=6. Breakdown: json=29, ts=17, js=6, png=5, html=4,
+md=4, css=3. Manifests package.json/package-lock.json.
+Index: FaceSolver index/head/eyes/mouth, Types.ts, src/index.ts.
+Excluded demos/build/media/pose-hand detail.
+
+STATIC/PUBLIC PRINCIPLE: Landmark -> head/eye/pupil/brow/mouth semantic solve is
+separate from avatar mapping. This responsibility boundary is applicable. Clamp,
+remap/blink heuristics from the deprecated project are not transaction authority
+and must not be copied into Tracking Core. Boundary=B; heuristic transplant=E.
+EXHAUSTIVE_FULL_SOURCE_AUDIT = NOT COMPLETE.
+
+# 11. UniVRM Findings
+
+Snapshot: https://github.com/vrm-c/UniVRM.git; tag v0.130.1;
+commit c7212c7988e6b5fe69d93a293a4274192a105005;
+date 2025-10-06T17:53:23+09:00; clone 2026-09-03; files=3,630;
+audited high-value files=3. Breakdown: meta=1949, cs=1162, asset=110, mat=90,
+png=74, asmdef=62, unity=39. Manifests: UniGLTF/VRM/VRM10 package + asmdef.
+Index: RuntimeGltfInstance.cs, ImporterContext.cs, VRMImporterContext.cs;
+Vrm10 importer/instance/runtime paths searched. Excluded Editor/export/tests/samples,
+generated schema/material subsystems.
+
+STATIC/PUBLIC PRINCIPLE: runtime import constructs an owned RuntimeGltfInstance
+with mesh visibility and explicit disposal/resource destruction. VRM0/VRM1 extend
+the glTF import layer. UniVRM does not provide Kiwi ModelProfile validation,
+inactive preparation, atomic model activation, ModelEpoch rejection or rollback.
+Runtime Import direction=B; implementing it during P0=HOLD.
+EXHAUSTIVE_FULL_SOURCE_AUDIT = NOT COMPLETE.
+
+# 12. KlakSpout Findings
+
+Snapshot: https://github.com/keijiro/KlakSpout.git; tag 2.0.6;
+commit 849e7bca3c167839ed697796153e1749acf0c53f;
+date 2025-11-16T23:12:08+09:00; clone 2026-09-03; files=139;
+audited high-value files=4. Breakdown: meta=46, asset=28, cs=18, h=16,
+md=5, json=5, cpp=4. Manifests: package/Packages manifests and asmdef.
+Index: SpoutSender/Receiver and Internal Sender/Receiver. Excluded examples/editor,
+most native detail/tests/media.
+
+Installed SpoutSender.cs and Internal/Sender.cs exactly equal pinned 2.0.6
+(SHA prefixes 9C32D44C and 2A064994). Sender binds name/size/native texture pointer;
+Dispose emits render-thread close and delayed event-memory retirement. Receiver
+recreates buffers for size/lifecycle. These are downstream resource semantics, not
+tracking authority. Explicit output lifecycle=B; Spout authority=D; Kiwi isolation=A.
+EXHAUSTIVE_FULL_SOURCE_AUDIT = NOT COMPLETE.
+
+# 13. Kiwi vs OSS Comparison Matrix
+
+Legend A=already better/present, B=applicable principle, C=evidence required,
+D=not applicable, E=reject/regression.
+
+latest-frame A/B preserve; FIFO A vs OpenSee D/E no queue; in-flight A/B bounded;
+timestamp A/B keep source/task clocks distinct; source identity A/B v25 bind;
+transaction identity C no permanent field yet; GPU/output ownership C package gate;
+stale rejection A preserve pre-decode reject; backend transition C BackendEpoch hold;
+provider transition A/C Resume != switch; Lost/Reacquire A/B no stale prediction;
+ROI A/B persistent; smoothing/prediction A/E no Kalman/workaround; Root/Head A;
+semantic solver Kalidokit B outside Core; Avatar Adapter B; Model Profile B;
+Runtime Import UniVRM B but implementation hold; model switching C atomic+epoch;
+resource retirement UniVRM/Klak B; Spout isolation A/B; lifecycle/recovery B/C;
+diagnostics C bounded/anomaly-triggered only.
+
+# 14. Confirmed Facts
+
+- v24 artifact integrity/counts and MIXED_TRANSACTION were directly revalidated.
+- Six anomalous pairs are neither REF-exact nor MODE2-exact.
+- Worker reuse-only is not a complete explanation.
+- PeekOutput lifetime is finite; logical tensor count and capacity are distinct.
+- Production uses bounded lanes and pre-decode stale rejection.
+- Canonical publish atomically assigns frameId/backend/submissionHostTicks/
+  timestamp/arrivalHostTicks under _trackingLock.
+- Pre-existing v25 omitted this publication boundary.
+- Pre-existing validator could not validate a genuine schedule mismatch.
+- Nested PS5.1 build failed to resolve Get-FileHash; helper was made independent.
+- Production tracking/presentation/native/ROI/threshold/inference files unchanged.
+- Updated observer compiles and guarded build succeeds.
+
+# 15. Public Design Principles
+
+- Bound realtime work; discard obsolete input instead of accumulating FIFO latency.
+- Publish needs exact source identity/timestamp and explicit lifecycle owner.
+- GPU object identity != content identity; logical shape != backing identity.
+- Importer disposal != application atomic activation/epoch safety.
+- Semantic solve belongs between landmarks and Avatar mapping.
+- Texture sharing remains downstream of tracking/inference authority.
+
+# 16. Inferences / Hypotheses
+
+INFERENCE/HYPOTHESIS:
+- If complete v25 anomalous rows close A-D, lane/PeekOutput/canonical publication
+  identity is strongly excluded and next authority becomes GPU execution context/
+  order or shadow-vs-Production preprocessing/execution.
+- A publication miss can be real G-class rejection or observer phase blind spot;
+  interpret with failureReason/frameId/sourceHostTicks/Player.log, never token alone.
+
+UNVERIFIED:
+- GPU submission/fence identity.
+- Whether anomalous packed output is exactly what canonical publish decoded.
+- Resume, Provider Switch, backend transition continuity.
+- Clean performance and visual result.
+
+# 17. Observer / Validator Audit
+
+Observer after change: bounded selected pairs; no FIFO; no Production write; no
+lane.input readback; no new Worker/Schedule/inference/GPU snapshot; no blocking GPU
+wait; no lifetime extension. It reads the existing no-landmark-copy atomic precision
+accessor once per new frameId and matches exact submissionHostTicks.
+
+Observer=VALID for its claim-scoped purpose: compile/bind/static fail-closed and
+Runtime thresholds passed; 104 rows completed with no observer faults, partial
+records or pending records. Boundary D adds a small existing-lock read on the main
+thread, so observer-heavy performance remains non-authoritative. It cannot prove
+why a packed candidate was not published and cannot identify GPU fence/submission.
+
+Validator defect fixed:
+- before, mismatch was an accepted decision but mismatch counters/rows were forced
+  coherent;
+- after, observer-integrity counters must be zero while finding/coverage counters
+  must match the decision and classified rows; a cross-backend publication is not
+  misclassified as an InferenceEngine transaction mismatch;
+- validator exit 0 certifies evidence contract, not Production correctness.
+
+PowerShell 5.1 results:
+- KiwiPsCompat SHA now uses FileStream/SHA256 with deterministic disposal.
+- Test-KiwiPsCompat.ps1: KIWI PS COMPAT SMOKE PASS.
+- v25: STATIC_VALIDATION_PASS; VALIDATOR_SELF_AUDIT_PASS; PROTECTED_SHA_PASS;
+  POWERSHELL_5_1_PARSER_PASS.
+
+# 18. v44.55.25 Root Cause Classification
+
+A schedule identity mismatch: EXCLUDED for all 104 observed scheduled pairs;
+  lane/Worker/pendingOutput/v24 pair identity counters are zero.
+B GPU submission/order mismatch: UNVERIFIED; no submission/fence token.
+C completion/fence mismatch: UNVERIFIED; ready/readback times exist, fence ID absent.
+D Worker-owned reuse/overwrite: capability CONFIRMED; sole cause REJECTED;
+  pair-specific contribution is not supported for 88 published transactions and
+  remains UNVERIFIED for the underlying numerical cause.
+E PeekOutput lifetime/alias: static risk CONFIRMED; runtime cause UNVERIFIED.
+F logical/backing identity: distinction CONFIRMED; causal mismatch UNVERIFIED.
+G canonical publish mismatch: EXCLUDED for the 88 exact published transactions,
+  including 10 anomalous and the one v24 Neither-exact pair. Sixteen candidates
+  were not observed as canonical publications; rejection/supersession reason is
+  not exposed, so coverage is partial rather than mismatch.
+H observer artifact: first Boundary-D run falsely matched same-source MediaPipe
+  publications and treated absence as a mismatch; CONFIRMED, corrected, rebuilt
+  and superseded by the final zero-fault exact-stamp run.
+I validator classification defect: CONFIRMED and corrected.
+J other execution-context/preprocess/shadow difference: STILL OPEN.
+
+Overall Root Cause=PARTIALLY_CONFIRMED because I/H and the former publication
+evidence gap are closed, but GPU execution/order and the numerical source of the
+remaining MIXED_TRANSACTION output are not identified.
+
+# 19. Alternatives Compared
+
+A Observer/validator-only closure — SELECTED.
+Correctness: observes missing publication identity, no authority change. Latency/
+jitter: small diagnostic-only read, performance invalid. Allocation: no tensor/
+landmark copy. GPU sync: none. Lifecycle: exactly one active runner, fail closed.
+Scope/risk/rollback: smallest/easiest.
+
+B Local Production output-boundary fix — HOLD.
+Could clone/own output, but may add copy/readback/storage latency, hide cause and
+touch protected Worker/lifecycle code. Not justified without runtime closure.
+
+C Permanent ScheduleTransactionId/BackendEpoch — HOLD.
+Potentially stronger identity but cross-cuts camera->inference->canonical->avatar,
+transition/rollback/diagnostics. Highest regression surface; no evidence yet.
+
+# 20. Selected Best Direction
+
+Select A as completed for schedule-to-published-canonical identity. Preserve its
+evidence and do not rerun it as a substitute for the next claim. Move only to a
+minimal GPU execution-context/order or numerical-difference observer; add a bounded
+pre-publication rejection reason only if the 16 unobserved candidates must be
+distinguished. Do not promote diagnostic fields from static plausibility.
+
+# 21. Changed Files
+
+Production code: NONE. Native code/artifact: NONE.
+
+Applied diagnostic/tool changes:
+- Assets\KiwiAvatarSystem\Runtime\Validation\KiwiProductionScheduleTransactionTraceV44_55_25.cs
+  (pre-existing untracked; Boundary D and decision data).
+- Tools\KiwiV44_55_25\Build-KiwiV44_55_25.ps1 (observer SHA guard).
+- Tools\KiwiV44_55_25\Validate-KiwiV44_55_25.ps1 (SHA/columns/classification).
+- Tools\KiwiV44_55_25\README.txt (Boundary D contract).
+- Tools\KiwiPowerShell\KiwiPsCompat.psm1 (PS5.1-safe SHA).
+
+Evidence/source additions: six pinned snapshots under
+KiwiValidation\ExternalSourceAudit_v44_55_25; preflight; PS smoke output; report.
+Old builds preserved, not deleted:
+- Builds\v44_55_25ProductionScheduleTransactionTrace_preF273_20260903_0830Z
+- Builds\v44_55_25ProductionScheduleTransactionTrace_preCanonicalBoundaryD_20260903_0900Z
+- Builds\v44_55_25ProductionScheduleTransactionTrace_preBackendFilterFix_20260903_1807JST
+
+Final byte-preserved evidence:
+- KiwiValidation\RuntimeEvidence_v44_55_25_20260903_181601
+
+# 22. Before / After SHA256
+
+observer:
+ F2736FD5F3BA196724C90F6BCAD520E88F709EE198ACF7886918470C9EB3BFB4
+ -> 90CEF88267EC14B5DD67DF35D0AE446C9469E6EC1058D1E8CADCF878BE18C814
+KiwiPsCompat.psm1:
+ AA72F60B45CD2041E3D970A86FB5679A9E33098648CEAB7354C236D5BD7DDE89
+ -> 6D6560DB47C2E9E4544FE67F4CB96C50B697D8A86974A8A7DADA798035EAB061
+Build script (captured before Boundary-D guard refresh):
+ 499C9F301E943A42C738801CADDE282DF6E81F3DD98881A6A7409B8E2D0A85B7
+ -> E38A066531B29DC2E5A450033032DB1153A39E5277D99F59DFE0AD3CCA77539C
+Validator (last captured before final classification/guard):
+ 0FF1B86388358936199B13881AE91B36CEC5234CE547C78130AB0CF52140718A
+ -> 87A8959D3BB7F97A99F274FEB41FD7CD2ED0B93BC3C0AC851511F0CE84FF7D2D
+README before SHA: not captured; UNVERIFIED.
+README after: BFAFE0FFE5DBFDAAFD95D1E2253C3C029083D359670BB74F7ABEF5C73A354FDE.
+
+Build: EXE 671744 bytes SHA
+98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81;
+Assembly-CSharp.dll 1620480 bytes SHA
+56336B853C0FAF3A38F3228B801878032BA005C16B43B65FE7F41AE23E581F00.
+
+# 23. Static Validation
+
+PASS: installed package audit; source/timestamp/generation/authority call chain;
+Production and Native protected hashes unchanged; observer SHA guard; PS5.1 parser;
+validator self-audit; PS compatibility smoke; Unity preflight; C# compile; Win64
+Development build; output SHA. No FIFO/blocking wait/repeated inference/lane.input
+oracle/stale publish/ownership transfer/Production overwrite was added.
+
+RUNTIME PASS for the claim-scoped observer contract: 104 completed pairs, exact
+dependency count, minimum anomalous count, decision-consistent rows, zero integrity
+failures and exact-stamp artifacts. UNVERIFIED: Resume/Provider/backend transitions;
+GPU submission/fence; overall semantic correctness; clean performance and visual.
+
+# 24. Runtime Evidence
+
+v44.55.24 final same-run evidence: contract PASS; rows=104; anomalous=12;
+REF-exact=11; MODE2-exact=0; Neither-exact=1; decision=MIXED_TRANSACTION.
+
+v44.55.25 final corrected run, exact stamp 20260903_181601:
+- RUNTIME_VALIDATION_PASS; decision=
+  PUBLISHED_TRANSACTION_COHERENT_PARTIAL_COVERAGE.
+- completedTraceCount=104; dependencyPairCount=104; anomalousPairCount=12.
+- TRANSACTION_COHERENT=88; NO_CANONICAL_PUBLICATION_OBSERVED=16.
+- canonicalPublicationBoundCount=88; bound anomalous=10; identity invalid=0;
+  duplicate=0; schedule mismatch=0; observerFault=0; partial=0; pending=0.
+- Cross count: NORMAL/coherent=78; NORMAL/unobserved=14;
+  REF-exact anomalous/coherent=9; REF-exact anomalous/unobserved=2;
+  Neither-exact anomalous/coherent=1.
+- Player exited with code 0; final Player.log reread after exit.
+
+Byte-preserved evidence SHA256:
+- v25 TXT 144CD49CC03B554FBB5CD6F07AA426D2A6A697A5FF56134459164D87ACA5752E
+- v25 CSV 6D8D31ED4EE8696193C8F1A7A422C1181E14394C1981EA377BF44077BA59F794
+- v24 TXT 5971BD8C480277D47219F6078CCD2583FEC53694B66B39DF113B7D450B846127
+- v24 CSV DC62DEF3A881E9EB940838E0B166C94E751A971160518BA1C4F83100BD87DD51
+- v20 TXT C1834F036CF449047138327F5A2282FBD24AB1FE6C35A5F10F5516904154B440
+- v20 CSV 7272749514A01B1099FC4188F0C367F3E50C189EFD79E413842D550FBCA274AA
+- top32 05517D6C88D58F2778E2B9A66E8579225914F945AB5D9EB978D9C8A329624CC8
+- heatmap CF692A75D360C8091358CB0946F37A494026E124F2C1BAF12AC12B1FEE900D57
+- final Player.log E036AB48229EABE0DD40CB2A383E55491E479A388A4CB7359307B4E1A1C146A8
+- SHA256_MANIFEST.txt
+  71CFA04BC8C368130679558AF0E6FF0F5346F54704D21148CC240D9E736FA2F8
+- evidence ZIP 1222418 bytes, 11 file entries, SHA
+  16F9A0FB219B26B7BD330EDAB20E06FFB19E8B4CCA8F5A949F4A2450ADF059F9.
+
+This is semantic-correctness diagnostic evidence only. No clean performance or
+MP4 visual decision is claimed because the observers materially instrument Runtime.
+
+# 25. Regression Risks
+
+- Boundary D uses existing locked no-copy accessor. It is same-main-thread/once per
+  new frameId but adds cost; performance is invalidated.
+- Sixteen packed candidates had no observed canonical publish. This may represent
+  correct stale/superseded rejection or polling coverage; it is not evidence of
+  Production loss without a bounded rejection/publish disposition reason.
+- Exactly one active FaceLandmarkerRunner is required; ambiguity fails closed.
+- Validator can now PASS evidence containing a real defect; always read decision.
+- Sparse clones add isolated validation disk/worktree noise.
+
+# 26. Validated Decisions
+
+Preserve Face Landmarker Primary, latest-frame, bounded non-blocking lanes,
+persistent ROI, Native Path B, fixed presentation texture, camera epoch != sequence,
+tracking/presentation cadence separation, Head single rigid authority, Root/Eye/
+Mouth separation, normalization/presentation/prediction owner=1, LIVE CAMERA
+560x315 16:9 Bilinear and Spout downstream isolation. UniVRM Runtime Import is an
+accepted direction only with Kiwi-owned validation/activation/rollback.
+
+# 27. Rejected Approaches
+
+Working Core rewrite; Face Landmarker/Native camera replacement; FIFO/permanent
+buffer; strong smoothing/Kalman/stale prediction/threshold relaxation; lane.input
+oracle; blocking GPU/fence waits; synchronous diagnostic readback;
+UpdateExternalTexture; rotating texture; D3D11On12 1080p; IMFSample retention;
+OpenCV/OpenSee camera; Kalidokit/OpenSee heuristics in Core; CPU Production before
+Canonical Semantic PASS; Golden authority before execution closure; commit/push.
+
+# 28. Superseded Conclusions
+
+- “v24 Production snapshot proves canonical publish” superseded: it proves packed
+  pendingOutput snapshot, not FacePrecisionTrackingData publish.
+- “Worker reuse explains all neither-exact” remains rejected.
+- Pre-Boundary-D “TRANSACTION_COHERENT closes schedule->canonical” superseded.
+- “Validator can validate SCHEDULE_TRANSACTION_MISMATCH” was false and corrected.
+- “Get-FileHash always resolves in nested PS5.1” superseded by observed failure.
+- First Boundary-D run (stamp 20260903_180717) reported
+  CANONICAL_PUBLICATION_MISMATCH because it matched same-source MediaPipe
+  publications and promoted non-publication to mismatch. That observer result is
+  superseded by the backend-filtered, coverage-aware rebuilt run at 181601.
+
+# 29. Open Issues
+
+- Determine B/C/E/F/J for the remaining numerical MIXED_TRANSACTION cause; do not
+  reopen A or published-subset G without contradictory evidence.
+- Determine whether a minimal disposition reason is necessary for the 16 packed
+  candidates not observed as canonical publications.
+- Test no-frame hold, stale/duplicate/out-of-order, source transition, Resume and
+  Provider Switch with identities.
+- Design the smallest GPU execution-context/order or numerical boundary observer;
+  GPU submission/fence identity remains unmeasured.
+- Close installed UniVRM provenance before Runtime Import.
+- Native installed-vs-Build DLL provenance remains open and must not be guessed.
+
+# 30. Next Action
+
+1. Freeze the 181601 artifacts as the schedule-to-published-canonical baseline.
+2. Specify one narrow claim for GPU execution-context/order or for the numerical
+   divergence between packed Production, REF and MODE2; do not add a permanent ID
+   until the field''s necessity is demonstrated.
+3. If non-publication disposition matters, expose only a bounded reason at the
+   existing rejection boundary; do not convert absence into defect by default.
+4. Rebuild and validate the new claim with exact source/timestamp/transaction
+   correlation and zero observer-integrity faults.
+5. Only after semantic closure: clean Production Performance A/B, MP4 visual
+   review, then lifecycle/recovery/security/product reliability gates.
+
+# 31. Do Not Change
+
+Without new evidence do not change Face Landmarker Primary,
+KiwiInferenceFaceTracker/KiwiFaceMotion for camera-display workaround, Native Path B,
+fixed texture, bounded lanes/latest-frame/persistent ROI/authority, accepted LIVE
+CAMERA geometry, Spout isolation, thresholds, smoothing, prediction or epochs. Do
+not add FIFO, blocking waits, CPU Production, auto-fallback, broad epoch propagation,
+Runtime Import implementation or unrelated refactor during P0.
+
+# 32. Production Decision
+
+v44.55.25: PASS (claim-scoped published-transaction observer)
+Production-vs-Shadow Transaction Semantic: STILL OPEN
+Root Cause: PARTIALLY_CONFIRMED
+Observer: VALID (claim-scoped; performance non-authority)
+Production Code Change: NONE
+OSS Full Source Audit: PARTIAL
+Production OSS Integration: HOLD
+CPU Production: BLOCKED
+Production Adoption: HOLD
+
+Reason: v24 MIXED_TRANSACTION remains confirmed. Corrected v25 Runtime binds all
+104 schedule transactions and binds 88 exact InferenceEngine canonical publishes,
+including 10 anomalous and the single Neither-exact pair, with zero integrity or
+schedule mismatch. This excludes schedule identity and published-canonical mixing
+for the measured subset. It does not identify GPU execution/fence order, explain
+the numerical Neither-exact output, or characterize the 16 non-published packed
+candidates. Therefore the v25 observer claim passes, while full Transaction
+Semantic and Production adoption remain open/HOLD.
+
+Primary-source references:
+https://github.com/google-ai-edge/mediapipe/blob/master/mediapipe/tasks/cc/vision/face_landmarker/face_landmarker.cc
+https://github.com/google-ai-edge/mediapipe/blob/master/docs/getting_started/troubleshooting.md
+https://github.com/homuler/MediaPipeUnityPlugin/tree/v0.16.3
+https://github.com/emilianavt/OpenSeeFace
+https://github.com/yeemachine/kalidokit
+https://github.com/vrm-c/UniVRM/tree/v0.130.1
+https://github.com/keijiro/KlakSpout/tree/2.0.6

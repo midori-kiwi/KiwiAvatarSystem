@@ -1,0 +1,14 @@
+V31_BUILT_IL_HOOK_AUDIT=PASS
+ASSEMBLY_SHA256=32064B0D9657A89A858E1888016DBE8F47A28FD924CD77B16B2B1B1A3E57AE86
+CALL_COUNT=5
+CapturePayloadsBeforeRelease=1
+RecordFinalPair=1
+BindTrace=1
+Append=1
+AfterPending=1
+CALLS:
+KiwiActualProductionVsShadowPayloadAuthorityV44_55_27::FinishPair IL_0x0018 -> System.Void KiwiAsyncProducerTailSnapshotV44_55_31::RecordFinalPair(System.Object)
+KiwiActualProductionVsShadowPayloadAuthorityV44_55_27::TryCompare IL_0x017C -> System.Void KiwiAsyncProducerTailSnapshotV44_55_31::CapturePayloadsBeforeRelease(System.Object)
+KiwiProductionScheduleTransactionTraceV44_55_25::AttachPendingPair IL_0x0560 -> System.Void KiwiAsyncProducerTailSnapshotV44_55_31::BindTrace(System.Object)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.KiwiInferenceFaceTracker::ScheduleModel IL_0x00F4 -> System.Void KiwiAsyncProducerTailSnapshotV44_55_31::Append(UnityEngine.Rendering.CommandBuffer,Unity.InferenceEngine.Worker,System.Object,System.Object,System.Int64,UnityEngine.Matrix4x4)
+Mediapipe.Unity.Sample.FaceLandmarkDetection.KiwiInferenceFaceTracker::TryScheduleNewestSource IL_0x01AD -> System.Void KiwiAsyncProducerTailSnapshotV44_55_31::AfterPending(System.Object)

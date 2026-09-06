@@ -1,0 +1,424 @@
+KiwiAvatarSystem v44.55.30 ASYNC_PRODUCER_TAIL_OUTPUT_SNAPSHOT_PROBE
+Status: IMPLEMENTATION_STATIC_COMPILE_BUILD_PASS_RUNTIME_REQUIRED
+Date: 2026-09-05 JST
+Project: D:/KiwiAvatarSystem
+Authority: current local source + SHA256 + Unity 6000.0.80f1 DX12 Development build
+Runtime authority: NOT ESTABLISHED; no v44.55.30 camera CONTROL/PROBE evidence exists yet
+
+EXECUTIVE RESULT
+
+The opt-in v44.55.30 producer-tail snapshot observer, raw validator, PowerShell 5.1
+collector, static guards, compile checks, standalone copy test, and Development
+Player build are complete.
+
+The implementation does not decide E1/E2/E3/E4/E5 without a fresh same-build
+CONTROL/PROBE Runtime collection. Prior v44.55.29 evidence is not reused as
+v44.55.30 Runtime authority.
+
+The only required next action is one correlated camera collection using the
+exact Windows PowerShell 5.1 command in RUNTIME COMMAND below.
+
+AUTHORITY CORRECTION
+
+The requested Runner expected SHA contained a one-character transcription error.
+The user explicitly authorized correction of the expected value only.
+
+Rejected requested value:
+6C65C075270F10C791D6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93
+
+Accepted frozen/current value:
+6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93
+
+Assets/Script/FaceLandmarkerRunner.cs was not edited.
+
+Base identities:
+HEAD=27281c622d7b8bf2ececf711b037fc8f9e029004
+Unity=6000.0.80f1
+Inference package=com.unity.ai.inference 2.4.1
+Inference package path=Library/PackageCache/com.unity.ai.inference@587873fd5e1b
+Inference package.json SHA256=2F230C84E28A9E3AD516B1A49B79B6F83E172F1C16E6813E0F1DD6FA2B1790EE
+Stage1A/1B report SHA256=353F1A9BF5F4EF1B9203BF8441F9613B79BD9AF472EAF6E03E89DFA0CA448819
+
+PROTECTED IDENTITIES AFTER IMPLEMENTATION AND BUILD
+
+Assets/Script/FaceLandmarkerRunner.cs
+SHA256=6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93
+STATUS=UNCHANGED
+
+Assets/Script/KiwiFaceMotion.cs
+SHA256=D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6
+STATUS=UNCHANGED
+
+Assets/Plugins/x86_64/KiwiNativeCamera.dll
+SHA256=82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+STATUS=UNCHANGED
+
+IMPLEMENTED OBSERVER
+
+New runtime observer:
+Assets/KiwiAvatarSystem/Runtime/Validation/KiwiAsyncProducerTailSnapshotV44_55_30.cs
+SHA256=9F8A555AA54042E96C6DF3CF463A73A1797405DC01E70A0036FFB0DFAA2D41D9
+
+New direct-bit copy kernel:
+Assets/KiwiAvatarSystem/Resources/KiwiProducerTailSnapshotV44_55_30.compute
+SHA256=BF3DA80BD223F059F39160FEBDF673CEEA3BBF9C399D281F095EB175794BB812
+
+Editor build gate:
+Assets/KiwiAvatarSystem/Editor/KiwiBuildV44_55_30.cs
+SHA256=3AD6F22C8C57A602EBE87742E2A4BB0DF5A2C48E330A710E3C591FE4F711E838
+
+Standalone DX12 copy test:
+Assets/KiwiAvatarSystem/Editor/KiwiSnapshotCopyTestV44_55_30.cs
+SHA256=F7439DD74133162B2903D64E26FE3D3177CA0BA5B8A0C08D277BE7F6B39BAC92
+
+Post-hook identities:
+Assets/Script/KiwiInferenceFaceTracker.cs
+SHA256=B89005B71C3DD0A3BFFE67144B7C6B8F92ACCE6729FB0D67CB5DF7AD0D410E88
+
+Assets/KiwiAvatarSystem/Runtime/Validation/KiwiProductionScheduleTransactionTraceV44_55_25.cs
+SHA256=F0786D4F6A26D87F0867663ED0630145C9E79CB27517C9E1A516E9BA7DBADF9F
+
+Assets/KiwiAvatarSystem/Runtime/Validation/KiwiActualProductionVsShadowPayloadAuthorityV44_55_27.cs
+SHA256=03F3AAC36639A57D0DC2018BE9E256865F3E30A88F1631428C52EB159A497071
+
+The hook edits are limited to:
+1. Append the uint-copy dispatch after ScheduleWorker and before
+   Graphics.ExecuteCommandBufferAsync in the same async CommandBuffer.
+2. Submit the independent observer AsyncGPUReadback only after the original
+   pendingOutput.ReadbackRequest and readbackPending=true.
+3. Bind the exact v25 transaction trace immediately after its trace insertion.
+4. Capture v27 Actual/REF/Mode2 raw arrays before v27 releases those arrays.
+
+The original Production output object, original ReadbackRequest, completion
+poll, decode path, transaction cadence, and publish path remain in place.
+
+COPY CONTRACT
+
+logicalWords=1405
+headerWords=8
+bufferWords=1413
+storageType=uint
+payloadCopy=direct uint load/store
+header fields=magic,version,observerToken,lane,wordCount,sourceTicksLow,
+sourceTicksHigh,tokenXor
+float conversion/arithmetic in copy shader=NONE
+worker output pin/repin=NONE
+repeated inference=NONE
+lane.input readback=NONE
+
+The observer uses worker.PeekOutput(0) only while the just-scheduled transaction
+is pending and consumes the existing ComputeTensorData buffer as a borrowed
+source. It does not replace Production ownership or extend the Worker output
+as a Production dependency.
+
+OBSERVER LIFECYCLE CONTRACT
+
+GPU slot count=6
+bytes per GPU slot=1413*4=5652
+maximum observer GPU bytes=33912
+candidate capacity=64
+final/pair capacity=192
+minimum accepted eligible pairs per arm=60
+
+Each slot remains rooted and Busy until its AsyncGPUReadback callback has copied
+the request data into observer-owned managed arrays. A Busy slot is not reused
+or released. Completion is posted to the captured Unity SynchronizationContext;
+only the main-context drain recycles or releases the slot.
+
+On disable/destroy/quit, unresolved slots are marked Retire. Completed slots are
+released after result capture. An unresolved callback/post failure is retained
+until process teardown and makes the run INCONCLUSIVE; no blocking drain is
+introduced.
+
+Static forbidden-operation checks cover:
+GraphicsFence
+WaitOnAsyncGraphicsFence
+CPU/GPU Wait
+queue flush
+Pin/repin
+extra Worker Schedule
+lane.input readback
+observer SetData upload
+FIFO/stale queue
+
+No observer buffer exists unless the Development collection contract is active.
+CONTROL creates the CPU correlation observer but issues zero producer-copy GPU
+requests. PROBE alone enables the six bounded copy slots.
+
+STATIC VALIDATION
+
+Command:
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File
+D:/KiwiAvatarSystem/Tools/KiwiV44_55_30/Validate-Static.ps1
+
+Result:
+V30_STATIC_PASS protected=3 preSHA=3 sourceEditReconstruction=3
+sourceIdentities=289 observerLifecycle=BOUNDED_NONBLOCKING_RETIREMENT_STATIC
+
+Static coverage:
+- Windows PowerShell 5.1 parser PASS for all v30 ps1/psm1 files.
+- Three protected SHA gates PASS.
+- Three edited source files reconstruct to their byte-preserved pre-edit backups
+  after removing only the declared hooks.
+- Frozen Stage1 core is unchanged except the authorized Tracker hook surface.
+- Installed Inference package source identity is recorded.
+- Observer/shader forbidden-operation and direct-uint-copy guards PASS.
+- Source identity set contains 289 records.
+
+Backups:
+KiwiValidation/Backups/v44_55_30_20260905
+
+COMPILE AND SHADER VALIDATION
+
+Authoritative DX12 batchmode validation:
+KiwiValidation/v44_55_30_compile_dx12.log
+SHA256=1141A4B9CB1EC6F2B20D278DF4DBEB2E4B97A30C04FB139F6273E794FBBA98B4
+Unity exit code=0
+Marker=[KiwiV30Build] STATIC_SHADER_PASS logicalWords=1405 headerWords=8
+
+An earlier -nographics attempt could not resolve the compute kernel and is
+explicitly excluded. It is not counted as compile or shader PASS.
+
+Standalone DX12 GPU copy test:
+KiwiValidation/v44_55_30_copy_test.log
+SHA256=61EB7C7B15663EF7C9ADEC425C7A4D9AAC1B2540C520157527161C5B51987101
+Result=[KiwiV30CopyTest] PASS logical=1405 header=8 tailCanary=4
+specialFloatBits=preserved inferenceCount=0
+
+The test covered exactly 1405 payload words, all 8 header words, four untouched
+tail canaries, signed zero, infinities, NaN bit patterns, and arbitrary uint
+payloads. It is a kernel/lifecycle unit test, not an inference Runtime result.
+
+VALIDATOR SELF-TEST
+
+Synthetic suite:
+KiwiValidation/v44_55_30_validator_tests_788611eab353421fb622cd89c4005d21/test_summary.json
+SHA256=457C7981A48C101285D076558D711D7F323A1CC129D69DD62E033D699528A0DF
+status=PASS
+tests=9
+runtimeAuthority=false
+
+Covered:
+- Positive E1
+- Positive E2
+- Positive E3
+- Negative token/header corruption
+- Negative source identity
+- Negative raw-bit payload
+- Negative payload size
+- Negative environment/mode
+- E5 observer contamination
+
+Validator implementation corrections found by self-audit:
+- Shader float-arithmetic scan now removes line comments before token matching.
+- PowerShell fixture array arithmetic is parenthesized for PS5.1 semantics.
+
+BUILD
+
+Build script:
+Tools/KiwiV44_55_30/Build-KiwiV44_55_30.ps1
+
+The first attempt was correctly blocked by the existing Release Candidate
+fingerprint gate because the diagnostic source changed after the previous
+preflight stamp. No Player, identity file, or partial payload remained.
+
+The build helper was corrected to use the repository's established mandatory
+Full Preflight path. The gate was not bypassed or disabled.
+
+Full Preflight:
+PASS
+scenes=1
+objects/components=50/61
+warning/error/critical=2/0/0
+fingerprint=a938cded44c1d7d855df201ab0008f97615c3a8988d2c1591e7ef78679c8848e
+
+The warnings are retained as warnings and are not represented as a zero-warning
+build. No Error or Critical finding was present.
+
+Final build:
+Development=1
+DX12 command line=-force-d3d12
+BuildResult=Succeeded
+totalErrors=0
+reported totalSize=276935077
+protected=UNCHANGED
+
+Build log:
+KiwiValidation/v44_55_30_build_20260905_154106.log
+SHA256=88EEC7126A6D33619A2BC923ECB59DE6C8F3DE963F0625E40C1F681A16C02EB7
+
+Build identity:
+KiwiValidation/v44_55_30_build_identity.json
+SHA256=7F0F40E097FD393EDD8E9A928189A2A78DCECE2A78996D71FF564926B47808E6
+contract=KIWI_V44_55_30_BUILD
+builtUtc=2026-09-05T06:41:49.7719574Z
+exitCode=0
+source records=289
+payload records=288
+
+PLAYER/PAYLOAD IDENTITIES
+
+EXE:
+Builds/v44_55_30AsyncProducerTailSnapshot/KiwiAvatarSystem_v44_55_30.exe
+SHA256=98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81
+
+Assembly-CSharp.dll:
+SHA256=7DF4BFFF6CF8DA36AF1E3324598518A9CCBF6044A42874D7292459D772AB458C
+
+Unity.InferenceEngine.dll:
+SHA256=E326B5C5906CADCC8786DC5B821E96C59B714B6CDAB92F8D9C3A347CB15CB20D
+
+KiwiFaceLandmarkInference.onnx:
+SHA256=ED487104519B0A88CB2CB2EC3678E183F447FB9DD63560998E960FFBAA8FB335
+
+face_landmarker_v2_with_blendshapes.bytes:
+SHA256=B261925D4AAD812B47A0E8D58C1BAA1223270A5D1F663D78338BC881C003879D
+
+Packaged KiwiNativeCamera.dll:
+SHA256=82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+
+The source shader SHA is included in the 289-record source identity. All 288
+built payload files are SHA-pinned and rechecked before each Runtime arm and
+after each arm.
+
+RUNTIME HARNESS
+
+Collector:
+Tools/KiwiV44_55_30/Run-KiwiV44_55_30.ps1
+SHA256=79883B954DF6DF2B14193406DA9C4002DA1B27AA5886737833B48AD1063265BE
+
+Independent validator:
+Tools/KiwiV44_55_30/Validate-Runtime.ps1
+SHA256=1A2E8EA93CFE76D8EA60707478DF52E4E03369E24B4A6BA56CAB2251603386B9
+
+The collector:
+- rejects pwsh and requires Windows PowerShell 5.1;
+- clears inherited KIWI_* flags before each arm;
+- runs CONTROL then PROBE from the same EXE/build manifest;
+- changes only KIWI_V44_55_30_PRODUCER_TAIL_SNAPSHOT between behavior arms;
+- keeps v20/v24/v25/v27 enabled identically;
+- records PID, exact environment, normal exit, timestamps and manifest SHA;
+- copies only newly-created correlated dependency artifacts;
+- hashes raw evidence without rewriting it;
+- creates and verifies an evidence manifest;
+- produces exactly one RuntimeEvidence_v44_55_30_*.zip;
+- invokes the independent read-only validator afterward.
+
+Fixed pre-Runtime thresholds:
+eligible pairs per arm >=60 and <=192
+CONTROL Actual NEITHER fraction >=0.95
+observer contamination class-fraction delta >0.10 absolute
+gross diagnostic render-throughput ratio accepted only in [0.5,2.0]
+performanceAuthority=0
+
+RUNTIME DECISION SCOPE
+
+E1:
+producer snapshot=REF, Production Actual=NEITHER
+DIVERGENCE_AFTER_PRODUCER_TAIL_SUPPORTED
+
+E2:
+producer snapshot=Production Actual=NEITHER
+DIVERGENCE_PRESENT_BY_PRODUCER_TAIL_OR_COMMON_OBSERVATION_PATH
+
+E3:
+snapshot and Actual disagree in another fully valid pattern
+OUTPUT_OBSERVATION_PATH_DISAGREEMENT_CONFIRMED
+
+E4:
+hasError, missing token, identity mismatch, duplicate, partial pair, pending
+completion, wrong build/mode, abnormal exit, or insufficient coverage
+INCONCLUSIVE
+
+E5:
+observer materially changes existing Production Actual classification or gross
+whole-run diagnostic throughput
+OBSERVER_CONTAMINATED
+
+If valid probe rows contain multiple coarse outcomes, the validator returns
+MIXED_COARSE_OUTCOMES_REQUIRES_NARROWER_DIAGNOSTIC instead of forcing E1/E2/E3.
+
+This probe isolates only a coarse producer-tail versus downstream observation
+endpoint. It does not independently prove a readback defect, pool defect, fence
+requirement, or a specific native queue synchronization defect.
+
+RUNTIME COMMAND
+
+Use Windows PowerShell 5.1, keep the face visible in the camera for both Players,
+and do not manually close either Player:
+
+& 'C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe' -NoProfile -ExecutionPolicy Bypass -File 'D:\KiwiAvatarSystem\Tools\KiwiV44_55_30\Run-KiwiV44_55_30.ps1'
+
+CONTROL and PROBE each use a 120-second measurement plus stabilization and
+callback drain. Each process has a 300-second launcher timeout. The Player exits
+itself when complete. Any abnormal/forced exit is INCONCLUSIVE.
+
+No extra pre-Runtime ZIP was created because this local workspace already
+contains the identity-pinned Player and complete harness. The collector creates
+the one requested Runtime ZIP after actual collection, including incomplete
+evidence when possible.
+
+UNCHANGED PRODUCTION SCOPE
+
+Not changed:
+FaceLandmarkerRunner
+KiwiFaceMotion
+Native camera source/DLL
+Face Landmarker Primary authority
+ROI
+latest-frame policy
+lane count
+tracking/presence thresholds
+smoothing/prediction
+Root/Head/Eye/Mouth authority
+Provider normalization
+FacePart implementation
+LIVE CAMERA
+Spout
+Inference package source
+Production backend default
+
+Not implemented:
+GraphicsFence
+WaitOnAsyncGraphicsFence
+CPU/GPU blocking wait
+queue flush
+async-disable Production fix
+repeated inference
+lane.input readback
+FIFO/stale queue
+tracking workaround
+
+PRODUCTION behavior remains unchanged when the v30 collection contract is not
+enabled. PROBE intentionally adds bounded diagnostic GPU copy/readback work; it
+has performanceAuthority=0 and must pass E5 before its correctness evidence can
+be used.
+
+WRITE-TARGET AUDIT
+
+Pre-existing tracked dirty files remain user-owned:
+Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiOrtDirectMLShadowRuntime.cs
+Assets/KiwiAvatarSystem/Runtime/Validation/KiwiPairBoundShadowOutputSnapshotV44_55_24.cs
+Assets/Script/KiwiInferenceFaceTracker.cs
+Tools/KiwiPowerShell/KiwiPsCompat.psm1
+
+The Tracker was already dirty; static reconstruction verifies that the current
+v30 delta against its byte-preserved v29 backup consists only of the two declared
+v30 hooks. v25 and v27 were existing diagnostic sources and received one hook
+each, verified the same way.
+
+No reset, checkout, clean, deletion of user artifacts, Native rebuild, package
+edit, commit, or push occurred.
+
+FINAL STATUS
+
+STATIC_STATUS=PASS_PS51_289_IDENTITIES_PROTECTED_AND_FORBIDDEN_OPERATION_GATES
+COMPILE_STATUS=PASS_UNITY_6000_0_80F1_DX12_EXIT_0_SHADER_PASS
+BUILD_STATUS=PASS_DEVELOPMENT_FULL_PREFLIGHT_AND_NORMAL_GATE_BUILD_IDENTITY_PINNED
+OBSERVER_LIFECYCLE_STATUS=STATIC_PASS_BOUNDED_NONBLOCKING_RETIREMENT_RUNTIME_PENDING
+CONTROL_READY=YES_SAME_BUILD_OBSERVER_OFF
+PROBE_READY=YES_SAME_BUILD_OBSERVER_ON
+PRODUCTION_BEHAVIOR_CHANGED=NO_DEFAULT_PATH_OPT_IN_PROBE_ADDS_BOUNDED_DIAGNOSTIC_WORK
+NEXT_RUNTIME_REQUIRED=YES_ONE_CORRELATED_CAMERA_CONTROL_PROBE_COLLECTION
+EXPECTED_PRIMARY_DECISION=NO_PRESELECTION_E1_E2_E3_E4_E5_OR_MIXED_FROM_RAW_VALIDATOR
+COMMIT_PUSH=NO

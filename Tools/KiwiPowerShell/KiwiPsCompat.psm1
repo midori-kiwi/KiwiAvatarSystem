@@ -118,7 +118,22 @@ function Get-KiwiSha256 {
     )
 
     $canonicalPath = Assert-KiwiFile -Path $Path -Label "SHA256 input"
-    return (Get-FileHash -LiteralPath $canonicalPath -Algorithm SHA256).Hash.ToUpperInvariant()
+    $stream = $null
+    $algorithm = $null
+    try {
+        $stream = [System.IO.File]::OpenRead($canonicalPath)
+        $algorithm = [System.Security.Cryptography.SHA256]::Create()
+        $hashBytes = $algorithm.ComputeHash($stream)
+        return [System.BitConverter]::ToString($hashBytes).Replace("-", "")
+    }
+    finally {
+        if ($null -ne $algorithm) {
+            $algorithm.Dispose()
+        }
+        if ($null -ne $stream) {
+            $stream.Dispose()
+        }
+    }
 }
 
 function Assert-KiwiFileSha256 {

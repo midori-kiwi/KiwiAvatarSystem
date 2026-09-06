@@ -1,0 +1,21 @@
+{
+  "contract": "KIWI_GLOBAL_AGENTS_BACKUP_V1",
+  "createdUtc": "2026-09-05T17:42:09.7401451Z",
+  "source": "C:\\Users\\main\\.codex\\AGENTS.md",
+  "backup": "D:\\KiwiAvatarSystem\\KiwiValidation\\Backups\\GlobalAgents_20260906_024057\\AGENTS.md.before",
+  "candidate": "D:\\KiwiAvatarSystem\\KiwiValidation\\Backups\\GlobalAgents_20260906_024057\\AGENTS.global.candidate.md",
+  "before": {
+    "sha256": "4AA78D0A366C9BB8145C4FC257A5B1BE2196FB2CC396385F3C25DEC3872D2DC6",
+    "bytes": 6746,
+    "lines": 45,
+    "lastWriteUtc": "2026-09-04T14:16:03.4454197Z"
+  },
+  "after": {
+    "sha256": "6500D37232B66B183555CBFED66B7F57E0AA27267F5E67A65BD425DB8FCFA59D",
+    "bytes": 2047,
+    "lines": 19,
+    "lastWriteUtc": "2026-09-05T17:41:30.6364532Z"
+  },
+  "transactionalReplace": true,
+  "backupShaMatches": true
+}

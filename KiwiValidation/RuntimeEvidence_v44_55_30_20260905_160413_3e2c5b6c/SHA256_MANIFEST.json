@@ -1,0 +1,58 @@
+[
+    {
+        "path":  "build_identity.json",
+        "sha256":  "7F0F40E097FD393EDD8E9A928189A2A78DCECE2A78996D71FF564926B47808E6"
+    },
+    {
+        "path":  "collection_failure.json",
+        "sha256":  "56A7241E1F1D48A0C2AF8BA4091CD5B81B9FC552B76F4C5594127A1DDD604E29"
+    },
+    {
+        "path":  "CONTROL\\KiwiActualProductionVsShadowPayloadAuthority_v44_55_27_20260905_160636.csv",
+        "sha256":  "7A00D84DDCF0D23186AF8FC90B22D472F5FCD2921A01F9A943113E4178B2014D"
+    },
+    {
+        "path":  "CONTROL\\KiwiActualProductionVsShadowPayloadAuthority_v44_55_27_20260905_160636.txt",
+        "sha256":  "8A648AFCD3D0067E61A493B5B350EE68EC0120B7FB8E3B6EB187E60859527766"
+    },
+    {
+        "path":  "CONTROL\\KiwiCommonTensorBackendStageIsolation_v44_55_20_20260905_160628.csv",
+        "sha256":  "7FBFA1D53AAB86B19EF34FDF7C09A0C5225E5D63E929586142F6E9E3B10732A3"
+    },
+    {
+        "path":  "CONTROL\\KiwiCommonTensorBackendStageIsolation_v44_55_20_20260905_160628.txt",
+        "sha256":  "C434D37D7987C072B9F678F5A1938DBA6BA11B8E8BE69F08A3EC75BB7AC41FBF"
+    },
+    {
+        "path":  "CONTROL\\KiwiPairBoundShadowOutputSnapshot_v44_55_24_20260905_160628.csv",
+        "sha256":  "88E70C17BD88ECD74B4E566D67406ABE1940A9304CDDE773A77B4B3DA96CF163"
+    },
+    {
+        "path":  "CONTROL\\KiwiPairBoundShadowOutputSnapshot_v44_55_24_20260905_160628.txt",
+        "sha256":  "054D45CD1ADA9FDC6D309151DA37331B483E525DB7F50C952B7FBA1066B750C4"
+    },
+    {
+        "path":  "CONTROL\\KiwiProductionScheduleTransactionTrace_v44_55_25_20260905_160636.csv",
+        "sha256":  "9AB504FD691A5CDDFB07DAD203DD9EF1DAA60FE3BD46EA74C35B9C52389CDE58"
+    },
+    {
+        "path":  "CONTROL\\KiwiProductionScheduleTransactionTrace_v44_55_25_20260905_160636.txt",
+        "sha256":  "F41C81CF2888BE8878FA5899B777C7C931FB6CA2BBF1384A0C280B8CF0A48DD5"
+    },
+    {
+        "path":  "CONTROL\\Player.log",
+        "sha256":  "BE434FADE37B8301FBF5DE8C1707C535BF78E83C8027385C1615D0844F3E92D9"
+    },
+    {
+        "path":  "CONTROL\\producer_pairs.jsonl",
+        "sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "path":  "CONTROL\\producer_summary.txt",
+        "sha256":  "1CCC4D4F1CCC3207DC2F7356FAEB8C6466E38DB74F1326444D66DDF42A446CE0"
+    },
+    {
+        "path":  "CONTROL\\run_identity.json",
+        "sha256":  "CD4CBA483E3A41737BE91AA3334C016E18B4BA476E2E51E20D9B675E0B4F0AAA"
+    }
+]

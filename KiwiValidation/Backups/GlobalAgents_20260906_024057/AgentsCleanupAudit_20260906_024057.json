@@ -1,0 +1,40 @@
+{
+  "contract": "KIWI_AGENTS_CLEANUP_AUDIT_V1",
+  "auditedUtc": "2026-09-05T17:52:13.3125840Z",
+  "projectsRootStatus": "ABSENT_ACCEPTED",
+  "globalAgentsPath": "C:\\Users\\main\\.codex\\AGENTS.md",
+  "projectAgentsPath": "D:\\KiwiAvatarSystem\\AGENTS.md",
+  "projectAgentsPresent": true,
+  "projectAgentsSha256": "B217232B8C25364A3CB1D5CB6BBD86D6732574748EE1BBCEFAA355376ECBDC24",
+  "globalAgentsBeforeSha256": "4AA78D0A366C9BB8145C4FC257A5B1BE2196FB2CC396385F3C25DEC3872D2DC6",
+  "globalAgentsAfterSha256": "6500D37232B66B183555CBFED66B7F57E0AA27267F5E67A65BD425DB8FCFA59D",
+  "globalKiwiStaleStateCount": 0.0,
+  "globalKiwiStaleMatches": [],
+  "duplicateRuleCount": 0,
+  "duplicateExactNonHeadingLines": [],
+  "conflictCount": 0,
+  "conflictAudit": "Manual and lexical precedence audit: global retains generic process rules; project owns Kiwi-specific rails; nested third-party AGENTS apply only within their own audit/tool subtrees.",
+  "criticalRailExpected": 19,
+  "criticalRailLossCount": 0,
+  "missingCriticalRails": [],
+  "ambiguousGlobalRule": "KEEP_AND_REPORT",
+  "globalPreservedScope": "Generic evidence discipline, explicit-only commit/push, validation order, PowerShell 5.1 safety, consolidated reporting, and working-core caution.",
+  "globalRemovedScope": "Kiwi persona/path/environment, v44.55.29 current state, Stage1 roadmap, and Kiwi-specific camera/native/tracking/FacePart/external-reuse/rearchitecture narrative.",
+  "inventory": [
+    {
+      "path": "D:\\KiwiAvatarSystem\\AGENTS.md",
+      "bytes": 6010,
+      "sha256": "B217232B8C25364A3CB1D5CB6BBD86D6732574748EE1BBCEFAA355376ECBDC24"
+    },
+    {
+      "path": "D:\\KiwiAvatarSystem\\KiwiValidation\\ExternalSourceAudit_v44_55_25\\sources\\KlakSpout_2.0.6\\AGENTS.md",
+      "bytes": 2450,
+      "sha256": "4A4C9C1D42B6FA430B2C5446BE7FF9D5BBAAE9A043243032F278FF68D2967450"
+    },
+    {
+      "path": "D:\\KiwiAvatarSystem\\Tools\\KlakSpout_v206_diag\\AGENTS.md",
+      "bytes": 2450,
+      "sha256": "4A4C9C1D42B6FA430B2C5446BE7FF9D5BBAAE9A043243032F278FF68D2967450"
+    }
+  ]
+}

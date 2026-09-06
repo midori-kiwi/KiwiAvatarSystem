@@ -1,0 +1,1187 @@
+KiwiAvatarSystem — Consolidated REPORT
+G0 Authority / Product-Effective Equivalence + P0 Product Failure Specification
+Symptom-to-Boundary Triage
+
+REPORT_TIMESTAMP_JST=2026-09-06 09:36:59 +09:00
+PROJECT=D:\KiwiAvatarSystem
+MODE=READ_ONLY_AUDIT_EXCEPT_THIS_REPORT
+AUTHORITY_MODEL=CLAIM_SCOPED_AUTHORITY
+
+===============================================================================
+1. Executive Summary
+===============================================================================
+
+Decision:
+- current local workspace と frozen-v31 planning baseline の間に、次の Product
+  correctness decision を変え得る新規 Product-effective difference は確認されなかった。
+- したがって planning 用の equivalence は支持する。ただし Runtime / Visual /
+  Performance equivalence へは昇格しない。
+- P0 のための current workspace build/run は不要であり、実行していない。
+- frozen-v31 の同一tested buildに対する既存Human Visualは、要求16項目すべてFAIL。
+  これは broad Product impact の証拠であるが、単一root causeの証拠ではない。
+- P1 first target は A Camera / LIVE CAMERA / Crop。閉じるclaimは、同じ
+  Presentation Texture の1:1中央cropに対し、LIVE CAMERA表示時のminificationが
+  最初の可視劣化boundaryかをprove/disproveすること。
+- F1/F2/F3/F4はいずれもStatic candidate/gapであり、Runtime root causeには昇格しない。
+- Production source、Scene、Native DLL、package、shader/material/prefabは変更していない。
+  v44.55.32、E2再開、Production fix、commit/pushは行っていない。
+
+WHY_CHANGE_IS_BETTER_THAN_NO_CHANGE=NOT_ESTABLISHED_FOR_PRODUCTION; NO_CHANGE
+
+===============================================================================
+2. Authority Freeze
+===============================================================================
+
+Freeze scope:
+- Implementation Authority: current local Production source and SHA256.
+- Planning comparison: frozen-v31 manifest and its exact identities.
+- Runtime/Visual Authority: pre-existing exact frozen-v31 heavy-collector-off run only.
+- Package semantics: actually installed package source/cache identity.
+- Performance Authority: NONE for this report. Existing run had default-active observers and
+  is not an observer-free clean Production benchmark.
+
+Git:
+- branch=main
+- HEAD=27281c622d7b8bf2ececf711b037fc8f9e029004
+- relation noted at audit freeze=main ahead 14
+- pre-report porcelain entries=732
+- tracked modified entries=4
+- untracked entries=728
+- reset/checkout/clean=NOT_EXECUTED
+- commit/push=NOT_EXECUTED
+
+Protected tracked dirty files at freeze:
+1. Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiOrtDirectMLShadowRuntime.cs
+   SHA256=D30A700A7B9E3C3D09BC64FA0CA5722729EE41821DE1F1B5E30E30D986B947C2;
+   user-owned; diagnostic path.
+2. Assets/KiwiAvatarSystem/Runtime/Validation/
+   KiwiPairBoundShadowOutputSnapshotV44_55_24.cs
+   SHA256=1F8F26D21DEA1DE17DE43A0A7B8FFA0513C1C9E23A65A1AEDFCFF7BA54AB26EC;
+   user-owned; diagnostic path.
+3. Assets/Script/KiwiInferenceFaceTracker.cs
+   SHA256=CF860F4EF686BD5FDAC4140D4F3E73E64B6F390C3BC64204CF346011AC69380D;
+   user-owned Product-path source; content matches frozen-v31 planning identity.
+4. Tools/KiwiPowerShell/KiwiPsCompat.psm1
+   SHA256=6D6560DB47C2E9E4544FE67F4CB96C50B697D8A86974A8A7DADA798035EAB061;
+   user-owned offline helper.
+
+Active build Scene:
+- Assets/Scenes/Face Landmark Detection.unity
+- SHA256=E28B0B81F731B92B04B97D4AA7DB1187C8DD57C5A39F49B08B2E6799BBF5B3D1
+- ProjectSettings/EditorBuildSettings.asset
+  SHA256=611BA53D1627847D786E714A7CC17EB8D5AE06C2EFBA4077DA1F396A81355EAE
+- EditorBuildSettings contains one enabled Scene: this Scene.
+- Unity editor version=6000.0.80f1.
+
+Current serialized/default Product settings relevant to P0:
+- FaceLandmarkerRunner: fresh-only=ON; latest-only=ON; downscale=ON; width=480;
+  Sentis hybrid=ON; MediaPipe refresh interval=10; minimum presence=0.5.
+- FacePartCropper: mirrorX=ON; swapEyes=ON; target=120 fps. Scene serializes
+  prediction/age-compensation/direct-position ON, but current strict contract and
+  Quality10 policy set these OFF at runtime.
+- KiwiFaceMotion: Scene contains prediction/smoothing fields; current Quality10 policy
+  disables adaptive microfilter, both prediction layers and age compensation; retains
+  static-pose lock, display smoothing, direct display motion and bounded correction.
+- KiwiExpressionReaction: enabled, direct FaceLandmarkerRunner reference serialized.
+- KlakSpout Sender: captureMethod=Texture (enum 2), keepAlpha=ON,
+  source=Assets/VTuberOutput.renderTexture.
+- Main Camera target texture is the same VTuberOutput RenderTexture.
+
+Installed package identities:
+- com.github.homuler.mediapipe=0.16.3, local tarball.
+  tarball bytes=290414365
+  tarball SHA256=CC3E77A219E0B99618AE3BE64C31A566197DEEDC69C1E136ACF52D65D7CF2E79
+  cache fingerprint=66127f8e750d
+  installed package.json SHA256=EEBBFF4550FA9CA3C2C76AB05BD0EDBDB3A0A4C2800883E244DC9E40D8FF2A2D
+- com.unity.ai.inference=2.4.1
+  cache fingerprint=587873fd5e1b
+  installed package.json SHA256=2F230C84E28A9E3AD516B1A49B79B6F83E172F1C16E6813E0F1DD6FA2B1790EE
+  audited installed source entries=215
+- jp.keijiro.klak.spout=2.0.6
+  cache fingerprint=cd3751890357...
+  repository revision=849e7bca...
+  installed package.json SHA256=DE3D55C1...
+- Packages/manifest.json
+  SHA256=35F00A89D31A8BF7EE50718F38D4BAC90236D8B691F516C5FC14CAB47AFBFEE1
+- Packages/packages-lock.json
+  SHA256=23845C132DBF51CB53A5CFDE4EF606FA68D10DCB53AE5FF21F4305613A5F9CE1
+
+Native:
+- Assets/Plugins/x86_64/KiwiNativeCamera.dll
+  bytes=80896
+  SHA256=82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+- native candidate/source SHA256=636D7625...
+- This report does not infer reproducible-build/Class-A provenance from DLL SHA alone.
+
+AGENTS precedence:
+1. C:/Users/main/.codex/AGENTS.md
+   SHA256=6500D37232B66B183555CBFED66B7F57E0AA27267F5E67A65BD425DB8FCFA59D
+2. D:/KiwiAvatarSystem/AGENTS.md
+   SHA256=B217232B8C25364A3CB1D5CB6BBD86D6732574748EE1BBCEFAA355376ECBDC24
+3. Nested ExternalSourceAudit/KlakSpout AGENTS SHA256=4A4C... only within that subtree.
+
+Authority limitation:
+- Current local source and identities were statically inspected in this audit.
+- Current workspace Runtime was not executed.
+- Existing Human Visual findings belong only to the exact frozen-v31 tested run.
+
+===============================================================================
+3. G0 Product-Effective Equivalence
+===============================================================================
+
+Comparison basis:
+- frozen-v31 manifest entries=578: source=290, payload=288.
+- current payload match=288/288.
+- current source match=288/290.
+- two source mismatches:
+  * Tools/KiwiV44_55_31/Test-Validator.ps1
+  * Tools/KiwiV44_55_31/Validate-Runtime.ps1
+  Both are offline validator/tool corrections made after the frozen run.
+
+Product-effective checks:
+- Production source: manifest-backed key Product set and all 59 Product entries match.
+- Scene/default Product settings: match frozen-v31 planning baseline.
+- Native DLL: exact SHA match.
+- package identities/payload: exact manifest match; package-source aggregate independently
+  recomputed as 426CF5286D1661407B5B45532B067CA6EBE80E479837108DD69248C80E746C0F.
+- Product-active shader/material/prefab: checked and match.
+- default-active Validation/Quality/Diagnostic reachability: classified in section 5.
+- superseded v30 family: no active source hit; 15 files reside under
+  KiwiValidation/RetiredDiagnostics/v44_55_30.
+- user-owned dirty sources: protected. The Product-path tracker content matches frozen-v31;
+  other tracked dirty content is diagnostic/tool-only. Untracked runtime-capable additions
+  are Editor-only, environment/token gated, compute resources reachable only through a
+  gated collector, or auto-quit validation support; none is default Product-effective.
+- current KIWI_* environment state at audit=none detected.
+
+Classification:
+- A PRODUCT_EFFECTIVE_DIFFERENCE: NONE CONFIRMED.
+- B DIAGNOSTIC_OR_TOOL_ONLY: two validator mismatches; tracked validation/helper changes;
+  opt-in untracked diagnostic families.
+- C IDENTITY_ONLY_NO_PRODUCT_EFFECT: Git-vs-HEAD dirty identity where current content is the
+  same frozen-v31 Product planning identity, including KiwiInferenceFaceTracker.cs.
+- D UNKNOWN_NEEDS_FURTHER_CLOSURE: no unresolved current-v31 difference known to alter P0
+  selection. Runtime/Visual equivalence itself remains outside the supported claim.
+
+G0 decision:
+CURRENT_V31_TO_WORKSPACE_PRODUCT_EFFECTIVE_EQUIVALENCE=
+SUPPORTED_FOR_P0_PLANNING_ONLY
+
+This does not mean:
+- current Runtime equals frozen-v31 Runtime;
+- current Visual equals frozen-v31 Visual;
+- performance is equal;
+- broad Human Visual FAIL has been root-caused.
+
+===============================================================================
+4. Current Dirty Workspace Classification
+===============================================================================
+
+Tracked dirty:
+- KiwiInferenceFaceTracker.cs: Product source by path/call role, but current content SHA is
+  the frozen-v31 identity. G0=C for current-v31 planning; still protected user-owned work.
+- KiwiOrtDirectMLShadowRuntime.cs: opt-in diagnostic observer. G0=B.
+- KiwiPairBoundShadowOutputSnapshotV44_55_24.cs: opt-in pair-bound diagnostic observer. G0=B.
+- KiwiPsCompat.psm1: offline PowerShell helper. G0=B.
+
+Untracked set:
+- 728 entries at pre-report freeze. These are not treated as authored by this audit.
+- Runtime-capable additions separately inspected: three Editor build scripts, one v31
+  compute resource, four environment-gated Runtime diagnostics, and one v29 auto-quit
+  validation support component.
+- Editor scripts do not enter Player Runtime. The compute resource is consumed only by its
+  gated v31 collector. The four Runtime diagnostics require explicit environment/token
+  activation. Auto-quit is validation-run support, not a normal Product owner.
+- Reports, manifests, ZIPs, logs and retired evidence have no Product call path solely by
+  existing in the workspace.
+
+Protection result:
+- No existing dirty file was edited, reverted, deleted, moved, staged, committed or pushed.
+- The only intended write is this Consolidated REPORT.
+
+===============================================================================
+5. Default-Active Service Classification
+===============================================================================
+
+Count scope for DEFAULT_ACTIVE_PRODUCT_WRITER_COUNT:
+- Includes default-active Validation/Quality/Diagnostic/Presentation helper components and
+  optimization helpers that mutate Product runtime state/material state.
+- Excludes ordinary core Product owners (camera, runner, FaceMotion, Cropper, transaction,
+  expression, camera/Spout sender), which are listed separately.
+- A component that is installed but idle/no-write in its default mode is not counted.
+- PRESENTATION_WRITER limited to debug Player IMGUI is reported but is not counted as a
+  Product texture/state writer.
+
+Service table columns:
+NAME | PATH | OWNERSHIP/ENTRY | DEFAULT | CLASS | PRODUCT WRITE | RESOURCE/COPY |
+TEMPORAL/GEOMETRY EFFECT | SPOUT EFFECT | DISABLE EFFECT/LIFECYCLE
+
+1. KiwiCameraPreviewQualityService |
+Assets/KiwiAvatarSystem/Runtime/Validation/KiwiCameraPreviewQualityService.cs |
+static service; called by FrameComparisonOverlay PrepareFrame | DIRECT + color OFF |
+OBSERVER_ONLY in default; QUALITY_TRANSFORM only when explicitly SINGLE/STAGED/METADATA |
+default returns exact source, no Product write | default no RT/no Blit/no readback/upload;
+opt-in owns RT/material and Blits | default does not alter crop/UV/mirror/scale/format;
+opt-in color/scale modes can transform preview | no effect on explicit Spout source RT |
+disabling removes debug preview preparation only; owned resources released.
+
+2. KiwiSpoutWaitFreeDiagnosticV44_55_20 |
+Assets/KiwiAvatarSystem/Runtime/Validation/KiwiSpoutWaitFreeDiagnosticV44_20.cs |
+auto-bootstrap on Windows; Update polls about every 5 s | ON on Windows |
+OBSERVER_ONLY | reads native counters/logs only | no texture allocation/copy/readback/upload |
+poll cadence state only; no crop/UV/mirror/format change | no sender/source write |
+disable removes telemetry only; Unity lifecycle owns component.
+
+3. KiwiCommercialCadencePipelineTelemetry |
+Assets/KiwiAvatarSystem/Runtime/Validation/KiwiCommercialCadencePipelineTelemetry.cs |
+auto-bootstrap; Update/reflection sample about every 0.5 s | ON | OBSERVER_ONLY |
+metrics only | reflection and bounded telemetry; no content copy | owns counters/windows only |
+no Spout content effect | disable removes telemetry.
+
+4. KiwiCommercialTransformWriterAudit |
+Assets/KiwiAvatarSystem/Runtime/Validation/KiwiCommercialTransformWriterAudit.cs |
+Update, LateUpdate, onBeforeRender, beginCameraRendering capture | ON | OBSERVER_ONLY |
+captures transform samples, does not assign Product transforms | bounded sample state |
+no geometry ownership | no Spout content write | disable removes audit capture.
+
+5. KiwiFramePacingDiagnosticController |
+Assets/KiwiAvatarSystem/Runtime/Validation/KiwiFramePacingDiagnosticController.cs |
+auto-bootstrap; mode evaluated at startup/update | ON component, BASELINE mode without env |
+OBSERVER_ONLY/NO_WRITE in default; DIAGNOSTIC_WITH_PRODUCT_EFFECT in explicit UNSYNC60 |
+default no quality-setting write; opt-in writes vSyncCount, targetFrameRate,
+captureFramerate/interval | no content readback/upload | can alter cadence only when opt-in |
+can indirectly alter presentation cadence only opt-in | disable in default does not change
+Product behavior.
+
+6. KiwiPhase16_18HandoffAuthorityDiagnostics |
+Assets/KiwiAvatarSystem/Runtime/Validation/KiwiPhase16_18HandoffAuthorityDiagnostics.cs |
+auto-bootstrap; LateUpdate | ON | OBSERVER_ONLY | reads/counters only | bounded counters |
+no crop/temporal writer | no direct Spout write | disable removes telemetry.
+
+7. KiwiPhase16_19FacePartEpochDiagnostics |
+Assets/KiwiAvatarSystem/Runtime/Validation/KiwiPhase16_19FacePartEpochDiagnostics.cs |
+auto-bootstrap; LateUpdate | ON | OBSERVER_ONLY | reads strict contract/counts alignment |
+bounded counters | no transaction writer | no direct Spout write | disable removes telemetry.
+
+8. KiwiRuntimeValidationHarness |
+Assets/KiwiAvatarSystem/Runtime/Validation/KiwiRuntimeValidationHarness.cs |
+auto-bootstrap; LateUpdate validation; explicit Export | enableValidation=true |
+OBSERVER_ONLY during normal default Runtime | counters/logging; Export writes JSON only on
+explicit request | no Product content copy/readback/upload | no geometry/semantic ownership |
+no direct Spout write | disabling removes validation and export availability.
+
+9. KiwiInferenceReadbackBoundaryDiagnostics and Phase16_13/15/16/17 diagnostics |
+Assets/KiwiAvatarSystem/Runtime/Validation/KiwiInferenceReadbackBoundaryDiagnostics.cs and
+KiwiPhase16_13PresentationDiagnostics.cs,
+KiwiPhase16_15RootContinuityDiagnostics.cs,
+KiwiPhase16_16ProviderBridgeDiagnostics.cs,
+KiwiPhase16_17PresentationAuthorityDiagnostics.cs |
+static services called by Product; reset/store/report hooks | ON as callable services |
+OBSERVER_ONLY | counter/event storage only | bounded diagnostic state; no GPU content dump |
+no crop/UV/mirror/format writer | no Spout source write | disabling hooks would remove
+observability; their recorded evidence is not Product authority.
+
+10. KiwiFrameComparisonOverlay |
+Assets/KiwiAvatarSystem/Runtime/Validation/KiwiFrameComparisonOverlay.cs |
+auto-installs in Editor/Development; Update/OnGUI; F8/F9 optional recording | ON only in
+Editor/Development builds | PRESENTATION_WRITER | writes debug Player IMGUI and its private
+CPU overlay texture, not Product tracking/camera/FacePart/Root or VTuberOutput RT |
+private 384x384 Texture2D uses SetPixels/Apply; preview default itself adds no RT/Blit |
+draw uses source aspect and Cropper mirrorX; does not alter source | Player IMGUI is not the
+explicit Spout RenderTexture source | disabling changes debug window presentation only;
+destroys owned textures/resources.
+
+11. KiwiFaultInjectionAcceptanceHarness |
+Assets/KiwiAvatarSystem/Runtime/Validation/KiwiFaultInjectionAcceptanceHarness.cs |
+auto-installs in Editor/Development; explicit Arm/Run APIs | component enabled but idle |
+DIAGNOSTIC_WITH_PRODUCT_EFFECT capability, INACTIVE mutation by default | explicit calls can
+mutate provider/recovery/mask/attachment state | no default copy/readback/upload |
+temporal/Product effects only when explicitly armed | possible downstream visible effect only
+under explicit test | disabling default idle shell does not alter Product.
+
+12. KiwiLiveCameraPixelSpaceAudit and v14-v31 heavy collectors |
+Assets/KiwiAvatarSystem/Runtime/Validation/KiwiLiveCameraPixelSpaceAudit.cs and related gated
+collectors | environment/token gated | OFF | INACTIVE | no default Product write |
+PixelSpaceAudit itself uses OnGUI same-texture draws and logs; no RT/Blit/readback/product write |
+its paired visual is an observer surface only | no Spout RT write | lifecycle active only when
+explicitly enabled. PixelSpaceAudit is the existing minimal P1 candidate, not executed here.
+
+13. KiwiTrackingQuality10Controller |
+Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiTrackingQuality10Controller.cs |
+auto-bootstrap; policy application plus LateUpdate/onBeforeRender hooks | ON;
+phase16_17PolicyOnlyPresentation=true | PRODUCT_WRITER (configuration/policy owner) |
+writes FaceMotion/Cropper runtime policy; its own Root presentation writes return early in
+policy-only mode | no GPU readback/upload; bounded state | disables adaptive filter,
+prediction and age compensation; retains approved display policy | downstream Product
+presentation changes by policy | disabling can expose serialized Scene defaults and therefore
+can change Product behavior; normal Unity lifecycle.
+
+14. KiwiFacePartRigidSampleFrame |
+Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiFacePartRigidSampleFrame.cs |
+auto-bootstrap; per-frame sample geometry update | ON | PRODUCT_WRITER |
+writes per-part sample-frame rotation via SurfaceFittedRawImage, not Root/Head transform |
+no GPU readback; material/geometry parameter path | derives eye-line relative roll |
+changes final FacePart sampling, hence Spout content indirectly | disabling changes FacePart
+orientation; lifecycle restores/clears owned state as implemented.
+
+15. KiwiFacePartSharedTiltLock |
+Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiFacePartSharedTiltLock.cs |
+auto-bootstrap; per-frame material update | ON | PRODUCT_WRITER |
+disables legacy FacePartAngleLock and writes _SampleRotationRad/pivot/aspect to part materials |
+no GPU readback/upload; material parameter writes | second sample-space rotation stage |
+changes final FacePart sampling, hence Spout content indirectly | disabling changes FacePart
+tilt behavior; material lifecycle must remain bounded.
+
+Core Product writers, outside the machine count:
+- WindowsNativeWebCamSource / KiwiNativeCameraPresentation
+- FaceLandmarkerRunner / canonical coordinator
+- KiwiFaceMotion (effective rigid Root writer)
+- FacePartCropper and FacePartShapeMask
+- KiwiFacePartTextureTransaction
+- KiwiExpressionReaction
+- Main Camera and KlakSpout Sender
+
+DEFAULT_ACTIVE_PRODUCT_WRITER_COUNT=3
+DEFAULT_ACTIVE_DEBUG_PRESENTATION_WRITER_COUNT=1_EDITOR_OR_DEVELOPMENT_ONLY
+
+===============================================================================
+6. Product Failure Scenario Matrix
+===============================================================================
+
+Legend:
+- R11-V means exact frozen-v31 tested run Human Visual.
+- C means current static source/Scene inspection.
+- "available" means a field/API exists; it does not mean end-to-end correlation was observed.
+- Rows are scenario specifications, not claims that the proposed boundary is the root cause.
+
+Columns:
+ID | Scenario | Expected Product Behavior | Latest observed symptom | Source of Truth |
+First owner | First transformation | Current writer chain | Timestamp/sample identity? |
+Generation/epoch? | Temporal owner | Final writer | Existing observability |
+First plausible failure boundary | Evidence strength | Remaining unknown
+
+01 | frontal stillness | Root/Head/parts remain visually stable without unnecessary jitter;
+normal motion responsiveness must not be traded away | R11-V: Frontal stillness NG |
+Face Landmarker accepted sample/canonical rigid state | FaceLandmarkerRunner |
+model landmarks/pose to canonical rigid/expression | Runner -> Canonical -> KiwiFaceMotion;
+part paths through Cropper/Mask/Transaction | canonical frameId and submissionHostTicks available |
+camera/tracking generations available across several stages, not continuously proven to final |
+KiwiFaceMotion rigid policy; part-specific temporal owners | KiwiFaceMotion for Root; part
+materials/transaction for parts | R11 Human review; current static diagnostics/counters |
+E temporal accepted-to-display ownership/cadence | Runtime symptom strong, causal boundary weak |
+which channel jitters first; sample-aligned trace; clean same-build reproduction.
+
+02 | horizontal translation | tracked screen-right -> avatar screen-right; screen-left ->
+screen-left; no axis inversion | R11-V: Head translation NG; direction/magnitude not preserved
+in evidence | Face Landmarker/canonical translation | Runner | coordinates normalized/mapped to
+canonical rigid | Runner -> Canonical -> KiwiFaceMotion -> Root | canonical timestamp/frameId |
+tracking generation available; final display epoch not end-to-end proven | KiwiFaceMotion |
+KiwiFaceMotion Root transform | static writer audit exists; R11 visual | C Root/Head mapping or E
+late display; not Camera by default | symptom domain confirmed, exact defect unknown | direction,
+gain, axis, latency and final-writer timestamp at failure.
+
+03 | vertical translation | screen-up/down movement maps consistently to intended avatar
+vertical Root movement; YPR must not contaminate translation | R11-V: Head translation NG;
+vertical isolated result not separately recorded | canonical rigid translation | Runner |
+coordinate/model-profile mapping | Runner -> Canonical -> KiwiFaceMotion -> Root | available |
+generation available before Root; final correlation missing | KiwiFaceMotion | KiwiFaceMotion |
+current static path + writer audit | C mapping/authority, then E temporal | broad Runtime relevance,
+isolated evidence missing | isolated vertical sign/gain and correlation.
+
+04 | yaw | yaw changes Head orientation only; must not drive Root translation | R11-V: Yaw NG |
+canonical rigid orientation | Runner | landmark pose to canonical orientation |
+Runner -> Canonical -> Head/rigid presentation plus part sample transforms | available |
+tracking generation available; rendered rotation identity incomplete | KiwiFaceMotion for rigid;
+part sample rotation separate | KiwiFaceMotion for Root/Head presentation; materials for parts |
+R11 visual, transform-writer observer, current static | C Root/Head final mapping; F3 possible
+part-only two-stage correction | symptom strong; owner defect unproven | whether NG is rigid Head,
+part sampling, sign/gain or temporal.
+
+05 | pitch | pitch changes Head orientation only; no Root translation contamination |
+R11-V: Pitch NG | canonical rigid orientation | Runner | pose to canonical orientation |
+Runner -> Canonical -> KiwiFaceMotion | available | generation before final; final correlation gap |
+KiwiFaceMotion | KiwiFaceMotion | R11 visual + static writer chain | C rigid mapping or E temporal |
+symptom strong; cause weak | sign/range/final writer and latency.
+
+06 | roll | roll/lean changes intended Head orientation; no Root translation contamination;
+FaceParts remain registered | R11-V: Roll NG | canonical rigid orientation/eye-line |
+Runner then rigid/part presentation helpers | canonical roll plus eye-line relative part rotation |
+Runner -> Canonical -> KiwiFaceMotion; RigidSampleFrame -> SharedTiltLock -> part materials |
+canonical timestamp exists; both part stages derive current visible geometry but single end-to-end
+identity unproven | tracking generation available; material epoch not exposed end-to-end |
+KiwiFaceMotion and part sample helpers by distinct scopes | Root=KiwiFaceMotion;
+parts=SharedTiltLock/material | R11 visual + current static F3 | C/F3 part sample rotation vs rigid
+orientation boundary | static overlap confirmed, harmful incidence unproven | whether visible roll NG
+is rigid, first part correction, second part correction, or temporal mismatch.
+
+07 | eye/gaze | eyes follow current semantic gaze without moving Root; both eyes use coherent
+sample | R11-V: Eye NG | model/canonical eye semantics | Runner | model outputs to canonical/
+expression state, then crop/binding | Runner -> Canonical/possible direct reaction -> Cropper/
+ExpressionReaction -> FacePart commit | timestamps exist in canonical and transaction metadata;
+direct expression path can bypass canonical latch | generations exist but complete eye semantic to
+texture commit chain not proven | expression smoothing plus crop/transaction owners |
+ExpressionReaction/Cropper/part material | R11 visual; current static F1/F2 | D/F1 semantic latch,
+then B/F2 transaction | symptom and static bypass confirmed, causal incidence unproven |
+which eye channel first diverges and direct-vs-canonical timestamp at display.
+
+08 | blink | current blink state changes eyelid/part only; no Root movement; no stale latch |
+R11-V: Blink NG | model/canonical blendshape/expression | Runner | learned/hybrid expression to
+reaction/canonical | Runner -> Canonical or direct Runner -> ExpressionReaction -> parts |
+canonical timestamp available; direct Runner path separately timestamped but not latched together |
+tracking generation exists; final state generation gap | ExpressionReaction smoothing/hold |
+ExpressionReaction/part presentation | R11 visual + current static F1 | D/F1 direct bypass |
+static active bypass strong; Runtime cause unknown | actual bypass incidence during blink and final
+sample identity.
+
+09 | mouth open | mouth opening follows current input, no Root movement and no stale retention |
+R11-V: Mouth open NG | model/canonical mouth semantic | Runner | expression derivation/mapping |
+Runner -> Canonical or direct reaction -> FacePart/avatar writer | partial timestamp identity |
+partial generation identity | ExpressionReaction and part presentation | ExpressionReaction/
+FacePart material | R11 visual + current static F1/F2 | D/F1 semantic path | strong symptom,
+static candidate only | raw semantic correctness, latch path taken, mapping/final commit identity.
+
+10 | mouth shape/expression | shape/expression is semantically correct, sample-coherent and does
+not move Root | R11-V: Mouth shape/expression NG | model semantic then canonical expression |
+Runner | hybrid learned expression/fallback mapping | Runner -> Canonical or direct reaction ->
+ExpressionReaction -> FacePartState/material | canonical semantic timestamp exists; direct bypass
+separates it | generation partial | ExpressionReaction smoothing; transaction temporal matching |
+ExpressionReaction/part material | R11 visual; F1 static path; F2 metadata | D/F1 first, B/F2 if
+semantic correct but texture/commit wrong | symptom strong; semantics not Runtime isolated |
+raw-model meaning, direct/canonical selection and final visible identity.
+
+11 | fast movement | latest valid samples remain near-raw, no FIFO/stale accumulation, bounded
+resources | R11-V: Fast movement response NG | newest native camera sample then Landmarker |
+WindowsNativeWebCamSource | NV12/native surface to stable PresentationTexture, then inference |
+Native latest -> PresentationTexture -> Runner -> Canonical -> writers | native sequence/hostTicks
+and canonical timestamps exist separately | camera session/tracking generation exist; full join gap |
+latest-only source plus channel temporal owners | camera presentation, then channel final writers |
+native/runner telemetry exists; R11 visual; observer-heavy performance not authoritative |
+A camera-to-display/inference identity or E temporal accepted-to-display | behavior fail confirmed,
+latency source unknown | continuous native-seq to final presentation trace and clean latency.
+
+12 | movement stop | converges promptly without overshoot, ongoing drift, stale prediction or
+permanent delay; then holds stable | not a separately named R11 checkbox; related Frontal
+stillness/Fast response/lag/stale all NG | last accepted canonical state | channel writers |
+accepted sample to smoothing/hold/late presentation | Canonical -> FaceMotion/Expression/Cropper/
+Mask -> final | partial timestamps | partial generations | multiple owners by channel, Quality10
+disables prediction but retains bounded display smoothing/lock | per-channel final writer |
+current static policy; indirect R11 symptoms | E/F4 stop/settle boundary | expected contract static;
+scenario-specific Runtime unknown | settling time, overshoot, last-sample age per channel.
+
+13 | obvious lag | visible output follows current accepted sample without permanent buffering or
+unnecessary previous-frame dependency | R11-V: Obvious lag NG | accepted canonical timestamp vs
+presentation time | canonical coordinator | per-channel smoothing/late latch/render/Spout |
+Canonical -> per-channel owners -> Camera/RT -> Spout | accepted timestamps exist; final external
+visible timestamp not correlated | several generations exist; end-to-end epoch incomplete |
+KiwiFaceMotion/Cropper/Mask/Expression/transaction by channel | Camera/RT then Spout Sender |
+R11 visual; scattered diagnostics; no clean performance authority | E/F4 presentation cadence |
+symptom strong, quantitative lag unavailable | channel-specific glass-to-glass/accepted-to-display
+latency and observer-free baseline.
+
+14 | stale/freeze | reject duplicate/out-of-order/stale/mixed epoch; recover to newest valid sample
+without indefinite hold | R11-V: Stale/freeze NG | native latest sequence and canonical freshness |
+camera/Runner then canonical coordinator | source freshness rejection and channel hold/recovery |
+Native -> Runner -> Canonical -> per-channel writer | native seq/hostTicks + canonical frameId exist |
+camera/tracking/session generations partial | source latest-only plus channel recovery owners |
+per-channel final writer | R11 visual; static freshness checks; diagnostics | E lifecycle/recovery
+or A source-to-canonical identity | broad failure confirmed, precise freeze locus unknown |
+first non-advancing identity, generation transition and recovery timing.
+
+15 | crop / LIVE CAMERA | same camera sample retains correct orientation, aspect, mirror and
+registration; accepted 560x315 exact 16:9/Bilinear is not changed without evidence |
+R11-V: LIVE CAMERA NG; user narrative explicitly says crop problems | native camera sample and
+stable PresentationTexture | WindowsNativeWebCamSource then debug display/crop owner | native NV12
+to stable linear ARGB32 with same-frame Y-flip Blit; OnGUI scale/mirror | Native ->
+KiwiNativeCameraPresentation -> PreviewService DIRECT -> FrameComparisonOverlay OnGUI |
+native seq/hostTicks exist; overlay lacks a frozen native-seq label in existing Human evidence |
+camera generation exists; session epoch not continuously displayed | latest camera presentation;
+overlay itself no temporal buffer | Player IMGUI overlay for LIVE CAMERA; Spout path separate |
+R11 Human visual; current static geometry; existing gated PixelSpaceAudit | A display
+minification/layout vs same texture 1:1 crop | highest Human specificity plus strong static
+falsifiability; cause not proven | paired same-repaint visual and exact source/draw metrics.
+
+16 | FacePart texture/mask/commit | texture, crop, mask, FacePartState and atomic commit are one
+same accepted sample/transaction; no stale/out-of-order/mixed epoch | R11-V: FacePart mismatch NG |
+canonical state plus selected camera texture slot | KiwiFacePartTextureTransaction/Cropper |
+closest-slot time matching then crop/mask/atomic per-part commit | camera presentation -> bounded
+transaction slots -> canonical match -> Cropper/Mask -> part commit | slot hostTicks, Unity frame,
+semantic timestamp and canonical frameId exist; exact native sequence absent in slot identity |
+camera/tracking generations stored and compared | transaction matcher plus Cropper/Mask owners |
+FacePart transaction/material commit | R11 visual; Phase16_19 counters; current static F2 |
+B/F2 exact sample identity at camera-to-slot join | static safety strong and exact identity gap
+confirmed; mismatch cause unproven | native camera seq/present hostTicks at slot, failing part and
+same-sample proof to final.
+
+17 | transition/reacquire | Resume is not Provider Switch; generations separate sessions;
+no mixed epoch, jump, stale part or indefinite loss after reacquire | R11-V: Transition artifact NG |
+provider/session transition state and first accepted new-generation sample | provider bridge/
+canonical coordinator | lifecycle reset, generation increment, reacquire, per-channel commit |
+source -> Runner/Canonical -> channel recovery -> transaction/final | timestamps exist at stages |
+camera/tracking generations available but end-to-end final proof incomplete | provider bridge,
+FaceMotion continuity, Cropper/Mask/transaction lifecycle | per-channel final writer |
+R11 visual; Phase16_15/16/18/19 static counters | E/F4 lifecycle/temporal, then B/F2 epoch join |
+symptom strong, first stale owner unknown | exact transition type, old/new generation identities,
+first correct final frame and recovery duration.
+
+18 | Spout/final output | final same-build Presentation RT content is published live and appears
+externally correct; publish progress alone is insufficient | R11-V: Spout output NG; prior publish
+count advanced to max 3110 | VTuberOutput RenderTexture content and external receiver view |
+Main Camera/final presentation then KlakSpout Sender | camera renders to RT; Sender Texture mode
+Blits source to sender buffer after WaitForEndOfFrame | final writers -> VTuberOutput RT -> Sender
+buffer -> native publish | publish counter exists; content/sample identity is not encoded end-to-end |
+no complete Product generation in external receiver evidence | final render cadence and Sender EOF |
+Main Camera then KlakSpout Sender | publish liveness telemetry + R11 external visual |
+F content before transport vs sender capture vs receiver display | liveness confirmed, visual
+correctness failed, transport/content cause separated | whether RT itself is wrong, capture differs,
+or receiver presentation differs at the same sample.
+
+Matrix completeness:
+- all 18 required scenarios present.
+- each scenario contains all 15 requested semantic columns after ID/Scenario.
+- unknowns are explicit; no missing scenario is silently marked PASS.
+
+===============================================================================
+7. Symptom-to-Owner/Boundary Matrix
+===============================================================================
+
+SYMPTOM DOMAIN | FIRST SOURCE OF TRUTH | CURRENT FIRST OWNER | FIRST PLAUSIBLE
+BOUNDARY | DOWNSTREAM ALTERNATIVES | AUTHORITY / STATUS
+
+- Frontal jitter | accepted canonical rigid/semantic sample | channel-specific temporal owner |
+  E accepted-to-display timing | C mapping, B part commit | R11 Runtime visual symptom;
+  boundary unproven.
+- Translation wrong | canonical rigid translation | KiwiFaceMotion | C model/canonical-to-Root
+  mapping/final writer | E late presentation | R11 symptom; exact axis/gain unknown.
+- Yaw/Pitch/Roll wrong | canonical rigid orientation | KiwiFaceMotion | C rigid mapping |
+  F3 part rotation only for FacePart appearance; E timing | R11 symptom; no single cause.
+- Eye/Blink/Mouth/Expression wrong | Runner model semantic/canonical expression | Runner and
+  ExpressionReaction | D/F1 direct latch bypass | B/F2 commit; E stale hold | R11 symptom plus
+  confirmed Static bypass; Runtime incidence unknown.
+- Fast/lag/stale/stop | native sequence/canonical accepted timestamp | camera/Runner then each
+  temporal owner | E/F4 accepted-to-presentation cadence | A source identity, lifecycle recovery |
+  R11 symptom; no quantitative clean trace.
+- LIVE CAMERA/crop | stable camera PresentationTexture | camera presentation + debug display |
+  A scale/layout/sampling relative to 1:1 same texture | Native preparation, mirror/orientation |
+  explicit narrative + R11 LIVE CAMERA NG; paired localization missing.
+- FacePart mismatch | canonical sample + chosen camera texture | transaction/Cropper/Mask |
+  B/F2 exact camera sample-to-slot identity | part material rotation, semantic mapping |
+  R11 symptom + Static exact identity gap; cause unproven.
+- Transition artifact | new-generation accepted sample | provider/canonical lifecycle owners |
+  E/F4 lifecycle reset/reacquire | B transaction epoch | R11 symptom; first stale owner unknown.
+- Spout output wrong | VTuberOutput RT and external visible output | Main Camera/Sender |
+  F content-before-transport vs capture/receiver | all upstream domains | publish liveness confirmed;
+  content correctness failed; transport cause unknown.
+
+No symptom row is used to infer a common root cause.
+
+===============================================================================
+8. F1/F2/F3/F4 Static Reaudit
+===============================================================================
+
+F1 — Expression Canonical latch bypass:
+- Confirmed Static: KiwiCanonicalTrackingFrame.TryGetExpressionData provides canonical expression
+  when coordinator is active.
+- Confirmed Static: enabled KiwiExpressionReaction has a direct runner reference and its
+  LateUpdate calls runner.TryGetLatestExpressionData directly.
+- Thus an active direct path can bypass the canonical expression latch.
+- Runner hybrid behavior can refresh learned MediaPipe expression while Sentis is primary;
+  Sentis geometry fallback is used only when learned expression is invalid/older than 500 ms.
+- Not confirmed: bypass incidence at a Human Visual failure, stale value, wrong semantic, or that
+  removing the path improves Product behavior.
+- Status=STATIC_ACTIVE_BYPASS_CONFIRMED_RUNTIME_CAUSALITY_UNPROVEN.
+
+F2 — FacePart exact texture/crop transaction identity gap:
+- Confirmed Static: transaction auto-installs, uses 20 desired slots bounded to 6..24 and 96 MiB,
+  max width 1280, one Blit per Unity frame, no CPU readback.
+- Each slot stores Stopwatch hostTicks captured immediately before Blit, Unity frame, camera
+  generation and tracking session generation.
+- It matches canonical rigid submissionHostTicks to closest same-generation slot within 55 ms,
+  stages semantic timestamp/canonical frameId, commits parts from one accepted decision, pins
+  textures and holds on misses/external writer detection.
+- Exact gap: the slot does not store native camera sequence or the presented native host tick.
+  Therefore exact native sample equality cannot be proven from the transaction slot identity.
+- Strict Cropper contract disables prediction, matched-age compensation, direct motion and
+  hide-on-loss despite their Scene serialized values.
+- Not confirmed: an actual mismatch, stale/out-of-order/mixed-epoch commit or visible causality.
+- Status=STATIC_EXACT_NATIVE_SAMPLE_IDENTITY_GAP_RUNTIME_MISMATCH_UNPROVEN.
+
+F3 — RigidSampleFrame / SharedTiltLock two-stage rotation:
+- Confirmed Static: RigidSampleFrame derives eye-line relative roll and calls
+  SurfaceFittedRawImage.SetSampleFrameRotationDegrees for parts.
+- Confirmed Static: SharedTiltLock disables legacy FacePartAngleLock and independently derives
+  rendered eye-line correction, writing _SampleRotationRad/pivot/aspect to part materials.
+- Both are active sample-space transformations.
+- They do not establish a second Root/Head transform writer. Quality10 policy-only mode suppresses
+  its own Root presentation writes; KiwiFaceMotion remains the effective rigid Root writer.
+- Not confirmed: harmful double correction, affected samples, or contribution to Yaw/Pitch/Roll NG.
+- Status=STATIC_TWO_STAGE_PART_ROTATION_PRESENT_HARMFUL_INCIDENCE_UNPROVEN.
+
+F4 — Temporal layer plurality:
+- Confirmed Static: temporal state exists in distinct scopes: KiwiFaceMotion rigid presentation,
+  Cropper geometry, ShapeMask contour/opacity, ExpressionReaction, transaction matching and
+  provider/recovery continuity.
+- Quality10 disables adaptive microfilter, both prediction layers and age compensation; it retains
+  bounded static-pose/display behavior. Serialized ON values are not assumed to be effective.
+- No duplicate Root final writer was established.
+- Multiple layers by itself is not a defect; per-channel scopes may be legitimate.
+- Not confirmed: duplicate ownership on the same channel, permanent previous-frame delay,
+  accepted/display cadence mismatch, or stale state at a reported failure.
+- Status=STATIC_TEMPORAL_PLURALITY_CONFIRMED_DUPLICATE_RUNTIME_OWNERSHIP_UNPROVEN.
+
+===============================================================================
+9. Camera / LIVE CAMERA / Crop Audit
+===============================================================================
+
+Current static chain:
+Media Foundation newest NV12 sample
+-> native one-slot latest behavior
+-> D3D11 worker / D3D12-compatible three-slot native presentation rail
+-> Unity per-frame TryRequestLatestPresent(seq > last)
+-> one external wrapper per slot
+-> same-frame Y-flip Graphics.Blit
+-> stable per-session linear ARGB32 RenderTexture "KiwiNativeCameraPresentation"
+-> LIVE CAMERA debug display or downstream inference/crop.
+
+Confirmed Static:
+- no FIFO or stale accumulation added;
+- no blocking D3D12 queue Wait;
+- fixed Unity-visible PresentationTexture identity per session;
+- Bilinear, Clamp, no mipmaps;
+- presented native sequence and normalized hostTicks are recorded;
+- Stop destroys RT/wrappers and ends telemetry generation;
+- TryGetLatestPresentedFrame exposes sequence/hostTicks, while session generation is held through
+  the surrounding camera generation contract rather than one complete displayed token.
+
+LIVE CAMERA display:
+- FrameComparisonOverlay is Editor/Development debug Player IMGUI, max width 560, source-aspect
+  preserving and uses Cropper mirrorX.
+- PreviewQualityService default DIRECT/color OFF returns the exact source with no RT/Blit.
+- Player IMGUI does not enter the explicitly assigned VTuberOutput Spout RenderTexture.
+- 560x315 exact 16:9 and Bilinear are not changed because no boundary-specific evidence proves
+  either is the cause.
+- SystemMemoryNV12 Native Path B is not changed for the same reason.
+
+Existing minimal localization surface:
+- KiwiLiveCameraPixelSpaceAudit is environment-gated and observer-only.
+- It draws the same Texture in the same OnGUI repaint as full-frame fitted view and exact 1:1
+  center texel crop; logs texture identity/format, draw rect, aspect, scales, mirror and mode.
+- It performs no RenderTexture allocation, Blit, GPU readback or Product state write.
+- It was not executed in P0 and is not current Runtime evidence.
+
+Conclusion:
+- A is the strongest first localization boundary, not a proven root cause.
+
+===============================================================================
+10. FacePart Transaction Audit
+===============================================================================
+
+Expected contract:
+Camera sample -> selected texture -> crop -> mask -> FacePartState -> atomic commit -> presentation.
+
+Confirmed Static safeguards:
+- bounded slot count/memory;
+- one source Blit per Unity frame;
+- generation equality and <=55 ms time match;
+- one accepted semantic/texture decision for all parts;
+- texture pinning and hold-on-miss/external-writer detection;
+- no CPU readback;
+- strict mode retires Cropper prediction/age compensation/direct motion/hide-on-loss.
+
+Confirmed identity fields:
+- slot hostTicks, Unity frame, camera generation, tracking session generation;
+- canonical rigid submissionHostTicks;
+- semantic timestamp and canonical frameId;
+- per-part commit derives from the same accepted transaction decision.
+
+Missing exact field:
+- native camera presented sequence and native presented hostTicks are not carried as the texture
+  slot identity. Nearest-time matching is bounded but is not exact sample proof.
+
+Rejected inference:
+- F2 gap does not prove R11 FacePart mismatch or crop NG was caused by a mixed transaction.
+- Prior pair-bound shadow observation that found MIXED_TRANSACTION across 76/76 evaluated pairs
+  rejected post-record reuse as a complete explanation, but did not close same-texture pixel-space
+  identity or current visible causality.
+
+===============================================================================
+11. Root / Head Audit
+===============================================================================
+
+Required contract:
+- Head has one rigid authority.
+- screen-right/left translation preserves intended direction.
+- Yaw/Pitch/Roll affect Head orientation, not Root translation.
+- Eye/Blink/Mouth/Expression do not affect Root translation.
+
+Current Static result:
+- FaceLandmarkerRunner/Canonical is the accepted rigid source.
+- KiwiTrackingQuality10Controller is policy-only for Phase16_17 presentation, so its
+  LateUpdate/onBeforeRender returns before an independent Root write.
+- KiwiFaceMotion is the effective Root/rigid final writer and writes in LateUpdate and
+  onBeforeRender under its defined policy.
+- RigidSampleFrame and SharedTiltLock alter FacePart sample/material space, not Root/Head
+  transforms.
+- No second effective Root writer was established.
+
+Unknown:
+- correctness of signs/gains/semantics at the exact failing R11 frames;
+- whether Human Yaw/Pitch/Roll NG is rigid output, part appearance, temporal presentation or a
+  combination;
+- final writer timestamp aligned with raw/canonical data.
+
+No tracking math change is justified in P0.
+
+===============================================================================
+12. Eye / Blink / Mouth / Expression Audit
+===============================================================================
+
+Current chain:
+Runner raw/model semantic
+-> learned/hybrid expression state
+-> Canonical expression latch
+-> ExpressionReaction and/or FacePart crop/binding
+-> material/presentation.
+
+Confirmed Static:
+- canonical expression API exists and is timestamped with canonical state;
+- enabled ExpressionReaction calls the Runner directly when its runner reference is assigned;
+- this bypass can separate expression selection from the canonical latch;
+- expression smoothing/hold is a channel-specific temporal owner, not Root authority;
+- F2 may affect the texture/semantic pairing after the semantic path, but does not prove the
+  semantic itself is wrong.
+
+Unknown:
+- model semantic correctness in the Human-failing frames;
+- which path was selected for each visible update;
+- direct and canonical timestamps/frames at final presentation;
+- mapping correctness, stale retention duration and exact final writer precedence.
+
+No F1 fix is authorized without Runtime incidence/localization.
+
+===============================================================================
+13. Temporal Ownership Audit
+===============================================================================
+
+Channel/scope map:
+- Native camera: one-slot latest/new sequence; no FIFO.
+- Runner/Canonical: freshness and generation rejection; authoritative accepted frame.
+- Rigid Root: KiwiFaceMotion.
+- Part geometry: FacePartCropper.
+- Part contour/opacity: FacePartShapeMask.
+- Expression: KiwiExpressionReaction.
+- Texture-to-semantic pairing: KiwiFacePartTextureTransaction.
+- Provider/resume/reacquire: provider/canonical lifecycle owners and continuity logic.
+- Final render/publish: Main Camera, render cadence and Spout Sender WaitForEndOfFrame.
+
+Quality10 effective policy:
+- adaptive microfilter=OFF;
+- prediction layer 1=OFF;
+- prediction layer 2=OFF;
+- matched-age compensation=OFF;
+- static pose lock/display smoothing/direct motion/bounded correction remain per preset.
+
+Result:
+- Temporal plurality is confirmed by source, but the scopes are not automatically duplicates.
+- No permanent FIFO, new stale prediction or second Root writer was established.
+- Runtime accepted-to-final cadence, stop settling and lifecycle recovery remain unclosed.
+
+===============================================================================
+14. Spout / Presentation Audit
+===============================================================================
+
+Current static path:
+Product writers
+-> Main Camera target Assets/VTuberOutput.renderTexture
+-> KlakSpout Sender configured captureMethod=Texture, source=same RenderTexture
+-> WaitForEndOfFrame
+-> package Blitter.Blit to sender buffer
+-> native publish
+-> external receiver.
+
+Confirmed Runtime from exact frozen-v31 run:
+- publish count progressed, observed maximum=3110.
+- This establishes liveness in that run, not visual correctness.
+- Human Visual classified Spout output NG.
+
+Static separation:
+- FrameComparisonOverlay's Player IMGUI debug display is not the explicit Spout source RT.
+- SpoutWaitFreeDiagnostic reads/logs counters and does not write the source texture or sender.
+
+Unknown:
+- whether bad content is already present in VTuberOutput RT;
+- whether sender buffer capture differs from that RT at the same sample;
+- receiver conversion/layout behavior;
+- end-to-end content/sample identity.
+
+Conclusion:
+publish progress != visual correctness; transport failure is not inferred.
+
+===============================================================================
+15. Ranked Boundary Candidates
+===============================================================================
+
+Axes use H/M/L qualitatively; they are evidence annotations, not an arithmetic score.
+Candidate | Human specificity | Static evidence | Identity/ownership gap | Falsifiability |
+Observer contamination risk | Product value | Regression risk of investigation | Measurement cost
+
+1. A Camera/LIVE CAMERA/Crop | H: explicit crop narrative + LIVE CAMERA NG |
+H: stable texture/display chain known | M: displayed exact sample token absent | H: same texture
+full vs 1:1 crop | L with existing OnGUI observer | H | L, read-only | L.
+
+2. B FacePart transaction / F2 | H: FacePart mismatch NG; crop type ambiguous |
+H: bounded matcher/commit audited | H: native sequence absent at slot | H if exact identity is
+added/observed | M: transaction observer can perturb/copy if designed poorly | H | M | M.
+
+3. E Temporal / F4 | H: stillness/fast/lag/stale/transition NG | M-H: owner scopes mapped |
+M: end-to-end accepted/display identity incomplete | M: needs correlated timestamps | M-H:
+observer can alter cadence | H | M | H.
+
+4. D Eye/Mouth/Expression / F1 | H: four semantic categories NG | H: active bypass confirmed |
+M-H: direct/canonical/final token gap | H for path incidence | M | H | M | M.
+
+5. C Root/Head / F3 | H: translation/YPR NG | H: single Root writer and two part stages mapped |
+M: rendered part rotation token missing | M | M | H | M-H if math altered; read-only is L | M.
+
+6. F Spout/Presentation | H: Spout visual NG | H for source configuration/liveness |
+M-H content identity gap | M without same-sample capture | M-H | H downstream but lower first-boundary
+specificity | M | M-H.
+
+Cross-cutting mapping:
+- F1 -> D.
+- F2 -> B.
+- F3 -> C, specifically FacePart sample-space rotation; not a second Root writer.
+- F4 -> E.
+
+Why this order is not a simple sum:
+- A has uniquely explicit Human crop narrative, a narrow same-texture falsification, and an already
+  present observer that avoids allocation/Blit/readback/Product writes.
+- B has a stronger exact identity gap, but Human "crop" does not identify FacePart crop over LIVE
+  CAMERA crop, and exact-token instrumentation costs more.
+- E explains more symptoms in breadth but has high observer-contamination and measurement cost.
+- D has a clear Static bypass, but selecting it first would conflate semantic and visible texture/
+  presentation failures before the explicit crop boundary is localized.
+- F is downstream; confirmed publish liveness makes transport the wrong first assumption.
+
+===============================================================================
+16. Selected P1 First Target
+===============================================================================
+
+FIRST_TARGET_BOUNDARY=A_CAMERA_LIVE_CAMERA_CROP
+
+Exact claim to prove/disprove:
+LIVE_CAMERA_DISPLAY_MINIFICATION_IS_THE_FIRST_VISIBLE_DEGRADATION_BOUNDARY_RELATIVE_TO_SAME_TEXTURE_1_TO_1_CENTER_CROP
+
+Why first:
+- explicit Human evidence mentions crop problems and separately marks LIVE CAMERA NG;
+- source shows the debug LIVE view can be compared against the exact same source texture without
+  touching inference, tracking, transaction or Spout;
+- the comparison is one-factor and falsifiable;
+- existing observer has lower contamination than GPU snapshot/tensor dump/transaction copying;
+- a negative result retires display minification quickly and promotes B/F2 without changing code.
+
+Existing evidence:
+- source texture is a stable per-session linear ARGB32 PresentationTexture;
+- default PreviewService is DIRECT/color OFF, adds no transform;
+- FrameComparisonOverlay uses aspect-preserving display with mirrorX;
+- R11 Human Visual: LIVE CAMERA NG and explicit crop concern.
+
+Missing evidence:
+- same-repaint Human comparison of fitted full view versus exact 1:1 central texel crop;
+- exact texture instance ID/size/format, source/draw aspect, X/Y display scale, mirror and preview
+  mode correlated with that comparison;
+- explicit reviewer decision: BOTH_BAD / FULL_ONLY_BAD / 1_TO_1_ONLY_BAD / DIFFERENT.
+
+Minimal required observation for P1, not executed in P0:
+1. Freeze same current build/source/Scene and relevant SHA identities.
+2. Set only KIWI_LIVE_CAMERA_PIXEL_SPACE_AUDIT=1.
+3. Keep preview DIRECT, color OFF; heavy v20/v24/v25/v27/v31 collectors OFF.
+4. Display same Texture twice in one OnGUI repaint: full fitted view and exact 1:1 center crop.
+5. Record the existing audit log fields and one paired Human review.
+6. Do not allocate an RT, Blit, read back GPU content, modify Product state, change Native path,
+   alter tracking math or treat the run as Performance Authority.
+
+Product relevance:
+- directly isolates whether visible quality loss begins at debug display scale/layout rather than
+  native source, FacePart transaction or downstream Spout.
+
+Regression risk:
+- low if limited to the existing opt-in observer; no Production behavior change.
+- the observer source/build identity must still be frozen and its activation verified before P1.
+
+Decision branches:
+- FULL bad, 1:1 materially better -> localize first visible degradation to display scale/sampling/
+  layout; then inspect exact geometry without changing accepted settings prematurely.
+- BOTH bad similarly -> retire display-only hypothesis; advance to native PresentationTexture/
+  source or B/F2 depending whether FacePart-only mismatch remains.
+- 1:1 only bad or divergent orientation -> inspect crop coordinates/mirror/orientation in A.
+
+===============================================================================
+17. Runtime Baseline Necessity Decision
+===============================================================================
+
+Conditional rule required both:
+1. a current-v31 PRODUCT_EFFECTIVE_DIFFERENCE, and
+2. that difference could change first-target selection and cannot be closed statically.
+
+Observed:
+- condition 1 is false.
+- therefore condition 2 need not authorize a build/run.
+
+Decision:
+RUNTIME_NOT_REQUIRED_FOR_P0
+
+CURRENT_WORKSPACE_RUNTIME_REQUIRED=NO
+RUNTIME_EXECUTED=NO
+
+No Runtime ZIP was created. No current Runtime/Visual/Performance authority is claimed.
+
+===============================================================================
+18. Observer / Validator Risks
+===============================================================================
+
+- Existing frozen-v31 run was heavy-collector-off but still contained default-active telemetry,
+  wait-free diagnostic and debug/development surfaces. It is Product-impact and Human Visual
+  authority for that exact build/scenario, not clean Performance Authority.
+- Validator conclusions are audited claims. Two validator scripts differ from frozen-v31 due to
+  post-run offline corrections; they cannot retroactively alter tested Runtime bytes.
+- An EXE or DLL SHA alone does not close build/source/toolchain provenance.
+- Reflection polling, OnGUI, CPU Texture2D Apply, logging and per-frame observers can change timing;
+  none may be used as observer-free performance evidence.
+- FrameComparisonOverlay writes Player debug presentation; a screenshot of it is not evidence of
+  the Spout RenderTexture content.
+- Transaction instrumentation that adds copies, GPU readbacks, queues or waits could hide/create
+  F2/F4 behavior. P1 avoids it.
+- Raw logs/CSV/ZIP must remain byte-preserving; filtering must not rewrite raw authority.
+- Missing exit code, startup/completion correlation, same-build identity or Human review is a
+  stop condition, never PASS.
+
+===============================================================================
+19. Confirmed Facts
+===============================================================================
+
+- Git/Scene/package/Native/key source identities were frozen from current local workspace.
+- frozen-v31 manifest comparison has 288/288 payload matches and only two source mismatches,
+  both offline validator scripts.
+- no new current-v31 Product-effective difference was found.
+- active Scene and explicit Spout source RT are identified.
+- default-active service behavior is classified by source and activation, not by name.
+- current camera path is latest-frame, fixed PresentationTexture, nonblocking and bounded.
+- F1 active direct expression bypass exists statically.
+- F2 exact native camera-sample field is absent from texture slot identity.
+- F3 two active FacePart sample-space rotation stages exist; they are not a second Root writer.
+- F4 temporal state exists in multiple channel-specific scopes; no duplicate Root writer found.
+- exact frozen-v31 tested run had publish progress to 3110 and Human Visual FAIL for all requested
+  checklist items.
+- this audit made no Production change and executed no Runtime.
+
+===============================================================================
+20. Static Findings
+===============================================================================
+
+- A can be localized with a same-texture, same-repaint, no-copy PixelSpaceAudit already present.
+- B contains bounded transaction safety but lacks exact native sequence/presented tick identity.
+- C has one effective rigid Root writer; FacePart rotations are separate sample-space writers.
+- D has a direct expression path bypassing canonical latch.
+- E contains legitimate distinct temporal scopes but needs Runtime correlation to identify an
+  actual duplicate/stale owner.
+- F publishes an explicit final RT in Texture mode; debug IMGUI overlay is outside that RT.
+
+===============================================================================
+21. Runtime Findings
+===============================================================================
+
+Authority source=pre-existing exact frozen-v31 run only:
+- Player completed without the previously reported timeout/explicit Player error condition.
+- Spout publish count advanced, max observed 3110.
+- Human Visual=FAIL.
+- NG categories: Head translation, Yaw, Pitch, Roll, Eye, Blink, Mouth open,
+  Mouth shape/expression, Frontal stillness, Fast movement response, Obvious lag, Stale/freeze,
+  FacePart mismatch, Transition artifact, LIVE CAMERA and Spout output.
+- User narrative: required quality not reached; broad behavior and crop problems.
+
+Not a Runtime finding:
+- current workspace equivalence, F1 causality, F2 mismatch, F3 harmful double rotation,
+  F4 duplicate ownership, or A display-minification causality.
+
+===============================================================================
+22. Inferences / Hypotheses
+===============================================================================
+
+- A display minification/layout is the best first hypothesis to falsify because Human evidence is
+  specific and measurement is low-contamination. It is not yet the most likely root cause in a
+  probabilistic sense and is not asserted as fact.
+- If full fitted view is worse than same-texture 1:1 crop, the first visible loss is likely within
+  display scaling/sampling/layout; native source quality could still also be inadequate.
+- If both views are equally bad, A display-only hypothesis weakens; source texture or another
+  domain becomes more plausible.
+- F1 may cause semantic desynchronization, F2 may permit nearest-time rather than exact-sample
+  pairing, F3 may double-correct parts, and F4 may create cadence mismatch. None has correlated
+  Runtime incidence yet.
+
+===============================================================================
+23. Rejected Conclusions
+===============================================================================
+
+- REJECT: Human all-NG proves one common root cause.
+- REJECT: crop narrative automatically means F2 FacePart transaction.
+- REJECT: 560x315 exact 16:9 or Bilinear is defective without a paired observation.
+- REJECT: SystemMemoryNV12 Native Path B is the cause.
+- REJECT: Spout publish progress proves correct visual content.
+- REJECT: Spout visual NG proves transport failure.
+- REJECT: F1/F2/F3/F4 Static existence proves Runtime defect.
+- REJECT: multiple temporal layers automatically mean duplicate ownership.
+- REJECT: two FacePart rotation stages establish two Root/Head authorities.
+- REJECT: current source/static planning equivalence is Runtime/Visual equivalence.
+- REJECT: observer-heavy/default-observer run is clean Performance Authority.
+- REJECT: change tracking math to hide camera/crop symptoms.
+- REJECT: add Fence/Wait/flush/async-disable, FIFO, stale prediction, strong smoothing, Kalman or
+  threshold relaxation as guessed fixes.
+
+===============================================================================
+24. Unknowns
+===============================================================================
+
+- Exact first bad pixel/geometry boundary for LIVE CAMERA/crop.
+- Exact native sequence carried into each FacePart transaction slot/final commit.
+- Which F1 path executed during each visible semantic failure.
+- Whether F3 applies a harmful net double correction and on which parts/samples.
+- Per-channel accepted-to-final latency, stop settling and stale/reacquire ownership.
+- Canonical semantic correctness at the frozen-v31 Human-failing frames.
+- Whether bad Spout appearance originates before sender, in sender capture, or at receiver.
+- Current workspace Runtime/Visual behavior; intentionally not measured because G0 run condition
+  was not met.
+- Clean observer-free Performance Authority.
+- Full reproducible native build provenance/Class-A closure.
+
+===============================================================================
+25. Files / SHA256
+===============================================================================
+
+Exact full hashes available at audit:
+- Assets/Script/FaceLandmarkerRunner.cs
+  6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93
+- Assets/Script/KiwiInferenceFaceTracker.cs
+  CF860F4EF686BD5FDAC4140D4F3E73E64B6F390C3BC64204CF346011AC69380D
+- Assets/Script/KiwiFaceMotion.cs
+  D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6
+- Assets/Plugins/x86_64/KiwiNativeCamera.dll
+  82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+- MediaPipe 0.16.3 local tarball
+  CC3E77A219E0B99618AE3BE64C31A566197DEEDC69C1E136ACF52D65D7CF2E79
+- installed MediaPipe package.json
+  EEBBFF4550FA9CA3C2C76AB05BD0EDBDB3A0A4C2800883E244DC9E40D8FF2A2D
+- installed Inference Engine 2.4.1 package.json
+  2F230C84E28A9E3AD516B1A49B79B6F83E172F1C16E6813E0F1DD6FA2B1790EE
+- audited package-source aggregate (216 entries)
+  426CF5286D1661407B5B45532B067CA6EBE80E479837108DD69248C80E746C0F
+- audited diagnostic aggregate (15 entries)
+  519D3D6B8BDA81DD3093693859A883AB33D0F26FE1A4ABD87EA985D3D3FB70E0
+
+Current key Product asset SHA256 values:
+- Assets/Scenes/Face Landmark Detection.unity
+  E28B0B81F731B92B04B97D4AA7DB1187C8DD57C5A39F49B08B2E6799BBF5B3D1
+- ProjectSettings/EditorBuildSettings.asset
+  611BA53D1627847D786E714A7CC17EB8D5AE06C2EFBA4077DA1F396A81355EAE
+- Assets/KiwiAvatarSystem/Runtime/Camera/WindowsNativeWebCamSource.cs
+  D0DD9A78FA57AAB51D3E0C8606844C44F0207DC87277D0B26AEF3B43EF353533
+- Assets/KiwiAvatarSystem/Runtime/Presentation/KiwiFacePartTextureTransaction.cs
+  DC78488DCD1D2E45E5AA6F40065D4983087014B501B5FD5A8E37B6D8E0F68849
+- Assets/Script/FacePartCropper.cs
+  39C06FEC43B4EA47AD783C233991E830E10B18DA285148E7A34B0C13DAD52CFE
+- Assets/Script/FacePartShapeMask.cs
+  822D18059988F390F52C40F60DA5F11E8ECF7577008D640272C5CF8D1557D4A6
+- Assets/Script/KiwiExpressionReaction.cs
+  0D48FB25CD79CE571F2892609E094D0D7DEA7A6C4B9D73A43A4B53B2A2980EF8
+- Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiFacePartRigidSampleFrame.cs
+  578CE2ED93A2A78EE1B19D8FF309A115A2FA53596E79BAAB0534A27AC10077C0
+- Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiFacePartSharedTiltLock.cs
+  0BCCA0B7BD6982B78C0FC18058ACD54D073D786820F7B027B8C2F218EF2CAE70
+- Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiTrackingQuality10Controller.cs
+  D6C15D6C6441595A4073E03A8CCDAD8ECB91BCDFA8F180931780925C6BFB9D8C
+- Assets/KiwiAvatarSystem/Runtime/Validation/KiwiFrameComparisonOverlay.cs
+  6DF8CCC9B47A0E2E9BFF4807B4D7CAB4AB11911992A4624EF7A8E40436F39EDD
+- Assets/KiwiAvatarSystem/Runtime/Validation/KiwiCameraPreviewQualityService.cs
+  717C1B1106CEBC0D1E0C37F5A3899A1C3D67007EB7B61DACCE64A39C1336043A
+- Assets/KiwiAvatarSystem/Runtime/Validation/KiwiSpoutWaitFreeDiagnosticV44_20.cs
+  EA828B9428537AF7140B3D57C91DA65C27762CF9E769911BA5A95F82140113CD
+- Assets/VTuberOutput.renderTexture
+  894997A591EE4A91BF5E6D130D30831FCA35E4E372E63FA94FE75DFB0CF8227E
+- Assets/Material/FacePartMaterial.mat
+  AA68B8BCB17E3158C9E1B9CE5DA2A28EDCD8C1C512F3C7A2D9917593C6F2F38C
+- Assets/Shader/FacePartSoftMask.shader
+  EB6CDCBE0B838053FB5A563641328E42C1BAAFB935D61F367913208D9638E921
+
+Product-active prefab identities checked against frozen-v31:
+- MediaPipe Multi FaceLandmarkList Annotation 8EF22886...
+- Annotatable Screen
+  68BC0A5BF6B57F3293E17BF58F37E8D568247D05F5468CF9FB982A523BDB73B3
+- uni_kiwi_textured_rigged
+  D514FA9B4312F5BB85887E4B7746813539D97565FF518F8A73FE791CE07C5342
+- Main Canvas
+  2235404C6CAEC1B5176979D9B1C7B4EBFDA14D9A9678F9342112E7500AFF7F35
+
+Important qualification:
+- The remaining ellipsized KlakSpout and Multi FaceLandmarkList Annotation values are recorded
+  identity prefixes, not reconstructed full hashes. No missing suffix is inferred in this report.
+- Prior R11 Production aggregate C34BC1B... is not claimed as independently recomputed here.
+  Product 59/59 equivalence is manifest-backed and supported by per-file identities.
+- This report's own SHA256 is reported out-of-band in the final handoff; it is not self-embedded.
+
+===============================================================================
+26. Production Changes
+===============================================================================
+
+- Production source changes=NONE.
+- Scene/default changes=NONE.
+- package changes=NONE.
+- Native changes=NONE.
+- shader/material/prefab changes=NONE.
+- diagnostic source changes=NONE.
+- build/run=NONE.
+- Runtime ZIP=NONE.
+- created artifact=this Consolidated REPORT only.
+
+WHY_CHANGE_IS_BETTER_THAN_NO_CHANGE=NO_PRODUCTION_CHANGE_JUSTIFIED
+PRODUCTION_BEHAVIOR_CHANGED=NO
+
+===============================================================================
+27. Next Single Action
+===============================================================================
+
+Authorize and execute one P1 same-build, one-factor LIVE CAMERA pixel-space comparison using the
+existing opt-in KiwiLiveCameraPixelSpaceAudit:
+- only KIWI_LIVE_CAMERA_PIXEL_SPACE_AUDIT=1;
+- same source Texture, same OnGUI repaint;
+- full fitted view vs exact 1:1 center crop;
+- preview DIRECT/color OFF;
+- heavy collectors OFF;
+- paired visual decision plus correlated texture/draw metrics;
+- no Production write, no GPU readback, no new E2/v44.55.32, no performance claim.
+
+Do not start B/F2 instrumentation, alter camera settings, or modify tracking math until this one
+claim is resolved or falsified.
+
+===============================================================================
+Machine-readable decision fields
+===============================================================================
+
+G0_PRODUCT_EFFECTIVE_DIFFERENCE=NO
+CURRENT_WORKSPACE_RUNTIME_REQUIRED=NO
+DEFAULT_ACTIVE_PRODUCT_WRITER_COUNT=3
+P0_SCENARIO_MATRIX_COMPLETE=YES
+P0_BOUNDARY_MATRIX_COMPLETE=YES
+F1_STATUS=STATIC_ACTIVE_BYPASS_CONFIRMED_RUNTIME_CAUSALITY_UNPROVEN
+F2_STATUS=STATIC_EXACT_NATIVE_SAMPLE_IDENTITY_GAP_RUNTIME_MISMATCH_UNPROVEN
+F3_STATUS=STATIC_TWO_STAGE_PART_ROTATION_PRESENT_HARMFUL_INCIDENCE_UNPROVEN
+F4_STATUS=STATIC_TEMPORAL_PLURALITY_CONFIRMED_DUPLICATE_RUNTIME_OWNERSHIP_UNPROVEN
+FIRST_TARGET_BOUNDARY=A_CAMERA_LIVE_CAMERA_CROP
+FIRST_TARGET_CLAIM=LIVE_CAMERA_DISPLAY_MINIFICATION_IS_THE_FIRST_VISIBLE_DEGRADATION_BOUNDARY_RELATIVE_TO_SAME_TEXTURE_1_TO_1_CENTER_CROP
+PRODUCTION_BEHAVIOR_CHANGED=NO
+RUNTIME_EXECUTED=NO
+V44_55_32=NOT_AUTHORIZED
+E2_BRANCH=FROZEN_DEPRIORITIZED
+PRODUCTION_FIX=NOT_AUTHORIZED_IN_P0
+COMMIT_PUSH=NO
+NEXT_SINGLE_ACTION=RUN_ONE_FACTOR_EXISTING_LIVE_CAMERA_PIXEL_SPACE_AUDIT_WITH_PAIRED_HUMAN_REVIEW
+
+END_OF_REPORT

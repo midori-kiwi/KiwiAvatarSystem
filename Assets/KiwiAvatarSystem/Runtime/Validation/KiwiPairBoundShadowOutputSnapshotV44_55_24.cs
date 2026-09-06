@@ -1817,6 +1817,34 @@ internal sealed class KiwiPairBoundShadowOutputSnapshotV44_55_24
             }
         }
 
+        // KIWI_V44_55_26_PRODUCTION_DECODE_PAYLOAD_TRANSACTION_CLOSURE
+        // Hands off the already observer-owned snapshot; no new GPU copy.
+        KiwiProductionDecodePayloadTransactionTraceV44_55_26
+            .RecordPairBoundSnapshot(
+                state.Index,
+                state.ShadowSnapshotPairToken,
+                state.ShadowSnapshotSequence,
+                state.ManagedHostTicks,
+                classification,
+                state.ProductionOutput);
+
+        // KIWI_V44_55_27_ACTUAL_PRODUCTION_VS_SHADOW_PAYLOAD_AUTHORITY
+        // Hands off the already CPU-owned REF/MODE2 arrays. The rejected
+        // Production snapshot is supplied only for reference-alias validation.
+        KiwiActualProductionVsShadowPayloadAuthorityV44_55_27
+            .RecordPairBoundShadowPayloads(
+                state.Index,
+                state.ShadowSnapshotPairToken,
+                state.ShadowSnapshotSequence,
+                state.ManagedHostTicks,
+                state.ShadowSnapshotRecordIndex,
+                state.ReferenceSnapshotFrame,
+                state.Mode2SnapshotFrame,
+                classification,
+                state.ReferenceOutput,
+                state.Mode2Output,
+                state.ProductionOutput);
+
         return
             new PairResult
             {

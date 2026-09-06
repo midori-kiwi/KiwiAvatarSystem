@@ -1,0 +1,1485 @@
+KiwiAvatarSystem
+KiwiCodexConsolidatedReport — Stage 1A / Stage 1B
+Draft identifier: 2026-09-04 22:59:46 +09:00
+Final source/report re-audit: 2026-09-05 JST
+Audit mode: READ_ONLY_SOURCE_AND_EXISTING_EVIDENCE_AUDIT
+Primary priority: Stage 1A — INFERENCE / TRANSACTION CRITICAL-PATH DATAFLOW AUDIT
+Parallel scope: Stage 1B — WHOLE-SYSTEM READ-ONLY FULL DATAFLOW AUDIT
+
+======================================================================
+0. OUTCOME FIRST
+======================================================================
+
+[確認済み事実]
+
+1. Stage 1A は、現行 Production source、installed Inference Engine package source、
+   freeze manifest、correlated v44.55.29 Runtime Evidence を照合し、次の一因子診断境界を
+   選定した。
+
+   SELECTED BOUNDARY D/E:
+   ASYNC_PRODUCER_TAIL_OUTPUT_SNAPSHOT_PROBE
+
+   final model dispatch後、同じasync CBのcompute dispatchでlogical outputをobserver専用
+   bufferへbit-preserving copyし、submit後に通常の非同期readbackで観測する。
+   Production decode直前の既存cloneとpair比較する。output storage/observation pathの
+   discriminatorであり、readback queue orderingだけを証明する実験ではない。未実装。
+   当初draftのsame-async-CB RequestAsyncReadback案はAPI適合性再監査により撤回した。
+
+2. v44.55.29 same-build Runtime は次のみを支持する。
+
+   ASYNC_QUEUE_EXECUTION_CONTEXT_CAUSAL_CONTRIBUTOR_CANDIDATE
+
+   DIRECT_GRAPHICS            68/68 REF_ONLY
+   COMMAND_BUFFER_GRAPHICS    88/88 REF_ONLY
+   COMMAND_BUFFER_ASYNC       87/87 NEITHER
+
+   external CommandBuffer形式単独は主要因候補から棄却できるが、graphics→async resource
+   visibility、ToTensor、model dispatch、output completion/readbackのどこが原因かは未分離。
+
+3. cross-queue defect、fence欠落、D3D12 barrier defect、root cause は証明されていない。
+   Unity公開設計原則は通常のGPU write→read resource dependencyをUnityが扱うとしており、
+   explicit GraphicsFence欠如のみをdefect証明に使えない。
+
+4. Stage 1B のF1–F4は静的条件として確認したが、Runtime defectではない。
+   F5「HubとFaceMotionがprovider-switch normalizationを二重所有」は静的に棄却した。
+
+5. Production/runtime behaviorは変更していない。Unity/Player起動、build、commit、push、
+   reset、checkout、clean、既存file書換えは行っていない。本reportのみ新規作成した。
+
+[最終判断]
+
+NO_GO_FOR_PRODUCTION_ADOPTION
+
+理由: Production-vs-Shadow transaction semantic divergenceの発生boundaryが未閉鎖。
+Semantic Correctness、Authority/Transaction、Lifecycle、Clean Performance、Visualの採用gateを
+満たしたとは判定できない。一方、Stage 1Aの次のone-factor diagnostic boundary選定は完了。
+
+======================================================================
+1. AUTHORITY / FREEZE / PROVENANCE
+======================================================================
+
+[確認済み事実]
+
+Logical freeze:
+  KIWI_STAGE1_SOURCE_SNAPSHOT_V44_55_29_20260904_213928
+  core manifest rehash: 37/37 MATCH, 0 DRIFT, 0 MISSING
+
+Git identity:
+  HEAD: 27281c622d7b8bf2ececf711b037fc8f9e029004
+  branch: main...origin/main [ahead 14]
+
+Freeze時と一致するtracked dirty files:
+  Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiOrtDirectMLShadowRuntime.cs
+  Assets/KiwiAvatarSystem/Runtime/Validation/KiwiPairBoundShadowOutputSnapshotV44_55_24.cs
+  Assets/Script/KiwiInferenceFaceTracker.cs
+  Tools/KiwiPowerShell/KiwiPsCompat.psm1
+
+Critical current SHA256:
+  KiwiInferenceFaceTracker.cs
+    1DBAAB45A5393D688B2ACE2A4FB5FBA995FE7B09E12843D3DAD536A15D8C539A
+  FaceLandmarkerRunner.cs
+    6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93
+  KiwiFaceMotion.cs
+    D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6
+  Production KiwiNativeCamera.dll
+    82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+  active scene: Assets/Scenes/Face Landmark Detection.unity
+    E28B0B81F731B92B04B97D4AA7DB1187C8DD57C5A39F49B08B2E6799BBF5B3D1
+
+Unity / package:
+  Unity: 6000.0.80f1
+  package: com.unity.ai.inference 2.4.1
+  installed source:
+    Library/PackageCache/com.unity.ai.inference@587873fd5e1b
+  installed package.json SHA256:
+    2F230C84E28A9E3AD516B1A49B79B6F83E172F1C16E6813E0F1DD6FA2B1790EE
+  lock fingerprint:
+    587873fd5e1bd2d10f696bceb1a83c296823e927
+
+Installed source SHA256 ledger (2026-09-05; paths under package Runtime/Core):
+  D3905D3D29B70073456FF63F51C54C7B8023A259715504AD14AA436F392DF146  Converters/TextureConverter.cs
+  C12F6A3B739ACC39588722EABE4AF0E4A125E262C14BCA714F57E1E8652B9D7D  Converters/TextureTransform.cs
+  011BC050A5CA80BBD313E7B4EE679D142B4740181D7F2380DD142C8910752256  Backends/Worker.cs
+  EFB9DE3F4C7EA7C33142B6B55994378121985713A65ACF97E1F8BCBD7C52BAF7  Backends/GPUCompute/GPUCompute.cs
+  38523335457507326E91FA5E40C332E99A18C7BFF556336F3016627788AA02D9  Backends/GPUCompute/ComputeTensorData.cs
+  592B80B1799FA3C9A7CD14C5593EBF418FC511A41B555863CFFB1C5DE9E2F334  Backends/GPUCompute/CommandBufferHelper.cs
+  F6670D6DA517F3663CBB2242D413614874BE6544A6629225787B76C938D65FC7  Backends/ModelStorage.cs
+  E653B80EE2C1E944EC1AB71F1EEF389F6774D18599FA6A1ED314A58791C3E79D  Backends/TensorPool.cs
+  C0765322525E209E31DA7F578C9BD2DEFA22418FD92FBA58E2231DB5E9F3CE79  Backends/TensorDataPool.cs
+  94199A8D0D1CF28F2EADE07E4BA30AEC284D872770CAAAE137868B2F7F436A33  Backends/CPUFallbackCalculator.cs
+  E4FB423D4D70E94B9E4CD50837068C4F7D898FDF968F91FE31723C0F1EDD15AE  Backends/BackendFactory.cs
+  373377D461C8FE5FCF800E598225FF415D16304B205716B1D9A15CB1942F3781  Tensor.cs
+  82C1DEC0B0978AC250C54991942E3A80527F4778B6B30E52A3E090F62320A81A  TensorGeneric.cs
+  7BDA4B8C1AFCCCB0B8EEE1CB5302BF086795A7BEC790A74A842C30AD6DC3A9E5  Layers/Layer.Transformation.cs
+
+Scene authority:
+  enabled build sceneは Assets/Scenes/Face Landmark Detection.unity の1件。
+  scene GUID: df0fc3b9f7146dee593f8b5660ae773c
+  Runnerはenabled、enableSentisHybridTracking=1。
+  KiwiFaceMotionはenabledで、serialized runnerは同一Runnerを参照。
+  Tracker canonical implementationは Assets/Script/KiwiInferenceFaceTracker.cs。
+  Assets/KiwiAvatarSystem/Runtime/Tracking/KiwiInferenceFaceTracker.cs はno-type shim。
+
+v44.55.29 Runtime Evidence:
+  KiwiValidation/RuntimeEvidence_v44_55_29_20260904_CORRELATED_VALID_FINAL.zip
+  ZIP SHA256:
+    4AC003C697EF18129A83E0C11657864AE5582D97FBC412686111290A1944E040
+  entries: 34
+  embedded manifest: 33/33 PASS, 0 mismatch, 0 missing
+  embedded manifest SHA256:
+    4CCC4B2E9D9177ACC876387AE71F1BCEF6B560EB559DB0D84DFB6B466A3ED6CE
+  composite identity validator: exit 0 / PASS
+  payload validator: exit 0 / PASS
+
+[Runtime]
+
+  3 armはいずれも同じbuild/source/package/model/Native identitiesにbindされ、exitCode=0。
+  generated summaryのsameBuildExeSha256空欄はvalidator表示field mismatch。
+  same-build authorityは独立identity validatorに依存し、空欄をPASS根拠にはしていない。
+
+[未確認]
+
+  Native DLL provenance Class A closureは本audit scopeでは再証明していない。
+  untracked diagnostics/evidence/toolsは存在する。ambient dirty stateを本turnの変更に帰属しない。
+
+======================================================================
+2. PATH CLASSIFICATION
+======================================================================
+
+[Static]
+
+DEFAULT_ACTIVE / Production-capable:
+
+  COMMAND_BUFFER_ASYNC
+    Eligible Windows/D3D12では、BeforeSceneLoadの
+    KiwiInferenceAsyncComputeDefaultV44_22.ApplyDefault が明示overrideなしの場合に
+    async環境値を設定するため、現projectの通常default候補。
+
+  DIRECT_GRAPHICS
+    Production baseline implementation。async明示off、非eligible、fallback時のbranch。
+    Tracker source内で両diagnostic requestがfalseならdirect pathに入る。
+
+DIAGNOSTIC_ONLY:
+
+  COMMAND_BUFFER_GRAPHICS
+    KIWI_INFERENCE_COMMAND_BUFFER_GRAPHICS_PROBE、D3D12、async-disabledにより明示opt-in。
+
+  ORT shadow submission / pair-bound snapshots / overlay / diagnostic telemetry
+    tracking、Canonical、Root、FacePart textureのauthority writerではない。
+
+CONDITIONAL:
+
+  async armはrecognized env、non-mobile、supportsAsyncCompute、D3D12が必要。
+  CB_GRAPHICSはexplicit request、!async、non-mobile、D3D12が必要。
+  両方requestedかつasync eligibleならasyncが優先。
+  cadence-budget modeはasyncまたはCB_GRAPHICS時にdisabled。
+
+INACTIVE_OR_LEGACY:
+
+  exact pre-v29 Tracker backup outside Assets:
+    KiwiValidation/Backups/v44_55_29_20260904_204244/KiwiInferenceFaceTracker.cs
+    SHA256 52C046EE44B41A4FF50B85AEF503BC29DD31B57EAF58C0D160CCC33C5D4B7695
+  Runtime/Tracking側のno-type Tracker shim。
+  Native/KiwiNativeCamera/Build/x86_64/KiwiNativeCamera.dll はProduction Assets外。
+
+======================================================================
+3. STAGE 1A — EXACT CRITICAL CALL GRAPH
+======================================================================
+
+[Static]
+
+1. FaceLandmarkerRunner.Update
+   -> fresh camera sourceをobserve
+   -> ProcessSentisFreshFrame
+   FaceLandmarkerRunner.cs:603-668
+
+2. ProcessSentisFreshFrame
+   -> texture / flips / sourceHostTicks / freshness admission
+   -> KiwiInferenceFaceTracker.TryProcessAsync
+
+3. TryProcessAsync
+   -> free laneがありready completionがなければschedule
+   -> PollCompletedLanes
+   -> schedule未実施ならpoll後schedule
+   KiwiInferenceFaceTracker.cs:1431-1606
+
+4. TryScheduleNewestSource
+   -> FindFreeLane
+   -> crop matrix構築
+   -> ScheduleModel
+   -> worker.PeekOutput(0)
+   -> lane sidecar identity固定
+   -> pendingOutput.ReadbackRequest
+   -> readbackPending=true
+   KiwiInferenceFaceTracker.cs:2110-2244
+
+5. ScheduleModel
+   -> sampling matrix/material設定
+   -> Graphics.Blit(source, lane.cropTexture, material, 0)
+   -> diagnostic shadow hooks
+   -> mutually-exclusive inference arm
+   KiwiInferenceFaceTracker.cs:2383-2507
+
+6A. DIRECT_GRAPHICS
+   -> TextureConverter.ToTensor(cropTexture, lane.input, transform)
+      package-local temporary CommandBuffer record + Graphics.ExecuteCommandBuffer
+   -> worker.Schedule(lane.input)
+      GPUComputeBackend internal CommandBuffer record + submit + Clear
+
+6B. COMMAND_BUFFER_GRAPHICS
+   -> lane.commandBuffer.Clear
+   -> cb.ToTensor
+   -> cb.ScheduleWorker
+   -> Graphics.ExecuteCommandBuffer(cb)
+
+6C. COMMAND_BUFFER_ASYNC
+   -> lane.commandBuffer.Clear
+   -> SetExecutionFlags(AsyncCompute)
+   -> cb.ToTensor
+   -> cb.ScheduleWorker
+   -> Graphics.ExecuteCommandBufferAsync(cb, ComputeQueueType.Default)
+
+7. Output completion
+   -> submit後にPeekOutputのComputeBufferへstatic AsyncGPUReadback.Request
+   -> IsReadbackRequestDone
+   -> ReadbackAndClone
+   -> DecodeReadableOutput
+   -> presence + 468 landmark triples + inverse crop transform + iris/rotation
+
+======================================================================
+4. STAGE 1A — PACKAGE RECORDING / SUBMISSION OWNERSHIP
+======================================================================
+
+[Package Source]
+
+Installed Inference Engine source 2.4.1:
+
+  TextureConverter.ToTensor(Texture,...)
+    fresh CommandBufferを生成し、CB overloadを記録し、Graphics.ExecuteCommandBuffer。
+    TextureConverter.cs:23-30
+
+  TextureConverter.ToTensor(CommandBuffer,...)
+    destination ComputeTensorData.Pin、texture/buffer/constants bind、compute dispatch記録。
+    TextureConverter.cs:76-109
+
+  CommandBuffer.ScheduleWorker
+    worker.SetCommandBuffer(cb)後、通常と同じworker.Schedule(input)を呼ぶ。
+    異なるmodel algorithmではない。
+    Worker.cs:480-524
+
+  GPUComputeBackend.SetCommandBuffer
+    backend cbをexternal cbへ置換し、m_InternalCommandBuffer=false。
+    GPUCompute.cs:40-48
+
+  Worker.Schedule
+    CPU上でgraph順にGPU commandsを記録。
+    InternalCommandBuffer==trueの場合のみ末尾でsubmit + clear。
+    external CBはWorkerが通常末尾submit/clearしない。
+    Worker.cs:199-262
+
+  PeekOutput
+    Worker-owned borrowed reference。
+    次のSchedule / ScheduleIterable / Disposeまでのみvalid。
+    Worker.cs:381-409
+
+  ComputeTensorData.ReadbackRequest
+    external CBへcommand追加せず、submit後にstatic AsyncGPUReadback.Request(buffer)。
+    ComputeTensorData.cs:251-267
+
+  IsReadbackRequestDone
+    stored request.doneのみを返す。hasErrorを検査しない。
+    ComputeTensorData.cs:254-258
+
+  ReadbackAndClone
+    logical countのみをcaller-owned CPU tensorへcopy。
+    Tensor.cs:164-184
+
+[推論・仮説]
+
+  external CB pathはToTensor+modelを1本のKiwi-owned CBへ記録する。
+  direct pathはToTensorとmodelをpackage-ownedの別々のgraphics submissionsにする。
+  CB_GRAPHICSのREF_ONLYにより、このsubmission count/CB ownership差だけでは
+  async NEITHERを説明できない。
+
+[未確認]
+
+  actual modelがCPU fallback flush setを持つか。Packageにはexternal CBでも
+  ExecuteCommandBufferAndClearし得るescape pathがあるが、current model activationは未確認。
+  package-created direct ToTensor CBとGPUCompute internal CBのnative cleanup詳細。
+
+======================================================================
+5. STAGE 1A — GPU RESOURCE READ/WRITE / OWNER / LIFETIME MAP
+======================================================================
+
+[Static]
+
+Resource: source texture
+  Owner: camera/Runner external owner
+  Read: Graphics.Blit
+  Identity: Texture object内にsource sequence/timestampは埋め込まれない。
+
+Resource: lane.cropTexture
+  Owner: one persistent 192x192 ARGB32 Linear RT per lane
+  Write: Graphics.Blit
+  Read: shadow hooks + authority ToTensor
+  Lifetime: Lane constructionからDisposeまでfixed identity。
+
+Resource: lane.input Tensor<float>[1,3,192,192]
+  Owner: lane; Worker borrows
+  Write: ToTensor dispatch
+  Read: first model layers
+  Lifetime: first Pinでpersistent GPU backingへ変換。subsequent lane jobsでreuse。
+
+Resource: model intermediates
+  Owner: per-Worker ModelStorage/TensorPool
+  R/W: graph dispatch order
+  Lifetime: last logical consumer後poolへ返る。smallest backing capacity >= requestedをreuse。
+  Aliasing: distinct Worker per laneのためnormal constructionでcross-lane pool aliasなし。
+
+Resource: packed output tensor/backing
+  Owner: Worker storage / per-worker pool
+  Write: final packed Concat/SliceSet dispatches
+  Read: AsyncGPUReadback
+  Logical length: 468*3+1 = 1405
+  Lifetime: borrowed PeekOutput refはnext Schedule/Disposeまで。
+  Capacity: backingがlogical 1405より大きい場合がある。
+
+Resource: AsyncGPUReadback request
+  Owner: ComputeTensorData stored request
+  Creation: model CB submit後のstatic API
+  Completion check: request.done only; hasError未確認。
+  Transfer: backing全capacityをrequestし得るがclone/decodeは先頭logical 1405のみ。
+
+Resource: CPU readable clone
+  Owner: tracker call site
+  Read: decode indices 0..1404
+  Lifetime: using scope内。decode後dispose。
+
+Resource: lane external CommandBuffer
+  Owner: Kiwi lane
+  Record: ToTensor + full model
+  Lifetime: pending期間を跨いで保持。new job前Clear。Lane.DisposeでRelease。
+
+Rejected static claim:
+  pooled backing tailをDecodeReadableOutputが読む — REJECTED。
+  cloneはlogical countだけcopyする。
+
+======================================================================
+6. STAGE 1A — SUBMISSION / QUEUE / COMPLETION MAP
+======================================================================
+
+[Static]
+
+DIRECT_GRAPHICS:
+  graphics Graphics.Blit crop write
+  -> graphics temporary ToTensor CB submit
+  -> graphics Worker internal model CB submit/clear
+  -> post-submit static AsyncGPUReadback.Request(output buffer)
+
+COMMAND_BUFFER_GRAPHICS:
+  graphics Graphics.Blit crop write
+  -> one graphics external CB: ToTensor + model
+  -> post-submit static AsyncGPUReadback.Request(output buffer)
+
+COMMAND_BUFFER_ASYNC:
+  graphics Graphics.Blit crop write
+  -> one Default async-compute external CB: ToTensor + model
+  -> post-submit static AsyncGPUReadback.Request(output buffer)
+
+Exact CB_GRAPHICS ↔ CB_ASYNC critical-resource difference:
+  1. async armのみSetExecutionFlags(AsyncCompute)。
+  2. ExecuteCommandBufferAsync(...Default)対ExecuteCommandBuffer。
+  3. resource instances、CB reuse、ToTensor statements、ScheduleWorker statements、
+     output borrow、readback request、poll、clone、decodeは同じsource path。
+
+[公開設計原則]
+
+Unity 6 Graphics.ExecuteCommandBufferAsync:
+  commandsは指定async compute queueで実行され、同一buffer内commandsは同じqueue。
+  platform非対応時はgraphics queueへfallbackし得る。
+  https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Graphics.ExecuteCommandBufferAsync.html
+
+Unity 6 GraphicsFence:
+  async/graphics queue同期に使用できる一方、GPU task write→別GPU task readのresource
+  dependencyはUnityが自動処理するため通常explicit fenceは不要、と公開説明される。
+  https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Rendering.GraphicsFence.html
+
+Unity 6 AsyncGPUReadback:
+  GPU dataをCPUへasyncに取得し、request objectがavailabilityを表す。
+  request.doneはrequest処理完了を示す。
+  https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Rendering.AsyncGPUReadback.Request.html
+  https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Rendering.AsyncGPUReadbackRequest-done.html
+
+[未確認]
+
+Managed/package sourceと公開docsからは次を証明できない。
+  actual D3D12 queue object / native command list
+  Graphics.Blit crop writeからasync ToTensor readへのnative wait/barrier実体
+  static AsyncGPUReadback.Requestが使用するnative queue/synchronization
+  request.doneが直前のexternal async model producerをどのnative dependencyで包含するか
+  request.hasError
+
+従って、explicit fence不在をcross-queue defect/root causeに昇格しない。
+
+======================================================================
+7. STAGE 1A — TRANSACTION IDENTITY / RESCHEDULE MAP
+======================================================================
+
+[Static]
+
+Native SourceSequence:
+  Runnerがduplicate/out-of-order rejectionに使用し、last observed sequenceとして保持。
+  ただしTracker.TryProcessAsyncにはsequence自体を渡さない。
+
+Runner→Tracker inputs:
+  source Texture reference
+  flips
+  exact sourceHostTicks
+  freshness scheduling boolean
+  anchor state
+
+Runner fresh generation:
+  admissionを制御するが、inference lane sidecarには格納しない。
+
+Tracker pending lane sidecar:
+  crop matrix
+  sourceHostTicks
+  schedule/start/readback-request timestamps
+  anchor revision / external-anchor epoch / tracker generation
+  camera generation / tracking-session generation
+  submitted minimum presence
+  borrowed output object identity
+  implicit lane index / per-lane Worker/input/crop/CB bundle
+
+Identity limitation:
+  SourceSequence、hostTicks、generations、lane index、crop matrixはTexture/Tensor/
+  ComputeBuffer/GPU outputへ埋め込まれない。continuityはCPU sidecar associationであり、
+  resource自体はself-describing transactionではない。
+
+Runner authoritative publish:
+  Sentis storeは新しいRunner frameIdを生成する。これはoriginal camera sequenceではない。
+  logical timestampはmonotonic化され得るため、exact source identityはsubmissionHostTicks側。
+
+Normal success-path Worker lifetime protection:
+  laneごとにdistinct Worker。
+  FindFreeLaneは!readbackPendingのみ。
+  request後readbackPending=true。
+  doneをpollし、identityをlocal captureし、stale reject、clone/decodeしてからreturn。
+  同Update内のpost-poll rescheduleはclone/decode完了後。
+  従ってnormal pathのnext Scheduleによるpending PeekOutput invalidationは静的に棄却。
+
+Failure-path gap:
+  ScheduleModel submit後、PeekOutput null/unexpected shapeのearly returnやreadback request exceptionで
+  lane pending flagがfalseのまま/clearされ、後続callがsame laneを選べる可能性がある。
+  これは静的gapであり、correlated Runtimeで発生した証拠はない。
+
+[Runtime]
+
+  v44.55.24 pair-bound observerは76/76 pair、observer fault 0でMIXED_TRANSACTIONを示し、
+  post-record PeekOutput reuseだけをcomplete explanationとする仮説を棄却した。
+  この過去evidenceをv44.55.29のroot-cause proofへ拡張しない。
+  このv24数値は過去監査メモ由来であり、本turnではv24 raw artifactsを再検証していない。
+  現turnのlifetime判断はcurrent sourceとv29 evidenceを優先し、v24数値をexit gateにしない。
+
+======================================================================
+8. STAGE 1A — CANDIDATE BOUNDARY MATRIX A–F
+======================================================================
+
+A. Graphics crop write → async ToTensor texture read
+  Evidence fit: HIGH。CBGとCBAの最初のqueue-crossing差。
+  Discrimination: graphics→async input visibility/orderを直接問える。
+  Risk: explicit fence/waitを入れると同期・latency・semanticsを同時に変える。
+  Public constraint: Unityはresource dependencyを自動処理すると説明。
+  Decision: PLAUSIBLE_UNVERIFIED。fence fixとして先行採用しない。
+
+B. ToTensor execution / texture→tensor transition
+  Evidence fit: MEDIUM_HIGH。CBAでinput conversionがasync CB上。
+  Discrimination: ToTensorを分離するとqueue、submission count、input handoffが同時に変わりやすい。
+  Risk: confounded diagnostic、追加cross-queue tensor dependency。
+  Decision: PLAUSIBLE_UNVERIFIED、次手には非選定。
+
+C. ScheduleWorker / backend external-CB submission form
+  Evidence fit: LOW after v29。
+  Discrimination: CBGが同じexternal CB formで88/88 REF_ONLY。
+  Risk: package internal/external ownership変更は複数因子。
+  Decision: REJECTED_AS_PRIMARY_FOR_THIS_SAME_BUILD_AB。
+
+D. Worker-owned output lifetime / pool reuse
+  Evidence fit: LOW for normal success path。
+  Discrimination: distinct Worker/laneとreadbackPending guardがnext Scheduleを防ぐ。
+  Risk: observer clone timingやpool behaviorを変える。
+  Decision: NORMAL_NEXT_SCHEDULE_REUSE_REJECTED。
+            exception/early-return pathのみSTATIC_GAP_UNVERIFIED。
+
+E. Async model output → post-submit static readback boundary
+  Evidence fit: HIGH。readback requestだけがexternal producer CB外で発行され、package/public
+                managed contractはnative producer dependencyを閉じない。
+  Initial proposal: same async CB内RequestAsyncReadback。
+  Re-audit: Unity 6000.0のasync許可command一覧に含まれないため撤回。
+  Replacement: D/Eのproducer-tail snapshotでstorage observation pathを比較する。
+  Risk: compute copyとsecond readbackによるGPU/latency perturbation。
+  Decision: PURE_SAME_ASYNC_CB_READBACK_PROPOSAL_REJECTED;
+            D_E_PRODUCER_TAIL_SNAPSHOT_SELECTED。
+
+F. CPU fallback flush / readback error / disposal edge
+  Evidence fit: UNKNOWN。Package escape pathとhasError omissionは確認済み。
+  Discrimination: model fallback set、error、lifecycle telemetryが必要。
+  Risk:低いread-only inspectionは可能だが、async armだけのsemantic splitへ直結未証明。
+  Decision: SECONDARY_UNVERIFIED。
+
+======================================================================
+9. SELECTED NEXT ONE-FACTOR DIAGNOSTIC CONTRACT
+======================================================================
+
+[Recommendation — NOT IMPLEMENTED]
+
+Name:
+  ASYNC_PRODUCER_TAIL_OUTPUT_SNAPSHOT_PROBE
+
+Single changed factor:
+  Output observation endpoint: Worker-owned pooled outputの既存readbackに対し、producer-tailで
+  observer専用storageへ固定したsnapshotを観測する。diagnostic enabled/disabledが実験の一因子。
+  final ScheduleWorker後、submit前の同じasync CBへSetComputeBufferParam/DispatchComputeを記録し、
+  output logical 1405 wordsをbit-preserving copyする。token/validity headerも同じdispatchでwrite。
+  submit後にobserver bufferへstatic AsyncGPUReadback.Requestを発行する。
+  既存Tensor.ReadbackRequest、pending flag、clone/decode/publishは変更しない。
+  この一因子にはcopy、専用storage、追加requestという実装要素が伴う。
+  従って差が出てもstorage lifetimeとreadback dependencyを個別には識別できない。
+
+Must remain identical:
+  camera/source admission
+  source texture and crop matrix
+  Graphics.Blit and crop RT
+  TextureTransform / ToTensor
+  Worker / model / output buffer
+  async queue selection
+  lane selection and inference count
+  existing pendingOutput / poll / ReadbackAndClone / decode
+  Runner/Hub/Canonical/Avatar publish authority
+  Root/Head/Eye/Mouth authority
+  tracking and presentation cadence
+
+Observer ownership:
+  shadow-only、pair-bound、nonblocking。
+  Production result、threshold、filter、fallback、lane stateを上書きしない。
+  performanceAuthority=0。
+  no blocking wait、no flush、no fence、no async disable、no repeated inference、
+  no lane.input readback。
+
+Required pre-implementation source check:
+  公開Unity 6000.0 APIはSetComputeBufferParam/DispatchComputeのasync実行を許可する。
+  CommandBuffer.RequestAsyncReadbackをasync CBへ入れる旧案は選定対象から除外した。
+  実装時にはoutputをre-pin/ownership transferせずexisting ComputeTensorData.bufferをborrowする。
+  exact buffer stride/typeとbit-preserving shader bindingをcompile検証する。
+  bufferはbounded observer lanesで所有し、未完了時はobserverだけskipしてProductionを待たせない。
+  source token/generationをGPU-writeし、readback hasError、token、logical lengthを全て検査する。
+  shutdown時callback/pending bufferの解放が安全であることを検証する。未検証ならRuntime実行しない。
+
+Discriminating outcomes:
+
+  E1: producer-tail snapshot == REF、existing Actual == NEITHER
+      -> supports divergence between producer-tail snapshot observation and Worker-buffer
+         Production observation。output storage/lifetime/readback boundary候補。
+      -> readback orderingだけ、native root cause/fix/fence locationは未証明。
+
+  E2: snapshot == existing Actual == NEITHER
+      -> alternative output storageでdifferenceは解消しなかった。
+      -> upstream A/B/Cと、両requestに共通のreadback問題は残る。readback全体を棄却しない。
+
+  E3: snapshot != existing Actual、pair identity/integrity complete
+      -> observation-path disagreementを確認。REF/oracle妥当性とstorage/readbackを再分離する。
+
+  E4: pair missing、hasError、identity mismatch、observer fault、mode/build/SHA mismatch
+      -> INCONCLUSIVE / FAIL_CLOSED。PASSへ昇格しない。
+
+  E5: observer-enabled arm changes existing Actual classification/cadence materially
+      -> OBSERVER_CONTAMINATED / INCONCLUSIVE。
+
+  Token success does not independently prove native producer/readback synchronization.
+  Both paths still depend on Unity readback semantics; common-mode failure remains UNVERIFIED。
+
+Acceptance gates for next Runtime:
+  same Production/source/package/model/Native identities
+  raw artifacts byte-preserved + SHA256 manifest
+  exact mode/env identity and process exit status
+  startup/completion evidence
+  pair token/lane/sourceHostTicks/camera/session/tracker generation correlation
+  observer request status including hasError
+  complete pair count and drop/fault accounting
+  Production Actual classification unchanged by observer
+  clean no-observer control arm
+  no performance/visual/adoption PASS from observer-heavy run
+
+======================================================================
+10. STAGE 1B — CURRENT WHOLE-SYSTEM PIPELINE MAP
+======================================================================
+
+[Static]
+
+Camera selection:
+  AppSettings.BuildWebCamSource
+  -> WindowsNativeWebCamSource on Windows
+  -> Bootstrap / ImageSourceProvider owns selected source.
+
+Native camera / presentation:
+  WindowsNativeWebCamSource.Play / TryPlayNative / PrepareFrameForUnity
+  -> plugin slot + sequence + hostTicks + resource pointer
+  -> reject duplicate/out-of-order
+  -> one external texture per slot
+  -> Graphics.Blit to fixed presentation RT
+  -> release plugin event after Blit
+  -> TryGetLatestPresentedFrame exposes selected sequence + normalized hostTicks.
+
+Camera→Runner:
+  IKiwiFreshFrameSource exact sequence/hostTicks
+  -> Runner rejects duplicate/out-of-order sequence
+  -> fresh generation + exact hostTicks
+  -> WebCam fallback uses Unity frame/current Stopwatch ticks.
+
+Runner scheduling:
+  Sentis: Update -> ProcessSentisFreshFrame -> 3-lane tracker.
+  MediaPipe: latest-frame one-in-flight + fresh-only gate -> exact task timestamp/submission ring
+             -> DetectAsync callback -> ring correlation.
+
+Inference completion→Runner store:
+  Sentis lane or MediaPipe callback
+  -> common _trackingLock
+  -> landmarks + rigid + backend + Runner frameId
+  -> expression may be cross-cadence latched up to bounded 500 ms equivalent.
+
+Runner→Provider Hub:
+  new Runner precision frame only
+  -> backend slot separation
+  -> normalized submission/arrival time
+  -> provider selection/confirmation/generation/handoff
+  -> Hub frameId.
+
+Hub→Canonical:
+  rigid authoritative frame or bounded Runner fallback
+  -> generation and fail-closed no-rigid gate
+  -> semantic only for exact timestamp/backend match
+  -> Canonical frameId.
+
+Canonical→Avatar:
+  KiwiFaceMotion obtains authoritative rigid through commercial policy
+  -> accepted sample/gap hold/display resampling
+  -> Root transform LateUpdate
+  -> newest authoritative sample only onBeforeRender late latch.
+
+Expression:
+  KiwiExpressionReaction reads Runner expression directly
+  -> reaction state
+  -> FaceMotion face-part expression
+  -> scene setting prevents expression from becoming Root motion authority.
+
+Face parts:
+  Canonical semantic
+  -> FacePartCropper uv sample/strict commit/display interpolation
+  -> TextureTransaction chooses/pins copied texture slot
+  -> RigidSampleFrame mesh/sample-frame rotation
+  -> SharedTiltLock shader rotation/pivot
+  -> FacePartSoftMask shader.
+
+Avatar hot swap / runtime import:
+  KiwiAvatarRuntimeManager.SwitchToModel
+  -> capture active avatar state
+  -> async candidate load
+  -> profile/binding apply and fit
+  -> faceMotion.kiwiRoot rebind
+  -> success時previous avatar destroy
+  -> failure時candidate destroy + previous presentation/state restore。
+  This manager is a binding/lifecycle owner, not per-frame tracking authority.
+
+Avatar→presentation→Spout:
+  VTuberCamera renders layer 256 to VTuberOutput
+  -> SpoutSender WaitForEndOfFrame
+  -> source texture to persistent buffer Blit
+  -> native sender plugin event。
+  Spout carries no canonical/camera transaction metadata。
+
+======================================================================
+11. STAGE 1B — EXECUTION ORDER MAP
+======================================================================
+
+[Static]
+
+  -28000  KiwiTrackingProviderHub
+       0  Runner / camera observation / Sentis poll (no explicit order)
+     640  KiwiFacePartTextureTransaction
+     650  KiwiCanonicalTrackingFrameCoordinator
+     700  FacePartCropper
+     830  KiwiFacePartRigidSampleFrame
+     900  KiwiExpressionReaction
+     900  KiwiFacePartSharedTiltLock
+   10000  KiwiFaceMotion
+  before-render:
+          FaceMotion late latch + TextureTransaction mismatch observer
+  render:
+          VTuberCamera -> VTuberOutput
+  end-of-frame:
+          Spout capture -> native event
+
+Hub Updateは通常Runnerより先だが、CanonicalCoordinator LateUpdateがHubを明示refreshして
+current Runner publishを同じLateUpdate chainで取得する。
+
+ExpressionReactionとSharedTiltLockは同order 900で相互順序未指定。ただし確認したwrite targetは
+expression stateとshader transformで異なる。
+
+before-render callbacksの相互順序はsourceから閉じない。FaceMotionはRoot writer、
+TextureTransaction callbackはmismatch observer。
+
+======================================================================
+12. STAGE 1B — TRANSACTION IDENTITY MAP
+======================================================================
+
+[Static]
+
+Native selected sequence + hostTicks
+  -> Runner freshGeneration + cameraGeneration + trackingSessionGeneration
+  -> MediaPipe taskTimestamp <-> bounded submission ring
+     OR Sentis lane pending sidecar
+  -> Runner frameId + backend + rigid timestamp + submissionHostTicks + arrivalHostTicks
+  -> Hub providerGeneration + Hub frameId
+  -> Canonical canonicalFrameId
+  -> FaceMotion accepted/display sample
+  -> Root transform
+  -> VTuberOutput render frame
+  -> Spout display frame
+
+Closure assessment:
+  Camera→Runner: exact native sequence/hostTicks freshness guardあり。
+  Runner→Inference completion: generation/timestamp/lane sidecar stale guardあり。
+  Runner→Hub→Canonical rigid/semantic: provider/backend/timestamp/frame guardsあり。
+  Expression: exact same transaction equalityなし。
+  FacePart texture: native sequenceをslotに持たず、capture-now ticksとのclosest ±55 ms。
+  VTuberOutput/Spout: presentation boundaryでtransaction metadata消失。
+
+従って、rigid/semantic chainの一部は閉じるが、Camera→Texture→FacePart→final displayを
+exact same camera sampleとしてend-to-end証明できない。
+
+======================================================================
+13. STAGE 1B — READ/WRITE AUTHORITY MAP
+======================================================================
+
+[Static]
+
+Selected camera texture/sequence:
+  WindowsNativeWebCamSource or WebCam fallback。runtime mode dependent。
+
+Runner tracking store:
+  StoreTrackingData / StoreSentisTrackingData under common lock。
+
+Provider selection/generation/handoff normalization:
+  KiwiTrackingProviderHub。
+
+Canonical rigid/semantic:
+  KiwiCanonicalTrackingFrameCoordinator。
+
+Root transform:
+  KiwiFaceMotion LateUpdate + same-owner onBeforeRender。
+  sceneのsecondary body motion off。runtime imported Animator/additive writerは未確認。
+
+Expression reaction:
+  KiwiExpressionReaction direct Runner read。Canonical expression latchは使用しない。
+
+Face-part uvRect:
+  FacePartCropper。
+
+Face-part RawImage.texture:
+  KiwiFacePartTextureTransaction。strict commit後はpinned RT。
+
+Mesh/sample-frame rotation:
+  KiwiFacePartRigidSampleFrame -> SurfaceFittedRawImage。
+
+Shader sample rotation/pivot:
+  KiwiFacePartSharedTiltLock。legacy FacePartAngleLockは抑止。
+
+Avatar binding/hot swap:
+  KiwiAvatarRuntimeManager。active root/profile capture、candidate load、rebind、rollback。
+
+VTuberOutput:
+  VTuberCamera。
+
+Spout output buffer:
+  package SpoutSender。presentation consumerでtracking authority writerではない。
+
+======================================================================
+14. STAGE 1B — TEMPORAL STATE OWNER MAP
+======================================================================
+
+[Static]
+
+Camera:
+  latest-frame / sequence freshness。FIFO ownerではない。
+
+Runner:
+  MediaPipe one-in-flight mailbox、Sentis 3-lane completion arbitration、camera/session
+  generation、submission ring。
+
+Hub:
+  provider confirmation、switch handoff normalization、provider generation。
+
+Canonical:
+  current canonical frame latch。
+
+FaceMotion/commercial rigid policy:
+  accepted rigid sample、gap hold、display resampling、bounded prediction eligibility、
+  before-render late latch、resume/discontinuity correction envelope。
+
+FacePartCropper:
+  eye/mouth sample history + display-rate uv interpolation。
+  Phase16_19 strict pathはprediction/matched-age compensation/direct position motionをoff。
+
+TextureTransaction:
+  bounded copied texture history + part-specific pinned slot。
+
+RigidSampleFrame:
+  mesh-side eye-line rotation state。
+
+SharedTiltLock:
+  shader-side calibrated tilt state。
+
+ExpressionReaction:
+  expression channel reaction state。
+
+Spout:
+  persistent display buffer。tracking temporal authorityなし。
+
+Assessment:
+  temporal layersは複数あるが、Root switch、Root presentation、FacePart UV、texture、
+  expression、shader tiltでchannel/目的が異なる。pluralityだけをdefectにしない。
+
+======================================================================
+15. STAGE 1B — ACTIVE / INACTIVE / DIAGNOSTIC WRITERS
+======================================================================
+
+[Static]
+
+ACTIVE STATIC WIRING:
+  scene-enabled Runner、KiwiFaceMotion、FacePartCropper、KiwiExpressionReaction、
+  VTuberCamera、SpoutSender。
+  auto-install/default-enabled ProviderHub、CanonicalCoordinator、TextureTransaction、
+  RigidSampleFrame、SharedTiltLock。
+  FaceMotion LateUpdate/onBeforeRenderは同一Root owner。
+
+CONDITIONAL ACTIVE:
+  Native Path B vs WebCam fallback。
+  MediaPipe vs Sentis primary。
+  Sentis direct / async / CB graphics branch。
+  runtime avatar import/hot-swap binding writer。
+
+INACTIVE / LEGACY:
+  scene上FacePartAngleLockは存在するがSharedTiltLockがenableAngleLock=false。
+  FaceMotion legacy provider-root bridgeはHub canonical handoff normalization enabled時no-op。
+
+DIAGNOSTIC ONLY:
+  ORT shadow submission、pair snapshots、overlay、telemetry。
+  authority resultを書かないが、GPU timing/submission perturbation neutralはRuntime未証明。
+
+======================================================================
+16. STAGE 1B — PACKAGE / LIFECYCLE / THREAD MAP
+======================================================================
+
+[Package Source]
+
+Native Camera:
+  managed WindowsNativeWebCamSource
+  -> installed native camera DLL
+  -> external D3D texture pointer + render-thread release event。
+  Managed sideはfixed presentation RTとsequence freshnessを確認。
+  DLL内部thread/queue topologyは本managed auditでは未閉鎖。
+
+MediaPipe:
+  Runner DetectAsync
+  -> package callback
+  -> bounded taskTimestamp/submission mapping
+  -> lifecycle lock
+  -> Runner store。
+
+Unity Inference:
+  installed com.unity.ai.inference 2.4.1。
+  one Worker per lane、borrowed output、async readback、clone/decode。
+
+Spout:
+  installed jp.keijiro.klak.spout 2.0.6。
+  VTuberOutput -> persistent RT -> native sender/render event。
+
+[Static — threads/phases]
+
+Unity main thread:
+  source switch、PrepareFrameForUnity、Runner scheduling/poll/decode、Hub、Canonical、
+  FacePart、Expression、FaceMotion。
+
+MediaPipe callback:
+  async arrivalをsubmission ringと_callbackLifecycleLockで処理。
+  actual callback thread identityは未確認。
+
+GPU/render:
+  Sentis graphics/async submissions、native camera release plugin event、Spout plugin event。
+
+Application.onBeforeRender:
+  FaceMotion newest accepted rigid late-latch、TextureTransaction mismatch observation。
+
+EndOfFrame:
+  Spout persistent buffer copy + sender update。
+
+Stop/dispose:
+  Runner Stop closes publication gate、callback lock内task/tracker/pool/input dispose/clear。
+  Native Pauseはresource保持、Stopはnative stop + identity/resource clear。
+  Sentis Lane.DisposeはCB/Worker/tensor/crop RT/material解放。
+  TextureTransaction releases copied/pinned RT。
+  Spout OnDisable disposes coroutine/sender/buffer。
+
+[未確認]
+
+  Sentis lane dispose時のpending GPU work drain/ordering。
+  Native DLL callback/worker exact threading and provenance closure。
+  runtime hot-swap during callback/GPU pending workのfull recovery behavior。
+  Spout receiver-side output correctness。
+
+======================================================================
+17. STAGE 1B — F1–F5 STRICT FINDINGS
+======================================================================
+
+F1 EXPRESSION CANONICAL LATCH BYPASS
+  Status: CONFIRMED_STATIC_CONDITION
+  Evidence:
+    KiwiExpressionReaction reads Runner expression directly, not Canonical expression API。
+    Canonical publish only requires expression valid、timestamp>=0、expression timestamp<=rigid。
+    exact frame/hostTicks/max-age equalityなし。
+    Sentis storeはfresh MediaPipe expressionをbounded約500 ms保持し得る。
+  Runtime/visual defect: NOT PROVEN。
+
+F2 FACEPART TEXTURE EXACT IDENTITY GAP
+  Status: CONFIRMED_STATIC_CONDITION
+  Evidence:
+    texture slotにnative source sequenceなし。
+    capture-now Stopwatch ticksを使用。
+    semantic submissionHostTicksへclosest slotを最大55 ms差で受理。
+    accepted textureはpinned RTへcommitされるため「pinなし」ではない。
+  Exact same camera sample end-to-end proof: NOT CLOSED。
+  Runtime/visual defect: NOT PROVEN。
+
+F3 RIGIDSAMPLEFRAME / SHAREDTILTLOCK TWO-STAGE ROTATION CONDITION
+  Status: CONFIRMED_STATIC_CONDITION
+  Evidence:
+    両方auto-install/default enabled。
+    RigidSampleFrameはeye-line由来rotationをmesh/sample-frame stateへwrite。
+    SharedTiltLockはeye-line correctionをshader _SampleRotationRad/pivotへwrite。
+    同じC# field競合ではなく同じvisual sampleへの二段representation owner。
+  Harmful double correction at Runtime: NOT PROVEN。
+
+F4 TEMPORAL LAYER PLURALITY
+  Status: CONFIRMED_STATIC_CONDITION
+  Evidence:
+    Hub handoff、Canonical latch、FaceMotion accepted/display/late-latch、FacePart UV、
+    texture history、RigidSampleFrame、SharedTiltLock、ExpressionReactionが併存。
+    channel/目的の一部は明確に分離。FacePart prediction等はstrict phaseでoff。
+  Runtime defect: NOT PROVEN。
+
+F5 PROVIDER TRANSITION DOUBLE OWNERSHIP
+  Status: REJECTED_STATICALLY
+  Evidence:
+    Hubがprovider change/generation/handoff normalization owner。
+    FaceMotion provider-root bridgeはCanonicalHandoffNormalizationEnabled時no-op。
+    same-provider short resumeはprovider switchではなく、FaceMotionのbounded correction envelope。
+  Conclusion:
+    HubとFaceMotionが同時にprovider-switch normalizationを所有するという仮説は棄却。
+
+======================================================================
+18. CONFIRMED / RUNTIME / STATIC / PUBLIC / HYPOTHESIS / UNVERIFIED
+======================================================================
+
+[確認済み事実]
+
+  Freeze 37/37一致。
+  installed package/version/source path確認。
+  active scene/wiring確認。
+  v29 3-arm correlated identity/payload validation PASS。
+  direct/CBG REF_ONLY、CBA NEITHER。
+  normal lane success pathはnext-Schedule output invalidationを防ぐ。
+  external CB form単独primary hypothesisはsame-build A/Bで棄却。
+  Stage 1B F1–F4 static conditions確認、F5棄却。
+
+[Runtime]
+
+  v29 evidence supports async execution-context contributor candidate only。
+  F1–F4のuser-visible defect、lifecycle defect、visual defectは証明していない。
+  observer-heavy evidenceをProduction performance authorityにしない。
+
+[Static]
+
+  CBG↔CBAのcritical-resource差はexecution flags/submission queue form。
+  readback requestはexternal producer CB外でsubmit後に発行。
+  IsReadbackRequestDoneはdone only、hasErrorなし。
+  transaction identityは主にCPU sidecarで、GPU resourceへembeddedされない。
+  FacePart texture/expression/final displayのexact transaction closureにgap。
+
+[公開設計原則]
+
+  Unityはasync command buffer queue semanticsを規定し、通常resource write→read dependencyを
+  自動処理すると説明する。従ってfence欠如のみでdefect判定しない。
+
+[推論・仮説]
+
+  Candidate A/B/E/Fは未分離。
+  D/Eのproducer-tail output snapshotを次のsource-evidenced observer boundaryに選定。
+  F1/F2/F3がvisual anomalyへ寄与する可能性はあるがRuntime correlationなし。
+
+[未確認]
+
+  exact native D3D12 queue/fence/barrier/resource-state timeline。
+  static readbackのproducer dependencyとhasError。
+  model CPU fallback flush activation。
+  actual startup env / active camera/inference branch（source単独では不可）。
+  runtime imported avatar/Animator/additive sceneの追加writer。
+  before-render / same-order callback actual ordering。
+  texture/presentation/Spout end-to-end same-camera-sample identity。
+  lifecycle/recovery、clean performance、visual correctness、product reliability。
+
+======================================================================
+19. PROTECTED BOUNDARIES / NEXT-TURN RULES
+======================================================================
+
+次turnで実装承認されるまで変更禁止:
+  Production tracking/inference/ROI/cadence/texture transaction/Root/Head authority
+  Native DLL/source/build
+  model/package version
+  threshold/filter/smoothing/prediction
+  blocking wait/readback/fence/flush
+  async disable
+  repeated inference
+  lane.input Production oracle再採用
+
+選定D/E boundaryを実装する場合も:
+  observer-only opt-in
+  one factor
+  pair-bound identity
+  fail-closed
+  raw evidence byte preservation
+  performanceAuthority=0
+  Production publish untouched
+
+======================================================================
+20. STATEMENT-LEVEL EXECUTION MAP (NORMAL PATH + EXCEPTIONS)
+======================================================================
+
+[STATIC / PACKAGE SOURCE]
+
+Source keys (absolute roots; all lines are current local source, not GitHub):
+  K = D:/KiwiAvatarSystem/Assets/Script/KiwiInferenceFaceTracker.cs
+  R = D:/KiwiAvatarSystem/Assets/Script/FaceLandmarkerRunner.cs
+  P = D:/KiwiAvatarSystem/Library/PackageCache/com.unity.ai.inference@587873fd5e1b/Runtime/Core/
+  TC = P + Converters/TextureConverter.cs
+  TT = P + Converters/TextureTransform.cs
+  W = P + Backends/Worker.cs
+  G = P + Backends/GPUCompute/GPUCompute.cs
+  D = P + Backends/GPUCompute/ComputeTensorData.cs
+  H = P + Backends/GPUCompute/CommandBufferHelper.cs
+  MS = P + Backends/ModelStorage.cs
+  TP = P + Backends/TensorPool.cs
+  DP = P + Backends/TensorDataPool.cs
+  T = P + Tensor.cs
+  TG = P + TensorGeneric.cs
+  L = P + Layers/Layer.Transformation.cs
+
+Classification:
+  ALL = DEFAULT_ACTIVE common path; inherited diagnostic calls stay DIAGNOSTIC_ONLY.
+  DIR = DEFAULT_ACTIVE explicit-off/noneligible graphics fallback.
+  ASY = DEFAULT_ACTIVE eligible Windows/DX12 startup default (also diagnostic Runtime arm).
+  CBG = DIAGNOSTIC_ONLY v29 probe.
+  OBS = DIAGNOSTIC_ONLY shadow hooks.
+  LEG = INACTIVE_OR_LEGACY reachable API with no current Assets call site found.
+
+Resource/lifetime keys refer to Section 5. Identity ledger:
+  I0 = SourceSequence + sourceHostTicks at Runner freshness admission.
+  I1 = texture/flips/sourceHostTicks passed; SourceSequence and freshGeneration become implicit.
+  I2 = lane/input/crop/Worker/CB chosen; crop matrix CPU local; old pending sidecar not current authority.
+  I3 = pending sidecar captured after ScheduleModel: matrix, sourceHostTicks, schedule timestamps,
+       tracker/anchor revision/epoch, camera/session generation, minimum presence, output object;
+       lane identity remains object/array association.
+  I4 = I3 local copy during poll; pending lane fields cleared; same call clones before reschedule.
+  I5 = decoded rigid/landmarks with sourceHostTicks; new Runner frameId later generated.
+  IP = package has resource refs/shape only; no Kiwi sequence/ticks/generation/lane/matrix/threshold.
+  For every row IP means each requested transaction field is absent, not verified via package.
+  No CPU call order below is claimed to prove native GPU completion.
+
+ID | file:line, class.method | caller -> callee | class/context | resource R/W; lifecycle | identity
+
+S01 | R:848-888 FaceLandmarkerRunner.ObserveFreshFrameSource
+  Update -> fresh source PrepareFrameForUnity/TryGetLatestPresentedFrame
+  ALL / Unity main; source camera method records graphics Blit
+  R selected texture/sequence/ticks; W last observed sequence/fresh generation/ticks
+  no tensor allocation; camera owns fixed presentation RT | I0 -> I1
+
+S02 | R:653-668 FaceLandmarkerRunner.ProcessSentisFreshFrame
+  Update -> K.TryProcessAsync
+  ALL / Unity main; no GPU submit at this statement
+  R source Texture/flips/ticks; W admission counters after successful scheduling | I1
+
+S03 | K:130-205 Lane constructor
+  Tracker ctor K:935-949 -> Worker(GPUCompute), Tensor, RenderTexture.Create, new CommandBuffer
+  ALL/ASY or CBG for CB / Unity main; backend actual native allocation queue UNVERIFIED
+  CREATE per-lane Worker/input/crop/material/optional CB; owner Lane
+  input initially CPU backed TG:79-87; persistent GPU backing acquired on first Pin | I2 allocation only
+
+S04 | K:185-190 Lane constructor -> TextureTransform.SetTensorLayout/SetCoordOrigin
+  ALL / CPU; NCHW + TopLeft; no texture/GPU write
+  TT:113-116 axis defaults; TT:133-149 inferred dimensions/channels; transform lane-owned | IP/I2
+
+S05 | K:1488-1508,1596-1606 TryProcessAsync -> schedule/poll/schedule
+  ALL / Unity main; no independent queue command
+  R pending status/ready request; no same-call concurrent lane schedule during clone | I1/I2/I4
+
+S06 | K:2110-2139 TryScheduleNewestSource -> FindFreeLane/BuildCropMatrix/ScheduleModel
+  ALL / Unity main
+  R source/current anchor; W crop matrix local; CREATE no per-frame lane resource
+  lane admission K:2339-2380 requires !readbackPending | I1 -> I2
+
+S07 | K:2391-2413 ScheduleModel -> material.SetMatrix/float settings
+  ALL / Unity main; command settings, native consumption later
+  R source dimensions/flip/crop; W per-lane crop material state; owner Lane | I2
+
+S08 | K:2416-2420 ScheduleModel -> Graphics.Blit
+  ALL / CPU submission API, intended graphics queue
+  R source Texture; W lane.cropTexture; fixed RT identity; GPU completion here UNVERIFIED | I2
+
+S09 | K:2422-2436 ScheduleModel -> ORT shadow submission hooks
+  OBS / main-thread call; own downstream GPU/native work requires observer audit
+  R crop/source-associated data; W observer-owned work; no Canonical/Root publish
+  observer timing/resource neutrality UNVERIFIED | I2 passed/observer-side association
+
+S10 | K:2446-2448 ScheduleModel -> cb.Clear/SetExecutionFlags(AsyncCompute)
+  ASY / main-thread command recording; old recorded commands cleared, not a GPU completion wait
+  W lane CB recording state; same CB reused only by lane success-path admission | I2
+
+S11 | K:2477 ScheduleModel -> cb.Clear
+  CBG / main-thread record; same owner/lifetime as S10; no AsyncCompute flag | I2
+
+S12 | K:2450-2453 or 2479-2482 -> CommandBuffer ToTensor
+  ASY/CBG / main-thread record; execution queue assigned at later submission
+  TC:76-109 TextureConverter.ToTensor: R crop; W pinned input buffer via dispatch
+  TC:94 -> D:379-403 ComputeTensorData.Pin(tensor,false)
+  Pin returns existing GPU backing or creates/converts/adopts; Lane owns persistent input | IP/I2
+
+S13 | K:2497-2500 -> static TextureConverter.ToTensor
+  DIR / main; TC:23-30 allocates temporary CB, delegates S12 and submits Graphics.ExecuteCommandBuffer
+  CREATE package CB; R crop; W lane input; no explicit Dispose/Release at this call site
+  native resource cleanup/actual completion UNVERIFIED | IP/I2
+
+S14 | TC:93-108 -> H:168-171 SetTensorAsBuffer + H:23-38 Dispatch
+  inherited ASY/CBG/DIR / main-thread record
+  R texture + ComputeTensorData.buffer ref; records buffer binding, constants, BeginSample,
+  DispatchCompute, EndSample; actual R texture/W input happens on selected GPU queue | IP
+
+S15 | K:2455-2457 or 2484-2486 -> W:506-510 CommandBufferWorkerExtensions.ScheduleWorker
+  ASY/CBG / main-thread record
+  -> W:186-194 Worker.SetCommandBuffer -> G:42-46 GPUComputeBackend.SetCommandBuffer
+  W backend CB pointer and Internal=false; Worker owns graph/storage, Kiwi owns external CB | IP/I2
+
+S16 | K:2502-2503 -> W:268-272 Worker.Schedule(input)
+  DIR / main-thread record; SetInput then same Worker.Schedule as S15
+  R borrowed lane input; W storage input reference; backend internal CB remains active | IP
+
+S17 | W:199-205 Worker.Schedule -> MS:296-308 DisposeOnExecute
+  ALL / main CPU allocation/lifetime operation; not GPU wait
+  previous outputs/unconnected tensors returned to Worker pool at next Schedule
+  TP:58-87 returns backing/object; reuse controlled by per-lane next-Schedule admission | IP
+
+S18 | W:211-250 Worker.Schedule -> layer.Execute/backend operations
+  ALL / main-thread graph execution records GPU dispatches
+  G:56-110 allocation pool; MS:145-166 AllocateTensor/Store
+  TP:15-56 and DP:45-75 reuse smallest backing capacity >= logical shape
+  MS:311-323 DisposeAfterLayer releases last-use intermediates during recording
+  logical alias lifetime is package-managed; actual native hazard tracking UNVERIFIED | IP
+
+S19 | W:215-226 Worker.Schedule CPU-fallback branch
+  CONDITIONAL / CPU; -> G:50-54 ExecuteCommandBufferAndClear
+  can submit current external CB through graphics API; model fallback set activation UNVERIFIED
+  no normal-path claim that all external-CB work remains one submit if fallback activates | IP
+
+S20 | L:329-352 Concat.Execute -> backend SliceSet writes
+  ALL / main record + selected GPU execution
+  R final landmark/presence intermediates; CREATE/store packed output, W logical 1405
+  Worker/ModelStorage owns tensor/backing; capacity may exceed 1405 | IP
+
+S21 | W:252-261 schedule end -> G:50-54 ExecuteCommandBufferAndClear
+  DIR if internal=true: submit graphics model CB and Clear
+  ASY/CBG if external=false: skip normal end submit/clear
+  R recorded CB; GPU completion not guaranteed by CPU return | IP
+
+S22 | K:2459-2461 -> Graphics.ExecuteCommandBufferAsync(Default)
+  ASY / main API; selected default async queue, actual native queue UNVERIFIED
+  crop last producer API=graphics Blit; input/intermediates/output planned writes=async dispatches
+  recording does not prove last completed native writer at submit time | I2/IP
+
+S23 | K:2488-2489 -> Graphics.ExecuteCommandBuffer
+  CBG / main API; graphics submission
+  same input/intermediate/output resource topology as S22 | I2/IP
+
+S24 | K:2150-2213 TryScheduleNewestSource -> Worker.PeekOutput + pending field assignments
+  ALL / CPU after ScheduleModel returns
+  R Worker output object, shape; W lane pending output/identity sidecar
+  borrow valid until next Worker Schedule/ScheduleIterable/Dispose | I2 -> I3
+
+S25 | K:2215-2244 -> T:159-162 Tensor.ReadbackRequest -> D:261-267
+  ALL / main call AFTER submit; native readback queue UNVERIFIED
+  R output ComputeBuffer, requests full backing byte count; W stored request/flag
+  records request hostTicks/Unity frame, then readbackPending=true | I3 + IP
+
+S26 | K:1639-1647 PollCompletedLanes -> T:148-154 -> D:255-258
+  ALL / main poll; R stored request.done; no hasError check
+  completion established only for that request object at managed contract level | I3
+
+S27 | K:1653-1726,1767-1866 PollCompletedLanes
+  ALL / main CPU; copy pending identity to locals, clear pending fields, stale reject
+  stale tracker/anchor/camera/session/sourceHostTicks rejected before decode
+  worker output still borrowed; no intervening same-thread Schedule | I3 -> I4
+
+S28 | K:1871-1894 -> TG:144-147 -> T:168-184 ReadbackAndClone
+  ALL / main CPU retrieval; D:317-347 Download consumes stored request
+  if !done, fallback WaitForCompletion exists; ordinary S26-done path skips it
+  if no stored request flag, Download can create request and block; guard assumptions matter
+  CREATE caller-owned CPU clone of logical count; R backing request data; W clone
+  diagnostic observers receive CPU clone; ownership cannot extend using scope | I4/IP
+
+S29 | K:1903-1911 -> K:2509-2628 DecodeReadableOutput
+  ALL / main CPU
+  R clone logical landmarks/presence + captured matrix/minimum presence
+  W decoded semantic/rigid; using scope then disposes clone | I4 -> I5
+
+S30 | K:2154-2168 early return; K:2265-2307 catch; K:208-247 Lane.Dispose
+  ALL failure/lifecycle / calling CPU; exact concurrent native completion UNVERIFIED
+  after-submit null/shape/error may leave/reset lane free before GPU complete
+  Dispose releases CB/Worker/input/crop; no explicit drain in these methods
+  I3 may never be completed or is cleared; no all-control-flow lifetime PASS
+
+S31 | K:1300-1428 TryProcess synchronous API
+  LEG for current Assets call graph: no .TryProcess( caller found; Runner uses TryProcessAsync
+  contains synchronous ReadbackAndClone; must not be counted as active async success path
+  possible external/reflection caller activation UNVERIFIED
+
+All package rows inherit lane resource association only; package APIs never carry Kiwi
+SourceSequence, hostTicks, generations, crop matrix, minimum presence or schedule/readback token.
+Thread classification above describes observed managed caller context; native render/GPU thread
+and physical queue identity remain UNVERIFIED unless explicitly named as requested API queue.
+
+======================================================================
+21. THREE-ARM EXACT DIFFERENCE MATRIX / CANDIDATE COMPARISON COMPLETENESS
+======================================================================
+
+[STATIC + RUNTIME]
+Boundary                   | DIRECT_GRAPHICS | CB_GRAPHICS           | CB_ASYNC
+Classification             | default fallback| diagnostic-only       | eligible startup default
+Crop producer              | graphics Blit   | same                  | same
+ToTensor CB                | temporary       | persistent lane CB    | persistent lane CB
+Worker CB                  | internal        | same external as input| same external as input
+Backend Internal flag      | true            | false                 | false
+Normal final submit        | package         | Kiwi                  | Kiwi
+Normal tensor/model submits| 2 graphics      | 1 graphics            | 1 async Default
+Async execution flag       | none            | none                  | AsyncCompute
+Normal Worker end Clear    | yes             | no                    | no
+Kiwi Clear                 | n/a             | before recording      | before flag/recording
+Pending/Readback/Clone      | shared path     | shared path           | shared path
+Logical output             | 1405            | 1405                  | 1405
+Correlated eligible rows   | 68 REF_ONLY     | 88 REF_ONLY           | 87 NEITHER
+
+Model CPU fallback activation is UNVERIFIED; counts above are no-fallback topology.
+v29 changed five areas versus exact backup: CB allocation condition, CBG fields/counters,
+mode parsing/precedence/cadence/logging, CBG submit arm, and async execution flags moved from
+constructor to each submit. Existing direct ToTensor/Worker.Schedule statements remain.
+No old async binary equivalence is inferred from source similarity.
+
+Candidate dimensions supplement Section 8; estimates are design judgments, not benchmarks.
+Size scale: small=one observation hook/helper; medium=helper+resource/kernel+lifecycle;
+large=queue/ownership refactor. No candidate was implemented.
+
+A input visibility/order:
+  Factor=handoff observation at crop-to-async boundary. Same=crop math/model/decode.
+  Claim=whether first async read sees selected crop. Contamination=medium/high;
+  latency=high if sync introduced (forbidden); lifecycle=resource handoff risk; size=medium/large.
+  Outcome=input disagreement would locate upstream edge but oracle identity must first close.
+  Not selected: no independently valid non-invasive input oracle established.
+
+B ToTensor queue:
+  Factor=conversion execution placement. Same=model/crop/decoder.
+  Claim=conversion context contribution. Contamination=high from extra input handoff;
+  latency=extra submit dependency; lifecycle=input lifetime risk; size=medium.
+  Outcome=arm changes could implicate transition but changed queue+handoff confound it.
+
+C backend CB form:
+  Factor=internal/external recording owner. Same=model/input logical data.
+  Claim=external form necessary/sufficient contributor. Contamination=existing equal observers;
+  latency=submit topology differs; lifecycle=CB owner/reuse; size=already present v29 arm.
+  Outcome=CBG REF_ONLY rejects external form alone for this same-build A/B.
+
+D ordinary pending lifetime:
+  Factor=earlier independent output storage capture. Same=Worker/model/Production poll.
+  Claim=worker storage observation versus frozen output. Contamination=medium;
+  latency=copy/request overhead; lifecycle=observer resource retention; size=medium.
+  Output next-Schedule reuse is statically guarded in success path, but D/E snapshot remains
+  useful because it tests the producer-output boundary without re-running inference.
+
+E readback context:
+  Factor=CB-local versus global request was the initial design; same=output and model.
+  Rejected: exact Unity API disallows RequestAsyncReadback on AsyncCompute CB.
+  Selected D/E factor instead=observer endpoint at producer tail versus Worker pooled output.
+  Contamination=medium, latency=extra dispatch/readback, lifecycle=bounded pending buffer;
+  size=medium: compute kernel + helper + binding/readback hooks + validator pair fields.
+  Outcome interpretation is Section 9, explicitly not pure readback ordering proof.
+
+F fallback/error/disposal:
+  Factor=observe fallback-set/error/lifetime branch activation. Same=all GPU work.
+  Claim=whether exception path is active. Contamination=low for CPU metadata;
+  latency=small unmeasured logging cost; lifecycle=reflection/version coupling risk; size=small.
+  Outcome=active fallback/error would reopen execution topology before causal GPU experiments.
+  No activation evidence in current correlated logs; kept as next-probe preflight gate.
+
+======================================================================
+22. STAGE 1B SOURCE / WRITER EVIDENCE INDEX
+======================================================================
+
+[STATIC]
+All paths below are relative to D:/KiwiAvatarSystem; this index binds Sections 10-17.
+Runtime/default activation statements are source/wiring conditions, not a new Player observation.
+
+Camera:
+  Assets/MediaPipeUnity/Samples/Common/Scripts/AppSettings.cs:85-105 BuildWebCamSource
+  Assets/MediaPipeUnity/Samples/Common/Scripts/Bootstrap.cs:20-23,84-87 OnEnable/Init
+  Assets/MediaPipeUnity/Samples/Common/Scripts/ImageSourceProvider.cs:37-69 Initialize/Switch
+  Assets/KiwiAvatarSystem/Runtime/Camera/WindowsNativeWebCamSource.cs:
+    Play 142-240; TryPlayNative 782-938; PrepareFrameForUnity 1026-1129;
+    TryGetLatestPresentedFrame 1131-1144; Pause 952-965; Stop 967-1013
+  Assets/KiwiAvatarSystem/Runtime/Camera/IKiwiFreshFrameSource.cs:3-26
+  Correct canonical paths are Runtime/Camera, not MediaPipe sample copies.
+
+Runner:
+  Assets/Script/FaceLandmarkerRunner.cs:
+    fresh source 848-913; construction 744-804; Update 603-611; scheduling 614-734;
+    MediaPipe one-in-flight/fresh gates 1845-1888; generation recheck 2034-2064;
+    submission ring/DetectAsync 2185-2238; callback 2404-2498;
+    StoreTrackingData 3034-3232; StoreSentisTrackingData 3237-3477;
+    expression hold 3461-3472; atomic snapshots 1248-1291;
+    RememberSubmittedFrame/ResolveSubmittedFrame 3553-3648; Stop 1384-1414.
+
+Hub / Canonical:
+  Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiTrackingProviderHub.cs:
+    execution order 34; auto-install 544-561; selection 629-879;
+    switch generation/handoff 818-836; resume 837-851; Runner capture 1189-1265;
+    publish 2310-2374; handoff normalization 2798-3238.
+  Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiCanonicalTrackingFrame.cs:
+    Publish 431-525; expression gate 497-500; order 566; auto-install 586-603;
+    LateUpdate refresh 643-660; capture 662-845; exact semantic match 750-767.
+
+Root / Expression:
+  Assets/Script/KiwiFaceMotion.cs:
+    order 7; LateUpdate 1344-1521; gap hold 1461-1483;
+    before-render 3817-3942; provider bridge no-op 4851-4863;
+    resume correction 4948-5015; root rotation 5862-6067;
+    root position 6080-6083; scale 6177-6180; expression face parts 6679-6731.
+  Assets/Script/KiwiExpressionReaction.cs:
+    order 6-7; direct Runner expression read/LateUpdate 376-435.
+
+Texture / UV / rotation:
+  Assets/Script/FacePartCropper.cs:
+    order 7; strict prediction/age compensation overrides 446-480;
+    semantic capture 516-527; texture prepare 530-550;
+    sample commit 642-854; uvRect writes 1275-1329 and 1626-1851.
+  Assets/KiwiAvatarSystem/Runtime/Presentation/KiwiFacePartTextureTransaction.cs:
+    order 24-26; limits 34-37; slot identity 39-47; auto-install 192-218;
+    PrepareSemanticTransaction 273-329; commit 338-410;
+    source rebuild 435-484; CaptureSourceFrameIfNeeded 514-565;
+    closest slot 597-645; pinned texture write 647-702;
+    before-render detection 705-759; resource release 909-946.
+  Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiFacePartRigidSampleFrame.cs:
+    order/defaults 18-29; auto-install 78-94; sample rotation writes 331-353.
+  Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiFacePartSharedTiltLock.cs:
+    order/defaults 10-25; auto-install 59-73; LateUpdate 102-181;
+    legacy AngleLock suppression 213-227; material writes 365-384.
+  Assets/Script/SurfaceFittedRawImage.cs:207-233 SetSampleFrameRotationDegrees.
+  Assets/Script/FacePartAngleLock.cs:1659-1671 legacy material writer.
+  Assets/Shader/FacePartSoftMask.shader:77,83,270,272,336,398,404 properties/use.
+  RigidSampleFrame/SharedTiltLock canonical paths are Runtime/Optimization.
+
+Avatar / scene / Spout:
+  Assets/KiwiAvatarSystem/Runtime/KiwiAvatarRuntimeManager.cs:
+    SwitchToModel 301; capture state 326; LoadAsync 333;
+    candidate/previous state restore 369-399; destroy previous 438;
+    failure rollback/candidate destroy 453-459;
+    CaptureActiveAvatarState 476; RestoreActiveAvatarState 511;
+    TryRestorePreviousAvatarPresentation 544; root rebind 563/643/839;
+    ApplyActiveProfile 772; fitting 844/906.
+  Assets/Scenes/Face Landmark Detection.unity:
+    Spout 190-239; Avatar manager enabled/root binding 611-637 (GUID 050f17dd1027a7f66c7f976aada5b60e);
+    Runner 1253-1325; VTuberCamera 1332-1392;
+    FaceMotion 1637-1815; Cropper 1950-2037; ExpressionReaction 2039-2165.
+  Library/PackageCache/jp.keijiro.klak.spout@cd3751890357/Runtime/SpoutSender.cs:
+    end-of-frame 88-95,137-146; texture buffer Blit 110-116; sender update 126-130.
+  same package Runtime/Internal/Sender.cs:21-32,58-59 and EventKicker.cs:47-61.
+
+Lifecycle scope limits:
+  managed Stop/Dispose/rebind statements audited; native callback drain, imported Animator behavior,
+  secure import, hot-swap soak/recovery, privacy/SLO/installer/product reliability NOT runtime validated.
+  Stage 1B complete means requested broad static dataflow inventory complete, not all system gates closed.
+  Stage 1C external comparative/reuse audit is outside this attachment's Stage1A/1B deliverable;
+  latest AGENTS makes it a roadmap prerequisite, not evidence that it ran in this task.
+
+======================================================================
+23. REPORT SELF-AUDIT / EXACT UNITY API CORRECTION
+======================================================================
+
+[CONFIRMED FACT / STATIC]
+The report's first draft proposed same-async-CB RequestAsyncReadback.
+Quality re-audit rejected that mechanism before delivery; no diagnostic implementation was made.
+This is a report/design correction, not evidence of a Production defect.
+
+Exact local assembly authority:
+  C:/Program Files/Unity/Hub/Editor/6000.0.80f1/Editor/Data/Managed/UnityEngine/UnityEngine.CoreModule.dll
+  SHA256 00B07D5CA10ADF0F217F6072153F666EEFA1C7DF47F69AFD4FE65FE35FEC3B3B
+  Read-only PowerShell 5.1 reflection/IL extraction; no Unity Editor execution.
+  Method RequestAsyncReadback(ComputeBuffer,Int32,Int32,Action<Request>): token 0x06003488
+  IL starts 00-02-16-18-28-45-35-00-06-26
+  -> this, requiredFlags=0, invalidFlags=2, call token 0x06003545
+  -> ValidateAgainstExecutionFlags(None,AsyncCompute).
+  Therefore async CB readback is explicitly invalid, not merely undocumented.
+  DispatchCompute/SetComputeBufferParam are present without that invalid-AsyncCompute guard.
+  static AsyncGPUReadback.Request(ComputeBuffer,size,offset,callback) exists outside CB.
+  Native copy binding/stride/synchronization still requires implementation-time validation.
+  Proposed snapshot payload=1405*4=5620 bytes; token/header requires additional explicit space
+  or separate metadata storage, and must be included in validation/readback. Do not read only
+  5620 bytes then claim a token outside that range was verified.
+
+[PUBLIC DESIGN PRINCIPLE]
+  Unity 6000.0 documented async command list permits DispatchCompute/SetComputeBufferParam;
+  it omits RequestAsyncReadback, consistent with exact installed assembly guard.
+  https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Graphics.ExecuteCommandBufferAsync.html
+  https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Rendering.CommandBuffer.RequestAsyncReadback.html
+
+[OBSERVER / VALIDATOR LIMITATIONS]
+  v29 eligible-row REF exact is equality to a reference payload, not independent face/canonical truth.
+  REF oracle, pair matching, raw payload extraction, excluded/partial rows remain measurement owners.
+  20-identity validator and byte-preserving manifest support provenance, not GPU semantic correctness.
+  Existing shadow hooks execute between crop Blit and authority ToTensor and can change timing.
+  hasError omission and failure-path lane release gaps are static findings, not demonstrated causes.
+  GPU-copy output snapshot adds work/storage/request and may perturb the bug.
+  Snapshot equality cannot rule out common readback errors or prove Canonical/Visual correctness.
+
+[FINAL VERIFICATION]
+  2026-09-05 rehash of freeze core list: 37/37 MATCH, 0 mismatch.
+  Git HEAD unchanged: 27281c622d7b8bf2ececf711b037fc8f9e029004.
+  Tracked dirty set remains the four pre-existing files in Section 1.
+  This task edits only this report; no Production/code/runtime/build/Git mutation.
+  Report final status keys are unique and remain the last six lines.
+  The terminal sandbox ACL initialization failed; approved elevated read-only checks and
+  apply_patch against this report were used. No ACL/configuration changes were made.
+
+======================================================================
+24. FINAL STATUS
+======================================================================
+
+STAGE1A_STATUS=NEXT_ONE_FACTOR_DIAGNOSTIC_BOUNDARY_SELECTED_FROM_SOURCE_EVIDENCE
+STAGE1B_STATUS=READ_ONLY_FULL_DATAFLOW_AUDIT_COMPLETE_STATIC_FINDINGS_ONLY_RUNTIME_DEFECT_NOT_PROVEN
+PRODUCTION_BEHAVIOR_CHANGE=NO
+NEXT_ONE_FACTOR_DIAGNOSTIC=ASYNC_PRODUCER_TAIL_OUTPUT_SNAPSHOT_PROBE_SHADOW_ONLY_NOT_IMPLEMENTED
+REQUIRES_RUNTIME_NEXT=YES_AFTER_SOURCE_API_FEASIBILITY_AND_EXPLICIT_IMPLEMENTATION_AUTHORIZATION
+COMMIT_PUSH=NO

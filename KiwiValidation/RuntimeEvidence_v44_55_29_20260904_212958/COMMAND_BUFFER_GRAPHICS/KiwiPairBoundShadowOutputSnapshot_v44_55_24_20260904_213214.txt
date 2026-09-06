@@ -1,0 +1,54 @@
+KiwiAvatarSystem v44.55.24 Pair-Bound Shadow Output Snapshot
+contract=KIWI_V44_55_24_PAIR_BOUND_SHADOW_OUTPUT_SNAPSHOT
+status=COMPLETE
+dependencyStatus=COMPLETE
+decision=REFERENCE_TRANSACTION_VALID_CONFIRMED
+observerOnly=1
+productionWrites=0
+nativeWrites=0
+trackingMathChange=0
+roiChange=0
+thresholdChange=0
+productionInputReadback=0
+productionOutputStateConsumption=0
+shadowPeekAfterRecordCompletion=0
+blockingWait=0
+performanceAuthority=0
+productionOutputAuthority=COMPLETED_PENDING_OUTPUT_GPU_SNAPSHOT
+referenceOutputAuthority=V20_PAIR_BOUND_REF_FROZEN_GPU_SNAPSHOT
+mode2OutputAuthority=V20_PAIR_BOUND_B_GPU_SNAPSHOT
+shadowSnapshotWindow=PAIR_PENDING_AND_COMMON_SCHEDULED
+comparison=PACKED_OUTPUT_1405_FLOAT_BITWISE
+anomalySelector=V20_REF_VS_MODE2_INPUT_GE4_LSB
+completedPairCount=88
+dependencyRecordCount=88
+anomalousPairCount=13
+referenceExactMatchCount=13
+mode2ExactMatchCount=0
+bothExactCount=0
+neitherExactCount=0
+observerFaultCount=0
+dependencyMissingFrames=12
+attachMissCount=0
+recordCaptureWindowMissCount=0
+shadowOutputCaptureMissCount=0
+shadowIdentityMismatchCount=0
+duplicateShadowSnapshotCount=0
+nextPairTokenObservedBeforeRecordBindCount=0
+productionOutputSnapshotFailureCount=0
+referenceOutputSnapshotFailureCount=0
+mode2OutputSnapshotFailureCount=0
+nonFiniteOutputCount=0
+inputArrayIdentityMismatchCount=0
+outputShapeMismatchCount=0
+duplicatePairCount=0
+capturesPending=0
+
+[DECISION_RULE]
+INVALID_OBSERVER if any observer/dependency identity/snapshot/completeness contract fails.
+INSUFFICIENT_DATA if completedPairCount<60.
+INSUFFICIENT_ANOMALY_REPRODUCTION if anomalousPairCount<3.
+REFERENCE_TRANSACTION_VALID_CONFIRMED only when every anomalous >=4-LSB input pair has Production packed output bitwise equal to REF_FROZEN_GPU and not MODE2_GPU.
+REFERENCE_TRANSACTION_INVALID_CONFIRMED only when every anomalous >=4-LSB input pair has Production packed output bitwise equal to MODE2_GPU and not REF_FROZEN_GPU.
+Any both-exact, neither-exact, or mixed anomalous population => MIXED_TRANSACTION.
+No numeric output threshold is tuned after runtime.

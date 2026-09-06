@@ -1,0 +1,79 @@
+KiwiAvatarSystem v44.55.27 Actual Production Decode Payload vs Pair-Bound Shadow Output Authority
+contract=KIWI_V44_55_27_ACTUAL_PRODUCTION_VS_SHADOW_PAYLOAD_AUTHORITY
+status=APPLICATION_QUIT
+decision=INVALID_OBSERVER
+observerOnly=1
+developmentDiagnosticOnly=1
+existingReadbackAndClone=1
+newReadbackAndClone=0
+productionInputOracle=0
+rejectedV24ProductionSnapshotComparison=0
+v26PayloadCopyRequired=0
+newWorker=0
+newSchedule=0
+repeatedInference=0
+newGpuCopy=0
+newAsyncGpuReadback=0
+blockingWait=0
+logicalFloatCount=1405
+performanceAuthority=0
+sideA=ACTUAL_PRODUCTION_DECODE_PAYLOAD
+sideB=REF_FROZEN_GPU_PAIR_BOUND
+sideC=MODE2_B_GPU_PAIR_BOUND
+
+[COUNTS]
+dependencyTraceCount=0
+capturedPairCount=0
+completedPairCount=0
+comparedPairCount=0
+payloadEligiblePairCount=0
+anomalousPairCount=0
+anomalousPayloadEligiblePairCount=0
+actualEqualsRefOnlyCount=0
+actualEqualsMode2OnlyCount=0
+actualEqualsBothCount=0
+actualEqualsNeitherCount=0
+anomalousActualEqualsRefOnlyCount=0
+anomalousActualEqualsMode2OnlyCount=0
+anomalousActualEqualsBothCount=0
+anomalousActualEqualsNeitherCount=0
+anomalousShadowExactCount=0
+publishedPayloadEligiblePairCount=0
+publishedAnomalousPayloadEligiblePairCount=0
+publishedActualEqualsRefOnlyCount=0
+publishedActualEqualsMode2OnlyCount=0
+publishedActualEqualsBothCount=0
+publishedActualEqualsNeitherCount=0
+publishedAnomalousActualEqualsRefOnlyCount=0
+publishedAnomalousActualEqualsMode2OnlyCount=0
+publishedAnomalousActualEqualsBothCount=0
+publishedAnomalousActualEqualsNeitherCount=0
+noDecodePayloadCoverageCount=0
+observerFaultCount=0
+identityMismatchCount=0
+duplicateDecodePayloadCount=0
+duplicateShadowPayloadCount=0
+arrayAliasCount=0
+fieldMappingMismatchCount=0
+payloadShapeMismatchCount=0
+nonFinitePayloadCount=0
+partialCaptureCount=0
+pendingAtCompletion=0
+
+[FIXED_RUNTIME_GATE]
+minimumPayloadEligiblePairCount=60
+minimumAnomalousPayloadEligiblePairCount=3
+dependencyCountMustEqualCompletedCount=1
+observerIntegrityCountersMustBeZero=1
+decisionAndRowsMustAgree=1
+canonicalPublicationRequiredForPrimaryEligibility=0
+publishedSubsetReportedSeparately=1
+
+[DECISION_RULE]
+REFERENCE_PAYLOAD_AUTHORITY_CONFIRMED=every anomalous payload-eligible pair is ACTUAL_EQUALS_REF_ONLY
+MODE2_PAYLOAD_AUTHORITY_CONFIRMED=every anomalous payload-eligible pair is ACTUAL_EQUALS_MODE2_ONLY
+ACTUAL_SHADOW_MIXED=discriminating anomalous population contains more than one actual-vs-shadow classification
+ACTUAL_EQUALS_NEITHER_CONFIRMED=every anomalous payload-eligible pair is ACTUAL_EQUALS_NEITHER
+SHADOWS_NOT_DISCRIMINATING=at least one anomalous payload-eligible pair has REF bitwise equal to MODE2
+INSUFFICIENT_ANOMALOUS_COVERAGE=fewer than three anomalous payload-eligible pairs
+INVALID_OBSERVER=identity alias deep-copy mapping duplicate shape finite partial dependency callback count or validator contract failed

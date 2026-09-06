@@ -1,0 +1,102 @@
+[
+    {
+        "path":  "build_identity.json",
+        "sha256":  "DAA8C22A890DEEB128758D587359D4EDBF859631E3A8306D63F77D746949D7A8"
+    },
+    {
+        "path":  "CONTROL\\KiwiActualProductionVsShadowPayloadAuthority_v44_55_27_20260905_165853.csv",
+        "sha256":  "F9FEF72418E2FA2B428636007F959C6D7CC8BD7AFCC15D6701712ED993DE7E62"
+    },
+    {
+        "path":  "CONTROL\\KiwiActualProductionVsShadowPayloadAuthority_v44_55_27_20260905_165853.txt",
+        "sha256":  "D35270E61C971D6B2C6402B53A35A1ABE399C7028DF7F877BB091EB3AE4173E5"
+    },
+    {
+        "path":  "CONTROL\\KiwiCommonTensorBackendStageIsolation_v44_55_20_20260905_165845.csv",
+        "sha256":  "6A3CBD974AEEEF0A331DAC84948B97CC6E427DD9A733AE612C0E4AD4F6693993"
+    },
+    {
+        "path":  "CONTROL\\KiwiCommonTensorBackendStageIsolation_v44_55_20_20260905_165845.txt",
+        "sha256":  "4266FBDF71E7DA9E154BAD50D0D30034C9B08E3E2ED1E4A954233528A0735910"
+    },
+    {
+        "path":  "CONTROL\\KiwiPairBoundShadowOutputSnapshot_v44_55_24_20260905_165845.csv",
+        "sha256":  "1309C5455A282497117651AA59DEA7FEDEED9FA99C49EE96B34D073A239EA964"
+    },
+    {
+        "path":  "CONTROL\\KiwiPairBoundShadowOutputSnapshot_v44_55_24_20260905_165845.txt",
+        "sha256":  "315EEE581B129E853A6C5F1DF26AF088DFE73E82F3DAC9A0E98CCF34F67101F8"
+    },
+    {
+        "path":  "CONTROL\\KiwiProductionScheduleTransactionTrace_v44_55_25_20260905_165853.csv",
+        "sha256":  "E83F5C47E2E7FC01907A745076B7ADB681D80E4FF801E1AEB21C84C17CD66E4D"
+    },
+    {
+        "path":  "CONTROL\\KiwiProductionScheduleTransactionTrace_v44_55_25_20260905_165853.txt",
+        "sha256":  "D086810E653E9014987DFA1955B418168BC3B36733E07124F55C0670C06291E4"
+    },
+    {
+        "path":  "CONTROL\\Player.log",
+        "sha256":  "4DB294D3A76AEB406074237599CBB6AB4866F9E1FA1BA4142686BE006DD32C67"
+    },
+    {
+        "path":  "CONTROL\\producer_pairs.jsonl",
+        "sha256":  "78EA8A172CC6223BD95A0A28B393F44B30F4E01DA848D7015AD7047B2906FB59"
+    },
+    {
+        "path":  "CONTROL\\producer_summary.txt",
+        "sha256":  "6601B423991A0E44F4096429FCA81E1F79718D384194A5EF70B54B7FE13FCF50"
+    },
+    {
+        "path":  "CONTROL\\run_identity.json",
+        "sha256":  "10E5B61DCD8018EE4FFAC334C8B4C71DCF4EFEF14BD6917A28277A650E360CC3"
+    },
+    {
+        "path":  "PROBE\\KiwiActualProductionVsShadowPayloadAuthority_v44_55_27_20260905_170120.csv",
+        "sha256":  "B3589D8DDBE486F69F3D46C73B5B6B3E36CC2E32DED8F35717AB9FA7C97150DD"
+    },
+    {
+        "path":  "PROBE\\KiwiActualProductionVsShadowPayloadAuthority_v44_55_27_20260905_170120.txt",
+        "sha256":  "A0A42160D258005D9D6AA722788672F5C72F6959C4EAC30964D1EF925F1B0700"
+    },
+    {
+        "path":  "PROBE\\KiwiCommonTensorBackendStageIsolation_v44_55_20_20260905_170111.csv",
+        "sha256":  "9523020657ECB51984029CBC6EACEC429A7AA8A866B7274B4699C59C9ADA61CF"
+    },
+    {
+        "path":  "PROBE\\KiwiCommonTensorBackendStageIsolation_v44_55_20_20260905_170111.txt",
+        "sha256":  "EF2EE43F0D0AADABC1CDB979BE23B0F6F5B53729D0B78DBA4ADAF4B604E2EFBE"
+    },
+    {
+        "path":  "PROBE\\KiwiPairBoundShadowOutputSnapshot_v44_55_24_20260905_170112.csv",
+        "sha256":  "61BCA72C1F499C2932079C9ABE963E0D07D107F4C1C7C6CCE813A75F77788C41"
+    },
+    {
+        "path":  "PROBE\\KiwiPairBoundShadowOutputSnapshot_v44_55_24_20260905_170112.txt",
+        "sha256":  "E0B22F78AD182DAA6C50FDF6F2975A28A5460E2194EC88268F4E0E5DF24B3241"
+    },
+    {
+        "path":  "PROBE\\KiwiProductionScheduleTransactionTrace_v44_55_25_20260905_170120.csv",
+        "sha256":  "D11E12FD11C66473F5400EF92EF4DB4B45EC04F88FD7DC7A9F92C934FDE367D6"
+    },
+    {
+        "path":  "PROBE\\KiwiProductionScheduleTransactionTrace_v44_55_25_20260905_170120.txt",
+        "sha256":  "A6F419327DF5FBF509AF2E1EFAB804D2ED96296E4A3FB87D425E43105D692287"
+    },
+    {
+        "path":  "PROBE\\Player.log",
+        "sha256":  "478F4470681A613376CD255A4A65ED2D39049550548C2489A6D00160C7FFFAB2"
+    },
+    {
+        "path":  "PROBE\\producer_pairs.jsonl",
+        "sha256":  "BD2506CE52CF8DFB1A16C38C281766DD52ABB21F8FC20B2F9BE160796EE94AD6"
+    },
+    {
+        "path":  "PROBE\\producer_summary.txt",
+        "sha256":  "7A5AA4BEE43A6AACF9BA43A1CC5E4C409830DD0328B462569CF4F2C8EA04E459"
+    },
+    {
+        "path":  "PROBE\\run_identity.json",
+        "sha256":  "BFA1900BCDA9BB9538481136662278728BF812EFC3755B876A070EFADADA7C5A"
+    }
+]

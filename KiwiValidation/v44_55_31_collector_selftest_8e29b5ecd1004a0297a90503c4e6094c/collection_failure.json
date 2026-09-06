@@ -1,0 +1,5 @@
+{
+    "error":  "CONTROL failed normal exit: 30 timeout=False",
+    "status":  "INCONCLUSIVE",
+    "synthetic":  true
+}

@@ -1,0 +1,727 @@
+KiwiAvatarSystem Codex Consolidated Report
+v44.55.29 Runtime Closure -> Stage 1 Ready State Preparation
+Generated: 2026-09-04 21:39:28 +09:00 (JST)
+Project: D:\KiwiAvatarSystem
+Unity: 6000.0.80f1 (2dfd32957da2)
+Platform: Windows / Direct3D12
+Contract: KIWI_V44_55_29_COMMAND_BUFFER_GRAPHICS_EXECUTION_FORM_ISOLATION
+
+## 1. Executive Summary
+
+STAGE1_READY = YES.
+STAGE1_EXECUTED = NO.
+
+v44.55.29 was closed through installed-payload verification, static validation,
+Unity compile/preflight, Development Player build, fresh three-arm Runtime,
+full cross-arm identity validation, and raw-payload validation.
+
+Valid correlated result:
+- DIRECT_GRAPHICS: 68/68 payload-eligible rows ACTUAL_EQUALS_REF_ONLY.
+- COMMAND_BUFFER_GRAPHICS: 88/88 payload-eligible rows ACTUAL_EQUALS_REF_ONLY.
+- COMMAND_BUFFER_ASYNC: 87/87 payload-eligible rows ACTUAL_EQUALS_NEITHER.
+- All three valid arms exited normally with code 0, v27 status=COMPLETE,
+  observerFault=0, partialCapture=0, pendingAtCompletion=0.
+- Claim-scoped decision:
+  ASYNC_QUEUE_EXECUTION_CONTEXT_CAUSAL_CONTRIBUTOR_CANDIDATE.
+- CommandBuffer execution form is rejected as the primary cause for this
+  same-build comparison. This does not prove a cross-queue hazard, fence
+  necessity/location, or a Production fix.
+
+The original package contained measurement-harness defects. They were not
+hidden with Production behavior changes:
+1. Original Build PS1 had a Windows PowerShell 5.1 `$Label:` parse defect.
+2. Vendor build hotfix still used undefined `$LASTEXITCODE` after asynchronous
+   Unity.exe launch. A local PS5.1 wrapper used Start-Process -Wait -PassThru.
+3. Runtime Validator used Python-style `elif`; local copy changed only these
+   three tokens to PowerShell `elseif`.
+4. Vendor Run script enabled v25/v27 but disabled the v20 instance required by
+   v25 TryBindDependencies. The first run failed with v25
+   DEPENDENCY_BIND_TIMEOUT and auto-quit exit 29. The local runner enabled the
+   v28-proven v20 120-second/1 Hz/8-second-stable settings equally for all arms,
+   dependency-only and outside v29 claim authority.
+5. Vendor payload validator uses EXE SHA only for same-build and the Unity EXE
+   launcher stub is identical between v28 and v29. A separate validator required
+   20 cross-arm SHA identities including Assembly-CSharp, package assemblies,
+   models, Native, package source, protected source, and harness.
+
+No FaceLandmarkerRunner, KiwiFaceMotion, Native source/DLL, FacePart behavior,
+tracking math, ROI, thresholds, smoothing, prediction, temporal policy, camera
+transport, or default Production execution mode was changed in this work.
+
+## 2. Current Production Identity
+
+Project root: D:\KiwiAvatarSystem
+Git branch: main
+Git HEAD: 27281c622d7b8bf2ececf711b037fc8f9e029004
+Unity: 6000.0.80f1 (2dfd32957da2)
+Active enabled build scene: Assets/Scenes/Face Landmark Detection.unity
+Scene GUID: df0fc3b9f7146dee593f8b5660ae773c
+
+Known source-audit snapshot:
+- AuditPackages\KiwiProduction_SourceAudit_20260904_183706.zip
+- SHA256 AE8A0FC8B8712F925A96794D16DFD8F9EFDB3DE5DCADA21E7DACF104EA3A6034
+
+Current local diagnostic Production source:
+- Assets\Script\KiwiInferenceFaceTracker.cs
+- SHA256 1DBAAB45A5393D688B2ACE2A4FB5FBA995FE7B09E12843D3DAD536A15D8C539A
+- Exact match to the v44.55.29 package payload.
+- When v29 diagnostic environment variables are unset, existing default
+  DIRECT/async-default behavior is retained by the patch contract.
+
+The worktree is dirty and user-owned. It contains v24-v29 diagnostic work and
+older untracked evidence/tools. It was not reset or normalized. The exact
+Stage 1 source snapshot is logically frozen by the SHA list in section 12.
+
+## 3. Pre-Change SHA
+
+Pre-v29 protected authority:
+- KiwiInferenceFaceTracker.cs:
+  52C046EE44B41A4FF50B85AEF503BC29DD31B57EAF58C0D160CCC33C5D4B7695
+- FaceLandmarkerRunner.cs:
+  6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93
+- KiwiFaceMotion.cs:
+  D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6
+
+Apply backup:
+- KiwiValidation\Backups\v44_55_29_20260904_204244\KiwiInferenceFaceTracker.cs
+- SHA256 52C046EE44B41A4FF50B85AEF503BC29DD31B57EAF58C0D160CCC33C5D4B7695
+
+Post-Apply/post-Runtime protected identity:
+- Tracker:
+  1DBAAB45A5393D688B2ACE2A4FB5FBA995FE7B09E12843D3DAD536A15D8C539A
+- FaceLandmarkerRunner unchanged:
+  6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93
+- KiwiFaceMotion unchanged:
+  D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6
+- KiwiNativeCamera.dll unchanged:
+  82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+
+## 4. v44.55.29 Package Verification
+
+Original package:
+- D:\Users\main\Downloads\KiwiAvatarSystem_v44_55_29_CommandBufferGraphicsExecutionFormIsolation.zip
+- Expected/actual SHA256:
+  D4C5B5001E3730D6E9C03B803209C50E7C20EBF96EB31226C53908A9F0B0E0D7
+- Internal SHA256_MANIFEST: 11/11 entries PASS.
+
+Vendor PowerShell 5.1 Build hotfix:
+- D:\Users\main\Downloads\KiwiAvatarSystem_v44_55_29_1_PowerShell51BuildHotfix.zip
+- SHA256:
+  D4EE1B7C37B202C79A09AADE2A13795A565B9894BE423BE022284A8BFB11A8CB
+- Internal SHA256_MANIFEST: 11/11 entries PASS.
+- Production C# payloads are byte-identical to the original package.
+- Vendor change was limited to the Build PS1 `${Label}:` interpolation fix and
+  explanatory README/design text.
+
+Installed payload exact matches:
+- KiwiInferenceFaceTracker.cs:
+  1DBAAB45A5393D688B2ACE2A4FB5FBA995FE7B09E12843D3DAD536A15D8C539A
+- KiwiV44_55_29ValidationAutoQuit.cs:
+  18914D01B88D17A3DCA7FDD2BC99189DDF5FF7B171F1DD5D39B5D068BBA190C9
+- KiwiBuildV44_55_29.cs:
+  2FED904A18BC099515ACDB22F8E24BD731833F3636819D1BF72B37EA0D2DB4B4
+
+## 5. Apply Result
+
+Result: PASS_BY_EXACT_INSTALLED_IDENTITY.
+
+Apply had already been run before this Codex turn. PowerShell history records
+Apply/Validate/Build invocations and the Apply backup exists with the exact
+pre-v29 Tracker SHA. Current Tracker/AutoQuit/Build C# files exactly match the
+verified package payload. The vendor hotfix README explicitly says not to
+re-apply after Apply completed, so Apply was not repeated.
+
+Original Apply process exit code: NOT RETAINED.
+Current installed-state validation exit code: 0.
+Backup path and pre/post hashes: recorded above.
+
+This is sufficient to identify the installed source exactly, but the lack of
+the original Apply console exit code remains an evidence-history limitation and
+must not be rewritten as a captured exit code.
+
+## 6. Static Validation
+
+Vendor-hotfix Validate-KiwiV44_55_29.ps1:
+- Windows PowerShell 5.1 exit code: 0.
+- Tracker/Runner/FaceMotion/AutoQuit/Build C#/Native SHA gates: PASS.
+- Required v29 execution tokens: PASS.
+- Forbidden Tracker tokens CreateGraphicsFence, WaitOnAsyncGraphicsFence,
+  g_unityD3D12Queue->Wait, UpdateExternalTexture: absent/PASS.
+- Package script parser loop: reported PASS.
+
+Validator self-audit finding:
+- PowerShell parser acceptance did not prove runtime decision syntax; `elif`
+  parsed but would execute as an unknown command when a decision branch was
+  reached. Local Runtime Validator replaced only three `elif` tokens with
+  `elseif`.
+
+Actual Windows PowerShell 5.1 parser PASS for the used scripts:
+- Build wrapper SHA256:
+  94DD2F7AD1E8176263EFADFC73B572648E0590EF4555A51503FE5EB87C63600A
+- Runtime dependency/identity runner SHA256:
+  36236115419FEF1A6DFA423636AA692FA5136A20803B00879D5F3A0674746955
+- Payload Runtime Validator SHA256:
+  27861ECC9FC1FDD5F134F4D8FD3BE44FAECF2FF1247EF574FA073DD9515CD9D8
+- Identity Runtime Validator SHA256:
+  F2F7235EBDCAB3DCC5FD0F68CD55D49012821D7CDC2FE11C0AFA868C589094C7
+- git diff --check for v29 local tools: PASS.
+
+## 7. Unity Compile / Build
+
+First package Build attempt:
+- Unity compile started.
+- Build blocked by stale Release Candidate preflight fingerprint.
+- Classification: build/preflight measurement gate, not Production compile defect.
+
+Full Preflight:
+- Unity batchmode exit: 0.
+- Result: PASS.
+- scenes=1, objects/components=50/61.
+- warning/error/critical=2/0/0.
+- fingerprint=863a972eeddc003ae5522fbe42a5a5d2c67f84362afec09c87d7bf55a3820430.
+
+Vendor Build hotfix wrapper attempt:
+- Wrapper exit: 1 because `$LASTEXITCODE` was undefined after Unity.exe launched
+  asynchronously as a GUI-subsystem process.
+- The underlying Unity process continued and produced BUILD_SUCCESS.
+- Classification: PowerShell/build launcher.
+
+Local PS5.1 Build wrapper final run:
+- Exit code: 0.
+- KIWI_V44_55_29_BUILD_PASS.
+- Build result: Success, Development Player, scenes=1.
+- Build totalSize: 276,909,982 bytes.
+- EXE SHA256:
+  98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81
+- Assembly-CSharp.dll SHA256:
+  E37CB89E9F83ED45ACAA09577354854832CC3D9FA3954B04A39431D23FE7A32C
+- Build identity:
+  KiwiValidation\KiwiBuildIdentity_v44_55_29.txt
+- Build log:
+  KiwiValidation\KiwiBuild_v44_55_29.log
+
+Important: the EXE is a Unity launcher stub and has the same SHA reported for
+v28 even though Assembly-CSharp differs. EXE SHA alone is not build authority.
+
+## 8. 3-Arm Runtime Evidence
+
+Final correlated EvidenceRoot:
+- KiwiValidation\RuntimeEvidence_v44_55_29_20260904_CORRELATED_VALID
+
+Final upload ZIP:
+- KiwiValidation\RuntimeEvidence_v44_55_29_20260904_CORRELATED_VALID_FINAL.zip
+- SHA256:
+  4AC003C697EF18129A83E0C11657864AE5582D97FBC412686111290A1944E040
+- Entries: 34.
+- Embedded Evidence SHA manifest SHA256:
+  4CCC4B2E9D9177ACC876387AE71F1BCEF6B560EB559DB0D84DFB6B466A3ED6CE
+
+DIRECT_GRAPHICS:
+- UTC interval 2026-09-04T12:20:43.8260904Z to
+  2026-09-04T12:23:29.1716219Z.
+- exitCode=0; v27 status=COMPLETE.
+- eligible=68; anomalousEligible=22.
+- REF_ONLY=68; MODE2_ONLY=0; BOTH=0; NEITHER=0.
+- v27 decision=REFERENCE_PAYLOAD_AUTHORITY_CONFIRMED.
+- observerFault=0; partialCapture=0; pendingAtCompletion=0.
+- v25 status=COMPLETE, dependencyStatus=COMPLETE,
+  decision=PUBLISHED_TRANSACTION_COHERENT_PARTIAL_COVERAGE.
+- v24 status=COMPLETE, decision=REFERENCE_TRANSACTION_VALID_CONFIRMED.
+
+COMMAND_BUFFER_GRAPHICS:
+- UTC interval 2026-09-04T12:29:58.3937468Z to
+  2026-09-04T12:32:24.4609141Z.
+- exitCode=0; v27 status=COMPLETE.
+- eligible=88; anomalousEligible=13.
+- REF_ONLY=88; MODE2_ONLY=0; BOTH=0; NEITHER=0.
+- v27 decision=REFERENCE_PAYLOAD_AUTHORITY_CONFIRMED.
+- observerFault=0; partialCapture=0; pendingAtCompletion=0.
+- This is the fresh replacement for the preserved 56-eligible invalid arm.
+
+COMMAND_BUFFER_ASYNC:
+- UTC interval 2026-09-04T12:26:01.1441341Z to
+  2026-09-04T12:28:34.7287105Z.
+- exitCode=0; v27 status=COMPLETE.
+- eligible=87; anomalousEligible=6.
+- REF_ONLY=0; MODE2_ONLY=0; BOTH=0; NEITHER=87.
+- v27 decision=ACTUAL_EQUALS_NEITHER_CONFIRMED.
+- observerFault=0; partialCapture=0; pendingAtCompletion=0.
+- v25 status=COMPLETE, dependencyStatus=COMPLETE,
+  decision=INSUFFICIENT_PUBLISHED_ANOMALOUS_DATA.
+- v24 status=COMPLETE, decision=MIXED_TRANSACTION.
+
+Common Runtime identity:
+- graphicsApi=Direct3D12; camera=UGREEN Camera 4K;
+  profile=1920x1080@60; captureTransport=B:SystemMemoryNV12.
+- Same Assembly-CSharp SHA:
+  E37CB89E9F83ED45ACAA09577354854832CC3D9FA3954B04A39431D23FE7A32C
+- Same inference model SHA:
+  ED487104519B0A88CB2CB2EC3678E183F447FB9DD63560998E960FFBAA8FB335
+- Same MediaPipe model SHA:
+  B261925D4AAD812B47A0E8D58C1BAA1223270A5D1F663D78338BC881C003879D
+- Same built/Production KiwiNativeCamera.dll SHA:
+  82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+- Same Inference Engine/MediaPipe assemblies, package manifests/lock,
+  installed package.json, protected Production sources, source package,
+  hotfix package, Run script, and Runtime Validator SHA across all valid arms.
+- Only arm-selection environment values differed.
+
+Preserved INVALID evidence, excluded from current claim:
+1. RuntimeEvidence_v44_55_29_20260904_211247:
+   DIRECT_GRAPHICS exit 29; v25 DEPENDENCY_BIND_TIMEOUT; v27 0 pairs,
+   status=APPLICATION_QUIT, decision=INVALID_OBSERVER.
+2. RuntimeEvidence_v44_55_29_20260904_212043\COMMAND_BUFFER_GRAPHICS:
+   normal exit and internally coherent 56 REF_ONLY rows, but fixed minimum 60
+   not met; v27 decision=INVALID_OBSERVER. Threshold was not relaxed.
+
+The final correlated root copies valid arm directories byte-for-byte. Immediate
+source/destination SHA equality was checked for all 10 files in each arm.
+
+## 9. Runtime Validator
+
+Identity validator:
+- Windows PowerShell 5.1 exit code: 0.
+- Result: KIWI_V44_55_29_RUNTIME_IDENTITY_VALIDATION_PASS.
+- Validated 20 identity categories across all three arms and against current
+  files, including Assembly-CSharp, package assemblies, models, Native,
+  package source, protected source, and harness.
+
+Payload Runtime Validator:
+- Windows PowerShell 5.1 exit code: 0 on the correlated valid root.
+- Result: KIWI_V44_55_29_RUNTIME_VALIDATION_PASS.
+- Fixed minimum eligible/anomalous counts: PASS.
+- dependencyTraceCount==completedPairCount: PASS.
+- observerFault, identity mismatch, duplicate decode/shadow, alias, field
+  mapping, shape, non-finite, partial, pending counters: zero/PASS.
+- Decision/classification row agreement: PASS.
+
+Validator limitation retained in Evidence:
+- The payload validator expects top-level EXE.sha256, while the strengthened
+  runner records identity.EXE.sha256. Its generated summary displays a blank
+  sameBuildExeSha256. This blank field is not used as authority.
+- Full same-build closure comes from the separate identity validator. The
+  payload validator remains authority for counts, integrity, classification,
+  and the claim-scoped decision.
+- Composite validation is recorded in
+  V44_55_29_COMPOSITE_VALIDATION.txt inside the final Evidence ZIP.
+
+## 10. v29 Claim-Scoped Decision
+
+V29_CLAIM_SCOPED_DECISION =
+ASYNC_QUEUE_EXECUTION_CONTEXT_CAUSAL_CONTRIBUTOR_CANDIDATE.
+
+Reason:
+- DIRECT_GRAPHICS and COMMAND_BUFFER_GRAPHICS both close every eligible Actual
+  payload bitwise to REF.
+- COMMAND_BUFFER_ASYNC classifies every eligible Actual payload as NEITHER.
+- Therefore CommandBuffer recording/execution form alone is rejected as the
+  primary cause for this same-build comparison; the async queue/execution
+  context transition remains the leading causal-contributor candidate.
+
+Claim scope:
+- Actual Production decode payload execution-form/queue isolation only.
+- This is not Canonical Semantic PASS, Avatar PASS, performance authority,
+  visual authority, full lifecycle/recovery closure, or Production adoption.
+
+## 11. Current Execution Context Status
+
+CONFIRMED RUNTIME:
+- The v28 pattern reproduced with valid normal exits and sufficient v27 raw
+  payload coverage.
+- Direct Graphics and CommandBuffer Graphics both equal REF exactly.
+- CommandBuffer Async equals neither shadow in all eligible rows.
+
+STATIC:
+- v29 has three opt-in execution arms and preserves default behavior when its
+  diagnostic environment is unset.
+- No fence, wait, queue flush, repeated inference, lane.input oracle, or new
+  readback was added by v29.
+
+INFERENCE/HYPOTHESIS:
+- Async queue/execution context is a causal-contributor candidate.
+
+UNVERIFIED:
+- A cross-queue resource dependency hazard as the exact cause.
+- Which sub-boundary inside async submission/output lifecycle is causal.
+- Correct fence type/location/necessity.
+- Whether disabling async is safe or performant in clean Production.
+- Cross-GPU/driver reproducibility.
+
+## 12. Source Snapshot for Stage 1
+
+Logical freeze name:
+KIWI_STAGE1_SOURCE_SNAPSHOT_V44_55_29_20260904_213928.
+
+Core identity manifest:
+E28B0B81F731B92B04B97D4AA7DB1187C8DD57C5A39F49B08B2E6799BBF5B3D1  Assets/Scenes/Face Landmark Detection.unity
+611BA53D1627847D786E714A7CC17EB8D5AE06C2EFBA4077DA1F396A81355EAE  ProjectSettings/EditorBuildSettings.asset
+EA333D8F6C87FFA35061EC92B7DEF6026D00D0131D7A6A05A23C53EB949B4F77  ProjectSettings/ProjectVersion.txt
+35F00A89D31A8BF7EE50718F38D4BAC90236D8B691F516C5FC14CAB47AFBFEE1  Packages/manifest.json
+23845C132DBF51CB53A5CFDE4EF606FA68D10DCB53AE5FF21F4305613A5F9CE1  Packages/packages-lock.json
+43BB8DA2496EFF443BE00D0B62642A789E850DC63965687241B74532F0EF051C  Assets/KiwiAvatarSystem/Runtime/Camera/IKiwiFreshFrameSource.cs
+D0DD9A78FA57AAB51D3E0C8606844C44F0207DC87277D0B26AEF3B43EF353533  Assets/KiwiAvatarSystem/Runtime/Camera/WindowsNativeWebCamSource.cs
+AC473ADBADE5EDC89726211ECAF03D040B5CC00FCA39BEA4A0D16195FA53E8B5  Assets/KiwiAvatarSystem/Runtime/Camera/KiwiNativeCameraInterop.cs
+528A2FE566A970E480DB8CA8851B46C873CBCE0289A13B6D15D5EF111D22907C  Assets/KiwiAvatarSystem/Runtime/Camera/KiwiNativeCameraTelemetry.cs
+6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93  Assets/Script/FaceLandmarkerRunner.cs
+1DBAAB45A5393D688B2ACE2A4FB5FBA995FE7B09E12843D3DAD536A15D8C539A  Assets/Script/KiwiInferenceFaceTracker.cs
+6F92C065BE426222FE591165551B4EB8B197A66998A3964A0D555F1564357801  Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiInferenceAsyncComputeDefaultV44_22.cs
+D30A700A7B9E3C3D09BC64FA0CA5722729EE41821DE1F1B5E30E30D986B947C2  Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiOrtDirectMLShadowRuntime.cs
+A10EC7889025BAABEB4B621956D5D0C7B8F6BA47B3674D0A8E12B7F968769DA9  Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiCanonicalTrackingFrame.cs
+B98CCBEBDA1969508D421B54F3A0D480B79434C996974B45D3F2EFEB45146BF5  Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiTrackingNormalizationContract.cs
+A5C7DE387FA2E02862BCF64942363AECFB9C7830B52DF5B8953404DF884ECCB1  Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiTrackingProviderHub.cs
+2AFCF4E9CD0AF6925F01AD3413B87E09FC45899DCCA94A853E889E500B4D2736  Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiCommercialLandmarkRefiner.cs
+D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6  Assets/Script/KiwiFaceMotion.cs
+39C06FEC43B4EA47AD783C233991E830E10B18DA285148E7A34B0C13DAD52CFE  Assets/Script/FacePartCropper.cs
+EE07BF928AC816C4989BFE81C6BE89E1A58979DCE0C6565EDC01C9078052D454  Assets/Script/FacePartAngleLock.cs
+822D18059988F390F52C40F60DA5F11E8ECF7577008D640272C5CF8D1557D4A6  Assets/Script/FacePartShapeMask.cs
+C32B19E6955CF3F635B502A4193A5A506893486C6ED61770444D51CC44E057F4  Assets/Script/FacePartMaskUV.cs
+DC78488DCD1D2E45E5AA6F40065D4983087014B501B5FD5A8E37B6D8E0F68849  Assets/KiwiAvatarSystem/Runtime/Presentation/KiwiFacePartTextureTransaction.cs
+578CE2ED93A2A78EE1B19D8FF309A115A2FA53596E79BAAB0534A27AC10077C0  Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiFacePartRigidSampleFrame.cs
+0BCCA0B7BD6982B78C0FC18058ACD54D073D786820F7B027B8C2F218EF2CAE70  Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiFacePartSharedTiltLock.cs
+4CD36DABF5C69ED15B54E7F93482EF5DA235BDC67CA9453E27F7355E961E5751  Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiFacePartPresentationResolver.cs
+3A845EA8A0F3939162A1621BFC36A2D2644BF6C28513D66D1BD2F97FD2A17D07  Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiFacePartLiveMotionBridge.cs
+55FECE90CA98C1502DDB55935B2B90471DE757381275C23152BEC2ADD02E9491  Assets/KiwiAvatarSystem/Runtime/KiwiAvatarRuntimeManager.cs
+02CF14CA919104B84B39464EF525CB845C447D3229B72933117FEC47C4D8B0B4  Assets/KiwiAvatarSystem/Runtime/KiwiAvatarProfile.cs
+FAF498E8F106D7550B2209B5459AF0B5F5D33900001E3F7AA338062D777A1355  Assets/KiwiAvatarSystem/Runtime/KiwiAdaptiveFaceFitter.cs
+9561950B8755328D60D394115B20CE9ECC74B731150E1DDA8D73C6F958974654  Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiCommercialPresentationTuner.cs
+1827C11E701482F8B46C310E45DF27BEF988148E47CB2C3B9C7744869FE481A4  Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiInferenceLifecycleGuard.cs
+2AC3DDAAF516A8553FA03169E058E362302456AA709AD26EB75F82F74813661B  Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiInferenceRecoveryBootstrap.cs
+40080B67FC7838C7156085DD52A47998E8BF59D09436D192CE033ACBB5F8723B  Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiCalibrationLifecycleCoordinator.cs
+90C2E91A48B5579AB5843CEACA1DE15CC935704DFD66787B445D8E4A615971B3  Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiRuntimePolicyResolver.cs
+6E71110071819C152BB0B3D6A6681400CD5EEC25E06F65A8E2D0866039AF485C  Assets/KiwiAvatarSystem/Runtime/KiwiPlatformRuntime.cs
+82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5  Assets/Plugins/x86_64/KiwiNativeCamera.dll
+
+Worktree status at freeze:
+- Modified tracked: KiwiOrtDirectMLShadowRuntime.cs,
+  KiwiPairBoundShadowOutputSnapshotV44_55_24.cs,
+  KiwiInferenceFaceTracker.cs, KiwiPsCompat.psm1.
+- Untracked diagnostic source/evidence/tools include v25-v29 observers, v29
+  Build/AutoQuit C#, AuditPackages, RuntimeEvidence, and Tools/KiwiV44_55_25..29.
+- No commit/push was performed.
+- Identity ambiguity is resolved by the exact hashes above and the final build/
+  Runtime identity manifests; ambient dirty state is not attributed to v29.
+
+## 13. Installed Package Identity
+
+MediaPipe Unity Plugin:
+- Manifest source: file:com.github.homuler.mediapipe-0.16.3.tgz
+- Installed path:
+  Library\PackageCache\com.github.homuler.mediapipe@66127f8e750d
+- package.json version: 0.16.3
+- package.json SHA256:
+  EEBBFF4550FA9CA3C2C76AB05BD0EDBDB3A0A4C2800883E244DC9E40D8FF2A2D
+
+Unity Inference Engine:
+- Manifest version: 2.4.1
+- Installed path:
+  Library\PackageCache\com.unity.ai.inference@587873fd5e1b
+- package.json version: 2.4.1
+- package.json SHA256:
+  2F230C84E28A9E3AD516B1A49B79B6F83E172F1C16E6813E0F1DD6FA2B1790EE
+
+Klak Spout supporting package:
+- Installed version: 2.0.6
+- Installed path:
+  Library\PackageCache\jp.keijiro.klak.spout@cd3751890357
+
+Full package method/source audit is intentionally deferred to Stage 1.
+
+## 14. Active Scene Identity
+
+Scene: Assets/Scenes/Face Landmark Detection.unity
+Scene SHA256:
+E28B0B81F731B92B04B97D4AA7DB1187C8DD57C5A39F49B08B2E6799BBF5B3D1
+Scene GUID: df0fc3b9f7146dee593f8b5660ae773c
+Build enabled: YES, sole enabled scene.
+
+Production Runner:
+- FaceLandmarkerRunner script GUID: 78fe4f7b7ad763b02aa042ef4c50ff6e
+- Scene references: 1; component m_Enabled=1.
+- Serialized runner references Bootstrap prefab GUID
+  1146a9de09159a948b683e94fb3d3c95 ->
+  Assets/MediaPipeUnity/Samples/Resources/Bootstrap.prefab.
+
+Tracker identity:
+- KiwiInferenceFaceTracker is a non-MonoBehaviour owned/constructed by the
+  Runner; its script GUID is 8b2f3b87b14854f4d8dcd3e8a182d6c4.
+- Direct Scene GUID reference count is 0, as expected for this ownership form.
+- Current source SHA is the v29 diagnostic SHA listed above.
+
+KiwiFaceMotion:
+- Script GUID ea0c91b1a00025b49898de00116e93ae.
+- Scene references: 1; component m_Enabled=1.
+- Serialized runner reference points to the active FaceLandmarkerRunner.
+
+Resolved relevant Scene prefab GUIDs:
+- 140d1d2c406167c50819d89f86d9092e -> Main Canvas.prefab.
+- 5713b959e3c77a58fb258133fc8e4aef -> Annotatable Screen.prefab.
+- 9f9af2b96610a144c83e229a8e7ea5f9 -> uni_kiwi_textured_rigged.prefab.
+- 1146a9de09159a948b683e94fb3d3c95 -> Bootstrap.prefab.
+
+Open Scene reference:
+- GUID 2e1291ddc10af56d4be1551cc630d40b is serialized as the Multi
+  FaceLandmarkList Annotation source prefab but no matching local .meta was
+  found. Unity preflight and Development build passed, so this is recorded as
+  an unresolved/possibly embedded or legacy annotation reference for Stage 1,
+  not promoted to a confirmed runtime defect.
+
+## 15. Known Static/Open Findings
+
+None of F1-F5 is promoted here to a confirmed Production bug.
+
+F1 Expression Canonical latch bypass:
+- Classification: CONFIRMED_STATIC candidate / RUNTIME_NOT_PROVEN /
+  NEEDS_STAGE1_AUDIT.
+- Stage 1 must establish the exact Runner-to-Canonical-to-expression read path
+  and whether any direct Runner read bypasses the intended latch.
+
+F2 FacePart Texture exact identity gap:
+- Classification: RUNTIME_NOT_PROVEN / NEEDS_STAGE1_AUDIT.
+- v29 is raw inference payload authority only and does not close same-sample
+  FacePart texture/crop/mask identity.
+
+F3 RigidSampleFrame / SharedTiltLock roll double-owner condition:
+- Classification: CONFIRMED_STATIC component coexistence candidate /
+  RUNTIME_NOT_PROVEN / NEEDS_STAGE1_AUDIT.
+- Do not remove either layer before writer conditions and runtime authority are
+  mapped.
+
+F4 multiple temporal processing layers:
+- Classification: CONFIRMED_STATIC layer plurality / RUNTIME_NOT_PROVEN /
+  NEEDS_STAGE1_AUDIT.
+- Existence of multiple temporal classes is not proof of harmful double
+  smoothing or authority conflict.
+
+F5 Provider transition ownership open issue:
+- Classification: NEEDS_STAGE1_AUDIT / RUNTIME_NOT_PROVEN.
+- Preserve Resume != Provider Switch and do not add a new owner before the
+  transition writers/readers are mapped.
+
+## 16. Stage 1 Audit Scope Index
+
+This is a file/class/likely-entry index only. No full method, statement,
+read/write, execution-order, writer, or dataflow audit was performed.
+
+Camera:
+- Assets/KiwiAvatarSystem/Runtime/Camera/WindowsNativeWebCamSource.cs
+  class WindowsNativeWebCamSource; likely entry: image-source lifecycle/fresh-frame acquisition.
+- KiwiNativeCameraInterop.cs, KiwiNativeCameraTelemetry.cs,
+  IKiwiFreshFrameSource.cs; likely entry: Native ABI, frame metadata, fresh-frame contract.
+
+Inference:
+- Assets/Script/FaceLandmarkerRunner.cs class FaceLandmarkerRunner;
+  likely entry: active scene Runner/update pipeline.
+- Assets/Script/KiwiInferenceFaceTracker.cs class KiwiInferenceFaceTracker;
+  likely entry: schedule/completion/decode lane lifecycle.
+- KiwiInferenceAsyncComputeDefaultV44_22.cs;
+  likely entry: runtime async default/override bootstrap.
+- Installed com.unity.ai.inference 2.4.1 source;
+  likely entry: TextureConverter, Worker schedule/output lifetime.
+
+Canonical:
+- KiwiCanonicalTrackingFrame.cs classes KiwiCanonicalTrackingFrame and
+  KiwiCanonicalTrackingFrameCoordinator; likely entry: canonical publish/latch.
+- KiwiTrackingNormalizationContract.cs; likely entry: provider normalization boundary.
+- FaceLandmarkerRunner.cs and KiwiFaceMotion.cs; likely entry: producer/consumer boundary.
+
+Tracking:
+- KiwiTrackingProviderHub.cs class KiwiTrackingProviderHub;
+  likely entry: provider selection/transition/liveness.
+- KiwiCommercialLandmarkRefiner.cs; likely entry: landmark refinement layer.
+- KiwiInferenceFaceTracker.cs; likely entry: latest-frame inference tracking.
+- KiwiFaceMotion.cs; likely entry: Avatar tracking consumer.
+
+FacePart:
+- FacePartCropper.cs, FacePartAngleLock.cs, FacePartShapeMask.cs,
+  FacePartMaskUV.cs.
+- KiwiFacePartTextureTransaction.cs class KiwiFacePartTextureTransaction.
+- KiwiFacePartRigidSampleFrame.cs, KiwiFacePartSharedTiltLock.cs,
+  KiwiFacePartPresentationResolver.cs, KiwiFacePartLiveMotionBridge.cs.
+- Likely entry: scene-bound FacePart MonoBehaviour lifecycle and final
+  texture/presentation transaction.
+
+Avatar:
+- KiwiFaceMotion.cs class KiwiFaceMotion; likely entry: scene-bound Avatar consumer.
+- KiwiAvatarRuntimeManager.cs class KiwiAvatarRuntimeManager;
+  likely entry: runtime import/hot-swap ownership.
+- KiwiAvatarProfile.cs, KiwiAdaptiveFaceFitter.cs;
+  likely entry: model profile and adapter/fitting policy.
+
+Presentation:
+- WindowsNativeWebCamSource.cs; likely entry: fixed Native presentation texture.
+- KiwiFacePartTextureTransaction.cs; likely entry: FacePart texture transaction.
+- KiwiCommercialPresentationTuner.cs; likely entry: presentation policy.
+- Existing LIVE CAMERA diagnostics are supporting evidence only, not Production writer authority.
+
+Spout:
+- Library/PackageCache/jp.keijiro.klak.spout@cd3751890357/Runtime/SpoutSender.cs.
+- Runtime/Internal/Sender.cs, SpoutManager.cs, SpoutResources.cs.
+- KiwiPlatformRuntime.cs; likely entry: platform/runtime Spout integration.
+
+Lifecycle:
+- KiwiInferenceLifecycleGuard.cs class KiwiInferenceLifecycleGuard.
+- KiwiInferenceRecoveryBootstrap.cs.
+- KiwiCalibrationLifecycleCoordinator.cs.
+- KiwiAvatarRuntimeManager.cs.
+- Likely entry: runtime-init/Awake/quit/recovery and hot-swap boundaries.
+
+Configuration:
+- KiwiRuntimePolicyResolver.cs class KiwiRuntimePolicyResolver.
+- KiwiAvatarProfile.cs.
+- MediaPipe FaceLandmarkDetectionConfig.cs.
+- Packages/manifest.json, Packages/packages-lock.json,
+  ProjectSettings/EditorBuildSettings.asset, ProjectSettings/GraphicsSettings.asset.
+- Likely entry: scene serialization, environment/default policy, package lock.
+
+## 17. Stage 1 Preconditions
+
+1. current Production source identity known: YES.
+2. relevant protected SHA recorded: YES.
+3. v29 build completed: YES, wrapper exit 0.
+4. v29 3-arm Runtime completed: YES, correlated valid arms.
+5. Runtime Evidence ZIP exists: YES, final SHA recorded.
+6. Runtime Validator result known: YES, composite PASS.
+7. valid/invalid claim scope separated: YES.
+8. active Scene identified: YES.
+9. package versions identified: YES.
+10. worktree status recorded: YES.
+11. Stage 1 target source snapshot logically frozen: YES.
+12. known open issues listed: YES.
+13. no uncommitted diagnostic ambiguity changing source identity: YES; exact
+    source/build/harness SHA and invalid-run exclusions are recorded.
+14. Stage 1 scope index prepared: YES, files/classes/entry roles only.
+
+## 18. Stage 1 Readiness Verdict
+
+STAGE1_READY = YES.
+STAGE1_EXECUTED = NO.
+
+The next task can begin READ_ONLY_FULL_DATAFLOW_AUDIT using the exact source,
+package, Scene, build, and Runtime authority frozen here. It must not substitute
+the excluded invalid runs or the v20 dependency-only decision for v29 authority.
+
+Readiness does not mean Production adoption. It means the Stage 1 audit inputs
+are unambiguous and its source snapshot can be addressed by exact SHA.
+
+## 19. Do Not Change
+
+Without new Evidence, do not change Face Landmarker Primary, Native Camera Path
+B, latest-frame, fixed presentation texture identity, bounded lanes, persistent
+ROI, non-blocking execution, Root/Head/Eye/Mouth authority separation, provider
+normalization owner, temporal presentation owner, prediction owner, thresholds,
+smoothing, Kalman, CPU Production backend, or external tracker.
+
+Do not add FIFO/stale queues, UpdateExternalTexture, lane.input oracle,
+GraphicsFence/Wait, queue flush, Unity D3D12 queue Wait, repeated inference,
+blocking readback, rotating texture, or Native rebuild.
+
+Do not modify FaceLandmarkerRunner.cs, KiwiFaceMotion.cs, or Native source as an
+execution-context workaround. Do not commit or push without explicit instruction.
+
+## 20. Recommended Next Action
+
+Begin READ_ONLY_FULL_DATAFLOW_AUDIT using logical snapshot
+KIWI_STAGE1_SOURCE_SNAPSHOT_V44_55_29_20260904_213928 and the final correlated
+Runtime Evidence ZIP.
+
+Stage 1 should answer the recorded dataflow/authority questions before any fix:
+- where exact identity is retained or lost;
+- whether any property has multiple writers/owners;
+- how many temporal-state owners exist;
+- where any direct Runner bypass exists;
+- who owns final presentation writes;
+- which writers are inactive/legacy;
+- whether Root/Head/Eye/Mouth authority remains separated in implementation.
+
+For execution context, only propose the next bounded diagnostic sub-boundary.
+Do not implement a fence, wait, queue flush, async disable, clone, or Production
+schedule change from v29 alone.
+
+## STAGE1_INPUT_AUTHORITY
+
+Project: D:\KiwiAvatarSystem
+Unity: 6000.0.80f1 (2dfd32957da2)
+Scene: Assets/Scenes/Face Landmark Detection.unity
+Git HEAD: 27281c622d7b8bf2ececf711b037fc8f9e029004
+Git Status: dirty; exact tracked/untracked scope and SHA recorded above
+
+Production Baseline SHA:
+- pre-v29 Tracker 52C046EE44B41A4FF50B85AEF503BC29DD31B57EAF58C0D160CCC33C5D4B7695
+- protected Runner 6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93
+- protected FaceMotion D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6
+Diagnostic SHA:
+- v29 Tracker 1DBAAB45A5393D688B2ACE2A4FB5FBA995FE7B09E12843D3DAD536A15D8C539A
+- Assembly-CSharp E37CB89E9F83ED45ACAA09577354854832CC3D9FA3954B04A39431D23FE7A32C
+
+Installed MediaPipe: 0.16.3 at com.github.homuler.mediapipe@66127f8e750d
+Installed Inference Engine: 2.4.1 at com.unity.ai.inference@587873fd5e1b
+
+Latest Valid Runtime Claim:
+- v29 DIRECT and CB_GRAPHICS exact REF; CB_ASYNC all NEITHER; identity/payload validators PASS.
+Latest Invalid Experiment:
+- v29 211247 dependency-bind/exit29 run; v29 212043 CB_GRAPHICS 56-row coverage run.
+v29 Runtime Decision:
+- ASYNC_QUEUE_EXECUTION_CONTEXT_CAUSAL_CONTRIBUTOR_CANDIDATE.
+
+## STAGE1_SCOPE
+
+Camera: WindowsNativeWebCamSource, Native interop/telemetry/fresh-frame files.
+Inference: FaceLandmarkerRunner, KiwiInferenceFaceTracker, async default owner,
+installed Inference Engine source.
+Canonical: KiwiCanonicalTrackingFrame, normalization contract, Runner/Motion boundary.
+Tracking: ProviderHub, LandmarkRefiner, Tracker, KiwiFaceMotion.
+FacePart: Cropper/locks/masks/texture transaction/rigid sample/tilt/presentation bridge.
+Avatar: KiwiFaceMotion, AvatarRuntimeManager, AvatarProfile, AdaptiveFaceFitter.
+Presentation: Native presentation, FacePart transaction, PresentationTuner.
+Spout: SpoutSender/Internal Sender/Manager/Resources, KiwiPlatformRuntime.
+Lifecycle: InferenceLifecycleGuard/RecoveryBootstrap, Calibration coordinator,
+AvatarRuntimeManager.
+
+## STAGE1_KNOWN_QUESTIONS
+
+- Where is exact identity retained or lost?
+- Which properties have duplicate writers/owners?
+- How many temporal-state owners exist?
+- Where is any direct Runner bypass?
+- Who is the final presentation writer?
+- Which writers are inactive/legacy?
+- Is Root/Head/Eye/Mouth authority preserved in implementation?
+
+## FINAL STATUS
+
+V29_APPLY = PASS_BY_EXACT_INSTALLED_IDENTITY; original Apply exit code NOT_RETAINED
+V29_STATIC_VALIDATE = PASS; exit code 0
+V29_BUILD = PASS; exit code 0
+V29_RUNTIME_3ARM = PASS; correlated valid arms, all exit code 0
+V29_RUNTIME_VALIDATOR = PASS_COMPOSITE; identity exit 0 + payload exit 0
+
+DIRECT_GRAPHICS_RESULT = ACTUAL_EQUALS_REF_ONLY 68/68; anomalousEligible=22; valid
+COMMAND_BUFFER_GRAPHICS_RESULT = ACTUAL_EQUALS_REF_ONLY 88/88; anomalousEligible=13; valid
+COMMAND_BUFFER_ASYNC_RESULT = ACTUAL_EQUALS_NEITHER 87/87; anomalousEligible=6; valid
+
+V29_CLAIM_SCOPED_DECISION = ASYNC_QUEUE_EXECUTION_CONTEXT_CAUSAL_CONTRIBUTOR_CANDIDATE
+
+EXECUTION_CONTEXT_STATUS = CommandBuffer form rejected as primary cause for this same-build comparison; async queue/execution context supported as causal-contributor candidate; exact hazard/fix unproven
+
+CURRENT_PRODUCTION_SOURCE_IDENTITY = KNOWN_AND_LOGICALLY_FROZEN
+CURRENT_RUNTIME_AUTHORITY = V29_CORRELATED_VALID_3ARM_IDENTITY_AND_PAYLOAD_PASS
+
+STAGE1_SOURCE_SNAPSHOT_READY = YES
+STAGE1_PACKAGE_IDENTITY_READY = YES
+STAGE1_SCENE_IDENTITY_READY = YES
+STAGE1_RUNTIME_BASELINE_READY = YES
+STAGE1_SCOPE_INDEX_READY = YES
+
+STAGE1_EXECUTED = NO
+
+STAGE1_READY = YES
+
+PRODUCTION_BEHAVIOR_CHANGE = NO; opt-in diagnostic source only, default preserved
+TRACKING_CORE_CHANGE = NO policy/math/authority change; Tracker diagnostic execution-form patch only
+NATIVE_CHANGE = NO
+FACEPART_CHANGE = NO
+
+NEXT_ACTION =
+Begin READ_ONLY_FULL_DATAFLOW_AUDIT using the frozen current source/runtime
+authority recorded in this report. Do not implement an execution-context fix
+until Stage 1 and any next bounded diagnostic establish the causal sub-boundary.

@@ -1,0 +1,17 @@
+status=COMPLETE
+performanceAuthority=0
+finalPairs=60
+eligiblePairs=60
+probe=0
+observerFault=0
+identityMismatch=0
+duplicate=0
+outOfOrder=0
+missingPair=0
+headerErrors=0
+hasError=0
+partialCapture=0
+pendingAtCompletion=0
+copyCount=0
+issuedRequests=0
+completedRequests=0

@@ -1,0 +1,1202 @@
+KiwiAvatarSystem P2
+Camera -> MediaPipe -> Canonical Source-Grounded Method/Dataflow Simplification Audit
+
+REPORT_TIMESTAMP_JST=2026-09-06 18:42:45 +09:00
+PROJECT=D:\KiwiAvatarSystem
+MODE=READ_ONLY
+PRODUCTION_CHANGE=NO
+RUNTIME=NO
+BUILD=NO
+COMMIT_PUSH=NO
+
+================================================================================
+Executive Summary
+================================================================================
+
+P2 RESULT: COMPLETE, subject to the explicit Unknowns and claim-scoped authority
+limits in this report.
+
+The current working Camera -> MediaPipe -> Canonical path is not supported for a
+wide redesign. The shortest evidence-supported decision is NO_CHANGE for Native
+Path B, camera latest-frame ownership, the Runner pre-input fresh/latest gate,
+MediaPipe's internal flow limiter, callback-time result copying, claim-scoped
+timestamps, and current Kiwi geometric rigid-head authority.
+
+Four simplification findings are material:
+
+1. FaceLandmarkerRunner contains 16 consecutive assignments of the same
+   _observedFreshFrameSource expression and 16 consecutive calls to
+   ObserveFreshFrameSource in the same loop region. PrepareFrameForUnity's Unity
+   frame guard and the native sequence freshness guard make calls after the first
+   normally idempotent, so this is not promoted to a Runtime defect. It is a
+   statement-only MERGE candidate.
+
+2. KiwiExpressionReaction directly consumes Runner expression state while
+   FacePartShapeMask consumes canonical expression. This is a static owner bypass.
+   A one-owner input architecture is preferable, but changing to the canonical
+   accessor may alter freshness/coherence timing. Classification: MERGE candidate
+   plus NEEDS_RUNTIME_EVIDENCE before adoption. Its presentation attack/release
+   state remains a distinct channel responsibility and is not proposed for removal.
+
+3. KiwiFacePartRigidSampleFrame and KiwiFacePartSharedTiltLock are both
+   auto-installed and enabled by default. The first rotates SurfaceFittedRawImage
+   uv0/uv1; the second independently computes the same rendered-eye-line correction
+   and writes _SampleRotationRad. FacePartSoftMask then rotates the already-rotated
+   mesh UV again. SharedTiltLock disables only the older FacePartAngleLock, not
+   RigidSampleFrame. This establishes two current owners for the same sampling
+   rotation claim. Retain RigidSampleFrame and classify SharedTiltLock as the
+   strongest RETIRE_CANDIDATE, with a change-local Runtime/Visual gate before
+   removal.
+
+4. KiwiFacePartTextureTransaction does not carry native frame sequence. It matches
+   a GPU history slot to Canonical submissionHostTicks by nearest time within 55 ms,
+   constrained by camera/tracking generations. This is useful bounded correlation,
+   but is not exact native-sample identity. F2 cannot be closed by renaming or
+   merging tokens. No instrumentation is added in P2.
+
+Sentis hybrid has concrete static responsibilities: a high-cadence 468-landmark
+backend, persistent ROI lease, three bounded GPUCompute lanes, generation and
+source freshness rejection before output readback, and MediaPipe-derived auxiliary
+expression/rotation/anchor refresh at the serialized 10 Hz default. It also adds a
+crop Blit, tensor conversion, output readback, model-specific state, and a second
+landmark authority selected before Canonical. Source does not establish that its
+quality/latency gain is necessary in current Product, nor that deletion is safe.
+It remains KEEP_CURRENTLY / NEEDS_RUNTIME_EVIDENCE, not RETIRE_CANDIDATE.
+
+The validation critical path can be reduced without weakening the completion gate.
+v20/v24/v25/v27/v31, E2, and P1 PixelSpaceAudit should be frozen as historical
+evidence or invoked only when their exact claim reopens. The recommended regression
+shape is: change-local gate + Contract/Golden Replay gate + milestone Full Product
+gate. Observer-heavy runs remain ineligible for Performance Authority.
+
+WHY_CHANGE_IS_BETTER_THAN_NO_CHANGE=
+Only two source-local simplifications have evidence stronger than NO_CHANGE:
+(a) collapse exact duplicate Runner statements/calls without changing logic, and
+(b) retire one of two active owners of the same FacePart sampling rotation, retaining
+RigidSampleFrame. Neither change is performed in P2. F1, F2, F4, Sentis necessity,
+and image-preparation optimization do not yet clear this bar.
+
+================================================================================
+Authority Freeze
+================================================================================
+
+Requested roadmap authority:
+  KiwiAvatarSystem_最新統合情報_ValidationReduction_R12_0906_1525.txt
+Status:
+  ABSENT from D:\KiwiAvatarSystem\KiwiValidation at audit time.
+Consequence:
+  P2 does not invent or silently substitute R12 claims. Current local source is
+  Implementation Authority. The available R11, P1, and P1-2 reports are used only
+  for their stated historical/same-build claims.
+
+Git:
+  HEAD=27281c622d7b8bf2ececf711b037fc8f9e029004
+  Worktree=DIRTY, user-owned.
+  Tracked pre-existing modifications observed:
+    Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiOrtDirectMLShadowRuntime.cs
+    Assets/KiwiAvatarSystem/Runtime/Validation/KiwiPairBoundShadowOutputSnapshotV44_55_24.cs
+    Assets/Script/KiwiInferenceFaceTracker.cs
+    Tools/KiwiPowerShell/KiwiPsCompat.psm1
+  Many pre-existing untracked diagnostics, reports, build helpers, and evidence
+  directories are present. P2 does not attribute them to this audit and does not
+  edit them.
+
+Current local Implementation/source identities (SHA256):
+  E28B0B81F731B92B04B97D4AA7DB1187C8DD57C5A39F49B08B2E6799BBF5B3D1  Assets/Scenes/Face Landmark Detection.unity
+  88CB3F68F275E1A7DCBF1FEA8C59D123F50743C6F93B0F861E1FD653865EC6AA  ProjectSettings/ProjectSettings.asset
+  82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5  Assets/Plugins/x86_64/KiwiNativeCamera.dll
+  636D76251F9CB3BB785F4497D3D0722033FC0CE36CB4A574B65EDA58B5ABE32A  Native/KiwiNativeCamera/Source/KiwiNativeCameraPlugin.cpp
+  D0DD9A78FA57AAB51D3E0C8606844C44F0207DC87277D0B26AEF3B43EF353533  Assets/KiwiAvatarSystem/Runtime/Camera/WindowsNativeWebCamSource.cs
+  AC473ADBADE5EDC89726211ECAF03D040B5CC00FCA39BEA4A0D16195FA53E8B5  Assets/KiwiAvatarSystem/Runtime/Camera/KiwiNativeCameraInterop.cs
+  6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93  Assets/Script/FaceLandmarkerRunner.cs
+  CF860F4EF686BD5FDAC4140D4F3E73E64B6F390C3BC64204CF346011AC69380D  Assets/Script/KiwiInferenceFaceTracker.cs [DIRTY]
+  D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6  Assets/Script/KiwiFaceMotion.cs
+  0D48FB25CD79CE571F2892609E094D0D7DEA7A6C4B9D73A43A4B53B2A2980EF8  Assets/Script/KiwiExpressionReaction.cs
+  39C06FEC43B4EA47AD783C233991E830E10B18DA285148E7A34B0C13DAD52CFE  Assets/Script/FacePartCropper.cs
+  822D18059988F390F52C40F60DA5F11E8ECF7577008D640272C5CF8D1557D4A6  Assets/Script/FacePartShapeMask.cs
+  A10EC7889025BAABEB4B621956D5D0C7B8F6BA47B3674D0A8E12B7F968769DA9  Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiCanonicalTrackingFrame.cs
+  A5C7DE387FA2E02862BCF64942363AECFB9C7830B52DF5B8953404DF884ECCB1  Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiTrackingProviderHub.cs
+  DC78488DCD1D2E45E5AA6F40065D4983087014B501B5FD5A8E37B6D8E0F68849  Assets/KiwiAvatarSystem/Runtime/Presentation/KiwiFacePartTextureTransaction.cs
+  578CE2ED93A2A78EE1B19D8FF309A115A2FA53596E79BAAB0534A27AC10077C0  Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiFacePartRigidSampleFrame.cs
+  0BCCA0B7BD6982B78C0FC18058ACD54D073D786820F7B027B8C2F218EF2CAE70  Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiFacePartSharedTiltLock.cs
+  1EA5B0493A48BE9B64AFD6316C8FBD4A4EC172848F06F8879BA733BB73535167  Assets/Script/SurfaceFittedRawImage.cs
+  EB6CDCBE0B838053FB5A563641328E42C1BAAFB935D61F367913208D9638E921  Assets/Shader/FacePartSoftMask.shader
+
+Native provenance boundary:
+  The installed Production DLL is the Implementation binary authority. The current
+  C++ file explicitly describes itself as a candidate that has not been compiled,
+  linked, loaded, or Runtime-tested. Earlier provenance work supports a strong
+  Class B relationship but not Class A source-to-binary closure: historical SDK,
+  PluginAPI headers, PDB, full toolchain environment, and deterministic build
+  attestation are absent. Therefore C++ method/dataflow findings below are STATIC
+  SOURCE / CLASS B, not a fabricated claim that this exact text produced the DLL.
+  A different Native/Build/x86_64 DLL is not the installed Production DLL.
+
+Installed package authority:
+  MediaPipeUnityPlugin cache directory:
+    Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d
+  package.json version=0.16.3
+  package.json SHA256=EEBBFF4550FA9CA3C2C76AB05BD0EDBDB3A0A4C2800883E244DC9E40D8FF2A2D
+  package archive SHA256=CC3E92785C890F1EC862185C30B31E7144BC51F1D8794FAFDEFA212C45242E79
+  FaceLandmarker.cs=6D1B9993679BDF5942C9BF1A1623BB24912BC1A5812D80C589A34EDAB12BE3CE
+  FaceLandmarkerOptions.cs=836442E0E9D87B0474D6FB5BB64C3BE35A5DAB4F9E66735048C010B725CAA481
+  BaseVisionTaskApi.cs=30BC1806E34DB11B63D524272DEEFFB292BCACD25972C546C24933C0FB4E6B3A
+  TaskRunner.cs=7ED3BBE36CD93BF40510A8AFCC07D9C5F663D1F56FD8348C9A3EA59F001A3B79
+  Packet.cs=CAB36509D4EE15AF9B088F47049C25960FFA51826EDCE2B31A52C07EF5108376
+  Image.cs=BF9EBEB545CB510510E643827E01F284D4ACA073FDE2D70E131E67A6F33E519C
+  TextureFrame.cs=244762C8A2AD4100F3DEB89BD5712101B9C2C1E7639BECE6B430AE8220D84F9C
+
+  The audited plugin source snapshot WORKSPACE pins MediaPipe v0.10.22; README and
+  CHANGELOG agree. Official MediaPipe v0.10.22 release tag resolves to c54c06d.
+  A local mediapipe_5257839 checkout is newer master and is NOT version-match
+  Package Authority.
+
+  Inference Engine cache directory:
+    Library/PackageCache/com.unity.ai.inference@587873fd5e1b
+  package.json version=2.4.1
+  package.json SHA256=2F230C84E28A9E3AD516B1A49B79B6F83E172F1C16E6813E0F1DD6FA2B1790EE
+
+Historical report identities used only within their claim scope:
+  R11 SHA256=18876767C0A914798011B7B1DDECBD97240817353AF06A06151403F67935F765
+  P1 SHA256=E8673B5204D5DAD97821964D8733B9E3DC5B0383C81EBBC208A29DA18BAE04D9
+  P1-2 SHA256=94053AFD0CF1162FD10BCE96D290F3D8300512546EEA979163E9A4F1128FC4FD
+  2026-09-02 acceptance report SHA256=A0C70BD2A88DF71F83284043C22246A2EA44FE5F56F7AF86832818D8A914404D
+
+Authority labels used below:
+  CONFIRMED_STATIC = current local source or installed package was read.
+  CLASS_B_STATIC = current Native source semantics without byte-exact DLL closure.
+  HISTORICAL_RUNTIME = a cited same-build historical evidence set, not this P2 run.
+  EXTERNAL_OFFICIAL = official source/docs, comparison only.
+  INFERENCE = explicitly reasoned consequence, not directly measured.
+  UNKNOWN = evidence unavailable; no PASS is issued.
+
+================================================================================
+Historical Acceptance Reconciliation
+================================================================================
+
+2026-09-02 accepted claim:
+  Purpose: relative before/after UI presentation improvement.
+  Change: nominal LIVE CAMERA drawRect 412x236 -> 560x315.
+  Static/Runtime conditions recorded: 1920x1080 source, exact 16:9 draw aspect,
+  same Texture ID, DIRECT/OFF, Bilinear, no additional Blit/readback, unchanged
+  Native/Tracking/Inference critical identities. Later Unity Editor execution and
+  user-confirmed full-frame before/after visual comparison were recorded PASS.
+  It was not a universal absolute camera-image-quality certificate.
+
+P1-2 exact frozen-v31 claim:
+  Exact v31 executable SHA256:
+    98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81
+  Actual Player client: 1706x901, not requested 2560x1352.
+  Source: 1920x1080. Original rect: x1120 y38 w560 h315.
+  108/108 frames: same source/comparison Texture, DIRECT_SAME_TEXTURE,
+  ARGB32/R8G8B8A8_UNorm, Bilinear, Linear, mirrorX=1, observerBlit=0.
+  Human decision: ORIGINAL symptom REPRODUCED; Audit FULL represents Original YES;
+  FULL vs same-source 1:1 central crop BOTH_BAD_SIMILAR.
+  The run explicitly was not Performance Authority.
+
+Authority differences not closed:
+  - physical camera controls and driver state;
+  - lighting, focus, exposure, distance, and motion equivalence;
+  - identical Editor versus Standalone capture conditions;
+  - exact display/DPI/capture chain equivalence between dates.
+
+Decision:
+  HISTORICAL_ACCEPTANCE_RECONCILIATION=COMPATIBLE_DIFFERENT_ACCEPTANCE_SCOPE
+  TRUE_VISUAL_REGRESSION_SUPPORTED=NO
+
+Reason:
+  A relative UI-size/aspect improvement can pass while a later absolute image-
+  quality comparison remains unsatisfactory. P1-2 rejected a display-minification-
+  only explanation for that frozen run; it did not establish a temporal regression
+  from 2026-09-02, nor Native, F1, F2, F4, filter, or crop causality.
+
+================================================================================
+Native Camera Dataflow
+================================================================================
+
+The following is CLASS_B_STATIC unless a managed/DLL ABI statement is explicitly
+identified. It preserves rather than replaces Path B.
+
+1. StartInternal -> CreateMediaFoundationReader
+   - MFStartup, device enumeration/selection, async IMFSourceReader creation.
+   - MF_LOW_LATENCY is enabled; converters are disabled; exact NV12 media type is
+     selected.
+   - SourceReader callback object attaches the borrowed reader.
+   - Three fixed CPU slots and three fixed GPU slots are lifecycle-owned globals.
+
+2. SourceReaderCallback::RequestNext
+   - Calls IMFSourceReader::ReadSample in asynchronous callback mode.
+   - It does not wait for the sample.
+   - One explicit request produces its corresponding OnReadSample completion.
+
+3. SourceReaderCallback::OnReadSample
+   - Executes on the SourceReader callback context, not Unity main thread.
+   - Captures QueryPerformanceCounter arrival hostTicks.
+   - Increments a local monotonically increasing native sequence.
+   - llTimestamp is used for interval telemetry; it is not the downstream identity.
+   - CopySampleToCpuLatest immediately copies the NV12 sample into a Kiwi-owned CPU
+     slot using IMF2DBuffer2::Lock2DSize, IMF2DBuffer::Lock2D, or raw buffer Lock.
+   - The callback does not retain IMFSample after return.
+   - After the bounded CPU copy it calls RequestNext. Callback and shared state are
+     synchronized; no Unity/render-thread wait is introduced.
+
+4. CPU latest ownership
+   - AcquireCpuWriteSlot finds a free slot or replaces the oldest Ready slot.
+   - AcquireLatestCpuReadSlot selects the newest Ready slot and releases other Ready
+     slots. This is latest-wins, not FIFO.
+   - ProcessingWorker may block only on its condition variable while idle. That is
+     a native worker-lifecycle wait, not a render/D3D12 queue wait.
+
+5. ProcessingWorker -> ProcessNv12OnGpu
+   - UpdateSubresource uploads Kiwi-owned NV12 bytes to a reusable D3D11 texture.
+   - D3D11 copy/compute converts NV12 to RGBA and CopyResource moves the result into
+     a D3D12-compatible shared resource.
+   - Producer fence is signaled. There is no CPU/D3D12 blocking Wait.
+   - ReclaimUnityCompletedSlotsLocked only polls completion.
+   - If all three GPU slots are unavailable, work is dropped rather than queued.
+
+6. RequestLatestPresent
+   - Polls the producer completed fence and chooses newest completed Ready sequence
+     greater than last requested sequence.
+   - Returns slot index, sequence, hostTicks, and a borrowed ID3D12Resource pointer.
+   - Marks PresentRequested; it does not transfer resource ownership.
+
+7. OnRenderEvent
+   - Called through the Unity plugin event for the selected slot.
+   - Captures the Unity-side frame fence and moves the slot to AwaitUnity.
+   - Later polling reclaims it nonblockingly after Unity completion.
+
+8. StopUnlocked
+   - Clears running, notifies and joins ProcessingWorker, Flushes SourceReader,
+     detaches callback, releases resources, calls MFShutdown, clears slots and
+     sequences. The join is allowed lifecycle blocking outside the normal frame
+     path. A new Start is a new native session and sequence restarts from zero.
+
+Official Microsoft comparison:
+  IMFSourceReader::ReadSample asynchronous mode returns immediately, completion is
+  delivered through IMFSourceReaderCallback::OnReadSample, timestamp is in 100-ns
+  units, the callback must be thread-safe, and the application requests the next
+  sample. The candidate source matches that control model.
+  https://learn.microsoft.com/en-us/windows/win32/api/mfreadwrite/nf-mfreadwrite-imfsourcereader-readsample
+  https://learn.microsoft.com/en-us/windows/win32/api/mfreadwrite/nf-mfreadwrite-imfsourcereadercallback-onreadsample
+
+Decision:
+  NATIVE_PATH_B_STATUS=KEEP
+  CAMERA_LATEST_FRAME_STATUS=KEEP
+  No FIFO, UpdateExternalTexture, sample retention, D3D11On12 replacement,
+  blocking GPU wait, or rotating Unity-visible presentation identity is justified.
+
+================================================================================
+Unity Presentation Handoff
+================================================================================
+
+WindowsNativeWebCamSource.PrepareFrameForUnity:
+  - once-per-Unity-frame guard;
+  - TryRequestLatestPresent obtains newest completed borrowed native slot;
+  - rejects sequence 0, duplicate/non-increasing sequence, invalid slot/resource;
+  - creates at most one fixed Texture2D external wrapper per native slot;
+  - does not call UpdateExternalTexture;
+  - one Graphics.Blit performs Y normalization from the external wrapper to a
+    stable linear ARGB32 RenderTexture named KiwiNativeCameraPresentation;
+  - invokes the render event after queuing presentation work;
+  - publishes presented native sequence and normalized hostTicks only after the
+    handoff succeeds.
+
+Identity and time owners:
+  Native sequence: created by native capture callback; detects same-session order.
+  Native hostTicks: QPC arrival in native callback.
+  Managed hostTicks: calibrated once per camera session from native QPC frequency
+  and anchor to managed Stopwatch frequency/domain; preserves ordering but is a
+  converted correlation clock, not Media Foundation sample time.
+  Camera generation: managed session/lifecycle owner; distinct from native sequence.
+  Unity frame: presentation scheduling identity only.
+
+Resource/lifecycle:
+  The Unity-visible RenderTexture identity is stable within the camera session.
+  Native slot wrappers persist per slot and are destroyed/recreated with source or
+  session lifecycle. Pause/resume retains the session; Stop clears native/managed
+  anchors, sequences, wrappers, and presentation state. Startup retries presentation
+  for up to 300 Unity frames without adding a GPU blocking wait.
+
+Classification:
+  Fixed external wrappers=KEEP.
+  Same-frame Y-normalizing presentation Blit=KEEP.
+  Native sequence + managed camera generation=KEEP_AS_DISTINCT_CLAIMS.
+  QPC-to-Stopwatch normalization=KEEP_FOR_CROSS_MANAGED_CORRELATION.
+
+================================================================================
+Runner Input Dataflow
+================================================================================
+
+Active Scene static defaults:
+  runningMode=LIVE_STREAM
+  numFaces=1
+  outputFaceBlendshapes=true
+  outputFacialTransformationMatrixes=true
+  requireFreshFrame=true
+  latestFrameOnly=true
+  downscale enabled, maximum width=480
+  Sentis hybrid enabled
+  MediaPipe refresh=10 Hz
+  minimum presence=0.5
+  Windows/Sentis path forces CPUAsync TextureFrame read mode
+  annotation debug output disabled
+
+Main order:
+  Update -> ObserveFreshFrameSource -> ProcessSentisFreshFrame.
+  Run coroutine independently services the MediaPipe refresh path.
+
+ObserveFreshFrameSource:
+  - calls IKiwiFreshFrameSource.PrepareFrameForUnity;
+  - reads presented sequence and normalized hostTicks;
+  - rejects zero/non-increasing sequence;
+  - substitutes Stopwatch now only when hostTicks is invalid;
+  - increments Runner fresh generation and replaces a one-slot pending-latest value.
+
+MediaPipe input gates in Run:
+  1. When Sentis is primary, ShouldThrottleMediaPipeRefresh enforces the configured
+     refresh rate, clamped to 2..30 Hz. There is no catch-up burst.
+  2. Source is observed before the one-in-flight check so newest pending identity is
+     retained while work is busy.
+  3. latestFrameOnly permits only one submitted input pending callback.
+  4. requireFreshFrame accepts only a new pending source generation.
+  5. hostTicks and camera generation are latched before readback.
+
+Image preparation:
+  - optional persistent aspect-preserving RenderTexture downscale to max width 480;
+  - Graphics.Blit creates the inference-sized texture;
+  - TextureFramePool supplies a reusable frame;
+  - CPUAsync ReadTextureAsync performs a temporary RT Blit plus AsyncGPUReadback,
+    LoadRawTextureData, Apply, and BuildCPUImage;
+  - Runner rechecks source identity and camera generation after asynchronous readback
+    and before submission;
+  - TextureFrame remains held until its Image packet lifetime contract permits pool
+    release.
+
+Timestamp/submission:
+  - GetCurrentTimestampMillisec creates a strictly increasing task timestamp in ms;
+  - RememberSubmittedFrame stores exact MediaPipe timestamp -> normalized source
+    hostTicks + camera generation in a bounded ring;
+  - DetectAsync submits Image and NormalizedRect at the same timestamp;
+  - callback must resolve that exact timestamp and current generation or is dropped;
+  - callback closes only the matching one-in-flight generation.
+
+Result handling:
+  - StoreTrackingData copies all required landmarks/blendshape/matrix data inside
+    the callback because installed plugin result/list instances are reusable;
+  - if Sentis is primary, MediaPipe updates auxiliary expression, rotation and ROI
+    anchor but does not publish the full landmark snapshot;
+  - otherwise it publishes a MediaPipe tracking snapshot with a new Runner frameId;
+  - Sentis publishes 468 landmarks and geometric rotation; learned MediaPipe
+    expression is reused only up to 500 ms, then geometry expression fallback is
+    used; logical timestamp is monotonicized before publication.
+
+Exact redundant statements:
+  FaceLandmarkerRunner.cs lines observed in this frozen source:
+  - _observedFreshFrameSource assignment appears 16 consecutive times near
+    lines 1515..1547.
+  - ObserveFreshFrameSource call appears 16 consecutive times near lines 1779..1827.
+  Classification=MERGE. No source edit in P2; no Runtime defect assertion.
+
+================================================================================
+MediaPipeUnityPlugin 0.16.3 Audit
+================================================================================
+
+FaceLandmarker.CreateFromOptions:
+  Builds a TaskInfo graph with IMAGE and NORM_RECT inputs, landmarks and output image,
+  plus optional blendshape and face-geometry outputs. GenerateGraphConfig adds the
+  flow limiter only for LIVE_STREAM.
+
+FaceLandmarker.DetectAsync:
+  ConfigureNormalizedRect is called with roiAllowed=false. Rotation is expressible;
+  user ROI is rejected by this Task API. Timestamp milliseconds are converted to
+  microseconds. Image and NormalizedRect packets receive the same timestamp and are
+  moved into TaskRunner.SendLiveStreamData. The call is nonblocking with respect to
+  graph completion.
+
+TaskRunner/BaseVisionTaskApi:
+  Input packet maps are move/dispose-owned by Send. Close closes graph input streams
+  and waits for graph completion during lifecycle shutdown; it is not a per-frame
+  wait. There is no Unity-main-thread callback marshal in the wrapper.
+
+Callback ownership:
+  The managed callback executes from the native graph callback context, outside the
+  Unity main thread. FaceLandmarkerResult and nested List instances are preallocated
+  and reused under an internal lock. The callback Image is wrapped in using and is
+  disposed on callback return. Therefore Kiwi's copy-inside-callback and lifecycle
+  gate are required; storing result/list/image references is unsafe.
+
+Image ownership:
+  Packet.CreateImage moves the managed Image wrapper into a native packet. In the
+  CPU path, TextureFrame.BuildCPUImage wraps the Texture2D raw NativeArray with a
+  void deleter, so raw pixel storage remains TextureFrame/Texture2D-owned. Kiwi's
+  one-in-flight and deferred TextureFrame release are part of a real memory-lifetime
+  contract, not redundant queue state.
+
+TextureFrame CPUAsync cost:
+  This is an asynchronous GPU->CPU transition, followed by Texture2D data load/apply.
+  It avoids a synchronous ReadPixels/GetPixels production path, but it is not zero-
+  copy. An optimization proposal needs installed-package-supported GPU input semantics
+  plus clean Performance and lifecycle evidence. P2 proposes none.
+
+Tutorial comparison:
+  Plugin tutorial documents that DetectAsync returns immediately, callbacks execute
+  outside Unity main thread, callback result references are shared/reused, and CPU
+  pixel-copy examples are not an ideal high-performance production architecture.
+  https://github.com/homuler/MediaPipeUnityPlugin/blob/master/docs/Tutorial-Task-API.md
+
+================================================================================
+MediaPipe FaceLandmarker Actual Source Audit
+================================================================================
+
+Version match:
+  MediaPipeUnityPlugin 0.16.3 build metadata pins MediaPipe v0.10.22. Official tagged
+  v0.10.22 source, not current master, is the external source comparison authority.
+
+FaceLandmarker::Create / CreateGraphConfig:
+  - converts public options into FaceLandmarkerGraph options;
+  - for LIVE_STREAM adds FlowLimiterCalculator;
+  - both IMAGE and NORM_RECT are limited together;
+  - FINISHED is driven by the NORM_LANDMARKS output;
+  - task input timestamps are validated equal and strictly increasing.
+
+Flow limiter semantics:
+  Default max_in_flight=1 and max_in_queue=1. If its queue is full, the older queued
+  packet is dropped so the newest queued packet is retained. This acts after Task
+  submission, inside the graph.
+
+FaceLandmarkerGraph tracking path:
+  In stream mode, previous face rects are looped back. When enough faces are tracked,
+  face detection is skipped. Association uses min_tracking_confidence. Detection is
+  re-run when tracking is lost or fewer faces than configured are present.
+
+FaceLandmarksDetectorGraph:
+  For one face in stream mode landmark smoothing is enabled. v0.10.22 uses a One Euro
+  landmarks filter with min_cutoff=0.05, beta=80, derivative_cutoff=1. Blendshape is
+  derived from smoothed landmarks. Face geometry/transformation derives from
+  landmarks and image size.
+
+Callback contract:
+  Returns result, corresponding input Image, and input timestamp. The callback image
+  reference is valid only during callback execution.
+
+Official tagged source references:
+  https://github.com/google-ai-edge/mediapipe/blob/v0.10.22/mediapipe/tasks/cc/vision/face_landmarker/face_landmarker.cc
+  https://github.com/google-ai-edge/mediapipe/blob/v0.10.22/mediapipe/tasks/cc/vision/face_landmarker/face_landmarker_graph.cc
+  https://github.com/google-ai-edge/mediapipe/blob/v0.10.22/mediapipe/tasks/cc/vision/face_landmarker/face_landmarks_detector_graph.cc
+  https://github.com/google-ai-edge/mediapipe/blob/v0.10.22/mediapipe/tasks/cc/vision/core/base_vision_task_api.cc
+  https://github.com/google-ai-edge/mediapipe/blob/v0.10.22/mediapipe/tasks/cc/core/task_runner.cc
+  https://github.com/google-ai-edge/mediapipe/releases/tag/v0.10.22
+
+================================================================================
+Detection/Tracking Responsibility
+================================================================================
+
+MediaPipe owns:
+  detector invocation and re-invocation on tracking loss; previous-rect tracking;
+  landmark model; single-face landmark smoothing; blendshape inference; optional
+  face geometry/transformation; internal post-submission flow limiting.
+
+Kiwi Runner owns:
+  camera-source freshness before expensive conversion; one-slot latest mailbox;
+  lifecycle/camera-generation acceptance; exact callback timestamp correlation;
+  backend selection; copying reusable callback outputs; Canonical-ready snapshot.
+
+Sentis hybrid owns when enabled:
+  high-cadence alternative 468-landmark model execution; persistent pixel-square ROI
+  lease; MediaPipe-to-future-Sentis ROI correction; stale source/anchor/generation
+  rejection; alternate geometric rotation and expression fallback.
+
+Overlap assessment:
+  - Detection: no second Kiwi detector found in the audited main path.
+  - Face tracking: MediaPipe previous-rect tracking and Sentis persistent ROI overlap
+    in objective but belong to different model invocations. It is architecturally
+    expensive, but not source-proven redundant while Sentis is primary.
+  - ROI: Task API user ROI is unsupported; Kiwi's Sentis ROI is for its separate
+    model crop, not a duplicate input ROI into FaceLandmarker.
+  - Smoothing: MediaPipe landmarks smoothing is model-output stabilization;
+    Kiwi Root/FacePart presentation state is channel-specific consumption. Mere
+    plurality does not establish duplicate ownership.
+
+Decision:
+  Face Landmarker remains Primary / Source of Truth for detection and semantic
+  calibration. Sentis must not be deleted from Static comparison alone.
+
+================================================================================
+Sentis Hybrid Audit
+================================================================================
+
+Call/dataflow:
+  FaceLandmarkerRunner.Update
+    -> ProcessSentisFreshFrame
+    -> KiwiInferenceFaceTracker.TryProcessAsync
+    -> TryScheduleNewestSource
+    -> ScheduleModel
+    -> 192x192 crop Graphics.Blit
+    -> TextureConverter.ToTensor
+    -> Worker.Schedule
+    -> nonblocking completion poll
+    -> pre-decode stale checks
+    -> ReadbackAndClone once for newest valid output
+    -> DecodeReadableOutput
+    -> Runner tracking publication
+
+Bounded resources/state:
+  - three preallocated GPUCompute lanes;
+  - persistent 192x192 crop resources and tensor/model worker;
+  - each job records source hostTicks, ROI/crop, anchorRevision, externalAnchorEpoch,
+    tracker generation, camera generation, tracking-session generation, and the
+    submission-time minimum-presence policy;
+  - stale generation, stale anchor, stale source, and cross-system stale results are
+    rejected before ReadbackAndClone when possible;
+  - newest valid source wins; no FIFO catch-up.
+
+Concrete value:
+  Supplies full landmarks at camera-fresh cadence while MediaPipe is deliberately
+  refreshed at 10 Hz for auxiliary learned expression, matrix rotation, and ROI
+  anchor. Persistent ROI survives short confidence dips with bounded lease/grace.
+
+Concrete cost/surface:
+  Adds one crop Blit, tensor conversion, model scheduling, GPU output readback,
+  decode, three-lane lifecycle, second ROI/tracking state, cross-backend timestamp
+  correlation, and fallback policy. It therefore increases resource, lifecycle,
+  validation, and authority surface.
+
+Current evidence limit:
+  No clean same-build Product benchmark or paired visual/accuracy evidence in P2
+  proves that hybrid output is better than standard FaceLandmarker-only output, or
+  that FaceLandmarker-only meets Kiwi's cadence/quality contract. E2 is frozen and
+  is not reopened.
+
+Decision:
+  SENTIS_HYBRID_STATUS=NEEDS_RUNTIME_EVIDENCE_KEEP_CURRENTLY
+  MEDIAPIPE_REFRESH_STATUS=KEEP_CONDITIONAL_WITH_SENTIS_HYBRID
+  Not RETIRE_CANDIDATE. No scheduling/readback/queue change is authorized.
+
+================================================================================
+Timestamp/Transaction Audit
+================================================================================
+
+| Token | Creator | Unit/domain | Monotonicity and scope | Reset/conversion | Principal consumers | Authority claim | Decision |
+|---|---|---|---|---|---|---|---|
+| MF llTimestamp | SourceReader | 100 ns media-source time | source-defined; per media stream | source lifecycle; no downstream conversion retained | interval telemetry only | sample media time/interval, not Kiwi identity | KEEP_TELEMETRY_ONLY |
+| native frame sequence | OnReadSample | uint64 count | strict within native session | resets on Stop/Start | native CPU/GPU latest slots, managed duplicate gate | exact native capture order within session | KEEP |
+| native hostTicks | OnReadSample | QPC ticks | monotonic clock domain, captured at callback arrival | new anchor each session | native slots, interop return | native callback-arrival correlation | KEEP |
+| normalized managed hostTicks | WindowsNativeWebCamSource | Stopwatch ticks | derived monotonic correlation within camera session | QPC frequency/anchor -> Stopwatch domain | Runner, tracking snapshots, Canonical, transaction matcher | cross-managed timing, not sample identity | KEEP |
+| camera generation | managed camera/session owner | integer epoch | increments/changes by managed lifecycle | reset/recreated on session change | Runner, Sentis, Canonical, transaction | rejects old camera session | KEEP |
+| Unity frame | Unity/PrepareFrameForUnity | frameCount | monotonic for process/frame loop | Unity lifecycle | once-per-frame prepare/capture | scheduling/presentation frame only | KEEP_LOCAL |
+| Runner fresh generation | ObserveFreshFrameSource | integer count | increments per accepted native sequence | Runner Stop/restart | latest mailbox, MediaPipe/Sentis gates | Runner-accepted fresh source event | KEEP_LOCAL |
+| MediaPipe timestamp_ms | GetCurrentTimestampMillisec | integer ms | forced strictly increasing | Runner lifecycle | Task input packets/ring | Task ordering/callback correlation | KEEP |
+| MediaPipe packet timestamp_us | installed wrapper | microseconds | timestamp_ms * 1000 | per TaskRunner lifecycle | MediaPipe graph | equal packet timestamp for IMAGE/NORM_RECT | KEEP_PACKAGE |
+| callback timestamp_ms | installed wrapper/native graph | integer ms | echoes input; callbacks may be dropped | ring lookup | Runner StoreTrackingData | exact submitted task token | KEEP |
+| Runner tracking frameId | StoreTrackingData/Sentis publish | integer count | increases for accepted published snapshot | Runner lifecycle | Hub/Canonical | publication order, not camera sample identity | KEEP |
+| submissionHostTicks | Runner snapshot | Stopwatch ticks | copied from accepted source | preserved through tracking snapshot | Canonical, transaction | source-time correlation | KEEP |
+| tracking session generation | tracking lifecycle owner | integer epoch | lifecycle-scoped | hard tracking reset | Sentis, Canonical, transaction | rejects old tracking session | KEEP |
+| provider generation | KiwiTrackingProviderHub | integer epoch | changes only on actual provider switch | provider lifecycle | Canonical/consumers | provider authority epoch; Resume is not switch | KEEP |
+| backend epoch/external anchor epoch | tracker/backend owners | integer epoch | increments on backend/anchor authority transitions | tracker reset/switch | Sentis jobs/decode | prevents old backend/anchor publication | KEEP_LOCAL |
+| Canonical frameId | KiwiCanonicalTrackingFrame | integer count | increases on coherent canonical latch | canonical lifecycle | FaceMotion, Cropper, ShapeMask | canonical transaction/order | KEEP |
+| FacePart capture hostTicks | KiwiFacePartTextureTransaction | Stopwatch now | capture time per GPU slot | source/gen/size rebuild | nearest-time matcher | presentation capture correlation only | KEEP_BOUNDED |
+| FacePart generation fields | transaction capture | camera + tracking generations | equality constraint | lifecycle rebuild | Prepare/Commit | excludes cross-session slot | KEEP |
+
+Precision and equivalence findings:
+  - MediaPipe ms timestamps intentionally lose sub-millisecond precision relative to
+    Stopwatch hostTicks; they remain sufficient as strict Task tokens.
+  - Native sequence is exact same-session order but is not carried through Runner
+    tracking snapshot/Canonical into FacePartTextureTransaction.
+  - Canonical frameId is canonical publication identity, not a replacement for
+    native capture sequence.
+  - Provider generation, camera generation, tracking generation, and backend/anchor
+    epochs protect different transitions and must not be collapsed into one number.
+
+F2 finding:
+  Transaction slots record hostTicks at Graphics.Blit capture time and select the
+  nearest slot to rigid.submissionHostTicks within 55 ms, with same generation and
+  bounded history. No native sequence is present in either side. Structural cleanup
+  alone cannot turn nearest-time correlation into exact source-sample proof.
+
+Decision:
+  TIMESTAMP_AUTHORITY_STATUS=KEEP_CLAIM_SCOPED_NOT_ONE_TOKEN
+  TRANSACTION_TOKEN_STATUS=INCOMPLETE_FOR_EXACT_NATIVE_SAMPLE_IDENTITY
+  F2_STATUS=NEEDS_RUNTIME_EVIDENCE_STRUCTURAL_GAP_REMAINS
+
+================================================================================
+Freshness/Flow-Limiter Audit
+================================================================================
+
+| Dimension | Kiwi pre-input fresh/latest owner | MediaPipe v0.10.22 FlowLimiter | Finding |
+|---|---|---|---|
+| Boundary | before downscale/readback/Task submission | after Task submission, inside graph | distinct |
+| Prevented backlog | camera frames and expensive image preparation | graph packets/calculator work | distinct |
+| In-flight | Runner latestFrameOnly permits one callback-pending input | max_in_flight=1 | superficially overlaps after submit only |
+| Waiting sample | one-slot pending latest native source | max_in_queue=1; drops older queued packet | both latest-oriented at different boundaries |
+| Drop/supersede | non-fresh sequences and overwritten pending source | graph queue overflow and flow control | distinct |
+| Callback behavior | exact timestamp/generation match; stale callback dropped | output callback may be absent for dropped input | Kiwi closes lifecycle/identity claim |
+| Resource lifetime | avoids TextureFrame/readback allocation/work before submit; holds submitted TextureFrame | owns packet/calculator graph lifetime | distinct |
+| Latency consequence | avoids processing stale camera inputs | avoids graph backlog but cannot undo pre-submit cost | both reduce different latency sources |
+
+Decision:
+  PRE_INPUT_LATEST_OWNER_NEEDED=YES
+  INTERNAL_FLOW_LIMITER_NEEDED=YES
+  RESPONSIBILITIES_DISTINCT=YES
+  MEDIAPIPE_FLOW_LIMITER_STATUS=KEEP
+  KIWI_PRE_INPUT_LATEST_STATUS=KEEP
+  FRESHNESS_OWNER_STATUS=KEEP_RUNNER_AT_PRE_INPUT_BOUNDARY
+
+================================================================================
+Image Preparation/Copy Audit
+================================================================================
+
+| Operation | Input -> output | Device | Copy/Blit | Allocation behavior | Logical need / owner | Blocking | Decision |
+|---|---|---|---|---|---|---|---|
+| MF sample access | IMFSample NV12 -> Kiwi CPU slot NV12 | CPU | bounded row copy | 3 preallocated vectors | detach from callback/IMFSample lifetime; Native | no normal-path wait | KEEP |
+| native upload | CPU NV12 slot -> D3D11 NV12 texture | CPU->GPU | UpdateSubresource copy | reusable slot resources | GPU conversion input; Native | no D3D12 wait | KEEP |
+| NV12 conversion | D3D11 NV12 -> RGBA | GPU | copy/compute | reusable | color conversion; Native | nonblocking submit | KEEP |
+| shared handoff | D3D11 RGBA -> D3D12 compatible shared resource | GPU | CopyResource | 3 reusable GPU slots | Unity D3D12 compatibility; Native | fence signal/poll only | KEEP |
+| Unity presentation | external slot wrapper -> stable KiwiNativeCameraPresentation | GPU | one Graphics.Blit | fixed wrappers + persistent RT | Y normalization and fixed Unity identity; Windows source | no readback/wait | KEEP |
+| Runner resize | full presentation -> aspect-preserved <=480 width RT | GPU | one Graphics.Blit | persistent RT, rebuild on size | reduce FaceLandmarker input cost; Runner | nonblocking GPU submit | KEEP_CURRENT |
+| plugin CPUAsync staging | Runner RT -> temp RT -> CPU readback -> Texture2D | GPU->CPU | Blit + AsyncGPUReadback + raw load/apply | pooled TextureFrame; temp RT managed by package | installed CPU Image path; package/Runner | async, callback completion required | NEEDS_PERF_EVIDENCE_BEFORE_CHANGE |
+| Packet image | Texture2D raw memory -> MediaPipe Image packet | CPU/native wrapper | wrapper/move; underlying bytes externally owned | packet wrapper | Task API input lifetime | no graph-completion block | KEEP_LIFETIME_CONTRACT |
+| Sentis crop | full presentation/ROI -> 192x192 crop | GPU | Graphics.Blit | persistent per tracker | model ROI input; Sentis | nonblocking submit | KEEP_CONDITIONAL |
+| Sentis tensor | 192x192 texture -> tensor | GPU | TextureConverter.ToTensor | preallocated lane/tensor resources | model input normalization; Inference Engine | scheduled | KEEP_CONDITIONAL |
+| Sentis output | GPU output -> cloned readable tensor | GPU->CPU | ReadbackAndClone | one per newest valid completed job | CPU decode; Sentis | only after completion poll | NEEDS_RUNTIME_EVIDENCE |
+
+No current evidence supports moving the tutorial WebCamTexture -> GetPixels32 ->
+SetPixels32 -> Texture2D CPU-copy path into Production. No CPU readback is added.
+
+IMAGE_PREPARATION_STATUS=KEEP_CURRENT_CONTRACT_CPUASYNC_COST_NEEDS_CLEAN_EVIDENCE
+
+================================================================================
+Expression/Head Semantic Audit
+================================================================================
+
+Expression:
+  MediaPipe v0.10.22 provides learned face blendshapes derived from smoothed
+  landmarks. Runner copies them and, under Sentis-primary mode, caches them for up
+  to 500 ms; after that, Sentis geometry heuristics provide fallback expression.
+  Canonical latches expression only when its timestamp/backend coherence policy
+  accepts it relative to rigid state.
+
+  FacePartShapeMask consumes Canonical expression. KiwiExpressionReaction instead
+  calls runner.TryGetLatestExpressionData directly and owns separate attack/release
+  display state and loss behavior. The direct source is F1's static bypass.
+
+  Decision: merge the input authority is a candidate; do not merge presentation
+  response state. Runtime must show that canonical coherence does not create an
+  unacceptable freshness/visual regression and that learned/fallback semantics are
+  preserved.
+
+Head:
+  MediaPipe provides a facial transformation matrix. Runner copies its rotation and
+  uses it as auxiliary information, but Kiwi's accepted rigid head is calculated
+  geometrically from landmarks in the current backend path. The two outputs have
+  different coordinate/calibration/model-dependence semantics. Existence of the
+  matrix is not evidence that it is more accurate, lower-latency, or stable for this
+  avatar coordinate system.
+
+  Decision: retain Kiwi geometric rigid-head authority. MediaPipe matrix remains
+  auxiliary/calibration input unless a same-build accuracy/stability evaluation
+  justifies promotion.
+
+EXPRESSION_OWNER_STATUS=MERGE_CANDIDATE_TO_CANONICAL_INPUT_NEEDS_RUNTIME
+HEAD_POSE_OWNER_STATUS=KEEP_KIWI_GEOMETRIC_RIGID_PRIMARY_MEDIAPIPE_MATRIX_AUXILIARY
+F1_STATUS=STATIC_BYPASS_CONFIRMED_MERGE_CANDIDATE_NEEDS_RUNTIME_EVIDENCE
+
+================================================================================
+Temporal Ownership Audit
+================================================================================
+
+| Channel | Current temporal owner(s) | Same-claim duplicate? | Finding/decision |
+|---|---|---|---|
+| Root translation | Hub provider handoff; KiwiFaceMotion acceptance/discontinuity; display resampling; bounded late prediction; continuity/lost-reacquire | not source-proven | layers protect distinct authority, sampling, and presentation claims; F4 Runtime-only if reopened |
+| Head orientation | Canonical rigid; FaceMotion presentation; MediaPipe smoothing upstream | not automatically | model output smoothing differs from avatar presentation |
+| Eye | MediaPipe landmark smoothing; Cropper per-sample geometry/interpolation | not automatically | distinct inference and FacePart presentation channels |
+| Blink | canonical expression/landmark semantic; ExpressionReaction/part visual response | possible F1 input split | merge input authority candidate, retain display response |
+| Mouth | canonical semantic; Cropper/ShapeMask geometry/visibility interpolation | no source-proven same claim | keep channel-specific presentation |
+| Expression | Canonical accessor and direct Runner accessor; ExpressionReaction attack/release | input authority overlap yes | F1 MERGE candidate; response state distinct |
+| FacePart geometry | Cropper sample smoothing, jitter suppression, size hold, render interpolation | no Root duplicate | direct motion/prediction/matched-age compensation forced OFF by policy |
+| FacePart opacity/mask | ShapeMask contour/visibility interpolation; final Canvas alpha in PresentationResolver | distinct responsibilities | keep |
+| Texture transaction | bounded GPU capture history/nearest-time pin | unique but identity incomplete | keep current; F2 evidence needed |
+| Sampling rotation | RigidSampleFrame mesh UV rotation and SharedTiltLock shader rotation | YES | retain Rigid; SharedTilt RETIRE_CANDIDATE |
+| Presentation | late render/display owners per channel | no blanket duplicate claim | do not remove merely for state-count reduction |
+
+FacePartCropper:
+  execution order 700; consumes TryGetSemanticLandmarksIfChanged; transaction Prepare
+  requires matching Canonical rigid timestamp/hostTicks and each part Commit decides
+  adoption. Policy repeatedly forces prediction, matched-age compensation, direct
+  motion, and hide-on-loss OFF. Remaining sample smoothing, jitter suppression,
+  size hold, and interpolation belong to FacePart geometry.
+
+FacePartShapeMask:
+  execution after Cropper; consumes the same canonical semantic/expression and part
+  adoption decision. Owns contour/visibility temporal interpolation. Final Canvas
+  alpha remains a presentation responsibility.
+
+F3 exact static path:
+  - RigidSampleFrame (auto-install, enabled) derives bilateral-eye relative angle,
+    applies deadzone/no temporal low-pass plus a two-sample large-jump guard, and
+    rotates SurfaceFittedRawImage uv0 and uv1 together.
+  - SharedTiltLock (auto-install, enabled) derives the same rendered-eye angle and
+    writes _SampleRotationRad. It disables only legacy FacePartAngleLock.
+  - FacePartSoftMask.GetSampleUV rotates the already mesh-rotated UV again and uses
+    the result for texture and polygon sampling.
+
+F4:
+  Source shows multiple Root-specific temporal layers, but their contracts differ.
+  Hub canonical handoff suppresses the legacy FaceMotion provider bridge. Static
+  code does not prove actual harmful overlap, latency, or visual error. F4 remains
+  NEEDS_RUNTIME_EVIDENCE only if selected after stronger F3/F1 work.
+
+F3_STATUS=RETIRE_CANDIDATE_SHARED_TILT_LOCK_KEEP_RIGID_SAMPLE_FRAME_NEEDS_CHANGE_LOCAL_RUNTIME
+F4_STATUS=NEEDS_RUNTIME_EVIDENCE_NO_SOURCE_PROVEN_DEFECT
+
+================================================================================
+Lifecycle Audit
+================================================================================
+
+Camera:
+  Stop clears run flag, joins the processing worker, Flushes/detaches SourceReader,
+  releases slots/fences/resources and resets native sequence. Managed Stop clears
+  wrappers, presentation, calibration anchors and published sequence. Pause/resume
+  preserves a session and is not a provider switch.
+
+MediaPipe:
+  Create allocates TaskRunner/graph. DetectAsync transfers packet ownership and
+  returns before completion. Runner's publish gate, lifecycle lock, exact submission
+  ring, camera-generation checks, and matching in-flight generation reject old or
+  unmatched callbacks. Callback-owned result/image data is copied before return.
+  Stop closes publication before base Stop/Task Close, waits only lifecycle-critical
+  callback sections, disposes tracker/task/pool/resources, and clears submission
+  correlation state.
+
+Sentis/backend:
+  Submitted jobs snapshot tracker, camera, tracking-session, anchor, and cross-system
+  epochs. Stale jobs are retired before ReadbackAndClone when possible. Backend/ROI
+  hard reset releases persistent lease and invalidates old jobs.
+
+Provider/Canonical:
+  KiwiTrackingProviderHub owns provider arbitration and increments providerGeneration
+  only on an actual switch. Resume is not Provider Switch. It normalizes provider
+  time/horizontal conventions and will not publish stale frames. Canonical copies
+  an immutable coherent latch after Hub refresh; semantic data is accepted only
+  when timestamp/backend match rigid and coherence/refiner rules pass.
+
+FacePart:
+  Camera/tracking generations constrain transaction slot matching; source/generation/
+  size change rebuilds the bounded slot set. Lost/reacquire behavior freezes or
+  resumes per channel rather than allowing an old transaction to become a new epoch.
+
+Static conclusion:
+  No identified direct path allows a known old camera session, Task callback,
+  provider generation, or Sentis job to publish as a current coherent sample.
+  This is a Static conclusion, not a Runtime stress PASS.
+
+================================================================================
+Master Dataflow Table
+================================================================================
+
+Columns are exactly the requested 23 fields. UNKNOWN is used where source/authority
+cannot close the value.
+
+| Stage | Source File | Method | Input | Output | Thread/Execution Context | Timestamp Owner | Identity | Epoch/Generation | Copy/Blit | Allocation | Queue/In-Flight | Drop/Supersede | Temporal State | Normalization | Resource Owner | Lifecycle Reset | Downstream Consumer | Current Responsibility | External/Package Equivalent | Classification | Evidence | Unknown |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Camera create | Native/.../KiwiNativeCameraPlugin.cpp | StartInternal; CreateMediaFoundationReader | device name, WxH, fps | async NV12 SourceReader | lifecycle caller | none | selected device/media type | native session | none | fixed source/slot/device resources | one async reader | startup fails closed | session state | exact NV12, low latency, converters off | native globals/COM | StopUnlocked | RequestNext | establish capture contract | MF SourceReader creation | KEEP | CLASS_B_STATIC + installed DLL ABI | exact C++->DLL Class A closure UNKNOWN |
+| Sample request | same | SourceReaderCallback::RequestNext | attached reader | outstanding ReadSample | caller/callback | MF source later supplies llTimestamp | one request/completion relation | native session | none | none per request established | one explicit request | HRESULT failure stops useful flow | request timing telemetry | none | SourceReader | Detach/Flush | OnReadSample | request next sample | IMFSourceReader::ReadSample async | KEEP | CLASS_B_STATIC; EXTERNAL_OFFICIAL | exact device-driver buffering UNKNOWN |
+| Capture callback | same | OnReadSample | status, flags, timestamp, IMFSample | QPC arrival, sequence, copied ready CPU slot | MF callback worker context | QPC arrival; MF llTimestamp telemetry | native sequence | native session | delegates bounded CPU copy | no per-frame managed allocation | callback then next request | invalid/failing sample not published | prior timestamp for interval telemetry | none | callback borrows sample only | Flush/detach | CPU latest slots | detach from IMFSample lifetime | OnReadSample contract | KEEP | CLASS_B_STATIC | DLL binary exact implementation UNKNOWN |
+| NV12 detach | same | CopySampleToCpuLatest; CopyMediaBufferToCpu; CopyPitchedNv12 | borrowed IMFSample/IMFMediaBuffer | Kiwi-owned NV12 bytes | MF callback | inherited QPC hostTicks | native sequence in slot | native session | CPU row copy | 3 preallocated vectors | 3 CPU slots | oldest Ready replaced | newest-ready metadata | pitch/negative-pitch handling | Kiwi CPU slot | Stop | ProcessingWorker | safe sample lifetime | no automatic external equivalent | KEEP | CLASS_B_STATIC | camera driver memory layout beyond API UNKNOWN |
+| CPU latest select | same | AcquireLatestCpuReadSlot | Ready CPU slots | newest Processing slot | native worker | carried hostTicks | native sequence | native session | none | none | latest-only slots | other Ready slots freed | latest wins | none | native slot state machine | Stop | ProcessNv12OnGpu | bound stale accumulation | application policy | KEEP | CLASS_B_STATIC | Runtime drop rate current build UNKNOWN |
+| NV12 GPU process | same | ProcessingWorker; ProcessNv12OnGpu | CPU NV12 slot | Ready shared RGBA GPU slot | native worker + D3D11 queue | carried QPC | sequence in GPU slot | native session | UpdateSubresource, compute/copy, CopyResource | 3 reusable GPU slots | no FIFO; bounded slots | drop when unavailable; oldest Ready replace | producer fence | NV12->RGBA | native/D3D resources | Stop/device shutdown | RequestLatestPresent | format conversion/D3D12 bridge | GPU processing implementation-specific | KEEP | CLASS_B_STATIC | clean performance UNKNOWN |
+| Present select | same | RequestLatestPresent | Ready GPU slots, producer completion | borrowed resource, slot, seq, ticks | Unity main caller/native lock | carried QPC | newest completed seq > last | native session | none | none | 3 GPU slots | older/noncompleted ignored | last requested sequence | none | native retains resource | Stop | managed PrepareFrameForUnity | newest completed handoff | no package equivalent | KEEP | CLASS_B_STATIC + ABI | actual DLL internals Class A UNKNOWN |
+| Unity fence handoff | same | OnRenderEvent | selected PresentRequested slot | AwaitUnity slot + frame fence | Unity render/plugin event | Unity queue fence | slot + native seq | native session | no image copy here | none | bounded slot | reclaimed only on completion poll | slot state | none | native/Unity borrowed interfaces | device Stop | future reclaim | nonblocking resource lifetime | Unity native plugin event | KEEP | CLASS_B_STATIC | Runtime fence timing UNKNOWN |
+| Stable presentation | Assets/.../WindowsNativeWebCamSource.cs | PrepareFrameForUnity | borrowed external slot texture | stable KiwiNativeCameraPresentation | Unity main schedules GPU Blit | native QPC normalized to Stopwatch | presented native sequence | camera generation | one Y-flip Graphics.Blit | fixed wrapper per slot + persistent RT | once per Unity frame | duplicate/non-increasing rejected | latest presented fields | vertical orientation, linear ARGB32 | managed source owns wrappers/RT | Stop/source change | Runner source selection | stable identity/orientation | Unity Texture/Graphics.Blit | KEEP | CONFIRMED_STATIC | clean GPU cost UNKNOWN |
+| Fresh observe | Assets/Script/FaceLandmarkerRunner.cs | ObserveFreshFrameSource | presentation + seq/ticks | one-slot pending fresh generation | Unity main | normalized hostTicks | native seq checked, Runner fresh generation | camera generation | none | none | one pending latest | non-fresh rejected; latest replaces | last observed sequence | invalid time fallback only | Runner state | Stop | Sentis and MP gates | pre-input freshness | none | KEEP | CONFIRMED_STATIC | device-to-callback exposure time UNKNOWN |
+| Sentis primary loop | same + KiwiInferenceFaceTracker.cs | ProcessSentisFreshFrame; TryProcessAsync | newest presentation, anchor | scheduled/completed job or no publish | Unity main schedules/polls GPU | source hostTicks | job token + source time | tracker/camera/tracking/anchor epochs | crop Blit + tensor conversion | 3 preallocated lanes/resources | bounded three lanes | stale jobs retired; newest valid wins | persistent ROI lease | pixel-square ROI/model normalization | Sentis tracker | hard reset/Stop | decode/publish | high-cadence alternate landmark backend | Inference Engine 2.4.1 | NEEDS_RUNTIME_EVIDENCE | CONFIRMED_STATIC | quality/perf necessity UNKNOWN |
+| Sentis schedule | KiwiInferenceFaceTracker.cs | TryScheduleNewestSource; ScheduleModel | source + ROI | Worker scheduled 192x192 tensor job | Unity main/GPU compute | latched hostTicks | lane/job/source identity | all job generations snapshotted | 192x192 Blit; ToTensor | preallocated job lane | bounded | no free/stale source not queued | ROI/anchor revision | crop/model input | tracker/lane | Stop/reset | completion poll | nonblocking model input | Sentis Worker.Schedule | KEEP_CONDITIONAL | CONFIRMED_STATIC | exact GPU execution latency UNKNOWN |
+| Sentis completion | same | pre-decode checks; ReadbackAndClone; DecodeReadableOutput | completed Worker output | 468 landmarks/presence | Unity main poll + CPU decode | carried source hostTicks | newest valid job | generation equality | one output GPU->CPU clone | readable tensor per accepted completion | only completed job | stale rejected before readback | decode/persistent ROI state | model coords -> normalized landmarks | tracker owns job/readable output | Stop/reset | Runner publication | freshness-safe decode | Inference Engine readback | NEEDS_RUNTIME_EVIDENCE | CONFIRMED_STATIC | current performance/accuracy UNKNOWN |
+| MP cadence gate | FaceLandmarkerRunner.cs | ShouldThrottleMediaPipeRefresh | Stopwatch now, Sentis-primary state | permit/skip refresh | Unity coroutine/main | Stopwatch | cadence slot | Runner lifecycle | none | none | no catch-up | early calls skipped | last refresh time | rate clamp 2..30 Hz | Runner | Stop | MP image preparation | auxiliary refresh cost bound | none | KEEP_CONDITIONAL | CONFIRMED_STATIC | optimal 10 Hz UNKNOWN |
+| Runner resize | same | Run downscale block | camera presentation | persistent <=480-width RT | Unity main schedules GPU | latched source hostTicks | pending fresh generation | camera generation | Graphics.Blit | persistent RT | only when accepted gate | changed source/gen rejected later | size state | aspect-preserving resize | Runner | size/Stop | TextureFrame | bound Task input cost | Unity Graphics.Blit | KEEP_CURRENT | CONFIRMED_STATIC | clean cost/quality tradeoff UNKNOWN |
+| Texture CPUAsync | installed TextureFrame.cs + Runner Run | ReadTextureAsync; BuildCPUImage | Runner RT | Texture2D-backed MediaPipe Image | GPU async callback then managed continuation | carried Runner timestamp | held TextureFrame/submission generation | camera generation | temp RT Blit, AsyncGPUReadback, raw load/apply | pooled frame/temp package resources | Runner one-in-flight | readback error or stale generation dropped | held frame until callback | texture orientation set through options/path | pool/Runner until safe release | Stop/dispose | DetectAsync | CPU Image creation/lifetime | plugin TextureFrame API | KEEP_CURRENT_NEEDS_PERF | INSTALLED_PACKAGE + CONFIRMED_STATIC | supported zero-copy GPU alternative UNKNOWN |
+| MP timestamp map | FaceLandmarkerRunner.cs | GetCurrentTimestampMillisec; RememberSubmittedFrame | source ticks/generation | strict ms token + bounded ring entry | Unity coroutine/main | Runner | exact MP timestamp | camera generation | none | bounded ring | one submitted in-flight | old ring entries evicted; stale callback rejected | last timestamp/ring | Stopwatch/time -> monotonic ms | Runner | Stop | DetectAsync/callback | exact Task correlation | Task timestamp contract | KEEP | CONFIRMED_STATIC | source exposure timestamp unavailable |
+| Task submit | installed FaceLandmarker.cs/BaseVisionTaskApi.cs/TaskRunner.cs | DetectAsync; SendLiveStreamData | Image + NormalizedRect at same timestamp | graph packets | caller; graph async | MP timestamp | equal timestamp packet pair | TaskRunner lifecycle | packet wrapper move | packet/native graph ownership | package flow limiter after send | graph may drop queued input | graph tracking state | rotation; ROI forbidden | TaskRunner/graph | Close | FaceLandmarker graph | async task execution | MediaPipe v0.10.22 | KEEP | INSTALLED_PACKAGE + version-matched official source | native graph binary identity beyond package build chain UNKNOWN |
+| Internal flow | MediaPipe v0.10.22 source | FlowLimiterCalculator | submitted IMAGE/NORM_RECT | permitted or queued-latest packets | MediaPipe graph threads | packet timestamp | paired packet timestamps | graph lifecycle | none | bounded packet queue | max in-flight 1, queue 1 | drops older queued packet | in-flight count | none | graph | Close | FaceLandmarkerGraph | prevent graph backlog | official calculator | KEEP | EXTERNAL_OFFICIAL version match | per-device scheduling timing UNKNOWN |
+| MP detect/track | MediaPipe v0.10.22 source | FaceLandmarkerGraph; FaceLandmarksDetectorGraph | RGB/RGBA image, rect | landmarks, optional blendshape/geometry | MediaPipe graph threads | packet timestamp | face/rect association | graph stream state | internal tensors unknown at wrapper level | graph/model internal | flow-limited | detector skipped while track sufficient; reruns on loss | previous rect; single-face OneEuro smoothing | image coords/geometry | graph/model | Close | callback | detection/tracking/model semantic | standard Face Landmarker | KEEP | EXTERNAL_OFFICIAL version match | exact model asset numerical behavior current device UNKNOWN |
+| Result callback copy | FaceLandmarkerRunner.cs + installed FaceLandmarker.cs | callback; StoreTrackingData | reusable result/list + callback image + timestamp | Kiwi-owned copied snapshot/aux state | native graph callback thread under lifecycle locks | callback timestamp resolved to source hostTicks | MP timestamp -> exact ring record | camera/tracking lifecycle | managed element copies | Kiwi snapshot/list storage | matching in-flight generation | unmatched/stale generation dropped | last expression/anchor/rotation | coordinates/expression mapping | Runner owns copied state | Stop gate/ring clear | Hub/Canonical or Sentis aux | escape package callback lifetime safely | package reusable callback contract | KEEP | INSTALLED_PACKAGE + CONFIRMED_STATIC | callback latency distribution UNKNOWN |
+| Backend publish | FaceLandmarkerRunner.cs | StoreTrackingData / Sentis publish path | copied MP or decoded Sentis result | tracking snapshot, backend tag, frameId | callback-serialized state or Unity main | source hostTicks; monotonic logical time | Runner frameId | camera/tracking/backend epochs | copies state | bounded snapshot | newest accepted state | stale/unmatched rejected | MP expr <=500 ms then geometry fallback | backend/model coordinates -> Kiwi semantic fields | Runner/tracker | Stop/backend reset | Hub | selected backend authority | no direct package equivalent | KEEP_CURRENT_NEEDS_RUNTIME | CONFIRMED_STATIC | hybrid benefit UNKNOWN |
+| Provider normalization | Assets/.../KiwiTrackingProviderHub.cs | refresh/arbitration methods | provider snapshot | normalized singular provider snapshot | Unity main | provider/source time | provider frame/order | providerGeneration | semantic copy | bounded state | singular provider | stale/out-of-order rejected | handoff state | time/horizontal convention | Hub | provider switch | Canonical | one provider authority | none | KEEP | CONFIRMED_STATIC | Runtime switch stress UNKNOWN |
+| Canonical latch | Assets/.../KiwiCanonicalTrackingFrame.cs | LateUpdate; TryGetSemanticLandmarksIfChanged/accessors | Hub rigid + semantic/expression | immutable coherent canonical frame | Unity LateUpdate after Hub refresh | submissionHostTicks | Canonical frameId + matching timestamp/backend | camera/tracking/provider/backend context | landmark/state copy | canonical arrays/state | latest coherent latch | incoherent/stale semantic rejected | expression accepted only <= rigid time | canonical semantics | Canonical owner | lost/reacquire/reset | FaceMotion/Cropper/ShapeMask | semantic transaction authority | none | KEEP | CONFIRMED_STATIC | live coherence/drop frequency UNKNOWN |
+
+================================================================================
+Responsibility Duplication Table
+================================================================================
+
+| Responsibility | Kiwi owner | MediaPipe/package owner | Overlap? | Necessary distinction? | Normal-path latency cost | Bug surface | Decision |
+|---|---|---|---|---|---|---|---|
+| latest-frame | Native CPU/GPU slots; Runner pending mailbox | FlowLimiter queued-latest after submit | partial, different boundaries | YES | reduces stale cost | sequence/slot lifecycle | KEEP_BOTH |
+| freshness | Runner native sequence/generation gate | strict task timestamp; graph stream order | partial | YES, source freshness vs task order | gate itself negligible, avoids work | reset/callback mismatch | KEEP |
+| flow limiting | Runner one-in-flight before conversion/submit | max_in_flight=1/max_queue=1 inside graph | apparent overlap | YES | both reduce separate queues | dead gate or leaked frame if lifecycle wrong | KEEP_BOTH |
+| face detection | no second main-path detector | internal Face Detector | NO | YES | MediaPipe model cost | detector/tracker loss transition | KEEP_MEDIAPIPE |
+| face tracking | Sentis persistent ROI/alternate high-cadence model | prior-rect tracking and detector skip | objective overlap across backends | possibly, if hybrid benefit proven | substantial second model state/cost | two model authorities | NEEDS_RUNTIME_EVIDENCE |
+| ROI | Sentis pixel-square persistent ROI | internal rect loopback; Task user ROI unsupported | different model ROI | YES while hybrid exists | crop + state | stale anchor/lease | KEEP_CONDITIONAL |
+| landmark smoothing | channel-specific Kiwi consumption/presentation | single-face OneEuro output smoothing | partial across layers | YES unless same channel/claim shown | possible aggregate latency | over-smoothing | F4_NEEDS_RUNTIME_EVIDENCE |
+| expression | Canonical plus direct Runner to ExpressionReaction | learned blendshape; Sentis geometry fallback is Kiwi | YES at Kiwi input ownership | presentation response remains distinct | extra state/branch | mixed timestamp/backend | MERGE_CANDIDATE_F1 |
+| head pose | Kiwi geometric rigid primary | facial transformation matrix output | alternative semantics | YES | both computed currently when enabled | coordinate/authority ambiguity | KEEP_KIWI_PRIMARY_MATRIX_AUX |
+| timestamp | source hostTicks, task ms, canonical order | packet timestamp us | different claims | YES | negligible | false equivalence/precision | KEEP_CLAIM_SCOPED |
+| sample identity | native seq, Runner MP token, Canonical frameId | packet timestamp | not equivalent | YES | mapping/ring state | F2 exact identity gap | KEEP; GAP_NEEDS_EVIDENCE |
+| generation/epoch | camera/tracking/provider/backend/anchor owners | TaskRunner graph lifecycle | multiple different transitions | YES | state comparisons only | stale cross-epoch publish | KEEP_SEPARATE |
+| in-flight ownership | Runner owns TextureFrame/callback gate; Sentis lanes | graph packet/calculator lifetime | adjacent | YES | bounded held resources | release-after-callback race | KEEP |
+| image resize | Runner max480 and Sentis 192 crop | package converts supplied image; model internals | model-specific | YES | GPU Blits | aspect/ROI mismatch | KEEP_CURRENT |
+| image normalization | managed Y Blit, Sentis tensor mapping | MP NormalizedRect rotation and model preprocessing | distinct | YES | one Blit plus model preprocessing | double orientation | KEEP; validate on change |
+| color conversion | Native NV12->RGBA | MediaPipe accepts RGB/RGBA; internal normalization | serial stages | YES | native GPU conversion | range/color mismatch | KEEP_NATIVE |
+| fallback | Runner MP refresh/expression fallback/backend selection | internal detector rerun on track loss | different failure boundaries | YES | additional MP cadence | stale fallback authority | HYBRID_NEEDS_RUNTIME |
+| prediction | FaceMotion bounded late prediction; FacePart policy disables prediction | MediaPipe tracking/smoothing is not future prediction | NO equivalent | YES | channel-specific | double prediction if reintroduced | KEEP_CURRENT_NO_ADDITION |
+| presentation temporal state | FaceMotion/Cropper/ShapeMask/ExpressionReaction per channel | model landmark smoothing only | partial pipeline layering | YES by channel | possible cumulative latency | F4 only if measured | DO_NOT_BLANKET_MERGE |
+| sampling rotation | RigidSampleFrame mesh UV and SharedTiltLock shader UV | none | YES, within Kiwi same claim | NO | double transform | visual geometry/sample mismatch | RETIRE_CANDIDATE_SHARED_TILT |
+
+================================================================================
+External Official/Research/YouTube Comparison
+================================================================================
+
+Tier A - official source/docs and installed source:
+  - Microsoft SourceReader async model confirms immediate ReadSample return,
+    callback completion, 100-ns llTimestamp, and explicit next request.
+    https://learn.microsoft.com/en-us/windows/win32/api/mfreadwrite/nf-mfreadwrite-imfsourcereader-readsample
+  - MediaPipe v0.10.22 tagged source confirms flow limiter, previous-rect tracking,
+    detector skip/re-entry, single-face smoothing, blendshape and geometry graph.
+    Links are listed in the Actual Source Audit above.
+  - Installed plugin 0.16.3 source, not tutorial/master, governs wrapper ownership,
+    result reuse, callback thread, timestamps, ROI rejection, and Image lifetime.
+
+Tier B - primary papers / official research context:
+  - Real-time Facial Surface Geometry from Monocular Video on Mobile GPUs describes
+    the dense 468-point mobile face-mesh design. It supports a compact model-centric
+    architecture; it does not prove Kiwi Runtime quality.
+    https://arxiv.org/abs/1907.06724
+  - Attention Mesh focuses compute on semantic regions such as eyes and lips and
+    reports a unified design more efficient than a cascade in its research setting.
+    It supports avoiding unnecessary parallel semantic pipelines, but is not a
+    benchmark of the installed Kiwi model.
+    https://arxiv.org/abs/2006.10962
+  - BlazeFace describes the lightweight detector used as an ROI front end for
+    task-specific geometry/landmark models. It supports MediaPipe owning detection
+    rather than adding an external detector without evidence.
+    https://arxiv.org/abs/1907.05047
+
+Tier B/C - official talks/videos, design context only:
+  - MediaPipe: Live Perception for Mobile and Web, Google AI / Embedded Vision.
+    https://www.youtube.com/watch?v=V9CiJhHQKkc
+  - MediaPipe Web: Bringing cross-platform AI tech to the browser, Chrome for
+    Developers.
+    https://www.youtube.com/watch?v=tVvKlx-oVqc
+
+No YouTube FPS, screenshot, tutorial WebCam path, or anecdotal visual appearance is
+used as Implementation, Runtime, Performance, or Visual Authority.
+
+================================================================================
+Validation Retirement Classification
+================================================================================
+
+Relevant source identities:
+  v20 CommonTensor=1F5D5BD6018C293529B9E8034B24F2168A377E6F697203A3D1504FFD4C8211B3
+  v24 PairBound=1F8F26D21DEA1DE17DE43A0A7B8FFA0513C1C9E23A65A1AEDFCFF7BA54AB26EC [DIRTY]
+  v25 ScheduleTrace=1A0692C683F258B95F5910409888B98B6E3F9777B3C50AB95FA7575308AE5316
+  v27 ActualVsShadow=DD13D1170218C23CA80E721EAFB77D6D745254F5E28E06A93343331B921B42B6
+  v31 AsyncProducerTail=0962DFF52A319806D3845FBD499DBE49878DF2444F714C47137E34B410A762FC
+  P1 PixelSpaceAudit=AB41E4F296041DEB6BA800D62BCBE992048CE5CFB1E5AE2B7A82E1BA59EA1602
+  RuntimeValidationHarness=C7065DA5F856950259611E1236482DCADE48AF040D85CE95DC4B157F3CECC7E7
+
+v20/v24/v25/v27/v31/P1 are RuntimeInitialize diagnostics but explicitly environment-
+gated; they do not own normal Product output. R11 records v20/v24/v25/v27/v31 as a
+frozen v31 inference evidence chain. v30 is superseded/retired. E2 is frozen and
+deprioritized; exact method/resource/queue/fix/Product causality remains unresolved.
+
+| Current validation | Why it exists | Owner/path protected | Reduction decision |
+|---|---|---|---|
+| RuntimeValidationHarness contract checks | broad Product contract/lifecycle regression | current Production end-to-end contracts | CORE_GATE; consolidate toward Golden Replay |
+| v20 CommonTensor backend-stage isolation | historical backend tensor equivalence/isolation | inference diagnostic branch | FROZEN_HISTORICAL_EVIDENCE; ON_DEMAND only if exact claim reopens |
+| v24 PairBound shadow snapshot | pair-bound output lifetime/mixed transaction | inference observer | FROZEN_HISTORICAL_EVIDENCE; not critical path |
+| v25 Schedule transaction trace | schedule/payload transaction context | inference scheduling diagnostic | FROZEN_HISTORICAL_EVIDENCE; not critical path |
+| v27 actual-vs-shadow payload authority | compare Product payload and shadow | inference observer | FROZEN_HISTORICAL_EVIDENCE; not critical path |
+| v31 async producer-tail snapshot | isolate producer-tail output timing | inference observer | FROZEN_HISTORICAL_EVIDENCE; ON_DEMAND only for reopened boundary |
+| E2 diagnostic family | unresolved inference execution context hypothesis | diagnostic-only backend branch | FREEZE; do not reactivate in P2 |
+| P1 PixelSpaceAudit | locate LIVE CAMERA display/crop pixel-space claim | LIVE CAMERA diagnostic overlay | FROZEN after P1-2; ON_DEMAND only if presentation geometry changes |
+| P1/P1-2 human paired review | absolute visual localization | same-build presentation output | milestone/change-local only, not every intermediate validator |
+| clean Production benchmark | Performance acceptance | uninstrumented Product hot path | milestone and performance-sensitive changes only |
+
+Recommended regression structure:
+  1. Change-local Gate
+     Only the modified owner/boundary plus adjacent lifecycle and visual contract.
+     Example for F3: same source/build, SharedTilt disabled, Rigid retained, verify
+     texture+mask sampling coherence and no double correction.
+  2. Contract / Golden Replay Gate
+     Deterministic timestamp/order/generation/canonical semantics/lost-reacquire and
+     FacePart transaction contract, using one consolidated fail-closed harness.
+  3. Milestone Full Product Gate
+     clean Production Runtime, Performance, and human Visual review using the same
+     build/source identity. Observer-heavy output is excluded from Performance.
+
+VALIDATION_REDUCTION_FEASIBLE=YES
+VALIDATORS_CAN_BE_REMOVED_FROM_CRITICAL_PATH=YES_V20_V24_V25_V27_V31_E2_P1_FREEZE_OR_ON_DEMAND
+
+================================================================================
+KEEP
+================================================================================
+
+- Installed Production Native DLL and current Path B contract.
+- Native three-slot latest-wins CPU/GPU ownership and nonblocking fence polling.
+- Immediate NV12 detach from IMFSample; no callback sample retention.
+- Fixed Unity external wrappers and stable KiwiNativeCameraPresentation identity.
+- One Y-normalizing presentation Blit.
+- Native sequence, normalized hostTicks, and distinct camera generation.
+- Runner pre-input source freshness/latest mailbox and one-in-flight lifetime gate.
+- MediaPipe internal post-submission FlowLimiter.
+- Installed callback-time deep copy and exact timestamp/generation ring correlation.
+- Claim-scoped camera/tracking/provider/backend/canonical tokens.
+- Canonical coherent immutable latch and singular provider authority.
+- Current Kiwi geometric rigid-head primary authority.
+- Per-channel FacePart geometry/mask/presentation state where claims differ.
+- RigidSampleFrame as the single preferred texture+mask sampling-rotation owner.
+- Sentis hybrid current Product behavior until its necessity/removal is measured.
+
+================================================================================
+MERGE
+================================================================================
+
+1. FaceLandmarkerRunner exact duplicate statements/calls:
+   Collapse 16 identical source assignments to one and 16 identical Observe calls
+   to one. Preserve ordering, PrepareFrameForUnity, sequence guard, mailbox behavior,
+   and all lifecycle gates. This is the only low-risk statement-level cleanup.
+
+2. Expression input authority, candidate only:
+   Route ExpressionReaction through the canonical expression accessor only if a
+   change-local Runtime comparison proves no unacceptable freshness/coherence loss.
+   Retain ExpressionReaction's attack/release/loss presentation state.
+
+No token-wide or temporal-state-wide merge is proposed.
+
+================================================================================
+RETIRE_CANDIDATE
+================================================================================
+
+KiwiFacePartSharedTiltLock is the strongest candidate because current Static source
+establishes a second owner for the same sampling-rotation claim. Retain
+KiwiFacePartRigidSampleFrame, which applies one coherent texture+mask UV transform
+and respects crop aspect without an added low-pass. Retirement still requires a
+change-local same-build Runtime/Visual gate; P2 does not disable or delete it.
+
+No Sentis, Native, FlowLimiter, pre-input gate, texture transaction, or head-pose
+owner is a justified retirement candidate on current evidence.
+
+================================================================================
+DIAGNOSTIC_ONLY
+================================================================================
+
+- v20, v24, v25, v27, v31 inference observers/validators.
+- E2 observer/diagnostic branches.
+- KiwiLiveCameraPixelSpaceAudit / P1 comparison machinery.
+- v29/v31 tracker command-buffer/async producer-tail hooks and ORT shadow hooks when
+  enabled only by diagnostic environment/configuration.
+
+They do not own Product semantic output. They remain audit targets themselves and
+must not become Performance Authority.
+
+================================================================================
+INACTIVE_LEGACY
+================================================================================
+
+- Legacy FaceMotion provider bridge is suppressed by the active Canonical Hub
+  handoff; it is not a second active provider owner in the audited path.
+- FacePartAngleLock is disabled by SharedTiltLock and is not the current F3 owner.
+- Retired v30 diagnostic implementation/evidence path is superseded by the frozen
+  v31 chain.
+- Any tutorial WebCamTexture/GetPixels32/SetPixels32 path is external example code,
+  not current Product.
+
+Files are not deleted in P2. Reachability should be rechecked at the exact future
+deletion change because Scene/prefab/config can drift.
+
+================================================================================
+NEEDS_RUNTIME_EVIDENCE
+================================================================================
+
+1. F1 adoption: Canonical-only expression input preserves learned/fallback semantic,
+   freshness, lost/reacquire behavior, and visible response.
+2. F2 causality/closure: exact camera sample -> Canonical -> FacePart transaction
+   cannot be proven from current tokens; quantify mismatch and symptom correlation
+   only under a separately authorized instrumentation stage.
+3. F3 adoption: disabling/retiring SharedTiltLock removes double ownership without
+   texture/mask/crop/visual regression; measure same-build output.
+4. F4 existence: determine whether Root/Head/FacePart temporal layers create actual
+   duplicate same-channel delay or visible instability; source does not establish it.
+5. Sentis hybrid necessity: paired FaceLandmarker-only versus current hybrid accuracy,
+   cadence, latency, lost/reacquire, clean Performance, and Visual/Product reliability.
+
+CPUAsync/image-preparation performance is a subordinate measurement within claim 5
+or a future explicit performance-sensitive change; it is not counted as a sixth
+independent Product claim here.
+
+RESIDUAL_RUNTIME_CLAIM_COUNT=5
+
+================================================================================
+Residual Runtime Claims
+================================================================================
+
+R1 F1_EXPRESSION_AUTHORITY_ADOPTION
+  Pre-fixed threshold: no timestamp/backend incoherence, no extra visible response
+  delay beyond an agreed budget, and no loss of learned/fallback expression behavior.
+  Authority: same-build Product Runtime + Visual.
+
+R2 F2_EXACT_TRANSACTION_IDENTITY_AND_CAUSALITY
+  Requires an explicitly authorized identity-carrying measurement; current nearest-
+  time matcher cannot produce exact proof. Do not infer PASS from close timestamps.
+  Authority: same-build correlated raw Runtime; instrumentation changes are not P2.
+
+R3 F3_SINGLE_SAMPLING_ROTATION_OWNER
+  Compare current double-owner control against SharedTilt disabled while Rigid stays
+  enabled. Gate texture and mask together, eye-line residual, crop/edge behavior,
+  lifecycle, and human Visual. Authority: change-local same-build Runtime/Visual.
+
+R4 F4_TEMPORAL_OWNER_CAUSALITY
+  Only investigate after F3/F1 if the visible symptom remains. Measure per-channel
+  sample age and owner contributions; do not treat number of state variables as a
+  defect. Authority: clean, minimally observed Product Runtime.
+
+R5 SENTIS_HYBRID_NECESSITY
+  Paired same-input comparison of current hybrid and standard FaceLandmarker-only:
+  landmark accuracy/stability, cadence, expression/head semantics, lost/reacquire,
+  end-to-end age, GPU/CPU cost, memory, and Visual/Product reliability. Pre-register
+  thresholds; do not reuse observer-heavy runs as Performance Authority.
+
+NEXT_RUNTIME_REQUIRED=YES_ONLY_AFTER_EXPLICIT_AUTHORIZATION_FOR_RESIDUAL_ADOPTION_CLAIMS
+
+================================================================================
+Rejected Simplifications
+================================================================================
+
+- Delete Kiwi latest gate because MediaPipe has FlowLimiter: REJECTED; boundaries and
+  prevented work differ.
+- Collapse all timestamps/epochs into one token: REJECTED; claims and reset scopes
+  differ, and it would hide rather than close F2.
+- Treat nearest hostTicks as exact native sample identity: REJECTED.
+- Replace Native Path B or introduce FIFO/extra queues: REJECTED; no contrary boundary
+  evidence and it violates latest-frame contract.
+- Use UpdateExternalTexture or rotating Unity-visible identity: REJECTED.
+- Retain IMFSample through worker lifetime: REJECTED.
+- Add Fence/Wait/queue flush/async-disable: REJECTED; no exact synchronization defect
+  boundary and normal path is nonblocking.
+- Remove Runner one-in-flight while CPU Image storage is externally owned: REJECTED;
+  it is a package lifetime contract.
+- Adopt tutorial GetPixels32/SetPixels32/ReadPixels Production path: REJECTED.
+- Delete Sentis from Static source comparison: REJECTED; benefit/removal remains a
+  measured Product claim.
+- Promote MediaPipe transformation matrix to Head authority solely because it exists:
+  REJECTED.
+- Remove channel-specific temporal state merely because multiple layers exist:
+  REJECTED.
+- Add strong smoothing, Kalman, stale prediction, permanent delay, or threshold
+  relaxation: REJECTED.
+- Reopen E2 or create new observer/validator in P2: REJECTED.
+- Interpret P1-2 BOTH_BAD_SIMILAR as proof of Native/filter/F1/F2/F4 cause or a true
+  temporal regression: REJECTED.
+- Big-Bang rewrite or external tracker replacement: REJECTED.
+
+================================================================================
+Unknowns
+================================================================================
+
+1. Requested R12 roadmap file is absent. Its exact current decisions are UNKNOWN.
+2. Exact Native C++ -> installed DLL Class A build provenance is UNKNOWN.
+3. Physical camera/driver buffering and exposure-time timestamp are UNKNOWN.
+4. Exact camera settings, focus, exposure, lighting, distance, DPI, and capture-chain
+   equivalence between 2026-09-02 and P1-2 are UNKNOWN.
+5. Current Product drop rates, callback latency distribution, end-to-end sample age,
+   and clean CPU/GPU performance are UNKNOWN because P2 executed no Runtime.
+6. Sentis hybrid versus FaceLandmarker-only current accuracy/visual value is UNKNOWN.
+7. Whether CPUAsync can be replaced by a supported installed-package path without
+   adding lifetime risk or CPU fallback is UNKNOWN.
+8. F1 canonical-only expression visible equivalence is UNKNOWN.
+9. F2 exact same-native-sample closure and symptom causality are UNKNOWN.
+10. F3 double rotation's measured magnitude/visual causality and removal outcome are
+    UNKNOWN despite the Static double-owner path.
+11. F4 harmful temporal overlap is UNKNOWN.
+12. Official tagged source describes version semantics, but exact numerical model
+    asset/device execution behavior is not Runtime-verified in P2.
+
+No UNKNOWN is converted to PASS.
+
+================================================================================
+Production Decision
+================================================================================
+
+P2 production decision: NO_CHANGE.
+
+Confirmed Static simplification opportunities are recorded, but none is applied.
+The working low-latency core remains protected. Correctness, Authority, Lifecycle,
+Security/Resource, Performance, Visual, and Product Reliability acceptance remains
+fail-closed and claim-scoped.
+
+What changed:
+  One new read-only consolidated report only.
+
+What did not change:
+  Production source, Scene, Native source/DLL, installed packages, model, tracking,
+  inference, ROI, cadence, texture transaction, Root/Head authority, temporal state,
+  observers, validators, build artifacts, and Runtime state.
+
+Why the proposed future simplification can be better than NO_CHANGE:
+  Exact Runner duplicates add maintenance/validator surface without adding a claim.
+  SharedTiltLock adds a second sampling-rotation owner to an already active coherent
+  RigidSampleFrame transform. Removing either is only better after its stated local
+  gate; all other proposed changes remain below the evidence threshold.
+
+================================================================================
+Next Single Action
+================================================================================
+
+Request a separately authorized, change-local F3 ownership experiment:
+  keep KiwiFacePartRigidSampleFrame enabled and unchanged;
+  disable only KiwiFacePartSharedTiltLock;
+  preserve Native, Runner, Sentis, Canonical, Root/Head, Cropper, ShapeMask, texture
+  transaction, filter, and thresholds;
+  build a same-source identity artifact;
+  compare control versus single-owner output for texture+mask sample rotation,
+  eye-line residual, crop/edge integrity, lifecycle, and human Visual;
+  use clean Product execution for Performance if performance is claimed.
+
+If the gate passes, retire SharedTiltLock and its unique validator surface. If it
+fails or evidence is incomplete, restore/retain current behavior and report NO_GO.
+Do not proceed automatically to F1, F2, F4, or Sentis removal.
+
+NEXT_TARGET_BOUNDARY=F3_SHARED_TILT_LOCK_VS_RIGID_SAMPLE_FRAME_SAMPLING_ROTATION_OWNER
+
+================================================================================
+Machine-Readable Fields
+================================================================================
+
+NATIVE_PATH_B_STATUS=KEEP_CLASS_B_SOURCE_PROVENANCE_ONLY
+CAMERA_LATEST_FRAME_STATUS=KEEP
+MEDIAPIPE_FLOW_LIMITER_STATUS=KEEP
+KIWI_PRE_INPUT_LATEST_STATUS=KEEP
+FRESHNESS_OWNER_STATUS=KEEP_RUNNER_PRE_INPUT_BOUNDARY
+IMAGE_PREPARATION_STATUS=KEEP_CURRENT_CONTRACT_CPUASYNC_COST_NEEDS_CLEAN_EVIDENCE
+SENTIS_HYBRID_STATUS=NEEDS_RUNTIME_EVIDENCE_KEEP_CURRENTLY
+MEDIAPIPE_REFRESH_STATUS=KEEP_CONDITIONAL_WITH_SENTIS_HYBRID
+EXPRESSION_OWNER_STATUS=MERGE_CANDIDATE_TO_CANONICAL_INPUT_NEEDS_RUNTIME
+HEAD_POSE_OWNER_STATUS=KEEP_KIWI_GEOMETRIC_RIGID_PRIMARY_MEDIAPIPE_MATRIX_AUXILIARY
+TIMESTAMP_AUTHORITY_STATUS=KEEP_CLAIM_SCOPED_NOT_ONE_TOKEN
+TRANSACTION_TOKEN_STATUS=INCOMPLETE_FOR_EXACT_NATIVE_SAMPLE_IDENTITY
+F1_STATUS=STATIC_BYPASS_CONFIRMED_MERGE_CANDIDATE_NEEDS_RUNTIME_EVIDENCE
+F2_STATUS=NEEDS_RUNTIME_EVIDENCE_STRUCTURAL_GAP_REMAINS
+F3_STATUS=RETIRE_CANDIDATE_SHARED_TILT_LOCK_KEEP_RIGID_SAMPLE_FRAME_NEEDS_CHANGE_LOCAL_RUNTIME
+F4_STATUS=NEEDS_RUNTIME_EVIDENCE_NO_SOURCE_PROVEN_DEFECT
+VALIDATION_REDUCTION_FEASIBLE=YES
+VALIDATORS_CAN_BE_REMOVED_FROM_CRITICAL_PATH=YES_V20_V24_V25_V27_V31_E2_P1_FREEZE_OR_ON_DEMAND
+RESIDUAL_RUNTIME_CLAIM_COUNT=5
+NEXT_RUNTIME_REQUIRED=YES_ONLY_AFTER_EXPLICIT_AUTHORIZATION_FOR_RESIDUAL_ADOPTION_CLAIMS
+NEXT_TARGET_BOUNDARY=F3_SHARED_TILT_LOCK_VS_RIGID_SAMPLE_FRAME_SAMPLING_ROTATION_OWNER
+PRODUCTION_BEHAVIOR_CHANGED=NO
+RUNTIME_EXECUTED=NO
+BUILD_EXECUTED=NO
+COMMIT_PUSH=NO
+REPORT_COUNT=1
+RUNTIME_ZIP_CREATED=NO
+P2_EXIT_GATE=COMPLETE_WITH_EXPLICIT_UNKNOWNS
+

@@ -1,0 +1,13 @@
+status=COMPLETE
+payloadEligiblePairCount=60
+observerFaultCount=0
+identityMismatchCount=0
+duplicateDecodePayloadCount=0
+duplicateShadowPayloadCount=0
+arrayAliasCount=0
+fieldMappingMismatchCount=0
+payloadShapeMismatchCount=0
+nonFinitePayloadCount=0
+partialCaptureCount=0
+pendingAtCompletion=0
+noDecodePayloadCoverageCount=0

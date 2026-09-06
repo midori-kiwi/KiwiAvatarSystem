@@ -1,0 +1,4048 @@
+[
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Editor/KiwiBuildV44_55_31.cs",
+    "expected": "ED54377B408B12FC715EE6F2CB8596855D4933CCB268479579B73F153E8689B3",
+    "current": "ED54377B408B12FC715EE6F2CB8596855D4933CCB268479579B73F153E8689B3",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Editor/KiwiSnapshotCopyTestV44_55_31.cs",
+    "expected": "A3937E3169DB9412730CD524C4FB31B90350246C39FFC06FBD2E2E52600FBA58",
+    "current": "A3937E3169DB9412730CD524C4FB31B90350246C39FFC06FBD2E2E52600FBA58",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Resources/KiwiProducerTailSnapshotV44_55_31.compute",
+    "expected": "A333894F1A9DA77387A8BE7AD6D990B420689502E33361192942B99D1EEEEBA0",
+    "current": "A333894F1A9DA77387A8BE7AD6D990B420689502E33361192942B99D1EEEEBA0",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Resources/KiwiProducerTailSnapshotV44_55_31.compute.meta",
+    "expected": "52C6C2B210F7D068729B8F1ECDB1D3AEF1FEC0B3F960ADCD95CBB1572774E225",
+    "current": "52C6C2B210F7D068729B8F1ECDB1D3AEF1FEC0B3F960ADCD95CBB1572774E225",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Runtime/Camera/IKiwiFreshFrameSource.cs",
+    "expected": "43BB8DA2496EFF443BE00D0B62642A789E850DC63965687241B74532F0EF051C",
+    "current": "43BB8DA2496EFF443BE00D0B62642A789E850DC63965687241B74532F0EF051C",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Runtime/Camera/KiwiNativeCameraInterop.cs",
+    "expected": "AC473ADBADE5EDC89726211ECAF03D040B5CC00FCA39BEA4A0D16195FA53E8B5",
+    "current": "AC473ADBADE5EDC89726211ECAF03D040B5CC00FCA39BEA4A0D16195FA53E8B5",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Runtime/Camera/KiwiNativeCameraTelemetry.cs",
+    "expected": "528A2FE566A970E480DB8CA8851B46C873CBCE0289A13B6D15D5EF111D22907C",
+    "current": "528A2FE566A970E480DB8CA8851B46C873CBCE0289A13B6D15D5EF111D22907C",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Runtime/Camera/WindowsNativeWebCamSource.cs",
+    "expected": "D0DD9A78FA57AAB51D3E0C8606844C44F0207DC87277D0B26AEF3B43EF353533",
+    "current": "D0DD9A78FA57AAB51D3E0C8606844C44F0207DC87277D0B26AEF3B43EF353533",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Runtime/KiwiAdaptiveFaceFitter.cs",
+    "expected": "FAF498E8F106D7550B2209B5459AF0B5F5D33900001E3F7AA338062D777A1355",
+    "current": "FAF498E8F106D7550B2209B5459AF0B5F5D33900001E3F7AA338062D777A1355",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Runtime/KiwiAvatarProfile.cs",
+    "expected": "02CF14CA919104B84B39464EF525CB845C447D3229B72933117FEC47C4D8B0B4",
+    "current": "02CF14CA919104B84B39464EF525CB845C447D3229B72933117FEC47C4D8B0B4",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Runtime/KiwiAvatarRuntimeManager.cs",
+    "expected": "55FECE90CA98C1502DDB55935B2B90471DE757381275C23152BEC2ADD02E9491",
+    "current": "55FECE90CA98C1502DDB55935B2B90471DE757381275C23152BEC2ADD02E9491",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Runtime/KiwiPlatformRuntime.cs",
+    "expected": "6E71110071819C152BB0B3D6A6681400CD5EEC25E06F65A8E2D0866039AF485C",
+    "current": "6E71110071819C152BB0B3D6A6681400CD5EEC25E06F65A8E2D0866039AF485C",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiCommercialPresentationTuner.cs",
+    "expected": "9561950B8755328D60D394115B20CE9ECC74B731150E1DDA8D73C6F958974654",
+    "current": "9561950B8755328D60D394115B20CE9ECC74B731150E1DDA8D73C6F958974654",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiFacePartLiveMotionBridge.cs",
+    "expected": "3A845EA8A0F3939162A1621BFC36A2D2644BF6C28513D66D1BD2F97FD2A17D07",
+    "current": "3A845EA8A0F3939162A1621BFC36A2D2644BF6C28513D66D1BD2F97FD2A17D07",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiFacePartPresentationResolver.cs",
+    "expected": "4CD36DABF5C69ED15B54E7F93482EF5DA235BDC67CA9453E27F7355E961E5751",
+    "current": "4CD36DABF5C69ED15B54E7F93482EF5DA235BDC67CA9453E27F7355E961E5751",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiFacePartRigidSampleFrame.cs",
+    "expected": "578CE2ED93A2A78EE1B19D8FF309A115A2FA53596E79BAAB0534A27AC10077C0",
+    "current": "578CE2ED93A2A78EE1B19D8FF309A115A2FA53596E79BAAB0534A27AC10077C0",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiFacePartSharedTiltLock.cs",
+    "expected": "0BCCA0B7BD6982B78C0FC18058ACD54D073D786820F7B027B8C2F218EF2CAE70",
+    "current": "0BCCA0B7BD6982B78C0FC18058ACD54D073D786820F7B027B8C2F218EF2CAE70",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiInferenceAsyncComputeDefaultV44_22.cs",
+    "expected": "6F92C065BE426222FE591165551B4EB8B197A66998A3964A0D555F1564357801",
+    "current": "6F92C065BE426222FE591165551B4EB8B197A66998A3964A0D555F1564357801",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiInferenceLifecycleGuard.cs",
+    "expected": "1827C11E701482F8B46C310E45DF27BEF988148E47CB2C3B9C7744869FE481A4",
+    "current": "1827C11E701482F8B46C310E45DF27BEF988148E47CB2C3B9C7744869FE481A4",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiInferenceRecoveryBootstrap.cs",
+    "expected": "2AC3DDAAF516A8553FA03169E058E362302456AA709AD26EB75F82F74813661B",
+    "current": "2AC3DDAAF516A8553FA03169E058E362302456AA709AD26EB75F82F74813661B",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiOrtDirectMLShadowRuntime.cs",
+    "expected": "D30A700A7B9E3C3D09BC64FA0CA5722729EE41821DE1F1B5E30E30D986B947C2",
+    "current": "D30A700A7B9E3C3D09BC64FA0CA5722729EE41821DE1F1B5E30E30D986B947C2",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiRuntimePolicyResolver.cs",
+    "expected": "90C2E91A48B5579AB5843CEACA1DE15CC935704DFD66787B445D8E4A615971B3",
+    "current": "90C2E91A48B5579AB5843CEACA1DE15CC935704DFD66787B445D8E4A615971B3",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Runtime/Presentation/KiwiFacePartTextureTransaction.cs",
+    "expected": "DC78488DCD1D2E45E5AA6F40065D4983087014B501B5FD5A8E37B6D8E0F68849",
+    "current": "DC78488DCD1D2E45E5AA6F40065D4983087014B501B5FD5A8E37B6D8E0F68849",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiCalibrationLifecycleCoordinator.cs",
+    "expected": "40080B67FC7838C7156085DD52A47998E8BF59D09436D192CE033ACBB5F8723B",
+    "current": "40080B67FC7838C7156085DD52A47998E8BF59D09436D192CE033ACBB5F8723B",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiCanonicalTrackingFrame.cs",
+    "expected": "A10EC7889025BAABEB4B621956D5D0C7B8F6BA47B3674D0A8E12B7F968769DA9",
+    "current": "A10EC7889025BAABEB4B621956D5D0C7B8F6BA47B3674D0A8E12B7F968769DA9",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiCommercialLandmarkRefiner.cs",
+    "expected": "2AFCF4E9CD0AF6925F01AD3413B87E09FC45899DCCA94A853E889E500B4D2736",
+    "current": "2AFCF4E9CD0AF6925F01AD3413B87E09FC45899DCCA94A853E889E500B4D2736",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiTrackingNormalizationContract.cs",
+    "expected": "B98CCBEBDA1969508D421B54F3A0D480B79434C996974B45D3F2EFEB45146BF5",
+    "current": "B98CCBEBDA1969508D421B54F3A0D480B79434C996974B45D3F2EFEB45146BF5",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiTrackingProviderHub.cs",
+    "expected": "A5C7DE387FA2E02862BCF64942363AECFB9C7830B52DF5B8953404DF884ECCB1",
+    "current": "A5C7DE387FA2E02862BCF64942363AECFB9C7830B52DF5B8953404DF884ECCB1",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Runtime/Validation/KiwiActualProductionVsShadowPayloadAuthorityV44_55_27.cs",
+    "expected": "DD13D1170218C23CA80E721EAFB77D6D745254F5E28E06A93343331B921B42B6",
+    "current": "DD13D1170218C23CA80E721EAFB77D6D745254F5E28E06A93343331B921B42B6",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Runtime/Validation/KiwiAsyncProducerTailSnapshotV44_55_31.cs",
+    "expected": "0962DFF52A319806D3845FBD499DBE49878DF2444F714C47137E34B410A762FC",
+    "current": "0962DFF52A319806D3845FBD499DBE49878DF2444F714C47137E34B410A762FC",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/KiwiAvatarSystem/Runtime/Validation/KiwiProductionScheduleTransactionTraceV44_55_25.cs",
+    "expected": "1A0692C683F258B95F5910409888B98B6E3F9777B3C50AB95FA7575308AE5316",
+    "current": "1A0692C683F258B95F5910409888B98B6E3F9777B3C50AB95FA7575308AE5316",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/Plugins/x86_64/KiwiNativeCamera.dll",
+    "expected": "82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5",
+    "current": "82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/Scenes/Face Landmark Detection.unity",
+    "expected": "E28B0B81F731B92B04B97D4AA7DB1187C8DD57C5A39F49B08B2E6799BBF5B3D1",
+    "current": "E28B0B81F731B92B04B97D4AA7DB1187C8DD57C5A39F49B08B2E6799BBF5B3D1",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/Script/FaceLandmarkerRunner.cs",
+    "expected": "6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93",
+    "current": "6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/Script/FacePartAngleLock.cs",
+    "expected": "EE07BF928AC816C4989BFE81C6BE89E1A58979DCE0C6565EDC01C9078052D454",
+    "current": "EE07BF928AC816C4989BFE81C6BE89E1A58979DCE0C6565EDC01C9078052D454",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/Script/FacePartCropper.cs",
+    "expected": "39C06FEC43B4EA47AD783C233991E830E10B18DA285148E7A34B0C13DAD52CFE",
+    "current": "39C06FEC43B4EA47AD783C233991E830E10B18DA285148E7A34B0C13DAD52CFE",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/Script/FacePartMaskUV.cs",
+    "expected": "C32B19E6955CF3F635B502A4193A5A506893486C6ED61770444D51CC44E057F4",
+    "current": "C32B19E6955CF3F635B502A4193A5A506893486C6ED61770444D51CC44E057F4",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/Script/FacePartShapeMask.cs",
+    "expected": "822D18059988F390F52C40F60DA5F11E8ECF7577008D640272C5CF8D1557D4A6",
+    "current": "822D18059988F390F52C40F60DA5F11E8ECF7577008D640272C5CF8D1557D4A6",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/Script/KiwiFaceMotion.cs",
+    "expected": "D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6",
+    "current": "D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Assets/Script/KiwiInferenceFaceTracker.cs",
+    "expected": "CF860F4EF686BD5FDAC4140D4F3E73E64B6F390C3BC64204CF346011AC69380D",
+    "current": "CF860F4EF686BD5FDAC4140D4F3E73E64B6F390C3BC64204CF346011AC69380D",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/package.json",
+    "expected": "EEBBFF4550FA9CA3C2C76AB05BD0EDBDB3A0A4C2800883E244DC9E40D8FF2A2D",
+    "current": "EEBBFF4550FA9CA3C2C76AB05BD0EDBDB3A0A4C2800883E244DC9E40D8FF2A2D",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library/PackageCache/com.unity.ai.inference@587873fd5e1b/package.json",
+    "expected": "2F230C84E28A9E3AD516B1A49B79B6F83E172F1C16E6813E0F1DD6FA2B1790EE",
+    "current": "2F230C84E28A9E3AD516B1A49B79B6F83E172F1C16E6813E0F1DD6FA2B1790EE",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\AssemblyInfo.cs",
+    "expected": "E1F508786F305AE865AADEC2E2CA51661B0B8C39641BCBE51471E8CCE3750F46",
+    "current": "E1F508786F305AE865AADEC2E2CA51661B0B8C39641BCBE51471E8CCE3750F46",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\BackendFactory.cs",
+    "expected": "E4FB423D4D70E94B9E4CD50837068C4F7D898FDF968F91FE31723C0F1EDD15AE",
+    "current": "E4FB423D4D70E94B9E4CD50837068C4F7D898FDF968F91FE31723C0F1EDD15AE",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\CPU\\BurstCPU.Backend.cs",
+    "expected": "0B5B88F05348066710CC0BB7594CB434AC361038128E42D6999FEE1E015630CF",
+    "current": "0B5B88F05348066710CC0BB7594CB434AC361038128E42D6999FEE1E015630CF",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\CPU\\BurstCPU.Backend.gen.cs",
+    "expected": "DA4CBF1DC4627BB45294543360B28567A69121419A8767906645358E91208635",
+    "current": "DA4CBF1DC4627BB45294543360B28567A69121419A8767906645358E91208635",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\CPU\\BurstCPU.Helper.cs",
+    "expected": "84102791E03C75B0C99CD0E59FF6B54AC04C6A8963FCEDFC6062A3FC031A565A",
+    "current": "84102791E03C75B0C99CD0E59FF6B54AC04C6A8963FCEDFC6062A3FC031A565A",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\CPU\\BurstCPU.Jobs.Broadcast.gen.cs",
+    "expected": "1F67736A4714AAB3239968826661EC110002289975828830523453A8BC19ECE9",
+    "current": "1F67736A4714AAB3239968826661EC110002289975828830523453A8BC19ECE9",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\CPU\\BurstCPU.Jobs.ConvA.gen.cs",
+    "expected": "C449B19C8AFEBDBFBDAED963AA4C754DED036192EE301BEDAE6F2D85D27987ED",
+    "current": "C449B19C8AFEBDBFBDAED963AA4C754DED036192EE301BEDAE6F2D85D27987ED",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\CPU\\BurstCPU.Jobs.cs",
+    "expected": "CE9B02BC2D3786557BD539B7879F77444266C8A158DAD2B6C52C8D2381AD6B38",
+    "current": "CE9B02BC2D3786557BD539B7879F77444266C8A158DAD2B6C52C8D2381AD6B38",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\CPU\\BurstCPU.Jobs.Dimension.cs",
+    "expected": "59357207D3C3E8A2A3A5EB0B67AC9C29755C3DAD207487C5E7E4439B6489BFA0",
+    "current": "59357207D3C3E8A2A3A5EB0B67AC9C29755C3DAD207487C5E7E4439B6489BFA0",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\CPU\\BurstCPU.Jobs.Einsum.cs",
+    "expected": "8C591D06931E7CAB5218071B2342345ECE05D17AA06F1184D010DE0420F4D43C",
+    "current": "8C591D06931E7CAB5218071B2342345ECE05D17AA06F1184D010DE0420F4D43C",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\CPU\\BurstCPU.Jobs.GenericA.cs",
+    "expected": "3D781341BC96462D7138BC4021A41BCF64B44C1F05D255480D573D2BFD59D19D",
+    "current": "3D781341BC96462D7138BC4021A41BCF64B44C1F05D255480D573D2BFD59D19D",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\CPU\\BurstCPU.Jobs.ImageBased.gen.cs",
+    "expected": "0EF00137F1F0E34C086EA809B13BC7720D1BBA669BF789B032E60A523B21EE05",
+    "current": "0EF00137F1F0E34C086EA809B13BC7720D1BBA669BF789B032E60A523B21EE05",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\CPU\\BurstCPU.Jobs.IndexingOpsA.cs",
+    "expected": "15DFB4C7EEDE910D15DF2FFE8BDD00237CC88038290D742003E079E0AA78F020",
+    "current": "15DFB4C7EEDE910D15DF2FFE8BDD00237CC88038290D742003E079E0AA78F020",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\CPU\\BurstCPU.Jobs.Logical.cs",
+    "expected": "6A385D676CFFA7185CC1D1E0C649651D24EA2FE827CC7C67CB7CB3BD043F8099",
+    "current": "6A385D676CFFA7185CC1D1E0C649651D24EA2FE827CC7C67CB7CB3BD043F8099",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\CPU\\BurstCPU.Jobs.Normalization.cs",
+    "expected": "22EA348248CB772E0D42FE0E98053321A8CBA1515D8B6EC88F5CDAF0CE7DE8BA",
+    "current": "22EA348248CB772E0D42FE0E98053321A8CBA1515D8B6EC88F5CDAF0CE7DE8BA",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\CPU\\BurstCPU.Jobs.Other.cs",
+    "expected": "68078FC6FA90614C5D2C278411CFC13678ADFA430C357D3AEF71128AF99A2051",
+    "current": "68078FC6FA90614C5D2C278411CFC13678ADFA430C357D3AEF71128AF99A2051",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\CPU\\BurstCPU.Jobs.Pad.gen.cs",
+    "expected": "C75F01E1C341BD835710553AD3E9BFD4D126B57FB91B0AB9DED48BD5A205B678",
+    "current": "C75F01E1C341BD835710553AD3E9BFD4D126B57FB91B0AB9DED48BD5A205B678",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\CPU\\BurstCPU.Jobs.PointwiseUnary.gen.cs",
+    "expected": "8B8D9EB78DD625E122D0B97E3184E2A2B434580C1C78BD563DE92AD37119BDF6",
+    "current": "8B8D9EB78DD625E122D0B97E3184E2A2B434580C1C78BD563DE92AD37119BDF6",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\CPU\\BurstCPU.Jobs.Pool.gen.cs",
+    "expected": "79CA5208FA98AA1D0008EECF66556D7594DEAEF1DA58049CFC686C9FFBEC5F44",
+    "current": "79CA5208FA98AA1D0008EECF66556D7594DEAEF1DA58049CFC686C9FFBEC5F44",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\CPU\\BurstCPU.Jobs.Reduction.gen.cs",
+    "expected": "5FD90307C3F22439E3C7BDD746C70055B0A1EA3B0502E3135E0535CCD8E8AEA0",
+    "current": "5FD90307C3F22439E3C7BDD746C70055B0A1EA3B0502E3135E0535CCD8E8AEA0",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\CPU\\BurstCPU.Jobs.RNN.cs",
+    "expected": "89F87FBE4C0CD7FBCCBFE852C7FE8F4B3FBB8A9707CB19D6930C027D80F1EB02",
+    "current": "89F87FBE4C0CD7FBCCBFE852C7FE8F4B3FBB8A9707CB19D6930C027D80F1EB02",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\CPU\\BurstCPU.MatMul.gen.cs",
+    "expected": "C542B119A1908BB385A1E7C1B3CC197889366A0C4D347ACB83A5C7F27E98B468",
+    "current": "C542B119A1908BB385A1E7C1B3CC197889366A0C4D347ACB83A5C7F27E98B468",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\CPU\\BurstCPUJobSystem.cs",
+    "expected": "43100E8AC39A953752782A750FD8D947493146435B7D133E69416DF6037905EF",
+    "current": "43100E8AC39A953752782A750FD8D947493146435B7D133E69416DF6037905EF",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\CPU\\BurstTensorData.cs",
+    "expected": "BF23534C9D26CEE1AE56ED587B1723C09E11588B454BAB54C6AA5E8BCCBFCC16",
+    "current": "BF23534C9D26CEE1AE56ED587B1723C09E11588B454BAB54C6AA5E8BCCBFCC16",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\CPU\\MathExtensions.cs",
+    "expected": "90D9A53DB8CCA8CE50D4FBA594060F99C16BB63AD176D14F2A601D1987D23162",
+    "current": "90D9A53DB8CCA8CE50D4FBA594060F99C16BB63AD176D14F2A601D1987D23162",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\CPU\\NativeTensorArray.cs",
+    "expected": "7BC19829CF75E8418D7B57CBC455854423AD189718CC6F46BB8C09FB3BF8475C",
+    "current": "7BC19829CF75E8418D7B57CBC455854423AD189718CC6F46BB8C09FB3BF8475C",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\CPU\\ReferenceCPU.cs",
+    "expected": "9787F710E10B0A59ED153E805C4FD2CAE416D231BCF9F2499773018A03F670D2",
+    "current": "9787F710E10B0A59ED153E805C4FD2CAE416D231BCF9F2499773018A03F670D2",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\CPU\\ReferenceCPU.Einsum.cs",
+    "expected": "C181B4F20CF5C07BEB09DD3ADC70F2ADC7743E8743F9E4099556A4F250A03BB3",
+    "current": "C181B4F20CF5C07BEB09DD3ADC70F2ADC7743E8743F9E4099556A4F250A03BB3",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\CPUFallbackCalculator.cs",
+    "expected": "94199A8D0D1CF28F2EADE07E4BA30AEC284D872770CAAAE137868B2F7F436A33",
+    "current": "94199A8D0D1CF28F2EADE07E4BA30AEC284D872770CAAAE137868B2F7F436A33",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\GfxDevice\\GfxDeviceBackend.cs",
+    "expected": "0DECCE807D903072277052C8DD94508DA842C6DFE6C8B0277D069B1E55D70F3A",
+    "current": "0DECCE807D903072277052C8DD94508DA842C6DFE6C8B0277D069B1E55D70F3A",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\GPUCompute\\CommandBufferHelper.cs",
+    "expected": "592B80B1799FA3C9A7CD14C5593EBF418FC511A41B555863CFFB1C5DE9E2F334",
+    "current": "592B80B1799FA3C9A7CD14C5593EBF418FC511A41B555863CFFB1C5DE9E2F334",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\GPUCompute\\Compute.Backend.gen.cs",
+    "expected": "DBF7AC38F2CA5EC7E4E3809691D356E80FB07BFA50E0A1EF6128DF295864512E",
+    "current": "DBF7AC38F2CA5EC7E4E3809691D356E80FB07BFA50E0A1EF6128DF295864512E",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\GPUCompute\\ComputeHelper.ComputeFunctions.cs",
+    "expected": "F825F020B5B7EDE0CCF61C7E46BF36BB70FF4130E475BF57AF84E7A355935059",
+    "current": "F825F020B5B7EDE0CCF61C7E46BF36BB70FF4130E475BF57AF84E7A355935059",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\GPUCompute\\ComputeHelper.cs",
+    "expected": "992876B3BEBA542E375A3D6B47C96255EA7FA5CDDAC79EC1024C2B2B25735F5C",
+    "current": "992876B3BEBA542E375A3D6B47C96255EA7FA5CDDAC79EC1024C2B2B25735F5C",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\GPUCompute\\ComputeHelper.PropertyID.cs",
+    "expected": "6448C3AD21823766DA51E88813AB050A948489C2CFA39EBE96AED1A97A2E1FC3",
+    "current": "6448C3AD21823766DA51E88813AB050A948489C2CFA39EBE96AED1A97A2E1FC3",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\GPUCompute\\ComputeInfo.cs",
+    "expected": "40D25A09B855315F2ED4DE4899294EDB91A683F6352F7EE7A49D43D432A4B595",
+    "current": "40D25A09B855315F2ED4DE4899294EDB91A683F6352F7EE7A49D43D432A4B595",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\GPUCompute\\ComputeTensorData.cs",
+    "expected": "38523335457507326E91FA5E40C332E99A18C7BFF556336F3016627788AA02D9",
+    "current": "38523335457507326E91FA5E40C332E99A18C7BFF556336F3016627788AA02D9",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\GPUCompute\\GPUCompute.cs",
+    "expected": "EFB9DE3F4C7EA7C33142B6B55994378121985713A65ACF97E1F8BCBD7C52BAF7",
+    "current": "EFB9DE3F4C7EA7C33142B6B55994378121985713A65ACF97E1F8BCBD7C52BAF7",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\GPUPixel\\GPUPixel.cs",
+    "expected": "EA3315F4179739F0674E413E80B68F2B0D641D67A124B60328AA9646C0364E0D",
+    "current": "EA3315F4179739F0674E413E80B68F2B0D641D67A124B60328AA9646C0364E0D",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\GPUPixel\\GPUPixelBurstJobs.cs",
+    "expected": "6A10854DDD4AC92074A3F9318127B8A291CF0EA0E90F423DE2E576DA84535CD0",
+    "current": "6A10854DDD4AC92074A3F9318127B8A291CF0EA0E90F423DE2E576DA84535CD0",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\GPUPixel\\PixelShaderSingleton.cs",
+    "expected": "F7F756ED7877932FB9B98853D29DF372B6A75FB357BA2869FD969A00CE2860CD",
+    "current": "F7F756ED7877932FB9B98853D29DF372B6A75FB357BA2869FD969A00CE2860CD",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\GPUPixel\\TextureTensorData.cs",
+    "expected": "C5216EA42FA970F4844618EF5B436C312182B368AAE02E8E1AFB2B8E4CE0F8C2",
+    "current": "C5216EA42FA970F4844618EF5B436C312182B368AAE02E8E1AFB2B8E4CE0F8C2",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\IBackend.cs",
+    "expected": "699C04D1FDDE93F88779A341DAFEF110F16C65FF8C10EA565C1B59128A358A0B",
+    "current": "699C04D1FDDE93F88779A341DAFEF110F16C65FF8C10EA565C1B59128A358A0B",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\ModelOptimizer.cs",
+    "expected": "974CD8108BF8F0AACB19BF9A366CCE41367C4A26B464DF5390856EF9224F5A4B",
+    "current": "974CD8108BF8F0AACB19BF9A366CCE41367C4A26B464DF5390856EF9224F5A4B",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\ModelStorage.cs",
+    "expected": "F6670D6DA517F3663CBB2242D413614874BE6544A6629225787B76C938D65FC7",
+    "current": "F6670D6DA517F3663CBB2242D413614874BE6544A6629225787B76C938D65FC7",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\ModelValidator.cs",
+    "expected": "C7D32A5F0CC2CCE3847F303F9C87D78F655DFB2BCC3EF0CCAFB0254905F3F3C8",
+    "current": "C7D32A5F0CC2CCE3847F303F9C87D78F655DFB2BCC3EF0CCAFB0254905F3F3C8",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\Ops.cs",
+    "expected": "E67BBA410AC7F78C0DD29131052BD6D33ADC8412E4DCFDD82962FFFAD3F322CF",
+    "current": "E67BBA410AC7F78C0DD29131052BD6D33ADC8412E4DCFDD82962FFFAD3F322CF",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\OpsUtils.cs",
+    "expected": "64F4E861A8CDC4555B6CFAC2A979C32DF1FECE6629D3844227946D3659F738D7",
+    "current": "64F4E861A8CDC4555B6CFAC2A979C32DF1FECE6629D3844227946D3659F738D7",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\TensorAllocator.cs",
+    "expected": "FEE6EBE1FF2BBC4B9835769C6652ECD1B20600AD1EE10A45E4B7022D8632DC02",
+    "current": "FEE6EBE1FF2BBC4B9835769C6652ECD1B20600AD1EE10A45E4B7022D8632DC02",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\TensorClassPool.cs",
+    "expected": "537D7255E77434420FB234B9F4A1DB167F92443F0697D82461A4A5D644958860",
+    "current": "537D7255E77434420FB234B9F4A1DB167F92443F0697D82461A4A5D644958860",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\TensorDataPool.cs",
+    "expected": "C0765322525E209E31DA7F578C9BD2DEFA22418FD92FBA58E2231DB5E9F3CE79",
+    "current": "C0765322525E209E31DA7F578C9BD2DEFA22418FD92FBA58E2231DB5E9F3CE79",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\TensorPool.cs",
+    "expected": "E653B80EE2C1E944EC1AB71F1EEF389F6774D18599FA6A1ED314A58791C3E79D",
+    "current": "E653B80EE2C1E944EC1AB71F1EEF389F6774D18599FA6A1ED314A58791C3E79D",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Backends\\Worker.cs",
+    "expected": "011BC050A5CA80BBD313E7B4EE679D142B4740181D7F2380DD142C8910752256",
+    "current": "011BC050A5CA80BBD313E7B4EE679D142B4740181D7F2380DD142C8910752256",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\BurstJobsCastTensor.cs",
+    "expected": "24E790182DA239048E8283B66809BA7FB0C5EEED02AB92DF961ED1A494CD1377",
+    "current": "24E790182DA239048E8283B66809BA7FB0C5EEED02AB92DF961ED1A494CD1377",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\BurstJobsQuantizeTensor.cs",
+    "expected": "5B5432EB4586463743029831A94D74994B38773C7BD3C41E7700574C5A6C2B23",
+    "current": "5B5432EB4586463743029831A94D74994B38773C7BD3C41E7700574C5A6C2B23",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Compiler\\Analyser\\GraphLogicAnalysis.cs",
+    "expected": "535DE2CC0617A07293A350DDC53C81C472C8957111F52F33413AEC392F4E1A1D",
+    "current": "535DE2CC0617A07293A350DDC53C81C472C8957111F52F33413AEC392F4E1A1D",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Compiler\\Analyser\\MemoryFootprintAnalysis.cs",
+    "expected": "5EBFC41C09168EC0731CE48801E13EAF58DDF6875D8C2E6D247A2922EAD91C81",
+    "current": "5EBFC41C09168EC0731CE48801E13EAF58DDF6875D8C2E6D247A2922EAD91C81",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Compiler\\Analyser\\PartialInferenceAnalysis.cs",
+    "expected": "F43AE8B9140CD99D0F03E4D5FB20DAE3C920D157F54DB8CFB9C17B4A5AEFCE8E",
+    "current": "F43AE8B9140CD99D0F03E4D5FB20DAE3C920D157F54DB8CFB9C17B4A5AEFCE8E",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Compiler\\Passes\\ConcatenateTransposesPass.cs",
+    "expected": "B695E18F440A7509CD7956EDCC8ED655BC824062423AE06C7E953D42EC9D7519",
+    "current": "B695E18F440A7509CD7956EDCC8ED655BC824062423AE06C7E953D42EC9D7519",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Compiler\\Passes\\ContractSubExpressionsPass.cs",
+    "expected": "A0E8CDC28792846D992E1351AFCE1B954D48B70D313037933E058C156B8C8509",
+    "current": "A0E8CDC28792846D992E1351AFCE1B954D48B70D313037933E058C156B8C8509",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Compiler\\Passes\\ContractToSimplerLayerPass.cs",
+    "expected": "5430B97CF9B02050A6BB78A6FFB6B456D000789DEEADA96A55E75F1D9A2DDB2A",
+    "current": "5430B97CF9B02050A6BB78A6FFB6B456D000789DEEADA96A55E75F1D9A2DDB2A",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Compiler\\Passes\\EinsumToMatMulPass.cs",
+    "expected": "3A1F7E872D6D5252236E217A674FB7330F1041E5F992F401C5AC01B48727B9AA",
+    "current": "3A1F7E872D6D5252236E217A674FB7330F1041E5F992F401C5AC01B48727B9AA",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Compiler\\Passes\\FuseActivationsPass.cs",
+    "expected": "8F41C8E419E94A9A9602B901926BD75385B3FFBF54E0804455A014FFCF6E98FD",
+    "current": "8F41C8E419E94A9A9602B901926BD75385B3FFBF54E0804455A014FFCF6E98FD",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Compiler\\Passes\\FuseConstantsPass.cs",
+    "expected": "F90DFCDFD3E5EA2DD690E70CACBFCFED08EB58C61097012800093FC17EC8CBBA",
+    "current": "F90DFCDFD3E5EA2DD690E70CACBFCFED08EB58C61097012800093FC17EC8CBBA",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Compiler\\Passes\\FuseDensePass.cs",
+    "expected": "0C03BFC62A0D245F817F42F646DD82AFD1F317F0A5A076014974682631CF4492",
+    "current": "0C03BFC62A0D245F817F42F646DD82AFD1F317F0A5A076014974682631CF4492",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Compiler\\Passes\\FuseLinearLayersPass.cs",
+    "expected": "24C92B82F94F4FE6B2BE649E525FD5796D31FEB0D5A126F0BD5D747491DA90BF",
+    "current": "24C92B82F94F4FE6B2BE649E525FD5796D31FEB0D5A126F0BD5D747491DA90BF",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Compiler\\Passes\\GraphPass.cs",
+    "expected": "1F9689667BB10EB152D927D2CCA588D84542407BC4C5896562612483B7D5D54B",
+    "current": "1F9689667BB10EB152D927D2CCA588D84542407BC4C5896562612483B7D5D54B",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Compiler\\Passes\\GraphPassUtil.cs",
+    "expected": "46470E329B4ECCA14E4101BB3855089D5C69C79CFD4923DD7844F2EB9A7F9989",
+    "current": "46470E329B4ECCA14E4101BB3855089D5C69C79CFD4923DD7844F2EB9A7F9989",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Compiler\\Passes\\PreComputeWindowedDFTMatrixPass.cs",
+    "expected": "081E31B653755FD4F7FEC7E384753AFBE29033076F61E180E721DE859A6F586A",
+    "current": "081E31B653755FD4F7FEC7E384753AFBE29033076F61E180E721DE859A6F586A",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Compiler\\Passes\\RemoveDuplicatesPass.cs",
+    "expected": "22A68D8D0932A840859D3F9B578AF9997EA0C303C0B19065873B2B12355F9FA2",
+    "current": "22A68D8D0932A840859D3F9B578AF9997EA0C303C0B19065873B2B12355F9FA2",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Compiler\\Passes\\RemoveNoOpsPass.cs",
+    "expected": "58CFCA705D81F51AD4D51B4AA9138D21EE4B0DCDE932D5131788A75D3E8711FF",
+    "current": "58CFCA705D81F51AD4D51B4AA9138D21EE4B0DCDE932D5131788A75D3E8711FF",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Compiler\\Passes\\RemoveUnusedPass.cs",
+    "expected": "F601E5CB1D4A2167E8116747E234D0035B48C22FCF7FC2A18A3E80B447391C86",
+    "current": "F601E5CB1D4A2167E8116747E234D0035B48C22FCF7FC2A18A3E80B447391C86",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Compiler\\Passes\\RoundDenormalWeightsPass.cs",
+    "expected": "46AF24B2F53F35A948889C8ACE3863DC344C61E29C280AC6E3A7EE9CC9768D4C",
+    "current": "46AF24B2F53F35A948889C8ACE3863DC344C61E29C280AC6E3A7EE9CC9768D4C",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Compiler\\Passes\\SimplifyReshapeInputPass.cs",
+    "expected": "B1DF007875EEEDA1DCA8EC06F88AF4D07BDC91CA3D7EDF90C254B2B54FCAA9FA",
+    "current": "B1DF007875EEEDA1DCA8EC06F88AF4D07BDC91CA3D7EDF90C254B2B54FCAA9FA",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Compiler\\Passes\\ValidatePasses.cs",
+    "expected": "6CA06E6D739479659B18A56665FDA544E0CC1777DA750564E230D64CA225453F",
+    "current": "6CA06E6D739479659B18A56665FDA544E0CC1777DA750564E230D64CA225453F",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Compiler\\Validation\\IValidationPass.cs",
+    "expected": "EF660F03D0F65BD0790E083CFD2CE2D54FD2A7F5FC3AFFA7F6105A3AE64213E4",
+    "current": "EF660F03D0F65BD0790E083CFD2CE2D54FD2A7F5FC3AFFA7F6105A3AE64213E4",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Compiler\\Validation\\ValidateShapeInference.cs",
+    "expected": "1663731AE9E18B3FD7D3797E51F41FA737131F3EB09DEA536A595233A2EF416E",
+    "current": "1663731AE9E18B3FD7D3797E51F41FA737131F3EB09DEA536A595233A2EF416E",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Converters\\TextureConverter.cs",
+    "expected": "D3905D3D29B70073456FF63F51C54C7B8023A259715504AD14AA436F392DF146",
+    "current": "D3905D3D29B70073456FF63F51C54C7B8023A259715504AD14AA436F392DF146",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Converters\\TextureTransform.cs",
+    "expected": "C12F6A3B739ACC39588722EABE4AF0E4A125E262C14BCA714F57E1E8652B9D7D",
+    "current": "C12F6A3B739ACC39588722EABE4AF0E4A125E262C14BCA714F57E1E8652B9D7D",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Functional\\Functional.Extensions.cs",
+    "expected": "ECB3BBC1425B7E118B26A46DFC00AD878F3C084CBC4B79D0E6CA6EEBA6D83A50",
+    "current": "ECB3BBC1425B7E118B26A46DFC00AD878F3C084CBC4B79D0E6CA6EEBA6D83A50",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Functional\\Functional.Layer.cs",
+    "expected": "D4A6DD3D6147AA32EDA802E721550D81CD912384F757AA06F7AA998733B8E624",
+    "current": "D4A6DD3D6147AA32EDA802E721550D81CD912384F757AA06F7AA998733B8E624",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Functional\\Functional.Math.Comparison.cs",
+    "expected": "95CDF55CECD291E093D0E926DB0CC7AAD947C521E9E4217BE845197D698CCE16",
+    "current": "95CDF55CECD291E093D0E926DB0CC7AAD947C521E9E4217BE845197D698CCE16",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Functional\\Functional.Math.LinearAlgebra.cs",
+    "expected": "C64BDA3DC316A8D9849E1FC338CD0AF67B77E72A360609437ED965883219EFBE",
+    "current": "C64BDA3DC316A8D9849E1FC338CD0AF67B77E72A360609437ED965883219EFBE",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Functional\\Functional.Math.Other.cs",
+    "expected": "AFA651B583B62B7D24167801E9813E99A510F04905E446BC493054C5090A9AB2",
+    "current": "AFA651B583B62B7D24167801E9813E99A510F04905E446BC493054C5090A9AB2",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Functional\\Functional.Math.Pointwise.cs",
+    "expected": "8685804362C394903BBD10C7054E647DFF6A57E71BD0CFCD3E97568215015B9B",
+    "current": "8685804362C394903BBD10C7054E647DFF6A57E71BD0CFCD3E97568215015B9B",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Functional\\Functional.Math.Reduction.cs",
+    "expected": "EDB4493621E2D67EF46D15313E2DB9F4DD53FBDBEF436F7FBF81123D22BBB0F0",
+    "current": "EDB4493621E2D67EF46D15313E2DB9F4DD53FBDBEF436F7FBF81123D22BBB0F0",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Functional\\Functional.Math.Spectral.cs",
+    "expected": "4970A8C544A9BDAB6E47B6C8E5B3E1C5BC3C487FA2DFB35578AFECB99A818B36",
+    "current": "4970A8C544A9BDAB6E47B6C8E5B3E1C5BC3C487FA2DFB35578AFECB99A818B36",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Functional\\Functional.Model.cs",
+    "expected": "5E34580E4C92C7ADE53A4E6682488A0A02B8416B74229FE17235BDF1038CB7A0",
+    "current": "5E34580E4C92C7ADE53A4E6682488A0A02B8416B74229FE17235BDF1038CB7A0",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Functional\\Functional.NN.Convolution.cs",
+    "expected": "2B1E5E015FD87717F820D5272ADDA1BCCAC7129D781B644A8AB2F33DBB48E0B2",
+    "current": "2B1E5E015FD87717F820D5272ADDA1BCCAC7129D781B644A8AB2F33DBB48E0B2",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Functional\\Functional.NN.NonLinearActivation.cs",
+    "expected": "1175B9341CCE45CA1D8442AE126B51ADCCCF35CCAAE7F095B5AE6A6D17897698",
+    "current": "1175B9341CCE45CA1D8442AE126B51ADCCCF35CCAAE7F095B5AE6A6D17897698",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Functional\\Functional.NN.Pooling.cs",
+    "expected": "B1ED48843FB0B9769F8B7243D141CBB2DF3662DE65033B30037C639ACE8729F6",
+    "current": "B1ED48843FB0B9769F8B7243D141CBB2DF3662DE65033B30037C639ACE8729F6",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Functional\\Functional.NN.Sparse.cs",
+    "expected": "627998A686B7FB3A1406853783857E58F839751E0F65F31AEA3481D1CD686228",
+    "current": "627998A686B7FB3A1406853783857E58F839751E0F65F31AEA3481D1CD686228",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Functional\\Functional.NN.Vision.cs",
+    "expected": "7719D9A689CF6E511222BAEFE15AC2955C9851E19AB6B5DA9928FAE8CC10E6F1",
+    "current": "7719D9A689CF6E511222BAEFE15AC2955C9851E19AB6B5DA9928FAE8CC10E6F1",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Functional\\Functional.Tensor.Constant.cs",
+    "expected": "77FC8ECD4793B03A2DDED5B084945D54D57FFD25151775C50C87B681203DB0FF",
+    "current": "77FC8ECD4793B03A2DDED5B084945D54D57FFD25151775C50C87B681203DB0FF",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Functional\\Functional.Tensor.Creation.cs",
+    "expected": "1A0AC16F9E74524489609C59F3F171F366B39425CBFA3403B25025E7E9814240",
+    "current": "1A0AC16F9E74524489609C59F3F171F366B39425CBFA3403B25025E7E9814240",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Functional\\Functional.Tensor.Random.cs",
+    "expected": "E31DCAE36FB5C15D4A5437219A8F3ED9E5133DDBFE63EA12350BE63E34DC4624",
+    "current": "E31DCAE36FB5C15D4A5437219A8F3ED9E5133DDBFE63EA12350BE63E34DC4624",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Functional\\Functional.Tensor.Transformation.cs",
+    "expected": "5269A8F1EF2D3D21DFD30FE9E7D522BDFEE2A3DBCC08135A3FB65DD6371A457B",
+    "current": "5269A8F1EF2D3D21DFD30FE9E7D522BDFEE2A3DBCC08135A3FB65DD6371A457B",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Functional\\Functional.Tensor.Type.cs",
+    "expected": "065A3EB88028AF866F8FC55225E9FF2CA3760E0A3CA3EC26E1D442236B68E6C7",
+    "current": "065A3EB88028AF866F8FC55225E9FF2CA3760E0A3CA3EC26E1D442236B68E6C7",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Functional\\Functional.Vision.Detection.cs",
+    "expected": "7B78435E9568BEAA9A96670E423FF0AD054373286E06070456E661E70B026260",
+    "current": "7B78435E9568BEAA9A96670E423FF0AD054373286E06070456E661E70B026260",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Functional\\FunctionalGraph.cs",
+    "expected": "21F5E167108209538ABF44B25073F47A215E46C8F18272E80C4673C96E3E6EFF",
+    "current": "21F5E167108209538ABF44B25073F47A215E46C8F18272E80C4673C96E3E6EFF",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Functional\\FunctionalNode.cs",
+    "expected": "7DC1642D3709EE8E559BE811C5D2783D6DE33792BC217D08409168CD5EC87BBA",
+    "current": "7DC1642D3709EE8E559BE811C5D2783D6DE33792BC217D08409168CD5EC87BBA",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Functional\\FunctionalTensor.cs",
+    "expected": "A4C38A4F4E5636996842868C8E58D61CEB55CB06EFFBA3AE43BA941FBECF5ADF",
+    "current": "A4C38A4F4E5636996842868C8E58D61CEB55CB06EFFBA3AE43BA941FBECF5ADF",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Functional\\FunctionalTensor.Indexer.cs",
+    "expected": "CD07820C1EA1F718F867B32F9504F70ACFCE548DCC98BE4A2364F596510AB012",
+    "current": "CD07820C1EA1F718F867B32F9504F70ACFCE548DCC98BE4A2364F596510AB012",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Functional\\FunctionalTensor.Operator.cs",
+    "expected": "BD4753990C426FFA0BFFB2524761E6531ADC7A16AA4BD963024BD3403148E0BB",
+    "current": "BD4753990C426FFA0BFFB2524761E6531ADC7A16AA4BD963024BD3403148E0BB",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Graph\\Argument.cs",
+    "expected": "34FD6A69D69EBCAEE8CE28B4CB4F398C125CE8E11C5DDE960AC47893B0AC0808",
+    "current": "34FD6A69D69EBCAEE8CE28B4CB4F398C125CE8E11C5DDE960AC47893B0AC0808",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Graph\\FindNodesLookupTable.cs",
+    "expected": "43713922BAA602640B1836779CF379AC98CEEFD171D6D4A1DA22EB4F3B985F59",
+    "current": "43713922BAA602640B1836779CF379AC98CEEFD171D6D4A1DA22EB4F3B985F59",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Graph\\Graph.cs",
+    "expected": "D3E409FD7D50143A5F3250E34F924CFB3E7943BBBDEC5C0C3534C9CF772027B6",
+    "current": "D3E409FD7D50143A5F3250E34F924CFB3E7943BBBDEC5C0C3534C9CF772027B6",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Graph\\GraphConverter.cs",
+    "expected": "69E8FF1D877F273C30A1648990E630760FC27ACAE19E2B2ECBF54143088774BD",
+    "current": "69E8FF1D877F273C30A1648990E630760FC27ACAE19E2B2ECBF54143088774BD",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Graph\\GraphModule.cs",
+    "expected": "AB4CA77EA5895464A438C94B4A175D4D0C2EC8A99580AF0C4983488C35621135",
+    "current": "AB4CA77EA5895464A438C94B4A175D4D0C2EC8A99580AF0C4983488C35621135",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Graph\\GraphModuleExtensions.cs",
+    "expected": "DD52792FF0F91D24D2B41FF8D28A259653B513E501137DBBE2023C670E49C86B",
+    "current": "DD52792FF0F91D24D2B41FF8D28A259653B513E501137DBBE2023C670E49C86B",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Graph\\GraphNamespace.cs",
+    "expected": "492DE928112C9CEB7EEA730A855F6C54CA0B9B0DD8185CE1B95F454C42F5E0AC",
+    "current": "492DE928112C9CEB7EEA730A855F6C54CA0B9B0DD8185CE1B95F454C42F5E0AC",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Graph\\GraphUtils.cs",
+    "expected": "E9C2A3B967B86BB20F166E2A6A5327F41FE66659DD516639BC476C1B6E734BE1",
+    "current": "E9C2A3B967B86BB20F166E2A6A5327F41FE66659DD516639BC476C1B6E734BE1",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Graph\\MatcherUtils.cs",
+    "expected": "84F4E5B5E09EB28C7F8839D31EC5F4079FEEA485F184E4A0B67F59486D677EAB",
+    "current": "84F4E5B5E09EB28C7F8839D31EC5F4079FEEA485F184E4A0B67F59486D677EAB",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Graph\\Node.cs",
+    "expected": "6DBC1507BE74D61C4F8E61A7BD950F2B89E3280A23841F167C1A01DFEECA5EE1",
+    "current": "6DBC1507BE74D61C4F8E61A7BD950F2B89E3280A23841F167C1A01DFEECA5EE1",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Graph\\NodeList.cs",
+    "expected": "2B2277252B91867B5CDE9059AA7EB3B5E333895514445BFA27530CD07CFE7254",
+    "current": "2B2277252B91867B5CDE9059AA7EB3B5E333895514445BFA27530CD07CFE7254",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Graph\\NodeSet.cs",
+    "expected": "6C90AE83E75D9FC8E736D7FBCA22C84B45197CDE75FFE73F0AF170327330F628",
+    "current": "6C90AE83E75D9FC8E736D7FBCA22C84B45197CDE75FFE73F0AF170327330F628",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Graph\\SortKey.cs",
+    "expected": "F22163B212FB0CF70F1C588DDED6747A7123F60AF948C2BBA51D63630E459EFA",
+    "current": "F22163B212FB0CF70F1C588DDED6747A7123F60AF948C2BBA51D63630E459EFA",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Graph\\SubgraphRewriter.cs",
+    "expected": "1A5CFD6B686A08688DF837897B2B94B6238E710B807116DF105C50A7795863D5",
+    "current": "1A5CFD6B686A08688DF837897B2B94B6238E710B807116DF105C50A7795863D5",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\InferenceEngine.cs",
+    "expected": "5471D5D093B5160B7D848EEE558A90D9ED9238A3AD2B80BF1CA2DE446A174B60",
+    "current": "5471D5D093B5160B7D848EEE558A90D9ED9238A3AD2B80BF1CA2DE446A174B60",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Internals\\Debug.cs",
+    "expected": "1AE245315E794D191806442C3C9768753632D80C2499F72300B9E6CB026DFDCD",
+    "current": "1AE245315E794D191806442C3C9768753632D80C2499F72300B9E6CB026DFDCD",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Internals\\ModelAsset.cs",
+    "expected": "758031C020E171B4EDF5235F48C6384691E5506D2DF4DAF745EACB974DE7FE33",
+    "current": "758031C020E171B4EDF5235F48C6384691E5506D2DF4DAF745EACB974DE7FE33",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Internals\\ModelAssetData.cs",
+    "expected": "4CA0D516824208F0EC8FD69413E5A64BBB1D6ACAC1669587F4EC9DA09895A51B",
+    "current": "4CA0D516824208F0EC8FD69413E5A64BBB1D6ACAC1669587F4EC9DA09895A51B",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Internals\\ModelAssetWeightsData.cs",
+    "expected": "1C1948AA31E48B313025F8DD218FCB86908B7C1A79A82B7B16DB9EA8356777A7",
+    "current": "1C1948AA31E48B313025F8DD218FCB86908B7C1A79A82B7B16DB9EA8356777A7",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Layers\\Constant.cs",
+    "expected": "3424290E710A3B5E7EE5C8C8C9D5CE6248DDF2B7826D4424F0EDAF57F48B25B4",
+    "current": "3424290E710A3B5E7EE5C8C8C9D5CE6248DDF2B7826D4424F0EDAF57F48B25B4",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Layers\\ConstantTensor.cs",
+    "expected": "928E890E673129D76E507E7059E08418254F8EF980487C2E52E9FA177824EB50",
+    "current": "928E890E673129D76E507E7059E08418254F8EF980487C2E52E9FA177824EB50",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Layers\\Layer.Activation.cs",
+    "expected": "14A71657BF19EC924F296CE8138C538689BB02F3EC4B73983436D48AC163E228",
+    "current": "14A71657BF19EC924F296CE8138C538689BB02F3EC4B73983436D48AC163E228",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Layers\\Layer.ActivationNonLinear.cs",
+    "expected": "BD41A2B51C233564F48E1800E5965F1AFD0BA47FABE015A7C68B145D5855F2DB",
+    "current": "BD41A2B51C233564F48E1800E5965F1AFD0BA47FABE015A7C68B145D5855F2DB",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Layers\\Layer.Convolution.cs",
+    "expected": "8CE0C861DA0E47CA6EBBA0135036AA10D61F3EB3D343A9A57BECDA4BF4D4F6D9",
+    "current": "8CE0C861DA0E47CA6EBBA0135036AA10D61F3EB3D343A9A57BECDA4BF4D4F6D9",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Layers\\Layer.cs",
+    "expected": "F52C443641952F466130BA203D0B573237ACE837A59CE41FF72FDD88829A7492",
+    "current": "F52C443641952F466130BA203D0B573237ACE837A59CE41FF72FDD88829A7492",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Layers\\Layer.Dimension.cs",
+    "expected": "6AE387F3FC03A41C80DE61E56ED81F7575AD1440A24DB7C58986AF9678D2BEB3",
+    "current": "6AE387F3FC03A41C80DE61E56ED81F7575AD1440A24DB7C58986AF9678D2BEB3",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Layers\\Layer.Generator.cs",
+    "expected": "20D60CD2B7F02C1C04D981B8DCD0F706903CB8946564FE9DE81AAADC54CC4706",
+    "current": "20D60CD2B7F02C1C04D981B8DCD0F706903CB8946564FE9DE81AAADC54CC4706",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Layers\\Layer.Indexing.cs",
+    "expected": "664D5DCE00640B4E5A31104BD7E8F281546C014A44D8ED6A456187B6072D3FBB",
+    "current": "664D5DCE00640B4E5A31104BD7E8F281546C014A44D8ED6A456187B6072D3FBB",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Layers\\Layer.Logical.cs",
+    "expected": "A830A88FF7D64FF24F889B2A59DF7C00CA5C32C4D24EB42961922C6CA0724710",
+    "current": "A830A88FF7D64FF24F889B2A59DF7C00CA5C32C4D24EB42961922C6CA0724710",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Layers\\Layer.Math.cs",
+    "expected": "749D66FA72A0CFC639F18651AF53123C1C06F7D3EBDC91AA987FCC8597F11C9F",
+    "current": "749D66FA72A0CFC639F18651AF53123C1C06F7D3EBDC91AA987FCC8597F11C9F",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Layers\\Layer.Normalization.cs",
+    "expected": "3E35E85E45724CF41E1CF80679FAA308FDE3234EB0279614649AC02D9B194DD4",
+    "current": "3E35E85E45724CF41E1CF80679FAA308FDE3234EB0279614649AC02D9B194DD4",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Layers\\Layer.ObjectDetection.cs",
+    "expected": "3F5A3DC165B053F46776A98B7DEE3ACCF9762070EF63D59083DD7F61023AD9CC",
+    "current": "3F5A3DC165B053F46776A98B7DEE3ACCF9762070EF63D59083DD7F61023AD9CC",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Layers\\Layer.Pooling.cs",
+    "expected": "D0E3DA5BEBBC5F21781A0E2E53443658C21A751A50117F7AD81AD00C87FE82C4",
+    "current": "D0E3DA5BEBBC5F21781A0E2E53443658C21A751A50117F7AD81AD00C87FE82C4",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Layers\\Layer.Quantization.cs",
+    "expected": "23E0122C9753F648709D593B7E25CD22B06E65A8FD8FB1846CEBC77E93BEF2BA",
+    "current": "23E0122C9753F648709D593B7E25CD22B06E65A8FD8FB1846CEBC77E93BEF2BA",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Layers\\Layer.Random.cs",
+    "expected": "694E61F547F66E463F2BD7AB6B3FFA42962D08DE0F02D57031621133E00C29A5",
+    "current": "694E61F547F66E463F2BD7AB6B3FFA42962D08DE0F02D57031621133E00C29A5",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Layers\\Layer.Recurrent.cs",
+    "expected": "05796AA73FBC899B409BDBC35ABD1EBA1BB2DBAAF492362FA0BCD7AAE93AAEBA",
+    "current": "05796AA73FBC899B409BDBC35ABD1EBA1BB2DBAAF492362FA0BCD7AAE93AAEBA",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Layers\\Layer.Reduction.cs",
+    "expected": "07E297588E2E26EF703FA656F4ABE96054AE0FBE5EA5363752CEB084B09524E5",
+    "current": "07E297588E2E26EF703FA656F4ABE96054AE0FBE5EA5363752CEB084B09524E5",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Layers\\Layer.Spectral.cs",
+    "expected": "6961EBBF3C0B21BCDC1149D6CFDFBA252375E91998C7E59D71554AF87CF4D857",
+    "current": "6961EBBF3C0B21BCDC1149D6CFDFBA252375E91998C7E59D71554AF87CF4D857",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Layers\\Layer.Transformation.cs",
+    "expected": "7BDA4B8C1AFCCCB0B8EEE1CB5302BF086795A7BEC790A74A842C30AD6DC3A9E5",
+    "current": "7BDA4B8C1AFCCCB0B8EEE1CB5302BF086795A7BEC790A74A842C30AD6DC3A9E5",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Layers\\Layer.Trigonometric.cs",
+    "expected": "198E76623CA2C6E5E394B41F28D4DFEB46452ACEC225A25A5999FFD156F4F936",
+    "current": "198E76623CA2C6E5E394B41F28D4DFEB46452ACEC225A25A5999FFD156F4F936",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Logger.cs",
+    "expected": "7AE98A5E9CAC38B9EACA4CBFD57850F316BC698AF13150D513AF95F4E9CEB247",
+    "current": "7AE98A5E9CAC38B9EACA4CBFD57850F316BC698AF13150D513AF95F4E9CEB247",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Model.cs",
+    "expected": "49F50B852A076CDF8FB90AB8C786C69F0A7CD7614468F4BCCB55E3BBFD3A58C1",
+    "current": "49F50B852A076CDF8FB90AB8C786C69F0A7CD7614468F4BCCB55E3BBFD3A58C1",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\PluginInterfaces.cs",
+    "expected": "D75F63696126E4AEB62FA0A48764A1CE30DC9F10D59DC3D39C35412785E3C260",
+    "current": "D75F63696126E4AEB62FA0A48764A1CE30DC9F10D59DC3D39C35412785E3C260",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\ProfilerMarkers.cs",
+    "expected": "9442151E6E32B743F8F81063E935DD8C3573546D6133C746CFBE762F18C15DD6",
+    "current": "9442151E6E32B743F8F81063E935DD8C3573546D6133C746CFBE762F18C15DD6",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Quantization\\ModelQuantizer.cs",
+    "expected": "3BB38B57A7C9B3CF626C759D24E9FE07DD7927B65822996E68D736A4230A6894",
+    "current": "3BB38B57A7C9B3CF626C759D24E9FE07DD7927B65822996E68D736A4230A6894",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Quantization\\QuantizeConstantsPass.cs",
+    "expected": "4CAA10D0592A5310AF8442847F7B651CE31E85E778DF477FDAD2E1383010CCC4",
+    "current": "4CAA10D0592A5310AF8442847F7B651CE31E85E778DF477FDAD2E1383010CCC4",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Random.cs",
+    "expected": "994382B29C31627F3E280ED33455C2A4B04EF1AE77131996D3F5E86A819AF7C8",
+    "current": "994382B29C31627F3E280ED33455C2A4B04EF1AE77131996D3F5E86A819AF7C8",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\FlatBuffers\\ByteBuffer.cs",
+    "expected": "6E62675E302B3D01D967E72ABDEF970ED2E072A91F74BA737862CDABE76EEFF6",
+    "current": "6E62675E302B3D01D967E72ABDEF970ED2E072A91F74BA737862CDABE76EEFF6",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\FlatBuffers\\ByteBufferUtil.cs",
+    "expected": "249DF34FF6DDCBAF3C685A0C5B067E2D1BBFF9D915F2EAD6C93EB9992B1328B6",
+    "current": "249DF34FF6DDCBAF3C685A0C5B067E2D1BBFF9D915F2EAD6C93EB9992B1328B6",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\FlatBuffers\\FlatBufferBuilder.cs",
+    "expected": "63759685199FB032A7F32463DAD5440CC4F56F3B29D976C0A230486FFB579214",
+    "current": "63759685199FB032A7F32463DAD5440CC4F56F3B29D976C0A230486FFB579214",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\FlatBuffers\\FlatBufferConstants.cs",
+    "expected": "19DD2B6BCDFAEF5462573C675371C7C8EB21571A7EF7E8F360457ABE129801E1",
+    "current": "19DD2B6BCDFAEF5462573C675371C7C8EB21571A7EF7E8F360457ABE129801E1",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\FlatBuffers\\FlatBufferVerify.cs",
+    "expected": "AAF4E15578E2944760ABA1DEA60E94EC5469830404146D8689148A2918943439",
+    "current": "AAF4E15578E2944760ABA1DEA60E94EC5469830404146D8689148A2918943439",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\FlatBuffers\\IFlatbufferObject.cs",
+    "expected": "62849F8CD6D09A02A9FF1654361FAEA43692342FC342F7DF11AF90028C5D0E43",
+    "current": "62849F8CD6D09A02A9FF1654361FAEA43692342FC342F7DF11AF90028C5D0E43",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\FlatBuffers\\Offset.cs",
+    "expected": "D65FE172550679BAAE337687BC5FA635D996AD026D2CAB531F5C62F515F2DCDD",
+    "current": "D65FE172550679BAAE337687BC5FA635D996AD026D2CAB531F5C62F515F2DCDD",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\FlatBuffers\\Struct.cs",
+    "expected": "28BFFB913B28088BCB8787D96AF3E90E18D9DC7E41F3625489BC349A839E0094",
+    "current": "28BFFB913B28088BCB8787D96AF3E90E18D9DC7E41F3625489BC349A839E0094",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\FlatBuffers\\Table.cs",
+    "expected": "425E0105C7A36A2F6C0750E06D4A3A6E29E3736786B51AFCCD35166B47CAE2E7",
+    "current": "425E0105C7A36A2F6C0750E06D4A3A6E29E3736786B51AFCCD35166B47CAE2E7",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\ModelLoader.cs",
+    "expected": "C562D0317C08E7DF5D3DED56D8B3F39DA88DC1477889E450906DDBFB9AB7036E",
+    "current": "C562D0317C08E7DF5D3DED56D8B3F39DA88DC1477889E450906DDBFB9AB7036E",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\ModelUpgrader.cs",
+    "expected": "4C750ECA8C1AC9FFEB48C16EDBC1407CA03D9E4F35D5BF0B50F9F5D3FF5FA256",
+    "current": "4C750ECA8C1AC9FFEB48C16EDBC1407CA03D9E4F35D5BF0B50F9F5D3FF5FA256",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\ModelWriter.cs",
+    "expected": "6FCAD5EA30CAFE62BD07C9F744A1D7DC50112B2CA1578508F768800F7F395D86",
+    "current": "6FCAD5EA30CAFE62BD07C9F744A1D7DC50112B2CA1578508F768800F7F395D86",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\Safetensors\\Safetensors.cs",
+    "expected": "2471166F4EE514ECA6242D2CC336DAC0E58FECBE647A27599690E4A2BC8CE10D",
+    "current": "2471166F4EE514ECA6242D2CC336DAC0E58FECBE647A27599690E4A2BC8CE10D",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\Safetensors\\SafetensorsHeader.cs",
+    "expected": "6EF83C76EC06DFA9AAC66FB046822A66A37E2324DE25B289CDFD8F2EE6CA3B84",
+    "current": "6EF83C76EC06DFA9AAC66FB046822A66A37E2324DE25B289CDFD8F2EE6CA3B84",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\BackendPartitioning.cs",
+    "expected": "7263D88A2BF0349F214F1CDD235D5511E3E8E6EF75582100DD5DC9A375B8D7B8",
+    "current": "7263D88A2BF0349F214F1CDD235D5511E3E8E6EF75582100DD5DC9A375B8D7B8",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\BackendType.cs",
+    "expected": "F7BD2B5355CB21A03C1AE4AF603E3B0131AA90BAB17A232EF1D8CF5DDCFCF7D1",
+    "current": "F7BD2B5355CB21A03C1AE4AF603E3B0131AA90BAB17A232EF1D8CF5DDCFCF7D1",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\Bool.cs",
+    "expected": "8B3569524720987560EB408D850114595F4D7816BE4244488A1FE9F55BCE5A6B",
+    "current": "8B3569524720987560EB408D850114595F4D7816BE4244488A1FE9F55BCE5A6B",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\BoolList.cs",
+    "expected": "9C044A2C9A864ABF86CE7E200FAA7AE111EE8511FEC5743E6BB8EAD96D092588",
+    "current": "9C044A2C9A864ABF86CE7E200FAA7AE111EE8511FEC5743E6BB8EAD96D092588",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\Buffer.cs",
+    "expected": "E7924931DD4360E3A1957486F97B66EFBF02864958C99116A86CEA4265B398DA",
+    "current": "E7924931DD4360E3A1957486F97B66EFBF02864958C99116A86CEA4265B398DA",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\Byte.cs",
+    "expected": "17F009F76E1F2D7EADCD6298C66886B4233D50250386ECBE7788DD023220C800",
+    "current": "17F009F76E1F2D7EADCD6298C66886B4233D50250386ECBE7788DD023220C800",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\Chain.cs",
+    "expected": "CF612933BFF623865F1943CDDB1811DAFEC213407401E09693F9EE70FB1FA2B9",
+    "current": "CF612933BFF623865F1943CDDB1811DAFEC213407401E09693F9EE70FB1FA2B9",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\DataSegment.cs",
+    "expected": "6017AC2755A2B39BE38AB43AC2D9B4AD14ADE643B7435E0475001E8784A0C7BA",
+    "current": "6017AC2755A2B39BE38AB43AC2D9B4AD14ADE643B7435E0475001E8784A0C7BA",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\EDim.cs",
+    "expected": "49DA1A31827C71BF91830B1461EC1046B6DE4A3E54F030FFC1BD9A1BB246E21C",
+    "current": "49DA1A31827C71BF91830B1461EC1046B6DE4A3E54F030FFC1BD9A1BB246E21C",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\EValue.cs",
+    "expected": "B09FC38A67609E79F626C90AB5A52BA48526030ABB0B7CABA442F2463FEAA039",
+    "current": "B09FC38A67609E79F626C90AB5A52BA48526030ABB0B7CABA442F2463FEAA039",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\ExecutionPlan.cs",
+    "expected": "F65D68D510B3C650117927351A3C83C316832BBA2727D8B6B148777B235DDBD9",
+    "current": "F65D68D510B3C650117927351A3C83C316832BBA2727D8B6B148777B235DDBD9",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\Float.cs",
+    "expected": "CB2B0AFDD50AA71001496B51BF84B3D6389E479EAD4BF1428C283A188E0AD2F7",
+    "current": "CB2B0AFDD50AA71001496B51BF84B3D6389E479EAD4BF1428C283A188E0AD2F7",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\FloatList.cs",
+    "expected": "B40ED5614FE424CE909EC3B2464C66BCB1510CD638BDB2DD8B13450FF183D0D3",
+    "current": "B40ED5614FE424CE909EC3B2464C66BCB1510CD638BDB2DD8B13450FF183D0D3",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\Instruction.cs",
+    "expected": "12C01C062DAAAC6150E7DB131AC2AAAEE0954AE0353466C3B4AD4CA9694F2677",
+    "current": "12C01C062DAAAC6150E7DB131AC2AAAEE0954AE0353466C3B4AD4CA9694F2677",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\InstructionArguments.cs",
+    "expected": "CB72E2D06823B9F013308B61B504EEA9B483146504B27CF6341FBEF3F5D659FF",
+    "current": "CB72E2D06823B9F013308B61B504EEA9B483146504B27CF6341FBEF3F5D659FF",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\Int.cs",
+    "expected": "6C557E5AC1ADF1E38939E6896A8D130F972639A81B4221EFA072685CB41E7A90",
+    "current": "6C557E5AC1ADF1E38939E6896A8D130F972639A81B4221EFA072685CB41E7A90",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\IntList.cs",
+    "expected": "73B73D73CD8FD16650899664379AF58D1F7356FC89B15A4C0E105B0E474A9FAF",
+    "current": "73B73D73CD8FD16650899664379AF58D1F7356FC89B15A4C0E105B0E474A9FAF",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\KernelCall.cs",
+    "expected": "A090D50ADA03A113F4D0C7328C02623596437DDFC6A229E5E1A55E5F89BC2A64",
+    "current": "A090D50ADA03A113F4D0C7328C02623596437DDFC6A229E5E1A55E5F89BC2A64",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\KernelTypes.cs",
+    "expected": "D50E68CF89029AE89D13385783EDB5E8792389EB978373DC45FF1B9E2DF78D6C",
+    "current": "D50E68CF89029AE89D13385783EDB5E8792389EB978373DC45FF1B9E2DF78D6C",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\Null.cs",
+    "expected": "34B749530D6C0AA36FD2F66D36A7429A9034B1F7D9474C0F3126BAEFA9CCF7B6",
+    "current": "34B749530D6C0AA36FD2F66D36A7429A9034B1F7D9474C0F3126BAEFA9CCF7B6",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\Operator.cs",
+    "expected": "B16D647EC19DF702383A2901F97F70C349BF1B8345B6557E43BEA18165ECFC13",
+    "current": "B16D647EC19DF702383A2901F97F70C349BF1B8345B6557E43BEA18165ECFC13",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\Program.cs",
+    "expected": "F3274D93763470C3E63E4AB2685947682264870306D66A5EFC77062A9E1BE477",
+    "current": "F3274D93763470C3E63E4AB2685947682264870306D66A5EFC77062A9E1BE477",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\ScalarType.cs",
+    "expected": "F4A8531651FB641DB834B11A3C20052D722699EAF1D6C9A2F71743B03C6FF854",
+    "current": "F4A8531651FB641DB834B11A3C20052D722699EAF1D6C9A2F71743B03C6FF854",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\Short.cs",
+    "expected": "97313ADCE8FF14A283BDD420899754E1EEBE0D50604FC69EA5E80A7C495064C2",
+    "current": "97313ADCE8FF14A283BDD420899754E1EEBE0D50604FC69EA5E80A7C495064C2",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\String.cs",
+    "expected": "905E06F6AE881497F754A0F2F1D78F26CCD0E6DC4A4C143CA474F9ED7BA17CB9",
+    "current": "905E06F6AE881497F754A0F2F1D78F26CCD0E6DC4A4C143CA474F9ED7BA17CB9",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\SymbolicDim.cs",
+    "expected": "16DF78341402BAD6148047B281E2B20C355E0FD00C8DB09C4E6484ADD9FDB95B",
+    "current": "16DF78341402BAD6148047B281E2B20C355E0FD00C8DB09C4E6484ADD9FDB95B",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\Tensor.cs",
+    "expected": "E7E13430EAAA64B44D14250D1EBAA902AE872849B5FB813B57233F3B70F77C9D",
+    "current": "E7E13430EAAA64B44D14250D1EBAA902AE872849B5FB813B57233F3B70F77C9D",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Serialization\\SentisFlatBuffer\\TensorShapeDynamism.cs",
+    "expected": "35934AE2CFCEA2F8996C7C2AF536F48C528625E2A8299D210CE49C72A9D96506",
+    "current": "35934AE2CFCEA2F8996C7C2AF536F48C528625E2A8299D210CE49C72A9D96506",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\ShapeInference\\DynamicTensorDim.cs",
+    "expected": "E2817D8AD3F2DFA071694DA43E0F1FCD245C5C189B45BD3FB75D12FCF72253D9",
+    "current": "E2817D8AD3F2DFA071694DA43E0F1FCD245C5C189B45BD3FB75D12FCF72253D9",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\ShapeInference\\DynamicTensorShape.cs",
+    "expected": "6CF0402E2A7931F9435DAF784D83DAF795A1898D4756FEE7696EAA98A7F4AC12",
+    "current": "6CF0402E2A7931F9435DAF784D83DAF795A1898D4756FEE7696EAA98A7F4AC12",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\ShapeInference\\EinsumHelper.cs",
+    "expected": "64C50899FAF4F576ECD067711C07B9AC99162801D9C61C22002D7B60E8E721C2",
+    "current": "64C50899FAF4F576ECD067711C07B9AC99162801D9C61C22002D7B60E8E721C2",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\ShapeInference\\PartialInferenceContext.cs",
+    "expected": "55D097CF26AFA27C41F29D612332C867C22DF20F4CA0D5CCC3CED01B61A98E82",
+    "current": "55D097CF26AFA27C41F29D612332C867C22DF20F4CA0D5CCC3CED01B61A98E82",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\ShapeInference\\PartialTensor.cs",
+    "expected": "3DD6AE67082A290BBCB279310CBE7275CE39A2D9D48A48AA30C1D6AFC631175B",
+    "current": "3DD6AE67082A290BBCB279310CBE7275CE39A2D9D48A48AA30C1D6AFC631175B",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\ShapeInference\\PartialTensorElement.cs",
+    "expected": "1DF0A5D1C7682E5C055C1823A75BE2558B55B2EBE00EA43EFB2556762D7A0AF8",
+    "current": "1DF0A5D1C7682E5C055C1823A75BE2558B55B2EBE00EA43EFB2556762D7A0AF8",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\ShapeInference\\ShapeInferenceHelper.cs",
+    "expected": "F33A35EA764B05B51844D28DB27475B6CAF31F8484EA4D3F34A7BC4104808866",
+    "current": "F33A35EA764B05B51844D28DB27475B6CAF31F8484EA4D3F34A7BC4104808866",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\ShapeInference\\TensorShapeInferenceHelper.cs",
+    "expected": "91AC12BC3D1038EDCB65F1099612A3EE39FD1FB0A260922EFC821467F5DF3344",
+    "current": "91AC12BC3D1038EDCB65F1099612A3EE39FD1FB0A260922EFC821467F5DF3344",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\SourceGenerator\\SourceGeneratorAttributes.cs",
+    "expected": "712826D765D2F1F587A3E04531DB5122D45860F217ACECF03AE33A42121869F6",
+    "current": "712826D765D2F1F587A3E04531DB5122D45860F217ACECF03AE33A42121869F6",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\SourceGenerator\\SourceGeneratorsProject~\\SourceGenerators\\SourceGenerators\\FunctionalLayer.cs",
+    "expected": "BF11A0F53215D5C61BB098325B62F25C940C625D893AC502E97AA75748767C63",
+    "current": "BF11A0F53215D5C61BB098325B62F25C940C625D893AC502E97AA75748767C63",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\SourceGenerator\\SourceGeneratorsProject~\\SourceGenerators\\SourceGenerators\\GraphConverter.cs",
+    "expected": "99F92B86874A4D8295DFCC5BE64730D479A077FD3D44A818B5930A76A3537480",
+    "current": "99F92B86874A4D8295DFCC5BE64730D479A077FD3D44A818B5930A76A3537480",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\SourceGenerator\\SourceGeneratorsProject~\\SourceGenerators\\SourceGenerators\\LayerModelLoader.cs",
+    "expected": "86DA4066F349B71794A37E8DB0BE01BCA53DB3A6A60AEFD173C689E1651C3458",
+    "current": "86DA4066F349B71794A37E8DB0BE01BCA53DB3A6A60AEFD173C689E1651C3458",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\SourceGenerator\\SourceGeneratorsProject~\\SourceGenerators\\SourceGenerators\\OpDef.cs",
+    "expected": "5AB4F7B24EA777484E884BD127FA66C662C52C3656445F2C380BDE8D2F150F94",
+    "current": "5AB4F7B24EA777484E884BD127FA66C662C52C3656445F2C380BDE8D2F150F94",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\SourceGenerator\\SourceGeneratorsProject~\\SourceGenerators\\SourceGenerators\\OperatorGenerator.cs",
+    "expected": "2A0DD8A02B9EEE2CA9FF559A06572E1316A51FB17076B68D787AE09A36403873",
+    "current": "2A0DD8A02B9EEE2CA9FF559A06572E1316A51FB17076B68D787AE09A36403873",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\SourceGenerator\\SourceGeneratorsProject~\\SourceGenerators\\SourceGenerators\\OperatorUtilities.cs",
+    "expected": "9A479F1BCE17FC363A484B3C2227A9FD129BF38A6CAA6C342AF9852D6CB66137",
+    "current": "9A479F1BCE17FC363A484B3C2227A9FD129BF38A6CAA6C342AF9852D6CB66137",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\Tensor.cs",
+    "expected": "373377D461C8FE5FCF800E598225FF415D16304B205716B1D9A15CB1942F3781",
+    "current": "373377D461C8FE5FCF800E598225FF415D16304B205716B1D9A15CB1942F3781",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\TensorData.cs",
+    "expected": "087B66C53E1B6879D5897F5DAE5EDA5CA88008BC237D479B5786E425504295C8",
+    "current": "087B66C53E1B6879D5897F5DAE5EDA5CA88008BC237D479B5786E425504295C8",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\TensorGeneric.cs",
+    "expected": "82C1DEC0B0978AC250C54991942E3A80527F4778B6B30E52A3E090F62320A81A",
+    "current": "82C1DEC0B0978AC250C54991942E3A80527F4778B6B30E52A3E090F62320A81A",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\TensorIndex.cs",
+    "expected": "CD0A5B6266D5D3D5A1422D7F62408A405793ADE4ED41768261F2BDA902DB91F9",
+    "current": "CD0A5B6266D5D3D5A1422D7F62408A405793ADE4ED41768261F2BDA902DB91F9",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\TensorIterator.cs",
+    "expected": "3548CEA8C3206440AFDDEA49EE5CF038A393C56EF76B623D27A1510A95C1B8EB",
+    "current": "3548CEA8C3206440AFDDEA49EE5CF038A393C56EF76B623D27A1510A95C1B8EB",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Library\\PackageCache\\com.unity.ai.inference@587873fd5e1b\\Runtime\\Core\\TensorShape.cs",
+    "expected": "BFCFC031D8F3B5BFFEEC0B87B56F2D23D726654E77BCE41B523DE11DEC8FADEA",
+    "current": "BFCFC031D8F3B5BFFEEC0B87B56F2D23D726654E77BCE41B523DE11DEC8FADEA",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Packages/manifest.json",
+    "expected": "35F00A89D31A8BF7EE50718F38D4BAC90236D8B691F516C5FC14CAB47AFBFEE1",
+    "current": "35F00A89D31A8BF7EE50718F38D4BAC90236D8B691F516C5FC14CAB47AFBFEE1",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Packages/packages-lock.json",
+    "expected": "23845C132DBF51CB53A5CFDE4EF606FA68D10DCB53AE5FF21F4305613A5F9CE1",
+    "current": "23845C132DBF51CB53A5CFDE4EF606FA68D10DCB53AE5FF21F4305613A5F9CE1",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "ProjectSettings/EditorBuildSettings.asset",
+    "expected": "611BA53D1627847D786E714A7CC17EB8D5AE06C2EFBA4077DA1F396A81355EAE",
+    "current": "611BA53D1627847D786E714A7CC17EB8D5AE06C2EFBA4077DA1F396A81355EAE",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "ProjectSettings/ProjectVersion.txt",
+    "expected": "EA333D8F6C87FFA35061EC92B7DEF6026D00D0131D7A6A05A23C53EB949B4F77",
+    "current": "EA333D8F6C87FFA35061EC92B7DEF6026D00D0131D7A6A05A23C53EB949B4F77",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "ProjectSettings\\AudioManager.asset",
+    "expected": "9A554916FE138EBCAD8443EE9B079363ECC72795C39D0E80F5F7CA99E2C6F5E7",
+    "current": "9A554916FE138EBCAD8443EE9B079363ECC72795C39D0E80F5F7CA99E2C6F5E7",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "ProjectSettings\\ClusterInputManager.asset",
+    "expected": "40E65DD214BF254955D2C8829CA8CE2130FD3510485560CE012E9A1DDD93E623",
+    "current": "40E65DD214BF254955D2C8829CA8CE2130FD3510485560CE012E9A1DDD93E623",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "ProjectSettings\\DynamicsManager.asset",
+    "expected": "62FD35DA36080A098D3E9F90CF4AF6C655FE582091C33E505B812CF9AA36FEE1",
+    "current": "62FD35DA36080A098D3E9F90CF4AF6C655FE582091C33E505B812CF9AA36FEE1",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "ProjectSettings\\EditorBuildSettings.asset",
+    "expected": "611BA53D1627847D786E714A7CC17EB8D5AE06C2EFBA4077DA1F396A81355EAE",
+    "current": "611BA53D1627847D786E714A7CC17EB8D5AE06C2EFBA4077DA1F396A81355EAE",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "ProjectSettings\\EditorSettings.asset",
+    "expected": "C9F8DB7B33B9025CFBAD5D1D2BB637788620FCCA9138A13532C0ACC0C4906D6F",
+    "current": "C9F8DB7B33B9025CFBAD5D1D2BB637788620FCCA9138A13532C0ACC0C4906D6F",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "ProjectSettings\\GraphicsSettings.asset",
+    "expected": "FBF0856B7693639A5388AE693A455BAAAD354C1D8DC548601DE3DC61C4AB12C3",
+    "current": "FBF0856B7693639A5388AE693A455BAAAD354C1D8DC548601DE3DC61C4AB12C3",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "ProjectSettings\\InputManager.asset",
+    "expected": "D0F454DDB880912ABCAE92E3E12957A7446786BA89E24937E019FF3BBC0D4300",
+    "current": "D0F454DDB880912ABCAE92E3E12957A7446786BA89E24937E019FF3BBC0D4300",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "ProjectSettings\\MemorySettings.asset",
+    "expected": "1E8379A461B10AE09F3F696911088C16875D63E87ED5F2D95DF9E1892703F9FD",
+    "current": "1E8379A461B10AE09F3F696911088C16875D63E87ED5F2D95DF9E1892703F9FD",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "ProjectSettings\\MultiplayerManager.asset",
+    "expected": "ABA89FD1A1DDAD182727AD82727E536D27372E90328A8196DA2A4560398983DD",
+    "current": "ABA89FD1A1DDAD182727AD82727E536D27372E90328A8196DA2A4560398983DD",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "ProjectSettings\\NavMeshAreas.asset",
+    "expected": "7EBBF8F53B8033104E1878B95CA07A28D0954092D81C220F14196A42F651E658",
+    "current": "7EBBF8F53B8033104E1878B95CA07A28D0954092D81C220F14196A42F651E658",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "ProjectSettings\\PackageManagerSettings.asset",
+    "expected": "D143983761035C267B7DE3089CF96EF5987886C7D73283ED0E125362B82810F5",
+    "current": "D143983761035C267B7DE3089CF96EF5987886C7D73283ED0E125362B82810F5",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "ProjectSettings\\Physics2DSettings.asset",
+    "expected": "531861618163B01648A075414F6E864506AD8FE0A0D4D0096AA1FBBFCD3937DC",
+    "current": "531861618163B01648A075414F6E864506AD8FE0A0D4D0096AA1FBBFCD3937DC",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "ProjectSettings\\PresetManager.asset",
+    "expected": "29C125923FE6E29F90190D4FCE1C82D660E7051546E2C9D02908D18C9CF2436C",
+    "current": "29C125923FE6E29F90190D4FCE1C82D660E7051546E2C9D02908D18C9CF2436C",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "ProjectSettings\\ProjectSettings.asset",
+    "expected": "88CB3F68F275E1A7DCBF1FEA8C59D123F50743C6F93B0F861E1FD653865EC6AA",
+    "current": "88CB3F68F275E1A7DCBF1FEA8C59D123F50743C6F93B0F861E1FD653865EC6AA",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "ProjectSettings\\ProjectVersion.txt",
+    "expected": "EA333D8F6C87FFA35061EC92B7DEF6026D00D0131D7A6A05A23C53EB949B4F77",
+    "current": "EA333D8F6C87FFA35061EC92B7DEF6026D00D0131D7A6A05A23C53EB949B4F77",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "ProjectSettings\\QualitySettings.asset",
+    "expected": "944B52D523BCB15B945BC80924B9289F59185AB19BCE8A00E99EEC345BDE6440",
+    "current": "944B52D523BCB15B945BC80924B9289F59185AB19BCE8A00E99EEC345BDE6440",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "ProjectSettings\\SceneTemplateSettings.json",
+    "expected": "1A1CA728A2A53A59F35926CC12F81C7DBA82EE0FB2DBBED3DEFBD568369ACE9E",
+    "current": "1A1CA728A2A53A59F35926CC12F81C7DBA82EE0FB2DBBED3DEFBD568369ACE9E",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "ProjectSettings\\TagManager.asset",
+    "expected": "923F77DB3FE194D4317D0A066CCCCFAE858EEC1964AFD2E79A24C8DC93989BB2",
+    "current": "923F77DB3FE194D4317D0A066CCCCFAE858EEC1964AFD2E79A24C8DC93989BB2",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "ProjectSettings\\TimeManager.asset",
+    "expected": "1A83E54ADBBDA7C9F4851103A0C6AB7F6448A3343D4EA5B7620452FA08416ECD",
+    "current": "1A83E54ADBBDA7C9F4851103A0C6AB7F6448A3343D4EA5B7620452FA08416ECD",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "ProjectSettings\\UnityConnectSettings.asset",
+    "expected": "D6034ACBEF6C9E3179866486C31EAB81FCBE5E7ED350CE71E0FA2B1449B77109",
+    "current": "D6034ACBEF6C9E3179866486C31EAB81FCBE5E7ED350CE71E0FA2B1449B77109",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "ProjectSettings\\VersionControlSettings.asset",
+    "expected": "E7BDA45BF7A394745FEE1316E6C71FA676004D591AD1F3AA247FD3E4CEB86071",
+    "current": "E7BDA45BF7A394745FEE1316E6C71FA676004D591AD1F3AA247FD3E4CEB86071",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "ProjectSettings\\VFXManager.asset",
+    "expected": "3F31266C7C1910447586E71B041DABD58D8371715AC3142D3E38ACE46121F4AB",
+    "current": "3F31266C7C1910447586E71B041DABD58D8371715AC3142D3E38ACE46121F4AB",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Tools\\KiwiV44_55_31\\Build-KiwiV44_55_31.ps1",
+    "expected": "DEE4AD491603E79925E2F28A81272A851908BA53E3783F7ACD514D0B8BF9E932",
+    "current": "DEE4AD491603E79925E2F28A81272A851908BA53E3783F7ACD514D0B8BF9E932",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Tools\\KiwiV44_55_31\\README.txt",
+    "expected": "C693DD983B95865E7357E5984744F1ACF013C90C277876048D82CE6182EC3EC2",
+    "current": "C693DD983B95865E7357E5984744F1ACF013C90C277876048D82CE6182EC3EC2",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Tools\\KiwiV44_55_31\\Run-KiwiV44_55_31.ps1",
+    "expected": "5C4E7B508642FDC6C945488EAC4EBD585F4B26F3659EE1A847952AD82648ADAB",
+    "current": "5C4E7B508642FDC6C945488EAC4EBD585F4B26F3659EE1A847952AD82648ADAB",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Tools\\KiwiV44_55_31\\Test-Collector.ps1",
+    "expected": "8BA5AC3E0F108AC22D24210C7BF2A70F385E63AC9B8FB79265BC8A2C4D536D23",
+    "current": "8BA5AC3E0F108AC22D24210C7BF2A70F385E63AC9B8FB79265BC8A2C4D536D23",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Tools\\KiwiV44_55_31\\Test-Validator.ps1",
+    "expected": "4ED4B33CCABB7FE38DD62DEB02FDDA920F4EDC852053F16CE95D531CC4E88BF4",
+    "current": "5C5AFDBA67D8E56C4B161F4B760CED35A39A1477769D67CF6A24ECA235F7084A",
+    "match": false
+  },
+  {
+    "kind": "source",
+    "path": "Tools\\KiwiV44_55_31\\V31.Common.psm1",
+    "expected": "E9009C6B7952573D9205E2C1D9CAB90A3BEB68A69BE47C8652AA6C95106E8B34",
+    "current": "E9009C6B7952573D9205E2C1D9CAB90A3BEB68A69BE47C8652AA6C95106E8B34",
+    "match": true
+  },
+  {
+    "kind": "source",
+    "path": "Tools\\KiwiV44_55_31\\Validate-Runtime.ps1",
+    "expected": "82E9FB0F7BD220888E35B362040801D27BA5AF7B855C07FF2A234E5D23174167",
+    "current": "E05F2B5B9CCD767E4DD39DE4B77E8D324D4241CFB158D873E91CAF497FE260ED",
+    "match": false
+  },
+  {
+    "kind": "source",
+    "path": "Tools\\KiwiV44_55_31\\Validate-Static.ps1",
+    "expected": "44349BF7DB32A13850263DC8844442849746CE95C0B36205E65AB7F696B4A54E",
+    "current": "44349BF7DB32A13850263DC8844442849746CE95C0B36205E65AB7F696B4A54E",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\D3D12\\D3D12Core.dll",
+    "expected": "31F364F2B3AA1753E7BA9FF912D0721C8F424BE5FA14503EFDDAFBB30C635D3B",
+    "current": "31F364F2B3AA1753E7BA9FF912D0721C8F424BE5FA14503EFDDAFBB30C635D3B",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\D3D12\\d3d12SDKLayers.dll",
+    "expected": "5DFC320D5EE27190181B1A63E74EB481B07EA727513DBEB38A96DB6157969D24",
+    "current": "5DFC320D5EE27190181B1A63E74EB481B07EA727513DBEB38A96DB6157969D24",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_BurstDebugInformation_DoNotShip\\Data\\Plugins\\x86_64\\lib_burst_generated.txt",
+    "expected": "B54768A2BEBB88756598ECCF8CA1390F334ADF9D5FBCF082DEE9435C699C63C0",
+    "current": "B54768A2BEBB88756598ECCF8CA1390F334ADF9D5FBCF082DEE9435C699C63C0",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31.exe",
+    "expected": "98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81",
+    "current": "98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\app.info",
+    "expected": "0D6C1ECC507F29B6732211D17A57D3DF84A5D585E5A271429F6A228CEE76EEFC",
+    "current": "0D6C1ECC507F29B6732211D17A57D3DF84A5D585E5A271429F6A228CEE76EEFC",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\boot.config",
+    "expected": "FA6F83EC877D74756CB9C8959422B06199346F8EBDD9AC3BDF4F2FFDBDF5C758",
+    "current": "FA6F83EC877D74756CB9C8959422B06199346F8EBDD9AC3BDF4F2FFDBDF5C758",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\globalgamemanagers",
+    "expected": "F82BB7D1F1BFDF331864005D27F5CA269E895E2F37EF0C642E7F5653B05E8E72",
+    "current": "F82BB7D1F1BFDF331864005D27F5CA269E895E2F37EF0C642E7F5653B05E8E72",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\globalgamemanagers.assets",
+    "expected": "1777DA51EAD1A64DC54D13A081664D1728E807A519AC532D28A8E3BC089A0B00",
+    "current": "1777DA51EAD1A64DC54D13A081664D1728E807A519AC532D28A8E3BC089A0B00",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\globalgamemanagers.assets.resS",
+    "expected": "EBF0F91664C0AA69E3B92E93D4D4E6FEAE1A9152529B0EFEAC047E3C9C3B0FC0",
+    "current": "EBF0F91664C0AA69E3B92E93D4D4E6FEAE1A9152529B0EFEAC047E3C9C3B0FC0",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\level0",
+    "expected": "BC50322F8DCD7825501DC6810697681AF00C2F574518BCE860E00BA67A357DB6",
+    "current": "BC50322F8DCD7825501DC6810697681AF00C2F574518BCE860E00BA67A357DB6",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Assembly-CSharp.dll",
+    "expected": "32064B0D9657A89A858E1888016DBE8F47A28FD924CD77B16B2B1B1A3E57AE86",
+    "current": "32064B0D9657A89A858E1888016DBE8F47A28FD924CD77B16B2B1B1A3E57AE86",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Assembly-CSharp.pdb",
+    "expected": "91A71C04D5BB36F7C89D4BBF5E420E4D5D6CB6B1A55268AFD3F94ACCFC3259F2",
+    "current": "91A71C04D5BB36F7C89D4BBF5E420E4D5D6CB6B1A55268AFD3F94ACCFC3259F2",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Google.Protobuf.dll",
+    "expected": "113F6E227399A9E7932E397FB893713A27A41AF7B774390D18EB2FB3413F438C",
+    "current": "113F6E227399A9E7932E397FB893713A27A41AF7B774390D18EB2FB3413F438C",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Klak.Spout.Runtime.dll",
+    "expected": "430A366C21778FA558C4475E039BB19837E211D17FE21D8670ECBD0E7346DCC3",
+    "current": "430A366C21778FA558C4475E039BB19837E211D17FE21D8670ECBD0E7346DCC3",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Klak.Spout.Runtime.pdb",
+    "expected": "0D731B234F9B64390B6ED7DA3EC9365C75823C9DC169EB46A8C4BC605B092615",
+    "current": "0D731B234F9B64390B6ED7DA3EC9365C75823C9DC169EB46A8C4BC605B092615",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Mediapipe.Runtime.dll",
+    "expected": "3D087D641938111C04C03E4F812647E0D16B1C403F581ACF73BCE9451F92A7AD",
+    "current": "3D087D641938111C04C03E4F812647E0D16B1C403F581ACF73BCE9451F92A7AD",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Mediapipe.Runtime.pdb",
+    "expected": "BF0B5553D6EFDE718C1A2B734A658324B5EC6F0427A7970E8EFD434C1AF8C18A",
+    "current": "BF0B5553D6EFDE718C1A2B734A658324B5EC6F0427A7970E8EFD434C1AF8C18A",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Microsoft.ML.OnnxRuntime.dll",
+    "expected": "A65876E5722478227840BEA854ACA2E772EAC6EFB05906EFFB916699CAE086D6",
+    "current": "A65876E5722478227840BEA854ACA2E772EAC6EFB05906EFFB916699CAE086D6",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Mono.Security.dll",
+    "expected": "4B6569566E48FA584DDE7B4F2FAA4C3CC0321599942E0898BA1B06838AEF7108",
+    "current": "4B6569566E48FA584DDE7B4F2FAA4C3CC0321599942E0898BA1B06838AEF7108",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\mscorlib.dll",
+    "expected": "5ED1180FC8CB409D57952296C7F573F2B1B3D3D2A2CD37258EF407498A17DD4D",
+    "current": "5ED1180FC8CB409D57952296C7F573F2B1B3D3D2A2CD37258EF407498A17DD4D",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\MToon.dll",
+    "expected": "4A8EF128E69DE7FFA90D0860C7BF75BD9CDB0F9174336FA8E6850D307A8DE67B",
+    "current": "4A8EF128E69DE7FFA90D0860C7BF75BD9CDB0F9174336FA8E6850D307A8DE67B",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\MToon.pdb",
+    "expected": "6DDAD23F2E28D64E0C97E98AA9E00CB4BB0842F8F17566F55B012212B43EFF33",
+    "current": "6DDAD23F2E28D64E0C97E98AA9E00CB4BB0842F8F17566F55B012212B43EFF33",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\netstandard.dll",
+    "expected": "6AE62E082DC494A2433984177F60CA4DB5FAE69B1F360A8B33754172B310B8C5",
+    "current": "6AE62E082DC494A2433984177F60CA4DB5FAE69B1F360A8B33754172B310B8C5",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Newtonsoft.Json.dll",
+    "expected": "A56146202232958F46BD6A28B5A7DA166AEA123EE0D646735A46E5C341DFBF1F",
+    "current": "A56146202232958F46BD6A28B5A7DA166AEA123EE0D646735A46E5C341DFBF1F",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Newtonsoft.Json.pdb",
+    "expected": "17CBAB4D4207187ED94173C0D59D7A39FABED7C9035B73634C1F02188DD60168",
+    "current": "17CBAB4D4207187ED94173C0D59D7A39FABED7C9035B73634C1F02188DD60168",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\SpringBoneJobs.dll",
+    "expected": "D7BA194B11C317B69FB560022BE4F7C0C48265CD520E25EE57EC04C5C02D84BE",
+    "current": "D7BA194B11C317B69FB560022BE4F7C0C48265CD520E25EE57EC04C5C02D84BE",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\SpringBoneJobs.pdb",
+    "expected": "4885F52C0A9FA75F3BB2D38F70190FCD3F3A477138BCAAC012B35BCF3BA2A535",
+    "current": "4885F52C0A9FA75F3BB2D38F70190FCD3F3A477138BCAAC012B35BCF3BA2A535",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\System.Buffers.dll",
+    "expected": "762F8FDBE975E05B76BE5FE996C53CE7C75E4A2830F2F50B02A5948EF6BA0AEB",
+    "current": "762F8FDBE975E05B76BE5FE996C53CE7C75E4A2830F2F50B02A5948EF6BA0AEB",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\System.ComponentModel.Composition.dll",
+    "expected": "0076148507A91AE4839320D6AFB549EEC928596B72DCD95EA6C5ECF73F8C65F2",
+    "current": "0076148507A91AE4839320D6AFB549EEC928596B72DCD95EA6C5ECF73F8C65F2",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\System.Configuration.dll",
+    "expected": "69686FE46898D9C0077ADB973527F3F5EB9C4840FA2F8D90A860B2F5C1E03FA1",
+    "current": "69686FE46898D9C0077ADB973527F3F5EB9C4840FA2F8D90A860B2F5C1E03FA1",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\System.Core.dll",
+    "expected": "9493EBE16569F6067BEEF5281D68E83EE9511DB7F55245B1DC2C95E8E189FCE3",
+    "current": "9493EBE16569F6067BEEF5281D68E83EE9511DB7F55245B1DC2C95E8E189FCE3",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\System.Data.DataSetExtensions.dll",
+    "expected": "1356D8889A0EDD5A658F2F942638EBF33269E68C4F72F2775741B821A6C6520B",
+    "current": "1356D8889A0EDD5A658F2F942638EBF33269E68C4F72F2775741B821A6C6520B",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\System.Data.dll",
+    "expected": "6081CA5F31ADB626455939A12D2F99FBA9E963BC05E9ACAA1F7921C0D84784BB",
+    "current": "6081CA5F31ADB626455939A12D2F99FBA9E963BC05E9ACAA1F7921C0D84784BB",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\System.dll",
+    "expected": "439CA04B265472AFE66DF7802BED26E880B3DB35E33C7E0ECF182611F4B9B6D7",
+    "current": "439CA04B265472AFE66DF7802BED26E880B3DB35E33C7E0ECF182611F4B9B6D7",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\System.Drawing.dll",
+    "expected": "5218327941712BDEBE787E33FE2200A859E4409BECB4FB46E6451CECE5D2E8E1",
+    "current": "5218327941712BDEBE787E33FE2200A859E4409BECB4FB46E6451CECE5D2E8E1",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\System.EnterpriseServices.dll",
+    "expected": "230BC9BF6611383AA9B3964CA70B1FE72B3662E213331C123265C8C83B5D03D6",
+    "current": "230BC9BF6611383AA9B3964CA70B1FE72B3662E213331C123265C8C83B5D03D6",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\System.IO.Compression.dll",
+    "expected": "39838D5AE350265398321E656EB0B396A67113E278D05D79B2D86E7326A0F196",
+    "current": "39838D5AE350265398321E656EB0B396A67113E278D05D79B2D86E7326A0F196",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\System.IO.Compression.FileSystem.dll",
+    "expected": "BFAE12D50F244DDA8B9715594BB85BE351C63326ADCC27DAD4F4A6B188D83CBF",
+    "current": "BFAE12D50F244DDA8B9715594BB85BE351C63326ADCC27DAD4F4A6B188D83CBF",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\System.IO.Hashing.dll",
+    "expected": "AC7AC3E83805B0B621C48B90543DC733C9A89106835278618357D6187E3DA74E",
+    "current": "AC7AC3E83805B0B621C48B90543DC733C9A89106835278618357D6187E3DA74E",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\System.Memory.dll",
+    "expected": "C4F030A2CBA7DA7CDCF493257C24560E203D355904AEE490D645A935842F834A",
+    "current": "C4F030A2CBA7DA7CDCF493257C24560E203D355904AEE490D645A935842F834A",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\System.Net.Http.dll",
+    "expected": "3677239BD08808DA011F94A7C41371BAAC10BEFA6423098C187471B236D2DB38",
+    "current": "3677239BD08808DA011F94A7C41371BAAC10BEFA6423098C187471B236D2DB38",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\System.Numerics.dll",
+    "expected": "9B6D5A2D166165A7F1EDFEA05B4AAE4F979F7672F6D50D75CCF8586098EA4DE6",
+    "current": "9B6D5A2D166165A7F1EDFEA05B4AAE4F979F7672F6D50D75CCF8586098EA4DE6",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\System.Runtime.CompilerServices.Unsafe.dll",
+    "expected": "01748200F2400C742AA689F1F5101BD6298EFDFD92C00C18F4FA473847235BA9",
+    "current": "01748200F2400C742AA689F1F5101BD6298EFDFD92C00C18F4FA473847235BA9",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\System.Runtime.dll",
+    "expected": "E0A7334B7BA419AAAB6BD3BB6992D693E689341A9178172C9BF99C2AA6A085BD",
+    "current": "E0A7334B7BA419AAAB6BD3BB6992D693E689341A9178172C9BF99C2AA6A085BD",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\System.Runtime.Serialization.dll",
+    "expected": "783E6193DB3D0E6F137587C5A7FD8D2F4076B8307CD1C481EEAB93ED57A81000",
+    "current": "783E6193DB3D0E6F137587C5A7FD8D2F4076B8307CD1C481EEAB93ED57A81000",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\System.Security.dll",
+    "expected": "81FFC9FA9B17422A9EF25FE7BCCCCD154EE277F459A3C62AA67EAD0A4FECA16D",
+    "current": "81FFC9FA9B17422A9EF25FE7BCCCCD154EE277F459A3C62AA67EAD0A4FECA16D",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\System.ServiceModel.Internals.dll",
+    "expected": "289D5CB6D75B81A2C38643A0305F12C908D8C78FFEF9F2845F0B22B30DC45A92",
+    "current": "289D5CB6D75B81A2C38643A0305F12C908D8C78FFEF9F2845F0B22B30DC45A92",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\System.Transactions.dll",
+    "expected": "1C86DDF61FDF72BD8942F8AC12226B134D4E10EC88D66EF2F31CCBB65B149ACA",
+    "current": "1C86DDF61FDF72BD8942F8AC12226B134D4E10EC88D66EF2F31CCBB65B149ACA",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\System.Xml.dll",
+    "expected": "F8D4A2AF788E679811171031B79F4AC5204E00526EFA0F0F3507984C3EE96D0A",
+    "current": "F8D4A2AF788E679811171031B79F4AC5204E00526EFA0F0F3507984C3EE96D0A",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\System.Xml.Linq.dll",
+    "expected": "181938ADE3495F679DB26FC767585BBD84B10F664D47EF1E3422D667F4954370",
+    "current": "181938ADE3495F679DB26FC767585BBD84B10F664D47EF1E3422D667F4954370",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UniGLTF.dll",
+    "expected": "93D023526E5B0D593174F915B3C127D3F9B40EAFD50C5BB5071A206404DABC3A",
+    "current": "93D023526E5B0D593174F915B3C127D3F9B40EAFD50C5BB5071A206404DABC3A",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UniGLTF.pdb",
+    "expected": "B16FB380C2E2D0E3358BB8C6E79FA934A1B86B32E8F2E7AA302AC24B05ADFBB2",
+    "current": "B16FB380C2E2D0E3358BB8C6E79FA934A1B86B32E8F2E7AA302AC24B05ADFBB2",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UniGLTF.UniUnlit.dll",
+    "expected": "BE1994C85E6E351F2C2120565094A1E0C657C9D2C1674BF539FA31D627A780C8",
+    "current": "BE1994C85E6E351F2C2120565094A1E0C657C9D2C1674BF539FA31D627A780C8",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UniGLTF.UniUnlit.pdb",
+    "expected": "4D8C6B20629E2FEC942344992C53373E2D2F03F5BB8B3B532675E973101D6B12",
+    "current": "4D8C6B20629E2FEC942344992C53373E2D2F03F5BB8B3B532675E973101D6B12",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UniGLTF.Utils.dll",
+    "expected": "06C26E8E4E48881A614A498F447E7065B66B382BD1811A49A48CB4BA0BEED2D4",
+    "current": "06C26E8E4E48881A614A498F447E7065B66B382BD1811A49A48CB4BA0BEED2D4",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UniGLTF.Utils.pdb",
+    "expected": "8FE3BD32507D0500434DA0DB032EB70A8ED3D07D205DD9DF8B4808C11424F062",
+    "current": "8FE3BD32507D0500434DA0DB032EB70A8ED3D07D205DD9DF8B4808C11424F062",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UniHumanoid.dll",
+    "expected": "9DCD3457901DB5FA08391A56DF8DA408B7794A2CBD8DEABA3A238CAB36D28AE3",
+    "current": "9DCD3457901DB5FA08391A56DF8DA408B7794A2CBD8DEABA3A238CAB36D28AE3",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UniHumanoid.pdb",
+    "expected": "9A55963FAC56A84B21795FC38DE8B6EEF45AEF490AD83CC8DDF09831E67EEEA4",
+    "current": "9A55963FAC56A84B21795FC38DE8B6EEF45AEF490AD83CC8DDF09831E67EEEA4",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Unity.AppUI.dll",
+    "expected": "F7952684EDA231195B7E09B0823041BD099D3A89A6A59E13D5D617CA5D451B8B",
+    "current": "F7952684EDA231195B7E09B0823041BD099D3A89A6A59E13D5D617CA5D451B8B",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Unity.AppUI.InternalAPIBridge.dll",
+    "expected": "267047B0A55C208A225BE3AAC13F49B4FC59B55782034AD51A885C773BEF0731",
+    "current": "267047B0A55C208A225BE3AAC13F49B4FC59B55782034AD51A885C773BEF0731",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Unity.AppUI.InternalAPIBridge.pdb",
+    "expected": "87C80A3602D3A4E2A254882F6DB605048944D1A730B597FC18CC8A8C0AB0998E",
+    "current": "87C80A3602D3A4E2A254882F6DB605048944D1A730B597FC18CC8A8C0AB0998E",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Unity.AppUI.MVVM.dll",
+    "expected": "ADE3C0F46FF33FBD52A8244236CABEE596137B92CF688CB99BABE9002F71CAE1",
+    "current": "ADE3C0F46FF33FBD52A8244236CABEE596137B92CF688CB99BABE9002F71CAE1",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Unity.AppUI.MVVM.pdb",
+    "expected": "1525541B24C4C1E7B15C8020BF11E8453E2FE8941C2EFCED133913FF8A113FDB",
+    "current": "1525541B24C4C1E7B15C8020BF11E8453E2FE8941C2EFCED133913FF8A113FDB",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Unity.AppUI.Navigation.dll",
+    "expected": "C09F29EF570A3334AC6F785F3624395935A7CE78067ACF5C3B1B035BFACA9C14",
+    "current": "C09F29EF570A3334AC6F785F3624395935A7CE78067ACF5C3B1B035BFACA9C14",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Unity.AppUI.Navigation.pdb",
+    "expected": "D6F034FED6078266F49685DFDD60D504C111D39EA1248ECA1FC830D04FEBC16E",
+    "current": "D6F034FED6078266F49685DFDD60D504C111D39EA1248ECA1FC830D04FEBC16E",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Unity.AppUI.pdb",
+    "expected": "98048DB82F926EC2EA81CC30019482F1F2B95ED958239078B2F7C50D954AE019",
+    "current": "98048DB82F926EC2EA81CC30019482F1F2B95ED958239078B2F7C50D954AE019",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Unity.AppUI.Redux.dll",
+    "expected": "02BEC2AFD9108CD0D92AE5F902F4CD55C7939266C8C51448BFD977AB0A15EF30",
+    "current": "02BEC2AFD9108CD0D92AE5F902F4CD55C7939266C8C51448BFD977AB0A15EF30",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Unity.AppUI.Redux.pdb",
+    "expected": "29FD6C542165F69F32E0BDE1072B89BDBDC8B6F414AC6FE2821C979B06D90950",
+    "current": "29FD6C542165F69F32E0BDE1072B89BDBDC8B6F414AC6FE2821C979B06D90950",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Unity.AppUI.Undo.dll",
+    "expected": "0A8323EAAD468E7504B27EDB7BD3DB75E6B1298509815D4A6776B5AF6C406A03",
+    "current": "0A8323EAAD468E7504B27EDB7BD3DB75E6B1298509815D4A6776B5AF6C406A03",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Unity.AppUI.Undo.pdb",
+    "expected": "63AB7A5C0E63C73A76756794CE13339885F455917D36D23B55657CDEFEC2CDA1",
+    "current": "63AB7A5C0E63C73A76756794CE13339885F455917D36D23B55657CDEFEC2CDA1",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Unity.Burst.dll",
+    "expected": "A1FDFF545843E5872708A68943DF97B7AB6AF37F6CF4081649B211ACB85A019F",
+    "current": "A1FDFF545843E5872708A68943DF97B7AB6AF37F6CF4081649B211ACB85A019F",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Unity.Burst.pdb",
+    "expected": "310401BF6A32AFF435C1990D9738804ADE802D8B06B8D90D3E225C1A739024D0",
+    "current": "310401BF6A32AFF435C1990D9738804ADE802D8B06B8D90D3E225C1A739024D0",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Unity.Burst.Unsafe.dll",
+    "expected": "9D9C1FF52411DECBEE5D9F0D1CD61EBEAA222077AA77A52101EA3DEBAFAE98E2",
+    "current": "9D9C1FF52411DECBEE5D9F0D1CD61EBEAA222077AA77A52101EA3DEBAFAE98E2",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Unity.Collections.dll",
+    "expected": "A60063AC7D3014F52A760C7208291558AAAF66CAAE23FB78E758D20371C18B3B",
+    "current": "A60063AC7D3014F52A760C7208291558AAAF66CAAE23FB78E758D20371C18B3B",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Unity.Collections.LowLevel.ILSupport.dll",
+    "expected": "FF50383F807F9692E4913B97E47D86FEFCB8FAA33D6D48CD3E3FD6FC7FFB448D",
+    "current": "FF50383F807F9692E4913B97E47D86FEFCB8FAA33D6D48CD3E3FD6FC7FFB448D",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Unity.Collections.pdb",
+    "expected": "7374AE25B7A489A92C31B9DE976F7A731EE3184BD6BD16088A9726C784502CC1",
+    "current": "7374AE25B7A489A92C31B9DE976F7A731EE3184BD6BD16088A9726C784502CC1",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Unity.InferenceEngine.dll",
+    "expected": "E326B5C5906CADCC8786DC5B821E96C59B714B6CDAB92F8D9C3A347CB15CB20D",
+    "current": "E326B5C5906CADCC8786DC5B821E96C59B714B6CDAB92F8D9C3A347CB15CB20D",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Unity.InferenceEngine.pdb",
+    "expected": "7EA603C93BC95248B67211F0EE013231571298D319857C71189872730F0C5408",
+    "current": "7EA603C93BC95248B67211F0EE013231571298D319857C71189872730F0C5408",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Unity.InferenceEngine.Tokenization.dll",
+    "expected": "1D60DC6A1BAC91596EA8D59DD56DBF947124F09491EEC3705B96FA4C30E2ED3B",
+    "current": "1D60DC6A1BAC91596EA8D59DD56DBF947124F09491EEC3705B96FA4C30E2ED3B",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Unity.InferenceEngine.Tokenization.pdb",
+    "expected": "A936BFB6ABCCA156B4A1291052E8A1B7B0D76CFC21D7454656473B4AF38696B0",
+    "current": "A936BFB6ABCCA156B4A1291052E8A1B7B0D76CFC21D7454656473B4AF38696B0",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Unity.Mathematics.dll",
+    "expected": "C14F939CF56038AF7B313FEE38A733B908179F97A72A5807AB86363763964A89",
+    "current": "C14F939CF56038AF7B313FEE38A733B908179F97A72A5807AB86363763964A89",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Unity.Mathematics.pdb",
+    "expected": "83E7C6BFDE03E9191803EF30C9AE83CC0345D03866E310E8EE3E991A9BE46457",
+    "current": "83E7C6BFDE03E9191803EF30C9AE83CC0345D03866E310E8EE3E991A9BE46457",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Unity.TextMeshPro.dll",
+    "expected": "EEBD3AF8E828882A34FFFB03C00FD2D3055EDD0778F7E2A7E59FA49C19D6B804",
+    "current": "EEBD3AF8E828882A34FFFB03C00FD2D3055EDD0778F7E2A7E59FA49C19D6B804",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\Unity.TextMeshPro.pdb",
+    "expected": "1AE226617ECD5721045A508A4B61794FEECEE02ED34E3DFF7D9619C71093B098",
+    "current": "1AE226617ECD5721045A508A4B61794FEECEE02ED34E3DFF7D9619C71093B098",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.AccessibilityModule.dll",
+    "expected": "71F7DE9E2CAEA7E56374E2BFAD6369254900746540CBCD4E25D09424DEA824BD",
+    "current": "71F7DE9E2CAEA7E56374E2BFAD6369254900746540CBCD4E25D09424DEA824BD",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.AccessibilityModule.pdb",
+    "expected": "7389B3B037CD4576A0BBF1511616AB843FB0733C2EDCF804AF4DAAA8F0833CD0",
+    "current": "7389B3B037CD4576A0BBF1511616AB843FB0733C2EDCF804AF4DAAA8F0833CD0",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.AIModule.dll",
+    "expected": "3E12C2494B0F0817BA644919A082D5132D9DF592A60E5861A4E5DFBA32939323",
+    "current": "3E12C2494B0F0817BA644919A082D5132D9DF592A60E5861A4E5DFBA32939323",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.AIModule.pdb",
+    "expected": "AFE8E16BFD62F2CA71750071C5197865330F668DDB4288E794B808E6B3B6C341",
+    "current": "AFE8E16BFD62F2CA71750071C5197865330F668DDB4288E794B808E6B3B6C341",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.AMDModule.dll",
+    "expected": "D25E0023502059F7D114F3001A03032C0E83B87C6734B2B5F9EF4CAE3DD89D5B",
+    "current": "D25E0023502059F7D114F3001A03032C0E83B87C6734B2B5F9EF4CAE3DD89D5B",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.AMDModule.pdb",
+    "expected": "4D699136CFE5777B4EEA615A9C043C5488C00FBE325C89450367FBA83C97153C",
+    "current": "4D699136CFE5777B4EEA615A9C043C5488C00FBE325C89450367FBA83C97153C",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.AndroidJNIModule.dll",
+    "expected": "A1C3D8A568447E87D66418EDB791916E3382DF53F84365835C8411AA8218AA51",
+    "current": "A1C3D8A568447E87D66418EDB791916E3382DF53F84365835C8411AA8218AA51",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.AndroidJNIModule.pdb",
+    "expected": "3191E22D530BF383A916E6F20BBD51B7229690933A39EB3479CABA88B744EAA7",
+    "current": "3191E22D530BF383A916E6F20BBD51B7229690933A39EB3479CABA88B744EAA7",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.AnimationModule.dll",
+    "expected": "6D3586CC7222F3B860C4C23168628F920126AA25A121C1099880EBFCC0EB253B",
+    "current": "6D3586CC7222F3B860C4C23168628F920126AA25A121C1099880EBFCC0EB253B",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.AnimationModule.pdb",
+    "expected": "D9A849A624C7467696689942ABC6F2D2FDEA1C80AC1F0EFB1693E7604AFD78C0",
+    "current": "D9A849A624C7467696689942ABC6F2D2FDEA1C80AC1F0EFB1693E7604AFD78C0",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.ARModule.dll",
+    "expected": "58BBBCCAAEFACF43762F54CC47F918DAD04218802D391887BE0F5BE0E7299DED",
+    "current": "58BBBCCAAEFACF43762F54CC47F918DAD04218802D391887BE0F5BE0E7299DED",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.ARModule.pdb",
+    "expected": "FBC12F7FCC46C8AD443704273C33E1CB9FDE4AF5DCA2468BE5D7193E11891FB4",
+    "current": "FBC12F7FCC46C8AD443704273C33E1CB9FDE4AF5DCA2468BE5D7193E11891FB4",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.AssetBundleModule.dll",
+    "expected": "5725E80172D91DC4B647A67A430083FBCF448E4C827D54A59DF72C5F8C928E47",
+    "current": "5725E80172D91DC4B647A67A430083FBCF448E4C827D54A59DF72C5F8C928E47",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.AssetBundleModule.pdb",
+    "expected": "234150996F99EB8D927CE1FAA2AA263EC2817B7ED8B1D172636C56E856FA81F4",
+    "current": "234150996F99EB8D927CE1FAA2AA263EC2817B7ED8B1D172636C56E856FA81F4",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.AudioModule.dll",
+    "expected": "5747710E149D044BD7124F21FC22F31B475935AD305CC48C202DEE6BBB7F57CC",
+    "current": "5747710E149D044BD7124F21FC22F31B475935AD305CC48C202DEE6BBB7F57CC",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.AudioModule.pdb",
+    "expected": "86F4080E806FAD2D3B9757BB8B188FAC770B1E49A67B773B821538E57C2FA8B7",
+    "current": "86F4080E806FAD2D3B9757BB8B188FAC770B1E49A67B773B821538E57C2FA8B7",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.ClothModule.dll",
+    "expected": "C2CB119F5E8C36DAC4AA0D5EB500E035CBD5D23F2CC68B5AF63D1A56D0278A80",
+    "current": "C2CB119F5E8C36DAC4AA0D5EB500E035CBD5D23F2CC68B5AF63D1A56D0278A80",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.ClothModule.pdb",
+    "expected": "26F96983F2DF8155CB86EB6E9789947E3ABAE4B5A1BE671410DE957E2B147146",
+    "current": "26F96983F2DF8155CB86EB6E9789947E3ABAE4B5A1BE671410DE957E2B147146",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.ClusterInputModule.dll",
+    "expected": "DDAC06058BFCF679B46515EA363DA7ED7411BD098CE9F9E28EA055533E246CC9",
+    "current": "DDAC06058BFCF679B46515EA363DA7ED7411BD098CE9F9E28EA055533E246CC9",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.ClusterInputModule.pdb",
+    "expected": "F894951DFFAA4131B7FB2F78B44F1DDDE7F6AE8F9208CE1E6943F14A5857633E",
+    "current": "F894951DFFAA4131B7FB2F78B44F1DDDE7F6AE8F9208CE1E6943F14A5857633E",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.ClusterRendererModule.dll",
+    "expected": "F7490BE5CC833B9B725820272640AEC90093993CA256873B7103596355AB9743",
+    "current": "F7490BE5CC833B9B725820272640AEC90093993CA256873B7103596355AB9743",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.ClusterRendererModule.pdb",
+    "expected": "D5C802FE7E4F1B8A2D1BB53AE263DAE2373A2D1A554171E240E92210E21C8513",
+    "current": "D5C802FE7E4F1B8A2D1BB53AE263DAE2373A2D1A554171E240E92210E21C8513",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.ContentLoadModule.dll",
+    "expected": "A8A711D85EACD3A9CC1586B559EDDD38D2D0B87CF9C4704E466494B1246EA454",
+    "current": "A8A711D85EACD3A9CC1586B559EDDD38D2D0B87CF9C4704E466494B1246EA454",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.ContentLoadModule.pdb",
+    "expected": "3857CEBA636F8BFA3CDE4217F9C7F0F629AA90FA260A3D1151653B3673E1B1A3",
+    "current": "3857CEBA636F8BFA3CDE4217F9C7F0F629AA90FA260A3D1151653B3673E1B1A3",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.CoreModule.dll",
+    "expected": "7E2B64936CFF3632B3800618F9A4239333B0AA68F833455447F98E05C2A6BD16",
+    "current": "7E2B64936CFF3632B3800618F9A4239333B0AA68F833455447F98E05C2A6BD16",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.CoreModule.pdb",
+    "expected": "6148DEF412CAD20A72C4D1DD4C121AD0B5A619DCFEAAB4D713C91A05D1B298A3",
+    "current": "6148DEF412CAD20A72C4D1DD4C121AD0B5A619DCFEAAB4D713C91A05D1B298A3",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.CrashReportingModule.dll",
+    "expected": "1B09BCD3EEBE73E7B24B6ECEDC6FAB34C488B501450D2E450C647BDDC181EEA9",
+    "current": "1B09BCD3EEBE73E7B24B6ECEDC6FAB34C488B501450D2E450C647BDDC181EEA9",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.CrashReportingModule.pdb",
+    "expected": "FDBAC61DCFC47DC68610E607FA5395790DCEC4B2BAE1D8FCFB8C0A3E18F3A858",
+    "current": "FDBAC61DCFC47DC68610E607FA5395790DCEC4B2BAE1D8FCFB8C0A3E18F3A858",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.DirectorModule.dll",
+    "expected": "3FE3420FC63C6D2086AAA5ABF919AE1AD42D1C3958733F9DFE6F1717B86DA631",
+    "current": "3FE3420FC63C6D2086AAA5ABF919AE1AD42D1C3958733F9DFE6F1717B86DA631",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.DirectorModule.pdb",
+    "expected": "5C7BC48147DD92410BF9E9BA203210F7D045576D05CA0B6969D16CE292E14B5D",
+    "current": "5C7BC48147DD92410BF9E9BA203210F7D045576D05CA0B6969D16CE292E14B5D",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.dll",
+    "expected": "08321D2A65E950D7C267DDBC9BFE553A95697D79BCCCB17BD49E99CE123CD765",
+    "current": "08321D2A65E950D7C267DDBC9BFE553A95697D79BCCCB17BD49E99CE123CD765",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.DSPGraphModule.dll",
+    "expected": "35EAD9934FFF0094AFAFA71DAB0229B31379C09F1B13ABA4B7CC45054A369606",
+    "current": "35EAD9934FFF0094AFAFA71DAB0229B31379C09F1B13ABA4B7CC45054A369606",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.DSPGraphModule.pdb",
+    "expected": "8C59C66A04AC0FA967F726C1D5381310D5C8942B8C2DD877E422BB0BB7193862",
+    "current": "8C59C66A04AC0FA967F726C1D5381310D5C8942B8C2DD877E422BB0BB7193862",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.GameCenterModule.dll",
+    "expected": "249343152B5876FF33A96F6B34319D70327693DCF24E8A95CA273B45AECC352F",
+    "current": "249343152B5876FF33A96F6B34319D70327693DCF24E8A95CA273B45AECC352F",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.GameCenterModule.pdb",
+    "expected": "AF00EBDDA2C43023F824B554491A60FFA8DFE5AB8C6D1F7D4C4CD5C8EA8B5347",
+    "current": "AF00EBDDA2C43023F824B554491A60FFA8DFE5AB8C6D1F7D4C4CD5C8EA8B5347",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.GIModule.dll",
+    "expected": "1EC89DB9D495A190C7A62FEA6DA7097D9787FEEE8CC62195D9EDCE0D6BA87164",
+    "current": "1EC89DB9D495A190C7A62FEA6DA7097D9787FEEE8CC62195D9EDCE0D6BA87164",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.GIModule.pdb",
+    "expected": "870221F4B316D1EFCBCAB4AF76464617A72C28C3C3DD7BECED646D9F7E72E0DF",
+    "current": "870221F4B316D1EFCBCAB4AF76464617A72C28C3C3DD7BECED646D9F7E72E0DF",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.GraphicsStateCollectionSerializerModule.dll",
+    "expected": "CDAF4236E607F0A0B0B41849512CC267FDAB52DC51EBC2C6FDB71A66C4AB7FAD",
+    "current": "CDAF4236E607F0A0B0B41849512CC267FDAB52DC51EBC2C6FDB71A66C4AB7FAD",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.GraphicsStateCollectionSerializerModule.pdb",
+    "expected": "D4F39A1A17E74AFB8AAF85661F3E79A1430BBE82AD158A9037AA227B550AB78D",
+    "current": "D4F39A1A17E74AFB8AAF85661F3E79A1430BBE82AD158A9037AA227B550AB78D",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.GridModule.dll",
+    "expected": "480D8A4076C10746F606A0680012F447C248B76AF22A5084D7C272ECA228B40D",
+    "current": "480D8A4076C10746F606A0680012F447C248B76AF22A5084D7C272ECA228B40D",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.GridModule.pdb",
+    "expected": "DE4B81DAC4B2808181E5D103C21CF42C09AA5983FBAC1E8041AD85B8F9F2983E",
+    "current": "DE4B81DAC4B2808181E5D103C21CF42C09AA5983FBAC1E8041AD85B8F9F2983E",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.HierarchyCoreModule.dll",
+    "expected": "4BEF43576013C515738B7979DBAE2833C49DBDD1CEEA3CC9345144F65A9DBE01",
+    "current": "4BEF43576013C515738B7979DBAE2833C49DBDD1CEEA3CC9345144F65A9DBE01",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.HierarchyCoreModule.pdb",
+    "expected": "C38E6E1A54CFC25C1979E8C9B5FB668598555E6EDC82E7DABA4407C11E59A071",
+    "current": "C38E6E1A54CFC25C1979E8C9B5FB668598555E6EDC82E7DABA4407C11E59A071",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.HotReloadModule.dll",
+    "expected": "3DE405CBADB40C8A9D359CEB0F27E4E5A76EB27D349916968236EBEDB30B9D5D",
+    "current": "3DE405CBADB40C8A9D359CEB0F27E4E5A76EB27D349916968236EBEDB30B9D5D",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.HotReloadModule.pdb",
+    "expected": "2C78F796402D7AC035A99768DF6B12FAD28AD3CF043DB61BA72C5799C74CBCA6",
+    "current": "2C78F796402D7AC035A99768DF6B12FAD28AD3CF043DB61BA72C5799C74CBCA6",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.IdentifiersModule.dll",
+    "expected": "1DA83F79AD734F9C4910CD6404BE5F694DB77CDD100E10BA3CC01870B83FB237",
+    "current": "1DA83F79AD734F9C4910CD6404BE5F694DB77CDD100E10BA3CC01870B83FB237",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.IdentifiersModule.pdb",
+    "expected": "BA4801297CFF0E378CB206DA8B095941F66FE0102971EBF3C60A5DDFDCDD305B",
+    "current": "BA4801297CFF0E378CB206DA8B095941F66FE0102971EBF3C60A5DDFDCDD305B",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.ImageConversionModule.dll",
+    "expected": "8FD85DDCAEDAEB060286CED93F90F0C161358E958A6CE4FD17554E624059DB7E",
+    "current": "8FD85DDCAEDAEB060286CED93F90F0C161358E958A6CE4FD17554E624059DB7E",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.ImageConversionModule.pdb",
+    "expected": "94F7B8DAF5377A403061F221F5586C64057CB4BF1CC4EE6CD81CEF235DC76FCD",
+    "current": "94F7B8DAF5377A403061F221F5586C64057CB4BF1CC4EE6CD81CEF235DC76FCD",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.IMGUIModule.dll",
+    "expected": "A352EBF5A1C5AE4F0A2C3D4818A380634DFD5F177691487DC3B4F909C32D53E3",
+    "current": "A352EBF5A1C5AE4F0A2C3D4818A380634DFD5F177691487DC3B4F909C32D53E3",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.IMGUIModule.pdb",
+    "expected": "C2B6FC1814956C67E8E348352DB0CCF8B844294E9F388A8C5A72B6E87AE8E8D3",
+    "current": "C2B6FC1814956C67E8E348352DB0CCF8B844294E9F388A8C5A72B6E87AE8E8D3",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.InputForUIModule.dll",
+    "expected": "540C9FEA7C8C51A25E951052FA19FA83A6CE0F5B54239AB5A10E9823FA6D6653",
+    "current": "540C9FEA7C8C51A25E951052FA19FA83A6CE0F5B54239AB5A10E9823FA6D6653",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.InputForUIModule.pdb",
+    "expected": "B21E273927E57B65D54347ACAEC91931663DC37CEE9F41949CD9D454CF8713F3",
+    "current": "B21E273927E57B65D54347ACAEC91931663DC37CEE9F41949CD9D454CF8713F3",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.InputLegacyModule.dll",
+    "expected": "8F3945901E91FC8BC693B77691C8109E726DB2D505EDC0740F41AB5A36DFFB32",
+    "current": "8F3945901E91FC8BC693B77691C8109E726DB2D505EDC0740F41AB5A36DFFB32",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.InputLegacyModule.pdb",
+    "expected": "842605597253C97825E6FE5879E744233594EB97B9CB96A299047A2A9F44578F",
+    "current": "842605597253C97825E6FE5879E744233594EB97B9CB96A299047A2A9F44578F",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.InputModule.dll",
+    "expected": "CC82A2886B706FDFE5DFD0DFF50BB7BA00D46DE8AA8A1810F73E3BF3ADD6C103",
+    "current": "CC82A2886B706FDFE5DFD0DFF50BB7BA00D46DE8AA8A1810F73E3BF3ADD6C103",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.InputModule.pdb",
+    "expected": "0978A7A2CA72E5956B4218C84FF39274DBCE40591BB47288E38F106C8A68F20B",
+    "current": "0978A7A2CA72E5956B4218C84FF39274DBCE40591BB47288E38F106C8A68F20B",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.InsightsModule.dll",
+    "expected": "2C1D9E2B50A26DC84FC5FF5D2034587BDFD3E5AE77738C8FEBFFF087A6BA8603",
+    "current": "2C1D9E2B50A26DC84FC5FF5D2034587BDFD3E5AE77738C8FEBFFF087A6BA8603",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.InsightsModule.pdb",
+    "expected": "09515412A6FB4D34EB18FD7D2FEB18E8DF29CF911FB0E7BF57BDC76778F87C7C",
+    "current": "09515412A6FB4D34EB18FD7D2FEB18E8DF29CF911FB0E7BF57BDC76778F87C7C",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.JSONSerializeModule.dll",
+    "expected": "19D41633326708DF9554A5842D655508464F379A445F624E2342E0B44A6FBDAC",
+    "current": "19D41633326708DF9554A5842D655508464F379A445F624E2342E0B44A6FBDAC",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.JSONSerializeModule.pdb",
+    "expected": "F09D1620615272B81A5D63DA7B912EC702BBAD9F8166FD2882558E73EA0F2D5E",
+    "current": "F09D1620615272B81A5D63DA7B912EC702BBAD9F8166FD2882558E73EA0F2D5E",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.LocalizationModule.dll",
+    "expected": "5D0EDC2434F68C09DA1071FFB3866E7A2434AE0901B33F903493C42CFEAA426C",
+    "current": "5D0EDC2434F68C09DA1071FFB3866E7A2434AE0901B33F903493C42CFEAA426C",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.LocalizationModule.pdb",
+    "expected": "7BF169ED3D5DAF1895D5433501CADE3733949E24044C5FC70158EE059B500B37",
+    "current": "7BF169ED3D5DAF1895D5433501CADE3733949E24044C5FC70158EE059B500B37",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.MarshallingModule.dll",
+    "expected": "CF4F6D57F0B597F3C68620382130EFED8B95BABFE230EA7DA0F7647FF4D5987C",
+    "current": "CF4F6D57F0B597F3C68620382130EFED8B95BABFE230EA7DA0F7647FF4D5987C",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.MarshallingModule.pdb",
+    "expected": "D7E4D4A7FD36FF3603A1F50BB86F3CBED9F7A560DB3231C95D0FDDD7ABF5F881",
+    "current": "D7E4D4A7FD36FF3603A1F50BB86F3CBED9F7A560DB3231C95D0FDDD7ABF5F881",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.MultiplayerModule.dll",
+    "expected": "851A85AB165A927CCAD80EA23CCA133A3D7233D377A844F278F58352F5FE9D3F",
+    "current": "851A85AB165A927CCAD80EA23CCA133A3D7233D377A844F278F58352F5FE9D3F",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.MultiplayerModule.pdb",
+    "expected": "EF07B15A9859E29DE7D09068EB186108636CF0D68789B73E0DA9E9FCBF5B46C3",
+    "current": "EF07B15A9859E29DE7D09068EB186108636CF0D68789B73E0DA9E9FCBF5B46C3",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.NVIDIAModule.dll",
+    "expected": "DFD2F2B1F3FE39E51595C48FE63478EBE005A9C1520A3D24FB9652EE00A8C921",
+    "current": "DFD2F2B1F3FE39E51595C48FE63478EBE005A9C1520A3D24FB9652EE00A8C921",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.NVIDIAModule.pdb",
+    "expected": "0BDE361914DA3FCEEB3B80BA16E3DF84E2B2EFD7FD525E3EF0A947EE100A779C",
+    "current": "0BDE361914DA3FCEEB3B80BA16E3DF84E2B2EFD7FD525E3EF0A947EE100A779C",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.ParticleSystemModule.dll",
+    "expected": "C813AD52C65D2C7F03A035EF5B9E78D605B35B8CDCFE2EC12D1D22B94E911C94",
+    "current": "C813AD52C65D2C7F03A035EF5B9E78D605B35B8CDCFE2EC12D1D22B94E911C94",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.ParticleSystemModule.pdb",
+    "expected": "F36F9026B649AB659F4A2A36889BACF0353F482ECF55FA4B7B4EFD0E3E6879D8",
+    "current": "F36F9026B649AB659F4A2A36889BACF0353F482ECF55FA4B7B4EFD0E3E6879D8",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.pdb",
+    "expected": "49D3507B1737689F44DD48FC4D7ECD5BAB831939772F1CBDDC800BACFD5AFF01",
+    "current": "49D3507B1737689F44DD48FC4D7ECD5BAB831939772F1CBDDC800BACFD5AFF01",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.PerformanceReportingModule.dll",
+    "expected": "9FD0857BE68A1910876B1FF1D831ABA2106D3FE0B985BB8AB3A6A826BD0C0302",
+    "current": "9FD0857BE68A1910876B1FF1D831ABA2106D3FE0B985BB8AB3A6A826BD0C0302",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.PerformanceReportingModule.pdb",
+    "expected": "D710C1B1961E83456647D9688C2C4EE2280196B5F3E3F9B4C3043791F2317DCF",
+    "current": "D710C1B1961E83456647D9688C2C4EE2280196B5F3E3F9B4C3043791F2317DCF",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.Physics2DModule.dll",
+    "expected": "BF81093320BF51846EA6F08E673B30B22D9CC84B77B98082A88E1A33F2B6C296",
+    "current": "BF81093320BF51846EA6F08E673B30B22D9CC84B77B98082A88E1A33F2B6C296",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.Physics2DModule.pdb",
+    "expected": "48901DB8A0D8D4B4E8C440E75AD3D04F653BA79612DEED2F69BADC0E343B3385",
+    "current": "48901DB8A0D8D4B4E8C440E75AD3D04F653BA79612DEED2F69BADC0E343B3385",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.PhysicsModule.dll",
+    "expected": "4C4BB977C26F84CDB8E64170BBA6671EF585E72D7F37C7A29AA10E438F5F83AC",
+    "current": "4C4BB977C26F84CDB8E64170BBA6671EF585E72D7F37C7A29AA10E438F5F83AC",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.PhysicsModule.pdb",
+    "expected": "F4092B52D55B2BF3703B67E1A920682D73EA570B6E3AF80955E2D4AD4E5BC700",
+    "current": "F4092B52D55B2BF3703B67E1A920682D73EA570B6E3AF80955E2D4AD4E5BC700",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.PropertiesModule.dll",
+    "expected": "932D44C4EC591EE1F1FBD8A448C5133FBCDAA9FE28F7DB7F5263DFB114AC8522",
+    "current": "932D44C4EC591EE1F1FBD8A448C5133FBCDAA9FE28F7DB7F5263DFB114AC8522",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.PropertiesModule.pdb",
+    "expected": "4B520F6C126F388D85A6D1A7F7D573B9515799FA50D72036410DB1BDBDD54025",
+    "current": "4B520F6C126F388D85A6D1A7F7D573B9515799FA50D72036410DB1BDBDD54025",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.RuntimeInitializeOnLoadManagerInitializerModule.dll",
+    "expected": "B9AC2DAD571EBD2CF92322B450A122EB85BB34943D7F1615EE657D42062EC1B3",
+    "current": "B9AC2DAD571EBD2CF92322B450A122EB85BB34943D7F1615EE657D42062EC1B3",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.RuntimeInitializeOnLoadManagerInitializerModule.pdb",
+    "expected": "87F6837F77FA8C49D3B35E6A26DB5239A3C30728F497711FC6D07E78497D3951",
+    "current": "87F6837F77FA8C49D3B35E6A26DB5239A3C30728F497711FC6D07E78497D3951",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.ScreenCaptureModule.dll",
+    "expected": "7105820AED11FCBEC92869BEB0792121AA84CF5F5018DE9A06C4934058D4848D",
+    "current": "7105820AED11FCBEC92869BEB0792121AA84CF5F5018DE9A06C4934058D4848D",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.ScreenCaptureModule.pdb",
+    "expected": "922ED4BBE24C608B6B724C85FE9784041C07D5BD58BB6AAF43CDCDF978249D79",
+    "current": "922ED4BBE24C608B6B724C85FE9784041C07D5BD58BB6AAF43CDCDF978249D79",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.ShaderVariantAnalyticsModule.dll",
+    "expected": "8B426C395C64120DC2084D2FA9D1D725F8CA6CCB963A02CA6925B0C8C8AE5BA5",
+    "current": "8B426C395C64120DC2084D2FA9D1D725F8CA6CCB963A02CA6925B0C8C8AE5BA5",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.ShaderVariantAnalyticsModule.pdb",
+    "expected": "3D50337838BBCFD8EC46C649046027A578CFB6E938A783F11989540AEEBABD07",
+    "current": "3D50337838BBCFD8EC46C649046027A578CFB6E938A783F11989540AEEBABD07",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.SharedInternalsModule.dll",
+    "expected": "F70B9A88640ACB7ADFD4DC4B896ED8480DE6BA47DCF44E340DEF8D124A413250",
+    "current": "F70B9A88640ACB7ADFD4DC4B896ED8480DE6BA47DCF44E340DEF8D124A413250",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.SharedInternalsModule.pdb",
+    "expected": "EBBAB26F58B2476BE19F065FE2CE1863C88DBD47649F53AA49123CBD9568736A",
+    "current": "EBBAB26F58B2476BE19F065FE2CE1863C88DBD47649F53AA49123CBD9568736A",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.SpriteMaskModule.dll",
+    "expected": "426C4D79A6B661208BD3F642A93204E777BEAD8457002D8C26B52B2B5D46FE20",
+    "current": "426C4D79A6B661208BD3F642A93204E777BEAD8457002D8C26B52B2B5D46FE20",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.SpriteMaskModule.pdb",
+    "expected": "CDDFF5B2EBD8BF5065DAEA7F3F8767FC575A6D6B5F28E2746038A6EFBDF51A19",
+    "current": "CDDFF5B2EBD8BF5065DAEA7F3F8767FC575A6D6B5F28E2746038A6EFBDF51A19",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.SpriteShapeModule.dll",
+    "expected": "FAB1F992ACDAF851B12E452FB9F65AB3C20AD621517AF40FC5C98BD18680CEC4",
+    "current": "FAB1F992ACDAF851B12E452FB9F65AB3C20AD621517AF40FC5C98BD18680CEC4",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.SpriteShapeModule.pdb",
+    "expected": "952EFD91BA0A1D20BED12E0CD5E31CE2897075E8ED67703897FF0109DD1CFA72",
+    "current": "952EFD91BA0A1D20BED12E0CD5E31CE2897075E8ED67703897FF0109DD1CFA72",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.StreamingModule.dll",
+    "expected": "49DB5A66B985050AB04FCAF2175C27C1CEA56BA22C52F662C5FAF33C8BE3E2CA",
+    "current": "49DB5A66B985050AB04FCAF2175C27C1CEA56BA22C52F662C5FAF33C8BE3E2CA",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.StreamingModule.pdb",
+    "expected": "E1E17FC8F11BA792766D415B5BF5D06BC9934EF55CB3CE3A4BBEE0F149434EAD",
+    "current": "E1E17FC8F11BA792766D415B5BF5D06BC9934EF55CB3CE3A4BBEE0F149434EAD",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.SubstanceModule.dll",
+    "expected": "E17482549D7EEDE48422E3240A740B34E08F8838BC58A3793AEFA6839DFD7D1C",
+    "current": "E17482549D7EEDE48422E3240A740B34E08F8838BC58A3793AEFA6839DFD7D1C",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.SubstanceModule.pdb",
+    "expected": "5183AF6BBF858B503412D81B48259C70485B355977BC00CA3F36D3569B3B9C5B",
+    "current": "5183AF6BBF858B503412D81B48259C70485B355977BC00CA3F36D3569B3B9C5B",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.SubsystemsModule.dll",
+    "expected": "0A1B1391AD648F1BBDC44A8D7B19D2C19A57157919B58994870704AEF6B40F14",
+    "current": "0A1B1391AD648F1BBDC44A8D7B19D2C19A57157919B58994870704AEF6B40F14",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.SubsystemsModule.pdb",
+    "expected": "4ED6691E26A54486C4502E08AE214D437DDF0160F533187F699484803A224AF8",
+    "current": "4ED6691E26A54486C4502E08AE214D437DDF0160F533187F699484803A224AF8",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.TerrainModule.dll",
+    "expected": "068676429A0E3C88447E2F6B046FEB218C911D28E337721A957CA3FD6E243762",
+    "current": "068676429A0E3C88447E2F6B046FEB218C911D28E337721A957CA3FD6E243762",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.TerrainModule.pdb",
+    "expected": "4E12C81A83BBD260833068E3A86D8C2C1AC27D5EB4C885AD5A973BB1BECC5180",
+    "current": "4E12C81A83BBD260833068E3A86D8C2C1AC27D5EB4C885AD5A973BB1BECC5180",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.TerrainPhysicsModule.dll",
+    "expected": "12EA53D261586711802278D8F639BFF6C394706BAFAEACA1BE9A7B5CED7FA8F6",
+    "current": "12EA53D261586711802278D8F639BFF6C394706BAFAEACA1BE9A7B5CED7FA8F6",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.TerrainPhysicsModule.pdb",
+    "expected": "5F37F483D20A10C2556D7102C21879369C664409E6ACAC2EC506482219CE2CD7",
+    "current": "5F37F483D20A10C2556D7102C21879369C664409E6ACAC2EC506482219CE2CD7",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.TextCoreFontEngineModule.dll",
+    "expected": "0F5129AC761CCCA06542C79FF28841F7A28ABEEB52265D2EA0742E692DD72325",
+    "current": "0F5129AC761CCCA06542C79FF28841F7A28ABEEB52265D2EA0742E692DD72325",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.TextCoreFontEngineModule.pdb",
+    "expected": "A4F3ECAC0F8D633646FA3C1DC504D66E872130198DA96D9C44A3E1B731372680",
+    "current": "A4F3ECAC0F8D633646FA3C1DC504D66E872130198DA96D9C44A3E1B731372680",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.TextCoreTextEngineModule.dll",
+    "expected": "DB6FB1B8D0DF42FD11B9D8977412868101B607848BBEBF0A2BE3F9BCBAEFEC49",
+    "current": "DB6FB1B8D0DF42FD11B9D8977412868101B607848BBEBF0A2BE3F9BCBAEFEC49",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.TextCoreTextEngineModule.pdb",
+    "expected": "38ED7686FA60F2D4F059D7A7E13EE3666DED7749C087F4340F3B1F27CD69E31D",
+    "current": "38ED7686FA60F2D4F059D7A7E13EE3666DED7749C087F4340F3B1F27CD69E31D",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.TextRenderingModule.dll",
+    "expected": "E8E1B5C8EFA9D8B3569F9C29E8E293B80B72ED597A0149C7A1673146E12AB705",
+    "current": "E8E1B5C8EFA9D8B3569F9C29E8E293B80B72ED597A0149C7A1673146E12AB705",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.TextRenderingModule.pdb",
+    "expected": "A8265B948A68DB896E8232809979020C605755A5076C7B6459477E3C928A0B38",
+    "current": "A8265B948A68DB896E8232809979020C605755A5076C7B6459477E3C928A0B38",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.TilemapModule.dll",
+    "expected": "C027E88B63D9A4E35593A4D028A3C24B9DA029161AA40C091F523DFB98F19223",
+    "current": "C027E88B63D9A4E35593A4D028A3C24B9DA029161AA40C091F523DFB98F19223",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.TilemapModule.pdb",
+    "expected": "BB44FDA0D0A53EFB7F08EDE02329124772920340B0369A652F0027811D9109EE",
+    "current": "BB44FDA0D0A53EFB7F08EDE02329124772920340B0369A652F0027811D9109EE",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.TLSModule.dll",
+    "expected": "015CC91A4A20BCE2BD0E2A56682C9F06054F9220160FED5FB899B75338889FBB",
+    "current": "015CC91A4A20BCE2BD0E2A56682C9F06054F9220160FED5FB899B75338889FBB",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.TLSModule.pdb",
+    "expected": "225F8F910139616B4C3B900546875431A3367C2079BB83E72B56A4DFB5A4B0C7",
+    "current": "225F8F910139616B4C3B900546875431A3367C2079BB83E72B56A4DFB5A4B0C7",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UI.dll",
+    "expected": "DEB9D4F1D3D993AF4E2FDF2B9F3E38CB7C1C4A453F4B5FBCE5339956857EA6D4",
+    "current": "DEB9D4F1D3D993AF4E2FDF2B9F3E38CB7C1C4A453F4B5FBCE5339956857EA6D4",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UI.pdb",
+    "expected": "CB9713BCF17859E9FE9B81C111015C56000AEED385CE284952CF92373511000C",
+    "current": "CB9713BCF17859E9FE9B81C111015C56000AEED385CE284952CF92373511000C",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UIElementsModule.dll",
+    "expected": "93E92AE6E4F1D8C66D4AA97F793F00E0E8F172E25B89A61BE453010B7CADA3CB",
+    "current": "93E92AE6E4F1D8C66D4AA97F793F00E0E8F172E25B89A61BE453010B7CADA3CB",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UIElementsModule.pdb",
+    "expected": "2E54CB7B037DF5B920C53E26C82ABF7C0C289E99967A5DA83AC04CBD721EF43E",
+    "current": "2E54CB7B037DF5B920C53E26C82ABF7C0C289E99967A5DA83AC04CBD721EF43E",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UIModule.dll",
+    "expected": "3D9802B948C2753D596BD229FFEFBD71F9580B26C6BE1D81760FE6FA09EF87A2",
+    "current": "3D9802B948C2753D596BD229FFEFBD71F9580B26C6BE1D81760FE6FA09EF87A2",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UIModule.pdb",
+    "expected": "B032436018F663274212EB7610CD3E1B9E691F017FC0926EB3CA9153D0F52C37",
+    "current": "B032436018F663274212EB7610CD3E1B9E691F017FC0926EB3CA9153D0F52C37",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UmbraModule.dll",
+    "expected": "6C91E74E2E59C5F10E972A8D6C49B1C79F095D0FFC09D6B98799F8820D18F7CA",
+    "current": "6C91E74E2E59C5F10E972A8D6C49B1C79F095D0FFC09D6B98799F8820D18F7CA",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UmbraModule.pdb",
+    "expected": "CDA08D53C5A7DC0E0C2D47E763B3BFF85B8155F00691D3313057A7604945647A",
+    "current": "CDA08D53C5A7DC0E0C2D47E763B3BFF85B8155F00691D3313057A7604945647A",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UnityAnalyticsCommonModule.dll",
+    "expected": "D09A5414E87BADD512B08F8C795786278C8F53B8FF2C5A59CCA283AC94004057",
+    "current": "D09A5414E87BADD512B08F8C795786278C8F53B8FF2C5A59CCA283AC94004057",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UnityAnalyticsCommonModule.pdb",
+    "expected": "3419622FBB147CE9A13B41F84FA5B71EFDCBAD8404640FD155DE6E94958690A0",
+    "current": "3419622FBB147CE9A13B41F84FA5B71EFDCBAD8404640FD155DE6E94958690A0",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UnityAnalyticsModule.dll",
+    "expected": "484D693CAAC26879F90DD49FA61640A8D4B25474455D16166B80F4D7EE34CD51",
+    "current": "484D693CAAC26879F90DD49FA61640A8D4B25474455D16166B80F4D7EE34CD51",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UnityAnalyticsModule.pdb",
+    "expected": "6743CAC5EB4DE012152AE4FF3087C55C3B0538F748F8F0237772C5647EF5A8C1",
+    "current": "6743CAC5EB4DE012152AE4FF3087C55C3B0538F748F8F0237772C5647EF5A8C1",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UnityConnectModule.dll",
+    "expected": "8A7ED1FD3BB14FEA519E17320364535BFECBBAED0290B67E04614D4809CE329A",
+    "current": "8A7ED1FD3BB14FEA519E17320364535BFECBBAED0290B67E04614D4809CE329A",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UnityConnectModule.pdb",
+    "expected": "C4CAB0DC78C9DFE402EA41B59A26A8C0BEADB91FA09539FA4FD6FD89A5643ED9",
+    "current": "C4CAB0DC78C9DFE402EA41B59A26A8C0BEADB91FA09539FA4FD6FD89A5643ED9",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UnityConsentModule.dll",
+    "expected": "19A07EF66E466D023CCA992097F29CCFC27537364F06D3C38ACFF89E98EA4AC1",
+    "current": "19A07EF66E466D023CCA992097F29CCFC27537364F06D3C38ACFF89E98EA4AC1",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UnityConsentModule.pdb",
+    "expected": "0C2A2A5021E8FCD79D2B559593231388CBAF1B10D604E516D51F0F1C4B40712F",
+    "current": "0C2A2A5021E8FCD79D2B559593231388CBAF1B10D604E516D51F0F1C4B40712F",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UnityCurlModule.dll",
+    "expected": "A11A7D086B670E09E2B56940518C6C7BD71AB95CB90CB450CE4144CCBF998587",
+    "current": "A11A7D086B670E09E2B56940518C6C7BD71AB95CB90CB450CE4144CCBF998587",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UnityCurlModule.pdb",
+    "expected": "408BECFBF2B635645532A8298F777463CAC44E719B1FAEBFCD6B50B24CF5DD97",
+    "current": "408BECFBF2B635645532A8298F777463CAC44E719B1FAEBFCD6B50B24CF5DD97",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UnityTestProtocolModule.dll",
+    "expected": "05B451EAE3136DCE622FBC523AF74AA1C5DA8FCEDAA213735403F1211D03DA4D",
+    "current": "05B451EAE3136DCE622FBC523AF74AA1C5DA8FCEDAA213735403F1211D03DA4D",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UnityTestProtocolModule.pdb",
+    "expected": "31C766E4921B9F211CBA5343E0EE0B902004085E794E5F95CCE202DD928D1568",
+    "current": "31C766E4921B9F211CBA5343E0EE0B902004085E794E5F95CCE202DD928D1568",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UnityWebRequestAssetBundleModule.dll",
+    "expected": "96F0A14350BB2DC9E780F6D237A91C72D77C9DFD90ED10A7AF3F790EAD568640",
+    "current": "96F0A14350BB2DC9E780F6D237A91C72D77C9DFD90ED10A7AF3F790EAD568640",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UnityWebRequestAssetBundleModule.pdb",
+    "expected": "0F42D7111963E6C3C4A305D0152ADC12D08B61017660AAAFD556224F838DCB46",
+    "current": "0F42D7111963E6C3C4A305D0152ADC12D08B61017660AAAFD556224F838DCB46",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UnityWebRequestAudioModule.dll",
+    "expected": "0E5E885DFE4CEEE0FD63F302C6C5424C7A9AC3EBE84222C082C3B81DCF4CCFF9",
+    "current": "0E5E885DFE4CEEE0FD63F302C6C5424C7A9AC3EBE84222C082C3B81DCF4CCFF9",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UnityWebRequestAudioModule.pdb",
+    "expected": "2170853D16C6985D5E0E074FE15F9FE64361D20B746CF4930ACCFFC7ED99DCD0",
+    "current": "2170853D16C6985D5E0E074FE15F9FE64361D20B746CF4930ACCFFC7ED99DCD0",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UnityWebRequestModule.dll",
+    "expected": "48931963AB088249DEF884977462DBEFEEFD5E801DFC9EF519668CD0DFC53421",
+    "current": "48931963AB088249DEF884977462DBEFEEFD5E801DFC9EF519668CD0DFC53421",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UnityWebRequestModule.pdb",
+    "expected": "A0EF905C983194C6AAF2DA713E9210943108BE1E0B0700F5A712165DC6CDE97F",
+    "current": "A0EF905C983194C6AAF2DA713E9210943108BE1E0B0700F5A712165DC6CDE97F",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UnityWebRequestTextureModule.dll",
+    "expected": "5C39C8D2200B47F5DEB88AB76E853E18BB43A90F6E91651F5F5A81B4C7E8083A",
+    "current": "5C39C8D2200B47F5DEB88AB76E853E18BB43A90F6E91651F5F5A81B4C7E8083A",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UnityWebRequestTextureModule.pdb",
+    "expected": "F961C87416FBE7FBECCF0116982FCE0268D973A77DF988C1FE4495BDBD152E2A",
+    "current": "F961C87416FBE7FBECCF0116982FCE0268D973A77DF988C1FE4495BDBD152E2A",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UnityWebRequestWWWModule.dll",
+    "expected": "E9B858CE097831EC145A4CB68158C6BD7540D8577C3B2CF5CE4C21B087B14279",
+    "current": "E9B858CE097831EC145A4CB68158C6BD7540D8577C3B2CF5CE4C21B087B14279",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.UnityWebRequestWWWModule.pdb",
+    "expected": "75D96AF5F1D95602ACEA640FDC92E995941F7A45DB3CA7F793050C414E382DE1",
+    "current": "75D96AF5F1D95602ACEA640FDC92E995941F7A45DB3CA7F793050C414E382DE1",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.VehiclesModule.dll",
+    "expected": "B5169EAB2C7DF5E0AC06F3355D058B54956C841F9AC5CDDA4FA3CC572D7D17C4",
+    "current": "B5169EAB2C7DF5E0AC06F3355D058B54956C841F9AC5CDDA4FA3CC572D7D17C4",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.VehiclesModule.pdb",
+    "expected": "73C96D064A4AC3183FE51B82C94CEBF2E63E3AF99684FAA55C686E7A2E4AF18E",
+    "current": "73C96D064A4AC3183FE51B82C94CEBF2E63E3AF99684FAA55C686E7A2E4AF18E",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.VFXModule.dll",
+    "expected": "06DEF75D5A2A0BB53F283365CCA526FB290AB404DC8E2DF3D99443A2E8A40724",
+    "current": "06DEF75D5A2A0BB53F283365CCA526FB290AB404DC8E2DF3D99443A2E8A40724",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.VFXModule.pdb",
+    "expected": "37DCCA5C44E7A28725D78B40249276DB78D32CF51156E49D685E55582FD43283",
+    "current": "37DCCA5C44E7A28725D78B40249276DB78D32CF51156E49D685E55582FD43283",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.VideoModule.dll",
+    "expected": "36AB220D9B525082EB11F391C9D4B31BE7187029166216C56DAEA625A65B0905",
+    "current": "36AB220D9B525082EB11F391C9D4B31BE7187029166216C56DAEA625A65B0905",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.VideoModule.pdb",
+    "expected": "985B585B27B090CDF7F0AA0DA131E9A86F9171E44637708434DE2E6331D40589",
+    "current": "985B585B27B090CDF7F0AA0DA131E9A86F9171E44637708434DE2E6331D40589",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.VirtualTexturingModule.dll",
+    "expected": "5CDEA15422FC91EC6C1B11613D558CA4F7AB6FE5CE2EC8AE164854787538C785",
+    "current": "5CDEA15422FC91EC6C1B11613D558CA4F7AB6FE5CE2EC8AE164854787538C785",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.VirtualTexturingModule.pdb",
+    "expected": "7BDC8D952BB864FEC2CB7FC7A8C2DFD924793396B1986B768C4DC689735BB70B",
+    "current": "7BDC8D952BB864FEC2CB7FC7A8C2DFD924793396B1986B768C4DC689735BB70B",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.VRModule.dll",
+    "expected": "09E292F55F5295C49FFB84CC150086662DD9D066E2EDD676D91A56BA908DB2CB",
+    "current": "09E292F55F5295C49FFB84CC150086662DD9D066E2EDD676D91A56BA908DB2CB",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.VRModule.pdb",
+    "expected": "795E1E4ABA82D2188629C6D44710C26D928A7D4AFF01C4C201666B3BAA1BE36F",
+    "current": "795E1E4ABA82D2188629C6D44710C26D928A7D4AFF01C4C201666B3BAA1BE36F",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.WindModule.dll",
+    "expected": "C3042C6792D75E3790A5FFC6F1FCE61DA39B4C7115180E702194D3F3FCB7D0C5",
+    "current": "C3042C6792D75E3790A5FFC6F1FCE61DA39B4C7115180E702194D3F3FCB7D0C5",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.WindModule.pdb",
+    "expected": "FF2133FE6393D12EEBC9B857EA5B6BAC0488B9B421DC008EBFD5F968526D6DD7",
+    "current": "FF2133FE6393D12EEBC9B857EA5B6BAC0488B9B421DC008EBFD5F968526D6DD7",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.XRModule.dll",
+    "expected": "28C2D3EDAF25C369D1F93373B8F888C307727FF07226D3FB51E9AA7C51ECF07E",
+    "current": "28C2D3EDAF25C369D1F93373B8F888C307727FF07226D3FB51E9AA7C51ECF07E",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\UnityEngine.XRModule.pdb",
+    "expected": "F1C46481698F280526CAA5F88F3311FB6C503ED16735384CC305EC9E5BB57649",
+    "current": "F1C46481698F280526CAA5F88F3311FB6C503ED16735384CC305EC9E5BB57649",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\VRM.dll",
+    "expected": "D1370C4F15CDBEF1F8E5C2266D4308850D3B809E74D5B2A5E78ED097147C826A",
+    "current": "D1370C4F15CDBEF1F8E5C2266D4308850D3B809E74D5B2A5E78ED097147C826A",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Managed\\VRM.pdb",
+    "expected": "C874862DF2A026AF864954B6FC4DCF58D2FF071C57646789DD3AC8603EFFEE78",
+    "current": "C874862DF2A026AF864954B6FC4DCF58D2FF071C57646789DD3AC8603EFFEE78",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Plugins\\ARM64\\AppUINativePlugin.dll",
+    "expected": "AB72763BF5773B105B3B0DC9781F57C480D7DE1EF49CDF3523C7EF6436EB1305",
+    "current": "AB72763BF5773B105B3B0DC9781F57C480D7DE1EF49CDF3523C7EF6436EB1305",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Plugins\\x86_64\\AppUINativePlugin.dll",
+    "expected": "2C0CFCF7B826508EF60039B417E203E0F4C91BEC3F75F51BD7C4B0EC47529FFC",
+    "current": "2C0CFCF7B826508EF60039B417E203E0F4C91BEC3F75F51BD7C4B0EC47529FFC",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Plugins\\x86_64\\DirectML.dll",
+    "expected": "9C9E6D822561C6C41B90E6994B3E8857CF1D66DBFB1E0C4C799C7C89B4E92DA1",
+    "current": "9C9E6D822561C6C41B90E6994B3E8857CF1D66DBFB1E0C4C799C7C89B4E92DA1",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Plugins\\x86_64\\KiwiMeshOptimizerBridge.dll",
+    "expected": "307C068CD4456271292C8C6C897359CBC8D05998BE630B0C299E97986C064B73",
+    "current": "307C068CD4456271292C8C6C897359CBC8D05998BE630B0C299E97986C064B73",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Plugins\\x86_64\\KiwiNativeCamera.dll",
+    "expected": "82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5",
+    "current": "82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Plugins\\x86_64\\KiwiOrtDmlZeroCopyBridge.dll",
+    "expected": "E607C916AC2D648420BBA85990F694C851789AA2BA0F606A457355759DE3A926",
+    "current": "E607C916AC2D648420BBA85990F694C851789AA2BA0F606A457355759DE3A926",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Plugins\\x86_64\\KlakSpout.dll",
+    "expected": "BC77E55CCC0F7DD0E414F8178B20FAAB2347229BF67505BEFCABCFB426F85249",
+    "current": "BC77E55CCC0F7DD0E414F8178B20FAAB2347229BF67505BEFCABCFB426F85249",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Plugins\\x86_64\\lib_burst_generated.dll",
+    "expected": "9CFDF700562B69A24A1F8D52BD8BF60D3D4E3D2BA79946E6711F1E9849251D04",
+    "current": "9CFDF700562B69A24A1F8D52BD8BF60D3D4E3D2BA79946E6711F1E9849251D04",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Plugins\\x86_64\\lib_burst_generated.pdb",
+    "expected": "6E75513DDA0C63D75ADE72D4BDC524698F165D5AB4BAE087B847FBB873334CEE",
+    "current": "6E75513DDA0C63D75ADE72D4BDC524698F165D5AB4BAE087B847FBB873334CEE",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Plugins\\x86_64\\mediapipe_c.dll",
+    "expected": "B9B620F2707DEA371BE3FCEF9F2D05468CA1471FAEE3BE6637BBD7DA77E21C54",
+    "current": "B9B620F2707DEA371BE3FCEF9F2D05468CA1471FAEE3BE6637BBD7DA77E21C54",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Plugins\\x86_64\\onnxruntime.dll",
+    "expected": "95366724919F4E95ECC60010912ED538AD9804B6683FBD0AAD389749102834B9",
+    "current": "95366724919F4E95ECC60010912ED538AD9804B6683FBD0AAD389749102834B9",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\resources.assets",
+    "expected": "66E7539F108C3D65375E211152BA3B5AFB5E250B7D6F151D67CE6848E85181B5",
+    "current": "66E7539F108C3D65375E211152BA3B5AFB5E250B7D6F151D67CE6848E85181B5",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\resources.resource",
+    "expected": "7AD0B85C963AE61ACD1B664661EDE920D4D20ECBBCFB7968087377AEC087741F",
+    "current": "7AD0B85C963AE61ACD1B664661EDE920D4D20ECBBCFB7968087377AEC087741F",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Resources\\unity default resources",
+    "expected": "D204FDF35008484A2154098EC2DA8DC25F76219F6654A9A8525A28F2FC11C529",
+    "current": "D204FDF35008484A2154098EC2DA8DC25F76219F6654A9A8525A28F2FC11C529",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\Resources\\unity_builtin_extra",
+    "expected": "298FD13A54637C99104DDBACA292D1391FD0014116F33F31842CE7384DCD34DE",
+    "current": "298FD13A54637C99104DDBACA292D1391FD0014116F33F31842CE7384DCD34DE",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\RuntimeInitializeOnLoads.json",
+    "expected": "99447E3F4E13937005C877062A36179F886B0F2E263CC102D1C332C08A0A40A1",
+    "current": "99447E3F4E13937005C877062A36179F886B0F2E263CC102D1C332C08A0A40A1",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\ScriptingAssemblies.json",
+    "expected": "B16848C889D3BEA677D590A1429B4D44869E9E8734B1EE095993D718EB438B8F",
+    "current": "B16848C889D3BEA677D590A1429B4D44869E9E8734B1EE095993D718EB438B8F",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\sharedassets0.assets",
+    "expected": "AE5E17BBF0BD9F780755BC50307C39586348E1C8C46DB2F28FCA379210733BAA",
+    "current": "AE5E17BBF0BD9F780755BC50307C39586348E1C8C46DB2F28FCA379210733BAA",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\sharedassets0.assets.resS",
+    "expected": "2F186DB83A6651519D67D55EEC5B16FA1D10912C15CA32C65F8223A1FC3723BD",
+    "current": "2F186DB83A6651519D67D55EEC5B16FA1D10912C15CA32C65F8223A1FC3723BD",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\StreamingAssets\\face_landmarker_v2_with_blendshapes.bytes",
+    "expected": "B261925D4AAD812B47A0E8D58C1BAA1223270A5D1F663D78338BC881C003879D",
+    "current": "B261925D4AAD812B47A0E8D58C1BAA1223270A5D1F663D78338BC881C003879D",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiAvatarSystem_v44_55_31_Data\\StreamingAssets\\KiwiFaceLandmarkInference.onnx",
+    "expected": "ED487104519B0A88CB2CB2EC3678E183F447FB9DD63560998E960FFBAA8FB335",
+    "current": "ED487104519B0A88CB2CB2EC3678E183F447FB9DD63560998E960FFBAA8FB335",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiComputeShaderPackagingAudit_v39.json",
+    "expected": "003F74280DC7D2B45367445E927747935D822ABD085999E52767396F6CD02760",
+    "current": "003F74280DC7D2B45367445E927747935D822ABD085999E52767396F6CD02760",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\KiwiComputeShaderPackagingAudit_v39.txt",
+    "expected": "2E11AD129AEB42072CFCBCD7B2FE8A0D6C8D8DC9F327C725C5DFA8D9CAF440BC",
+    "current": "2E11AD129AEB42072CFCBCD7B2FE8A0D6C8D8DC9F327C725C5DFA8D9CAF440BC",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\MonoBleedingEdge\\EmbedRuntime\\mono-2.0-bdwgc.dll",
+    "expected": "51250806C2B9C17712C7EFBE448A9B012481C05A75BAD351A438F3E6F713B7B0",
+    "current": "51250806C2B9C17712C7EFBE448A9B012481C05A75BAD351A438F3E6F713B7B0",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\MonoBleedingEdge\\EmbedRuntime\\MonoPosixHelper.dll",
+    "expected": "9AE9AEAAC9146E02534EF24986D1F0554E2E02DE0AC2700D3805C8AAF5BE8DAE",
+    "current": "9AE9AEAAC9146E02534EF24986D1F0554E2E02DE0AC2700D3805C8AAF5BE8DAE",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\MonoBleedingEdge\\etc\\mono\\2.0\\Browsers\\Compat.browser",
+    "expected": "8A1082057AC5681DCD4E9C227ED7FB8EB42AC1618963B5DE3B65739DD77E2741",
+    "current": "8A1082057AC5681DCD4E9C227ED7FB8EB42AC1618963B5DE3B65739DD77E2741",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\MonoBleedingEdge\\etc\\mono\\2.0\\DefaultWsdlHelpGenerator.aspx",
+    "expected": "751861040B69EA63A3827507B7C8DA9C7F549DC181C1C8AF4B7CA78CC97D710A",
+    "current": "751861040B69EA63A3827507B7C8DA9C7F549DC181C1C8AF4B7CA78CC97D710A",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\MonoBleedingEdge\\etc\\mono\\2.0\\machine.config",
+    "expected": "E91782A27FA39FC6C1D6EE8B08529F5D35052310D0006034B878EB04B8F2AF30",
+    "current": "E91782A27FA39FC6C1D6EE8B08529F5D35052310D0006034B878EB04B8F2AF30",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\MonoBleedingEdge\\etc\\mono\\2.0\\settings.map",
+    "expected": "49C6160F9D54AF4270A3B4E997FC4A8301F79B9E2070118FA46DDBCBBC44F9A2",
+    "current": "49C6160F9D54AF4270A3B4E997FC4A8301F79B9E2070118FA46DDBCBBC44F9A2",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\MonoBleedingEdge\\etc\\mono\\2.0\\web.config",
+    "expected": "CF2B54339E069B9E42F7D6795EECBF562C50C1011F4CA8F65F578FE52D97FF92",
+    "current": "CF2B54339E069B9E42F7D6795EECBF562C50C1011F4CA8F65F578FE52D97FF92",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\MonoBleedingEdge\\etc\\mono\\4.0\\Browsers\\Compat.browser",
+    "expected": "8A1082057AC5681DCD4E9C227ED7FB8EB42AC1618963B5DE3B65739DD77E2741",
+    "current": "8A1082057AC5681DCD4E9C227ED7FB8EB42AC1618963B5DE3B65739DD77E2741",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\MonoBleedingEdge\\etc\\mono\\4.0\\DefaultWsdlHelpGenerator.aspx",
+    "expected": "751861040B69EA63A3827507B7C8DA9C7F549DC181C1C8AF4B7CA78CC97D710A",
+    "current": "751861040B69EA63A3827507B7C8DA9C7F549DC181C1C8AF4B7CA78CC97D710A",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\MonoBleedingEdge\\etc\\mono\\4.0\\machine.config",
+    "expected": "E60AEC2C5115D65B3ACB3C55EA21576DBD770F579166C017125571E46AE560ED",
+    "current": "E60AEC2C5115D65B3ACB3C55EA21576DBD770F579166C017125571E46AE560ED",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\MonoBleedingEdge\\etc\\mono\\4.0\\settings.map",
+    "expected": "CE1DB1AD8A9512073164E3ECCDC193F7EDA036E1A9733CAEC4635DE21B2865C8",
+    "current": "CE1DB1AD8A9512073164E3ECCDC193F7EDA036E1A9733CAEC4635DE21B2865C8",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\MonoBleedingEdge\\etc\\mono\\4.0\\web.config",
+    "expected": "E38BB8CC68FE5B4EDECDFD288D094B9E8CED7629039B2A347682ABA0D8BD7492",
+    "current": "E38BB8CC68FE5B4EDECDFD288D094B9E8CED7629039B2A347682ABA0D8BD7492",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\MonoBleedingEdge\\etc\\mono\\4.5\\Browsers\\Compat.browser",
+    "expected": "8A1082057AC5681DCD4E9C227ED7FB8EB42AC1618963B5DE3B65739DD77E2741",
+    "current": "8A1082057AC5681DCD4E9C227ED7FB8EB42AC1618963B5DE3B65739DD77E2741",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\MonoBleedingEdge\\etc\\mono\\4.5\\DefaultWsdlHelpGenerator.aspx",
+    "expected": "751861040B69EA63A3827507B7C8DA9C7F549DC181C1C8AF4B7CA78CC97D710A",
+    "current": "751861040B69EA63A3827507B7C8DA9C7F549DC181C1C8AF4B7CA78CC97D710A",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\MonoBleedingEdge\\etc\\mono\\4.5\\machine.config",
+    "expected": "EE950004B576FB28DC85F4B0435ED04BF96612DE2E8B53BE84D07AFE85A0DE6C",
+    "current": "EE950004B576FB28DC85F4B0435ED04BF96612DE2E8B53BE84D07AFE85A0DE6C",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\MonoBleedingEdge\\etc\\mono\\4.5\\settings.map",
+    "expected": "CE1DB1AD8A9512073164E3ECCDC193F7EDA036E1A9733CAEC4635DE21B2865C8",
+    "current": "CE1DB1AD8A9512073164E3ECCDC193F7EDA036E1A9733CAEC4635DE21B2865C8",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\MonoBleedingEdge\\etc\\mono\\4.5\\web.config",
+    "expected": "C4CBDDD4FD9347B58CC5A72B36DC4BA1AD2BB699E65869D05CD3FB9865F0D824",
+    "current": "C4CBDDD4FD9347B58CC5A72B36DC4BA1AD2BB699E65869D05CD3FB9865F0D824",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\MonoBleedingEdge\\etc\\mono\\browscap.ini",
+    "expected": "4DDD50F31FB968F30BEDEFC253A46DC3F2890192D05CDAA9E0A64A056EEE807E",
+    "current": "4DDD50F31FB968F30BEDEFC253A46DC3F2890192D05CDAA9E0A64A056EEE807E",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\MonoBleedingEdge\\etc\\mono\\config",
+    "expected": "5776169973A26A387B8B3E5C0F2301A7AB9A6DD7C7D3EFA22A96ABC47FBF8662",
+    "current": "5776169973A26A387B8B3E5C0F2301A7AB9A6DD7C7D3EFA22A96ABC47FBF8662",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\MonoBleedingEdge\\etc\\mono\\mconfig\\config.xml",
+    "expected": "0C56E34C69124510FA8C19E7B4C2CA6C1C4FF460AE19F798DD0CA035809E396D",
+    "current": "0C56E34C69124510FA8C19E7B4C2CA6C1C4FF460AE19F798DD0CA035809E396D",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\UnityCrashHandler64.exe",
+    "expected": "0685276DB7296EF8D96368B281A145A26D497B32387D6D3C397C33D4D754E37A",
+    "current": "0685276DB7296EF8D96368B281A145A26D497B32387D6D3C397C33D4D754E37A",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\UnityPlayer.dll",
+    "expected": "A1C4F29041D783DF506E7C2892BC6AFA4ED45EF0D87AAFE0C7296BDC090681FC",
+    "current": "A1C4F29041D783DF506E7C2892BC6AFA4ED45EF0D87AAFE0C7296BDC090681FC",
+    "match": true
+  },
+  {
+    "kind": "payload",
+    "path": "Builds\\v44_55_31AsyncProducerTailSnapshot\\WinPixEventRuntime.dll",
+    "expected": "81ADCFD8253C3489BE720DA7E30F16004DC9A1F02A8B418C6C3AEF4993032E6D",
+    "current": "81ADCFD8253C3489BE720DA7E30F16004DC9A1F02A8B418C6C3AEF4993032E6D",
+    "match": true
+  }
+]
