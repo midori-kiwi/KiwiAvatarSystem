@@ -1967,8 +1967,8 @@ MonoBehaviour:
   leftEyeImage: {fileID: 842958310}
   rightEyeImage: {fileID: 788061712}
   mouthImage: {fileID: 553149536}
-  mirrorX: 1
-  swapEyes: 1
+  mirrorX: 0
+  swapEyes: 0
   request120Fps: 1
   targetRenderFrameRate: 120
   eyeWidthScale: 1.45

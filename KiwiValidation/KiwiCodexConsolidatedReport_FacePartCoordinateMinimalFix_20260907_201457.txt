@@ -1,0 +1,249 @@
+KIWI CODEX CONSOLIDATED REPORT
+TARGET=FACEPART_COORDINATE_MINIMAL_FIX_VALIDATION
+REPORT_JST=2026-09-07 20:14:57 +09:00
+PROJECT=D:\KiwiAvatarSystem
+MODE=ONE_COORDINATE_CONTRACT_FIX / ONE_BUILD / ONE_MEDIAPIPE_ONLY_RUNTIME / ONE_HUMAN_VISUAL
+
+============================================================
+0. FINAL DECISION / REQUIRED FIELDS
+============================================================
+
+BEFORE_HEAD=310c6ce785369b55d498fd241bcd68c678027490
+AFTER_EDIT_HEAD=310c6ce785369b55d498fd241bcd68c678027490
+BRANCH=work/raw-direct-motion
+
+SCENE_SHA_BEFORE=E28B0B81F731B92B04B97D4AA7DB1187C8DD57C5A39F49B08B2E6799BBF5B3D1
+SCENE_SHA_AFTER=9BAC89F64B45429B38D41C1A2539C63D5E9A442E8EF920EE13B59245BE166735
+
+mirrorX_before=1
+mirrorX_after=0
+swapEyes_before=1
+swapEyes_after=0
+
+PROTECTED_SOURCE_SHA_UNCHANGED=YES
+VALIDATOR_RESULT=PASS
+BUILD_COUNT=1
+RUNTIME_RUN_COUNT=1
+RUNTIME_PROVIDER_GATE=PASS
+
+HUMAN_VISUAL_MOUTH=PASS
+HUMAN_VISUAL_LEFT_EYE=PASS
+HUMAN_VISUAL_RIGHT_EYE=PASS
+HUMAN_VISUAL_MASK=PASS
+HUMAN_VISUAL_LIVE_CAMERA=PASS
+
+FACEPART_COORDINATE_FIX=PASS
+CANONICAL_TO_CROPPER_BOUNDARY=CLOSED
+CROP_MASK_PRIMARY_COORDINATE_DEFECT=CONFIRMED_AND_FIXED
+CASE_DECISION=CASE_A
+
+PRODUCTION_CHANGE=SCENE_FLAGS_ONLY
+NATIVE_CHANGE=NO
+TRACKING_MATH_CHANGE=NO
+COMMIT_PUSH=NO
+RUNTIME_ZIP=NOT_CREATED
+
+============================================================
+1. CONFIRMED IMPLEMENTATION / PACKAGE AUTHORITY
+============================================================
+
+Execution and project identity:
+- PowerShell=pwsh 7.6.5
+- Unity=6000.0.80f1 revision 2dfd32957da2
+- enabled release scene=Assets/Scenes/Face Landmark Detection.unity
+- MediaPipe package=local tarball com.github.homuler.mediapipe 0.16.3
+- MediaPipe tarball SHA256=CC3E77A219E0B99618AE3BE64C31A566197DEEDC69C1E136ACF52D65D7CF2E79
+
+Required pre-edit SHA256 values matched exactly and remained unchanged after the edit,
+build, Runtime, and Player exit:
+- 6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93  Assets/Script/FaceLandmarkerRunner.cs
+- 458FF33E98E054B766F20EB17CE6BDD242C9AD9FD6E73AF53D60BD3961822AFA  Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiCanonicalTrackingFrame.cs
+- A5C7DE387FA2E02862BCF64942363AECFB9C7830B52DF5B8953404DF884ECCB1  Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiTrackingProviderHub.cs
+- 39C06FEC43B4EA47AD783C233991E830E10B18DA285148E7A34B0C13DAD52CFE  Assets/Script/FacePartCropper.cs
+- DC78488DCD1D2E45E5AA6F40065D4983087014B501B5FD5A8E37B6D8E0F68849  Assets/KiwiAvatarSystem/Runtime/Presentation/KiwiFacePartTextureTransaction.cs
+- 822D18059988F390F52C40F60DA5F11E8ECF7577008D640272C5CF8D1557D4A6  Assets/Script/FacePartShapeMask.cs
+- 82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5  Assets/Plugins/x86_64/KiwiNativeCamera.dll
+
+Repository safety:
+- The pre-existing user-owned untracked Static report was preserved.
+- No reset, checkout, clean, stash, commit, or push was performed.
+
+============================================================
+2. PRODUCT CHANGE / STATIC RESULT
+============================================================
+
+Only Product edit:
+- Assets/Scenes/Face Landmark Detection.unity
+- FacePartCropper mirrorX: 1 -> 0
+- FacePartCropper swapEyes: 1 -> 0
+
+Post-edit scene counts:
+- mirrorX: 0 count=1; mirrorX: 1 count=0
+- swapEyes: 0 count=1; swapEyes: 1 count=0
+
+Diff validation:
+- one tracked Product file
+- 2 insertions / 2 deletions
+- only the two serialized scene flag lines changed
+- git diff --check exit=0
+
+Coordinate proof after edit:
+- MakeUvRect centerX=mirrorX ? 1-x : x, therefore CROPPER_X=x.
+- MakeUvRect centerY=1-y, therefore CROPPER_Y=1-y.
+- swapEyes=0 preserves anatomical left/right output ownership.
+
+LEFT_EYE_X_PARITY=PASS
+RIGHT_EYE_X_PARITY=PASS
+MOUTH_X_PARITY=PASS
+Y_PARITY=PASS
+
+WHY_CHANGE_IS_BETTER_THAN_NO_CHANGE=The current unmirrored texture contract requires
+(x,1-y), while the former scene forced (1-x,1-y). NO_CHANGE preserved a deterministic extra
+X reflection. Removing the unnecessary scene mirror and eye-output swap is the smallest
+coherent correction and leaves the working camera, tracking, canonical, transaction, and
+Native core unchanged.
+
+============================================================
+3. VALIDATOR / ONE BUILD AUTHORITY
+============================================================
+
+Validator safety audit:
+- KiwiReleaseCandidatePreflight did not hardcode mirrorX=1 or swapEyes=1.
+- No stale validator expectation was changed.
+- No gate was weakened, bypassed, or rewritten.
+
+Full Preflight:
+- passed=True; releaseCandidateReady=True
+- warning/error/critical=2/0/0
+- fingerprint=336307765577f986d4c9012ff937eda6b8577928fb90dbc5ef819ec5ab0622b1
+- preflight JSON SHA256=E884325A4A240D5A6FBCD5C93A87BC84AD4C06BF01F2B2D9BC0915C51F990333
+- warnings preserved: Package.VersionDrift and Dependency.UniVRMVersionUnverified
+
+The existing KiwiStandaloneBuildDiagnostic.BuildWindows64 path ran the mandatory Full
+Preflight and normal build gate. The saved log confirms Direct3D12-only before/after,
+Build Finished Result=Success, helper result=Succeeded, totalSize=276795485,
+warnings=186, errors=0, and Unity return code 0.
+
+Build identity:
+- source scene SHA256=9BAC89F64B45429B38D41C1A2539C63D5E9A442E8EF920EE13B59245BE166735
+- Assembly-CSharp.dll SHA256=1EF11C38455137F2FBC579A47EAF9582C8B2BD260F7D55F1844AC6672634209D
+- UnityPlayer.dll SHA256=A1C4F29041D783DF506E7C2892BC6AFA4ED45EF0D87AAFE0C7296BDC090681FC
+- KiwiAvatarSystem.exe SHA256=98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81
+- UnityBuild.log SHA256=8A4522AFF8C90A6F17A7A1869485A5C5495191F48F513CF647DD3FBCF451B4A7
+- BuildPayloadManifest.sha256.txt SHA256=7F607BA99A224ABD205F1723D5ACA7D6F9FEA8C16839B0720955C257FEC55574
+- payload manifest file count=290
+- evidence root=Builds/FacePartCoordinateMinimalFix_20260907_195805
+
+The EXE SHA is not used alone as build authority. The source scene, managed assembly,
+UnityPlayer, Preflight, full payload manifest, and saved log are correlated.
+This Development diagnostic build is not clean Performance Authority.
+
+============================================================
+4. EXISTING ISOLATION SAFETY / ONE RUNTIME
+============================================================
+
+Pre-run Static audit of KiwiMediaPipeOnlyCausalIsolation confirmed:
+- arm absent returns before creating an object/component: behavior change=0
+- private Runner reflection=0
+- provider priority writes=0
+- tracking math writes=0
+- FacePart writes=0
+- no new observer was created
+
+One visible Player run used KIWI_MEDIAPIPE_ONLY_ISOLATION=1.
+Runtime evidence:
+- log=Builds/FacePartCoordinateMinimalFix_20260907_195805/FacePartCoordinateMinimalFix_Runtime.log
+- size=140939 bytes
+- SHA256=2A82F123D7D70BF3AE7F88D6CA69BB463DC5DABC02F0CE859892ECB344404E6A
+- Direct3D 12 level 12.1
+- isolation ARMED; enableHybrid=0; enableRuntimeRecovery=0
+- UGREEN Camera 4K 1920x1080@60; stablePresentation=True
+- FIRST_MEDIAPIPE_FRAME observed
+
+Normal completion summary:
+- completionReason=APPLICATION_QUIT; runtimeGate=PASS
+- runner MediaPipe/Inference=6764/0
+- hub MediaPipe/Inference/other=6763/0/0
+- canonical MediaPipe/Inference/other=6765/0/0
+- configurationViolations=0
+- CONFIGURATION_VIOLATION markers=0
+- INFERENCE_RUNNER/HUB/CANONICAL markers=0/0/0
+- NullReferenceException=0
+- InvalidOperationException=0
+- EntryPointNotFoundException=0
+
+The runtime diagnostic writes humanVisual=PENDING because it does not ingest human judgment.
+The separate same-run Human Visual authority is recorded below.
+
+============================================================
+5. HUMAN VISUAL / CASE A
+============================================================
+
+User report after the same Player run was closed:
+- MOUTH=PASS
+- LEFT_EYE=PASS
+- RIGHT_EYE=PASS
+- MASK=PASS
+- LIVE_CAMERA=PASS
+- PLAYER_CLOSED=YES
+
+This establishes correct mouth physical-direction following, correct anatomical eye output,
+mask-to-sampled-pixel correspondence, and no new LIVE CAMERA regression for this run.
+
+FACEPART_COORDINATE_FIX=PASS
+CANONICAL_TO_CROPPER_BOUNDARY=CLOSED
+CROP_MASK_PRIMARY_COORDINATE_DEFECT=CONFIRMED_AND_FIXED
+
+============================================================
+6. SEPARATE USER-REPORTED RESIDUAL
+============================================================
+
+The user additionally reported that eye/mouth rotation does not match the model tilt and
+that eye/mouth size should be adjusted.
+
+Classification:
+- FACEPART_ROTATION_MODEL_TILT_ALIGNMENT=OPEN_USER_REPORTED_VISUAL_RESIDUAL
+- FACEPART_EYE_MOUTH_SIZE_TUNING=OPEN_USER_REQUEST
+- COORDINATE_FIX_REGRESSION=NO_EVIDENCE
+- EXACT_ROTATION_OWNER=UNKNOWN_IN_THIS_TASK
+- EXACT_SIZE_OWNER_OR_MODEL_PROFILE=UNKNOWN_IN_THIS_TASK
+
+This does not contradict the five coordinate/spatial PASS results. Rotation and size are
+separate crop-local, mask, presentation, or model-profile claims. Their exact owner and target
+geometry were not measured here, so no guessed adjustment was mixed into this one-build,
+one-run coordinate validation. F3 remains frozen for this task.
+
+============================================================
+7. PRESERVED CLAIMS / CHANGE ACCOUNTING
+============================================================
+
+F2_EXACT_NATIVE_IDENTITY_PROVEN=NO
+INFERENCE_MOTION=PARKED_SUPPORTED_CONTRIBUTOR
+EXACT_INFERENCE_SUB_BOUNDARY=UNKNOWN
+F3=FROZEN_FOR_THIS_TASK
+SHARED_TILT_LOCK=KEEP
+SHAPEMASK_STARTUP_LATCH=STATIC_CANDIDATE_ONLY
+TEMPORAL_LAYERS=NOT_EVALUATED
+PERFORMANCE_AUTHORITY=NOT_ESTABLISHED
+
+Unchanged: FacePartCropper.cs, FacePartShapeMask.cs, KiwiFacePartTextureTransaction.cs,
+FaceLandmarkerRunner.cs, KiwiInferenceFaceTracker.cs, KiwiTrackingProviderHub.cs,
+KiwiCanonicalTrackingFrame.cs, Native Camera/DLL, Root/Head math, SharedTiltLock,
+QualityGuard, thresholds, smoothing, Kalman, prediction, temporal owners, and provider
+priority. No additional mirror/flip mechanism was added.
+
+No broad Runtime ZIP was created because the full build manifest, Preflight, build log,
+and raw Runtime log preserve the required machine evidence. No commit or push was performed.
+
+============================================================
+8. NEXT SINGLE ACTION
+============================================================
+
+NEXT_SINGLE_ACTION=Run a separate source-first FacePart rotation/size owner audit using this
+validated coordinate build and the observed model as the Visual baseline. Identify the single
+existing rotation authority and current eye/mouth sizing or model-profile parameters before
+editing. Define fixed per-model target geometry, then validate under a new explicit build/run
+scope. Do not reopen mirrorX or swapEyes and do not alter tracking or Root/Head math to hide a
+crop-local or model-profile presentation mismatch.
+
+END_OF_REPORT

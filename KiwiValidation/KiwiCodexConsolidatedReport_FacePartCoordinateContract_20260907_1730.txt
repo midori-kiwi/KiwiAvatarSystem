@@ -1,0 +1,480 @@
+KIWI CODEX CONSOLIDATED REPORT
+TARGET=FACEPART_SEMANTIC_TO_TEXTURE_COORDINATE_CONTRACT_AUDIT
+REPORT_JST=2026-09-07 17:30 +09:00
+PROJECT=D:\KiwiAvatarSystem
+MODE=STATIC_SOURCE_FIRST
+
+============================================================
+0. RESULT SUMMARY / REQUIRED RESULT FIELDS
+============================================================
+
+G0_AUTHORITY=FROZEN_CURRENT_LOCAL_STATIC_SOURCE_SHA
+
+ACTUAL_FACEPART_SOURCE_TEXTURE_IDENTITY=KiwiNativeCameraPresentation RenderTexture; native-active session-stable Unity-visible identity; accepted same-build Runtime source was 1920x1080
+LIVE_CAMERA_AND_FACEPART_SOURCE_SAME_IDENTITY=YES
+
+SOURCEIMAGE_RAW_TEXTURE_SPACE=UNMIRRORED_KIWI_NATIVE_PRESENTATION_UNITY_TEXTURE_UV; U increases right, V is Unity logical texture UV; native/D3D Y-origin correction is already folded into the presentation RenderTexture
+SOURCEIMAGE_DISPLAY_SPACE=SAME_AS_RAW_TEXTURE_FOR_CURRENT_BINDING; uvRect=(0,0,1,1), material=null, Screen rotation=0, no negative X/Y scale or display mirror
+
+MEDIAPIPE_INPUT_SPACE=UNMIRRORED_MEDIA_PIPE_IMAGE_SPACE; current native flags produce flipHorizontally=false, flipVertically=true, rotationDegrees=0 before MediaPipe submission
+RUNNER_SEMANTIC_SPACE=RAW_MEDIAPIPE_IMAGE_SPACE; full-image normalized X right / Y down; no Runner semantic mirror, flip, rotation, or ROI-local conversion
+CANONICAL_RIGID_SPACE=CANONICAL_PRESENTATION_CONVENTION_AFTER_PROVIDER_RIGID_NORMALIZATION
+CANONICAL_SEMANTIC_SPACE=RAW_MEDIAPIPE_IMAGE_SPACE
+CANONICAL_SEMANTIC_TRANSFORM_OWNER=NONE_PASS_THROUGH_COPY
+SEMANTIC_MIRROR_APPLIED_BEFORE_PUBLISH=NO
+SEMANTIC_Y_FLIP_APPLIED_BEFORE_PUBLISH=NO
+
+CROPPER_MIRROR_REQUIRED=NO
+CROPPER_Y_INVERSION_REQUIRED=YES
+SWAP_EYES_REQUIRED=NO_FOR_CURRENT_UNMIRRORED_ANATOMICAL_OUTPUT_BINDING
+
+TRANSACTION_SOURCE_TEXTURE_SPACE=SOURCEIMAGE_RAW_TEXTURE_SPACE; direct sourceImage.texture reference
+TRANSACTION_SNAPSHOT_SPACE=SAME_LOGICAL_UV_ORIENTATION_AS_SOURCE; aspect-preserving downscale to max width 1280, ARGB32 RenderTexture
+BLIT_ORIENTATION_PARITY=YES_STATIC_UNITY_API_CONTRACT; Graphics.Blit(source,destination) has identity scale/offset and no material; no X mirror and no additional logical-UV Y inversion
+
+SOURCEIMAGE_DISPLAY_TRANSFORM_PRESERVED_IN_TRANSACTION=YES_EFFECTIVELY_FOR_CURRENT_BINDING_ONLY; Transaction does not copy uvRect/material/RectTransform state, but all current orientation-affecting display state is identity, so omitting it changes no current orientation
+
+LEFT_EYE_COORDINATE_PARITY=FAIL_X_PASS_Y
+RIGHT_EYE_COORDINATE_PARITY=FAIL_X_PASS_Y
+MOUTH_COORDINATE_PARITY=FAIL_X_PASS_Y
+X_PARITY=FAIL_DETERMINISTIC_EXTRA_CROPPER_MIRROR
+Y_PARITY=PASS_EXACTLY_ONCE_IMAGE_Y_TO_TEXTURE_V_INVERSION
+
+SHAPEMASK_MAPPING_CLASSIFICATION=DEPENDENT_LOCAL_MATCHER
+SHAPEMASK_CAN_DIVERGE_FROM_CROPPER=YES
+SHAPEMASK_STARTUP_LATCH_RISK=YES
+
+F2_EXACT_NATIVE_IDENTITY_PROVEN=NO
+
+STATIC_ROOT_CAUSE_PROVEN=YES
+RUNTIME_RESIDUAL_REQUIRED=NO_FOR_FIRST_BOUNDARY
+CROP_MASK_FIRST_TARGET_BOUNDARY=CANONICAL_TO_CROPPER_COORDINATE_MAPPING
+
+INFERENCE_MOTION_DOMAIN=PARKED_SUPPORTED_CONTRIBUTOR
+PARKED_SUPPORTED_CONTRIBUTOR=YES
+
+PRODUCTION_FIX=NO
+NATIVE_CHANGE=NO
+TRACKING_MATH_CHANGE=NO
+F3_STATUS=FROZEN
+SHARED_TILT_LOCK_STATUS=KEEP
+COMMIT_PUSH=NO
+
+STOP_CONDITION=A_DETERMINISTIC_COORDINATE_CONTRADICTION_PROVEN_BY_SOURCE
+
+============================================================
+1. CONFIRMED_FACTS
+============================================================
+
+Claim-scoped current-local Implementation Authority:
+- branch=work/raw-direct-motion
+- HEAD=310c6ce785369b55d498fd241bcd68c678027490
+- git status before report creation=clean
+- Unity=6000.0.80f1 revision 2dfd32957da2
+- enabled release scene=Assets/Scenes/Face Landmark Detection.unity
+- no build, Player run, Runtime diagnostic, Production edit, Native edit, commit, or push was performed
+
+Current-local protected/source SHA256:
+- 6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93  Assets/Script/FaceLandmarkerRunner.cs
+- 458FF33E98E054B766F20EB17CE6BDD242C9AD9FD6E73AF53D60BD3961822AFA  Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiCanonicalTrackingFrame.cs
+- A5C7DE387FA2E02862BCF64942363AECFB9C7830B52DF5B8953404DF884ECCB1  Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiTrackingProviderHub.cs
+- 39C06FEC43B4EA47AD783C233991E830E10B18DA285148E7A34B0C13DAD52CFE  Assets/Script/FacePartCropper.cs
+- DC78488DCD1D2E45E5AA6F40065D4983087014B501B5FD5A8E37B6D8E0F68849  Assets/KiwiAvatarSystem/Runtime/Presentation/KiwiFacePartTextureTransaction.cs
+- 822D18059988F390F52C40F60DA5F11E8ECF7577008D640272C5CF8D1557D4A6  Assets/Script/FacePartShapeMask.cs
+- 1EA5B0493A48BE9B64AFD6316C8FBD4A4EC172848F06F8879BA733BB73535167  Assets/Script/SurfaceFittedRawImage.cs
+- EB6CDCBE0B838053FB5A563641328E42C1BAAFB935D61F367913208D9638E921  Assets/Shader/FacePartSoftMask.shader
+- E28B0B81F731B92B04B97D4AA7DB1187C8DD57C5A39F49B08B2E6799BBF5B3D1  Assets/Scenes/Face Landmark Detection.unity
+- 82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5  Assets/Plugins/x86_64/KiwiNativeCamera.dll
+
+Additional identity SHA256 used by this coordinate audit:
+- D0DD9A78FA57AAB51D3E0C8606844C44F0207DC87277D0B26AEF3B43EF353533  Assets/KiwiAvatarSystem/Runtime/Camera/WindowsNativeWebCamSource.cs
+- 0F3CFF1D8D153FD94E185B90F91ACD85EE26319B2FF83EE1B066E09CA27ECDD0  Assets/MediaPipeUnity/Samples/Common/Scripts/AppSettings.cs
+- 3F0A870BEBA9DD0D3A459E0FF2B123B5F76080EC64E81A6B04D71CCECA1DE040  Assets/MediaPipeUnity/Samples/Common/Scripts/Screen.cs
+- 021243C7C059D1C797CE72B4690B6C7FA848105DC852101289EC576D0163CA6D  Assets/MediaPipeUnity/Samples/Common/Scripts/ImageSource/ImageSource.cs
+- 68BC0A5BF6B57F3293E17BF58F37E8D568247D05F5468CF9FB982A523BDB73B3  Assets/MediaPipeUnity/Samples/UI/Objects/Annotatable Screen.prefab
+
+Accepted prior Runtime/Visual Authority, not rerun here:
+- KiwiCodexConsolidatedReport_MediaPipeOnlyCausalIsolation_20260907_0754.txt used HEAD 38ad8d23d14a3795f47b100a1003fc506dbfa003, so it is not substituted for current HEAD authority.
+- Its same-build Runtime established Windows D3D12, UGREEN Camera 4K 1920x1080@60, native camera active, stable presentation, and LIVE CAMERA source=KiwiNativeCameraPresentation 1920x1080.
+- Its provider gate passed MediaPipe-only at Runner/ProviderHub/Canonical, Human Visual jump/freeze improved, and crop/mask remained unchanged from control FAIL.
+- Its Runtime does not prove pixel parity, current HEAD Runtime, Performance, or the exact native frame sequence paired to each semantic result.
+
+============================================================
+2. PACKAGE_SOURCE_FINDINGS
+============================================================
+
+Package Source Authority:
+- Packages/manifest.json SHA256=35F00A89D31A8BF7EE50718F38D4BAC90236D8B691F516C5FC14CAB47AFBFEE1
+- Packages/packages-lock.json SHA256=23845C132DBF51CB53A5CFDE4EF606FA68D10DCB53AE5FF21F4305613A5F9CE1
+- local MediaPipe tarball version=0.16.3
+- tarball SHA256=CC3E77A219E0B99618AE3BE64C31A566197DEEDC69C1E136ACF52D65D7CF2E79
+- installed source=Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d
+- installed package.json SHA256=EEBBFF4550FA9CA3C2C76AB05BD0EDBDB3A0A4C2800883E244DC9E40D8FF2A2D
+- ImageTransformationOptions.cs SHA256=3806D636843AFEF2FFFA0761D78A2799ED44BF5E7DCB71CB464F978DBB1ADB4D
+- TextureFrame.cs SHA256=244762C8A2AD4100F3DEB89BD5712101B9C2C1E7639BECE6B430AE8220D84F9C
+- ImageCoordinate.cs SHA256=31049255866C2DC8EB6926ABDF03EA1C8B0C5E069EFC94357CC14A70FE966901
+
+Actual preprocessing path:
+1. ImageSource.GetTransformationOptions computes
+   shouldFlipHorizontally=(isFrontFacing || expectedToBeMirrored) XOR isHorizontallyFlipped.
+   Source: Assets/MediaPipeUnity/Samples/Common/Scripts/ImageSource/ImageSource.cs:172-176.
+2. Native active flags are isFrontFacing=false, isHorizontallyFlipped inherited false,
+   isVerticallyFlipped=false, rotation=Rotation0.
+   Source: WindowsNativeWebCamSource.cs:127-140 and ImageSource.cs:79-82.
+3. Installed ImageTransformationOptions.Build therefore computes:
+   isInverted=false; flipHorizontally=false; flipVertically=true.
+   Source: installed ImageTransformationOptions.cs:22-28.
+4. Runner passes those flags to TextureFrame.ReadTextureOnGPU/CPU/CPUAsync and passes
+   rotationDegrees=0 in ImageProcessingOptions.
+   Source: FaceLandmarkerRunner.cs:1631-1651, 1939-1997.
+5. Installed TextureFrame.ReadTextureInternal implements flips only through explicit
+   scale/offset. With current flags it uses scale=(1,-1), offset=(0,1), then Graphics.Blit.
+   Source: installed TextureFrame.cs:159-179.
+6. LIVE_STREAM uses taskApi.DetectAsync(image,timestamp,imageProcessingOptions).
+   Source: FaceLandmarkerRunner.cs:2067-2186 and 2232-2239. Configuration default is
+   RunningMode.LIVE_STREAM in FaceLandmarkDetectionConfig.cs:25-26.
+
+Normalized semantic convention:
+- Installed ImageCoordinate defines image x as column and y as row and, for Rotation0 /
+  unmirrored, IsXReversed=false and IsYReversed=true. Its normalized image-to-Unity
+  conversion maps X without reflection and maps Y top-to-bottom into Unity bottom-to-top.
+  Source: installed ImageCoordinate.cs:127-150 and 687-704.
+- Official MediaPipe NormalizedLandmark source defines x/y as normalized by image width/height.
+  https://github.com/google-ai-edge/mediapipe/blob/master/mediapipe/framework/formats/landmark.proto
+- Official MediaPipe face mesh topology names 263/362 as LEFT_EYE and 33/133 as RIGHT_EYE.
+  https://github.com/google-ai-edge/mediapipe/blob/master/mediapipe/python/solutions/face_mesh_connections.py
+
+Package-source conclusion:
+- For a physical feature represented by MediaPipe normalized point M=(x,y), the same point
+  in the current unmirrored Unity presentation texture is T_expected=(x,1-y).
+- No horizontal reflection is required between MediaPipe semantic X and presentation texture U.
+
+============================================================
+3. STATIC_COORDINATE_LEDGER
+============================================================
+
+Boundary 1: native slot -> stable presentation texture
+- Windows AppSettings builds WindowsNativeWebCamSource on Windows.
+  Source: AppSettings.cs:85-105.
+- Native has three rotating external Texture2D wrappers internally.
+  Source: WindowsNativeWebCamSource.cs:53-57, 1075-1089.
+- PrepareFrameForUnity copies the selected slot to _nativePresentationTexture with only
+  scale=(1,-1), offset=(0,1). This is a Y-origin canonicalization, not an X mirror.
+  Source: WindowsNativeWebCamSource.cs:1091-1109.
+- GetCurrentTexture returns _nativeTexture, which is assigned to the stable presentation RT.
+  Source: WindowsNativeWebCamSource.cs:1015-1023, 1105-1109.
+
+Boundary 2: presentation texture -> MediaPipe image
+- Screen and Runner use the same ImageSource.GetCurrentTexture result.
+- Current preprocessing applies H=0, V=1, rotation=0. This produces the MediaPipe image
+  convention for an unmirrored source. It does not create an H transform owner.
+
+Boundary 3: MediaPipe result -> Runner semantic store
+- StoreTrackingData takes result.faceLandmarks[0].landmarks.
+  Source: FaceLandmarkerRunner.cs:2528-2545.
+- Every _stagingLandmarks[i] is exactly new Vector2(landmarks[i].x,landmarks[i].y).
+  Source: FaceLandmarkerRunner.cs:3066-3089.
+- The arrays are swapped into _latestLandmarks without element conversion.
+  Source: FaceLandmarkerRunner.cs:3167-3184.
+- TryGetLatestPrecisionTrackingData copies _latestLandmarks to the caller.
+  Source: FaceLandmarkerRunner.cs:1248-1287.
+- X transform=NO; Y transform=NO; mirror=NO; rotation=NO; ROI conversion=NO.
+
+Boundary 4: Runner semantic store -> Canonical semantic frame
+- Coordinator calls Runner.TryGetLatestPrecisionTrackingData into _semanticScratch and
+  requires timestamp/backend equality to the selected rigid frame.
+  Source: KiwiCanonicalTrackingFrame.cs:738-765.
+- It publishes the same _semanticScratch reference/count.
+  Source: KiwiCanonicalTrackingFrame.cs:801-810.
+- Publish uses Array.Copy directly into _publishedLandmarks.
+  Source: KiwiCanonicalTrackingFrame.cs:478-495.
+- ProviderHub can call KiwiTrackingNormalizationMath.MirrorHorizontal(ref rigid data) and
+  records canonicalInputHorizontallyMirrored metadata, but that method is applied to
+  FacePrecisionTrackingData rigid state, not to the semantic Vector2 array.
+  Source: KiwiTrackingProviderHub.cs:1554-1587.
+- Therefore canonicalInputHorizontallyMirrored is metadata plus rigid normalization context;
+  it is not a semantic landmark transform owner in the audited path.
+
+Boundary 5: Canonical semantic frame -> FacePartCropper UV
+- Cropper constants identify left eye 362/263, right eye 33/133, and mouth 61/291.
+  Source: FacePartCropper.cs:327-335.
+- Eye centers are arithmetic means of each named pair. Mouth starts from the 61/291 mean;
+  safe-crop expansion can adjust size/center around raw semantic contour, but it does not
+  establish a separate texture orientation contract.
+  Source: FacePartCropper.cs:1041-1108, 1124-1219.
+- MakeUvRect computes centerX=mirrorX ? 1-x : x and centerY=1-y.
+  Source: FacePartCropper.cs:1986-2033.
+- Release scene serializes mirrorX=1 and swapEyes=1.
+  Source: Face Landmark Detection.unity:1964-1971.
+- Hence current Cropper point transform is C=(1-x,1-y), while the exact same-source
+  texture point is T_expected=(x,1-y).
+
+Boundary 6: crop UV -> actual RawImage sampling
+- Cropper writes the resulting rect to each part RawImage.uvRect.
+  Source: FacePartCropper.cs:1312-1328, 1641-1645, 1846-1851.
+- SurfaceFittedRawImage emits uvRect-derived UV0 directly; local sample zoom/rotation is
+  around the crop frame and does not insert a global horizontal restoration.
+  Source: SurfaceFittedRawImage.cs:770-835.
+- FacePartSoftMask passes vertex texcoord to the fragment sampling transform and samples
+  _MainTex; it does not perform a hidden platform/global X reflection.
+  Source: FacePartSoftMask.shader:218-324 and sampling/fragment section.
+
+============================================================
+4. TEXTURE_IDENTITY_LEDGER
+============================================================
+
+Actual scene/prefab resource chain:
+- Runner.screen={fileID:1006057043}.
+- Cropper.sourceImage={fileID:1006057045}.
+- Both are stripped components from Annotatable Screen prefab GUID
+  5713b959e3c77a58fb258133fc8e4aef.
+- prefab Screen component source fileID 2020366215714292840 binds _screen to RawImage
+  source fileID 3259285889726014649.
+- scene stripped fileID 1006057045 is that exact RawImage; this is the RawImage whose
+  texture Screen.Initialize writes and whose texture Cropper/Transaction read.
+  Sources: Face Landmark Detection.unity:1164-1209, 1258-1265, 1964-1969;
+  Annotatable Screen.prefab:3-103.
+
+LIVE CAMERA / sourceImage current display state:
+- Screen.Initialize resizes, rotates by source.rotation.Reverse(), resets uvRect, and writes
+  texture=imageSource.GetCurrentTexture(). Source: Screen.cs:29-37.
+- Native rotation=0, isVerticallyFlipped=false, isFrontFacing=false, so ResetUvRect leaves
+  uvRect=(0,0,1,1). Source: Screen.cs:59-85.
+- Prefab RawImage has material=null, texture=null before initialization, uvRect=(0,0,1,1),
+  local rotation identity, local scale=(1,1,1). Scene adds no RawImage uvRect/material mirror.
+- Search of current Assets C# found Screen as the source RawImage texture/uvRect writer;
+  Kiwi FacePart components read sourceImage.texture and do not rewrite sourceImage uvRect,
+  sourceImage.material, or sourceImage texture.
+
+Transaction resource chain:
+- DefaultExecutionOrder: Transaction=640, Cropper=700, ShapeMask=850.
+- Transaction RefreshBinding reads source=_cropper.sourceImage.texture and keys rebinding on
+  instance ID, dimensions, camera generation, and tracking session generation.
+  Source: KiwiFacePartTextureTransaction.cs:435-484.
+- Source is therefore the same stable KiwiNativeCameraPresentation used by LIVE CAMERA,
+  not a rotating native wrapper and not a separately transformed display texture.
+- It snapshots source once per Unity frame via Graphics.Blit(_source,slot.texture).
+  Source: KiwiFacePartTextureTransaction.cs:514-565.
+- For 1920x1080, aspect-preserving MaximumSnapshotWidth=1280 gives 1280x720.
+  Slots are ARGB32, RenderTextureReadWrite.Default, bilinear, clamp, no mipmaps.
+  Source: KiwiFacePartTextureTransaction.cs:32-36, 810-878.
+- Committed part RawImages receive the pinned slot.texture directly.
+  Source: KiwiFacePartTextureTransaction.cs:647-702.
+
+Blit orientation conclusion:
+- Transaction uses the overload with no material and no explicit negative scale/offset.
+- Unity's Graphics.Blit contract is a source-to-destination full-screen copy; Unity documents
+  that simple one-texture blits handle platform vertical texture-coordinate differences.
+  https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Graphics.Blit.html
+  https://docs.unity3d.com/6000.0/Documentation/Manual/SL-PlatformDifferences.html
+- Therefore the logical source UV point (u,v) remains the same logical snapshot UV point
+  (u,v). The resolution changes, not normalized orientation. No source supports an X mirror.
+- This is Static API-contract authority, not a new DX12 pixel-observation Runtime claim.
+- Even if an implementation-specific vertical residual were suspected, it cannot repair the
+  independently proven X contradiction because neither Blit overload nor display state flips X.
+
+============================================================
+5. COORDINATE_PARITY_PROOF
+============================================================
+
+Definitions:
+- M=(x,y): MediaPipe normalized semantic point, x right and y down in the submitted image.
+- R=M: Runner stored point.
+- K=R: Canonical published semantic point.
+- T_expected=(x,1-y): same physical point in the unmirrored Unity source/snapshot texture UV.
+- Scene mirrorX=1, so Cropper C=(1-x,1-y).
+- Transaction normalized UV parity is identity, so pinned texture sampling remains C.
+
+General proof:
+- C.x == T_expected.x only when 1-x == x, i.e. x==0.5.
+- A face feature is not contractually constrained to x==0.5; eyes and mouth center move with
+  pose/translation and mouth center need not be exactly central even frontally.
+- Therefore current X parity is generally false by construction.
+- C.y == T_expected.y for every y, so current Y parity is exact.
+- Clamping/edge-preservation and temporal interpolation cannot turn the global mapping 1-x
+  into x. They may change a held/display rect, but do not establish point identity.
+
+Left eye center:
+- M_L=((x_362+x_263)/2,(y_362+y_263)/2).
+- Expected pinned texture UV center=(M_L.x,1-M_L.y).
+- Cropper center=(1-M_L.x,1-M_L.y), then swapEyes assigns this rect to rightEyeImage.
+- Assignment to another output does not change the sampled UV and cannot prove
+  1-M_L.x equals the original left-eye point M_L.x.
+- LEFT_EYE_COORDINATE_PARITY=FAIL_X_PASS_Y.
+
+Right eye center:
+- M_R=((x_33+x_133)/2,(y_33+y_133)/2).
+- Expected pinned texture UV center=(M_R.x,1-M_R.y).
+- Cropper center=(1-M_R.x,1-M_R.y), then swapEyes assigns this rect to leftEyeImage.
+- Symmetry with the opposite eye is not an identity contract; 1-M_R.x cannot be substituted
+  for M_R.x and does not become exact through output reassignment.
+- RIGHT_EYE_COORDINATE_PARITY=FAIL_X_PASS_Y.
+
+Mouth center:
+- Initial semantic anchor M_M=((x_61+x_291)/2,(y_61+y_291)/2); safe-crop may use the
+  contour-derived center but that center remains in the same raw MediaPipe image space.
+- Expected pinned texture UV center=(M_M.x,1-M_M.y).
+- Cropper center=(1-M_M.x,1-M_M.y).
+- Mouth has no left/right output swap that could even visually approximate cancellation.
+- MOUTH_COORDINATE_PARITY=FAIL_X_PASS_Y.
+
+swapEyes decision:
+- MediaPipe official topology and Cropper constants agree: 362/263 are anatomical left;
+  33/133 are anatomical right.
+- In the unmirrored source, anatomical left appears on viewer/image right. Scene LeftEye3D is
+  at anchored X=+250; RightEye3D is at X=-250. Direct anatomical assignment therefore already
+  matches current output placement.
+- Scene swapEyes=1 instead assigns the left semantic rect to rightEyeImage and the right rect
+  to leftEyeImage. This is not a coordinate transform and is not required by the current
+  unmirrored anatomical binding.
+- mirrorX=1 plus swapEyes=1 can make symmetric eyes look approximately plausible because it
+  samples near the opposite eye and routes that sample to the opposite output. Approximate
+  facial symmetry is not exact point parity and cannot explain or repair the mouth result.
+
+PRIMARY QUESTION ANSWER=NO. Canonical semantic landmark coordinates transformed by the
+current FacePartCropper do not, in general, point to the same point in the texture actually
+passed by KiwiFacePartTextureTransaction to the RawImages.
+
+============================================================
+6. SHAPEMASK_CLASSIFICATION
+============================================================
+
+Classification=DEPENDENT_LOCAL_MATCHER.
+
+Static facts:
+- ShapeMask runs after Cropper and reads the current part RawImage.uvRect.
+- ResolveEye searches both eye index sets and every mirrorX/flipY combination, minimizing
+  distance between candidate semantic center and crop center.
+  Source: FacePartShapeMask.cs:2715-2915.
+- lockEyeAssignment can latch _currentEyeSet/_currentMirrorX/_currentFlipY after the first
+  resolution and reuse it for the session.
+- ResolveMouthOrientation searches mirror/flip combinations once and permanently sets
+  _mouthOrientationResolved until ResetContour.
+  Source: FacePartShapeMask.cs:2969-3007, 3511-3590, 4244-4272.
+- ApplyOrientation implements its own point.x=1-x and/or point.y=1-y.
+  Source: FacePartShapeMask.cs:3885 onward.
+- The contour is then converted against the current crop rect with ToCropLocal.
+  Source: FacePartShapeMask.cs:1633-1652, 4568 onward.
+- automaticEyeMatching is declared at line 238 but has no read in this file. The exhaustive
+  matching path is therefore not actually gated by that serialized flag.
+
+Answers:
+- Q1: YES. ShapeMask can independently choose a different eye set/mirror/flip state.
+- Q2: YES. A different latched state can produce crop-local contour/pixel mismatch.
+- Q3: YES. lockEyeAssignment and _mouthOrientationResolved can retain a startup selection.
+- Q4: It is primarily dependent because it derives its choice by fitting to Cropper's current
+  uvRect. It has independent latched mapping state, but it is not the first texture-coordinate
+  authority and cannot move the pinned texture crop to the correct source point.
+
+Root-cause ordering:
+- With the current wrong Cropper UV, ShapeMask may select an orientation that follows the
+  wrong crop and makes a contour appear locally aligned over the wrong pixels.
+- That behavior can hide or compound presentation symptoms, but cannot restore the missing
+  same-point X parity. It is therefore secondary and is not promoted to first root cause.
+
+============================================================
+7. F2_LIMITATION
+============================================================
+
+F2_EXACT_NATIVE_IDENTITY_PROVEN=NO.
+
+- TextureTransaction stores Stopwatch capture hostTicks for the Graphics.Blit snapshot.
+- FindClosestSlot minimizes abs(slot.hostTicks-submissionHostTicks) while requiring camera
+  generation and tracking session generation equality.
+  Source: KiwiFacePartTextureTransaction.cs:548-564, 597-639.
+- There is no exact native frame sequence carried from native present through MediaPipe result
+  into the chosen transaction slot.
+- Therefore nearest-time correlation is stronger than an unconstrained latest-texture bind,
+  but it is not exact native sample identity.
+- This remains a real unresolved F2 limitation. It is not the first action because a spatial
+  X contradiction already exists independently of timestamp/sample selection.
+
+============================================================
+8. INFERENCES
+============================================================
+
+- The deterministic extra X reflection is sufficient to explain why crop/mask can remain
+  wrong during a MediaPipe-only run even when jump/freeze improves.
+- mirrorX=1 plus swapEyes=1 may make left/right eye crops look partially plausible through
+  bilateral facial similarity while mouth remains obviously displaced; this is a likely
+  visual masking effect, not an exact contract.
+- ShapeMask can follow the erroneous crop and locally fit a contour to wrong pixels, allowing
+  crop and mask to fail together without ShapeMask being the initiating defect.
+- These are causal interpretations from Static structure. Actual symptom magnitude and final
+  Human Visual result require same-build observation after an authorized fix.
+
+============================================================
+9. UNKNOWN
+============================================================
+
+- Current HEAD same-build Runtime/Visual result: not run in this task.
+- Pixel-observed DX12 Graphics.Blit parity: not newly measured; the conclusion here is Unity
+  logical API-contract Static authority.
+- Exact native frame sequence for each semantic result: not carried, F2 remains NO.
+- Whether any imported avatar/model profile intentionally redefines LeftEye3D/RightEye3D as
+  viewer-side rather than anatomical-side: no such explicit contract was found. The current
+  scene names/positions and official MediaPipe topology support anatomical direct assignment.
+- Post-fix clean Performance and Human Visual authority: unavailable until a separate task.
+- Any residual temporal presentation or ShapeMask startup-latch defect after coordinate parity
+  is repaired: intentionally not investigated beyond classification in this task.
+
+These UNKNOWN items do not prevent STOP CONDITION A because the X contradiction is independent
+of Runtime frame content, camera driver mirroring, vertical GPU convention, and sample timing:
+MediaPipe and Cropper both reference the same image texture, so the same-point X transform is x.
+
+============================================================
+10. REJECTED
+============================================================
+
+- SOURCE_TEXTURE_TO_TRANSACTION_PRESENTATION_COORDINATE as first boundary: rejected for the
+  current binding. LIVE CAMERA and FacePart use the same RawImage texture identity; current
+  display orientation state is identity; Transaction performs an orientation-preserving
+  logical UV copy and introduces no X mirror.
+- Runner or Canonical semantic normalization as X-transform owner: rejected. Both raw-copy x/y.
+- ShapeMask as first root cause: rejected. It is downstream of the already wrong crop UV.
+- FacePart transaction identity as first root cause: rejected. F2 remains unresolved, but time
+  selection cannot convert systematic 1-x into x.
+- Inference as crop/mask single cause: rejected by accepted MediaPipe-only visual result.
+- Tracking math, Root/Head, SharedTiltLock, QualityGuard, thresholds, smoothing, Kalman,
+  prediction, Native, or provider priority changes: rejected for this task.
+- Additional broad Runtime face trace: rejected; STOP CONDITION A has already been met.
+- Production implementation/build/commit/push in this task: rejected by scope.
+
+============================================================
+11. MINIMAL_FIX_DESIGN
+============================================================
+
+WHY_CHANGE_IS_BETTER_THAN_NO_CHANGE=Current source proves that the same semantic point must map
+to texture UV (x,1-y), while release scene configuration forces (1-x,1-y). NO_CHANGE preserves
+a systematic X reflection for all noncentral FacePart points, so a two-flag scene correction is
+smaller and more correct than redesigning the working tracking/camera/transaction core.
+
+Best single design, not implemented here:
+1. Keep Native presentation, MediaPipe preprocessing, Runner storage, ProviderHub/Canonical,
+   TextureTransaction, F3, SharedTiltLock, and tracking math unchanged.
+2. For this current unmirrored native/presentation contract, set FacePartCropper mirrorX=0.
+3. Preserve anatomical output ownership explicitly and set swapEyes=0 for the current scene:
+   left 362/263 -> LeftEye3D(+250), right 33/133 -> RightEye3D(-250).
+4. Do not add another transform mechanism. The resulting point contract is exactly
+   MediaPipe (x,y) -> texture (x,1-y).
+5. Treat a future genuinely mirrored provider as an explicit provider/model-profile coordinate
+   contract selected at the boundary, not as an implicit scene heuristic.
+
+This design removes two scene-level corrections whose responsibility is not required. It does
+not change source texture identity, copies, queues, readbacks, prediction, smoothing, cadence,
+tracking authority, Root/Head, or Native ABI.
+
+============================================================
+12. NEXT_SINGLE_ACTION
+============================================================
+
+NEXT_SINGLE_ACTION=Open a separate implementation/validation task that changes only the release
+scene FacePartCropper flags mirrorX=0 and swapEyes=0, freezes before/after protected SHA, then
+builds one same-build Windows D3D12 candidate and performs a minimal Human Visual check of left
+eye, right eye, and mouth spatial correspondence against LIVE CAMERA. Do not evaluate temporal
+layers, ShapeMask ownership, F2 identity, or Inference motion until this coordinate correction
+either passes or produces a precisely scoped residual.
+
+Runtime ZIP for this task=NOT_CREATED; Runtime was not performed.
+
+END_OF_REPORT
