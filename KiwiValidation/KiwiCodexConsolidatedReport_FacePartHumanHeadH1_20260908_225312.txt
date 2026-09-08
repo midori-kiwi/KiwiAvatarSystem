@@ -1,0 +1,315 @@
+KIWI AVATAR SYSTEM - CODEX CONSOLIDATED REPORT
+FACEPART H1 HUMAN-HEAD CANONICAL PRESENTATION
+Generated: 2026-09-08 22:53:12 +09:00 (JST)
+Project: D:\KiwiAvatarSystem
+Task mode: LOCAL_CURRENT_SOURCE_AUTHORITY / MINIMAL_CHANGE / FIXPOINT_REAUDIT
+
+総合結果
+変更が無変更より優れている根拠：証明されていない
+H1 候補の Production 採用判定：不合格（NO_GO）
+H1 候補の Production 採用：承認しない
+最終的なソース対応：H1 候補の変更だけを全撤回
+既存 Production／Working Core：変更せず維持
+最初に失敗した境界：通常の hybrid backend における Runner／Canonical／Presentation の capability 境界
+部分的な backend でしか成立しない H1 実装を保持するより、最終的に無変更とする方が安全である。
+
+AUTHORITY_PREFLIGHT
+Implementation authority was current local Production source at the SHA values below.
+Initial worktree was clean. No user-owned dirty file existed at Gate 0.
+No AUTHORITY_CONFLICT was found.
+No reset, checkout, clean, commit, or push was performed.
+The already-proven 2026-09-07 coordinate correction was present:
+  FacePartCropper.mirrorX=0
+  FacePartCropper.swapEyes=0
+Those values and the scene were preserved. No new mirror mechanism was introduced.
+Local current was preferred over older origin/main.
+Authority classes:
+  Static=current local source and installed package.
+  Build=exact diagnostic artifact and build log.
+  Runtime=exact diagnostic build plus correlated Player log.
+  Human Visual=NOT_RUN.
+  Performance=NONE.
+
+CURRENT_BRANCH / HEAD / STATUS
+CURRENT_BRANCH=work/raw-direct-motion
+HEAD=dff213b8a76677426e7810c8d9e4827185803602
+INITIAL_STATUS=clean
+STATUS_BEFORE_REPORT_WRITE=clean
+FINAL_EXPECTED_STATUS=only this requested report is untracked
+REPORT_SELF_SHA=not embedded because a file cannot contain its own stable hash
+
+CURRENT_SCENE
+ENABLED_RELEASE_SCENE_COUNT=1
+CURRENT_SCENE=Assets/Scenes/Face Landmark Detection.unity
+SCENE_SHA256=9BAC89F64B45429B38D41C1A2539C63D5E9A442E8EF920EE13B59245BE166735
+SCENE_FACEPART_MIRROR_X=0
+SCENE_FACEPART_SWAP_EYES=0
+CANDIDATE_BUILD_PATH=D:\KiwiAvatarSystem\Builds\FacePartHumanHeadH1_20260908_194700\KiwiAvatarSystem_H1.exe
+CANDIDATE_BUILD_KIND=DX12 Win64 Development diagnostic; not a release-candidate artifact
+
+BEFORE_SHA / CANDIDATE_SHA / AFTER_SHA
+Format: path | BEFORE baseline | temporary H1 candidate | AFTER final rollback
+FaceLandmarkerRunner.cs
+  BEFORE=6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93
+  CANDIDATE=2D480060E741AA08A5ABC7C4D98229E35AFE7CAA07220EB14D0B96ABB899E0AA
+  AFTER=6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93
+KiwiCanonicalTrackingFrame.cs
+  BEFORE=458FF33E98E054B766F20EB17CE6BDD242C9AD9FD6E73AF53D60BD3961822AFA
+  CANDIDATE=268B473279532B47A709920144D144DCB1FF9D300835267AAC16021A221CBDDF
+  AFTER=458FF33E98E054B766F20EB17CE6BDD242C9AD9FD6E73AF53D60BD3961822AFA
+FacePartCropper.cs
+  BEFORE=39C06FEC43B4EA47AD783C233991E830E10B18DA285148E7A34B0C13DAD52CFE
+  CANDIDATE=17E5293000710950ACA6CDBC1E03812BBA0F9A2A845D757973E690FC411FF18A
+  AFTER=39C06FEC43B4EA47AD783C233991E830E10B18DA285148E7A34B0C13DAD52CFE
+KiwiFacePartTextureTransaction.cs
+  BEFORE=DC78488DCD1D2E45E5AA6F40065D4983087014B501B5FD5A8E37B6D8E0F68849
+  CANDIDATE=73AED789363DF684CA21F16C7963E5904686AA34EA184004C4DD7CA08A0FD57A
+  AFTER=DC78488DCD1D2E45E5AA6F40065D4983087014B501B5FD5A8E37B6D8E0F68849
+SurfaceFittedRawImage.cs
+  BEFORE=1EA5B0493A48BE9B64AFD6316C8FBD4A4EC172848F06F8879BA733BB73535167
+  CANDIDATE=84843DBFF9DBE69D4945FCF4D33A3BA986F8E790AA37C94FEBAC0EDD01246B85
+  AFTER=1EA5B0493A48BE9B64AFD6316C8FBD4A4EC172848F06F8879BA733BB73535167
+FacePartShapeMask.cs
+  BEFORE=822D18059988F390F52C40F60DA5F11E8ECF7577008D640272C5CF8D1557D4A6
+  CANDIDATE=68BF64795C29E9BA7BFEB19D9AF4A286DB53D0C7F5E352EC80590BFB3DEAA01A
+  AFTER=822D18059988F390F52C40F60DA5F11E8ECF7577008D640272C5CF8D1557D4A6
+KiwiFacePartRigidSampleFrame.cs
+  BEFORE=578CE2ED93A2A78EE1B19D8FF309A115A2FA53596E79BAAB0534A27AC10077C0
+  CANDIDATE=377300823ED589E6CF183C4B6F058C1EE6477F2CF2562A27B02F9A4F4656FB5C
+  AFTER=578CE2ED93A2A78EE1B19D8FF309A115A2FA53596E79BAAB0534A27AC10077C0
+KiwiFacePartSharedTiltLock.cs
+  BEFORE=0BCCA0B7BD6982B78C0FC18058ACD54D073D786820F7B027B8C2F218EF2CAE70
+  CANDIDATE=17B419D0CCF3C341A7F4BB0A0F35E1FD781E29C9E2A37C3B4B71FA04D0495C48
+  AFTER=0BCCA0B7BD6982B78C0FC18058ACD54D073D786820F7B027B8C2F218EF2CAE70
+KiwiFacePartRigidCenterLock.cs
+  BEFORE=069688F88355FE1439A72525DC591E2FC8EF0C632D349B4F14E1D37B045B3E35
+  CANDIDATE=55D8FE7CF8B99B40277737B0E662A310CBF72CA7A14BDD205415380498E0B256
+  AFTER=069688F88355FE1439A72525DC591E2FC8EF0C632D349B4F14E1D37B045B3E35
+KiwiFacePartHeadLocalUvMapper.cs
+  BEFORE=ABSENT
+  CANDIDATE=1C4F19E9070A0701680EE98F56D2BD86642C26810EA423572177A683A0542EF0
+  AFTER=ABSENT
+KiwiFacePartHeadLocalUvMapper.cs.meta
+  BEFORE=ABSENT
+  CANDIDATE=10A125D40A6A5E3CF9BB717245C9B15A3A5186DB8E10768BFC1DA80692511FAB
+  AFTER=ABSENT
+
+Protected files unchanged BEFORE=AFTER:
+  KiwiTrackingProviderHub.cs=A5C7DE387FA2E02862BCF64942363AECFB9C7830B52DF5B8953404DF884ECCB1
+  FacePartSoftMask.shader=EB6CDCBE0B838053FB5A563641328E42C1BAAFB935D61F367913208D9638E921
+  KiwiSurfaceFitter.cs=96B18B1D3712F7E15ECE3F7D32529B4F8A40312B93DA63CC1A80385841A575B3
+  KiwiExpressionReaction.cs=0D48FB25CD79CE571F2892609E094D0D7DEA7A6C4B9D73A43A4B53B2A2980EF8
+  scene=9BAC89F64B45429B38D41C1A2539C63D5E9A442E8EF920EE13B59245BE166735
+  manifest=35F00A89D31A8BF7EE50718F38D4BAC90236D8B691F516C5FC14CAB47AFBFEE1
+  packages-lock=23845C132DBF51CB53A5CFDE4EF606FA68D10DCB53AE5FF21F4305613A5F9CE1
+  KiwiNativeCamera.dll=82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+
+INSTALLED_MEDIAPIPE_PACKAGE_SOURCE_FINDINGS
+Authority=actually installed package plus exact local tarball.
+Package=com.github.homuler.mediapipe 0.16.3
+Resolved root=Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d
+package fingerprint=66127f8e750d
+Tarball=Packages/com.github.homuler.mediapipe-0.16.3.tgz
+Tarball size=290414365
+Tarball SHA256=CC3E77A219E0B99618AE3BE64C31A566197DEEDC69C1E136ACF52D65D7CF2E79
+Model=Assets/StreamingAssets/face_landmarker_v2_with_blendshapes.bytes
+Model SHA256=B261925D4AAD812B47A0E8D58C1BAA1223270A5D1F663D78338BC881C003879D
+Decoded installed geometry metadata=468 canonical XYZUV vertices, 2694 triangle indices.
+Confirmed:
+1. FaceLandmarkerResult carries normalized 3D landmarks and facialTransformationMatrixes from the same result callback.
+2. The package reads FaceGeometry protobufs and converts PoseTransformMatrix to Unity Matrix4x4.
+3. Generated FaceGeometry/Mesh3D proto types exist, but the public result discards runtime metric Mesh3D and exposes only normalized landmarks plus matrices.
+4. Baseline Runner uses z only for eyeSpan3D, reduces the matrix to Quaternion, and copies semantic landmarks as Vector2 xy.
+5. A presentation-only matrix snapshot is feasible for MediaPipe and the prototype reached Runtime.
+6. The high-rate Inference Engine backend has same-sample Vector3 landmarks but no FaceGeometry matrix; MediaPipe is a low-rate auxiliary refresh.
+H1_SELECTION=H1-B minimum presentation-local prototype.
+H1-A pose reuse is only a partial MediaPipe solution, not full hybrid coverage.
+
+PUBLIC_DESIGN_PRINCIPLES_USED
+External source semantics, not local Runtime authority:
+- MediaPipe geometry pipeline: canonical-to-runtime rigid pose is metric 3D; inverse pose separates rigid motion from residual geometry.
+  https://github.com/google-ai-edge/mediapipe/blob/master/mediapipe/modules/face_geometry/libs/geometry_pipeline.cc
+- Tasks graph defaults: TOP_LEFT, vertical FOV 63 degrees, near 1 cm, far 10000 cm, first 468 landmarks.
+  https://github.com/google-ai-edge/mediapipe/blob/master/mediapipe/tasks/cc/vision/face_geometry/face_geometry_from_landmarks_graph.cc
+- Metadata/mesh semantics:
+  https://github.com/google-ai-edge/mediapipe/blob/master/mediapipe/tasks/cc/vision/face_geometry/proto/geometry_pipeline_metadata.proto
+  https://github.com/google-ai-edge/mediapipe/blob/master/mediapipe/tasks/cc/vision/face_geometry/proto/mesh_3d.proto
+- Canonical metric-face design:
+  https://github.com/google-ai-edge/mediapipe/blob/master/docs/solutions/face_mesh.md
+Applied principle: never inverse-warp 2D UV directly with the facial 4x4; solve/unproject in 3D before deriving UV.
+
+METHOD_STATEMENT_DATAFLOW_AUDIT
+ACTIVE flow:
+Native latest camera sample -> stable Unity texture -> MediaPipe/Inference hybrid -> Runner coherent precision+semantic store -> ProviderHub -> Canonical render latch -> TextureTransaction matched slot -> Cropper -> ShapeMask -> SurfaceFittedRawImage/shader -> fitted WorldSpace Canvas under Head -> camera/Spout.
+Orders: TextureTransaction 640; Canonical 650; Cropper 700; temporary H1 820; RigidCenter 825; RigidSampleFrame 830; ShapeMask 850; MouthDisplaySizeLock 860; AngleLock 875; SharedTilt/Expression 900; ModelConstraint 930; Quality 990; VisibilityRecovery 1250.
+Writers/readers:
+- FacePartCropper is nominal uvRect writer.
+- Conditional uvRect writers: MouthCropGuard, ShapeMask mouth-height path, LiveMotionBridge legacy path, RigidCenterLock.
+- LiveMotionBridge is auto-installed but enableLiveFrameTracking=false by default under strict transactions.
+- SurfaceFittedRawImage reads uvRect and writes mesh UVs; KiwiSurfaceFitter owns fitted local positions.
+- ExpressionReaction writes visual zoom.
+- RigidSampleFrame writes mesh sample-frame Roll.
+- SharedTiltLock writes shader sample rotation/pivot/aspect and suppresses legacy independent AngleLock.
+- ShapeMask writes mask points and semantic visibility.
+- QualityCoordinator writes final pose visibility/Canvas alpha, surface offset, and yaw/depth/facing policy.
+- KiwiFaceMotion is the existing visible rigid hierarchy authority; unchanged.
+DIAGNOSTIC_ONLY=temporary H1 telemetry in the rejected Development build.
+INACTIVE_LEGACY=AngleLock while SharedTilt suppression is active; LiveMotionBridge correction at default OFF.
+
+COORDINATE_SPACE_LEDGER
+1. Runtime native camera: 1920x1080@60, RGBA32-linear, ProviderGpuYNormalized, stable presentation.
+2. FaceLandmarker: normalized image x-right/y-down, normalized relative z.
+3. FaceGeometry: canonical metric face -> runtime metric face pose; Unity conversion flips z convention.
+4. Baseline Runner: Vector2 xy semantics; full z/matrix not retained.
+5. Canonical: same unmirrored anatomical contract; scene mirror/swap=0/0.
+6. Cropper: semantic -> bottom-left source UV via y -> 1-y, then uvRect.
+7. SurfaceFittedRawImage: fixed head-local fitted grid positions; uv0 samples source via uvRect.
+8. Shader: sample scale/rotation/offset transforms uv0; texture and polygon test consume resulting sample UV.
+9. Head hierarchy applies the visible rigid pose.
+Temporary H1-B: canonical metric contour -> pose-predicted depth + actual 2D unprojection -> inverse pose -> head-local residual -> piecewise-affine fan -> per-grid global source UV.
+Static closure existed only for MediaPipe frames, not InferenceEngine frames.
+
+TRANSACTION_LEDGER
+Camera: sequence + hostTicks + cameraGeneration.
+Inference: sourceHostTicks + result timestamp + Runner frameId.
+Canonical: providerId + canonicalFrameId + rigid/semantic timestamp + camera/session generation.
+Texture: bounded RenderTexture slot matched to submission hostTicks and generations.
+Baseline gap: global committed identity exists; no public per-part timestamp/frame identity accessor.
+Prototype added per-part identity and required texture slot == Cropper sample == Canonical semantic == H1 mapping identity. Mismatch cleared H1 and retained safe fallback.
+Runtime sampled all three parts in the same mode, but the mode alternated with backend capability.
+TRANSACTION_CORRUPTION_OBSERVED=NO
+H1_CONTINUITY_CLOSED=NO
+PRIMARY_BACKEND_REQUIRED_SAME_SAMPLE_POSE=NO
+
+POSE_OWNER_LEDGER
+Visible rigid owner=existing KiwiFaceMotion/Head hierarchy.
+Baseline source-rigid contributors=RigidSampleFrame Roll, SharedTilt shader Roll, bounded RigidCenter mouth correction. SharedTilt suppresses legacy AngleLock.
+Prototype made H1 the intended sole source-rigid removal owner and neutralized those contributions only while a part had a valid H1 map.
+Telemetry printed owners=1 for H1 and 0 for fallback, but this count was mapper-derived rather than independently read from every contribution.
+POSE_OWNER_RUNTIME_AUTHORITY=INSUFFICIENT
+FINAL_SOURCE=baseline restored byte-for-byte.
+
+MASK_OWNER_LEDGER
+Baseline ShapeMask independently resolves/latches eye assignment and mouth mirror/flip orientation.
+Prototype bypassed heuristics only for matching H1 identity: anatomical eye selection, mirrorX=false, flipY=true, zero mouth offset, immediate contour, same mesh UV for texture/mask.
+Validator defect: telemetry hard-coded maskPixelMapping=SHARED_SOURCE_UV; it did not read ShapeMask acceptance or compare independent transaction IDs.
+MASK_PIXEL_TRANSACTION_EQUALITY=NOT_PROVEN
+Final ShapeMask=baseline SHA restored.
+
+OCCLUSION_OWNER_LEDGER
+GATE_7_STATUS=NOT_RUN because H1 static+Runtime prerequisite failed.
+Static facts only:
+- FacePart Canvas is WorldSpace.
+- FacePartSoftMask is Transparent, Cull Off, ZWrite Off, ZTest Always, with UI stencil/ColorMask.
+- It therefore does not use opaque-head depth as per-pixel physical authority.
+- QualityCoordinator uses surface facing, eye depth ratio, Canvas alpha/_PoseVisibility, and bounded yaw fallback; fittedSurfaceOffset=0.0005.
+No shader, queue, depth, offset, fade, or occluder change was made.
+
+CHANGED_FILES
+Temporary candidate changed nine tracked files listed in the SHA table and added the mapper plus meta. All eleven were rolled back/deleted.
+FINAL_PRODUCTION_SOURCE_CHANGED_FILES=NONE
+FINAL_DELIVERABLE_CHANGED_FILES=this report only
+Builds/ and Logs/ retain diagnostic evidence and are not Production source.
+
+WHY_EACH_CHANGE_IS_NECESSARY
+Prototype: Runner/Canonical carried exact MediaPipe pose; Cropper/TextureTransaction exposed per-part identity; Surface accepted per-grid source UV; ShapeMask shared the H1 contract; legacy Roll/center contributions were conditionally neutralized; mapper owned presentation-local 3D inverse-rigid mapping.
+Rollback: normal Production hybrid frames do not all carry pose, H1/fallback alternated, and validators did not independently prove key equality/ownership claims. Retaining it was worse than NO_CHANGE.
+
+REJECTED_CHANGES
+No 2D inverse matrix warp; homography authority; frontalization RT; new full-frame readback/copy; FIFO; stale queue; permanent frame buffer; blocking wait/fence/flush; prediction; smoothing/Kalman; secondary Root/Head writer; KiwiFaceMotion or KiwiInferenceFaceTracker edit; Native/camera ABI edit; mirror/swap edit; forced MediaPipe-only Production; occlusion/shader edit; mouth tuning; threshold relaxation; compensating Sentis solver stacked onto the first failing build; unrelated cleanup.
+
+STATIC_FIXPOINT_STATUS
+H1_CANDIDATE=NOT_REACHED
+Blockers: primary backend pose absent; mask equality telemetry constant; owner count mapper-derived; lifecycle reacquire and Human Visual unclosed.
+FINAL_ROLLBACK=SCOPED_STATIC_FIXPOINT_REACHED_FOR_NO_CHANGE
+All H1 source changes are absent, tracked candidate files equal baseline SHA, no new H1 writer remains. This is not a perfect-system claim.
+
+COMPILE / BUILD RESULT
+Candidate compile:
+  Unity=6000.0.80f1; Direct3D12; exit=0; C# errors=0.
+  Log=Logs/h1_compile_unity6000_pass3_20260908.log
+  SHA256=CE90D31336F67708C3A0C1DE6CD2ACFA058C115E414666553B0DFD51A8128537
+  Existing generator/obsolete/unused warnings remain; warning-free is not claimed.
+Candidate build:
+  KiwiStandaloneBuildDiagnostic.BuildWindows64; StandaloneWindows64; Development=1; DX12-only=1.
+  scene=Assets/Scenes/Face Landmark Detection.unity
+  mandatory gate bypass=0
+  preflight PASS/releaseCandidateReady=True/True; warning/error/critical=2/0/0
+  fingerprint=e93ba4f9ac98c4be4e76a9a03f540af3ad4dbc3ef304b88f39d5103a7c4475ab
+  preflight warnings=UGUI 2.0.0 baseline drift; UniVRM version unverified.
+  result=Succeeded; warnings/errors=202/0; exit=0
+  diagnosticOnly=1; releaseCandidateArtifact=0
+Artifacts:
+  EXE=98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81
+  Assembly-CSharp.dll=D4EE7C0409274DE057F3FC122B6FB71343B1D22670A66E6FF049CD30BB1C6EC0
+  build meta=DB0C388E4C7EC0EF1F88C033DA163F5DD1E356B5D5BD8C4AA86CEDFD9FCA8ABB
+  preflight JSON=94AC8ED6B045D5FAA5D1C123D52B46E41B8EDADBEEE03CE58070337C68A96209
+  compute audit JSON=9FC234C858F3ED00AFD79515CD91FBA92F81A68CFBB818C2D0897C3E19F2FF2C
+Post-rollback compile/build=NOT_RUN; final tracked source is byte-identical baseline and git diff is empty.
+
+RUNTIME_RESULT
+RESULT=FAIL / NO_GO for H1 candidate.
+Artifact=exact EXE above.
+Log=Logs/h1_player_runtime_20260908_194700.log
+Log SHA256=3EA76BA4238E441EBAF0B852E3C3DC2C3551B470CB8200C0647C09432EC02B05
+Graphics=Direct3D12 12.1, RTX 4090.
+Camera=UGREEN Camera 4K 1920x1080@60; MediaFoundation/NV12/D3D11->D3D12 compatibility reverse share; stable/nonblocking latest presentation.
+Observed identity=cameraGeneration 2; trackingSessionGeneration 2.
+Inference=Hybrid GPU single-readback initialized.
+H1 telemetry samples=28:
+  all-parts H1 / owners=1 / NONE: 7
+  all-parts SAFE_FALLBACK / owners=0 / BACKEND_NOT_MEDIAPIPE: 21
+  sampled mode transitions=10
+  first=frame 1 timestamp 2135 SAFE_FALLBACK
+  last=frame 896 timestamp 31058 SAFE_FALLBACK
+These are one-second samples, not an exact per-frame percentage.
+No sampled row mixed per-part modes. Pixel/mask equality and owner count remain unproven due validator design.
+First failure: high-rate InferenceEngine publishes Vector3 landmarks but no same-sample FaceGeometry pose; Canonical correctly rejects H1, so normal hybrid ownership alternates H1/fallback.
+Unrelated existing Runtime error: KiwiSpoutWaitFreeDiagnosticV44_20 EntryPointNotFound for KiwiSpoutDiagGetPluginLoaded. Not changed, but whole-run error-free PASS is forbidden.
+Shutdown logged disposeInvoked=1, trackerCleared=1, blockingGpuWait=0.
+
+HUMAN_VISUAL_RESULT
+NOT_RUN
+No authoritative external MP4 or complete neutral/yaw/pitch/roll/combined/recovery review was captured. Windows UI-control failed before reliable review, and the agent cannot physically perform head motion.
+ROTATION_MATCH=UNKNOWN
+EYE_TWIST=UNKNOWN
+MOUTH_TWIST=UNKNOWN
+LIVE_CAMERA=Runtime startup confirmed; Human Visual UNKNOWN
+
+PERFORMANCE_AUTHORITY
+NONE
+Only a Development diagnostic run with telemetry/existing observers occurred. No clean Production benchmark, latency, or FPS claim.
+
+LIFECYCLE / RECOVERY
+Prototype statically cleared maps on disable/destroy/rebind and rejected identity mismatch.
+Shutdown cleanup passed without blocking wait.
+Camera restart, provider reacquire, avatar hot swap, scene reload with H1, and generation rollover were NOT_RUN.
+H1 lifecycle authority=INCOMPLETE.
+Final source risk is removed by exact rollback.
+
+RESOURCE CORRECTNESS
+Static prototype added no full-frame copy/readback/wait/fence/flush/queue/buffer/thread/process hop. It used small contour/control arrays and existing grid vertices.
+Native ABI unchanged; DLL SHA fixed.
+Static resource result does not override Runtime NO_GO.
+
+GATE_9 MOUTH SIZE / SURFACE CLIP
+NOT_RUN because H1 did not pass. No mouth zoom, overlap, safeZoom, crop/mask bound, surface clipping, or shader scale was changed.
+
+REGRESSION_RISK
+Final source risk=LOW: all H1 tracked files match baseline and new files are absent.
+Candidate risk if reintroduced=HIGH: hybrid mode discontinuity, incomplete same-sample pose coverage, non-independent validator outputs, untested recovery, no visual/performance authority.
+Diagnostic artifacts must not be mistaken for approved Production.
+
+最終判断
+変更が無変更より優れている根拠：証明されていない
+H1 候補の Production 採用判定：不合格（NO_GO）
+H1 候補の Production 採用：承認しない
+最終的なソース対応：H1 候補の変更だけを全撤回
+既存 Production／Working Core：変更せず維持
+コミット／プッシュ：実施していない
+この不合格判定は、既存 Production 全体が不合格または故障しているという意味ではない。通常の hybrid backend で H1 候補を採用するための証拠が不足しているため、H1 候補だけを撤回した。既存の twist／occlusion／mouth 問題が解決したとは主張しない。
+
+NEXT_SINGLE_ACTION
+Create one observer-only same-source-transaction geometry parity probe at the InferenceEngine decode boundary. Compare a proposed H1-B metric pose/residual solve from that exact Vector3 sample against version-matched MediaPipe FaceGeometry under predeclared pose/reprojection thresholds, without publishing tracking/presentation state. Do not reintroduce H1 mapping until the probe proves stable coverage for the high-rate primary backend.
+
+COMMIT_PUSH=NO（コミット／プッシュは実施していない）

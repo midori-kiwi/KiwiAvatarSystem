@@ -1,188 +1,283 @@
-# KiwiAvatarSystem AGENTS.md
+# KiwiAvatarSystem — Project AGENTS.md
 
 ## Scope
-This file applies to the KiwiAvatarSystem repository only.
-Do not treat it as global guidance for unrelated repositories.
 
-## Astra Single-Agent Policy
+This file contains durable KiwiAvatarSystem rules only.
+Project root: `D:\KiwiAvatarSystem`.
 
-Default mode: single-agent execution.
+Do not embed current version numbers, current Git SHA, latest Runtime results, current roadmap step,
+temporary hypotheses, or other volatile state here. Resolve current state from local Production,
+installed package source, Git history, KiwiValidation reports, build identity, and correlated Runtime evidence.
 
-- Do not spawn, delegate to, or invoke any sub-agent unless the user explicitly requests sub-agent use in the current request.
-- The default sub-agent count is 0.
-- Do not use sub-agents for parallelization, research, implementation, review, testing, validation, or performance optimization.
-- Do not infer permission to use sub-agents from task complexity, duration, context size, or potential quality improvements.
-- Previous permission to use sub-agents does not carry over to later requests.
-- If no explicit current-request permission exists, complete the task entirely in the primary Astra agent.
-- Do not recursively delegate.
+## Autonomous local execution
 
-## Goal
-Preserve the working low-latency Production core unless evidence justifies a change.
-Prefer deletion, responsibility retirement, and simplification before adding new mechanisms.
-`NO_CHANGE` is a valid and preferred result when no change is justified.
+Within an explicitly assigned KiwiAvatarSystem task, proceed without routine confirmation for normal engineering work.
 
-## Authority
-Use claim-scoped authority.
+Allowed without extra confirmation:
+- read/search/edit files under `D:\KiwiAvatarSystem`;
+- run Windows PowerShell 5.1 commands and project scripts;
+- run Unity Editor/batchmode/build/compile operations required by the task;
+- run C#/C++ build tools, validators, linters, ABI checks, SHA256 checks, and local diagnostics;
+- create project-local backups, reports, logs, temporary build artifacts, and Runtime evidence;
+- inspect installed package source and local Git history;
+- use network/web access for official source/documentation and dependency research;
+- repeat a failed local compile/test only when the failure or a changed input justifies the rerun.
 
-- Implementation: current local Production source + SHA.
-- Runtime: same-build, same-Production correlated evidence.
-- Package semantics: actually installed package source.
-- Performance: clean Production benchmark only.
-- Visual: same-build observed result only.
+Do not stop merely to ask whether routine read/edit/build/test operations are allowed.
+Make the smallest justified change, verify it, and continue to task completion.
 
-Do not promote Static findings to Runtime facts.
-Do not infer SHA values.
-Do not prefer GitHub main when it is older than current local Production.
-Treat Observer, Validator, Benchmark, and REPORT conclusions as audit targets, not unquestionable authority.
+## Hard human-authorization boundary
 
-## Repository safety
-Before modifying files:
-- inspect git HEAD and git status;
-- preserve user-owned dirty files;
-- do not reset, checkout, clean, or overwrite unrelated changes;
-- record write targets;
-- do not commit or push unless explicitly requested.
+The following are never implicit consequences of another task.
 
-## Core architecture
-Face Landmarker is the Primary / Source of Truth.
+### Git publication and destructive Git state changes
 
-Target flow:
-Newest valid camera sample
--> Face Landmarker
--> Canonical semantic state
--> Model Profile / model-specific mapping
--> Avatar / FacePart binding
--> Presentation
--> Spout/output
+Do not run any of the following unless the user explicitly requests the exact operation in the current task:
+- `git commit`;
+- `git push`;
+- creating/publishing tags or releases;
+- force push;
+- `git reset`;
+- `git clean`;
+- checkout/restore operations that discard or overwrite user-owned changes;
+- destructive history rewriting.
 
-Healthy samples should follow the shortest correct path.
-Reject or locally suppress only invalid, duplicate, out-of-order, stale, mixed-epoch, broken-transaction, or presentation/provider-transition failures.
+Treat an existing dirty workspace as user-owned unless the task proves otherwise.
+Never reset, clean, stash, overwrite, or attribute pre-existing modifications to the current task merely to obtain a clean tree.
 
-## Camera / Native rails
-Windows/DX12 is the primary target.
+### PC-wide or operating-system changes
 
-Preserve unless contrary evidence is established:
-- latest-frame behavior;
+Do not make PC-wide destructive, persistence, security-boundary, or recovery-impacting changes unless the user explicitly requests that exact system operation.
+
+This includes:
+- disk partitioning, formatting, boot/BCD changes, firmware/BIOS actions;
+- device-driver install/remove/disable;
+- Windows service creation/removal or broad service reconfiguration;
+- UAC, Defender, antivirus, firewall, security policy, credential, certificate-store, or account changes;
+- machine/user execution-policy changes;
+- machine-wide PATH/environment changes not strictly required by an explicitly assigned setup task;
+- registry changes unrelated to a narrowly identified Kiwi requirement;
+- scheduled-task, startup, autorun, or persistence changes;
+- shutdown/restart/logoff commands unless the user specifically requested them;
+- recursive deletion or permission takeover outside the project root;
+- destructive changes to unrelated repositories, user documents, browser profiles, cloud-sync roots, or system directories.
+
+A process-local PowerShell execution-policy override used by an existing Kiwi runner is not a machine/user policy change.
+
+If one of these system operations becomes necessary, stop at that boundary, state the exact required operation and why,
+and wait for explicit user authorization. Do not work around the boundary by weakening Windows security.
+
+## External writes
+
+Reading outside the project is allowed when required for source/package/toolchain/provenance inspection.
+
+Writing outside `D:\KiwiAvatarSystem` is allowed only when directly required by the assigned task, such as:
+- a normal toolchain cache/output location;
+- Unity/Windows logs;
+- a user-selected staging/output path.
+
+Keep such writes narrow and reversible. Never recursively delete or rewrite unrelated external paths.
+
+## Claim-Scoped Authority
+
+Use claim-scoped authority rather than "latest wins".
+
+Implementation:
+current local Production source + actual SHA > installed artifact/package > local Git > remote repository.
+
+Runtime:
+same-Production / same-build Runtime > correlated evidence > static source.
+
+Package:
+actually installed package source > version-matched official source > documentation.
+
+Performance:
+clean Production benchmark > same-build telemetry > diagnostic run > theory.
+
+Visual:
+same-build Runtime/MP4/human observation > screenshot > static math.
+
+Provenance:
+source -> build definition -> toolchain/flags -> artifact -> installed SHA -> Runtime evidence.
+
+Never guess a SHA.
+Do not promote a Validator PASS, commercial adoption, benchmark result, or "latest" label to correctness by itself.
+Observer, Validator, Benchmark, report, and measurement design are all auditable and can be wrong.
+
+## Engineering objective
+
+Deliver each healthy/newest valid sample to the Avatar with minimum justified latency and high semantic accuracy.
+Reject, hold, or recover only locally for invalid samples, authority transitions, broken transactions, or presentation failures.
+
+Do not rebuild a Working Core for cleanup alone.
+If new evidence proves a defect, change the smallest responsible boundary.
+If an assumption, source/timestamp identity, Observer, proxy, Validator, or measurement design is wrong,
+return to that authority/measurement boundary instead of stacking compensating fixes.
+
+Do not hide root causes with strong smoothing, Kalman filtering, permanent buffering, stale prediction,
+FIFO accumulation, or unjustified threshold relaxation.
+
+## Tracking / Canonical rails
+
+Face Landmarker is Primary / Source of Truth.
+
+Preserve:
+- latest-frame behavior; no latency-growing FIFO or stale accumulation;
+- persistent ROI where currently required;
+- freshness/liveness/source-age separation;
+- tracking cadence separate from display/presentation cadence;
+- duplicate/out-of-order/stale/mixed-epoch publication rejection;
+- same-sample transaction for texture/crop/mask/FacePart data where that contract applies.
+
+Authority separation:
+- Head = one rigid authority;
+- Root translation is separate from Head rotation;
+- Eye/Blink/Mouth/Expression do not drive Root translation;
+- Yaw/Pitch/Roll do not leak into Root translation;
+- Provider normalization owner = one;
+- Resume is not Provider Switch;
+- temporal presentation owner = one per channel;
+- prediction owner = one per channel.
+
+Do not change `KiwiFaceMotion.cs` or `KiwiInferenceFaceTracker.cs` as camera/display workarounds.
+
+## Native Camera rails
+
+Keep the evidence-protected Windows Native baseline unless new evidence proves a defect at that boundary.
+
+Preserve the principles:
+- latest frame;
 - fixed Unity-visible texture identity;
-- explicit timestamp and generation;
-- session epoch distinct from frame sequence;
-- nonblocking realtime path;
-- bounded resources.
+- explicit timestamp and generation/session epoch;
+- session epoch is not frame sequence;
+- bounded lanes/resources;
+- non-blocking normal path.
 
-Do not reintroduce without boundary-specific evidence:
-- FIFO or stale accumulation;
-- `UpdateExternalTexture`;
-- IMFSample retention across callback/worker lifetime;
-- blocking D3D12 queue Wait;
+Do not reintroduce without direct evidence:
+- FIFO/stale queues;
 - rotating Unity-visible texture identity;
-- D3D11On12 1080p Production path.
+- `UpdateExternalTexture` as a workaround;
+- callback/worker-crossing `IMFSample` lifetime retention;
+- blocking D3D12 queue waits;
+- unsupported historical bridge paths.
 
-Do not hide camera/inference defects by changing tracking math.
+Native provenance is not closed by DLL/EXE SHA alone.
+Track source -> build definition -> toolchain/flags -> artifact -> installed SHA.
+Do not perform a guessed rebuild when the actual build definition is unknown.
 
-## Tracking / semantic ownership
-Keep authority singular and explicit.
+## Inference / transaction rails
 
-- Head = one rigid authority.
-- Root, Head, Eye, and Mouth are separate channels.
-- Yaw/Pitch/Roll must not drive Root translation.
-- Blink/Mouth/Eye must not drive Root translation.
-- Provider normalization owner = 1.
-- Resume != Provider Switch.
-- Temporal Presentation owner = 1 per channel.
-- Prediction owner = 1 per channel.
-- Do not publish duplicate, out-of-order, stale, or mixed-epoch samples.
-- Texture/Crop/Mask/FacePart should remain one same-sample transaction where required.
+Prefer the actually installed Inference Engine package source for package behavior claims.
 
-Do not add strong smoothing, Kalman filtering, stale prediction, permanent frame delay, or threshold relaxation without evidence.
+Do not confuse logical tensor size with backing capacity.
+Treat worker-owned output lifetime and asynchronous queue/readback lifetime as explicit correctness concerns.
+Do not restore lane-input direct readback/copy as a Production input oracle without new evidence.
 
-## Inference / GPU
-Trace actual installed Inference Engine source before changing scheduling, queue, tensor, or readback behavior.
+A backend is not Production-eligible because it is faster or pixel-close.
+Close model/canonical semantic correctness first.
+Separate old/new in-flight publication across backend epochs.
 
-Keep preprocess, execution, output lifetime, readback, decode, and canonical stages distinguishable.
+Trace only transaction fields whose necessity is demonstrated.
+After execution-context/semantic closure, prefer deterministic replay / Golden Corpus.
+Never auto-update Golden data from current behavior.
 
-Do not add Fence, blocking Wait, queue flush, or async-disable as a guessed fix.
-A synchronization change requires exact boundary evidence and lifecycle/resource review.
+## Avatar boundary
 
-## Diagnostic code
-Production and Diagnostic responsibilities must remain separate.
-
-For each diagnostic:
-- state the claim it measures;
-- state whether the claim is still open;
-- keep it opt-in when practical;
-- retire superseded diagnostic implementations once their evidence is preserved and no unique dependency remains.
-
-Do not preserve old diagnostics merely because they once produced useful evidence.
-Observer-heavy runs are not Performance Authority.
-
-## Avatar / FacePart
-Preferred architecture:
-Evidence-Protected Core
+Target architecture:
+Evidence-Protected Tracking Core
 + Avatar Adapter
 + Model Profile
 + Runtime Import
-+ Transactional Hot Swap
++ Transactional Hot Swap.
 
-Prefer stateless mapping -> FacePartState -> atomic commit.
+Keep model-specific logic out of Tracking Core.
+Do not replace Face Landmarker Primary with an external tracker merely because another product appears mature.
 
-External tracker replacement is not the Primary direction.
 External reuse is selective and evidence-gated.
+Prefer reuse only when it removes Kiwi responsibility/bug surface without adding permanent FIFO, hidden smoothing,
+extra process/thread hops, serialization, CPU/GPU round trips, readback/upload, previous-frame dependencies,
+authority owners, or unacceptable lifecycle/resource risk.
 
-Reject reuse that permanently adds unnecessary:
-- copies;
-- FIFO/queues;
-- buffers;
-- process/thread hops;
-- serialization;
-- CPU-GPU roundtrips;
-- readback/upload;
-- previous-frame dependency;
-- hidden smoothing/normalization;
-- additional authority owners.
+## Runtime evaluation order
 
-## Change decision
-Before changing Production, answer:
+Evaluate in this order:
+1. Source identity / provenance.
+2. Timestamp and transaction identity.
+3. Model semantic correctness.
+4. Canonical semantic correctness.
+5. Authority / ownership safety.
+6. Lifecycle / recovery.
+7. Resource correctness.
+8. Clean Production performance.
+9. Same-build visual behavior.
+10. Product/release reliability.
 
-`WHY_CHANGE_IS_BETTER_THAN_NO_CHANGE=`
+Observer-heavy correctness runs are not Performance Authority.
+Do not use a proxy alone for a Production decision.
+Do not change Tracking Core based only on visual symptoms.
 
-If evidence does not support the answer, do not change Production.
+Prefer:
+change-local Gate -> contract/replay Gate -> milestone full-product Gate.
 
-Preferred order:
-1. delete unreachable/obsolete/superseded code;
-2. retire duplicate responsibility;
-3. simplify ownership/state;
-4. optimize the remaining hot path;
-5. add a new mechanism only when necessary.
+Do not multiply diagnostics for the same closed claim.
+Retire or freeze diagnostics when their claim/owner is closed or superseded.
 
-Big-Bang rewrite is rejected.
+## PowerShell / Validator / installer
 
-## Validation order
-Use:
-1. Source identity
-2. Timestamp / transaction identity
-3. Model semantic correctness
-4. Canonical semantic correctness
-5. Authority safety
-6. Lifecycle / recovery
-7. Resource correctness
-8. Clean performance
-9. Visual result
+Windows PowerShell 5.1 compatibility is required for Kiwi PowerShell tooling.
 
-Validation effort should be proportional to change risk.
-Do not repeat already-passing validation unless new evidence, a new change, or an unresolved concern can change the decision.
+Prefer shared, audited helpers for:
+- SHA256;
+- safe/root-contained I/O;
+- subprocess stdout/stderr/exit-code capture;
+- transactional replacement;
+- rollback;
+- write-target guards.
 
-## Current-state information
-Do not hard-code volatile current version numbers, SHAs, or latest Runtime conclusions in this file.
-Resolve current state from local source, current build identity, Runtime evidence, and the latest relevant consolidated report.
+Reject:
+- PS7-only syntax in required PS5.1 tooling;
+- ambiguous cardinality;
+- unsafe broad Copy/Move/Remove;
+- obsolete paths/versions;
+- placeholders;
+- version/class/contract/output-name mismatches.
+
+For Generic List usage, prefer `::new()` plus `.ToArray()` where applicable.
+
+Validators are evidence producers, not unquestionable authorities.
+Audit their schema, representation normalization, identity logic, failure mode, write target, and independence.
+
+For installer/distribution replacement:
+exact identity -> backup -> transactional replace -> validate -> rollback path.
+
+## Change discipline
+
+Before a non-trivial design change:
+- inspect current local Production/source identity;
+- inspect the actually installed relevant package source;
+- check relevant official source/documentation;
+- compare established alternative designs where they could change the decision;
+- identify benefits, costs, latency, authority, lifecycle, and regression risks;
+- choose one smallest justified approach.
+
+Do not rewrite healthy code for organization/style alone.
+Prefer whole-file output when a file must be replaced and the user needs a copyable implementation.
+Do not commit or push unless explicitly requested.
+
+After code changes, verify the affected compile/ABI/authority/lifecycle/SHA/write target as applicable.
+Run Unity Runtime only when the claim requires Runtime evidence; do not create heavy observers by default.
 
 ## Reporting
-Keep Confirmed, Runtime, Static, Package Source, External Public Source, Inference, Rejected, Unknown, and Superseded claims distinct.
 
-Final reports should state:
-- what changed;
-- what did not change;
-- why the change is better than `NO_CHANGE`;
-- Runtime/Performance/Visual authority separately;
-- next single action.
+Keep conclusions concise and separate:
+- Confirmed Facts;
+- Runtime;
+- Static / Package Source;
+- Public Design Principles;
+- Inference / Hypothesis;
+- Unknown / Unverified;
+- Rejected / Superseded where relevant.
 
-Never fabricate Runtime, Performance, Visual, build, or SHA authority.
+For substantial Codex work, prefer one consolidated report.
+For Runtime evidence, prefer one ZIP when a ZIP is actually needed.
+Do not fabricate local Production verification or SHA.
