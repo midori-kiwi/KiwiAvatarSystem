@@ -4,6 +4,18 @@
 This file applies to the KiwiAvatarSystem repository only.
 Do not treat it as global guidance for unrelated repositories.
 
+## Astra Single-Agent Policy
+
+Default mode: single-agent execution.
+
+- Do not spawn, delegate to, or invoke any sub-agent unless the user explicitly requests sub-agent use in the current request.
+- The default sub-agent count is 0.
+- Do not use sub-agents for parallelization, research, implementation, review, testing, validation, or performance optimization.
+- Do not infer permission to use sub-agents from task complexity, duration, context size, or potential quality improvements.
+- Previous permission to use sub-agents does not carry over to later requests.
+- If no explicit current-request permission exists, complete the task entirely in the primary Astra agent.
+- Do not recursively delegate.
+
 ## Goal
 Preserve the working low-latency Production core unless evidence justifies a change.
 Prefer deletion, responsibility retirement, and simplification before adding new mechanisms.
