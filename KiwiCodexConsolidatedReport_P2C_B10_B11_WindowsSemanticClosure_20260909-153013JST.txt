@@ -1,0 +1,402 @@
+KiwiAvatarSystem P2C B10/B11 Windows Semantic Closure — Ordered Static Gate
+Report time: 2026-09-09 15:30:13 JST
+Project: D:\KiwiAvatarSystem
+Claim scope: CURRENT WINDOWS / DX12 / NATIVE PATH B PRODUCTION
+
+============================================================
+0. OUTCOME
+============================================================
+
+[Decision]
+- P2C Boundary 1-9 current reuse gate=PASS. All required task-time identities are
+  byte-identical to the 2026-09-09 12:07 P2C B8 report authority.
+- Native-active Path B is statically Rotation0 at both MediaPipe and IE boundaries.
+- The complete Windows Production-reachable domain is wider: the same
+  WindowsNativeWebCamSource falls back to its inherited WebCamSource/WebCamTexture path
+  after native unavailability/start failure and under an explicit supported fallback mode.
+- That fallback publishes WebCamTexture.videoRotationAngle. Nonzero source rotation reaches
+  MediaPipe ImageProcessingOptions, but no rotation value or equivalent source-rotation
+  matrix reaches KiwiInferenceFaceTracker.
+- Therefore B10_WINDOWS_NATIVE_PRODUCTION=FAIL for the complete accepted Windows domain.
+- Ordered stop applies. Boundary 11 was not audited and no equation-based B11 result is claimed.
+- No Production source/package/scene change, compile, Runtime, camera use, commit, or push occurred.
+
+============================================================
+1. LIVE-LOCAL AUTHORITY PREFLIGHT
+============================================================
+
+[Confirmed Facts]
+- Exact project root=D:\KiwiAvatarSystem.
+- Branch=work/raw-direct-motion.
+- Task-time HEAD=2637b089fa5d0673f92887eecda4e9eb4e9de25c.
+- Upstream=origin/work/raw-direct-motion at
+  38ad8d23d14a3795f47b100a1003fc506dbfa003; local relation=ahead 5 / behind 0.
+- Task-start/current tracked dirty files are user-owned inputs:
+  Assets\Script\FaceLandmarkerRunner.cs
+  Assets\Script\KiwiInferenceFaceTracker.cs
+- Task-start/current untracked state includes CodexTasks\ and the two prior P2B/P2C
+  consolidated reports. None was reset, checked out, cleaned, stashed, deleted, or overwritten.
+- This report is the only file created by this task.
+
+[Unity Identity]
+- ProjectVersion.txt=6000.0.80f1 (2dfd32957da2).
+- Exact executable=C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe.
+- Executable ProductVersion=6000.0.80f1_2dfd32957da2.
+- Executable FileVersion=6000.0.80.3013938.
+- Executable SHA256=7FC68434F4FCCF2781648C398FBAA4E8ADFB568251605E990D887FE36CF1376F.
+- Expected/current equality=PASS. Unity was not launched.
+
+[Package Source Authority]
+- MediaPipe manifest entry=file:com.github.homuler.mediapipe-0.16.3.tgz.
+- TGZ SHA256=CC3E77A219E0B99618AE3BE64C31A566197DEEDC69C1E136ACF52D65D7CF2E79.
+- Installed root=Library\PackageCache\com.github.homuler.mediapipe@66127f8e750d.
+- Installed package.json version=0.16.3; fingerprint=66127f8e750d;
+  package.json SHA256=EEBBFF4550FA9CA3C2C76AB05BD0EDBDB3A0A4C2800883E244DC9E40D8FF2A2D.
+- Inference Engine manifest/lock version=2.4.1.
+- Installed root=Library\PackageCache\com.unity.ai.inference@587873fd5e1b.
+- Installed package.json version=2.4.1;
+  fingerprint=587873fd5e1bd2d10f696bceb1a83c296823e927;
+  package.json SHA256=2F230C84E28A9E3AD516B1A49B79B6F83E172F1C16E6813E0F1DD6FA2B1790EE.
+- Packages\manifest.json SHA256=
+  35F00A89D31A8BF7EE50718F38D4BAC90236D8B691F516C5FC14CAB47AFBFEE1.
+- Packages\packages-lock.json SHA256=
+  23845C132DBF51CB53A5CFDE4EF606FA68D10DCB53AE5FF21F4305613A5F9CE1.
+
+[Current Implementation/Artifact SHA256]
+- Assets\Script\KiwiInferenceFaceTracker.cs
+  17F55087EFA7D42B14EF7453F35B0720EE79A23A64CB239391171C45241E3744
+- Assets\Script\FaceLandmarkerRunner.cs
+  027C61F6A4B42E772F355719CFF93D5D8DF1D0C3C100AE6C07E2E3083EC4F90E
+- Assets\KiwiAvatarSystem\Runtime\Camera\WindowsNativeWebCamSource.cs
+  D0DD9A78FA57AAB51D3E0C8606844C44F0207DC87277D0B26AEF3B43EF353533
+- Assets\MediaPipeUnity\Samples\Common\Scripts\AppSettings.cs
+  0F3CFF1D8D153FD94E185B90F91ACD85EE26319B2FF83EE1B066E09CA27ECDD0
+- Assets\MediaPipeUnity\Samples\Common\Scripts\ImageSource\ImageSource.cs
+  021243C7C059D1C797CE72B4690B6C7FA848105DC852101289EC576D0163CA6D
+- Installed ImageTransformationOptions.cs
+  3806D636843AFEF2FFFA0761D78A2799ED44BF5E7DCB71CB464F978DBB1ADB4D
+- Production Resources ONNX
+  ED487104519B0A88CB2CB2EC3678E183F447FB9DD63560998E960FFBAA8FB335
+  size=2440358 bytes.
+- StreamingAssets ONNX has the same SHA256 and size.
+- Current producer remains Resources.Load<ModelAsset>("KiwiFaceLandmarkInference") in
+  FaceLandmarkerRunner -> KiwiInferenceFaceTracker -> ModelLoader.Load. The Resources copy is
+  the IE model artifact used by this source path.
+
+============================================================
+2. P2C BOUNDARY 1-9 CURRENT REUSE GATE
+============================================================
+
+[Confirmed Identity Delta]
+- The task-time Tracker, Runner, Resources/StreamingAssets ONNX, manifest, and packages-lock
+  hashes exactly match the 12:07 report's final/current identities.
+- Installed MediaPipe version/fingerprint/TGZ and installed Inference Engine
+  version/fingerprint also match that report.
+- No exact delta exists in a B1-9 owner or artifact.
+- Classification=UNCHANGED_FROM_P2C_B8_AUTHORITY.
+
+[Decision]
+- Reuse Boundary 1 model provenance=PASS.
+- Reuse Boundary 2 first468 topology/decode=PASS.
+- Reuse Boundary 3 XYZ crop normalization=PASS.
+- Reuse Boundary 4 origin/Y basis=PASS.
+- Reuse Boundary 5 same-sample ROI transform=PASS.
+- Reuse Boundary 6 XY source projection=PASS.
+- Reuse Boundary 7 Z source projection=PASS.
+- Reuse Boundary 8 pixel-square ROI=PASS.
+- Reuse Boundary 9 letterbox=PASS.
+- P2C_B1_TO_B9_CURRENT_REUSE_GATE=PASS.
+
+============================================================
+3. B10 2026-09-07 IDENTITY/DELTA GATE
+============================================================
+
+[Confirmed Facts]
+- WindowsNativeWebCamSource.cs=IDENTICAL_TO_0907.
+- AppSettings.cs=IDENTICAL_TO_0907.
+- ImageSource.cs=IDENTICAL_TO_0907.
+- Installed ImageTransformationOptions.cs=IDENTICAL_TO_0907.
+- FaceLandmarkerRunner whole-file identity is not used as a 09/07 equivalence shortcut.
+  Its current rotation-specific initialization, refresh, MediaPipe submission, and IE
+  initialization dataflow was inspected directly.
+- Runner's B8 whole-file change does not add a source-rotation argument to
+  InitializeSentisTracker or KiwiInferenceFaceTracker.
+
+[Supporting Prior Evidence, Not Promoted to Current]
+- The 09/07 report observed its same-build native-active source as frontFacing=false,
+  horizontallyFlipped=false, verticallyFlipped=false, rotation=Rotation0, yielding installed
+  transform flags H=false, V=true, rotation=0. This supports the native-active subdomain only.
+- Current classification is derived from current source identities and dataflow, not by
+  promoting the prior Runtime observation.
+
+============================================================
+4. COMPLETE CURRENT WINDOWS PRODUCTION PROVIDER DOMAIN
+============================================================
+
+[Static / Current Production Reachability]
+1. Initial selection
+   - AppSettings.asset serializes _defaultImageSource=0; ImageSourceType.WebCamera=0.
+   - Bootstrap builds the WebCamera source through AppSettings.BuildWebCamSource and switches
+     ImageSourceProvider to the configured default.
+   - On UNITY_EDITOR_WIN/UNITY_STANDALONE_WIN, BuildWebCamSource constructs exactly one
+     WindowsNativeWebCamSource, which inherits WebCamSource.
+
+2. Normal DX12 native path
+   - WindowsNativeWebCamSource.Play uses native Production when graphics=D3D12 and native
+     support/start/first-presentable-texture gates succeed.
+   - The current native capture log contract identifies Path B when
+     SystemMemoryCaptureEnabled is true.
+   - The native provider returns a stable KiwiNativeCameraPresentation RenderTexture.
+
+3. Startup failure/unavailability and explicit fallback
+   - If D3D12/native support is unavailable, native Start fails, or the first presentable
+     texture times out, Play reaches _fallbackActive=true; yield return base.Play().
+   - KIWI_NATIVE_CAMERA_MODE=WEBCAM/FALLBACK/DISABLED also reaches the same path.
+   - Diagnostic modes later enter base.Play for normal tracking, but diagnostic execution is
+     not used as Production authority; the resulting base fallback itself is a normal tracking
+     source in current code.
+   - Therefore inherited WebCamSource/WebCamTexture is Production-reachable on Windows and
+     cannot be excluded from B10.
+
+4. Pause/resume, restart, and active-session failure
+   - Native Resume does not switch provider; it resumes consumption of the same native source.
+   - Fallback Resume delegates to WebCamSource.Resume. Resume is not a provider switch.
+   - The release scene includes the Main Canvas ImageSource Config UI. A changed setting calls
+     Modal.CloseAndResume(forceRestart=true) -> runner.Play(); VisionTaskApiRunner.Play first
+     stops the current run and then starts the currently selected provider.
+   - Re-selecting WebCamera/device/resolution therefore re-enters WindowsNativeWebCamSource.Play
+     and the same native-or-fallback gates.
+   - No automatic active-native-to-WebCamTexture transition was found after native has become
+     active; PrepareFrameForUnity returns when no presentable slot exists. This does not remove
+     the startup/restart fallback reachability above.
+
+5. Provider/source switching
+   - ImageSourceConfig exposes ImageSourceProvider.Switch for WebCamera/Image/Video, camera
+     selection, resolution selection, and isHorizontallyFlipped mutation.
+   - Current AppSettings.asset has empty StaticImage and Video source arrays. Those objects can
+     be selected in the generic UI, but cannot produce a prepared accepted input and are not
+     included in the current operational accepted set.
+
+[Provider Set]
+- WINDOWS_DEFAULT_IMAGE_SOURCE=WindowsNativeWebCamSource, default type WebCamera.
+- WINDOWS_FALLBACK_IMAGE_SOURCE=the same WindowsNativeWebCamSource instance operating through
+  inherited WebCamSource/WebCamTexture.
+- WINDOWS_RUNTIME_SOURCE_SWITCH_AVAILABLE=YES: release UI can restart/switch type/device/
+  resolution/explicit horizontal flip; configured StaticImage/Video have no accepted assets.
+- CURRENT_WINDOWS_ACCEPTED_IMAGE_SOURCE_SET={WindowsNativeWebCamSource native-active Path B,
+  WindowsNativeWebCamSource inherited WebCamSource/WebCamTexture fallback}.
+
+============================================================
+5. B10 EXACT SOURCE-ROTATION CONTRACT
+============================================================
+
+[Source Producers]
+- Native-active WindowsNativeWebCamSource overrides rotation=Rotation0 and publishes the
+  provider-normalized KiwiNativeCameraPresentation texture. Domain={0}.
+- When not native-active, the override delegates to WebCamSource.rotation.
+- WebCamSource.rotation returns (RotationAngle)webCamTexture.videoRotationAngle after prepare.
+- Unity 6000.0 public API documents videoRotationAngle as the camera-content clockwise angle
+  used to orient the image correctly:
+  https://docs.unity3d.com/6000.0/Documentation/ScriptReference/WebCamTexture-videoRotationAngle.html
+- Installed ImageTransformationOptions tests exercise Rotation0/90/180/270. Current fallback
+  source has no Windows-specific rejection, normalization-to-zero, or accepted-domain guard for
+  the nonzero values.
+
+[MediaPipe Consumer]
+- ImageSource.GetTransformationOptions returns flips plus source rotation.
+- Runner initialization constructs ImageProcessingOptions(rotationDegrees=(int)rotationAngle).
+- On an owned source identity/name/dimension refresh, Runner reconstructs the same options from
+  the refreshed source.
+- Installed BaseVisionTaskApi requires a multiple of 90, writes normalizedRect.Rotation=
+  -rotationDegrees*pi/180, and swaps rect width/height for 90/270.
+- MediaPipe therefore consumes the nonzero source-rotation contract.
+
+[IE Consumer]
+- InitializeSentisTracker accepts only source Texture, flipHorizontally, flipVertically.
+- Refresh stores only _sentisSourceTexture and those two flip booleans.
+- KiwiInferenceFaceTracker.TryProcess/TryProcessAsync/ScheduleModel likewise accept no source
+  rotation value.
+- ScheduleModel computes samplingMatrix=BuildFlipMatrix(h,v)*cropMatrix and sends it to the
+  crop shader. BuildFlipMatrix contains only x->1-x and/or y->1-y reflections.
+- KiwiInferenceFaceCrop.shader samples mul(_Xform,(cropUv,0,1)).xy. No source-rotation matrix,
+  90/270 dimension swap, rotationAngle, or rotationDegrees is present.
+- DecodeReadableOutput projects using the unrotated same-lane cropMatrix. ROI roll is a separate
+  face-ROI transform and is not a substitute for source-image rotation.
+
+[Rotation-Only Equation / Counterexample]
+- Let P be an arbitrary physical source feature and let F be the already separate flip/origin
+  preprocessing transform. For the rotation subclaim, factor F as common input processing and
+  vary only source rotation r.
+- MediaPipe model-input coordinate: M_input(P)=R_r(F(P)), with the installed 90/270 dimension
+  handling where applicable.
+- IE model-input coordinate: I_input(P)=F(P), followed by the existing ROI crop; there is no R_r.
+- For native-active r=0, R_0 is identity and this B10 subclaim passes.
+- For fallback r in {90,180,270}, choose any asymmetric P not fixed by R_r. Then
+  R_r(F(P)) != F(P). The model pixels and source-normalized semantics cannot be generally equal.
+- This counterexample does not rely on horizontal mirror, vertical-origin equivalence, preview
+  display state, model numerical equality, or Runtime frequency.
+
+[First Conflict]
+- Producer=WindowsNativeWebCamSource fallback -> WebCamSource.rotation ->
+  WebCamTexture.videoRotationAngle.
+- Accepted nonzero domain=Rotation90/Rotation180/Rotation270 in the current transform/API path.
+- MediaPipe consumer=Runner ImageProcessingOptions.rotationDegrees -> installed
+  BaseVisionTaskApi normalizedRect rotation and 90/270 dimension swap.
+- Missing IE boundary=Runner InitializeSentisTracker/current refresh and
+  KiwiInferenceFaceTracker.ScheduleModel have no source rotation or equivalent transform.
+- Exact defect=SOURCE_IMAGE_ROTATION_NOT_CARRIED_TO_IE_CROP.
+
+[B10 Decision]
+- B10_WINDOWS_NATIVE_ACTIVE_SUBDOMAIN=PASS with MEDIAPIPE_SOURCE_ROTATION=0 and
+  IE_SOURCE_ROTATION=0 only while native remains active.
+- B10_WINDOWS_NATIVE_PRODUCTION=FAIL because the complete Production-reachable fallback domain
+  admits nonzero rotation to MediaPipe while IE remains source-rotation 0.
+- Physical upright orientation and sensor correctness are not claimed.
+- Generic nonzero rotation is not classified as mobile/P20 and is not deferred outside the
+  Windows critical path: its WebCamTexture owner is reachable through current Windows fallback.
+
+============================================================
+6. BOUNDARY 11 ORDERED STOP
+============================================================
+
+[Not Audited]
+- Entry condition B10_WINDOWS_NATIVE_PRODUCTION=PASS is false.
+- BOUNDARY_11_FLIP_MIRROR=NOT_AUDITED_BY_ORDERED_GATE_B10_FAIL.
+- Current IE BuildFlipMatrix and composition statement were inspected only to establish B10's
+  missing rotation input. No boolean-equality shortcut or M(P)=I(P) flip/mirror proof is claimed.
+- GPU/platform Y origin, vertical flip, horizontal mirror, front-facing semantics, ROI roll,
+  source rotation, and preview mirror remain distinct. Screen/RawImage display transforms do
+  not modify the source Texture consumed by the models and were not used as tracking transforms.
+
+============================================================
+7. P1 CLASSIFICATION / CARRIED CLAIMS
+============================================================
+
+[Decision]
+- P1_S_WINDOWS_NATIVE_PRODUCTION=FAIL_AT_B10_WINDOWS_FALLBACK_NONZERO_ROTATION.
+- P1_S_GENERIC_IMAGE_SOURCE_COMPATIBILITY=
+  FAIL_NONZERO_ROTATION_REACHABLE_IN_CURRENT_WINDOWS_FALLBACK_DOMAIN.
+- P1_R_RECURRENCE_POLICY=ACCEPTABLE_PROVIDER_SPECIFIC_DIFFERENCE_CARRIED_FORWARD.
+- P1_R_INDEPENDENT_REAUDIT=NO.
+- P1_I_GEOMETRY_IDENTITY_CARRIER=NONE.
+- B8_LIFECYCLE_BOUND=NO_SEPARATE_OPEN_CLAIM_IDENTIFIED_BY_THIS_AUDIT.
+  The current recovery expansion is capped at 1.35 relative to the trusted ROI, repeated calls
+  take max against that same trusted ROI, lease expiry releases the region, and an anchor during
+  retention adopts the supplied anchor before marking it trusted. This is a narrow Static
+  inspection only; it does not promote B8 to Runtime authority or reopen the semantic repair.
+
+[Scope Exclusions]
+- This failure does not decide numerical equality between IE and MediaPipe models, P1-R,
+  same-sample geometry carrier, FaceGeometry solver correctness, P3, H1, FacePart, Human Visual,
+  Runtime performance, physical camera uprightness, or providers outside the traced set.
+
+============================================================
+8. UNKNOWN / UNVERIFIED
+============================================================
+
+- Which angle the currently attached Windows camera reports on a particular fallback session is
+  Runtime evidence and was not measured.
+- Whether the current machine normally reaches fallback is not required for the accepted-domain
+  Static contradiction and was not measured.
+- Boundary 11 exact flip/mirror equations remain unverified by ordered stop.
+- No Runtime, visual, performance, or same-build camera claim was generated.
+
+============================================================
+9. REJECTED / NOT EXECUTED
+============================================================
+
+- Treating only the nominal native-active path as the complete Windows Production domain:
+  REJECTED because current Play/restart has a normal tracking WebCamTexture fallback.
+- Treating configured-empty StaticImage/Video objects as accepted current Production inputs:
+  REJECTED because they cannot prepare an input in current AppSettings.
+- Promoting 09/07 Rotation0 Runtime evidence to all current fallback sessions: REJECTED.
+- Assigning the generic gap automatically to mobile/P20: REJECTED.
+- Treating ROI roll, Y-origin conversion, Screen/RawImage preview rotation, or boolean flip
+  equality as an IE source-rotation implementation: REJECTED.
+- Boundary 11 audit/repair, rotation implementation, flip fix, B8/Z/ROI recurrence change,
+  FaceGeometry/H1/FacePart/Head/Camera/Native/KiwiFaceMotion change, thresholds, smoothing,
+  Kalman, prediction, FIFO/stale buffer, fence/wait/flush/async-disable: NOT_EXECUTED.
+- Compile/build, Runtime, package/scene write, commit/push: NOT_EXECUTED.
+
+============================================================
+10. NEXT SINGLE ACTION
+============================================================
+
+Decision: the next single action is B10_EXACT_BOUNDED_FOLLOWUP.
+
+The follow-up must stay at the first conflicting boundary: freeze one source-rotation owner and
+an exact rotation/flip/origin composition for the Windows WebCamTexture fallback (including
+90/270 dimension handling and source generation identity), or explicitly remove that fallback
+domain from supported Production reachability. It must not proceed to B11/P3 until B10 passes.
+No repair is implemented or selected as Production in this report.
+
+============================================================
+11. SELF-AUDIT FIXPOINT
+============================================================
+
+1. 09/07 report-time source was not promoted to current: PASS.
+2. 12:07 B1-9 PASS was reused only after task-time identity gate: PASS.
+3. Current model/package identity captured: PASS.
+4. Nominal provider separated from fallback domain: PASS.
+5. Generic WebCamSource was included only because current Windows wrapper reaches base.Play: PASS.
+6. Generic rotation gap was not assigned to mobile/P20: PASS.
+7. B10 contains source rotation only: PASS.
+8. B11 flip/mirror/origin audit was not run after B10 failure: PASS.
+9. Physical upright orientation not confused with MediaPipe/IE parity: PASS.
+10. Preview mirror not treated as model-input transform: PASS.
+11. Boolean equality not substituted for a B11 coordinate equation: PASS; B11 not claimed.
+12. Current IE BuildFlipMatrix and ScheduleModel composition inspected directly: PASS.
+13. Windows P1-S and generic compatibility are separately keyed: PASS.
+14. P1-R/P1-I not mixed into P1-S: PASS.
+15. B8 lifecycle note does not reopen B8 without evidence: PASS.
+16. Production write: NO.
+17. Runtime: NOT_RUN.
+18. Commit/push: NO.
+
+============================================================
+12. REQUIRED MACHINE-READABLE KEYS
+============================================================
+
+CURRENT_HEAD=2637b089fa5d0673f92887eecda4e9eb4e9de25c
+KIWI_INFERENCE_FACE_TRACKER_SHA=17F55087EFA7D42B14EF7453F35B0720EE79A23A64CB239391171C45241E3744
+FACE_LANDMARKER_RUNNER_SHA=027C61F6A4B42E772F355719CFF93D5D8DF1D0C3C100AE6C07E2E3083EC4F90E
+WINDOWS_NATIVE_WEBCAM_SOURCE_SHA=D0DD9A78FA57AAB51D3E0C8606844C44F0207DC87277D0B26AEF3B43EF353533
+APP_SETTINGS_SHA=0F3CFF1D8D153FD94E185B90F91ACD85EE26319B2FF83EE1B066E09CA27ECDD0
+IMAGE_SOURCE_SHA=021243C7C059D1C797CE72B4690B6C7FA848105DC852101289EC576D0163CA6D
+IMAGE_TRANSFORMATION_OPTIONS_SHA=3806D636843AFEF2FFFA0761D78A2799ED44BF5E7DCB71CB464F978DBB1ADB4D
+MODEL_SHA=ED487104519B0A88CB2CB2EC3678E183F447FB9DD63560998E960FFBAA8FB335
+MEDIAPIPE_PACKAGE_IDENTITY=com.github.homuler.mediapipe@0.16.3;installed_fingerprint=66127f8e750d;tgz_sha256=CC3E77A219E0B99618AE3BE64C31A566197DEEDC69C1E136ACF52D65D7CF2E79
+INFERENCE_ENGINE_PACKAGE_IDENTITY=com.unity.ai.inference@2.4.1;installed_fingerprint=587873fd5e1bd2d10f696bceb1a83c296823e927
+
+P2C_B1_TO_B9_CURRENT_REUSE_GATE=PASS
+B10_0907_IDENTITY_DELTA=WindowsNativeWebCamSource:IDENTICAL_TO_0907;AppSettings:IDENTICAL_TO_0907;ImageSource:IDENTICAL_TO_0907;ImageTransformationOptions:IDENTICAL_TO_0907;FaceLandmarkerRunner:CURRENT_ROTATION_DATAFLOW_DIRECTLY_INSPECTED
+
+WINDOWS_DEFAULT_IMAGE_SOURCE=WindowsNativeWebCamSource(WebCamera;native Path B when supported/start succeeds)
+WINDOWS_FALLBACK_IMAGE_SOURCE=WindowsNativeWebCamSource::base WebCamSource(WebCamTexture)
+WINDOWS_RUNTIME_SOURCE_SWITCH_AVAILABLE=YES_RELEASE_UI_RESTARTS_TYPE_DEVICE_RESOLUTION_AND_HORIZONTAL_FLIP;STATIC_VIDEO_CURRENTLY_UNCONFIGURED
+CURRENT_WINDOWS_ACCEPTED_IMAGE_SOURCE_SET={WINDOWS_NATIVE_PATH_B_ACTIVE,WINDOWS_WEBCAMTEXTURE_FALLBACK}
+
+CURRENT_WINDOWS_ROTATION_DOMAIN=NATIVE_ACTIVE:{Rotation0};WEBCAMTEXTURE_FALLBACK:{videoRotationAngle including accepted Rotation0/90/180/270}
+B10_GENERIC_NONZERO_ROTATION=FAIL_STATIC_NOT_DEFERRED_WINDOWS_PRODUCTION_FALLBACK_REACHABLE
+B10_WINDOWS_NATIVE_PRODUCTION=FAIL
+
+BOUNDARY_11_FLIP_MIRROR=NOT_AUDITED_BY_ORDERED_GATE_B10_FAIL
+
+P1_S_WINDOWS_NATIVE_PRODUCTION=FAIL_AT_B10_WINDOWS_FALLBACK_NONZERO_ROTATION
+P1_S_GENERIC_IMAGE_SOURCE_COMPATIBILITY=FAIL_NONZERO_ROTATION_REACHABLE_IN_CURRENT_WINDOWS_FALLBACK_DOMAIN
+
+P1_R_RECURRENCE_POLICY=ACCEPTABLE_PROVIDER_SPECIFIC_DIFFERENCE_CARRIED_FORWARD
+P1_R_INDEPENDENT_REAUDIT=NO
+
+P1_I_GEOMETRY_IDENTITY_CARRIER=NONE
+
+B8_LIFECYCLE_BOUND=NO_SEPARATE_OPEN_CLAIM_IDENTIFIED_BY_THIS_AUDIT
+
+PRODUCTION_CHANGE=NO
+COMPILE=NOT_RUN
+RUNTIME=NOT_RUN
+COMMIT_PUSH=NO
+
+NEXT_SINGLE_ACTION=B10_EXACT_BOUNDED_FOLLOWUP
+
+END_OF_REPORT

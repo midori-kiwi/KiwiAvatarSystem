@@ -1,0 +1,308 @@
+KiwiAvatarSystem P2B Z-Scale Repair / P2C Ordered Static Re-audit
+Report time: 2026-09-09 09:39:55 JST
+Project: D:\KiwiAvatarSystem
+
+AUTHORITY_PREFLIGHT
+[Confirmed Facts]
+- User-supplied ZIP:
+  D:\Users\main\Downloads\KiwiCodexTask_P2B_P2C_20260909-0919JST.zip
+- Archive entries were listed before extraction. The archive contained four regular files under one root and no absolute or parent-traversal path.
+- Extraction target was resolved under the project and did not exist before extraction:
+  D:\KiwiAvatarSystem\CodexTasks\KiwiCodexTask_P2B_P2C_20260909-0919JST
+- README_FIRST.md was read first, followed by 01_TASK_DETAILED.md, 02_P2_DESIGN_FREEZE.md, and 03_REPORT_TIME_SHA_MANIFEST.txt.
+- Exact project root resolved to D:\KiwiAvatarSystem.
+- ProjectVersion and intended Unity executable both identify 6000.0.80f1. Production-write preflight therefore passed.
+- The first Git status capture occurred after the explicitly requested ZIP extraction. It showed only the four extracted task documents as untracked and no tracked modification. This report does not fabricate a before-extraction Git-status observation.
+- No reset, checkout, clean, stash, commit, push, tag, release, untracked-file deletion, or Runtime launch was performed.
+
+[Authority]
+- Implementation Authority: current live-local Production source at task HEAD plus the before SHA captured in this task.
+- 03_REPORT_TIME_SHA_MANIFEST.txt identities were used only as reference/correlation and were not promoted to current.
+- Package Authority: installed PackageCache/TGZ. Missing MediaPipe calculator C++ source was compared against version-matched official MediaPipe v0.10.22 source.
+
+LIVE_LOCAL_IDENTITY
+[Confirmed Facts]
+- Branch=work/raw-direct-motion
+- HEAD=2637b089fa5d0673f92887eecda4e9eb4e9de25c
+- Upstream=origin/work/raw-direct-motion
+- Tracking relation at preflight=behind 0 / ahead 5
+- Reference-only report HEAD=49b43fedad55b084980f5486dc7142fdf2db2e1e
+- The single local commit after that reference adds two ChatReport ZIPs and the earlier audit report; it does not modify the audited Production sources.
+- Pre-write target SHA matched the reference-only target SHA, but current live-local capture remained the authority.
+
+[Installed Package Source]
+- MediaPipe manifest entry=file:com.github.homuler.mediapipe-0.16.3.tgz
+- Installed MediaPipe root=D:\KiwiAvatarSystem\Library\PackageCache\com.github.homuler.mediapipe@66127f8e750d
+- Installed package version=0.16.3; fingerprint=66127f8e750d
+- MediaPipe TGZ SHA256=CC3E77A219E0B99618AE3BE64C31A566197DEEDC69C1E136ACF52D65D7CF2E79
+- Installed Inference Engine root=D:\KiwiAvatarSystem\Library\PackageCache\com.unity.ai.inference@587873fd5e1b
+- Installed Inference Engine version=2.4.1
+- Plugin v0.16.3 official README binds this lineage to MediaPipe 0.10.22:
+  https://raw.githubusercontent.com/homuler/MediaPipeUnityPlugin/v0.16.3/README.md
+  https://raw.githubusercontent.com/homuler/MediaPipeUnityPlugin/v0.16.3/WORKSPACE
+
+UNITY_EDITOR_IDENTITY
+[Confirmed Facts]
+- ProjectSettings\ProjectVersion.txt:
+  m_EditorVersion: 6000.0.80f1
+  m_EditorVersionWithRevision: 6000.0.80f1 (2dfd32957da2)
+- Unity executable:
+  C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe
+- FileVersion=6000.0.80.3013938
+- ProductVersion=6000.0.80f1_2dfd32957da2
+- UNITY_IDENTITY_GATE=PASS
+
+BEFORE_SHA256
+CF860F4EF686BD5FDAC4140D4F3E73E64B6F390C3BC64204CF346011AC69380D  Assets\Script\KiwiInferenceFaceTracker.cs
+6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93  Assets\Script\FaceLandmarkerRunner.cs
+D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6  Assets\Script\KiwiFaceMotion.cs
+35F00A89D31A8BF7EE50718F38D4BAC90236D8B691F516C5FC14CAB47AFBFEE1  Packages\manifest.json
+23845C132DBF51CB53A5CFDE4EF606FA68D10DCB53AE5FF21F4305613A5F9CE1  Packages\packages-lock.json
+EA333D8F6C87FFA35061EC92B7DEF6026D00D0131D7A6A05A23C53EB949B4F77  ProjectSettings\ProjectVersion.txt
+
+P2_DESIGN_FREEZE_APPLIED
+[Public Design / Frozen Input]
+- P2_EXTERNAL_COMPARATIVE_DESIGN_REUSE_GATE_REFRESH=PASS was accepted as the task's frozen design input.
+- Target valid-domain equation: Z scale is the Euclidean magnitude of the projected crop X-axis, with no numeric clamp.
+- The change preserves Face Landmarker Primary, Native Path B, latest-frame, bounded/nonblocking lanes, persistent ROI, stable texture identity, same-sample transaction, and authority separation.
+- ROI clamp repair, 478-vs-468 recurrence, FaceGeometry, geometry carrier, H1, FacePart, Camera, Native, KiwiFaceMotion, thresholds, smoothing, prediction, fences/waits/flush, packages, and scene defaults remained outside this write scope.
+
+EXACT_PRODUCTION_CHANGE
+[Confirmed Source Change]
+- File=Assets\Script\KiwiInferenceFaceTracker.cs
+- Method=ExtractRegionZScale(Matrix4x4 cropMatrix)
+- Live-local first failing statement before the write was confirmed as:
+  cropMatrix.MultiplyVector(Vector3.right) -> xAxis.magnitude -> Mathf.Clamp(scale, 0.02f, 3.0f)
+- DecodeReadableOutput consumed that value for every i=0..467 as cropZ * regionZScale.
+- Applied semantic diff only:
+    return Mathf.Clamp(scale, 0.02f, 3.0f);
+  became:
+    return scale;
+- Method signature and surrounding ownership/lifecycle remained unchanged. The existing comment remains factually correct.
+- Existing DecodeReadableOutput per-point IsFinite(point) rejection remains the invalid/non-finite output guard. No numeric clamp or second validity owner was added.
+
+CANDIDATE_SHA256
+0394687A1C325DAE291E45967B68E5B9341CEF74032A33E2AE14DAF491F6E1B7  Assets\Script\KiwiInferenceFaceTracker.cs
+
+AFTER_SHA256
+0394687A1C325DAE291E45967B68E5B9341CEF74032A33E2AE14DAF491F6E1B7  Assets\Script\KiwiInferenceFaceTracker.cs
+6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93  Assets\Script\FaceLandmarkerRunner.cs
+D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6  Assets\Script\KiwiFaceMotion.cs
+35F00A89D31A8BF7EE50718F38D4BAC90236D8B691F516C5FC14CAB47AFBFEE1  Packages\manifest.json
+23845C132DBF51CB53A5CFDE4EF606FA68D10DCB53AE5FF21F4305613A5F9CE1  Packages\packages-lock.json
+EA333D8F6C87FFA35061EC92B7DEF6026D00D0131D7A6A05A23C53EB949B4F77  ProjectSettings\ProjectVersion.txt
+
+DIFF_SCOPE_AUDIT
+[Static]
+- git diff --numstat target=1 insertion / 4 deletions.
+- git diff --check=PASS.
+- The sole tracked diff is Assets/Script/KiwiInferenceFaceTracker.cs.
+- The sole semantic change is removal of Mathf.Clamp around xAxis.magnitude.
+- Candidate SHA remained identical after compilation and re-audit.
+- No unexpected tracked mutation was observed.
+- Extracted task documents, compile log, and this report are evidence artifacts, not Production changes.
+- User-owned state was not discarded or rewritten.
+
+COMPILE_RESULT
+[Static Compilation Evidence]
+- Command:
+  "C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe" -batchmode -force-d3d12 -quit -projectPath "D:\KiwiAvatarSystem" -logFile "D:\KiwiAvatarSystem\CodexTasks\KiwiCodexTask_P2B_P2C_20260909-0919JST\P2B_UnityCompile_6000.0.80f1.log"
+- Exit code=0
+- Log editor identity=6000.0.80f1 (2dfd32957da2), revision 3013938
+- Script compilation was requested because the AssetDatabase observed a script change.
+- Library/ScriptAssemblies/Assembly-CSharp.dll and PDB were copied.
+- Script compilation time=7.61 seconds.
+- C# compiler errors=0.
+- C# warning occurrences=35; unique normalized warning messages=18.
+- Warnings consist of one source-generator CS8785, one obsolete Resolution.refreshRate CS0618, one unused exception CS0168, and existing unused-field CS0414 warnings. The target file's warnings are at the pre-existing unused exception and latency-streak fields, not ExtractRegionZScale.
+- The CS8785 generator warning states that generated source was skipped, but Unity loaded all assemblies, emitted Assembly-CSharp.dll, logged no C# error, and exited successfully. It was not modernized because it is unrelated to this one-boundary task.
+- Packages\manifest.json, Packages\packages-lock.json, ProjectVersion, FaceLandmarkerRunner, and KiwiFaceMotion hashes were unchanged after Unity.
+- Unity's expected ignored Library cache changed; no build output or package-lock tracked mutation occurred.
+- Result=PASS as Static compilation evidence only. It is not Runtime, visual, performance, or normalized-landmark semantic proof.
+
+P2C_ORDERED_STATIC_GATE
+[Authority Used]
+- Current post-P2B KiwiInferenceFaceTracker.cs, FaceLandmarkerRunner.cs, KiwiInferenceFaceCrop.shader, current model artifacts, installed MediaPipe 0.16.3 managed source, installed Inference Engine 2.4.1 source, and version-matched official MediaPipe v0.10.22 calculator/graph source.
+- Official comparators:
+  https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.22/mediapipe/calculators/tensor/tensors_to_landmarks_calculator.cc
+  https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.22/mediapipe/calculators/util/landmark_projection_calculator.cc
+  https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.22/mediapipe/calculators/util/rect_transformation_calculator.cc
+  https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.22/mediapipe/tasks/cc/vision/face_landmarker/face_landmarks_detector_graph.cc
+
+1. model provenance — PASS
+- Current producer: FaceLandmarkerRunner Resources.Load<ModelAsset>("KiwiFaceLandmarkInference") -> KiwiInferenceFaceTracker -> ModelLoader.Load(modelAsset).
+- Current model outputs selected by exact names conv2d_20 and conv2d_30; expected packed length is 468*3+1.
+- Resources and StreamingAssets ONNX are byte-identical:
+  SHA256=ED487104519B0A88CB2CB2EC3678E183F447FB9DD63560998E960FFBAA8FB335; size=2440358.
+- Current license file SHA256=0D8A5F1F2E715DD43675BC534434F7C78E727AB1D808225E23D9A5B35B277E40 and identifies keijiro/FaceLandmarkBarracuda plus MediaPipe origin under Apache-2.0.
+- The exact current SHA matches the artifact previously directly parsed as input FLOAT [1,3,192,192], landmark output FLOAT [1,1404,1,1], and presence FLOAT [1,1,1,1]. The current SHA check makes that parse applicable without treating the prior report's Git HEAD as current authority.
+- Installed Task bundle SHA256=B261925D4AAD812B47A0E8D58C1BAA1223270A5D1F663D78338BC881C003879D. Its face_landmarks_detector.tflite entry SHA256=BC5EE5DE06D8C3A5465C3155227615B164480A52105A2B3DF5748250AB4D914F.
+- Claim scope: the Production ONNX identity and expected 192/base468 output contract, not equivalence to the separate installed 478-point TFLite artifact.
+
+2. first468 topology/decode — PASS
+- Current producer statements: BaseLandmarkCount=468; conv2d_20 is reshaped to 468*3; DecodeReadableOutput iterates i=0..467 with direct stride 3 and no index remap.
+- Installed Package comparator: FaceLandmarkListWithIrisAnnotation declares face=468 and iris=5+5, then partitions the first 468 sequential elements before both iris groups.
+- Official tensor comparator iterates ld in order and uses offset=ld*num_dimensions; no topology remap occurs in TensorsToLandmarksCalculator.
+- Equation/dataflow: raw[3i+0..2] -> landmark i, i in [0,467].
+- Claim scope: COMPATIBLE_BASE468_SEMANTICS only. Synthesized Kiwi iris points and P1-R next-frame bounds are excluded.
+
+3. XYZ crop normalization — PASS
+- Current producer statements:
+  cropX=raw[3i]/192
+  cropYBottom=1-raw[3i+1]/192
+  cropZ=raw[3i+2]/192
+- Official TensorsToLandmarksCalculator normalizes X by input width, Y by input height, and Z by input width/normalize_z. Actual Kiwi input is square 192x192; face graph supplies model dimensions and the applicable default Z normalization is 1.
+- Equation: u=rawX/192, v=rawY/192, z0=rawZ/192.
+- Claim scope: crop-local normalized XYZ before source projection.
+
+4. origin/Y basis convention — PASS
+- Current producer: Lane TextureTransform is NCHW with CoordOrigin.TopLeft. Installed Inference Engine 2.4.1 defines CoordOrigin.TopLeft as data origin (0,0) at texture top-left.
+- Kiwi decodes model Y into bottom-left as 1-v for its Unity crop matrix, then converts projected Y back with 1-sourceBottom.y.
+- Basis transform: vBottom=1-vTop; CyBottom=1-CyTop; rBottom=-rTop. Substitution restores top-left normalized output.
+- Claim scope: tensor/crop/source Y basis only; rotation policy boundary 10 was not reached.
+
+5. same-sample ROI transform — PASS
+- Current producer: BuildCropMatrix is taken at lane submission and assigned to lane.pendingCropMatrix together with sourceHostTicks and generation/anchor state.
+- Current consumer: PollCompletedLanes copies completedCropMatrix from that same lane and passes it to DecodeReadableOutput after stale generation/epoch/source checks.
+- Equation/dataflow: source sample -> lane-local crop matrix snapshot -> model output from that lane -> decode with the same snapshot.
+- Official comparator: the face graph sends the face_rect used by preprocessing to LandmarkProjection with the same graph timestamp.
+- Claim scope: IE lane-internal same-completion crop projection. It does not assert the future public geometry carrier exists.
+
+6. XY source projection — PASS
+- Current producer: BuildCropMatrix is D^-1*T(centerPixels)*R(rBottom)*S(sizePixels)*T(-0.5,-0.5); DecodeReadableOutput applies MultiplyPoint3x4(u,1-v,0) and returns (x,1-yBottom).
+- Official LandmarkProjection with IMAGE_DIMENSIONS builds the pixel rotated-rect transform and ProjectXY applies that matrix.
+- Let source size=(W,H), pixel ROI=(a,b), top-left center=(Cx,Cy), and rotation=r. Both reduce to:
+  x=Cx/W+(a/W)cos(r)(u-1/2)-(b/W)sin(r)(v-1/2)
+  y=Cy/H+(a/H)sin(r)(u-1/2)+(b/H)cos(r)(v-1/2)
+- Claim scope: exact XY projection when the same finite rect parameters are supplied. Rect parameter generation is audited later.
+
+7. Z source projection — PASS
+- Current post-P2B producer: cropMatrix.MultiplyVector(Vector3.right).magnitude; return scale; no numeric clamp.
+- Current consumer: every base landmark Z is cropZ*regionZScale. A non-finite resulting Vector3 is locally rejected as DecodeStatus.NonFiniteLandmark.
+- Official CalculateZScale projects (0,0) and (1,0), then returns their Euclidean XY distance without clamp; projected landmark Z is z_scale*lm.z().
+- Equation for pixel ROI width a and rotation r:
+  s=sqrt(((a/W)cos(r))^2+((a/H)sin(r))^2)
+  z=z0*s
+- cropMatrix X-axis magnitude is mathematically the same s. Finite valid-domain ROI width is positive under the current owner; invalid/non-finite outputs remain Kiwi rejection policy, not claimed MediaPipe numerical equivalence.
+- Claim scope: source-space Z projection for an already supplied same-sample crop matrix.
+
+8. pixel-square ROI — FAIL; ORDERED AUDIT STOPS HERE
+- Current producer in UpdateRegionFromLandmarks:
+  squareSidePixels=max(boxWidthPixels,boxHeightPixels)*1.50
+  targetWidth=Clamp(squareSidePixels/imageWidth,0.04,2.50)
+  targetHeight=Clamp(squareSidePixels/imageHeight,0.04,2.50)
+- BuildCropMatrix converts these normalized dimensions back independently:
+  aKiwi=W*Clamp(S/W,0.04,2.50)
+  bKiwi=H*Clamp(S/H,0.04,2.50)
+- Official face graph configures scale_x=1.5, scale_y=1.5, square_long=true. Official RectTransformationCalculator computes S=max(width*W,height*H), then width=S/W and height=S/H with no independent numeric clamp.
+- Required invariant: aMediaPipe=bMediaPipe=S.
+- Static counterexample using the accepted 560x315 source dimensions and S=900 pixels:
+  Kiwi width=Clamp(900/560,0.04,2.50)=1.607142857 -> aKiwi=900
+  Kiwi height=Clamp(900/315,0.04,2.50)=2.50 -> bKiwi=787.5
+  Therefore aKiwi!=bKiwi while MediaPipe remains 900x900 pixels.
+- The current code accepts projected normalized landmarks outside [0,1], so a large enclosing ROI is not rejected before these statements. The difference is in the implemented full accepted statement domain; no Runtime frequency measurement is required to establish non-equivalence.
+- ApplyExternalAnchor also independently clamps normalized width and height, but no second fix or broader boundary analysis was performed in this task.
+- Claim scope: pixel-square ROI dimension generation, separate from P1-R 478-vs-468 bounds selection.
+
+9. letterbox semantics — NOT_AUDITED_BY_ORDERED_GATE
+10. rotation convention — NOT_AUDITED_BY_ORDERED_GATE
+11. flip/mirror ownership — NOT_AUDITED_BY_ORDERED_GATE
+
+- P2C_ORDERED_STATIC_REAUDIT=FAIL at boundary 8.
+
+FIRST_FAILING_BOUNDARY_AFTER_P2B
+[Confirmed Static Failure]
+- Boundary=pixel-square ROI / independent normalized width-height clamp
+- File=Assets\Script\KiwiInferenceFaceTracker.cs
+- Method=UpdateRegionFromLandmarks(Vector3[] points)
+- Statements=current lines 2994-3012 (squareSidePixels followed by two independent Mathf.Clamp calls)
+- Consumer=BuildCropMatrix current lines 2794-2824
+- Result=FAIL for full accepted-domain MediaPipe pixel-square equivalence.
+- This result was derived after boundaries 1-7 passed; it was not predeclared from the task's expected-possibility note.
+
+P1_SAME_SAMPLE_NORMALIZED_SEMANTIC_STATUS
+[Decision]
+- P1_SAME_SAMPLE_NORMALIZED_SEMANTIC=FAIL
+- Z-scale equivalence is now PASS, but the ordered same-sample contract stops at pixel-square ROI FAIL.
+- Static/Package Source closes this claim. Runtime cannot make the two clamp equations identical.
+
+P1_R_RECURRENCE_STATUS
+[Frozen Policy + Current Static Check]
+- Current Kiwi recurrence bounds iterate BaseLandmarkCount=468 after iris synthesis.
+- Installed Tasks graph sends the complete projected landmark list into LandmarksToDetectionCalculator; installed managed annotation confirms a 468+5+5 layout for refined output.
+- This remains a provider/model-domain difference and was not mixed into P1-S pixel-square equality.
+- No new source evidence invalidated the frozen decision.
+- P1_R_RECURRENCE_POLICY=ACCEPTABLE_PROVIDER_SPECIFIC_DIFFERENCE
+
+P1_I_GEOMETRY_CARRIER_STATUS
+[Current Static]
+- KiwiInferenceFaceTracker.TryProcessAsync publicly returns Vector3[] landmarks, heuristic Quaternion rotation, and completedSourceHostTicks; it does not return same-sample FaceGeometry pose or the lane's full crop/generation identity tuple.
+- FaceLandmarkerRunner StoreSentisTrackingData reduces semantic staging to Vector2 x/y. MediaPipe facialTransformationMatrixes are handled on the MediaPipe callback path, not paired to the IE completion as same-sample FaceGeometry.
+- KiwiCanonicalTrackingFrame carries Vector2[] semantic landmarks plus canonical metadata/generation, not first468 XYZ plus same-sample FaceGeometry pose.
+- P1_I_GEOMETRY_IDENTITY_CARRIER=NONE
+- No carrier or solver was implemented.
+
+OBSERVER_VALIDATOR_SELF_AUDIT
+[Static]
+- No overall optimization validator or semantic validator was run. Therefore no stale validator PASS/FAIL was used as P1-S authority.
+- Unity batchmode was used only for editor identity and compilation evidence.
+- The compile warning set contains unrelated historical warnings; they neither prove nor disprove the normalized-landmark equations.
+- Prior reports were used only for correlated artifact parsing where the current SHA was re-established. Current source statements and current package source control the conclusions.
+
+PROTECTED_FILES_UNCHANGED
+[Confirmed SHA]
+- FaceLandmarkerRunner.cs: before=after=6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93
+- KiwiFaceMotion.cs: before=after=D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6
+- Packages\manifest.json: before=after=35F00A89D31A8BF7EE50718F38D4BAC90236D8B691F516C5FC14CAB47AFBFEE1
+- Packages\packages-lock.json: before=after=23845C132DBF51CB53A5CFDE4EF606FA68D10DCB53AE5FF21F4305613A5F9CE1
+- ProjectSettings\ProjectVersion.txt: before=after=EA333D8F6C87FFA35061EC92B7DEF6026D00D0131D7A6A05A23C53EB949B4F77
+- Protected result=PASS.
+
+RUNTIME_STATUS
+[Not Run]
+- Live camera Runtime=NOT_RUN
+- Player Runtime=NOT_RUN
+- Visual/performance claim=NOT_MADE
+- Runtime ZIP=NOT_CREATED
+
+REJECTED_NOT_EXECUTED
+- A second Production repair for ROI clamp=NOT_EXECUTED by strict one-boundary scope.
+- P2C boundaries 9-11=NOT_EXECUTED after first FAIL.
+- P3, FaceGeometry solver/port, deterministic solver self-test, same-image replay, H1, FacePart, ROI recurrence change, geometry carrier, Camera, Native, KiwiFaceMotion, thresholds, smoothing, prediction, fences/waits/flush/async-disable, package changes, scene changes=NOT_EXECUTED.
+- Treating the former clamp as equivalent safety policy=REJECTED and removed only at the authorized method.
+- Treating compiler success or a validator as P1-S semantic PASS=REJECTED.
+- Commit/push=NO.
+
+NEXT_SINGLE_ACTION
+In a separate authorized task, replace the pixel-square ROI's independent normalized width/height clamps with the frozen pixel-space single-long-side policy, then rerun this ordered Static Gate from boundary 1.
+
+FIXPOINT_REAUDIT
+[Re-audit]
+1. Current branch/HEAD and all final hashes were rechecked; reference-time SHA was not promoted.
+2. Unity project version, executable ProductVersion, and compile log all agree on exact 6000.0.80f1.
+3. The sole tracked diff remains the one-boundary ExtractRegionZScale clamp removal.
+4. Protected files and packages-lock remain byte-identical to pre-write captures.
+5. No second fix, Runtime, commit, push, reset, checkout, clean, stash, or user-file removal occurred.
+6. Static/Package Source, compilation, Runtime, visual, and performance claims remain separated.
+7. The next first failure was demonstrated by current equations and a concrete counterexample before being reported.
+8. Required report sections and final keys are present.
+- FIXPOINT=REACHED_FOR_TASK_SCOPE
+
+FINAL_MACHINE_READABLE_BLOCK
+P2A_DESIGN_REUSE_FREEZE=PASS
+P2B_Z_SCALE_REPAIR=PASS
+P2B_TARGET_FILE_BEFORE_SHA=CF860F4EF686BD5FDAC4140D4F3E73E64B6F390C3BC64204CF346011AC69380D
+P2B_TARGET_FILE_AFTER_SHA=0394687A1C325DAE291E45967B68E5B9341CEF74032A33E2AE14DAF491F6E1B7
+UNITY_VERSION=6000.0.80f1
+UNITY_IDENTITY_GATE=PASS
+COMPILE=PASS
+P2C_ORDERED_STATIC_REAUDIT=FAIL
+Z_SCALE_EQUIVALENCE=PASS
+FIRST_FAILING_BOUNDARY_AFTER_P2B=Assets/Script/KiwiInferenceFaceTracker.cs::UpdateRegionFromLandmarks pixel-square ROI independent normalized width-height clamps
+P1_SAME_SAMPLE_NORMALIZED_SEMANTIC=FAIL
+P1_R_RECURRENCE_POLICY=ACCEPTABLE_PROVIDER_SPECIFIC_DIFFERENCE
+P1_I_GEOMETRY_IDENTITY_CARRIER=NONE
+RUNTIME=NOT_RUN
+PRODUCTION_FILES_CHANGED=Assets/Script/KiwiInferenceFaceTracker.cs
+COMMIT_PUSH=NO
+NEXT_SINGLE_ACTION=Replace independent normalized ROI width-height clamps with the frozen pixel-space single-long-side policy in a separate task, then rerun the ordered Static Gate from boundary 1.

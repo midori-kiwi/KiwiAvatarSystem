@@ -1,0 +1,845 @@
+KiwiAvatarSystem P3B Same-Sample Geometry Transaction / Lifecycle Design Freeze
+Report time: 2026-09-09 21:34:52 JST
+Project: D:\KiwiAvatarSystem
+Mode: READ_ONLY_DESIGN_AUDIT
+Production implementation: NO
+Live Camera Runtime: NO
+H1: NOT_AUTHORIZED
+
+======================================================================
+0. CONCLUSION
+======================================================================
+
+[Gate Result]
+- P3A_RESULT=PASS is carried without reopening its mathematical result.
+- P3B_RESULT=FAIL_POSE_ONLY_MANAGED_BOUNDARY_NOT_CLOSED.
+- Identity, correlation, semantic dimensions, IMAGE_SIZE delivery, external
+  latest-frame admission, graph queue safety, callback routing, graph lifetime,
+  old-epoch rejection, and resource ownership have one bounded provisional
+  design.
+- The installed package has no registered calculator or managed API that extracts
+  only FaceGeometry.pose_transform_matrix before the native/managed boundary.
+- Both installed getters return a SerializedProto for the complete FaceGeometry;
+  that payload contains the 468-vertex mesh. The current high-level FaceLandmarker
+  path likewise deserializes the complete FaceGeometry and only then copies the
+  pose matrix.
+- Therefore the explicit P3B requirement to avoid serializing/copying the 468 mesh
+  across the managed boundary cannot be satisfied by the installed package while
+  Native/package changes remain forbidden. This is an exact Static/Package Source
+  stop boundary. It is not converted to PASS.
+- No Production implementation, compile, Runtime, Scene mutation, Native build,
+  H1 work, commit, or push was performed.
+
+[Best Bounded Design If The Stop Boundary Is Separately Resolved]
+- Reuse the existing accepted Runner frameId as the correlation token and checked
+  Calculator timestamp.
+- Capture one immutable IE transaction immediately at the accepted StoreSentis
+  boundary; copy first468 XYZ once (5616 bytes), never re-read global latest.
+- Carry sourceHostTicks, camera/session/provider/model authority, backend=IE, and
+  exact semantic width/height with the frameId.
+- Keep one persistent CalculatorGraph for a fixed Environment, metadata, and
+  semantic dimension state.
+- Supply one dimension-epoch ImageFrame as an input side packet; use installed
+  SidePacketToStreamCalculator with FACE_LANDMARKS as TICK, then installed
+  ImagePropertiesCalculator. This produces IMAGE_SIZE at the exact landmark
+  correlation timestamp without a per-frame ImageFrame allocation/copy.
+- Keep external state at one IN_FLIGHT plus one overwriteable LATEST_PENDING.
+- Use an AOT-safe static ObserveOutputStream callback, perform no Unity API work,
+  never retain the borrowed packet, and hand off only a bounded immutable pose
+  completion.
+- Keep the graph across camera/provider/model/session changes when dimensions and
+  graph invariants do not change; invalidate transactions by identity. Reset only
+  for dimension/Environment/metadata change, graph fault, or shutdown.
+
+======================================================================
+1. CURRENT AUTHORITY / CONTEXT RECONCILIATION
+======================================================================
+
+[Live-Local Identity]
+- Project=D:\KiwiAvatarSystem.
+- Branch=work/raw-direct-motion.
+- HEAD=2637b089fa5d0673f92887eecda4e9eb4e9de25c.
+- origin comparison=ahead 5 at report preflight.
+- Unity=6000.0.80f1, revision 2dfd32957da2.
+- MediaPipeUnityPlugin manifest=file:com.github.homuler.mediapipe-0.16.3.tgz.
+- Installed MediaPipe root=Library\PackageCache\com.github.homuler.mediapipe@66127f8e750d.
+- Installed package version=0.16.3; MediaPipe lineage=v0.10.22.
+- Inference Engine=2.4.1.
+
+[User-Owned Dirty State Preserved]
+- Tracked modified files observed before this report:
+  AGENTS.md
+  Assets\Script\FaceLandmarkerRunner.cs
+  Assets\Script\KiwiInferenceFaceTracker.cs
+- Existing untracked task/report/context material was not attributed to P3B and
+  was not modified. This report is the only P3B write.
+
+[Current Project Context]
+- Enumerated all files then present in D:\KiwiAvatarSystem\ProjectContext\Current.
+- Exactly one file was present and read in full:
+  KiwiAvatarSystem_最新統合情報_統合ロードマップ_R13_7_ProjectWide_DoubleFullAudit.txt
+  SHA256=BD8A8B2F1F1E003249F1B7630CB21E586F83742767C02220C025127FE53378C1.
+- Its volatile P1 FAIL / P2 next-action snapshot predates the later same-day P2C
+  and P3A reports. The conflict is resolved by claim-scoped Authority:
+  current Production source hashes and later reports at current HEAD establish
+  P1_S_WINDOWS_NATIVE_PRODUCTION=PASS and P3_RESULT=PASS.
+- Durable constraints remain applicable: double full audit, no H1, no Runtime for
+  a Static claim, no FIFO, bounded/nonblocking, and same-sample authority.
+- The Current document was not treated as Implementation Authority over current
+  Production source.
+
+[Carried Reports]
+- P2C report:
+  KiwiCodexConsolidatedReport_P2C_B10SemanticCorrection_B11Closure_20260909-155715JST.txt
+  current-HEAD P1_S_WINDOWS_NATIVE_PRODUCTION=PASS.
+- P3A report:
+  KiwiCodexConsolidatedReport_P3A_FaceGeometryReuseContract_DeterministicSelfTest_20260909-163536JST.txt
+  SHA256=0D472291CF8FBB16307D8D625A6908150234F92374D024CFF731701C31D400C5.
+  P3_RESULT=PASS; FACEGEOMETRY_REUSE_DECISION=LOW_LEVEL_CALCULATOR_GRAPH_REUSE;
+  P1_I_GEOMETRY_IDENTITY_CARRIER=NONE.
+
+[Relevant Current Source SHA256]
+- Assets\Script\FaceLandmarkerRunner.cs
+  027C61F6A4B42E772F355719CFF93D5D8DF1D0C3C100AE6C07E2E3083EC4F90E.
+- Assets\Script\KiwiInferenceFaceTracker.cs
+  17F55087EFA7D42B14EF7453F35B0720EE79A23A64CB239391171C45241E3744.
+- Assets\KiwiAvatarSystem\Runtime\TrackingFoundation\KiwiRuntimeGenerationContext.cs
+  E74887450A8EBD881A3AEDE7B4789C5D83E4A7C5B7F5A6D4C427DB134D250C40.
+- Assets\KiwiAvatarSystem\Runtime\TrackingFoundation\KiwiTrackingProviderHub.cs
+  A5C7DE387FA2E02862BCF64942363AECFB9C7830B52DF5B8953404DF884ECCB1.
+- Assets\KiwiAvatarSystem\Runtime\TrackingFoundation\KiwiCanonicalTrackingFrame.cs
+  458FF33E98E054B766F20EB17CE6BDD242C9AD9FD6E73AF53D60BD3961822AFA.
+
+[Package / Model Identity]
+- MediaPipe TGZ SHA256=
+  CC3E77A219E0B99618AE3BE64C31A566197DEEDC69C1E136ACF52D65D7CF2E79.
+- installed package.json SHA256=
+  EEBBFF4550FA9CA3C2C76AB05BD0EDBDB3A0A4C2800883E244DC9E40D8FF2A2D.
+- installed mediapipe_c.dll SHA256=
+  B9B620F2707DEA371BE3FCEF9F2D05468CA1471FAEE3BE6637BBD7DA77E21C54.
+- installed and Production Face Landmarker bundle SHA256=
+  B261925D4AAD812B47A0E8D58C1BAA1223270A5D1F663D78338BC881C003879D.
+- Production IE ONNX SHA256=
+  ED487104519B0A88CB2CB2EC3678E183F447FB9DD63560998E960FFBAA8FB335.
+
+======================================================================
+2. CURRENT IDENTITY OWNER AUDIT
+======================================================================
+
+Columns:
+SEMANTIC | CURRENT_FIELD | OWNER | WRITE_POINT | READ_POINT | LIFETIME |
+MONOTONIC | EPOCH_SCOPE | P3B_REQUIRED
+
+accepted publication sequence | FacePrecisionTrackingData.frameId from
+_nextPublishedTrackingFrameId | FaceLandmarkerRunner | Store MediaPipe and
+StoreSentisTrackingData after acceptance | ProviderHub/canonical consumers |
+Runner instance | strictly increments; no reset assignment found | all accepted
+Runner backend samples | REQUIRED; reused as correlation and order token
+
+source observation time | Lane.pendingSourceHostTicks ->
+FacePrecisionTrackingData.submissionHostTicks | KiwiInferenceFaceTracker lane,
+then Runner | TryScheduleNewestSource captures; StoreSentis copies | freshness,
+provider contract | exact scheduled/completed sample | not required unique;
+monotonic rejection exists in IE completion | source timebase | REQUIRED for age,
+never overloaded as correlation
+
+IE lane generation | Lane.pendingTrackerGeneration | KiwiInferenceFaceTracker |
+schedule/reset | completion pre-decode gate | one tracker instance/reset domain |
+positive local generation | tracker internal | REDUNDANT after accepted completion;
+current gate has already rejected mismatch
+
+camera generation | Lane.pendingCameraGeneration and
+KiwiRuntimeGenerationContext.CameraGeneration | FaceLandmarkerRunner through
+KiwiCameraGeneration | source run, texture/dimension/name/restart/timeline
+boundary | IE completion and downstream generation snapshot | process lifetime |
+positive increment | camera/source identity | REQUIRED
+
+tracking session generation | Lane.pendingTrackingSessionGeneration and
+KiwiRuntimeGenerationContext.TrackingSessionGeneration | TrackingProviderHub |
+scene/tracking session start | IE completion and canonical snapshot | process |
+positive increment | tracking session | REQUIRED
+
+provider generation | KiwiRuntimeGenerationContext.ProviderGeneration |
+TrackingProviderHub | actual provider identity switch/removal; same-provider
+resume does not advance | canonical/publication consumers | process | positive
+increment | provider authority | REQUIRED at result publication; not graph reset
+
+model generation | KiwiRuntimeGenerationContext.ModelGeneration |
+KiwiAvatarRuntimeManager | model activation/change | canonical/publication
+consumers | process | positive increment | Avatar model authority | REQUIRED at
+result publication; pose math itself remains model-independent
+
+backend identity | FacePrecisionTrackingData.backend and built-in ProviderSlot |
+FaceLandmarkerRunner/ProviderHub | accepted store and slot selection | ProviderHub
+and canonical frame | exact frame | enum, not monotonic | sample provider/backend |
+REQUIRED constant InferenceEngine; no independent backend epoch exists
+
+config epoch | KiwiRuntimeGenerationContext.ConfigEpoch | runtime policy owners |
+configuration transitions | policy/presentation consumers | process | positive
+increment | config | NOT_RELEVANT_TO_GEOMETRY under fixed P3 Environment/metadata;
+captured first468 already embodies producer configuration
+
+calibration generation | KiwiRuntimeGenerationContext.CalibrationGeneration |
+calibration/model policy | calibration transition | downstream consumers |
+process | positive increment | calibration | NOT_RELEVANT_TO_CURRENT_GEOMETRY;
+future Environment calibration would require a separate graph invariant/epoch
+
+native source sequence | native presented-frame sequence and
+_lastObservedFreshFrameSequence | camera source/Runner | fresh-source observation |
+Runner latest gate | camera run | monotonic within native session | source stream |
+NOT_AVAILABLE at accepted IE completion; do not invent a duplicate carrier
+
+fresh webcam generation | _freshWebCamGeneration | FaceLandmarkerRunner | each
+fresh source | IE schedule gating | camera boundary; resettable | local increment |
+Runner source freshness | REDUNDANT and not carried through IE completion
+
+source texture identity | _kiwiOwnedSourceTextureId | FaceLandmarkerRunner |
+source identity observation | camera-generation owner | camera run | not monotonic |
+camera source | REDUNDANT because a change advances cameraGeneration
+
+semantic dimensions | _trackingInputWidth/_trackingInputHeight | Runner tracking
+input resource owner | PrepareTrackingInputTexture/RebuildTrackingInputResources |
+Task/diagnostic inputs | resource lifetime | not monotonic | semantic image
+configuration | REQUIRED as exact immutable transaction payload and graph dimension
+state; no current independent dimension epoch exists
+
+canonical frame sequence | KiwiTrackingFrame.canonicalFrameId | canonical latch |
+display-cycle latch | Root/FacePart consumers | process | strictly increments |
+canonical presentation | NOT_AVAILABLE at geometry submission and therefore not
+the Geometry correlation token
+
+[Field Classification]
+- REQUIRED: accepted frameId, sourceHostTicks, cameraGeneration,
+  trackingSessionGeneration, providerGeneration, modelGeneration,
+  backend=InferenceEngine, semanticFrameWidth, semanticFrameHeight.
+- REDUNDANT: trackerGeneration after acceptance, sourceTextureId,
+  _freshWebCamGeneration, native source sequence for the current accepted-result
+  boundary.
+- NOT_CURRENTLY_OWNED: a separate backendGeneration, a semanticDimensionEpoch,
+  an IE-only accepted completion sequence.
+- NOT_RELEVANT_TO_GEOMETRY: ConfigEpoch and CalibrationGeneration under the fixed
+  P3 Environment/metadata contract. They remain downstream authority where their
+  existing consumers require them.
+
+======================================================================
+3. MINIMAL LOGICAL TRANSACTION / CORRELATION
+======================================================================
+
+[GeometryInputTransaction - conceptual, exact class name not frozen]
+- identity:
+  frameId
+  sourceHostTicks
+  cameraGeneration
+  trackingSessionGeneration
+  providerGeneration
+  modelGeneration
+  backend=InferenceEngine
+- payload:
+  copied first468 XYZ normalized in tracking semantic plane T/TOP_LEFT
+  semanticFrameWidth
+  semanticFrameHeight
+- correlation:
+  the same frameId, checked representable as a positive MediaPipe timestamp
+
+[GeometryOutputTransaction - conceptual]
+- exact original identity tuple, retained from the input transaction rather than
+  reconstructed from current globals;
+- same correlation frameId;
+- raw canonical-to-runtime pose matrix, 16 finite floats, when status is valid;
+- explicit status; no silent hold-last;
+- mesh absent from the Kiwi cross-boundary payload.
+
+[Capture Boundary]
+- TryProcessAsync currently exposes a shared Vector3[468] that is overwritten by
+  a later accepted completion.
+- The immutable geometry transaction must be created immediately after the exact
+  StoreSentisTrackingData acceptance that assigns frameId.
+- P3C would minimally make that accepted frameId and the already captured lane
+  camera/session identity available at this exact boundary. It must not read
+  _latestPrecisionData or global latest landmarks later.
+- Exactly one first468 copy is required: 468 * 3 * 4 = 5616 bytes.
+- Do not extend the lifetime of the Sentis output/readback buffer.
+
+[Correlation]
+- _nextPublishedTrackingFrameId is the only current accepted-result sequence whose
+  uniqueness and order are suitable. It is shared across MediaPipe and IE, which
+  creates harmless gaps but no reuse. No assignment/reset other than declaration
+  and preincrement at accepted publication was found.
+- It is available only after accepted StoreSentis publication; P3C must return the
+  exact assigned value from that call, not reread the latest global value.
+- Calculator timestamp is correlation only. sourceHostTicks remains sample age.
+- If frameId cannot be represented as positive Int64, fail closed, retire the graph
+  run, and do not reuse a timestamp while an old graph/callback can exist.
+
+GEOMETRY_TRANSACTION_IDENTITY_TUPLE={frameId,sourceHostTicks,cameraGeneration,trackingSessionGeneration,providerGeneration,modelGeneration,backend=InferenceEngine,semanticFrameWidth,semanticFrameHeight}
+GEOMETRY_CORRELATION_TOKEN=EXISTING_FACE_PRECISION_TRACKING_DATA_FRAME_ID_CAPTURED_AT_ACCEPTED_SENTIS_STORE
+CALCULATOR_TIMESTAMP_SEMANTIC=CORRELATION_ONLY
+
+======================================================================
+4. SEMANTIC FRAME DIMENSIONS / IMAGE_SIZE DELIVERY
+======================================================================
+
+[Dimension Authority]
+- 480x270 is P3A baseline evidence, not a constant.
+- Runner owns the actual tracking semantic texture dimensions in
+  _trackingInputWidth/_trackingInputHeight. The transaction snapshots those exact
+  positive dimensions at acceptance.
+- cameraGeneration covers source texture/dimension boundaries, but no independent
+  semanticDimensionEpoch exists. Width/height are therefore carried explicitly.
+- Graph dimension state is immutable per graph run. A transaction is admissible
+  only when its exact width/height equal the graph's dimension state.
+
+[Candidate A: per-transaction ImageFrame -> ImageProperties]
+- Static correctness: simple and exact.
+- Cost: one ImageFrame allocation/storage initialization and packet ownership
+  transfer per accepted geometry transaction, solely to convey dimensions.
+- Decision: REJECTED_UNNECESSARY_RECURRING_ALLOCATION_AND_COPY.
+
+[Candidate B: dimension-epoch ImageProperties + PacketCloner]
+- Official PacketCloner semantics are suitable in principle: retain latest base
+  packet and emit it at TICK timestamp.
+- Installed generated C# options do not prove native calculator availability.
+- Direct ASCII inspection of the exact installed mediapipe_c.dll found
+  PacketClonerCalculator=False.
+- Decision: REJECTED_NOT_REGISTERED_IN_INSTALLED_NATIVE_BINARY.
+
+[Candidate C: installed SidePacketToStream + ImageProperties]
+- Exact installed DLL registration checks:
+  SidePacketToStreamCalculator=True.
+  ImagePropertiesCalculator=True.
+  FaceGeometryPipelineCalculator=True.
+- One lightweight ImageFrame of the exact dimensions is created only when a graph
+  run/dimension state is created and is moved into the graph input side-packet map.
+- SidePacketToStreamCalculator receives FACE_LANDMARKS as TICK and emits that
+  side-packet ImageFrame at the exact landmark timestamp.
+- ImagePropertiesCalculator reads width/height and produces the required
+  std::pair<int,int> IMAGE_SIZE at that timestamp.
+- The ImageFrame payload is immutable graph-run configuration state, not a camera
+  image, prediction, previous-frame result, or temporal smoothing owner.
+- No per-frame ImageFrame allocation, zero-fill, or pixel copy is required.
+- ImageProperties performs only per-transaction dimension extraction; it does not
+  process/copy image pixels.
+- Decision: SELECTED_PROVISIONAL, conditional only on the independent pose-output
+  stop boundary being resolved.
+
+[Candidate D: direct std::pair<int,int> native/managed binding]
+- Would reduce the side-packet image indirection, but adds native/package source,
+  artifact provenance, distribution, and maintenance responsibility.
+- Candidate C meets IMAGE_SIZE correctness without it.
+- Decision: REJECTED_NOT_REQUIRED.
+
+[Dimension Change Protocol]
+1. Stop new graph admission.
+2. Atomically supersede/dispose LATEST_PENDING from the old dimensions.
+3. Retire the old IN_FLIGHT transaction for publication; any late callback drops.
+4. Close/cancel and dispose the old graph according to shutdown/fault state.
+5. Create the new one-time dimension ImageFrame and new graph-run state.
+6. Register callback before StartRun, then StartRun with Environment/dimension side
+   packets and metadata fixed.
+7. Admit only the newest still-current IE transaction matching the new dimensions.
+- No transaction can pair new landmarks with old size because graph-run dimensions
+  are immutable and equality is checked before AddPacketToInputStream.
+
+SEMANTIC_FRAME_DIMENSION_OWNER=FACE_LANDMARKER_RUNNER_TRACKING_INPUT_RESOURCE_SNAPSHOT_PLUS_GEOMETRY_GRAPH_RUN_IMMUTABLE_DIMENSION_STATE
+P3B_IMAGE_SIZE_DELIVERY_DECISION=PROVISIONAL_SELECTED_INSTALLED_SIDE_PACKET_TO_STREAM_TICK_PLUS_IMAGE_PROPERTIES
+IMAGE_SIZE_STATE_OWNER=GEOMETRY_GRAPH_LIFECYCLE_OWNER_ONE_IMMUTABLE_WIDTH_HEIGHT_AND_SIDE_PACKET_IMAGEFRAME_PER_GRAPH_RUN
+IMAGE_SIZE_DIMENSION_CHANGE_POLICY=STOP_ADMISSION_RETIRE_OLD_TRANSACTIONS_REBUILD_GRAPH_BEFORE_FIRST_NEW_DIMENSION_LANDMARK
+EXTRA_COPY_PER_FRAME=FIRST468_ONLY_5616_BYTES;NO_IMAGEFRAME_PIXEL_COPY
+PER_FRAME_ALLOCATION=NO_IMAGEFRAME;INPUT_PROTO_PACKET_SERIALIZATION_REMAINS
+NATIVE_ABI_CHANGE_REQUIRED=NO_FOR_IMAGE_SIZE_DELIVERY
+
+======================================================================
+5. EXECUTION LANE / GRAPH QUEUE / FLOW LIMITER
+======================================================================
+
+[External Primary Admission Owner]
+- Geometry lifecycle owner state is exactly IDLE or IN_FLIGHT, plus at most one
+  LATEST_PENDING transaction.
+- In IDLE, admit the newest transaction and transition to IN_FLIGHT only after
+  successful packet ownership transfer.
+- In IN_FLIGHT, atomically replace LATEST_PENDING. Dispose the replaced immutable
+  first468 payload immediately. Do not add it to the graph.
+- Callback completion moves one bounded result into COMPLETION_READY. Main-thread
+  drain validates and retires the exact in-flight token, then may admit the latest
+  pending transaction if still current.
+- No Queue<T>, List backlog, FIFO history, permanent delay, or multi-frame graph
+  admission is permitted.
+
+[Graph Queue Safety]
+- CalculatorGraphConfig exposes max_queue_size and report_deadlock.
+- Official generated comments state default max_queue_size is 100; -1 disables
+  throttling; when report_deadlock is false, an input queue may be enlarged to
+  resolve a scheduler deadlock.
+- Use max_queue_size=1 as a secondary fail-closed safety limit and
+  report_deadlock=true. This prevents automatic queue expansion from becoming
+  normal behavior.
+- The graph has one externally admitted FACE_LANDMARKS stream. No second packet is
+  added while IN_FLIGHT, so AddPacketToInputStream is never used as a wait/queue
+  mechanism. A queue/deadlock error is a graph fault and triggers bounded reset;
+  it does not authorize expansion or blocking retries.
+
+[FlowLimiter Comparator]
+- Installed FlowLimiterCalculator is registered, but it adds FINISHED feedback,
+  another admission/queue owner, and retained queue state.
+- The explicit external one-in-flight/latest-pending owner is smaller and preserves
+  Kiwi latest-frame policy. FlowLimiter is not needed and must not be layered on.
+
+LATEST_FRAME_ADMISSION_OWNER=GEOMETRY_LIFECYCLE_OWNER_OUTSIDE_MEDIAPIPE_GRAPH
+DESIRED_MAX_IN_FLIGHT_GEOMETRY=1
+GEOMETRY_EXECUTION_LANE=ONE_IN_FLIGHT_PLUS_ONE_OVERWRITEABLE_LATEST_PENDING
+MAX_PENDING_GEOMETRY=1
+SUPERSEDE_POLICY=NEWEST_ACCEPTED_IE_TRANSACTION_ATOMICALLY_REPLACES_AND_DISPOSES_OLDER_PENDING
+NO_FIFO_CONTRACT=PASS_DESIGN_ONLY
+GRAPH_MAX_QUEUE_SIZE_POLICY=SECONDARY_FAIL_CLOSED_MAX_QUEUE_SIZE_1_NOT_LATEST_FRAME_OWNER
+GRAPH_DEADLOCK_POLICY=REPORT_DEADLOCK_TRUE;ERROR_RESET_GRAPH;NO_AUTO_QUEUE_EXPANSION_OR_BLOCKING_RETRY
+FLOW_LIMITER_DECISION=NOT_NEEDED
+
+======================================================================
+6. OUTPUT ACQUISITION / POSE-ONLY STOP BOUNDARY
+======================================================================
+
+[Callback Selection]
+- OutputStreamPoller.Next is blocking and is not selected. No main-thread poller
+  and no extra worker thread are required.
+- CalculatorGraph.ObserveOutputStream exposes NativePacketCallback(graphPtr,
+  streamId, packetPtr). Its generic wrapper creates Packet<T>.CreateForReference;
+  that wrapper is non-owning.
+- Installed OutputStream demonstrates the IL2CPP/AOT pattern: a static callback
+  annotated MonoPInvokeCallback and an instance table keyed by stream id.
+- P3C design must use one static rooted delegate and a registry entry that also
+  verifies graph identity/lifecycle generation. Register before StartRun; mark the
+  registry non-accepting before graph shutdown; remove it only after callbacks
+  have quiesced.
+- Callback does no Unity API work, no main-thread state access, no blocking wait,
+  and no unbounded allocation/work.
+- packetPtr is borrowed/native-owned and may not survive callback return. The
+  callback must extract/copy the required immutable result before returning and
+  never retain Packet<T>, packetPtr, FaceGeometry, or native mesh storage.
+- Callback exceptions are converted to a graph error/status; the in-flight token
+  is retired and graph fault recovery is bounded.
+
+[Installed Pose Extraction Audit]
+- FaceGeometry proto has field 1 Mesh and field 2 PoseTransformMatrix.
+- PacketGetterExtension.Get<T> calls mp_Packet__GetProtoMessageLite, receives a
+  SerializedProto for the full message, and deserializes it with the supplied
+  parser.
+- The specific mp_Packet__GetFaceGeometry export also returns SerializedProto for
+  the full FaceGeometry.
+- FaceLandmarker.GetFaceGeometryList calls packet.WriteTo(FaceGeometry.Parser),
+  deserializes full FaceGeometry objects, then reads PoseTransformMatrix.
+- The exact installed DLL contains FaceGeometryPipelineCalculator and MatrixData,
+  but no registered FaceGeometry-field-to-MatrixData extraction calculator was
+  found. Searches for FaceGeometry-to-matrix/proto-field calculator names in
+  installed source/config and calculator registration strings found none.
+- A managed parser that skips Mesh would still receive/copy the complete serialized
+  proto bytes across the native/managed boundary. It does not satisfy the explicit
+  no-mesh-cross-boundary requirement.
+- Unsafe inspection of a native C++ packet object is not a supported ABI and is
+  rejected.
+
+[Exact Unresolved Boundary]
+- Desired payload is correlation timestamp + raw 16-float MatrixData + status.
+- Achieving it requires a native registered calculator that maps FaceGeometry to
+  MatrixData (the existing generic MatrixData getter can then copy only the small
+  proto), or a new purpose-built native getter. Either changes the installed
+  package/native artifact/provenance scope and is forbidden in P3B.
+- No diagnostic micro-probe can turn this static API/registration absence into the
+  required pose-only path, so none was run.
+
+GEOMETRY_OUTPUT_ACQUISITION_DECISION=OBSERVE_OUTPUT_STREAM_STATIC_AOT_CALLBACK_PROVISIONAL;POSE_ONLY_EXTRACTION_UNRESOLVED
+POSE_PAYLOAD=RAW_CANONICAL_TO_RUNTIME_MATRIX_16_FLOATS_DESIRED_NOT_CURRENTLY_EXTRACTABLE_WITHOUT_FULL_FACEGEOMETRY_SERIALIZATION
+MESH_PAYLOAD=NOT_COPIED_REQUIRED;INSTALLED_BINDING_CANNOT_CURRENTLY_ENFORCE_THIS
+
+======================================================================
+7. GRAPH / ENVIRONMENT / CALLBACK LIFETIME
+======================================================================
+
+[Owners]
+- GeometryGraphOwner owns CalculatorGraph, callback registry entry/delegate root,
+  Environment side packet, metadata file_content/options, immutable dimension
+  ImageFrame side packet, state machine, and shutdown.
+- Input transaction owns its 5616-byte first468 copy until AddPacket ownership
+  transfer/serialization succeeds or it is superseded/disposed.
+- Exactly one in-flight record owns the authoritative tuple/correlation until
+  completion, invalidation, or fault.
+- Exactly one pending slot owns the newest unadmitted transaction.
+- Native graph owns input packets after AddPacketToInputStream and owns callback
+  packet data for callback duration.
+- Callback handoff owns at most one immutable completion record. It may never own
+  a borrowed native packet.
+- Main-thread publication owner consumes the completion once, validates current
+  authority, and then releases/forwards the pose value.
+
+[Fixed Graph Invariants]
+- Environment=TOP_LEFT, vertical_fov_degrees=63, near=1, far=10000.
+- Geometry metadata exact bundle entry/file_content and installed calculator
+  identity are fixed for graph lifetime.
+- Dimensions are fixed for one graph run because Candidate C uses a side packet.
+- FaceGeometryPipelineCalculator is per-sample/stateless after Open. No pose,
+  smoothing, prediction, or previous sample is retained.
+
+EVENT | KEEP/RESET GRAPH | INVALIDATE PENDING? | INVALIDATE INFLIGHT PUBLICATION?
+| UPDATE DIMENSION STATE? | IDENTITY ACTION | REASON
+
+same-provider resume, same dimensions | KEEP | stale pending only by ordinary
+identity/freshness check | compare exact tuple; do not reset merely for resume |
+NO | same ProviderGeneration | Resume != Provider Switch
+
+camera restart, same semantic dimensions | KEEP | YES if old camera | YES old
+camera | NO | compare cameraGeneration | solver resources remain valid
+
+provider switch | KEEP | YES old provider | YES old provider | NO | compare
+ProviderGeneration and backend | publication authority changes; algorithm does not
+
+model switch | KEEP | YES old model | YES old model | NO | compare ModelGeneration |
+pose math resource is model-independent; publication authority changes
+
+tracking session restart | KEEP | YES old session | YES old session | NO | compare
+TrackingSessionGeneration | session invalidation does not alter solver resources
+
+backend change | KEEP | YES non-IE/old provider | YES wrong backend | NO | require
+backend=InferenceEngine and current provider authority | graph remains IE-only
+
+source texture identity change, same semantic dimensions | KEEP | camera gate |
+camera gate | NO | compare cameraGeneration | texture not retained by graph
+
+semantic width/height change | RESET | YES | YES | YES before any new admission |
+exact dimension equality | side packet is immutable per run
+
+Environment change | RESET | YES | YES | retain/set explicit new Environment
+epoch only in future authorized work | exact environment identity | graph invariant
+
+metadata/package change | RESET | YES | YES | as required | exact artifact identity |
+graph invariant/provenance changes
+
+graph error/deadlock | RESET | keep only newest current candidate for bounded
+one-time retry | YES | recreate current state | retire graph-run tokens | recovery
+
+shutdown/scene destroy | RESET/DISPOSE | YES | YES | NO | registry non-accepting,
+close/cancel, quiesce, dispose | explicit lifecycle end
+
+[Shutdown Ordering]
+1. Mark owner non-accepting and stop admission.
+2. Retire/dispose pending and mark in-flight token invalid for publication.
+3. CloseAllPacketSources for graceful normal completion when safe; use Cancel for
+   graph fault or bounded teardown where completion cannot be awaited safely.
+4. Allow already-entered callback to finish its bounded copy/drop path; callback
+   checks registry accepting/lifecycle identity.
+5. Dispose graph-owned resources, then release callback registry/delegate root.
+- No per-frame WaitUntilIdle, main-thread blocking Next, graph flush, Fence, or
+  blocking D3D12 wait is introduced.
+- Exact Production scheduling/quiescence implementation remains for P3C only after
+  the pose boundary is authorized and closed; P3B ran no Runtime.
+
+GRAPH_LIFETIME_OWNER=ONE_GEOMETRY_GRAPH_OWNER_SEPARATE_FROM_PUBLICATION_EPOCHS
+GRAPH_RESET_EVENTS=SEMANTIC_DIMENSION_CHANGE;ENVIRONMENT_CHANGE;METADATA_OR_PACKAGE_CHANGE;GRAPH_FAULT;EXPLICIT_SHUTDOWN
+RESUME_GRAPH_POLICY=KEEP_GRAPH;INVALIDATE_ONLY_BY_EXISTING_IDENTITY_AND_FRESHNESS_RULES;RESUME_IS_NOT_PROVIDER_SWITCH
+RESOURCE_LIFETIME_CONTRACT=ONE_OWNER_PER_GRAPH_CALLBACK_SIDE_PACKET_METADATA_TRANSACTION_SLOT_AND_POSE_COPY;BORROWED_PACKET_NEVER_RETAINED;FIRST468_COPY_5616_BYTES
+
+======================================================================
+8. OLD OUTPUT / ORDER / FRESHNESS / PUBLICATION AUTHORITY
+======================================================================
+
+[Publication Gate]
+1. Callback correlation must identify the one current in-flight transaction.
+2. Token must not already be consumed/retired and must equal callback timestamp.
+3. Output uses the original stored tuple; it never reconstructs identity from
+   mutable current globals.
+4. Before geometry publication/use, compare original camera, tracking session,
+   provider, model, and backend identity with current publication authority.
+5. Require exact semantic width/height match to the graph run and valid aspect.
+6. Require frameId greater than last geometry-published frameId for the applicable
+   publication channel.
+7. Require sourceHostTicks to remain the original freshness time. Geometry
+   submission/completion ticks are telemetry only.
+8. On any failure, drop/propagate explicit invalid status; never update Head twice
+   and never hold the last pose inside Geometry Core.
+
+OLD_EPOCH_RESULT_POLICY=DROP_OLD_EPOCH_RESULT
+DUPLICATE_POLICY=DROP_ALREADY_CONSUMED_OR_RETIRED_CORRELATION_TOKEN
+OUT_OF_ORDER_POLICY=DROP_FRAME_ID_LESS_THAN_OR_EQUAL_TO_LAST_GEOMETRY_PUBLISHED_FOR_CHANNEL
+UNKNOWN_CORRELATION_POLICY=DROP_AND_RECORD_GRAPH_PROTOCOL_FAULT;RESET_ON_PROTOCOL_CORRUPTION
+GEOMETRY_FRESHNESS_OWNER=EXISTING_SOURCE_HOST_TICKS_AND_CURRENT_PRODUCTION_PROVIDER_FRESHNESS_LIVENESS_AUTHORITY
+TEMPORAL_PRESENTATION_OWNER=EXISTING_DOWNSTREAM_TEMPORAL_PRESENTATION_CHANNEL_OWNER_UNCHANGED
+GEOMETRY_TEMPORAL_STATE=NONE
+
+======================================================================
+9. FAILURE-MODE MATRIX
+======================================================================
+
+graph busy | do not AddPacket; SUPERSEDE LATEST_PENDING only
+pending superseded | dispose old 5616-byte payload; keep newest only
+duplicate output | DROP; mark token consumed once
+out-of-order output | DROP when frameId <= last geometry-published for channel
+unknown correlation | DROP + protocol fault; RESET_GRAPH if graph/token integrity
+old camera generation | DROP_OLD_EPOCH_RESULT
+old tracking session | DROP_OLD_EPOCH_RESULT
+old provider generation | DROP_OLD_EPOCH_RESULT
+old model generation | DROP_OLD_EPOCH_RESULT
+wrong backend | DROP; only InferenceEngine is admissible
+semantic dimension/aspect change | stop admission; retire old; RESET_GRAPH;
+initialize new dimension state; RETRY_LATEST current matching sample only
+size state uninitialized | do not admit; initialize graph; RETRY_LATEST if current
+size update race | invariant violation: DROP + RESET_GRAPH; never patch in place
+graph reset while in-flight | retire token; DROP late callback; retry newest current
+callback during dispose | registry accepting=false causes bounded DROP; no Unity API
+graph error/deadlock | retire in-flight; RESET_GRAPH; one bounded RETRY_LATEST
+empty output | PROPAGATE_INVALID status, retire token, then newest pending may run
+invalid FaceGeometry | PROPAGATE_INVALID/DROP pose; no hold-last
+non-finite pose | PROPAGATE_INVALID/DROP pose; graph protocol/error telemetry
+shutdown while work exists | stop admission; dispose pending; invalidate in-flight;
+close/cancel and quiesce; DROP late output
+correlation Int64 exhaustion | stop admission; retire graph run; no timestamp reuse
+AddPacket status failure | input remains failed/retired; RESET_GRAPH; one bounded
+retry of newest current transaction only
+
+======================================================================
+10. REJECTED / UNRESOLVED / NO-CHANGE
+======================================================================
+
+[Rejected]
+- sourceHostTicks as correlation token: not guaranteed unique; freshness owner.
+- camera/session generation as correlation: epochs are not per-sample sequences.
+- new speculative Geometry sequence: existing accepted frameId is suitable.
+- native source sequence: not carried to accepted IE result.
+- per-frame ImageFrame: recurring work with no semantic benefit.
+- PacketCloner selection: generated options exist but native calculator is absent.
+- direct std::pair binding: Candidate C closes size without ABI cost.
+- FlowLimiter: duplicate admission owner.
+- main-thread OutputStreamPoller.Next: blocking.
+- dedicated poller worker: unnecessary thread and shutdown owner.
+- graph rebuild on every camera/provider/model/session epoch: algorithm resources
+  are unchanged; identity invalidation is sufficient.
+- full FaceGeometry managed deserialization followed by mesh discard: violates the
+  requested cross-boundary contract.
+- unsafe native object layout access: unsupported ABI/provenance.
+- smoothing, prediction, interpolation, Kalman, or hold-last: forbidden and not
+  part of per-sample geometry.
+
+[Unresolved]
+- POSE_ONLY_NATIVE_TO_MANAGED_EXTRACTION=
+  UNAVAILABLE_IN_EXACT_INSTALLED_PACKAGE_WITHOUT_NATIVE_ARTIFACT_EXTENSION.
+- Callback shutdown behavior is statically bounded by registry invalidation and
+  documented close/cancel APIs, but no same-build Runtime lifecycle claim is made.
+  This is expected for P3C/its small Runtime gate, not evidence that can waive the
+  pose-output stop boundary.
+- Current context roadmap has not yet been updated to the later P2C/P3A progress;
+  its claim conflict was resolved for this audit but the context file itself was
+  not modified because context maintenance was not requested.
+
+[Do Not Change]
+- Production source, Scene, Native camera, IE math/ROI, KiwiFaceMotion, H1,
+  FacePart, Head authority, temporal presentation, freshness thresholds, package
+  binary, and installed ABI remain unchanged.
+
+======================================================================
+11. CONDITIONAL DIAGNOSTIC DECISION
+======================================================================
+
+- No micro-probe was executed.
+- PacketCloner availability and pose-only extraction are exact installed-binary /
+  managed-source questions and were closed statically as unavailable.
+- A callback/PacketCloner reassurance probe would not resolve the named stop
+  boundary and would add no Authority.
+
+CONDITIONAL_DIAGNOSTIC_EXECUTION=NOT_RUN_STATIC_PACKAGE_SOURCE_AND_BINARY_REGISTRATION_CLOSED_THE_NAMED_UNKNOWN
+
+======================================================================
+12. DOUBLE FULL AUDIT
+======================================================================
+
+[FULL_AUDIT_1]
+- Covered the complete P3B scope from current authority through identity owner
+  inventory, minimum tuple, token, immutable capture, dimensions, all four
+  IMAGE_SIZE candidates, queue/deadlock/FlowLimiter, callback/poller, pose/mesh,
+  graph/environment lifecycle, old output/order/freshness, resource ownership,
+  failure matrix, prohibited actions, and pass conditions.
+- Result: audit complete; P3B gate fails at pose-only managed boundary.
+
+[FULL_AUDIT_2 - independent restart]
+- Re-enumerated Current context and reconciled it again against current HEAD,
+  current source hashes, P2C, and P3A.
+- Re-searched current owners/assignments rather than relying on Audit 1's table:
+  frameId has only accepted-store preincrements; camera/session identity is carried
+  in IE lanes; provider/model are independently advanced; backend is per-frame;
+  current semantic dimensions are Runner resource fields.
+- Re-inspected exact installed CalculatorGraph, Packet, PacketGetterExtension,
+  OutputStream, FaceLandmarker, generated FaceGeometry, NativeMethods, and exact
+  mediapipe_c.dll registration strings.
+- Re-evaluated A-D, graph bounds, callback lifetime, graph reset events, old epoch,
+  duplicate/order, resources, failures, temporal ownership, and every PASS key.
+- Independently reached the same selected size path and the same pose-only stop.
+
+FULL_AUDIT_1=PASS
+FULL_AUDIT_2=PASS
+AUDIT_DISAGREEMENTS=NONE_AFTER_CURRENT_CONTEXT_PROGRESS_WAS_RESOLVED_BY_CLAIM_SCOPED_AUTHORITY
+REMAINING_UNRESOLVED_CLAIMS=POSE_ONLY_NATIVE_TO_MANAGED_EXTRACTION_UNAVAILABLE_WITHIN_FORBIDDEN_PACKAGE_CHANGE_SCOPE
+
+======================================================================
+13. SELF-AUDIT AGAINST USER CHECKLIST
+======================================================================
+
+01 PASS - P3A PASS not reopened without evidence.
+02 PASS - official FaceGeometryPipelineCalculator reuse retained.
+03 PASS - calculator timestamp classified correlation-only.
+04 PASS - exact current Kiwi identity owners audited first.
+05 PASS - no speculative epoch proliferation.
+06 PASS - minimal tuple classified; no independent backend epoch invented.
+07 PASS - 480x270 not hardcoded.
+08 PASS - IMAGE_SIZE candidates include PacketCloner.
+09 PASS - PacketCloner retained state analyzed, then rejected as unregistered.
+10 PASS - new dimensions cannot pair with stale size under graph-run invariant.
+11 PASS - per-frame ImageFrame rejected after comparison.
+12 PASS - native pair binding rejected as unnecessary.
+13 PASS - latest-frame admission owner remains outside graph.
+14 PASS - max_queue_size is secondary safety only.
+15 PASS - report_deadlock=true; auto growth not accepted silently.
+16 PASS - FlowLimiter not added as duplicate owner.
+17 PASS - one outstanding transaction target.
+18 PASS - one overwriteable pending slot.
+19 PASS - OutputStreamPoller.Next never selected for main thread.
+20 PASS - callback borrowed packet may not be retained.
+21 PASS - callback performs no Unity API work.
+22 FAIL/BLOCKER - desired mesh-not-copied contract cannot be implemented with
+   installed output getter/calculator set; no false PASS.
+23 PASS - graph lifetime not tied to session without necessity.
+24 PASS - authority epoch invalidates result without graph rebuild.
+25 PASS - Resume != Provider Switch.
+26 PASS - late old-authority result is dropped.
+27 PASS - source age is not replaced by geometry completion age.
+28 PASS - buffer/packet/resource owners explicitly assigned.
+29 PASS - no diagnostic run merely for reassurance.
+30 PASS - Geometry Core remains stateless.
+31 PASS - no Production write.
+32 PASS - H1 remains unauthorized.
+33 PASS - no commit/push.
+
+======================================================================
+14. REQUIRED MACHINE KEYS
+======================================================================
+
+CURRENT_HEAD=2637b089fa5d0673f92887eecda4e9eb4e9de25c
+
+P3A_RESULT=PASS
+P3B_RESULT=FAIL_POSE_ONLY_MANAGED_BOUNDARY_NOT_CLOSED
+
+CURRENT_SOURCE_IDENTITY_OWNER=FACE_LANDMARKER_RUNNER_CAMERA_GENERATION_PLUS_SOURCE_HOST_TICKS
+CURRENT_INFERENCE_IDENTITY_OWNER=KIWI_INFERENCE_FACE_TRACKER_LANE_THEN_ACCEPTED_FACE_PRECISION_FRAME_ID
+CURRENT_SESSION_EPOCH_OWNER=KIWI_TRACKING_PROVIDER_HUB_TRACKING_SESSION_GENERATION
+CURRENT_PROVIDER_EPOCH_OWNER=KIWI_TRACKING_PROVIDER_HUB_PROVIDER_GENERATION
+CURRENT_MODEL_EPOCH_OWNER=KIWI_AVATAR_RUNTIME_MANAGER_MODEL_GENERATION
+CURRENT_BACKEND_EPOCH_OWNER=NO_INDEPENDENT_EPOCH;FACE_PRECISION_BACKEND_PLUS_PROVIDER_GENERATION
+
+GEOMETRY_TRANSACTION_IDENTITY_TUPLE={frameId,sourceHostTicks,cameraGeneration,trackingSessionGeneration,providerGeneration,modelGeneration,backend=InferenceEngine,semanticFrameWidth,semanticFrameHeight}
+
+GEOMETRY_CORRELATION_TOKEN=EXISTING_FACE_PRECISION_TRACKING_DATA_FRAME_ID_CAPTURED_AT_ACCEPTED_SENTIS_STORE
+CALCULATOR_TIMESTAMP_SEMANTIC=CORRELATION_ONLY
+
+SEMANTIC_FRAME_DIMENSION_OWNER=FACE_LANDMARKER_RUNNER_TRACKING_INPUT_RESOURCE_SNAPSHOT_PLUS_GEOMETRY_GRAPH_RUN_IMMUTABLE_DIMENSION_STATE
+
+P3B_IMAGE_SIZE_DELIVERY_DECISION=PROVISIONAL_SELECTED_INSTALLED_SIDE_PACKET_TO_STREAM_TICK_PLUS_IMAGE_PROPERTIES
+IMAGE_SIZE_STATE_OWNER=GEOMETRY_GRAPH_LIFECYCLE_OWNER_ONE_IMMUTABLE_WIDTH_HEIGHT_AND_SIDE_PACKET_IMAGEFRAME_PER_GRAPH_RUN
+IMAGE_SIZE_DIMENSION_CHANGE_POLICY=STOP_ADMISSION_RETIRE_OLD_TRANSACTIONS_REBUILD_GRAPH_BEFORE_FIRST_NEW_DIMENSION_LANDMARK
+EXTRA_COPY_PER_FRAME=FIRST468_ONLY_5616_BYTES;NO_IMAGEFRAME_PIXEL_COPY
+PER_FRAME_ALLOCATION=NO_IMAGEFRAME;INPUT_PROTO_PACKET_SERIALIZATION_REMAINS
+NATIVE_ABI_CHANGE_REQUIRED=NO_FOR_IMAGE_SIZE_DELIVERY
+
+LATEST_FRAME_ADMISSION_OWNER=GEOMETRY_LIFECYCLE_OWNER_OUTSIDE_MEDIAPIPE_GRAPH
+
+DESIRED_MAX_IN_FLIGHT_GEOMETRY=1
+GEOMETRY_EXECUTION_LANE=ONE_IN_FLIGHT_PLUS_ONE_OVERWRITEABLE_LATEST_PENDING
+MAX_PENDING_GEOMETRY=1
+SUPERSEDE_POLICY=NEWEST_ACCEPTED_IE_TRANSACTION_ATOMICALLY_REPLACES_AND_DISPOSES_OLDER_PENDING
+NO_FIFO_CONTRACT=PASS_DESIGN_ONLY
+
+GRAPH_MAX_QUEUE_SIZE_POLICY=SECONDARY_FAIL_CLOSED_MAX_QUEUE_SIZE_1_NOT_LATEST_FRAME_OWNER
+GRAPH_DEADLOCK_POLICY=REPORT_DEADLOCK_TRUE;ERROR_RESET_GRAPH;NO_AUTO_QUEUE_EXPANSION_OR_BLOCKING_RETRY
+FLOW_LIMITER_DECISION=NOT_NEEDED
+
+GEOMETRY_OUTPUT_ACQUISITION_DECISION=OBSERVE_OUTPUT_STREAM_STATIC_AOT_CALLBACK_PROVISIONAL;POSE_ONLY_EXTRACTION_UNRESOLVED
+
+GRAPH_LIFETIME_OWNER=ONE_GEOMETRY_GRAPH_OWNER_SEPARATE_FROM_PUBLICATION_EPOCHS
+GRAPH_RESET_EVENTS=SEMANTIC_DIMENSION_CHANGE;ENVIRONMENT_CHANGE;METADATA_OR_PACKAGE_CHANGE;GRAPH_FAULT;EXPLICIT_SHUTDOWN
+RESUME_GRAPH_POLICY=KEEP_GRAPH;INVALIDATE_ONLY_BY_EXISTING_IDENTITY_AND_FRESHNESS_RULES;RESUME_IS_NOT_PROVIDER_SWITCH
+
+OLD_EPOCH_RESULT_POLICY=DROP_OLD_EPOCH_RESULT
+DUPLICATE_POLICY=DROP_ALREADY_CONSUMED_OR_RETIRED_CORRELATION_TOKEN
+OUT_OF_ORDER_POLICY=DROP_FRAME_ID_LESS_THAN_OR_EQUAL_TO_LAST_GEOMETRY_PUBLISHED_FOR_CHANNEL
+UNKNOWN_CORRELATION_POLICY=DROP_AND_RECORD_GRAPH_PROTOCOL_FAULT;RESET_ON_PROTOCOL_CORRUPTION
+
+GEOMETRY_FRESHNESS_OWNER=EXISTING_SOURCE_HOST_TICKS_AND_CURRENT_PRODUCTION_PROVIDER_FRESHNESS_LIVENESS_AUTHORITY
+
+POSE_PAYLOAD=RAW_CANONICAL_TO_RUNTIME_MATRIX_16_FLOATS_DESIRED_NOT_CURRENTLY_EXTRACTABLE_WITHOUT_FULL_FACEGEOMETRY_SERIALIZATION
+MESH_PAYLOAD=NOT_COPIED_REQUIRED;INSTALLED_BINDING_CANNOT_CURRENTLY_ENFORCE_THIS
+
+TEMPORAL_PRESENTATION_OWNER=EXISTING_DOWNSTREAM_TEMPORAL_PRESENTATION_CHANNEL_OWNER_UNCHANGED
+GEOMETRY_TEMPORAL_STATE=NONE
+
+RESOURCE_LIFETIME_CONTRACT=ONE_OWNER_PER_GRAPH_CALLBACK_SIDE_PACKET_METADATA_TRANSACTION_SLOT_AND_POSE_COPY;BORROWED_PACKET_NEVER_RETAINED;FIRST468_COPY_5616_BYTES
+
+CONDITIONAL_DIAGNOSTIC_EXECUTION=NOT_RUN_STATIC_PACKAGE_SOURCE_AND_BINARY_REGISTRATION_CLOSED_THE_NAMED_UNKNOWN
+
+P1_I_GEOMETRY_IDENTITY_CARRIER=NONE_DESIGN_NOT_CLOSED_NOT_IMPLEMENTED_NOT_RUNTIME_VALIDATED
+
+PRODUCTION_CHANGE=NO
+COMPILE=NOT_RUN
+LIVE_CAMERA_RUNTIME=NOT_RUN
+PERFORMANCE_AUTHORITY=NONE
+H1=NOT_AUTHORIZED
+COMMIT_PUSH=NO
+
+NEXT_SINGLE_ACTION=AUTHORIZE_OR_REJECT_ONE_VERSION_MATCHED_NATIVE_FACEGEOMETRY_TO_MATRIXDATA_EXTRACTION_CALCULATOR_DESIGN_GATE_WITH_FULL_PROVENANCE
+
+======================================================================
+15. NEXT EXACT BOUNDARY
+======================================================================
+
+- Do not start P3C.
+- The next single action is a narrow design/authority decision: authorize or reject
+  a version-matched native FaceGeometry -> MatrixData extraction calculator as the
+  only recommended closure path.
+- If authorized later, it must be a separate package/native provenance task:
+  exact source/build definition/toolchain -> calculator registration -> artifact
+  -> installed SHA -> callback MatrixData-only proof -> rollback. It must not alter
+  the FaceGeometry algorithm, camera, inference, ROI, H1, or tracking ownership.
+- A custom calculator can output existing MatrixData, allowing the existing generic
+  managed proto getter to copy only the 16-float matrix. This is preferred over a
+  new special C ABI getter because it reuses graph typing and the existing managed
+  MatrixData binding, but it is not authorized by this task.
+- If native/package modification remains forbidden, retain P3B FAIL and do not
+  weaken the no-mesh-cross-boundary requirement or implement P3C around it.
+
+======================================================================
+16. SOURCE BASIS
+======================================================================
+
+[Installed Package Source - Primary for package behavior]
+- Library\PackageCache\com.github.homuler.mediapipe@66127f8e750d\Runtime\Scripts\Framework\CalculatorGraph.cs
+- ...\Framework\Packet.cs
+- ...\Framework\PacketGetterExtension.cs
+- ...\Framework\OutputStreamPoller.cs
+- ...\Unity\OutputStream.cs
+- ...\Tasks\Vision\FaceLandmarker\FaceLandmarker.cs
+- ...\PInvoke\NativeMethods\Framework\Packet_Unsafe.cs
+- ...\PInvoke\NativeMethods\External\Protobuf_Unsafe.cs
+- ...\Protobuf\Framework\Calculator.cs
+- ...\Protobuf\Calculators\Core\PacketClonerCalculator.cs
+- ...\Protobuf\Calculators\Core\FlowLimiterCalculator.cs
+- ...\Protobuf\Tasks\Vision\FaceGeometry\Proto\FaceGeometry.cs
+- exact installed Runtime\Plugins\mediapipe_c.dll registration string scan
+
+[Version-Matched Official Source - Supporting comparator]
+- SidePacketToStreamCalculator:
+  https://github.com/google-ai-edge/mediapipe/blob/v0.10.22/mediapipe/calculators/core/side_packet_to_stream_calculator.cc
+- PacketClonerCalculator:
+  https://github.com/google-ai-edge/mediapipe/blob/v0.10.22/mediapipe/calculators/core/packet_cloner_calculator.cc
+- ImagePropertiesCalculator:
+  https://github.com/google-ai-edge/mediapipe/blob/v0.10.22/mediapipe/calculators/image/image_properties_calculator.cc
+- FlowLimiterCalculator:
+  https://github.com/google-ai-edge/mediapipe/blob/v0.10.22/mediapipe/calculators/core/flow_limiter_calculator.cc
+- MediaPipe troubleshooting / queue deadlock behavior:
+  https://github.com/google-ai-edge/mediapipe/blob/master/docs/getting_started/troubleshooting.md
+- MediaPipeUnityPlugin callback/thread notes:
+  https://github.com/homuler/MediaPipeUnityPlugin/wiki/API-Overview
+
+END_OF_P3B_REPORT

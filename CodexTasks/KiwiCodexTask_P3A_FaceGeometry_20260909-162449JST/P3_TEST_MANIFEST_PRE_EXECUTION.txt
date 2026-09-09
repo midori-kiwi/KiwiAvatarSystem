@@ -1,0 +1,93 @@
+KiwiAvatarSystem P3A FaceGeometry deterministic diagnostic test manifest
+MANIFEST_STATE=PRE_EXECUTION_FROZEN
+CREATED_JST=2026-09-09 16:24:49 JST
+PRODUCTION_WRITE=FORBIDDEN
+LIVE_CAMERA=FORBIDDEN
+AVATAR_PATH=FORBIDDEN
+FACE_INFERENCE=FORBIDDEN
+
+AUTHORITIES
+CURRENT_HEAD=2637b089fa5d0673f92887eecda4e9eb4e9de25c
+MEDIAPIPE_UNITY_PACKAGE=0.16.3
+MEDIAPIPE_LINEAGE=v0.10.22
+INSTALLED_PACKAGE_ROOT=Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d
+INSTALLED_NATIVE_DLL_SHA256=B9B620F2707DEA371BE3FCEF9F2D05468CA1471FAEE3BE6637BBD7DA77E21C54
+TASK_BUNDLE=face_landmarker_v2_with_blendshapes.bytes
+METADATA_ENTRY=geometry_pipeline_metadata_landmarks.binarypb
+METADATA_SHA256=BDBCDA96DFCB7DA883DA124AAA2C55DEE49770D934F0FCC71747F8C21BDC75B4
+
+EXECUTION_PATH
+GRAPH=CalculatorGraph
+IMAGE_SIZE_PRODUCER=installed ImagePropertiesCalculator from a zeroed diagnostic ImageFrame
+GEOMETRY_CALCULATOR=mediapipe.tasks.vision.face_geometry.FaceGeometryPipelineCalculator
+ENVIRONMENT_PRODUCER=mediapipe.tasks.vision.face_geometry.FaceGeometryEnvGeneratorCalculator
+METADATA_INPUT=exact bundle entry bytes embedded as ExternalFile.file_content
+LANDMARK_INPUT=arbitrary single NormalizedLandmarkList packet
+TEMPORAL_STATE=NONE
+SECOND_FACE_MODEL=NONE
+
+ENVIRONMENT
+ORIGIN=TOP_LEFT_CORNER
+VERTICAL_FOV_DEGREES=63.0
+NEAR=1.0
+FAR=10000.0
+
+IMAGE_SIZE_CASES
+PRIMARY=480x270
+PRIMARY_AUTHORITY=current scene trackingInputMaxWidth=480; current AppSettings preferred source=1920x1080; Runner aspect-preserving rounded-even tracking copy=480x270
+ASPECT_EQUIVALENT=1920x1080
+SECOND_ASPECT=640x480
+PRIMARY_ASPECT=16/9
+SECOND_ASPECT=4/3
+
+FIXTURE_CONSTRUCTION
+SOURCE=canonical mesh XYZ parsed from the exact metadata entry
+VERTEX_COUNT_EXPECTED=468
+BASE_CENTER_X=0.5
+BASE_CENTER_Y=0.5
+BASE_MAX_XY_SPAN=0.58
+BASE_FORMULA=uniform scale q=0.58/max(canonical_x_span,canonical_y_span); x=0.5+q*(cx-mid_x); y=0.5-q*(cy-mid_y); z=q*(cz-mean_z)
+BASE_CLASSIFICATION=INVARIANT_ONLY
+TRANSLATED_FORMULA=base x+0.04; base y-0.03; base z unchanged
+TRANSLATED_CLASSIFICATION=INVARIANT_ONLY
+RELATIVE_Z_FORMULA=x,y unchanged; z=1.25*base_z
+RELATIVE_Z_CLASSIFICATION=INVARIANT_ONLY
+SECOND_ASPECT_FORMULA=base landmarks unchanged; IMAGE_SIZE=640x480
+SECOND_ASPECT_CLASSIFICATION=INVARIANT_ONLY
+ASPECT_EQUIVALENT_FORMULA=base landmarks unchanged; IMAGE_SIZE=1920x1080
+ASPECT_EQUIVALENT_CLASSIFICATION=KNOWN_GROUND_TRUTH_FOR_ASPECT_ONLY
+
+REPEAT_COUNT=5
+
+METRICS_AND_PREDECLARED_TOLERANCES
+OUTPUT_PRESENT=required for every valid fixture/repeat
+MESH_VERTEX_COUNT=exactly 468
+FINITE_OUTPUT=all mesh XYZ and all 16 matrix values finite
+POSE_ROWS_COLS=exactly 4x4
+POSE_LAST_ROW_ABS_MAX_ERROR=1e-6
+POSE_COLUMN_SCALE_RELATIVE_SPREAD_MAX=1e-5
+POSE_ROTATION_ORTHOGONALITY_ABS_MAX_ERROR=2e-5 after removing uniform scale
+POSE_ROTATION_DETERMINANT_MIN=0.99998
+REPROJECTION_XY_RMS_MAX=1e-5 normalized screen units
+REPROJECTION_XY_MAX_MAX=5e-5 normalized screen units
+DETERMINISM_RULE=serialized FaceGeometry bytes must be exactly identical across five repeats of the same fixture
+ASPECT_EQUIVALENT_POSE_ABS_MAX=5e-6 between 480x270 and 1920x1080
+ASPECT_EQUIVALENT_MESH_XYZ_ABS_MAX=5e-6 between 480x270 and 1920x1080
+SECOND_ASPECT_RULE=finite/structure/reprojection/determinism only; output equality with 16:9 is not required
+
+REPROJECTION_ALGORITHM
+1=read raw MatrixData according to declared row/column-major layout; do not use Unity-converted matrix
+2=runtime_point=pose_transform_matrix*[output_mesh_xyz,1]
+3=project right-handed metric point to near plane with camera looking down negative Z: z_positive=-runtime_z; near_x=runtime_x*near/z_positive; near_y=runtime_y*near/z_positive
+4=normalize with the same frustum derived from VFOV and IMAGE_SIZE aspect
+5=convert bottom-left normalized Y to TOP_LEFT exactly once
+6=compare projected XY to input NormalizedLandmarkList XY; no Z equality requirement
+
+PASS_RULE
+PASS=all required output, count, finite, pose structure, handedness/orientation, reprojection, determinism, and aspect-equivalence checks satisfy the predeclared rules
+FAIL=no threshold adjustment after execution; a defective test design must be invalidated and replaced by a separately hashed pre-result manifest
+
+PROCRUSTES_CORE_SELFTEST=NOT_REQUIRED_IF_OFFICIAL_INSTALLED_IMPLEMENTATION_REUSED
+LIVE_PRODUCTION_RUNTIME=NOT_RUN
+HUMAN_VISUAL=NOT_RUN
+PERFORMANCE_AUTHORITY=NONE

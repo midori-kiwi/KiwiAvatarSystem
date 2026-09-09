@@ -340,6 +340,11 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
         [Range(0.1f, 0.95f)]
         public float sentisMinimumPresence = 0.5f;
 
+        [Header("P3C FaceGeometry Transaction")]
+        [Tooltip("Compute bounded same-sample IE FaceGeometry transactions without publishing to Head, Canonical, or FacePart. Keep OFF until the P3D Runtime gate.")]
+        [SerializeField]
+        private bool enableInferenceFaceGeometryTransactions = false;
+
 
         private Experimental.TextureFramePool
             _textureFramePool;
@@ -371,6 +376,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
         private bool _hasSentisRotationOffset;
         private float _latestSentisLatencyMs;
         private float _latestSentisPresence;
+        private KiwiFaceGeometryTransactionService
+            _faceGeometryTransactionService;
 
 
         public readonly FaceLandmarkDetectionConfig config =
@@ -602,6 +609,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
         private void Update()
         {
+            PumpFaceGeometryTransactionService();
+
             // This observer continues to run while the processing coroutine is
             // awaiting AsyncGPUReadback. Without it, camera updates occurring in
             // that wait frame are invisible and effective source fps can halve.
@@ -696,6 +705,21 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     ? _sentisRotationOffset * geometricRotation
                     : geometricRotation;
 
+                KiwiRuntimeGenerationContext.Snapshot geometryIdentity =
+                    default;
+                int geometrySemanticWidth = 0;
+                int geometrySemanticHeight = 0;
+
+                if (enableInferenceFaceGeometryTransactions)
+                {
+                    geometryIdentity =
+                        KiwiRuntimeGenerationContext.Capture();
+                    geometrySemanticWidth =
+                        _trackingInputWidth;
+                    geometrySemanticHeight =
+                        _trackingInputHeight;
+                }
+
                 bool sentisAcceptedForPublish = StoreSentisTrackingData(
                     landmarks,
                     NormalizeQuaternion(rotation),
@@ -703,10 +727,21 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     completedSourceHostTicks > 0L
                         ? completedSourceHostTicks
                         : sourceHostTicks,
-                    System.Diagnostics.Stopwatch.GetTimestamp());
+                    System.Diagnostics.Stopwatch.GetTimestamp(),
+                    out ulong acceptedFrameId);
 
                 if (sentisAcceptedForPublish)
                 {
+                    AdmitFaceGeometryTransaction(
+                        acceptedFrameId,
+                        completedSourceHostTicks > 0L
+                            ? completedSourceHostTicks
+                            : sourceHostTicks,
+                        geometryIdentity,
+                        geometrySemanticWidth,
+                        geometrySemanticHeight,
+                        landmarks);
+
                     _sentisPublishFailureStreak = 0;
                     _sentisPrimaryActive = true;
                 }
@@ -815,6 +850,69 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             _hasSentisRotationOffset = false;
             _latestSentisLatencyMs = 0f;
             _latestSentisPresence = 0f;
+        }
+
+
+        private void PumpFaceGeometryTransactionService()
+        {
+            if (_faceGeometryTransactionService == null)
+            {
+                return;
+            }
+
+            if (
+                !enableInferenceFaceGeometryTransactions ||
+                !_acceptTrackingResults)
+            {
+                _faceGeometryTransactionService.BeginShutdown();
+                _faceGeometryTransactionService.PumpShutdown();
+
+                if (_faceGeometryTransactionService.IsShutdownComplete)
+                {
+                    _faceGeometryTransactionService = null;
+                }
+                return;
+            }
+
+            _faceGeometryTransactionService.Pump(
+                _trackingInputWidth,
+                _trackingInputHeight);
+        }
+
+
+        private void AdmitFaceGeometryTransaction(
+            ulong frameId,
+            long sourceHostTicks,
+            KiwiRuntimeGenerationContext.Snapshot identity,
+            int semanticFrameWidth,
+            int semanticFrameHeight,
+            Vector3[] landmarks)
+        {
+            if (!enableInferenceFaceGeometryTransactions)
+            {
+                return;
+            }
+
+            if (_faceGeometryTransactionService == null)
+            {
+                string bundlePath = System.IO.Path.Combine(
+                    Application.streamingAssetsPath,
+                    "face_landmarker_v2_with_blendshapes.bytes");
+
+                _faceGeometryTransactionService =
+                    new KiwiFaceGeometryTransactionService(bundlePath);
+            }
+
+            _faceGeometryTransactionService.AdmitAcceptedInferenceResult(
+                frameId,
+                sourceHostTicks,
+                identity.cameraGeneration,
+                identity.trackingSessionGeneration,
+                identity.providerGeneration,
+                identity.modelGeneration,
+                semanticFrameWidth,
+                semanticFrameHeight,
+                landmarks);
         }
 
 
@@ -1392,6 +1490,12 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             // section. New callbacks see the closed volatile gate and cannot enter.
             lock (_callbackLifecycleLock)
             {
+            }
+
+            if (_faceGeometryTransactionService != null)
+            {
+                _faceGeometryTransactionService.BeginShutdown();
+                _faceGeometryTransactionService.PumpShutdown();
             }
 
             DisposeSentisTracker();
@@ -2934,6 +3038,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                         1.50f;
 
                     if (
+                        float.IsNaN(squareSidePixels) ||
+                        float.IsInfinity(squareSidePixels) ||
                         squareSidePixels <=
                             1f
                     )
@@ -2944,18 +3050,12 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     else
                     {
                         float anchorWidth =
-                            Mathf.Clamp(
-                                squareSidePixels /
-                                imageWidth,
-                                0.04f,
-                                2.50f);
+                            squareSidePixels /
+                            imageWidth;
 
                         float anchorHeight =
-                            Mathf.Clamp(
-                                squareSidePixels /
-                                imageHeight,
-                                0.04f,
-                                2.50f);
+                            squareSidePixels /
+                            imageHeight;
 
                         Vector2 anchorCenter =
                             new Vector2(
@@ -3239,8 +3339,11 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             Quaternion rotation,
             long timestamp,
             long submissionHostTicks,
-            long arrivalHostTicks)
+            long arrivalHostTicks,
+            out ulong acceptedFrameId)
         {
+            acceptedFrameId = 0UL;
+
             if (
                 !_acceptTrackingResults ||
                 landmarks == null ||
@@ -3454,6 +3557,8 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     _latestMotionTimestamp = timestamp;
                     precisionData.frameId =
                         ++_nextPublishedTrackingFrameId;
+                    acceptedFrameId =
+                        precisionData.frameId;
                     precisionData.backend =
                         KiwiTrackingBackend.InferenceEngine;
                     _latestPrecisionData = precisionData;

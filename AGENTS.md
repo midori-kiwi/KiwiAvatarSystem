@@ -9,6 +9,162 @@ Do not embed current version numbers, current Git SHA, latest Runtime results, c
 temporary hypotheses, or other volatile state here. Resolve current state from local Production,
 installed package source, Git history, KiwiValidation reports, build identity, and correlated Runtime evidence.
 
+
+## Mandatory project context preflight
+
+Treat this `AGENTS.md` as durable operating policy, not as the repository's volatile status database.
+
+The fixed current project-information directory is:
+
+`D:\KiwiAvatarSystem\ProjectContext\Current\`
+
+Files currently present in this directory form the current project information set.
+Do not depend on their exact filenames, revision numbers, filename labels such as `latest` or `final`,
+or filesystem modification time to decide which project-information document is current.
+
+At the start of every substantive KiwiAvatarSystem technical task, before design, implementation, validation,
+evaluation, or a next-action recommendation:
+
+1. resolve current live-local authority first: project root, branch/HEAD/status, relevant Production paths and SHA,
+   exact Unity identity, installed package/model identity, and user-owned dirty state as applicable;
+2. enumerate every file currently present under `D:\KiwiAvatarSystem\ProjectContext\Current\`;
+3. read all current-context documents whose claim scope can materially affect the assigned task;
+4. reconcile their Current / Rejected / Superseded / Unknown / Unverified / Do Not Change / Next Action claims;
+5. locate and read the newest relevant KiwiValidation / Consolidated REPORT(s) when the current-context documents
+   identify or require them;
+6. inspect the actually installed package source for package-behavior claims;
+7. compare older reports/history only after current authority is established.
+
+Directory membership is the current-context selector.
+A document moved out of `ProjectContext\Current\` is not part of the current project-information set unless the task
+explicitly requires historical evidence.
+
+The `Current` directory does not override claim-scoped authority.
+Current integrated information and project-context documents are coordination/evidence sources, not automatic
+Implementation Authority. Current live-local Production source + actual identity remains authoritative for
+Implementation claims.
+
+Do not choose between conflicting `Current` documents by:
+- filename;
+- revision number;
+- newest mtime;
+- directory order;
+- a `latest` / `final` label;
+- GitHub `main`;
+- an older report's recommendation.
+
+If documents inside `ProjectContext\Current\` conflict, resolve the conflict using claim-scoped Authority,
+source identity, report-time SHA/HEAD, same-build Runtime identity, package identity, and claim scope.
+
+If the conflict cannot be resolved:
+`CURRENT_CONTEXT_UNRESOLVED`
+
+Stop the affected Gate. Do not silently select one document and continue.
+
+If the directory is missing or contains no usable project-context document:
+`CURRENT_CONTEXT_NOT_FOUND`
+
+Do not silently fall back to an older historical source.
+
+If a current-context document references another required file that is missing or ambiguous:
+report that dependency as unavailable/unresolved. Do not invent its contents.
+
+Before changing design, implementation, or project direction, explicitly reconcile:
+- Current;
+- Rejected;
+- Superseded;
+- Unknown / Unverified;
+- Do Not Change;
+- Next Action;
+- applicable Runtime / Static / Package / Visual authority.
+
+Keep `ProjectContext\Current\` small and intentional.
+Place only documents that are meant to define or constrain current project state, architecture, Authority,
+roadmap, or active technical decisions there.
+Do not use it as a dump for all historical Codex REPORTs, Runtime ZIPs, logs, or superseded evidence.
+
+When a project-context document becomes superseded, remove it from `ProjectContext\Current\` or move it to
+historical storage as part of the same context-maintenance task.
+
+## Default Normal Chat / Codex role boundary
+
+Default division of responsibility:
+
+Normal Chat:
+- external/public research;
+- comparative design and Design Freeze;
+- independent re-audit of Codex REPORTs;
+- interpretation/adoption decisions for Runtime and Human Visual evidence;
+- roadmap/integrated-information decisions;
+- final Production Adopt / Reject / Supersede decisions.
+
+Codex:
+- current live-local source/dataflow inspection;
+- branch/HEAD/status/dirty-state and SHA/provenance collection;
+- actually installed package/source inspection;
+- exact method/statement/owner/identity/lifecycle/resource tracing;
+- whole-file implementation when authorized by the task;
+- Windows PowerShell 5.1 validators/tooling;
+- compile/build/ABI/artifact verification;
+- rollback preparation;
+- consolidated evidence REPORT generation.
+
+This is the default boundary, not a reason to refuse an explicitly assigned task.
+When Codex is asked to perform supporting external lookup, prefer official/version-matched source and clearly
+separate it from live-local facts.
+
+Codex must not promote its own Validator PASS, REPORT conclusion, implementation recommendation,
+or report-time SHA/HEAD into final Project/Production adoption authority by itself.
+Provide evidence and claim-scoped conclusions for independent project decision.
+
+## Project-wide double full audit
+
+KiwiAvatarSystemに関する、技術的意味を持つすべての調査・設計・指示・実装・検証・評価・判断・成果物を、
+原則として2回の完全監査対象とする。
+
+For every substantive technical target:
+
+`FULL_AUDIT_1`
+- audit the entire target and the entire agreed scope from start to finish.
+
+`FULL_AUDIT_2`
+- independently audit the same entire target and the same entire scope again from start to finish;
+- do not treat `FULL_AUDIT_1` conclusions as authority or merely confirm its delta.
+
+Each pass is 100% scope.
+Two partial passes whose union equals one complete audit are not two full audits.
+
+Reject:
+- first pass = first half, second pass = second half;
+- first pass = Source, second pass = Runtime for the same required whole audit;
+- second pass = only changed lines/findings;
+- checklist partitioning presented as two audits;
+- automatic PASS because the first audit passed.
+
+If the two complete audits disagree:
+- do not majority-vote or average to PASS;
+- return to claim scope, identity, Authority, assumption, observer/validator, or measurement design;
+- resolve the conflict or mark the claim `UNRESOLVED` and stop the affected Gate.
+
+The rule applies project-wide, including technical task instructions, source/package/provenance audits,
+implementation plans and results, validators/observers/benchmarks, compile/build/ABI results, Runtime,
+Performance, Human Visual, lifecycle/resource/security/compatibility work, reuse/retire decisions,
+Reject/Supersede/Rollback/Production decisions, reports, roadmaps, handoffs, and release artifacts.
+
+Double full audit does not mean blindly repeating side-effecting operations twice.
+Writes, code modification, builds, Runtime capture, installer application, commit, or push are executed only
+as many times as technically justified. Audit the intended action before execution and the resulting evidence
+after execution with the required two complete audits. Repeated execution is required separately only when
+reproducibility, determinism, flakiness, or repeatability is itself the claim.
+
+For a substantive Codex task, the final consolidated REPORT should state:
+- `FULL_AUDIT_1=PASS|FAIL|UNRESOLVED`;
+- `FULL_AUDIT_2=PASS|FAIL|UNRESOLVED`;
+- disagreements found and how they were resolved;
+- remaining `UNRESOLVED` claims.
+
+Do not claim two full audits unless both actually covered the full scope independently.
+
 ## Autonomous local execution
 
 Within an explicitly assigned KiwiAvatarSystem task, proceed without routine confirmation for normal engineering work.
@@ -252,12 +408,15 @@ exact identity -> backup -> transactional replace -> validate -> rollback path.
 
 ## Change discipline
 
-Before a non-trivial design change:
+Before a non-trivial design or implementation change:
+- complete the mandatory project-context preflight, including `ProjectContext\Current\` enumeration and reconciliation;
 - inspect current local Production/source identity;
 - inspect the actually installed relevant package source;
+- reconcile the latest applicable integrated information / roadmap and relevant REPORTs;
 - check relevant official source/documentation;
 - compare established alternative designs where they could change the decision;
-- identify benefits, costs, latency, authority, lifecycle, and regression risks;
+- identify benefits, costs, latency, authority, lifecycle, resource, and regression risks;
+- complete `FULL_AUDIT_1` and `FULL_AUDIT_2` for the proposed technical scope;
 - choose one smallest justified approach.
 
 Do not rewrite healthy code for organization/style alone.
@@ -279,5 +438,7 @@ Keep conclusions concise and separate:
 - Rejected / Superseded where relevant.
 
 For substantial Codex work, prefer one consolidated report.
+Include project-context sources actually used, report-time live-local identity, changed files/SHA,
+validation evidence, rollback state, `FULL_AUDIT_1`, `FULL_AUDIT_2`, unresolved conflicts, and next evidence boundary.
 For Runtime evidence, prefer one ZIP when a ZIP is actually needed.
-Do not fabricate local Production verification or SHA.
+Do not fabricate local Production verification, current-state claims, source identity, or SHA.

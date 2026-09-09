@@ -1,0 +1,551 @@
+KiwiAvatarSystem P2C B10 Final Semantic Correction / B11 Static Closure
+Report time: 2026-09-09 15:57:15 JST
+Project: D:\KiwiAvatarSystem
+Scope: CURRENT WINDOWS / DX12 / NATIVE PATH B PRODUCTION + Production-reachable WebCamTexture fallback
+Method: read-only Production/Package/official-source audit; this REPORT is the only created artifact
+
+============================================================
+0. CONCLUSION
+============================================================
+
+[Decision]
+- P2C Boundary 1-9 current reuse gate=PASS. Every B1-B9-relevant task-time identity
+  remains byte-identical to the 12:07 and 15:30 report authorities.
+- Boundary 10 preprocessing parity=DIFFERENT: MediaPipe consumes explicit source
+  rotation in ImageProcessingOptions; IE does not.
+- That difference is not a final normalized landmark semantic difference.
+  Version-matched MediaPipe v0.10.22 projects crop/model-local landmarks back into
+  the unrotated, uncropped task-input image coordinate system. Current IE projects
+  raw XYZ through its same-sample cropMatrix into the same normalized source plane.
+- B10 final XY rotation semantic=PASS and B10 final Z rotation semantic=PASS.
+- The B11 entry gate is therefore open. Exact composition shows that both pipelines
+  return the same F_hv(P) coordinate for an arbitrary source feature P in every
+  current static contract-domain state. Source rotation is not commuted with a flip;
+  it is explicitly cancelled only by MediaPipe's final projection contract.
+- BOUNDARY_11_FLIP_MIRROR=PASS.
+- P1_S_WINDOWS_NATIVE_PRODUCTION=PASS for the audited first468 normalized source-
+  coordinate semantic required as P3 FaceGeometry input.
+- The 15:30 B10/P1-S FAIL conclusions are superseded only as specified below.
+- Windows fallback reachability, rotation metadata, explicit MediaPipe rotation
+  consumption, absent IE rotation-preprocess owner, and separate operational risk
+  remain retained facts.
+- No Production/package/scene source was changed. No compile/build, Runtime, camera,
+  ZIP, commit, or push was run.
+
+============================================================
+1. CURRENT AUTHORITY / IDENTITY GATE
+============================================================
+
+[Confirmed Facts]
+- Branch=work/raw-direct-motion.
+- CURRENT_HEAD=2637b089fa5d0673f92887eecda4e9eb4e9de25c.
+- Upstream=origin/work/raw-direct-motion at
+  38ad8d23d14a3795f47b100a1003fc506dbfa003.
+- Relation=local ahead 5 / behind 0.
+- Task-start tracked dirty inputs, preserved as user-owned:
+  Assets\Script\FaceLandmarkerRunner.cs
+  Assets\Script\KiwiInferenceFaceTracker.cs
+- Task-start untracked state, preserved:
+  CodexTasks\
+  KiwiCodexConsolidatedReport_P2B_ZScaleRepair_P2C_OrderedStaticReaudit_20260909-093955JST.txt
+  KiwiCodexConsolidatedReport_P2C_B8_PixelSquareROIRepair_OrderedStaticReaudit_20260909-120720JST.txt
+  KiwiCodexConsolidatedReport_P2C_B10_B11_WindowsSemanticClosure_20260909-153013JST.txt
+
+[Current Implementation / Artifact SHA256]
+- Assets\Script\KiwiInferenceFaceTracker.cs
+  17F55087EFA7D42B14EF7453F35B0720EE79A23A64CB239391171C45241E3744
+- Assets\Script\FaceLandmarkerRunner.cs
+  027C61F6A4B42E772F355719CFF93D5D8DF1D0C3C100AE6C07E2E3083EC4F90E
+- Assets\KiwiAvatarSystem\Runtime\Camera\WindowsNativeWebCamSource.cs
+  D0DD9A78FA57AAB51D3E0C8606844C44F0207DC87277D0B26AEF3B43EF353533
+- Assets\MediaPipeUnity\Samples\Common\Scripts\ImageSource\ImageSource.cs
+  021243C7C059D1C797CE72B4690B6C7FA848105DC852101289EC576D0163CA6D
+- Assets\MediaPipeUnity\Samples\Common\Scripts\AppSettings.cs
+  0F3CFF1D8D153FD94E185B90F91ACD85EE26319B2FF83EE1B066E09CA27ECDD0
+- Installed ImageTransformationOptions.cs
+  3806D636843AFEF2FFFA0761D78A2799ED44BF5E7DCB71CB464F978DBB1ADB4D
+- Installed TextureFrame.cs
+  244762C8A2AD4100F3DEB89BD5712101B9C2C1E7639BECE6B430AE8220D84F9C
+- Installed BaseVisionTaskApi.cs
+  30BC1806E34DB11B63D524272DEEFFB292BCACD25972C546C24933C0FB4E6B3A
+- Production Resources ONNX and StreamingAssets ONNX are byte-identical:
+  size=2440358
+  ED487104519B0A88CB2CB2EC3678E183F447FB9DD63560998E960FFBAA8FB335
+- Packages\manifest.json
+  35F00A89D31A8BF7EE50718F38D4BAC90236D8B691F516C5FC14CAB47AFBFEE1
+- Packages\packages-lock.json
+  23845C132DBF51CB53A5CFDE4EF606FA68D10DCB53AE5FF21F4305613A5F9CE1
+
+[Package Source Authority]
+- MediaPipe manifest entry=file:com.github.homuler.mediapipe-0.16.3.tgz.
+- TGZ SHA256=CC3E77A219E0B99618AE3BE64C31A566197DEEDC69C1E136ACF52D65D7CF2E79.
+- Installed root=Library\PackageCache\com.github.homuler.mediapipe@66127f8e750d.
+- Installed package version=0.16.3; fingerprint=66127f8e750d;
+  package.json SHA256=EEBBFF4550FA9CA3C2C76AB05BD0EDBDB3A0A4C2800883E244DC9E40D8FF2A2D.
+- Inference Engine manifest/lock/installed version=2.4.1.
+- Installed root=Library\PackageCache\com.unity.ai.inference@587873fd5e1b;
+  package.json SHA256=2F230C84E28A9E3AD516B1A49B79B6F83E172F1C16E6813E0F1DD6FA2B1790EE.
+
+[Reuse Decision]
+- Current Tracker, Runner, camera/ImageSource/AppSettings owners, transformation
+  helper, ONNX, TGZ, installed package fingerprints, manifest, and lock hashes match
+  the 12:07/15:30 task-time identities.
+- No B1-B9 owner/artifact delta exists; no earlier boundary is reopened.
+- P2C_B1_TO_B9_CURRENT_REUSE_GATE=PASS.
+
+============================================================
+2. SOURCE COORDINATE SYSTEM S
+============================================================
+
+[Fixed Definition]
+- S is the exact logical pixel plane of the source image/Texture supplied by the
+  current ImageSource to both tracking paths, before ImageProcessingOptions
+  rotation/crop semantics.
+- Coordinates are normalized against S width/height and use the already-audited
+  top-left source semantic: P=(x,y), x rightward, y downward.
+- S is not physical sensor coordinates, visually upright camera coordinates,
+  desktop preview coordinates, RawImage/Screen coordinates, or post-rotation
+  model-input coordinates.
+- Runner may make a 480-wide aspect-preserving bilinear MediaPipe tracking copy.
+  This maps (xW,yH) to (xW',yH') and is identity in normalized coordinates; it can
+  affect accuracy but not the coordinate-frame semantic. IE continues to sample the
+  source Texture. This model-input difference is not used as a parity requirement.
+
+SOURCE_COORDINATE_SYSTEM_S=EXACT_LOGICAL_IMAGE_SOURCE_TEXTURE_PLANE_PRE_IMAGEPROCESSINGOPTIONS_NORMALIZED_TOP_LEFT
+
+============================================================
+3. MEDIAPIPE 0.16.3 -> v0.10.22 LINEAGE / DIVERGENCE GATE
+============================================================
+
+[Package / Official Source]
+- Installed/TGZ package is MediaPipeUnityPlugin 0.16.3.
+- Exact tag comparator:
+  https://raw.githubusercontent.com/homuler/MediaPipeUnityPlugin/v0.16.3/WORKSPACE
+- WORKSPACE lines 23-39 select strip_prefix=mediapipe-0.10.22 and URL
+  google/mediapipe/archive/v0.10.22.tar.gz with a fixed archive SHA256.
+- The tag applies only these five MediaPipe patch sets:
+  mediapipe_opencv.diff, mediapipe_visibility.diff, mediapipe_model_path.diff,
+  mediapipe_extension.diff, mediapipe_workaround.diff.
+- Exact patch inspection found no semantic edit to BaseVisionTaskApi conversion,
+  FaceLandmarkerGraph, FaceLandmarksDetectorGraph, LandmarkLetterboxRemoval, or
+  LandmarkProjectionCalculator. visibility adds BUILD/proto exposure only in the
+  face_landmarker area; workaround touches output monitoring, OpenCV include logic,
+  TaskApiFactory conditional compilation, and Holistic blendshape acceleration.
+- Installed BaseVisionTaskApi.cs ConfigureNormalizedRect lines 125-181 independently
+  reproduces the version-matched contract: rotation multiple-of-90 validation,
+  rotation=-degrees*pi/180, and 90/270 normalized width/height adjustment.
+- MATERIAL_B10_DIVERGENCE_FROM_V0_10_22=NONE_FOUND.
+- master/latest source was not substituted.
+
+============================================================
+4. B10-A PREPROCESSING STATEMENT
+============================================================
+
+[Current Static Dataflow]
+- ImageSource.GetTransformationOptions returns flip options plus source rotation.
+- Runner lines 1647-1651 and refresh lines 1736-1739 build MediaPipe
+  ImageProcessingOptions(rotationDegrees=rotationAngle).
+- Installed BaseVisionTaskApi.cs lines 139-141 writes NormalizedRect.Rotation and
+  lines 165-180 adjusts width/height for 90/270.
+- Runner InitializeSentisTracker accepts source Texture and two flip booleans only.
+- Refresh stores only _sentisSourceTexture and the same two booleans.
+- KiwiInferenceFaceTracker scheduling APIs and ScheduleModel have no explicit
+  source-rotation input.
+
+B10_MEDIAPIPE_ROTATION_PREPROCESS=EXPLICIT_IMAGEPROCESSINGOPTIONS_TO_NORMALIZEDRECT_ROTATION_WITH_90_270_DIMENSION_ADJUSTMENT
+B10_IE_EXPLICIT_ROTATION_PREPROCESS=NONE
+B10_PREPROCESSING_STATEMENT_PARITY=DIFFERENT
+
+[Classification]
+- This proves different model preprocessing only. It does not prove a surviving
+  difference in final normalized coordinates.
+- No numerical point equality, equal accuracy, equal detection robustness, equal
+  presence, or equal reacquisition behavior is required or claimed.
+
+============================================================
+5. B10-B MEDIAPIPE FINAL NORMALIZED SEMANTIC
+============================================================
+
+[Exact v0.10.22 Source Trace]
+1. FaceLandmarker::Detect/DetectForVideo/DetectAsync calls
+   ConvertToNormalizedRect and sends IMAGE plus NORM_RECT to FaceLandmarkerGraph:
+   https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.22/mediapipe/tasks/cc/vision/face_landmarker/face_landmarker.cc
+2. BaseVisionTaskApi::ConvertToNormalizedRect lines 125-188 sets rotation and
+   performs 90/270 dimension adjustment for ImageToTensor behavior:
+   https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.22/mediapipe/tasks/cc/vision/core/base_vision_task_api.h
+3. FaceLandmarkerGraph lines 186-192 defines NORM_RECT as rotation/ROI input and
+   lines 269-273 states that all returned coordinates are in the unrotated and
+   uncropped input-image coordinate system:
+   https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.22/mediapipe/tasks/cc/vision/face_landmarker/face_landmarker_graph.cc
+4. FaceLandmarksDetectorGraph lines 298-307 removes FIT letterbox and lines
+   308-316 sends landmarks, face_rect, and IMAGE_DIMENSIONS through
+   LandmarkProjectionCalculator to the full pre-crop image:
+   https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.22/mediapipe/tasks/cc/vision/face_landmarker/face_landmarks_detector_graph.cc
+5. LandmarkProjectionCalculator lines 204-225 constructs the rotated ROI in pixel
+   dimensions, uses GetRotatedSubRectToRectTransformMatrix for XY, and scales Z by
+   the Euclidean length of the projected (0,0)->(1,0) ROI X-axis:
+   https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.22/mediapipe/calculators/util/landmark_projection_calculator.cc
+
+[Derived Contract]
+- Let T be the task-input image plane after Runner's physical flip copy and before
+  ImageProcessingOptions rotation. MediaPipe model input is a crop/resize/letterbox
+  of R_r(T); it is not S and need not match IE model input.
+- LandmarkLetterboxRemoval and LandmarkProjection invert the model crop/letterbox/
+  rotation coordinate mapping for final normalized landmarks.
+- Therefore final XY is normalized in unrotated, uncropped T.
+- For B10, flip is explicitly factored to B11, so T=S and final XY is normalized S.
+- Final Z is model/crop-local Z normalized by model input width, corrected for
+  letterbox, then multiplied by the Euclidean magnitude of the projected ROI X-axis
+  in normalized T coordinates. Rotation changes numerical ROI geometry but does not
+  leave a different final unit convention.
+
+MEDIAPIPE_MODEL_INPUT_COORDINATE_SYSTEM=ROTATED_ROI_CROP_RESIZE_LETTERBOX_LOCAL_MODEL_PLANE_R_r_OF_PHYSICALLY_FLIPPED_TASK_INPUT
+MEDIAPIPE_FINAL_LANDMARK_COORDINATE_SYSTEM=NORMALIZED_UNROTATED_UNCROPPED_TASK_INPUT_IMAGE;B10_FLIP_FACTORED_EQUALS_S
+MEDIAPIPE_FINAL_XY_ORIGIN=TOP_LEFT
+MEDIAPIPE_FINAL_Z_UNIT_CONVENTION=MODEL_WIDTH_NORMALIZED_Z_TIMES_LETTERBOX_CORRECTION_TIMES_PROJECTED_ROI_X_AXIS_EUCLIDEAN_MAGNITUDE_IN_NORMALIZED_TASK_INPUT
+
+============================================================
+6. B10-C KIWI IE FINAL NORMALIZED SEMANTIC
+============================================================
+
+[Current Live-Local Trace]
+- ScheduleModel lines 2393-2397 computes samplingMatrix=BuildFlipMatrix(h,v)*cropMatrix.
+- Crop shader lines 48-66 samples sourceUv=samplingMatrix*(cropUv,0,1), with
+  saturate as the existing border policy.
+- TextureConverter uses a fixed 192x192 NCHW TextureTransform with
+  CoordOrigin.TopLeft (tracker lines 185-190).
+- DecodeReadableOutput lines 2577-2591 computes rawX/192,
+  1-rawY/192 in Unity bottom-left crop basis, and rawZ/192.
+- Lines 2593-2607 project XY with the same lane cropMatrix, convert output Y back
+  to top-left, and multiply Z by ExtractRegionZScale(cropMatrix).
+- ExtractRegionZScale lines 2736-2747 is exactly
+  |cropMatrix * Vector3.right|.
+- Boundary 3-7 identity reuse closes crop normalization, origin conversion,
+  same-sample matrix identity, XY projection, and Z projection.
+
+[B10 Derived Contract]
+- Factor B11 flip F_hv. With h=v=0, model-local q samples C(q) in S, and decode
+  reports C(q). Hence final XY is normalized S.
+- There is no post-decode source-rotation transform. None is required for final
+  coordinate semantics because IE never rotates S and reports directly in S.
+- Z is rawZ/192 times |C e_x|, the same projected-ROI-X-axis convention audited at
+  B7. Source rotation can alter MediaPipe's numerical ROI but not this unit contract.
+
+IE_MODEL_INPUT_COORDINATE_SYSTEM=192X192_TOP_LEFT_CROP_LOCAL_MODEL_PLANE_SAMPLED_BY_F_hv_TIMES_CROP_MATRIX
+IE_FINAL_LANDMARK_COORDINATE_SYSTEM=NORMALIZED_SOURCE_TEXTURE_S_AFTER_SAME_SAMPLE_CROP_PROJECTION;B11_FLIP_FACTORED
+IE_FINAL_XY_ORIGIN=TOP_LEFT
+IE_FINAL_Z_UNIT_CONVENTION=RAW_Z_DIV_192_TIMES_EUCLIDEAN_MAGNITUDE_OF_PROJECTED_ROI_X_AXIS_IN_NORMALIZED_S
+IE_POST_DECODE_SOURCE_ROTATION_TRANSFORM=NONE
+
+[B10 Decision]
+- C_mp==S and C_ie==S for final XY after factoring the already-separate B11 flip.
+- Both Z outputs use crop/model Z scaled by the projected ROI X-axis Euclidean
+  magnitude in normalized source coordinates.
+- Numerical landmark equality is neither required nor claimed.
+
+B10_FINAL_XY_ROTATION_SEMANTIC=PASS
+B10_FINAL_Z_ROTATION_SEMANTIC=PASS
+B10_FINAL_NORMALIZED_ROTATION_SEMANTIC=PASS
+B10_WINDOWS_P1S=PASS
+
+============================================================
+7. WINDOWS FALLBACK OPERATIONAL CLAIM — RETAINED AND SEPARATE
+============================================================
+
+[Confirmed Static]
+- WindowsNativeWebCamSource delegates to inherited WebCamSource/WebCamTexture after
+  native unavailability/start/first-presentation failure and explicit supported
+  fallback modes. The fallback remains Production-reachable.
+- Native-active Path B publishes isFrontFacing=false, isVerticallyFlipped=false,
+  rotation=Rotation0 over its already-normalized presentation Texture.
+- Fallback rotation metadata is WebCamTexture.videoRotationAngle.
+- Fallback vertical metadata is WebCamTexture.videoVerticallyMirrored.
+- Fallback front metadata is selected WebCamDevice.isFrontFacing.
+- Current release UI mutates ImageSource.isHorizontallyFlipped and restarts the run;
+  both false and true user states are reachable.
+- No Runtime/producer evidence was collected here. No claim is made that any
+  particular Windows device/session emitted 90/180/270, or that all four enum states
+  occur on Windows hardware.
+
+IE_EXPLICIT_SOURCE_ROTATION_PREPROCESS_OWNER=NONE
+WINDOWS_FALLBACK_ROTATION_METADATA_SOURCE=WebCamTexture.videoRotationAngle
+WINDOWS_NONZERO_FALLBACK_ROTATION=NOT_STATICALLY_EXCLUDED
+WINDOWS_WEBCAMTEXTURE_NONZERO_ROTATION_OPERATIONAL_COMPATIBILITY=OPEN_SEPARATE_CLAIM
+
+[Open Operational Scope]
+- Detection robustness, model accuracy, presence, reacquisition, and ROI quality
+  under nonzero rotated fallback content remain operational questions.
+- They do not change the final coordinate-frame semantic proven at B10 and were not
+  converted into a Runtime requirement in this task.
+
+============================================================
+8. B11 EXACT TRANSFORMATION EQUATIONS
+============================================================
+
+[Reachability Owners]
+- Provider subdomains: NATIVE_ACTIVE_PATH_B and WEBCAMTEXTURE_FALLBACK.
+- Current accepted source set excludes configured-empty StaticImage and Video arrays.
+- User horizontal flip false/true is reachable through the release ImageSourceConfig.
+- Native fixed metadata: f=0, m=0, r=0.
+- Fallback contract fields: f=WebCamDevice.isFrontFacing, m=videoVerticallyMirrored,
+  r=videoRotationAngle. Their actual per-device values/correlations are Runtime-
+  unverified; the matrix below covers the full current statically admitted enum/
+  boolean contract without claiming those rows were observed.
+
+[Definitions in normalized top-left S]
+- P=(x,y).
+- f=isFrontFacing; u=isHorizontallyFlipped; m=isVerticallyFlipped, equal to fallback
+  videoVerticallyMirrored; expectedToBeMirrored=false at the current call site.
+- a=f XOR u.
+- j=1 for r in {90,270}, else 0.
+- Installed ImageTransformationOptions.Build gives:
+    h = (!j) AND a
+    v = if !a then !m else if j then m else !m
+- H(x,y)=(1-x,y); V(x,y)=(x,1-y).
+- F_hv=V^v o H^h. H and V commute with each other only; no flip is commuted with r.
+- D is Runner's optional aspect-preserving MediaPipe downscale. In normalized
+  coordinates D(P)=P.
+
+[MediaPipe]
+- TextureFrame.ReadTextureInternal uses Graphics.Blit scale=(-1 when h, -1 when v)
+  and offset=(1 when flipped), so a source feature P appears in the task-input image
+  at F_hv(P).
+- The task then preprocesses with R_r. Its model-input point is locally
+  R_r(F_hv(P)) after ROI/crop/resize/letterbox.
+- The v0.10.22 top-level/final projection contract returns coordinates in the
+  unrotated, uncropped task-input image. It cancels R_r without assuming
+  R_r o F_hv = F_hv o R_r.
+- Therefore M(P)=F_hv(P).
+
+[IE]
+- Let B(x,y)=(x,1-y) convert top-left S to Unity bottom-left UV and let C be the
+  same-sample bottom-left cropMatrix mapping crop UV q to unflipped source UV.
+- Shader sampling order is exact column-vector order:
+    sourceUv = F_hv,BL * C * q_BL
+  because ScheduleModel uses BuildFlipMatrix(h,v) * cropMatrix.
+- For source feature P, the corresponding ideal crop-local point satisfies:
+    F_hv,BL * C * q_BL = B(P)
+- Decoder uses raw top-left model y -> q_BL, then reports B(C*q_BL). Since each
+  reflection is self-inverse and B conjugates it to the same normalized top-left
+  reflection:
+    I(P) = B * C * C^-1 * F_hv,BL^-1 * B(P)
+         = B * F_hv,BL * B(P)
+         = F_hv(P)
+- Thus M_x(P)=I_x(P) and M_y(P)=I_y(P) for arbitrary P and every admitted state.
+- Z is also convention-compatible: reflection F is orthogonal, so
+  |F_hv,BL*C*e_x|=|C*e_x|. Neither flip signs nor rotation preprocessing changes the
+  projected ROI X-axis magnitude convention.
+- ROI roll, provider-specific recurrence, and numerical predictions are not assumed
+  equal and are outside B11 coordinate-semantic equality.
+- Screen/RawImage preview transforms are downstream presentation only and are not
+  included in M or I.
+
+============================================================
+9. B11 PROVIDER x TRANSFORMATION-STATE MATRIX
+============================================================
+
+Legend:
+- N=native-active; W=WebCamTexture fallback.
+- m is videoVerticallyMirrored for W and N/A for N.
+- MI is the material model-input transform before model-local crop details.
+- Final lists both M(P) and I(P); equality is equation-derived, not numerical-model parity.
+- W rows are static accepted-contract coverage, NOT observed Windows outputs.
+
+ID  P  f u m   r    h v   MediaPipe MI       IE MI        M(P)=I(P)
+N01 N  0 0 NA   0    0 1   R0 o V             V o C        V(P)
+N02 N  0 1 NA   0    1 1   R0 o V o H         V o H o C  (V o H)(P)
+W01 W  0 0 0    0    0 1   R0 o V             V o C        V(P)
+W02 W  0 0 1    0    0 0   R0                 C            P
+W03 W  0 1 0    0    1 1   R0 o V o H         V o H o C  (V o H)(P)
+W04 W  0 1 1    0    1 0   R0 o H             H o C        H(P)
+W05 W  1 0 0    0    1 1   R0 o V o H         V o H o C  (V o H)(P)
+W06 W  1 0 1    0    1 0   R0 o H             H o C        H(P)
+W07 W  1 1 0    0    0 1   R0 o V             V o C        V(P)
+W08 W  1 1 1    0    0 0   R0                 C            P
+W09 W  0 0 0   90    0 1   R90 o V            V o C        V(P)
+W10 W  0 0 1   90    0 0   R90                C            P
+W11 W  0 1 0   90    0 0   R90                C            P
+W12 W  0 1 1   90    0 1   R90 o V            V o C        V(P)
+W13 W  1 0 0   90    0 0   R90                C            P
+W14 W  1 0 1   90    0 1   R90 o V            V o C        V(P)
+W15 W  1 1 0   90    0 1   R90 o V            V o C        V(P)
+W16 W  1 1 1   90    0 0   R90                C            P
+W17 W  0 0 0  180    0 1   R180 o V           V o C        V(P)
+W18 W  0 0 1  180    0 0   R180               C            P
+W19 W  0 1 0  180    1 1   R180 o V o H       V o H o C  (V o H)(P)
+W20 W  0 1 1  180    1 0   R180 o H           H o C        H(P)
+W21 W  1 0 0  180    1 1   R180 o V o H       V o H o C  (V o H)(P)
+W22 W  1 0 1  180    1 0   R180 o H           H o C        H(P)
+W23 W  1 1 0  180    0 1   R180 o V           V o C        V(P)
+W24 W  1 1 1  180    0 0   R180               C            P
+W25 W  0 0 0  270    0 1   R270 o V           V o C        V(P)
+W26 W  0 0 1  270    0 0   R270               C            P
+W27 W  0 1 0  270    0 0   R270               C            P
+W28 W  0 1 1  270    0 1   R270 o V           V o C        V(P)
+W29 W  1 0 0  270    0 0   R270               C            P
+W30 W  1 0 1  270    0 1   R270 o V           V o C        V(P)
+W31 W  1 1 0  270    0 1   R270 o V           V o C        V(P)
+W32 W  1 1 1  270    0 0   R270               C            P
+
+[Matrix Decision]
+- Static contract-domain rows=34: 2 native-active + 32 fallback metadata rows.
+- Distinct provider x final-transform classes=14: 2 native +
+  (4 at r=0, 2 at r=90, 4 at r=180, 2 at r=270) fallback classes.
+- No row assumes flip/rotation commutation. R_r is removed only by the proven
+  MediaPipe final-output projection.
+- B11_REACHABLE_TRANSFORM_STATE_COUNT=34_STATIC_CONTRACT_DOMAIN_ROWS;14_DISTINCT_PROVIDER_TRANSFORM_CLASSES;OBSERVED_COUNT_UNKNOWN
+- BOUNDARY_11_FLIP_MIRROR=PASS.
+
+============================================================
+10. P1-S CLASSIFICATION / SUPERSESSION
+============================================================
+
+[Decision]
+- P1_S_WINDOWS_NATIVE_PRODUCTION=PASS.
+- Meaning: current Windows Production IE first468 XYZ satisfies the audited final
+  normalized source-coordinate semantic contract needed as P3 FaceGeometry input.
+- It does not mean numerical IE/MediaPipe prediction parity, accuracy equality under
+  rotated camera content, provider ROI recurrence parity, presence/reacquisition
+  parity, a same-sample FaceGeometry carrier, FaceGeometry solver correctness, H1,
+  Runtime, Visual, Performance, or Distribution PASS.
+
+[Carried Claims]
+- P1_R_RECURRENCE_POLICY=ACCEPTABLE_PROVIDER_SPECIFIC_DIFFERENCE_CARRIED_FORWARD.
+- P1_R_INDEPENDENT_REAUDIT=NO.
+- P1_I_GEOMETRY_IDENTITY_CARRIER=NONE.
+
+[Superseded — Only These 15:30 Conclusions]
+- B10_WINDOWS_NATIVE_PRODUCTION=FAIL -> SUPERSEDED_BY_FINAL_SEMANTIC_SOURCE_PROOF.
+- P1_S_WINDOWS_NATIVE_PRODUCTION=FAIL_AT_B10_WINDOWS_FALLBACK_NONZERO_ROTATION
+  -> SUPERSEDED_BY_B10_FINAL_SEMANTIC_AND_B11_EQUATION_PASS.
+- Reason: the 15:30 proof established a preprocessing/model-input difference but did
+  not establish a surviving difference in final normalized coordinate semantics.
+- SUPERSEDED_1530_B10_FAIL=YES_ONLY_THE_TWO_SPECIFIED_CONCLUSIONS.
+
+[Retained]
+- Windows fallback is Production-reachable.
+- WebCamTexture exposes rotation metadata.
+- MediaPipe explicitly consumes rotation metadata.
+- IE has no explicit source-rotation preprocessing owner.
+- Nonzero fallback rotation is not statically excluded.
+- Operational compatibility remains open and separate.
+
+============================================================
+11. UNKNOWN / UNVERIFIED / REJECTED / NOT EXECUTED
+============================================================
+
+[Unknown / Unverified]
+- Actual fallback rotation/vertical/front metadata emitted by the currently attached
+  Windows camera and correlations among those fields: NOT_RUNTIME_VERIFIED.
+- Whether the current machine normally enters fallback: NOT_RUNTIME_VERIFIED.
+- Rotated-content accuracy, presence, reacquisition, and ROI-quality equivalence:
+  OPEN_OPERATIONAL_CLAIM.
+- Runtime/Visual/Performance/Distribution status: NOT_EVALUATED_BY_THIS_TASK.
+
+[Rejected / Superseded]
+- MediaPipe-model-input-pixels == IE-model-input-pixels as P1-S B10 pass condition:
+  REJECTED_WRONG_SEMANTIC_BOUNDARY.
+- Absence of IE rotation API symmetry as a final-coordinate failure by itself:
+  REJECTED.
+- Numerical landmark equality as B10/B11 requirement: REJECTED.
+- Treating preview/RawImage/Screen transforms as tracking transforms: REJECTED.
+- Claiming 0/90/180/270 were all observed on Windows: REJECTED_NO_RUNTIME_EVIDENCE.
+- Treating Validator/REPORT conclusions as unquestionable authority: REJECTED;
+  current source, installed package, exact version source, and equations were audited.
+
+[Not Executed]
+- Production rotation implementation, IE rotation parameter, B11/B8/Z repair,
+  recurrence change, FaceGeometry solver/carrier, H1, FacePart, Head authority,
+  Camera/Native/KiwiFaceMotion change, threshold/smoothing/Kalman/prediction,
+  FIFO/stale buffer, fence/wait/flush/async-disable: NOT_EXECUTED.
+- Package/Scene write: NOT_EXECUTED.
+- Compile/build: NOT_RUN.
+- Runtime/camera/human visual/performance: NOT_RUN.
+- Runtime ZIP: NOT_CREATED.
+- Commit/push: NOT_RUN.
+
+============================================================
+12. NEXT SINGLE ACTION
+============================================================
+
+NEXT_SINGLE_ACTION=P3_METRIC_FACEGEOMETRY_FEASIBILITY_AND_DETERMINISTIC_SELF_TEST
+
+Entry meaning is limited to P1-S normalized semantic closure. P1-I remains NONE;
+P3 must not infer that same-sample geometry identity or H1 correctness already exists.
+
+============================================================
+13. SELF-AUDIT FIXPOINT
+============================================================
+
+1. S is exact pre-ImageProcessingOptions logical source plane: PASS.
+2. S is not physical/upright/preview space: PASS.
+3. Model-input difference is not treated as final semantic difference: PASS.
+4. Numerical landmark equality is not required: PASS.
+5. XY coordinate frame and Z unit convention are separated: PASS.
+6. Exact v0.10.22 source is used: PASS.
+7. master/latest source is not substituted: PASS.
+8. Installed 0.16.3 lineage and material patch divergence are checked: PASS.
+9. Windows fallback reachability is retained: PASS.
+10. Nonzero Windows rotation occurrence is not invented: PASS.
+11. Operational compatibility is separate and open: PASS.
+12. B11 ran only after B10 final semantic PASS: PASS.
+13. Provider x transformation-state domain is enumerated: PASS.
+14. Flip/rotation composition order is checked without commuting them: PASS.
+15. Boolean flag equality is not substituted for coordinate equations: PASS.
+16. Preview mirror is not a tracking transform: PASS.
+17. P1-S/P1-R/P1-I are separated: PASS.
+18. Only specified 15:30 conclusions are superseded: PASS.
+19. Production/package/scene write absent: PASS.
+20. Compile/build/Runtime/commit/push absent: PASS.
+21. Re-audit found no remaining contradiction within the assigned Static claim: PASS.
+
+============================================================
+14. FINAL MACHINE-READABLE BLOCK
+============================================================
+
+CURRENT_HEAD=2637b089fa5d0673f92887eecda4e9eb4e9de25c
+P2C_B1_TO_B9_CURRENT_REUSE_GATE=PASS
+SOURCE_COORDINATE_SYSTEM_S=EXACT_LOGICAL_IMAGE_SOURCE_TEXTURE_PLANE_PRE_IMAGEPROCESSINGOPTIONS_NORMALIZED_TOP_LEFT
+
+B10_MEDIAPIPE_ROTATION_PREPROCESS=EXPLICIT_IMAGEPROCESSINGOPTIONS_TO_NORMALIZEDRECT_ROTATION_WITH_90_270_DIMENSION_ADJUSTMENT
+B10_IE_EXPLICIT_ROTATION_PREPROCESS=NONE
+B10_PREPROCESSING_STATEMENT_PARITY=DIFFERENT
+
+MEDIAPIPE_MODEL_INPUT_COORDINATE_SYSTEM=ROTATED_ROI_CROP_RESIZE_LETTERBOX_LOCAL_MODEL_PLANE_R_r_OF_PHYSICALLY_FLIPPED_TASK_INPUT
+MEDIAPIPE_FINAL_LANDMARK_COORDINATE_SYSTEM=NORMALIZED_UNROTATED_UNCROPPED_TASK_INPUT_IMAGE;B10_FLIP_FACTORED_EQUALS_S
+MEDIAPIPE_FINAL_XY_ORIGIN=TOP_LEFT
+MEDIAPIPE_FINAL_Z_UNIT_CONVENTION=MODEL_WIDTH_NORMALIZED_Z_TIMES_LETTERBOX_CORRECTION_TIMES_PROJECTED_ROI_X_AXIS_EUCLIDEAN_MAGNITUDE_IN_NORMALIZED_TASK_INPUT
+
+IE_MODEL_INPUT_COORDINATE_SYSTEM=192X192_TOP_LEFT_CROP_LOCAL_MODEL_PLANE_SAMPLED_BY_F_hv_TIMES_CROP_MATRIX
+IE_FINAL_LANDMARK_COORDINATE_SYSTEM=NORMALIZED_SOURCE_TEXTURE_S_AFTER_SAME_SAMPLE_CROP_PROJECTION;B11_FLIP_FACTORED
+IE_FINAL_XY_ORIGIN=TOP_LEFT
+IE_FINAL_Z_UNIT_CONVENTION=RAW_Z_DIV_192_TIMES_EUCLIDEAN_MAGNITUDE_OF_PROJECTED_ROI_X_AXIS_IN_NORMALIZED_S
+IE_POST_DECODE_SOURCE_ROTATION_TRANSFORM=NONE
+
+B10_FINAL_XY_ROTATION_SEMANTIC=PASS
+B10_FINAL_Z_ROTATION_SEMANTIC=PASS
+B10_FINAL_NORMALIZED_ROTATION_SEMANTIC=PASS
+B10_WINDOWS_P1S=PASS
+
+WINDOWS_FALLBACK_ROTATION_METADATA_SOURCE=WebCamTexture.videoRotationAngle
+WINDOWS_NONZERO_FALLBACK_ROTATION=NOT_STATICALLY_EXCLUDED
+WINDOWS_WEBCAMTEXTURE_NONZERO_ROTATION_OPERATIONAL_COMPATIBILITY=OPEN_SEPARATE_CLAIM
+
+B11_REACHABLE_TRANSFORM_STATE_COUNT=34_STATIC_CONTRACT_DOMAIN_ROWS;14_DISTINCT_PROVIDER_TRANSFORM_CLASSES;OBSERVED_COUNT_UNKNOWN
+BOUNDARY_11_FLIP_MIRROR=PASS
+
+P1_S_WINDOWS_NATIVE_PRODUCTION=PASS
+
+P1_R_RECURRENCE_POLICY=ACCEPTABLE_PROVIDER_SPECIFIC_DIFFERENCE_CARRIED_FORWARD
+P1_R_INDEPENDENT_REAUDIT=NO
+
+P1_I_GEOMETRY_IDENTITY_CARRIER=NONE
+
+SUPERSEDED_1530_B10_FAIL=YES_ONLY_B10_WINDOWS_NATIVE_PRODUCTION_FAIL_AND_P1S_FAIL_AT_B10_WINDOWS_FALLBACK_NONZERO_ROTATION
+
+PRODUCTION_CHANGE=NO
+COMPILE=NOT_RUN
+RUNTIME=NOT_RUN
+COMMIT_PUSH=NO
+
+NEXT_SINGLE_ACTION=P3_METRIC_FACEGEOMETRY_FEASIBILITY_AND_DETERMINISTIC_SELF_TEST

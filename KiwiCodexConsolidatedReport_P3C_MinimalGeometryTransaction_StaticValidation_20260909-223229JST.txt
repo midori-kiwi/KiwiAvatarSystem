@@ -1,0 +1,552 @@
+KiwiAvatarSystem P3C Minimal Same-Sample FaceGeometry Transaction / Static Validation
+Report time: 2026-09-09 22:32:29 JST
+Project: D:\KiwiAvatarSystem
+Scope: accepted IE first468 -> immutable transaction -> bounded official FaceGeometry graph -> transient full FaceGeometry callback -> pose-only Kiwi completion
+Production activation: OFF
+Live Camera Runtime: NOT RUN
+H1 / Head / Canonical / FacePart publication: NONE
+
+======================================================================
+0. CONSOLIDATED RESULT
+======================================================================
+
+[Result]
+- P3C_RESULT=PASS.
+- One dedicated Production owner was added at:
+  Assets\KiwiAvatarSystem\Runtime\TrackingFoundation\KiwiFaceGeometryTransactionService.cs
+- FaceLandmarkerRunner now returns the exact accepted IE frameId directly from
+  StoreSentisTrackingData and synchronously copies the accepted first468 into the
+  geometry transaction. It does not reread global latest landmarks or frameId.
+- KiwiInferenceFaceTracker.cs was not modified by P3C. Its pre-existing P2 dirty
+  state and SHA were preserved exactly.
+- The official installed FaceGeometryPipelineCalculator is reused. There is no
+  second face inference, custom calculator, Native/package ABI change, solver
+  port, FlowLimiter, FIFO, poller thread, graph wait, or per-sample ImageFrame.
+- Callback deserializes the installed official complete FaceGeometry transiently,
+  validates its 4x4 MatrixData, and copies only 16 semantic matrix floats into a
+  Pose16 value. FaceGeometry, Mesh3d, SerializedProto, and borrowed packet do not
+  survive callback scope.
+- The geometry result is consumed internally only to advance the geometry-channel
+  order token. No pose hold-last and no Avatar-facing result path were added.
+- Default execution state is OFF. Existing Scene has no serialized activation.
+- Exact Unity 6000.0.80f1 compile passed with exit code 0, no compiler errors,
+  and no P3C-caused warnings.
+- A justified synthetic-only deterministic diagnostic exercised the new native
+  graph configuration and passed graph start, side-packet IMAGE_SIZE delivery,
+  callback/correlation, pose-only completion, pending supersede, dimension graph
+  rebuild, and bounded shutdown. This is not Live Camera Runtime or Performance
+  Authority.
+
+[Authority Limitation]
+- This report is report-time Codex evidence, not final Production adoption
+  authority. P3C does not authorize H1.
+- Live same-build camera identity/lifecycle/cadence remains the P3D Gate.
+
+======================================================================
+1. ENTRY AUTHORITY / CURRENT CONTEXT RECONCILIATION
+======================================================================
+
+Project=D:\KiwiAvatarSystem
+Branch=work/raw-direct-motion
+Upstream=origin/work/raw-direct-motion
+Ahead/behind=5/0
+CURRENT_HEAD_BEFORE=2637b089fa5d0673f92887eecda4e9eb4e9de25c
+CURRENT_HEAD_AFTER=2637b089fa5d0673f92887eecda4e9eb4e9de25c
+
+Unity project identity:
+- ProjectSettings\ProjectVersion.txt SHA256=
+  EA333D8F6C87FFA35061EC92B7DEF6026D00D0131D7A6A05A23C53EB949B4F77
+- Version=6000.0.80f1
+- Revision=2dfd32957da2
+- Unity.exe=
+  C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe
+
+Current context enumeration:
+- Exactly one file was present and read in full:
+  ProjectContext\Current\KiwiAvatarSystem_最新統合情報_統合ロードマップ_R13_7_ProjectWide_DoubleFullAudit.txt
+- SHA256=
+  BD8A8B2F1F1E003249F1B7630CB21E586F83742767C02220C025127FE53378C1
+- Its volatile P1 FAIL / P2-next snapshot predates later same-day P2C/P3A/P3B
+  evidence. Claim-scoped reconciliation used current source identities and the
+  required reports; its durable double-audit and protected-boundary rules remain.
+
+Required reports read in full:
+- KiwiCodexConsolidatedReport_P3A_FaceGeometryReuseContract_DeterministicSelfTest_20260909-163536JST.txt
+  SHA256=0D472291CF8FBB16307D8D625A6908150234F92374D024CFF731701C31D400C5
+  P3A_RESULT=PASS
+  FACEGEOMETRY_REUSE_DECISION=LOW_LEVEL_CALCULATOR_GRAPH_REUSE
+- KiwiCodexConsolidatedReport_P3B_SameSampleGeometryTransaction_LifecycleDesignFreeze_20260909-213452JST.txt
+  SHA256=06FAB526BF062FA00EC55BDA6B80AB088DE2B93657F5A28ABB1C44E8AC93AEF4
+  Original report result was FAIL_POSE_ONLY_MANAGED_BOUNDARY_NOT_CLOSED.
+  This task explicitly supersedes that narrow decision with:
+  P3B_CORRECTED_RESULT=PASS_DESIGN_CLOSED_WITH_TRANSIENT_FULL_FACEGEOMETRY_MANAGED_BOUNDARY
+  The correction is coherent with installed binding behavior: pose-only Native
+  extraction is an optional later resource optimization, not a same-sample
+  correctness prerequisite.
+
+P1_S_WINDOWS_NATIVE_PRODUCTION=PASS
+P3A_RESULT=PASS
+P3B_CORRECTED_RESULT=PASS_DESIGN_CLOSED_WITH_TRANSIENT_FULL_FACEGEOMETRY_MANAGED_BOUNDARY
+CURRENT_AUTHORITY=CLOSED
+CURRENT_CONTEXT_UNRESOLVED=NO
+
+======================================================================
+2. BEFORE / AFTER IDENTITY AND DIRTY-STATE PROTECTION
+======================================================================
+
+[Selected Production Modification]
+- Assets\Script\FaceLandmarkerRunner.cs
+  BEFORE_SHA256=027C61F6A4B42E772F355719CFF93D5D8DF1D0C3C100AE6C07E2E3083EC4F90E
+  AFTER_SHA256=77708DF460584C0FCC041A345CE1736E7E6F4F5950A2D445565926058E662875
+- Assets\KiwiAvatarSystem\Runtime\TrackingFoundation\KiwiFaceGeometryTransactionService.cs
+  BEFORE=ABSENT
+  AFTER_SHA256=B85A4E2A4A6FC94FE720690B3D0E1CC4A844FDA0F608CFBF2192BE4C2D976129
+- Assets\KiwiAvatarSystem\Runtime\TrackingFoundation\KiwiFaceGeometryTransactionService.cs.meta
+  BEFORE=ABSENT
+  AFTER_SHA256=29B4B65B3FA4439A89154CDB96ECB877E04DE1D9FD388D7FD1C9AC27BE5F6CD1
+
+[Protected / Unchanged]
+- Assets\Script\KiwiInferenceFaceTracker.cs
+  BEFORE_SHA256=17F55087EFA7D42B14EF7453F35B0720EE79A23A64CB239391171C45241E3744
+  AFTER_SHA256=17F55087EFA7D42B14EF7453F35B0720EE79A23A64CB239391171C45241E3744
+- Assets\Script\KiwiFaceMotion.cs
+  AFTER_SHA256=D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6
+- KiwiRuntimeGenerationContext.cs
+  BEFORE/AFTER_SHA256=E74887450A8EBD881A3AEDE7B4789C5D83E4A7C5B7F5A6D4C427DB134D250C40
+- KiwiTrackingProviderHub.cs
+  BEFORE/AFTER_SHA256=A5C7DE387FA2E02862BCF64942363AECFB9C7830B52DF5B8953404DF884ECCB1
+- KiwiCanonicalTrackingFrame.cs
+  BEFORE/AFTER_SHA256=458FF33E98E054B766F20EB17CE6BDD242C9AD9FD6E73AF53D60BD3961822AFA
+- Assets\Scenes\Face Landmark Detection.unity
+  SHA256=9BAC89F64B45429B38D41C1A2539C63D5E9A442E8EF920EE13B59245BE166735
+  Git diff=NONE
+
+[Package / Native / Bundle]
+- MediaPipe TGZ SHA256=
+  CC3E77A219E0B99618AE3BE64C31A566197DEEDC69C1E136ACF52D65D7CF2E79
+- installed package.json version=0.16.3, SHA256=
+  EEBBFF4550FA9CA3C2C76AB05BD0EDBDB3A0A4C2800883E244DC9E40D8FF2A2D
+- installed mediapipe_c.dll SHA256=
+  B9B620F2707DEA371BE3FCEF9F2D05468CA1471FAEE3BE6637BBD7DA77E21C54
+- installed Face Landmarker bundle SHA256=
+  B261925D4AAD812B47A0E8D58C1BAA1223270A5D1F663D78338BC881C003879D
+- Production StreamingAssets bundle SHA256=
+  B261925D4AAD812B47A0E8D58C1BAA1223270A5D1F663D78338BC881C003879D
+- Package diff=NONE; Native DLL diff=NONE.
+
+Pre-existing tracked dirty state remained user-owned:
+- AGENTS.md
+- Assets\Script\FaceLandmarkerRunner.cs (P2 changes already present before P3C)
+- Assets\Script\KiwiInferenceFaceTracker.cs (P2 changes, untouched by P3C)
+
+No reset, checkout, clean, stash, commit, or push was performed.
+
+======================================================================
+3. IMPLEMENTATION / TRANSACTION / CORRELATION
+======================================================================
+
+P3C_OWNER=Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiFaceGeometryTransactionService.cs
+EXISTING_EQUIVALENT_OWNER=NONE_FOUND
+
+The owner is intentionally internal and owns only:
+- CalculatorGraph/callback/metadata/dimension state;
+- one IN_FLIGHT record and one overwriteable LATEST_PENDING record;
+- immutable accepted first468 payload;
+- callback completion and geometry-channel order validation;
+- graph fault/reset/shutdown resources.
+
+It does not own Head, Root, Avatar, FacePart, Canonical publication, camera,
+Inference Engine execution, ROI recurrence, normalization, freshness thresholds,
+smoothing, prediction, or presentation.
+
+GEOMETRY_TRANSACTION_IDENTITY_TUPLE={frameId,sourceHostTicks,cameraGeneration,trackingSessionGeneration,providerGeneration,modelGeneration,backend=InferenceEngine,semanticFrameWidth,semanticFrameHeight}
+
+Capture proof:
+- KiwiInferenceFaceTracker filters lane camera/tracking-session mismatch before
+  decoding/publishing the winning completion.
+- Runner synchronously captures the current generation snapshot and semantic
+  tracking dimensions immediately before accepted store.
+- StoreSentisTrackingData returns the exact frameId assigned by
+  ++_nextPublishedTrackingFrameId through its out parameter.
+- The service synchronously copies only landmarks indices 0..467 XYZ before a
+  later TryProcessAsync call can reuse the tracker's shared Vector3 array.
+- Geometry code never reads _latestPrecisionData, _latestLandmarks, or a global
+  latest frameId.
+
+GEOMETRY_CORRELATION_TOKEN=EXISTING_FACE_PRECISION_TRACKING_DATA_FRAME_ID_CAPTURED_AT_ACCEPTED_SENTIS_STORE
+CALCULATOR_TIMESTAMP_SEMANTIC=CORRELATION_ONLY
+CORRELATION_RANGE_POLICY=REQUIRE_FRAME_ID_1_TO_INT64_MAX;FAIL_CLOSED_NO_WRAP_OR_REUSE
+FIRST468_COPY_BYTES=5616
+FIRST468_COPY_COUNT=ONE_IMMUTABLE_TRANSACTION_COPY
+SENTIS_OUTPUT_LIFETIME_EXTENSION=NONE
+SOURCE_FRESHNESS_OWNER=ORIGINAL_SOURCE_HOST_TICKS_PLUS_EXISTING_PRODUCTION_FRESHNESS_LIVENESS_AUTHORITY;NO_NEW_THRESHOLD
+
+======================================================================
+4. GRAPH / IMAGE_SIZE / EXECUTION LANE
+======================================================================
+
+[Installed and Official Contract Reconfirmation]
+- Exact installed mediapipe_c.dll identities from P3A/P3B remain current.
+- Version-matched v0.10.22 SidePacketToStreamCalculator contract uses untagged
+  side packets, TICK input, and AT_TICK output at the TICK timestamp.
+- ImagePropertiesCalculator accepts IMAGE ImageFrame and emits SIZE as
+  std::pair<int,int>.
+- FaceGeometryPipelineCalculator consumes matching IMAGE_SIZE and
+  FACE_LANDMARKS, plus ENVIRONMENT, and emits FACE_GEOMETRY.
+
+Production graph topology:
+- top-level input stream: face_landmarks
+- top-level input side packet: dimension_image
+- SidePacketToStreamCalculator:
+  TICK:face_landmarks + dimension_image -> AT_TICK:dimension_image_at_tick
+- ImagePropertiesCalculator:
+  IMAGE:dimension_image_at_tick -> SIZE:image_size
+- FaceGeometryEnvGeneratorCalculator:
+  TOP_LEFT_CORNER, VFOV=63.0, near=1.0, far=10000.0 -> ENVIRONMENT
+- FaceGeometryPipelineCalculator:
+  IMAGE_SIZE:image_size + FACE_LANDMARKS:face_landmarks + ENVIRONMENT
+  -> FACE_GEOMETRY:face_geometry
+
+Metadata:
+- geometry_pipeline_metadata_landmarks.binarypb
+- SHA256=BDBCDA96DFCB7DA883DA124AAA2C55DEE49770D934F0FCC71747F8C21BDC75B4
+- Runtime loads it from the exact Production Face Landmarker bundle and verifies
+  both bundle and metadata SHA before graph creation.
+
+SEMANTIC_FRAME_DIMENSION_OWNER=FACE_LANDMARKER_RUNNER_TRACKING_INPUT_WIDTH_HEIGHT_SNAPSHOT_PLUS_IMMUTABLE_GRAPH_RUN_DIMENSION_STATE
+IMAGE_SIZE_DELIVERY_IMPLEMENTATION=ONE_GRAPH_RUN_IMAGEFRAME_SIDE_PACKET_TO_STREAM_AT_FACE_LANDMARKS_TICK_THEN_IMAGE_PROPERTIES_SIZE
+PER_FRAME_IMAGEFRAME=NONE
+HARDCODED_480X270=NO
+
+MAX_IN_FLIGHT_GEOMETRY=1
+MAX_PENDING_GEOMETRY=1
+NO_FIFO_CONTRACT=PASS
+SUPERSEDE_POLICY=NEWEST_ACCEPTED_TRANSACTION_REPLACES_AND_RELEASES_OLDER_PENDING
+GRAPH_INTERNAL_QUEUE_POLICY=INSTALLED_DEFAULT_UNCHANGED;EXTERNAL_ONE_IN_FLIGHT_IS_PRIMARY_OWNER
+FLOW_LIMITER=NONE
+PACKET_CLONER=NONE
+
+======================================================================
+5. CALLBACK / POSE / AUTHORITY / LIFECYCLE
+======================================================================
+
+OUTPUT_ACQUISITION=CALCULATOR_GRAPH_OBSERVE_OUTPUT_STREAM_WITH_STATIC_MONOPINVOKECALLBACK_AND_BOUNDED_REGISTRY
+CALLBACK_THREAD_POLICY=NO_UNITY_API;NO_GRAPH_WAIT;NO_CAMERA_AVATAR_OR_GLOBAL_LATEST_ACCESS
+BORROWED_PACKET_POLICY=CREATE_FOR_REFERENCE_AND_DISPOSE_WITHIN_CALLBACK;NEVER_RETAIN
+
+TRANSIENT_FULL_FACEGEOMETRY=ACCEPTED_FOR_CORRECTNESS_IMPLEMENTATION
+PERSISTENT_MESH_PAYLOAD=NONE
+POSE_COMPLETION_PAYLOAD=POSE16_READONLY_VALUE_TYPE_WITH_16_EXPLICIT_SEMANTIC_MATRIX_FLOATS_PLUS_FRAME_ID_AND_STATUS
+POSE_MATRIX_CONVERSION=NONE;MATRIXDATA_LAYOUT_DECODE_ONLY;NO_TRANSPOSE_INVERSE_HANDEDNESS_OR_UNITY_TRANSFORM
+
+Callback handoff:
+- one CallbackCompletion value at most;
+- contains graph-run identity, correlation frameId, status, and Pose16;
+- input identity remains in exactly one _inFlight record;
+- unexpected second/unknown correlation requests graph reset;
+- no borrowed/proto/mesh object crosses callback scope.
+
+OLD_EPOCH_RESULT_POLICY=DROP_OLD_EPOCH_RESULT
+DUPLICATE_POLICY=DROP_AND_REQUEST_GRAPH_RESET_ON_ALREADY_CONSUMED_OR_UNKNOWN_CORRELATION
+OUT_OF_ORDER_POLICY=DROP_FRAME_ID_LESS_THAN_OR_EQUAL_TO_LAST_ACCEPTED_GEOMETRY_FRAME_ID
+LAST_ACCEPTED_STATE=GEOMETRY_CHANNEL_FRAME_ID_ONLY;NO_POSE_HOLD_LAST
+
+Current acceptance gate validates:
+- exact active graph run and in-flight correlation;
+- not consumed/retired;
+- positive ordered frameId;
+- camera/tracking-session/provider/model generation current;
+- backend=InferenceEngine;
+- transaction dimensions equal current Runner and graph state;
+- original sourceHostTicks positive and preserved;
+- pose shape exactly 4x4/16 and all 16 values finite.
+
+GRAPH_LIFETIME_OWNER=ONE_KIWI_FACE_GEOMETRY_TRANSACTION_SERVICE
+GRAPH_RESET_EVENTS=SEMANTIC_WIDTH_HEIGHT_CHANGE;ENVIRONMENT_OR_METADATA_PACKAGE_IDENTITY_CHANGE_REQUIRES_NEW_SERVICE_BUILD;GRAPH_FAULT;EXPLICIT_SHUTDOWN
+RESUME_GRAPH_POLICY=KEEP_GRAPH;RESUME_IS_NOT_PROVIDER_SWITCH
+SAME_DIMENSION_CAMERA_RESTART_POLICY=KEEP_GRAPH_DROP_OLD_CAMERA_EPOCH_RESULT
+PROVIDER_MODEL_SESSION_CHANGE_POLICY=KEEP_GRAPH_DROP_OLD_AUTHORITY_RESULT
+
+Shutdown sequence implemented:
+1. mark service non-accepting;
+2. release pending and retire in-flight publication authority;
+3. mark callback run non-accepting;
+4. CloseAllPacketSources then Cancel without WaitUntilIdle/WaitUntilDone;
+5. already-entered callback completes its bounded parse/copy/drop path;
+6. callback posts one bounded main-thread cleanup when quiescent;
+7. dispose graph and remove registry only after active callback count is zero.
+
+No per-frame WaitUntilIdle, WaitUntilDone, main-thread poller Next, graph flush,
+GPU Fence/Wait, D3D12 queue wait, or worker thread was added.
+
+======================================================================
+6. FEATURE ACTIVATION / BEHAVIOR BOUNDARY
+======================================================================
+
+P3C_DEFAULT_EXECUTION_STATE=OFF
+- Runner serialized feature gate defaults false.
+- Existing Scene contains no activation field/value and was not modified.
+- OFF path performs no metadata read, graph construction, ImageFrame creation,
+  first468 geometry copy, or callback registration.
+- The existing IE/MediaPipe result path keeps its behavior; only the accepted
+  frameId is returned from its own store helper.
+
+PRODUCTION_AVATAR_BEHAVIOR_CHANGE=NO
+H1_PUBLICATION=NONE
+HEAD_APPLICATION=NONE
+ROOT_APPLICATION=NONE
+FACEPART_APPLICATION=NONE
+CANONICAL_PUBLICATION=NONE
+SPOUT_PUBLICATION=NONE
+H1=NOT_AUTHORIZED
+
+======================================================================
+7. COMPILE AND DETERMINISTIC DIAGNOSTIC
+======================================================================
+
+[Compile]
+Unity path=C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe
+Unity version/revision=6000.0.80f1 (2dfd32957da2)
+Command mode=-batchmode -quit -projectPath D:\KiwiAvatarSystem
+Exit code=0
+Tundra build success=YES
+Compiler error count=0
+P3C warning/error line count=0
+Compile log=CodexTasks\P3C_MinimalGeometryTransaction_UnityCompile_20260909.log
+Compile log SHA256=29ED0B8A4A5E3BE57C5FCDC5B196F9D222EF2FCC569A189F783749A3311786A0
+
+Existing unrelated warnings remained, including the previously existing source
+generator warning, obsolete Resolution.refreshRate, unused diagnostic fields, and
+the frozen P3A diagnostic's obsolete GetProto call. P3C initially used that
+obsolete getter, then changed to installed current Get before the final compile.
+
+COMPILE_RESULT=PASS_UNITY_6000_0_80F1_EXIT_0_ERRORS_0_NEW_P3C_WARNINGS_0
+
+[Synthetic Deterministic Diagnostic]
+Reason=compile/static source cannot execute and validate the new side-packet
+SidePacketToStream graph configuration itself.
+Source=Assets\CodexTasks\P3C_FaceGeometryTransaction_20260909\Editor\P3CFaceGeometryTransactionDiagnostic.cs
+Source SHA256=CE8173ADBA5ECFE81BBF392A016985CD88DCC9904A1D262AACBA397193645ACD
+Result=CodexTasks\P3C_FACEGEOMETRY_TRANSACTION_DIAGNOSTIC_RESULT.txt
+Result SHA256=00E3E643FBD6A672F8416445A861D3357DDD61FEF0CE3F6B35953C527CA63E20
+Diagnostic log SHA256=7CAB7E2FA584D06E59145DE20A2FFC1CFFCED20F6F2A054214208A2052C80730
+
+Passed:
+- graph start;
+- SidePacketToStream/ImageProperties IMAGE_SIZE;
+- one synthetic transaction/callback and correlation;
+- transient complete FaceGeometry parse and pose-only Kiwi completion;
+- frame 3 pending superseded by newer frame 4, with no frame 3 acceptance;
+- 480x270 graph run -> 640x480 graph rebuild;
+- bounded shutdown and registry/resource quiescence.
+
+DETERMINISTIC_DIAGNOSTIC_EXECUTION=PASS_SYNTHETIC_ONLY
+LIVE_CAMERA_RUNTIME=NOT_RUN
+HUMAN_VISUAL=NOT_RUN
+PERFORMANCE_AUTHORITY=NONE
+RUNTIME_ZIP=NO
+
+======================================================================
+8. DOUBLE FULL AUDIT
+======================================================================
+
+[PRE_IMPLEMENTATION_FULL_AUDIT_1]
+- Started from exact current branch/HEAD/status, Unity identity, Current directory,
+  required reports, source SHA, package/model/native/bundle identity, dirty state,
+  accepted IE store boundary, identity owners, installed graph/packet/callback
+  APIs, official v0.10.22 calculator tags, graph configuration, queue policy,
+  pose boundary correction, lifecycle, protected responsibilities, validation,
+  and rollback scope.
+- Result: PASS; one new service plus minimal Runner accepted-frameId handoff.
+
+[PRE_IMPLEMENTATION_FULL_AUDIT_2 - independent restart]
+- Re-enumerated current authority and existing owner candidates; independently
+  retraced TryProcessAsync stale gates, StoreSentis frameId assignment, all four
+  required generations, semantic dimensions, installed Packet/PacketMap/
+  CalculatorGraph/OutputStream binding behavior, callback lifetime, complete
+  FaceGeometry getter, SidePacketToStream/ImageProperties/Geometry tags, reset
+  matrix, feature activation, and forbidden changes.
+- Result: PASS; same minimum design.
+
+PRE_IMPLEMENTATION_FULL_AUDIT_1=PASS
+PRE_IMPLEMENTATION_FULL_AUDIT_2=PASS
+PRE_IMPLEMENTATION_AUDIT_DISAGREEMENT=NONE
+
+[POST_IMPLEMENTATION_FULL_AUDIT_1]
+- Audited the complete changed source and evidence for owner scope, exact capture,
+  copy count, token/range, tuple, dimensions, graph topology, graph queue,
+  in-flight/pending state, supersede, callback, transient proto/mesh lifetime,
+  Pose16 semantics, old epoch/order, graph fault, reset/restart matrix, shutdown,
+  default OFF behavior, protected hashes, compile, diagnostic, and task output.
+- Found and fixed two candidate issues before final evidence:
+  obsolete GetProto warning and missing nonblocking CalculatorGraph.HasError poll.
+- Result after fixpoint: PASS.
+
+[POST_IMPLEMENTATION_FULL_AUDIT_2 - independent restart]
+- Restarted from current source and hashes without taking Audit 1's result as
+  authority. Rechecked 29 independent static assertions, exact accepted-store
+  dataflow, current generation producers, GUID uniqueness, absence of Scene/
+  Package/Native/KiwiFaceMotion/KiwiInferenceFaceTracker task changes, official
+  calculator graph tags, callback and resource ownership, final compile, and
+  final deterministic diagnostic.
+- Initial text-only validator falsely matched Head/Canonical/FacePart words in
+  comments. Direct code-reference inspection found no call/reference; the check
+  was corrected to code-identifier form and all 29 checks passed. This was a
+  validator false positive, not an implementation/audit disagreement.
+- Result: PASS.
+
+POST_IMPLEMENTATION_FULL_AUDIT_1=PASS
+POST_IMPLEMENTATION_FULL_AUDIT_2=PASS
+POST_IMPLEMENTATION_AUDIT_DISAGREEMENT=NONE_AFTER_VALIDATOR_COMMENT_FALSE_POSITIVE_WAS_CORRECTED
+REMAINING_UNRESOLVED_P3C_STATIC_CLAIMS=NONE
+
+======================================================================
+9. REJECTED / DEFERRED / UNVERIFIED
+======================================================================
+
+[Rejected / Not Implemented]
+- H1, Head, Root, FacePart, Avatar, Canonical, Spout publication.
+- KiwiInferenceFaceTracker modification.
+- custom Native calculator, new getter, package patch, ABI or DLL change.
+- second Face Landmarker inference.
+- per-frame ImageFrame, PacketCloner, FlowLimiter.
+- graph queue override/max_queue_size/report_deadlock as a second owner.
+- Queue<T>, transaction List backlog, FIFO, hold-last, smoothing, prediction,
+  Kalman, or freshness threshold.
+- OutputStreamPoller.Next, worker poller, WaitUntilIdle, WaitUntilDone, blocking
+  graph wait, flush, Fence/Wait, or async-disable.
+- per-frame graph rebuild or graph rebuild on ordinary camera/provider/model/
+  tracking-session identity changes.
+
+POSE_ONLY_NATIVE_EXTRACTION=DEFERRED_RESOURCE_OPTIMIZATION
+Promotion condition=later clean same-build Runtime/Performance evidence proves
+material latency/cadence/allocation/GC/resource harm from transient complete
+FaceGeometry serialization/deserialization.
+
+[Unverified by this task]
+- Live Camera same-sample transaction behavior and cadence.
+- Live restart/provider/model/session transition behavior.
+- Live graph fault recovery and late callback distribution.
+- clean Production allocation/GC/performance.
+- Human Visual and H1 behavior.
+
+Unknown/Unverified is not PASS and does not invalidate the closed P3C static plus
+synthetic-graph claim. These are explicitly the next P3D scope.
+
+======================================================================
+10. REQUIRED MACHINE KEYS
+======================================================================
+
+CURRENT_HEAD_BEFORE=2637b089fa5d0673f92887eecda4e9eb4e9de25c
+CURRENT_HEAD_AFTER=2637b089fa5d0673f92887eecda4e9eb4e9de25c
+
+PRE_IMPLEMENTATION_FULL_AUDIT_1=PASS
+PRE_IMPLEMENTATION_FULL_AUDIT_2=PASS
+PRE_IMPLEMENTATION_AUDIT_DISAGREEMENT=NONE
+
+P3A_RESULT=PASS
+P3B_CORRECTED_RESULT=PASS_DESIGN_CLOSED_WITH_TRANSIENT_FULL_FACEGEOMETRY_MANAGED_BOUNDARY
+
+P3C_OWNER=Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiFaceGeometryTransactionService.cs
+
+CHANGED_FILES=Assets/Script/FaceLandmarkerRunner.cs;Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiFaceGeometryTransactionService.cs;Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiFaceGeometryTransactionService.cs.meta;Assets/CodexTasks/P3C_FaceGeometryTransaction_20260909.meta;Assets/CodexTasks/P3C_FaceGeometryTransaction_20260909/Editor.meta;Assets/CodexTasks/P3C_FaceGeometryTransaction_20260909/Editor/P3CFaceGeometryTransactionDiagnostic.cs;Assets/CodexTasks/P3C_FaceGeometryTransaction_20260909/Editor/P3CFaceGeometryTransactionDiagnostic.cs.meta;CodexTasks/P3C_MinimalGeometryTransaction_UnityCompile_20260909.log;CodexTasks/P3C_FaceGeometryTransaction_Diagnostic_20260909.log;CodexTasks/P3C_FACEGEOMETRY_TRANSACTION_DIAGNOSTIC_RESULT.txt;THIS_REPORT
+
+GEOMETRY_TRANSACTION_IDENTITY_TUPLE={frameId,sourceHostTicks,cameraGeneration,trackingSessionGeneration,providerGeneration,modelGeneration,backend=InferenceEngine,semanticFrameWidth,semanticFrameHeight}
+
+GEOMETRY_CORRELATION_TOKEN=EXISTING_FACE_PRECISION_TRACKING_DATA_FRAME_ID_CAPTURED_AT_ACCEPTED_SENTIS_STORE
+CALCULATOR_TIMESTAMP_SEMANTIC=CORRELATION_ONLY
+
+FIRST468_COPY_BYTES=5616
+
+SEMANTIC_FRAME_DIMENSION_OWNER=FACE_LANDMARKER_RUNNER_TRACKING_INPUT_WIDTH_HEIGHT_SNAPSHOT_PLUS_GEOMETRY_GRAPH_RUN_IMMUTABLE_DIMENSION_STATE
+IMAGE_SIZE_DELIVERY_IMPLEMENTATION=ONE_GRAPH_RUN_DIMENSION_IMAGEFRAME_SIDE_PACKET_TO_STREAM_AT_FACE_LANDMARKS_TICK_THEN_IMAGE_PROPERTIES
+
+MAX_IN_FLIGHT_GEOMETRY=1
+MAX_PENDING_GEOMETRY=1
+NO_FIFO_CONTRACT=PASS
+
+GRAPH_INTERNAL_QUEUE_POLICY=DEFAULT_UNCHANGED;EXTERNAL_ONE_IN_FLIGHT_IS_PRIMARY_OWNER
+
+OUTPUT_ACQUISITION=OBSERVE_OUTPUT_STREAM_STATIC_AOT_CALLBACK
+
+TRANSIENT_FULL_FACEGEOMETRY=ACCEPTED_FOR_CORRECTNESS_IMPLEMENTATION
+PERSISTENT_MESH_PAYLOAD=NONE
+POSE_COMPLETION_PAYLOAD=POSE16_16_EXPLICIT_FLOAT_VALUE_TYPE_PLUS_FRAME_ID_AND_STATUS
+
+OLD_EPOCH_RESULT_POLICY=DROP_OLD_EPOCH_RESULT
+DUPLICATE_POLICY=DROP_AND_GRAPH_PROTOCOL_RESET
+OUT_OF_ORDER_POLICY=DROP_FRAME_ID_LESS_THAN_OR_EQUAL_TO_LAST_ACCEPTED_GEOMETRY_FRAME_ID
+
+SOURCE_FRESHNESS_OWNER=ORIGINAL_SOURCE_HOST_TICKS_AND_EXISTING_PRODUCTION_FRESHNESS_LIVENESS_AUTHORITY
+
+GRAPH_LIFETIME_OWNER=ONE_KIWI_FACE_GEOMETRY_TRANSACTION_SERVICE
+GRAPH_RESET_EVENTS=SEMANTIC_DIMENSION_CHANGE;ENVIRONMENT_CHANGE;METADATA_OR_PACKAGE_IDENTITY_CHANGE;GRAPH_FAULT;EXPLICIT_SHUTDOWN
+RESUME_GRAPH_POLICY=KEEP_GRAPH;RESUME_IS_NOT_PROVIDER_SWITCH
+
+P3C_DEFAULT_EXECUTION_STATE=OFF
+
+POSE_ONLY_NATIVE_EXTRACTION=DEFERRED_RESOURCE_OPTIMIZATION
+DEFERRED_RESOURCE_OPTIMIZATION=MEASURE_TRANSIENT_COMPLETE_FACEGEOMETRY_COST_IN_P3D_BEFORE_ANY_NATIVE_CHANGE
+
+COMPILE_RESULT=PASS_UNITY_6000_0_80F1_EXIT_0_ERRORS_0_NEW_P3C_WARNINGS_0
+DETERMINISTIC_DIAGNOSTIC_EXECUTION=PASS_SYNTHETIC_ONLY
+
+POST_IMPLEMENTATION_FULL_AUDIT_1=PASS
+POST_IMPLEMENTATION_FULL_AUDIT_2=PASS
+POST_IMPLEMENTATION_AUDIT_DISAGREEMENT=NONE_AFTER_VALIDATOR_COMMENT_FALSE_POSITIVE_WAS_CORRECTED
+
+P3C_RESULT=PASS
+
+P1_I_GEOMETRY_IDENTITY_CARRIER=IMPLEMENTED_STATIC_VALIDATED_NOT_RUNTIME_VALIDATED
+
+PRODUCTION_AVATAR_BEHAVIOR_CHANGE=NO
+H1=NOT_AUTHORIZED
+LIVE_CAMERA_RUNTIME=NOT_RUN
+PERFORMANCE_AUTHORITY=NONE
+COMMIT_PUSH=NO
+
+NEXT_SINGLE_ACTION=P3D_MINIMAL_SAME_BUILD_GEOMETRY_TRANSACTION_RUNTIME_CORRECTNESS_LIFECYCLE_GATE
+
+======================================================================
+11. SELF-AUDIT FIXPOINT
+======================================================================
+
+01 PASS - P3A PASS preserved.
+02 PASS - corrected P3B transient-complete-FaceGeometry decision used.
+03 PASS - pose-only Native optimization not used as correctness blocker.
+04 PASS - live-local authority and dirty state checked before write.
+05 PASS - two complete pre-implementation audits completed.
+06 PASS - existing equivalent owner searched; none found.
+07 PASS - KiwiInferenceFaceTracker unchanged by P3C.
+08 PASS - exact accepted frameId returned at StoreSentis boundary.
+09 PASS - no geometry global-latest reread.
+10 PASS - exactly one 5616-byte first468 transaction copy.
+11 PASS - Sentis/readback/output lifetime not extended.
+12 PASS - original sourceHostTicks retained as freshness time.
+13 PASS - calculator timestamp is correlation only.
+14 PASS - semantic dimensions are captured, not hardcoded.
+15 PASS - one ImageFrame per graph run, none per sample.
+16 PASS - no PacketCloner.
+17 PASS - official installed FaceGeometryPipelineCalculator reused.
+18 PASS - no second face inference.
+19 PASS - no FlowLimiter.
+20 PASS - one external latest-frame geometry admission owner.
+21 PASS - one in-flight plus one overwriteable latest pending.
+22 PASS - no FIFO or transaction backlog.
+23 PASS - callback performs no Unity API work.
+24 PASS - borrowed packet is callback-scoped.
+25 PASS - complete FaceGeometry is transient only.
+26 PASS - mesh never persists in Kiwi transaction/completion.
+27 PASS - raw pose semantic not Unity-converted/inverted/transposed.
+28 PASS - old camera/session/provider/model epochs rejected.
+29 PASS - duplicate/out-of-order rejected.
+30 PASS - Resume remains distinct from Provider Switch.
+31 PASS - ordinary authority changes keep graph.
+32 PASS - no smoothing/prediction/hold-last temporal state.
+33 PASS - no Head/H1/FacePart/Canonical publication.
+34 PASS - exact Unity 6000.0.80f1 compile exit 0.
+35 PASS - two complete post-implementation audits reached fixpoint.
+36 PASS - no Native/package/Scene mutation.
+37 PASS - no commit/push.
+
+END_OF_P3C_REPORT

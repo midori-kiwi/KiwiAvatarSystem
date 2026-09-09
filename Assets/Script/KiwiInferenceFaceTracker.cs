@@ -1109,21 +1109,28 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             bool force)
         {
             float width =
-                Mathf.Clamp(
-                    Mathf.Abs(
-                        regionTopLeft.width),
-                    0.04f,
-                    2.50f);
+                Mathf.Abs(
+                    regionTopLeft.width);
 
             float height =
-                Mathf.Clamp(
-                    Mathf.Abs(
-                        regionTopLeft.height),
-                    0.04f,
-                    2.50f);
+                Mathf.Abs(
+                    regionTopLeft.height);
 
             Vector2 centerTopLeft =
                 regionTopLeft.center;
+
+            if (
+                !IsFinite(width) ||
+                !IsFinite(height) ||
+                width <= 0f ||
+                height <= 0f ||
+                !IsFinite(centerTopLeft.x) ||
+                !IsFinite(centerTopLeft.y) ||
+                !IsFinite(rollRadiansBottomLeft)
+            )
+            {
+                return;
+            }
 
             Vector2 centerBottomLeft =
                 new Vector2(
@@ -1262,16 +1269,10 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 centerBottomLeft;
 
             _regionWidth =
-                Mathf.Clamp(
-                    width,
-                    0.04f,
-                    2.50f);
+                width;
 
             _regionHeight =
-                Mathf.Clamp(
-                    height,
-                    0.04f,
-                    2.50f);
+                height;
 
             _regionRollRadians =
                 rollRadiansBottomLeft;
@@ -2743,10 +2744,7 @@ Graphics.Blit(
                 xAxis.magnitude;
 
             return
-                Mathf.Clamp(
-                    scale,
-                    0.02f,
-                    3.0f);
+                scale;
         }
 
         private void UpdateSourceDimensions(
@@ -3000,19 +2998,18 @@ Graphics.Blit(
                     boxHeightPixels) *
                 1.50f;
 
+            if (!IsFinite(squareSidePixels))
+            {
+                return;
+            }
+
             float targetWidth =
-                Mathf.Clamp(
-                    squareSidePixels /
-                    imageWidth,
-                    0.04f,
-                    2.50f);
+                squareSidePixels /
+                imageWidth;
 
             float targetHeight =
-                Mathf.Clamp(
-                    squareSidePixels /
-                    imageHeight,
-                    0.04f,
-                    2.50f);
+                squareSidePixels /
+                imageHeight;
 
             // MediaPipe uses landmark 33 -> 263 as the rotation vector.
             // Convert the top-left landmark Y convention to the bottom-left
@@ -3339,16 +3336,10 @@ Graphics.Blit(
                 System.Diagnostics.Stopwatch.GetTimestamp();
 
             _trustedRegionWidth =
-                Mathf.Clamp(
-                    _regionWidth,
-                    0.04f,
-                    2.50f);
+                _regionWidth;
 
             _trustedRegionHeight =
-                Mathf.Clamp(
-                    _regionHeight,
-                    0.04f,
-                    2.50f);
+                _regionHeight;
         }
 
         private void MarkRegionTrusted()
@@ -3369,16 +3360,10 @@ Graphics.Blit(
                 System.Diagnostics.Stopwatch.GetTimestamp();
 
             _trustedRegionWidth =
-                Mathf.Clamp(
-                    _regionWidth,
-                    0.04f,
-                    2.50f);
+                _regionWidth;
 
             _trustedRegionHeight =
-                Mathf.Clamp(
-                    _regionHeight,
-                    0.04f,
-                    2.50f);
+                _regionHeight;
         }
 
         private void ExpandRegionForRecovery()
@@ -3407,23 +3392,31 @@ Graphics.Blit(
                     RecoveryExpansionMaxScale,
                     t);
 
+            float targetWidth =
+                Mathf.Max(
+                    _regionWidth,
+                    _trustedRegionWidth *
+                        _regionRecoveryScale);
+
+            float targetHeight =
+                Mathf.Max(
+                    _regionHeight,
+                    _trustedRegionHeight *
+                        _regionRecoveryScale);
+
+            if (
+                !IsFinite(targetWidth) ||
+                !IsFinite(targetHeight)
+            )
+            {
+                return;
+            }
+
             _regionWidth =
-                Mathf.Clamp(
-                    Mathf.Max(
-                        _regionWidth,
-                        _trustedRegionWidth *
-                            _regionRecoveryScale),
-                    0.04f,
-                    2.50f);
+                targetWidth;
 
             _regionHeight =
-                Mathf.Clamp(
-                    Mathf.Max(
-                        _regionHeight,
-                        _trustedRegionHeight *
-                            _regionRecoveryScale),
-                    0.04f,
-                    2.50f);
+                targetHeight;
         }
 
         private float GetTrustedRegionAgeMs(

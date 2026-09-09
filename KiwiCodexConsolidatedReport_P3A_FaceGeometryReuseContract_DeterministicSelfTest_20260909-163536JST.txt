@@ -1,0 +1,488 @@
+KiwiAvatarSystem P3A FaceGeometry Reuse Contract / Deterministic Self-Test
+Report time: 2026-09-09 16:35:36 JST
+Project: D:\KiwiAvatarSystem
+Scope: IE first468 normalized XYZ -> version-matched Tasks FaceGeometry metric pipeline feasibility
+Production change: NO
+
+============================================================
+0. CONCLUSION
+============================================================
+
+[Decision]
+- P3_RESULT=PASS.
+- The installed MediaPipeUnityPlugin 0.16.3 native binary can accept an arbitrary
+  468-point NormalizedLandmarkList plus explicit IMAGE_SIZE and execute the exact
+  v0.10.22 Tasks FaceGeometryPipelineCalculator without a second face model.
+- Reuse classification is LOW_LEVEL_CALCULATOR_GRAPH_REUSE. No algorithm port or
+  custom Procrustes solver is required.
+- The output is a pose-normalized/canonical-aligned residual metric mesh, not an
+  already-posed runtime mesh. pose_transform_matrix maps canonical/output mesh to
+  runtime metric space and includes uniform scale, rotation, and translation.
+- Five deterministic fixtures, each repeated five times, passed exact serialized-
+  byte determinism, 468-vertex/finite output, pose structure, right-handed
+  orientation, pose-then-project reprojection, 16:9 absolute-size equivalence, and
+  a second-aspect test under the pre-execution manifest.
+- Maximum observed reprojection XY error was 1.143324937202445E-07 normalized units.
+- 480x270 and 1920x1080 produced byte-identical FaceGeometry. Their exact 16:9
+  aspect equivalence is closed for this algorithm/environment and fixture.
+- P1_I_GEOMETRY_IDENTITY_CARRIER remains NONE. P3 PASS does not authorize H1 or
+  publication of IE geometry.
+
+============================================================
+1. CURRENT AUTHORITY / IDENTITY
+============================================================
+
+[Confirmed Facts]
+- Branch=work/raw-direct-motion.
+- CURRENT_HEAD=2637b089fa5d0673f92887eecda4e9eb4e9de25c.
+- Task-start tracked dirty files were preserved as user-owned:
+  Assets\Script\FaceLandmarkerRunner.cs
+  Assets\Script\KiwiInferenceFaceTracker.cs
+- Their task-time/current SHA256 values exactly match the supplied Latest P1
+  Authority report:
+  FaceLandmarkerRunner.cs=027C61F6A4B42E772F355719CFF93D5D8DF1D0C3C100AE6C07E2E3083EC4F90E
+  KiwiInferenceFaceTracker.cs=17F55087EFA7D42B14EF7453F35B0720EE79A23A64CB239391171C45241E3744
+- Latest P1 Authority read:
+  KiwiCodexConsolidatedReport_P2C_B10SemanticCorrection_B11Closure_20260909-155715JST.txt
+- P1_S_WINDOWS_NATIVE_PRODUCTION=PASS remains current for the normalized first468
+  input semantic required here. P1-R and P1-I are not reopened.
+
+[Package Authority]
+- Manifest source=file:com.github.homuler.mediapipe-0.16.3.tgz.
+- TGZ SHA256=CC3E77A219E0B99618AE3BE64C31A566197DEEDC69C1E136ACF52D65D7CF2E79.
+- Installed root=Library\PackageCache\com.github.homuler.mediapipe@66127f8e750d.
+- package.json version=0.16.3, fingerprint=66127f8e750d,
+  SHA256=EEBBFF4550FA9CA3C2C76AB05BD0EDBDB3A0A4C2800883E244DC9E40D8FF2A2D.
+- installed mediapipe_c.dll SHA256=
+  B9B620F2707DEA371BE3FCEF9F2D05468CA1471FAEE3BE6637BBD7DA77E21C54.
+- installed bundle and Production StreamingAssets bundle are byte-identical:
+  size=2357924,
+  SHA256=B261925D4AAD812B47A0E8D58C1BAA1223270A5D1F663D78338BC881C003879D.
+- Inference Engine manifest/lock/installed version remains 2.4.1.
+
+============================================================
+2. P3 INPUT / IMAGE_SIZE FREEZE
+============================================================
+
+[Input Semantic]
+- S=RAW_LOGICAL_SOURCE_TEXTURE_PLANE.
+- T=TRACKING_SEMANTIC_SCREEN_PLANE=F_hv(S).
+- P3 consumes indices 0..467 XYZ normalized in T, TOP_LEFT origin.
+- No F_hv, ImageProcessingOptions rotation, ROI roll, Unity-space conversion,
+  Quaternion conversion, pose inversion, or Head-authority operation is applied.
+
+[Current Static IMAGE_SIZE Dataflow]
+- AppSettings.asset selects the Windows preferred source profile 1920x1080@60.
+- WindowsNativeWebCamSource uses that preferred width/height for its fixed native
+  texture wrappers and stable presentation texture.
+- Face Landmark Detection.unity serializes downscaleTrackingInput=1 and
+  trackingInputMaxWidth=480.
+- FaceLandmarkerRunner starts from the source Texture dimensions and computes an
+  aspect-preserving tracking copy. For 1920x1080:
+    scale=480/1920=0.25
+    rounded height=RoundToInt(1080*0.25)=270
+    even adjustment keeps 270
+- Runner then reads that 480x270 tracking Texture into the Image supplied to the
+  Face Landmarker Task. Official FaceLandmarkerGraph obtains IMAGE_SIZE from
+  ImagePropertiesCalculator on that Task IMAGE.
+- IE samples the 1920x1080 source Texture but publishes normalized T coordinates.
+  192x192 is only the IE crop/model plane and is not FaceGeometry IMAGE_SIZE.
+- 480/270=1920/1080=16/9 exactly. No resize rounding changes the aspect ratio.
+- Therefore exact Task-oracle baseline IMAGE_SIZE is 480x270. The normalized IE
+  result on 1920x1080 is aspect-equivalent. Diagnostic execution independently
+  returned byte-identical output at both absolute sizes.
+- Runtime fallback/source dimension changes are not claimed absent. A later carrier
+  must bind the same-sample semantic image aspect; this task ran no camera.
+
+[Identity SHA]
+- Face Landmark Detection.unity=
+  9BAC89F64B45429B38D41C1A2539C63D5E9A442E8EF920EE13B59245BE166735.
+- AppSettings.asset=
+  DE4ED2047DA3222564B499AFF711398C5E8A8A1D0CA1BB2DE6D450F1C49EE647.
+- WindowsNativeWebCamSource.cs=
+  D0DD9A78FA57AAB51D3E0C8606844C44F0207DC87277D0B26AEF3B43EF353533.
+
+============================================================
+3. VERSION-MATCHED TASKS SOURCE CONTRACT
+============================================================
+
+[Official Primary Source: exact v0.10.22 tag]
+- face_geometry_from_landmarks_graph.cc
+  https://github.com/google-ai-edge/mediapipe/blob/v0.10.22/mediapipe/tasks/cc/vision/face_geometry/face_geometry_from_landmarks_graph.cc
+- calculators/env_generator_calculator.cc
+  https://github.com/google-ai-edge/mediapipe/blob/v0.10.22/mediapipe/tasks/cc/vision/face_geometry/calculators/env_generator_calculator.cc
+- calculators/geometry_pipeline_calculator.cc
+  https://github.com/google-ai-edge/mediapipe/blob/v0.10.22/mediapipe/tasks/cc/vision/face_geometry/calculators/geometry_pipeline_calculator.cc
+- libs/geometry_pipeline.cc
+  https://github.com/google-ai-edge/mediapipe/blob/v0.10.22/mediapipe/tasks/cc/vision/face_geometry/libs/geometry_pipeline.cc
+- libs/procrustes_solver.cc
+  https://github.com/google-ai-edge/mediapipe/blob/v0.10.22/mediapipe/tasks/cc/vision/face_geometry/libs/procrustes_solver.cc
+- libs/validation_utils.h and validation_utils.cc
+  https://github.com/google-ai-edge/mediapipe/blob/v0.10.22/mediapipe/tasks/cc/vision/face_geometry/libs/validation_utils.h
+  https://github.com/google-ai-edge/mediapipe/blob/v0.10.22/mediapipe/tasks/cc/vision/face_geometry/libs/validation_utils.cc
+- proto/environment.proto, face_geometry.proto, geometry_pipeline_metadata.proto,
+  mesh_3d.proto, face_geometry_graph_options.proto
+  https://github.com/google-ai-edge/mediapipe/tree/v0.10.22/mediapipe/tasks/cc/vision/face_geometry/proto
+- FaceLandmarkerGraph resource/IMAGE_SIZE integration
+  https://github.com/google-ai-edge/mediapipe/blob/v0.10.22/mediapipe/tasks/cc/vision/face_landmarker/face_landmarker_graph.cc
+
+[Static Source Contract]
+- FaceGeometryFromLandmarksGraph receives vector<NormalizedLandmarkList> plus
+  pair<int,int> IMAGE_SIZE and optional Environment; it splits every list to the
+  first 468 landmarks before FaceGeometryPipelineCalculator.
+- Default Environment is TOP_LEFT_CORNER, VFOV=63 degrees, near=1, far=10000.
+- GeometryPipeline requires the landmark frame and IMAGE_SIZE to have the same
+  aspect ratio; absolute size affects the frustum only through aspect.
+- ProjectXY owns TOP_LEFT -> internal Y orientation conversion. ChangeHandedness
+  owns the screen-left-handed -> metric-right-handed Z sign conversion.
+- The pipeline uses relative weak-perspective input Z, two scale estimates,
+  unprojection, final weighted orthogonal Procrustes pose estimation, and then
+  multiplies runtime metric landmarks by inverse pose before output mesh packing.
+- Procrustes disallows reflection and produces a uniform-scale rotation plus
+  translation with matrix last row [0 0 0 1].
+- FaceGeometry proto guarantees mesh XYZ in right-handed Metric 3D and guarantees
+  screen XY only after mesh -> pose matrix -> same-environment perspective project.
+- Canonical metadata declares centimeter units.
+- No master/latest or legacy mediapipe/modules/face_geometry source was used as
+  Primary.
+
+============================================================
+4. METADATA / RESOURCE IDENTITY
+============================================================
+
+[Confirmed Package Artifact]
+- FaceLandmarkerGraph v0.10.22 constant name is
+  geometry_pipeline_metadata_landmarks.binarypb and injects that bundle entry into
+  FaceGeometry graph options only when FACE_GEOMETRY is requested.
+- The installed and Production bundle both contain exactly that entry.
+- Entry size=19376 bytes.
+- Entry SHA256=BDBCDA96DFCB7DA883DA124AAA2C55DEE49770D934F0FCC71747F8C21BDC75B4.
+- Native validation and independent diagnostic parsing establish:
+  canonical vertex count=468;
+  vertex format=POSITION XYZ + UV;
+  triangle index count=2694;
+  canonical unit=centimeter;
+  input_source=FACE_LANDMARK_PIPELINE (enum 1);
+  Procrustes basis entries=33.
+- Procrustes basis identity is SHA256 over ordered
+  landmark_id:IEEE754_weight_bits lines:
+  C3391A7F247E3F7F12D74925ABE332E7733CEC6952EF0ECFB65F844FB09F6C17.
+- face_geometry_from_landmarks_graph.cc comment names
+  geometry_pipeline_metadata_from_landmarks.binarypb, while the actual
+  FaceLandmarkerGraph constant and both installed bundles use
+  geometry_pipeline_metadata_landmarks.binarypb. The actual bundle identity is
+  Authority; the comment spelling is not.
+
+============================================================
+5. INSTALLED REUSE FEASIBILITY
+============================================================
+
+[Package Source]
+- Managed CalculatorGraph supports graph creation, input packets, output pollers,
+  timestamps, and deterministic completion.
+- Packet.CreateProtoAt supports a single arbitrary NormalizedLandmarkList.
+- Packet.CreateImageFrameAt supports a diagnostic ImageFrame.
+- PacketGetterExtension and generated Tasks FaceGeometry binding support extracting
+  singular FaceGeometry; FaceLandmarker binding also supports FaceGeometry vectors.
+- Generated Tasks bindings include FaceGeometryPipelineCalculatorOptions,
+  FaceGeometry, Mesh3d, and FaceGeometryGraphOptions.
+- The public managed layer does not expose a creator for std::pair<int,int>, does
+  not expose a vector<NormalizedLandmarkList> packet creator, and does not include
+  the Tasks Environment generated binding needed for a convenient direct subgraph
+  call.
+
+[Reuse Execution]
+- A diagnostic CalculatorGraph used installed ImagePropertiesCalculator to turn a
+  zeroed ImageFrame of the declared dimensions into official pair<int,int>
+  IMAGE_SIZE.
+- Installed FaceGeometryEnvGeneratorCalculator created the exact default
+  Environment.
+- Installed FaceGeometryPipelineCalculator received an arbitrary single 468-point
+  NormalizedLandmarkList and exact bundle metadata embedded as
+  ExternalFile.file_content.
+- Native graph initialization and all executions passed. This is direct native
+  calculator reuse; no solver/pipeline code was ported or reimplemented.
+- No TFLite/ONNX face inference node, camera, GPU crop/readback/upload, FIFO,
+  previous-frame input, smoothing, cache semantics, or temporal state exists in
+  the graph. Graph NumThreads=1 and fixture timestamps are unique.
+- The graph can carry MediaPipe packet timestamps later, but current Production has
+  no geometry identity carrier. This feasibility result does not close P1-I.
+
+[Decision]
+- A. FaceGeometryFromLandmarksGraph directly from current high-level managed API:
+  MANAGED_INPUT_PACKET_GAPS; not selected.
+- B. FaceGeometryPipelineCalculator through CalculatorGraph:
+  AVAILABLE_AND_EXECUTED; selected.
+- C. Existing high-level FaceLandmarker path:
+  REJECTED_FOR_IE_REUSE because it reruns face inference.
+- Port: NOT_REQUIRED.
+- FACEGEOMETRY_REUSE_DECISION=LOW_LEVEL_CALCULATOR_GRAPH_REUSE.
+
+[Installed Binding SHA256]
+- CalculatorGraph.cs=9A5D7CB057854095D99CEB17EBA7C285EDB5A20E892D063F5B3404644DC89BCB.
+- Packet.cs=CAB36509D4EE15AF9B088F47049C25960FFA51826EDCE2B31A52C07EF5108376.
+- PacketGetterExtension.cs=0AE9CF50DA05B9E1B9C82FA9F47AAC38B86A49A8E4B3E549AB8A095067AC72E7.
+- GeometryPipelineCalculator.cs=F7F723CF11822A9E94E96D93D8DDF67175EB90C98A9217CD804404F37597EF57.
+- FaceGeometry.cs=89D923320B8C21A9682AC6F83979D9E2D7CA6A5C4D150366C3F5625E325F2C45.
+- Mesh3D.cs=371A26FF24076D7208790E2BE972CED4F5D341D8C6F79846720C91364E07C5A9.
+- FaceLandmarker.cs=6D1B9993679BDF5942C9BF1A1623BB24912BC1A5812D80C589A34EDAB12BE3CE.
+
+============================================================
+6. OUTPUT SEMANTIC FREEZE
+============================================================
+
+[Static + Executed Contract]
+- INTERNAL_RUNTIME_METRIC_LANDMARKS are the right-handed points after final
+  unprojection and handedness crossing, before inverse pose normalization.
+- POSE_TRANSFORM_MATRIX maps canonical/output-mesh coordinates to runtime metric
+  face coordinates. It contains uniform scale, rotation, and translation.
+- OUTPUT_FACE_GEOMETRY_MESH copies canonical UV/topology and replaces XYZ with
+  inverse-pose-transformed metric landmarks. It is pose-normalized/canonical-
+  aligned residual geometry.
+- Correct validation is:
+  output mesh XYZ -> raw pose_transform_matrix -> perspective projection under the
+  same Environment/aspect -> TOP_LEFT normalized screen XY.
+- P3 does not transpose/invert/convert the pose to a Unity Transform and does not
+  use the plugin's Unity-facing Matrix4x4 conversion, which changes handedness.
+- Origin conversion owner=official GeometryPipeline ProjectXY/projection inverse.
+- Handedness conversion owner=official GeometryPipeline ChangeHandedness.
+
+============================================================
+7. PRE-EXECUTION MANIFEST / DETERMINISTIC EXECUTION
+============================================================
+
+[Test Design]
+- Manifest:
+  CodexTasks\KiwiCodexTask_P3A_FaceGeometry_20260909-162449JST\P3_TEST_MANIFEST_PRE_EXECUTION.txt
+- P3_TEST_MANIFEST_SHA_PRE_EXECUTION=
+  C7324CF1DA2FC267C8E14BEB6ADF8ECEE73846E54C608B330EB2A9FC629FEBC4.
+- Manifest was written and hashed before the diagnostic code was executed.
+- Thresholds were not changed after results.
+- Fixture source is exact canonical metadata XYZ, deterministically mapped to a
+  non-degenerate centered screen face. Translation (+0.04,-0.03) and relative-Z
+  scale (1.25) are explicit. These are INVARIANT_ONLY, not fabricated known-pose
+  ground truth. 480x270 versus 1920x1080 is KNOWN_GROUND_TRUTH_FOR_ASPECT_ONLY.
+- Repeat count=5 per fixture.
+
+[Execution Artifact]
+- Diagnostic source:
+  Assets\CodexTasks\P3A_FaceGeometry_20260909_162449JST\Editor\P3FaceGeometryDiagnostic.cs
+- Source SHA256=D3D6A18EEFEDAB147B9640957D7667CE192FF6E9924C8DB6947451DC53101E18.
+- Compile=PASS under Unity 6000.0.80f1. One obsolete API warning and no compile
+  error occurred; the warning is diagnostic-only and does not alter semantics.
+- Result:
+  CodexTasks\KiwiCodexTask_P3A_FaceGeometry_20260909-162449JST\P3_DETERMINISTIC_DIAGNOSTIC_RESULT.txt
+- Result SHA256=73D57FF253122619C721B879B14C690441F75922EF7142828D23B956C1F86945.
+
+[Deterministic Diagnostic Results]
+- Installed graph initialization=PASS.
+- Arbitrary single NormalizedLandmarkList input=PASS.
+- Explicit IMAGE_SIZE via official ImagePropertiesCalculator=PASS.
+- Metadata: 468 canonical vertices, 2694 indices, 33 weighted basis entries=PASS.
+- Every output mesh contained exactly 468 finite XYZ vertices.
+- Every raw pose had exact last row [0 0 0 1].
+- Maximum uniform-scale relative column spread=1.6227472934787411E-07.
+- Maximum rotation orthogonality error=2.16366317529193E-07.
+- Minimum normalized rotation determinant=0.99999999999999145.
+- Every posed runtime vertex had negative camera-space Z (468/468 per fixture),
+  consistent with the right-handed camera convention used by official projection.
+- Maximum reprojection XY RMS=3.4413994418618397E-08.
+- Maximum reprojection XY max=1.143324937202445E-07.
+- Serialized FaceGeometry bytes were identical across all five repeats of each
+  fixture.
+- 480x270 vs 1920x1080:
+  pose absolute max difference=0;
+  mesh XYZ absolute max difference=0;
+  serialized output SHA was identical.
+- 640x480 second-aspect output independently passed finite/pose/reprojection/
+  determinism. Equality to 16:9 was correctly not required.
+- PROCRUSTES_CORE_SELFTEST=NOT_REQUIRED_OFFICIAL_IMPLEMENTATION_REUSED.
+- GEOMETRY_PIPELINE_DETERMINISTIC_SELFTEST=PASS.
+
+============================================================
+8. EVIDENCE CLASSIFICATION
+============================================================
+
+STATIC_SOURCE_CONTRACT=PASS_VERSION_MATCHED_TASKS_V0_10_22
+PACKAGE_SOURCE_CONTRACT=PASS_INSTALLED_0_16_3_BINDINGS_BUNDLE_AND_NATIVE_ARTIFACT
+DETERMINISTIC_DIAGNOSTIC_EXECUTION=PASS_INSTALLED_NATIVE_CALCULATOR_GRAPH
+LIVE_PRODUCTION_RUNTIME=NOT_RUN
+HUMAN_VISUAL=NOT_RUN
+PERFORMANCE_AUTHORITY=NONE
+
+The deterministic execution is Runtime evidence for this isolated diagnostic only;
+it is not labeled Static and does not satisfy a live Production/camera claim.
+
+============================================================
+9. UNKNOWN / UNVERIFIED / REJECTED
+============================================================
+
+[Unknown / Unverified]
+- Physical UGREEN camera VFOV/intrinsics and calibration accuracy are unverified.
+- Actual live fallback/source dimensions and per-sample aspect carrier are not
+  Runtime-verified here.
+- IE geometry same-sample sourceHostTicks, camera generation, tracking session,
+  provider/model/backend epoch publication contract does not exist yet.
+- Live camera behavior, Avatar visual result, performance, lifecycle recovery,
+  distribution, and Windows acceptance are not evaluated.
+
+[Rejected / Not Selected]
+- 192x192 IE crop as IMAGE_SIZE: REJECTED_WRONG_SEMANTIC_PLANE.
+- 560x315 display or any historical size as IMAGE_SIZE: REJECTED_NO_CURRENT_TASK_INPUT_AUTHORITY.
+- 1920x1080 physical/source absolute size as exact Task-oracle input:
+  NOT_SELECTED; aspect-equivalent only.
+- VFOV tuning from diagnostic results: REJECTED.
+- Direct projection of output mesh without applying pose: REJECTED_POSE_NORMALIZED_MESH.
+- Unity Matrix4x4 conversion during P3: REJECTED_CHANGES_RAW_HANDEDNESS_SEMANTIC.
+- Naive synthetic yaw/pitch as exact full-pipeline ground truth: REJECTED_CIRCULAR_OR_INVALID_INVERSE_ASSUMPTION.
+- Broad MediaPipe port/custom solver: REJECTED_UNNECESSARY.
+- High-level FaceLandmarker reuse for IE geometry: REJECTED_DUPLICATE_FACE_INFERENCE.
+- H1/Canonical/FacePart/Head publication: NOT_AUTHORIZED.
+
+============================================================
+10. CHANGE / PROHIBITION AUDIT
+============================================================
+
+- Production source change=NO.
+- Package mutation=NO.
+- Scene mutation=NO.
+- Camera/Native/KiwiFaceMotion/KiwiInferenceFaceTracker change=NO.
+- H1/FacePart/Head/Canonical publish=NO.
+- Live-camera Runtime/Human Visual/Performance benchmark=NOT_RUN.
+- Smoothing/Kalman/prediction/FIFO/persistent queue=NONE.
+- Commit/push=NO.
+- New files are limited to diagnostic source/meta under Assets\CodexTasks, task
+  manifest/result/log under CodexTasks, and this consolidated REPORT.
+- Pre-existing tracked modifications and untracked reports were preserved.
+
+============================================================
+11. P3 GATE / NEXT HANDOFF
+============================================================
+
+[P3 Gate]
+- P1-S current: PASS.
+- Input coordinate contract: FROZEN.
+- IMAGE_SIZE contract: FROZEN.
+- Environment contract: FROZEN.
+- Metadata identity: CLOSED.
+- Reuse decision: FROZEN.
+- Output mesh semantic: PASS.
+- Pose matrix semantic: PASS.
+- Handedness semantic: PASS.
+- Deterministic diagnostic execution: PASS.
+- Reprojection contract: PASS.
+- Custom solver conditional gate: NOT_REQUIRED.
+- P3_RESULT=PASS.
+
+[Handoff]
+- P1_I_GEOMETRY_IDENTITY_CARRIER remains NONE.
+- NEXT_SINGLE_ACTION=P3B_SAME_SAMPLE_GEOMETRY_IDENTITY_CARRIER_DESIGN_AND_STATIC_CLOSURE.
+- P3B must bind geometry to the same sourceHostTicks, camera generation, tracking
+  session generation, provider/model/backend epoch and reject duplicate,
+  out-of-order, stale, or mixed-epoch publication before H1 is considered.
+
+============================================================
+12. SELF-AUDIT FIXPOINT
+============================================================
+
+1. Tasks implementation is Primary; legacy modules is not: PASS.
+2. first468 only: PASS.
+3. S and T separated: PASS.
+4. TOP_LEFT supplied exactly once: PASS.
+5. IMAGE_SIZE derived from current source/config/dataflow: PASS.
+6. 192x192 crop not used as FaceGeometry IMAGE_SIZE: PASS.
+7. 560x315 display/historical size not used: PASS.
+8. resize rounding checked; 270 exact and even: PASS.
+9. default Environment not promoted to physical calibration: PASS.
+10. metadata file, bundle, SHA, count, unit, basis identity closed: PASS.
+11. output mesh not described as already-posed runtime mesh: PASS.
+12. pose is canonical/output-mesh -> runtime: PASS.
+13. pose not inverted/transposed/Unity-converted during P3: PASS.
+14. screen LH / metric RH and conversion owners retained: PASS.
+15. installed reuse checked and executed before any port: PASS.
+16. no duplicate face inference: PASS.
+17. no circular full-pipeline pose ground truth: PASS.
+18. Procrustes core test omitted only because official solver reused: PASS.
+19. official arbitrary input execution and invariant checks separated: PASS.
+20. reprojection applies pose before projection: PASS.
+21. thresholds and manifest SHA frozen before execution: PASS.
+22. deterministic execution not mislabeled Static: PASS.
+23. P3 PASS does not imply P1-I: PASS.
+24. H1 remains unauthorized: PASS.
+25. no Production/package/scene write: PASS.
+26. no live-camera Runtime/Human Visual/Performance claim: PASS.
+27. no commit/push: PASS.
+
+Re-audit found no remaining contradiction within the assigned P3A claim.
+
+============================================================
+13. FINAL MACHINE-READABLE BLOCK
+============================================================
+
+CURRENT_HEAD=2637b089fa5d0673f92887eecda4e9eb4e9de25c
+
+P1_S_WINDOWS_NATIVE_PRODUCTION=PASS
+
+P3_INPUT_RAW_SOURCE_PLANE=S
+P3_INPUT_TRACKING_SEMANTIC_PLANE=T
+P3_INPUT_COORDINATE_CONTRACT=FIRST468_XYZ_NORMALIZED_IN_T_TOP_LEFT_NO_REAPPLIED_F_HV_ROTATION_OR_ROI
+
+P3_IMAGE_SIZE_WIDTH=480
+P3_IMAGE_SIZE_HEIGHT=270
+P3_IMAGE_SIZE_ASPECT=16:9
+P3_IMAGE_SIZE_AUTHORITY=CURRENT_1920X1080_WINDOWS_SOURCE_TO_RUNNER_480_WIDTH_EXACT_ASPECT_TRACKING_COPY_AND_TASK_IMAGEPROPERTIES
+P3_IMAGE_SIZE_EQUIVALENCE_PROOF=480_DIV_270_EQUALS_1920_DIV_1080_EXACT;ROUND_1080_TIMES_480_DIV_1920_EQUALS_270_EVEN;DIAGNOSTIC_POSE_MESH_AND_SERIALIZED_OUTPUT_IDENTICAL
+
+P3_ORIGIN=TOP_LEFT_CORNER
+P3_ENV_VFOV=63.0
+P3_ENV_NEAR=1.0
+P3_ENV_FAR=10000.0
+P3_ENVIRONMENT_AUTHORITY=VERSION_MATCHED_TASK_DEFAULT
+
+FACEGEOMETRY_PRIMARY_SOURCE_NAMESPACE=MEDIAPIPE_TASKS_CC_VISION_FACE_GEOMETRY
+
+FACEGEOMETRY_INSTALLED_COMPONENT_STATUS=NATIVE_CALCULATORS_PRESENT_AND_EXECUTED;TASKS_PROTO_OUTPUT_BINDINGS_PRESENT;HIGH_LEVEL_ARBITRARY_VECTOR_AND_IMAGE_SIZE_PACKET_BINDINGS_INCOMPLETE
+FACEGEOMETRY_REUSE_DECISION=LOW_LEVEL_CALCULATOR_GRAPH_REUSE
+
+FACEGEOMETRY_METADATA_FILE=face_landmarker_v2_with_blendshapes.bytes!geometry_pipeline_metadata_landmarks.binarypb
+FACEGEOMETRY_METADATA_SHA=BDBCDA96DFCB7DA883DA124AAA2C55DEE49770D934F0FCC71747F8C21BDC75B4
+FACEGEOMETRY_METADATA_INPUT_SOURCE=EXACT_INSTALLED_AND_PRODUCTION_BYTE_IDENTICAL_TASK_BUNDLE_ENTRY_EMBEDDED_AS_EXTERNALFILE_FILE_CONTENT
+FACEGEOMETRY_CANONICAL_VERTEX_COUNT=468
+FACEGEOMETRY_CANONICAL_UNIT=CENTIMETER
+FACEGEOMETRY_PROCRUSTES_BASIS_IDENTITY=COUNT_33;ORDERED_ID_IEEE754_WEIGHT_SHA256_C3391A7F247E3F7F12D74925ABE332E7733CEC6952EF0ECFB65F844FB09F6C17
+
+OUTPUT_FACE_GEOMETRY_MESH_SEMANTIC=RIGHT_HANDED_METRIC_POSE_NORMALIZED_CANONICAL_ALIGNED_RESIDUAL_MESH_WITH_CANONICAL_UV_TOPOLOGY
+POSE_TRANSFORM_MATRIX_SEMANTIC=CANONICAL_OR_OUTPUT_MESH_TO_RUNTIME_METRIC_UNIFORM_SCALE_ROTATION_TRANSLATION_LAST_ROW_0_0_0_1
+
+P3_SCREEN_HANDEDNESS=LEFT_HANDED_NORMALIZED_SCREEN
+P3_METRIC_HANDEDNESS=RIGHT_HANDED_METRIC_3D
+P3_ORIGIN_CONVERSION_OWNER=OFFICIAL_GEOMETRY_PIPELINE_PROJECTXY_AND_INVERSE_PROJECTION_CHECK
+P3_HANDEDNESS_CONVERSION_OWNER=OFFICIAL_GEOMETRY_PIPELINE_CHANGEHANDEDNESS_Z_SIGN
+
+OFFICIAL_ARBITRARY_LANDMARK_ORACLE=AVAILABLE_INSTALLED_OFFICIAL_LOW_LEVEL_FACEGEOMETRYPIPELINECALCULATOR
+
+P3_TEST_MANIFEST_SHA_PRE_EXECUTION=C7324CF1DA2FC267C8E14BEB6ADF8ECEE73846E54C608B330EB2A9FC629FEBC4
+
+PROCRUSTES_CORE_SELFTEST=NOT_REQUIRED_OFFICIAL_IMPLEMENTATION_REUSED
+GEOMETRY_PIPELINE_DETERMINISTIC_SELFTEST=PASS
+
+REPROJECTION_CONTRACT=PASS_MAX_RMS_3.4413994418618397E-08_MAX_1.143324937202445E-07
+HANDEDNESS_SEMANTIC=PASS_POSITIVE_ROTATION_DETERMINANT_AND_ALL_RUNTIME_Z_NEGATIVE
+POSE_MATRIX_SEMANTIC=PASS
+
+STATIC_SOURCE_CONTRACT=PASS_VERSION_MATCHED_TASKS_V0_10_22
+PACKAGE_SOURCE_CONTRACT=PASS_INSTALLED_MEDIAPIPEUNITYPLUGIN_0_16_3
+DETERMINISTIC_DIAGNOSTIC_EXECUTION=PASS_INSTALLED_NATIVE_CALCULATOR_GRAPH
+LIVE_PRODUCTION_RUNTIME=NOT_RUN
+HUMAN_VISUAL=NOT_RUN
+PERFORMANCE_AUTHORITY=NONE
+
+P3_RESULT=PASS
+
+P1_I_GEOMETRY_IDENTITY_CARRIER=NONE
+
+PRODUCTION_CHANGE=NO
+H1=NOT_AUTHORIZED
+COMMIT_PUSH=NO
+
+NEXT_SINGLE_ACTION=P3B_SAME_SAMPLE_GEOMETRY_IDENTITY_CARRIER_DESIGN_AND_STATIC_CLOSURE

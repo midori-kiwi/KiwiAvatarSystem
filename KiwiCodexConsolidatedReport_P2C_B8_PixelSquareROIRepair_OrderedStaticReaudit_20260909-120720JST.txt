@@ -1,0 +1,372 @@
+KiwiAvatarSystem P2C Boundary 8 Pixel-Square ROI Repair / Ordered Static Re-audit
+Report time: 2026-09-09 12:07:20 JST
+Project: D:\KiwiAvatarSystem
+
+AUTHORITY_PREFLIGHT
+[Confirmed Facts]
+- Exact project root=D:\KiwiAvatarSystem.
+- Branch=work/raw-direct-motion.
+- Task-start HEAD=2637b089fa5d0673f92887eecda4e9eb4e9de25c.
+- Upstream=origin/work/raw-direct-motion; relation=behind 0 / ahead 5.
+- Task-start tracked dirty state was Assets\Script\KiwiInferenceFaceTracker.cs only. Its current content was the prior P2B Z-scale repair. It was preserved as the current task input and was not attributed to this task.
+- Task-start untracked state was CodexTasks\ and KiwiCodexConsolidatedReport_P2B_ZScaleRepair_P2C_OrderedStaticReaudit_20260909-093955JST.txt. Neither was deleted, reset, cleaned, stashed, or overwritten.
+- Reference report was read from KiwiCodexConsolidatedReport_P2B_ZScaleRepair_P2C_OrderedStaticReaudit_20260909-093955JST.txt.
+- Reference-only post-P2B tracker SHA 0394687A... matched the task-time capture, but it was not promoted to current merely because it appeared in the report. Task-time live-local files and hashes remained Implementation Authority.
+- No reset, checkout, clean, stash, commit, push, tag, release, scene write, package write, Runtime, Player, camera run, visual review, or performance benchmark was performed.
+
+[Authority]
+- Implementation Authority=current live-local Production source at task HEAD plus task-time before/candidate/after SHA256.
+- Package Authority=actually installed PackageCache/TGZ source.
+- Missing calculator C++ implementation was compared with the version-matched MediaPipe v0.10.22 official source selected by MediaPipeUnityPlugin v0.16.3.
+- Runtime Authority=NOT_USED.
+
+LIVE_LOCAL_AND_PACKAGE_IDENTITY
+[Confirmed Facts]
+- MediaPipe manifest entry=file:com.github.homuler.mediapipe-0.16.3.tgz.
+- MediaPipe TGZ SHA256=CC3E77A219E0B99618AE3BE64C31A566197DEEDC69C1E136ACF52D65D7CF2E79.
+- Installed MediaPipe root=D:\KiwiAvatarSystem\Library\PackageCache\com.github.homuler.mediapipe@66127f8e750d.
+- Installed MediaPipe package.json version=0.16.3; fingerprint=66127f8e750d.
+- Plugin v0.16.3 WORKSPACE selects mediapipe-0.10.22:
+  https://raw.githubusercontent.com/homuler/MediaPipeUnityPlugin/v0.16.3/WORKSPACE
+- Installed Inference Engine root=D:\KiwiAvatarSystem\Library\PackageCache\com.unity.ai.inference@587873fd5e1b.
+- Installed Inference Engine package.json version=2.4.1; fingerprint=587873fd5e1bd2d10f696bceb1a83c296823e927.
+- packages-lock records MediaPipe as local-tarball 0.16.3 and Inference Engine as registry 2.4.1.
+
+UNITY_EDITOR_IDENTITY
+[Confirmed Facts]
+- ProjectSettings\ProjectVersion.txt:
+  m_EditorVersion: 6000.0.80f1
+  m_EditorVersionWithRevision: 6000.0.80f1 (2dfd32957da2)
+- Exact executable=C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe.
+- Executable ProductVersion=6000.0.80f1_2dfd32957da2.
+- Executable FileVersion=6000.0.80.3013938.
+- Expected/current equality=PASS.
+- UNITY_IDENTITY_GATE=PASS.
+
+P2A_FROZEN_INPUT
+[Confirmed Local Source]
+- Local original exists at CodexTasks\KiwiCodexTask_P2B_P2C_20260909-0919JST\02_P2_DESIGN_FREEZE.md.
+- SHA256=B5751E50858AE604B3089EAE3DD7E8940E973B3981F55911F5A17F2AAD02E56D.
+- It records P2_EXTERNAL_COMPARATIVE_DESIGN_REUSE_GATE_REFRESH=PASS and ROI_SQUARE_LETTERBOX_POLICY=PIXEL_SPACE_SINGLE_LONGSIDE_NO_INDEPENDENT_NORMALIZED_CLAMP.
+- It also protects Face Landmarker Primary, latest-frame, bounded/nonblocking behavior, persistent ROI, same-sample transaction, and authority separation.
+- P2A_DESIGN_REUSE_FREEZE=PASS.
+
+BEFORE_SHA256
+0394687A1C325DAE291E45967B68E5B9341CEF74032A33E2AE14DAF491F6E1B7  Assets\Script\KiwiInferenceFaceTracker.cs
+6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93  Assets\Script\FaceLandmarkerRunner.cs
+D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6  Assets\Script\KiwiFaceMotion.cs
+35F00A89D31A8BF7EE50718F38D4BAC90236D8B691F516C5FC14CAB47AFBFEE1  Packages\manifest.json
+23845C132DBF51CB53A5CFDE4EF606FA68D10DCB53AE5FF21F4305613A5F9CE1  Packages\packages-lock.json
+EA333D8F6C87FFA35061EC92B7DEF6026D00D0131D7A6A05A23C53EB949B4F77  ProjectSettings\ProjectVersion.txt
+
+BYTE_EXACT_ROLLBACK_PREPARATION
+[Confirmed Facts]
+- Backup root was resolved before write:
+  C:\Users\main\AppData\Local\Temp\KiwiP2C_B8_20260909_115956JST
+- KiwiInferenceFaceTracker.cs backup SHA256=0394687A1C325DAE291E45967B68E5B9341CEF74032A33E2AE14DAF491F6E1B7.
+- FaceLandmarkerRunner.cs backup SHA256=6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93.
+- Both backup hashes matched live pre-write hashes.
+- No rollback condition occurred. Boundary 1-8 passed after repair, compilation passed, and the new first failure was Boundary 10. Per task rule, the closed Boundary 8 repair was retained.
+- P2C_B8_ROLLBACK=NOT_REQUIRED.
+
+BOUNDARY_8_PRODUCER_SCOPE_CLOSURE
+[Static]
+1. KiwiInferenceFaceTracker.UpdateRegionFromLandmarks(Vector3[])
+   - Caller: synchronous completion and newest valid async completion, with stale generation/epoch/source guards already applied.
+   - Reachability: active Production IE recurrence path.
+   - Input: finite decoded source-normalized landmarks; first 468 are used. X/Y are not range-clamped to [0,1].
+   - Output before repair: full-landmark pixel bounds -> long side -> 1.50 -> two independently clamped normalized dimensions.
+   - Domain/requirement: pixel long-side square; one scale owner=1.50; valid geometry must remain square after normalization.
+   - Identity/lifecycle: newest accepted completion; future ROI only; same completion crop/source identities remain lane-local.
+   - Consumer: _regionWidth/_regionHeight -> BuildCropMatrix -> next 192x192 crop.
+   - Classification=SAME_B8_CONTRACT.
+
+2. FaceLandmarkerRunner.StoreTrackingData MediaPipe auxiliary anchor producer
+   - Caller: current Face Landmarker result callback/store path.
+   - Reachability: active Production auxiliary anchor path.
+   - Input: finite MediaPipe result landmarks and current positive source dimensions.
+   - Output before repair: full result bounds -> pixel long side -> 1.50 -> independently clamped anchorWidth/anchorHeight -> timestamped anchor mailbox.
+   - Contract evidence: the source comment explicitly identifies FaceLandmarkLandmarksToRoi parity and the equation is the same pixel-long-side Boundary 8 contract. The classification does not rely merely on similar clamp syntax.
+   - Identity/lifecycle: result timestamp and camera generation are checked before mailbox publication; only a new anchor timestamp is applied.
+   - Consumer: ProcessSentisFreshFrame -> ApplyExternalAnchor.
+   - Classification=SAME_B8_CONTRACT. The 478-vs-468 choice is separately frozen P1-R policy and was not changed.
+
+3. KiwiInferenceFaceTracker.ApplyExternalAnchor / AdoptExternalAnchor
+   - Caller: the sole current Production call is FaceLandmarkerRunner's timestamped MediaPipe auxiliary anchor above.
+   - Reachability: active first-anchor, forced reacquire, and material future-only correction path.
+   - Input/output: normalized anchor rect -> bottom-left center conversion -> current ROI state.
+   - Scale owner: upstream 1.50 producer; these methods must not scale or independently clamp dimensions again.
+   - Identity/lifecycle: externalAnchorEpoch increments for adopted future crops; hard first/reacquire also increments anchorRevision so old jobs cannot roll the ROI backward.
+   - Consumer: BuildCropMatrix.
+   - Classification=SAME_B8_CONTRACT, proven by its sole current caller and transport role; not by clamp shape alone.
+
+4. MarkExternalAnchorTrusted / MarkRegionTrusted / ExpandRegionForRecovery
+   - Reachability: active persistent-ROI lease and bounded recovery-widening path.
+   - Input/output: current valid ROI dimensions -> trusted snapshot -> both dimensions widened by the same existing recovery factor.
+   - Scale owner: existing recovery factor remains unchanged (maximum 1.35); no new normalization owner was added.
+   - Before repair, trusted storage and recovery independently clamped normalized axes and could recreate non-square pixel geometry after a valid square ROI.
+   - Algebra after repair: if W*rw=H*rh=A and W*tw=H*th=B, then W*max(rw,q*tw)=H*max(rh,q*th)=max(A,qB). Thus equal-factor recovery preserves the pixel-square invariant.
+   - Consumer: BuildCropMatrix.
+   - Classification=SAME_B8_CONTRACT lifecycle modifiers.
+
+5. Reset
+   - Writes region/trusted dimensions to zero while _hasRegion=false.
+   - Classification=INACTIVE for crop production.
+
+6. BuildCropMatrix
+   - Does not write ROI dimensions. It reconstructs sizePixels=(W*regionWidth,H*regionHeight) and consumes them for crop submission.
+   - Classification=CONSUMER, not a producer.
+
+- Project-wide current call search found no second Production caller of ApplyExternalAnchor and no separate external anchor producer contract.
+- P2C_B8_SCOPE_CLOSURE=PASS.
+
+CURRENT_ACCEPTED_DOMAIN_FAILURE_PROOF
+[Static / Current Before Source]
+- Let current accepted source dimensions be any positive W,H with W=2H. This is a symbolic accepted Texture domain; no 560x315 source assumption is used.
+- Current TryProcess paths accept positive Texture dimensions and UpdateSourceDimensions uses source.width/source.height. No aspect-ratio equality restriction was found.
+- Current UpdateRegionFromLandmarks rejects null/short arrays, non-finite points, and pixel bbox axes <=1, but it does not restrict finite projected X/Y to [0,1]. Model tensor outputs are finite-checked but otherwise not range-clamped.
+- Choose finite accepted projected points whose bbox long side is L=4W/3 and whose other axis is >1 pixel. This is reachable in the statement domain because the affine crop projection of finite, unconstrained model coordinates remains finite and no range rejection precedes the ROI statements.
+- Then S=1.50*L=2W=4H.
+- Before repair:
+  widthPx=W*Clamp(S/W,0.04,2.50)=W*Clamp(2,0.04,2.50)=2W=S.
+  heightPx=H*Clamp(S/H,0.04,2.50)=H*Clamp(4,0.04,2.50)=2.5H != S.
+- Therefore widthPx != heightPx within the current accepted statement domain. Runtime frequency is not required for this algebraic non-equivalence.
+- The lower clamp also fails for sufficiently small but >1-pixel valid bboxes on unequal source dimensions: independently forcing both normalized axes to 0.04 reconstructs 0.04W and 0.04H.
+- The same pre-repair distortion was reachable through the active MediaPipe auxiliary anchor and later through trusted/recovery storage.
+- P2C_B8_ACCEPTED_DOMAIN_FAILURE_PROOF=PASS.
+
+OFFICIAL_BOUNDARY_8_COMPARATOR
+[Version-Matched Official Source]
+- MediaPipeUnityPlugin v0.16.3 WORKSPACE selects MediaPipe v0.10.22.
+- FaceLandmarker ConfigureFaceRectTransformationCalculator sets scale_x=1.5, scale_y=1.5, square_long=true:
+  https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.22/mediapipe/tasks/cc/vision/face_landmarker/face_landmarks_detector_graph.cc
+- RectTransformationCalculator::TransformNormalizedRect computes long_side=max(width*image_width,height*image_height), then width=long_side/image_width and height=long_side/image_height, followed by equal scale_x/scale_y. It has no independent numeric clamp:
+  https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.22/mediapipe/calculators/util/rect_transformation_calculator.cc
+- Required equation: L=max(wPx,hPx); S=1.5L; targetWidth=S/W; targetHeight=S/H. Reconstructed dimensions are both S. The 1.50 factor is applied once.
+
+INVALID_INPUT_POLICY_SEPARATION
+[Static]
+- MediaPipe valid-domain numerical equivalence and Kiwi invalid-input rejection remain separate claims.
+- Existing null/short, non-finite landmark, positive bbox, generation/epoch/source, and stale-publication guards were retained.
+- ApplyExternalAnchor now rejects non-finite/nonpositive dimensions, non-finite center, and non-finite roll rather than converting such inputs into unrelated geometry with a numeric clamp.
+- Both landmark producers reject a non-finite square side before publication/adoption.
+- No valid geometry is independently normalized-clamped after the repair.
+- No second normalization owner was introduced.
+
+EXACT_PRODUCTION_CHANGE
+[Confirmed Source Change]
+- Assets\Script\FaceLandmarkerRunner.cs:
+  - In the existing MediaPipe auxiliary anchor producer, anchorWidth and anchorHeight are now exactly S/W and S/H.
+  - Existing S=max(boxWidthPx,boxHeightPx)*1.50 remains unchanged; 1.50 is not applied twice.
+  - Non-finite S is rejected together with the existing degenerate S<=1 rejection.
+- Assets\Script\KiwiInferenceFaceTracker.cs:
+  - UpdateRegionFromLandmarks targetWidth/targetHeight are now exactly S/W and S/H; S and 1.50 remain unchanged.
+  - ApplyExternalAnchor validates invalid input and no longer independently clamps valid dimensions.
+  - AdoptExternalAnchor and trusted-region snapshots preserve the supplied dimensions exactly.
+  - Recovery retains the existing equal recovery factor and max policy but removes the two independent numeric clamps; a non-finite widened result is rejected.
+  - BuildCropMatrix, ROI center, ROI rotation, recurrence indices, thresholds, scheduling, smoothing/prediction, and ExtractRegionZScale were not changed by this task.
+- KiwiFaceMotion, Packages, scenes, Camera/Native, FaceGeometry, H1, FacePart, authority, and presentation code were not changed.
+
+CANDIDATE_AND_AFTER_SHA256
+17F55087EFA7D42B14EF7453F35B0720EE79A23A64CB239391171C45241E3744  Assets\Script\KiwiInferenceFaceTracker.cs
+027C61F6A4B42E772F355719CFF93D5D8DF1D0C3C100AE6C07E2E3083EC4F90E  Assets\Script\FaceLandmarkerRunner.cs
+- Candidate hashes remained identical after Unity compilation and ordered re-audit. They are the final after hashes.
+
+CHANGE_LOCAL_GATE
+[Static]
+- Pre-write live hashes matched the byte-exact backups.
+- git diff --check=PASS.
+- Task-specific no-index numstat from the backups:
+  KiwiInferenceFaceTracker.cs=54 insertions / 58 deletions.
+  FaceLandmarkerRunner.cs=6 insertions / 10 deletions.
+- The line count reflects the existing multiline formatting of each removed clamp. Exact review found no unrelated formatting or semantic change.
+- Git diff against HEAD also contains the pre-existing P2B ExtractRegionZScale change in KiwiInferenceFaceTracker.cs. This task preserved it and did not claim it as a Boundary 8 edit.
+- Current total diff against HEAD:
+  KiwiInferenceFaceTracker.cs=55 insertions / 62 deletions.
+  FaceLandmarkerRunner.cs=6 insertions / 10 deletions.
+- No Boundary 9/10/11 change was made.
+- Protected hashes remained unchanged after Unity:
+  D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6  Assets\Script\KiwiFaceMotion.cs
+  35F00A89D31A8BF7EE50718F38D4BAC90236D8B691F516C5FC14CAB47AFBFEE1  Packages\manifest.json
+  23845C132DBF51CB53A5CFDE4EF606FA68D10DCB53AE5FF21F4305613A5F9CE1  Packages\packages-lock.json
+  EA333D8F6C87FFA35061EC92B7DEF6026D00D0131D7A6A05A23C53EB949B4F77  ProjectSettings\ProjectVersion.txt
+- No unexpected tracked Unity mutation occurred.
+
+UNITY_COMPILE
+[Static Compilation Evidence]
+- Command:
+  "C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe" -batchmode -force-d3d12 -quit -projectPath "D:\KiwiAvatarSystem" -logFile "C:\Users\main\AppData\Local\Temp\KiwiP2C_B8_20260909_115956JST\P2C_B8_UnityCompile_6000.0.80f1.log"
+- Command runner process exit code=0.
+- Log identity=6000.0.80f1 (2dfd32957da2), revision 3013938, Release.
+- Graphics device forced/created as Direct3D 12.
+- AssetDatabase requested script compilation due changed script files.
+- Tundra build success=9.64 seconds; Unity script compilation time=10.27 seconds.
+- C# errors=0.
+- Warning occurrences=35; unique normalized warnings=18.
+- Warning classes are the existing AttributeBasedFieldGenerator CS8785, obsolete Resolution.refreshRate CS0618, unused exception CS0168, and unused-field CS0414 set. No warning identifies the Boundary 8 repair statements.
+- Library\ScriptAssemblies\Assembly-CSharp.dll and PDB were copied at 2026-09-09 12:02:22 JST.
+- Assembly-CSharp.dll SHA256=F5026B2BD6A3870999E7C7C2047EA7D03757F4517E5BB97ACF792EE70CADF371.
+- COMPILE=PASS as compilation evidence only. It is not semantic, Runtime, visual, or performance authority.
+
+P2C_ORDERED_STATIC_GATE
+[Authority Used]
+- Current post-B8 KiwiInferenceFaceTracker.cs and FaceLandmarkerRunner.cs, current crop shader/model artifacts, installed MediaPipe 0.16.3 and Inference Engine 2.4.1 source, and version-matched official MediaPipe v0.10.22 source.
+
+1. model provenance — PASS
+- Current producer remains Resources.Load<ModelAsset>("KiwiFaceLandmarkInference") -> KiwiInferenceFaceTracker -> ModelLoader.Load.
+- Exact output names remain conv2d_20 and conv2d_30; expected packed length remains 468*3+1.
+- Resources and StreamingAssets model files remain byte-identical:
+  SHA256=ED487104519B0A88CB2CB2EC3678E183F447FB9DD63560998E960FFBAA8FB335; size=2440358.
+- License SHA256=0D8A5F1F2E715DD43675BC534434F7C78E727AB1D808225E23D9A5B35B277E40 and identifies keijiro/FaceLandmarkBarracuda plus MediaPipe origin under Apache-2.0.
+- The current exact model SHA is identical to the artifact previously parsed as FLOAT input [1,3,192,192], landmark output [1,1404,1,1], presence output [1,1,1,1]. This is correlated artifact evidence, not promotion of the prior Git HEAD.
+- Claim scope=Production ONNX identity and expected 192/base468 output contract, not equality with the separate installed 478-point TFLite task asset.
+
+2. first468 topology/decode — PASS
+- Current BaseLandmarkCount=468; conv2d_20 is reshaped to 468*3; DecodeReadableOutput iterates i=0..467 with direct stride 3 and no remap.
+- Installed annotation partitions the first 468 sequential landmarks before iris groups. Official tensor decoding uses offset=i*num_dimensions.
+- Equation=raw[3i+0..2] -> landmark i for i in [0,467].
+- Claim scope=COMPATIBLE_BASE468_SEMANTICS; synthesized iris and P1-R recurrence are excluded.
+
+3. XYZ crop normalization — PASS
+- Current decode remains cropX=rawX/192, cropYBottom=1-rawY/192, cropZ=rawZ/192.
+- Official TensorsToLandmarks normalizes X by model input width, Y by input height, and Z by input width/normalize_z. Kiwi input is 192x192 and applicable Z normalize factor is 1.
+- Claim scope=crop-local normalized XYZ before source projection.
+
+4. origin/Y basis — PASS
+- Current TextureTransform remains NCHW with CoordOrigin.TopLeft.
+- Decode converts model top-left Y to bottom-left for the Unity crop matrix, then converts projected source Y back to top-left.
+- Substitution vBottom=1-vTop, CyBottom=1-CyTop, rBottom=-rTop restores the same top-left normalized coordinate.
+- Claim scope=tensor/crop/source Y basis; source orientation rotation is audited at Boundary 10.
+
+5. same-sample ROI transform — PASS
+- BuildCropMatrix is snapshotted into the submitted lane with sourceHostTicks, tracker/camera/session generations, anchor revision/epoch, and minimum presence.
+- PollCompletedLanes copies that lane's completed matrix and rejects stale generation/epoch/source before DecodeReadableOutput uses it.
+- Claim scope=lane-internal same-completion transform; it does not claim the future public geometry carrier exists.
+
+6. XY source projection — PASS
+- BuildCropMatrix remains D^-1*T(centerPixels)*R(rBottom)*S(sizePixels)*T(-0.5,-0.5).
+- Decode uses MultiplyPoint3x4(cropX,cropYBottom,0) and returns top-left Y.
+- With pixel ROI (a,b), center (Cx,Cy), top-left rotation r, both current and official IMAGE_DIMENSIONS projection reduce to:
+  x=Cx/W+(a/W)cos(r)(u-1/2)-(b/W)sin(r)(v-1/2)
+  y=Cy/H+(a/H)sin(r)(u-1/2)+(b/H)cos(r)(v-1/2)
+- Claim scope=projection for the same finite rect parameters; rect generation is Boundary 8/10.
+
+7. Z source projection — PASS
+- Current preserved P2B source returns cropMatrix.MultiplyVector(Vector3.right).magnitude with no numeric clamp.
+- Every first468 landmark uses z=cropZ*regionZScale; non-finite output remains locally rejected.
+- This equals official projected crop X-axis Euclidean magnitude.
+- Claim scope=source-space Z projection for an already supplied same-sample crop matrix.
+
+8. pixel-square ROI — PASS
+- All active SAME_B8_CONTRACT producers/modifiers listed in scope closure now preserve one pixel side and derive normalized dimensions as S/W and S/H.
+- UpdateRegion and MediaPipe auxiliary anchor apply 1.50 exactly once after selecting the pre-scale pixel long side.
+- ApplyExternalAnchor/adoption/trusted storage do not renormalize valid dimensions.
+- Equal-factor recovery preserves pixel equality by the max equation documented above.
+- BuildCropMatrix reconstructs W*(S/W)=S and H*(S/H)=S.
+- Invalid/non-finite/degenerate geometry is rejected, not transformed and called equivalent.
+- Claim scope=PIXEL_SPACE_SINGLE_LONG_SIDE_INVARIANT for active same-contract producers; P1-R selection and Boundary 9 letterbox remain separate.
+- PIXEL_SQUARE_ROI_EQUIVALENCE=PASS.
+
+9. letterbox — PASS
+- Current crop shader directly maps the repaired pixel-square rotated ROI into a fixed 192x192 RenderTexture. TextureConverter then consumes that already-square texture as a 192x192 NCHW tensor.
+- Therefore ROI pixel aspect=input tensor aspect=1 and the corresponding MediaPipe FIT letterbox padding is [0,0,0,0].
+- Official LandmarkLetterboxRemoval computes x'=(x-left)/(1-left-right), y'=(y-top)/(1-top-bottom), z'=z/(1-left-right); for zero padding this is identity:
+  https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.22/mediapipe/calculators/util/landmark_letterbox_removal_calculator.cc
+- The current shader's saturate border sampling is the separate BORDER_REPLICATE/out-of-image policy, not letterbox padding. It was not changed or used to hide Boundary 8.
+- Claim scope=letterbox transform for the repaired square ROI; source orientation rotation is next.
+
+10. rotation convention — FAIL; ORDERED AUDIT STOPS HERE
+- ROI roll subclaim for Rotation0 is compatible: official uses target_angle(0)-atan2(-(dyTop),dx)=atan2(dyTop,dx) in top-left rect convention; Kiwi uses -atan2(dyTop,dx) in its bottom-left sampling convention. These represent the same crop orientation after Y-basis conversion.
+- The full current accepted source-orientation domain is not compatible:
+  a. FaceLandmarkerRunner obtains ImageTransformationOptions from ImageSource and passes transformationOptions.rotationAngle into MediaPipe ImageProcessingOptions.rotationDegrees at initialization and source refresh.
+  b. Installed BaseVisionTaskApi accepts multiples of 90, sets the input NormalizedRect rotation to -rotationDegrees*pi/180, and swaps rect width/height for 90/270 degrees.
+  c. WebCamSource exposes WebCamTexture.videoRotationAngle, and installed ImageTransformationOptions tests explicitly cover Rotation0/90/180/270. Nonzero rotation is therefore an accepted current source domain, not a hypothetical unsupported input.
+  d. The IE initialization/refresh stores only flipHorizontally and flipVertically. KiwiInferenceFaceTracker.ScheduleModel constructs samplingMatrix=BuildFlipMatrix(h,v)*cropMatrix. No source rotation value, 90/270 dimension swap, or equivalent rotation matrix reaches the IE crop.
+- Counterexample: for any asymmetric source image with rotationAngle=Rotation90, MediaPipe inference consumes the rotated coordinate domain while IE consumes only the flip-transformed unrotated source. Their model input pixels and resulting normalized landmarks cannot be generally identical.
+- This is a Static source/dataflow failure. Runtime frequency and the current physical camera's observed rotation are not required to prove accepted-domain non-equivalence.
+- Exact failure scope=SOURCE_IMAGE_ROTATION_NOT_CARRIED_TO_IE_CROP. It is separate from the Boundary 8 dimension repair and was not modified.
+- Boundary 11 flip/mirror=NOT_AUDITED_BY_ORDERED_GATE.
+
+FIRST_FAILING_BOUNDARY_AFTER_B8
+[Static]
+- Boundary=10 rotation convention.
+- Exact sub-boundary=nonzero ImageTransformationOptions.rotationAngle reaches MediaPipe ImageProcessingOptions but is absent from the IE sampling transform.
+- Current files=Assets\Script\FaceLandmarkerRunner.cs and Assets\Script\KiwiInferenceFaceTracker.cs.
+- Result=FAIL for accepted Rotation90/180/270 source-orientation domain.
+- No Boundary 10 repair was attempted.
+
+P1_STATUS_SEPARATION
+[Decision]
+- P1_SAME_SAMPLE_NORMALIZED_SEMANTIC=FAIL because ordered P1-S now reaches and fails Boundary 10.
+- P1_R_RECURRENCE_POLICY=ACCEPTABLE_PROVIDER_SPECIFIC_DIFFERENCE_CARRIED_FORWARD.
+- P1_R_INDEPENDENT_REAUDIT=NO. The local P2A freeze was verified, but 478-vs-468 recurrence was not reopened or changed.
+- P1_I_GEOMETRY_IDENTITY_CARRIER=NONE. No carrier or solver was implemented.
+- P3=NOT_RUN. H1=NOT_RUN.
+
+OBSERVER_VALIDATOR_SELF_AUDIT
+[Static]
+- No overall optimization or semantic validator was used as Authority.
+- Unity was used only for exact editor identity and C# compilation.
+- The Boundary 8 PASS is source/equation proof across the scoped active owners, not a validator or Runtime promotion.
+- Boundary 9 remained a separate zero-letterbox claim; no letterbox code was changed.
+- Boundary 10 failure is derived from current source and installed package behavior, not from visual symptoms or an assumed 560x315 source.
+- No Runtime, visual, latency, or performance claim is made.
+
+REJECTED_NOT_EXECUTED
+- Boundary 9 preemptive repair=NOT_EXECUTED.
+- Boundary 10 repair=NOT_EXECUTED after it became the next first failure.
+- Boundary 11 audit/repair=NOT_EXECUTED by ordered stop rule.
+- ExtractRegionZScale change by this task=NOT_EXECUTED; prior P2B repair preserved.
+- 478/468 recurrence, FaceGeometry solver, geometry carrier, P3, H1, FacePart, Head authority, Camera/Native, KiwiFaceMotion, thresholds, smoothing, Kalman, prediction, FIFO/stale queue, permanent buffer, GPU wait/fence/flush/async-disable, packages, scenes, commit, and push=NOT_EXECUTED.
+
+RUNTIME_STATUS
+[Not Run]
+- Live camera=NOT_RUN.
+- Player=NOT_RUN.
+- Human Visual=NOT_RUN.
+- Performance benchmark=NOT_RUN.
+- Runtime ZIP=NOT_CREATED.
+
+NEXT_SINGLE_ACTION
+- Open a new one-boundary Static task for Boundary 10 SOURCE_IMAGE_ROTATION_NOT_CARRIED_TO_IE_CROP: first close the exact rotation owner, transformed dimensions, flip/rotation composition order, generation identity, and Windows accepted domain; do not repair Boundary 11 or proceed to P3 in that task.
+
+FIXPOINT_REAUDIT
+[Confirmed]
+- Report-time/reference SHA was not promoted over task-time live-local source.
+- Unity identity is exact 6000.0.80f1.
+- Before/candidate/after hashes are recorded for both same-contract target files.
+- Existing user-owned tracked/untracked state was preserved.
+- 1.50 is applied exactly once; Z scale is unchanged.
+- ApplyExternalAnchor was included only after sole-caller/dataflow/contract proof.
+- Accepted-domain failure proof is symbolic and does not assume 560x315.
+- Valid geometry equivalence and invalid-input rejection are separated.
+- Boundary 8 and Boundary 9 are not mixed.
+- P1-S, P1-R, and P1-I are separated.
+- Compilation is not promoted to semantic or Runtime authority.
+- The next first failure was not repaired.
+- Runtime claims, commit, and push are absent.
+- Rollback was not required under the explicit stop rules.
+
+FINAL_MACHINE_READABLE_BLOCK
+P2A_DESIGN_REUSE_FREEZE=PASS
+P2C_B8_SCOPE_CLOSURE=PASS
+P2C_B8_ACCEPTED_DOMAIN_FAILURE_PROOF=PASS
+P2C_B8_PIXEL_SQUARE_REPAIR=PASS
+P2C_B8_ROLLBACK=NOT_REQUIRED
+TARGET_FILE_BEFORE_SHA=Assets/Script/KiwiInferenceFaceTracker.cs:0394687A1C325DAE291E45967B68E5B9341CEF74032A33E2AE14DAF491F6E1B7;Assets/Script/FaceLandmarkerRunner.cs:6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93
+TARGET_FILE_AFTER_SHA=Assets/Script/KiwiInferenceFaceTracker.cs:17F55087EFA7D42B14EF7453F35B0720EE79A23A64CB239391171C45241E3744;Assets/Script/FaceLandmarkerRunner.cs:027C61F6A4B42E772F355719CFF93D5D8DF1D0C3C100AE6C07E2E3083EC4F90E
+UNITY_VERSION=6000.0.80f1
+UNITY_IDENTITY_GATE=PASS
+COMPILE=PASS
+P2C_ORDERED_STATIC_REAUDIT=FAIL_AT_BOUNDARY_10
+BOUNDARY_1_TO_7=PASS
+PIXEL_SQUARE_ROI_EQUIVALENCE=PASS
+FIRST_FAILING_BOUNDARY_AFTER_B8=10_SOURCE_IMAGE_ROTATION_NOT_CARRIED_TO_IE_CROP
+P1_SAME_SAMPLE_NORMALIZED_SEMANTIC=FAIL
+P1_R_RECURRENCE_POLICY=ACCEPTABLE_PROVIDER_SPECIFIC_DIFFERENCE_CARRIED_FORWARD
+P1_R_INDEPENDENT_REAUDIT=NO
+P1_I_GEOMETRY_IDENTITY_CARRIER=NONE
+RUNTIME=NOT_RUN
+PRODUCTION_FILES_CHANGED=Assets/Script/KiwiInferenceFaceTracker.cs;Assets/Script/FaceLandmarkerRunner.cs
+COMMIT_PUSH=NO
+NEXT_SINGLE_ACTION=BOUNDARY_10_ROTATION_OWNER_AND_TRANSFORM_SCOPE_STATIC_TASK
