@@ -1,0 +1,370 @@
+KiwiAvatarSystem IE FaceGeometry Source Equivalence — Detailed Closure
+Report time: 2026-09-09 08:32:17 JST
+Project: D:\KiwiAvatarSystem
+
+AUTHORITY_PREFLIGHT
+[Confirmed Facts]
+- 指定ZIPをpath-containment確認後に一時領域へ展開し、次の順で全文を読んだ。
+  1. 00_CODEX_INSTRUCTION_STANDARD.md
+  2. 01_CODEX_TASK_DETAILED.md
+  3. 02_NORMAL_CHAT_DESIGN_NOTES.md
+- ZIP SHA256=C48404647EA0EBEB2F6D0A1973F99A724E54626282684CEDCE9C3AA7D779E9EC
+- 文書SHA256:
+  00=F3ABDF22DF6E0E722C35B743CB6B3BF25F351393CB6EE62F5E3023A0B207E6FE
+  01=2A197EE6278144BE0EDA9FABB0FB37BFC1B2F89813D327719178F0E8D867D032
+  02=F415A835F60861144BD4B2E18ADA3090F8AF4F815F0677763522076387E2F0DF
+- current local Production source + report-time Git SHAをImplementation Authorityとした。
+- Package claimは実インストール済みPackageCache/TGZを最優先し、同梱されないMediaPipe C++実装だけをversion-matched official v0.10.22 sourceで補った。
+- GitHub remote、過去REPORT、comment、validator表示はcurrent localを上書きしていない。
+- 新たに現れたuntracked ChatReport ZIP 2個はuser-ownedとして読み書きしていない。
+
+CURRENT_LOCAL_SHA
+[Implementation Authority]
+- Branch=work/raw-direct-motion
+- HEAD=49b43fedad55b084980f5486dc7142fdf2db2e1e
+- report開始時点: origin/work/raw-direct-motion に対して ahead 4。
+- report直前のuntracked user-owned files:
+  ChatReport/KiwiChat_FacePartControlCoordinateAudit_Updated_20260907-JST.zip
+  ChatReport/KiwiChat_HumanHeadFacePartGeometry_R13_4_Updated_20260909-JST.zip
+- 主要Production SHA256:
+  Assets/Script/KiwiInferenceFaceTracker.cs=CF860F4EF686BD5FDAC4140D4F3E73E64B6F390C3BC64204CF346011AC69380D
+  Assets/Script/FaceLandmarkerRunner.cs=6C65C075270F10C791F6B044E3BC04C6024AADF916D65283F0EEFFA3448BBB93
+  Assets/Script/KiwiFaceMotion.cs=D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6
+  Assets/Script/FacePartCropper.cs=39C06FEC43B4EA47AD783C233991E830E10B18DA285148E7A34B0C13DAD52CFE
+  Assets/Script/SurfaceFittedRawImage.cs=1EA5B0493A48BE9B64AFD6316C8FBD4A4EC172848F06F8879BA733BB73535167
+  Assets/Script/FacePartShapeMask.cs=822D18059988F390F52C40F60DA5F11E8ECF7577008D640272C5CF8D1557D4A6
+  Assets/Script/KiwiSurfaceFitter.cs=96B18B1D3712F7E15ECE3F7D32529B4F8A40312B93DA63CC1A80385841A575B3
+  Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiCanonicalTrackingFrame.cs=458FF33E98E054B766F20EB17CE6BDD242C9AD9FD6E73AF53D60BD3961822AFA
+  Assets/KiwiAvatarSystem/Runtime/Presentation/KiwiFacePartTextureTransaction.cs=DC78488DCD1D2E45E5AA6F40065D4983087014B501B5FD5A8E37B6D8E0F68849
+  Assets/KiwiAvatarSystem/Resources/KiwiInferenceFaceCrop.shader=6ECB07BD7CE795A13497C6765C23F38BADC33B55BC8E89574D9FBAF48E2B9AF0
+  Packages/manifest.json=35F00A89D31A8BF7EE50718F38D4BAC90236D8B691F516C5FC14CAB47AFBFEE1
+  Packages/packages-lock.json=23845C132DBF51CB53A5CFDE4EF606FA68D10DCB53AE5FF21F4305613A5F9CE1
+  ProjectSettings/EditorBuildSettings.asset=611BA53D1627847D786E714A7CC17EB8D5AE06C2EFBA4077DA1F396A81355EAE
+  ProjectSettings/ProjectVersion.txt=EA333D8F6C87FFA35061EC92B7DEF6026D00D0131D7A6A05A23C53EB949B4F77
+- Task記載の旧path Assets/KiwiAvatarSystem/Runtime/Tracking/KiwiCanonicalTrackingFrame.cs は不存在。current localの正規pathは TrackingFoundation 配下。
+
+INSTALLED_PACKAGE_SOURCE
+[Package Source]
+- Packages/manifest.json:
+  com.github.homuler.mediapipe=file:com.github.homuler.mediapipe-0.16.3.tgz
+  com.unity.ai.inference=2.4.1
+- Installed MediaPipe root=D:\KiwiAvatarSystem\Library\PackageCache\com.github.homuler.mediapipe@66127f8e750d
+  package version=0.16.3; cache fingerprint=66127f8e750d
+- TGZ=D:\KiwiAvatarSystem\Packages\com.github.homuler.mediapipe-0.16.3.tgz
+  size=290414365; SHA256=CC3E77A219E0B99618AE3BE64C31A566197DEEDC69C1E136ACF52D65D7CF2E79
+- Installed managed source SHA256:
+  TextureFrame.cs=244762C8A2AD4100F3DEB89BD5712101B9C2C1E7639BECE6B430AE8220D84F9C
+  ImageTransformationOptions.cs=3806D636843AFEF2FFFA0761D78A2799ED44BF5E7DCB71CB464F978DBB1ADB4D
+  BaseVisionTaskApi.cs=30BC1806E34DB11B63D524272DEEFFB292BCACD25972C546C24933C0FB4E6B3A
+  FaceLandmarker.cs=6D1B9993679BDF5942C9BF1A1623BB24912BC1A5812D80C589A34EDAB12BE3CE
+  FaceLandmarkerResult.cs=4B9CF0957E0C1571102D6EBF3D8B5CF95F29FA761B45E252D05105343F81CBC3
+- Native mediapipe_c.dll size=16517120; SHA256=B9B620F2707DEA371BE3FCEF9F2D05468CA1471FAEE3BE6637BBD7DA77E21C54。
+  DLL SHA単独をsource/build authorityにはしていない。
+- Installed 0.16.3はwrapper/generated sourceとnative artifactを含むが、基礎calculatorのC++ sourceを同梱しない。この欠落範囲のみ、0.16.3 release lineageが使用するMediaPipe v0.10.22のofficial sourceをPackage補助Authorityとした。
+- Official references:
+  https://github.com/homuler/MediaPipeUnityPlugin/releases/tag/v0.16.3
+  https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.22/mediapipe/calculators/tensor/tensors_to_landmarks_calculator.cc
+  https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.22/mediapipe/calculators/util/landmark_projection_calculator.cc
+  https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.22/mediapipe/calculators/util/rect_transformation_calculator.cc
+- Installed Inference Engine root=D:\KiwiAvatarSystem\Library\PackageCache\com.unity.ai.inference@587873fd5e1b
+  version=2.4.1; fingerprint=587873fd5e1bd2d10f696bceb1a83c296823e927
+  package.json SHA256=2F230C84E28A9E3AD516B1A49B79B6F83E172F1C16E6813E0F1DD6FA2B1790EE
+
+IE_MODEL_PROVENANCE
+[Confirmed Static]
+- Production ONNX:
+  Assets/KiwiAvatarSystem/Resources/KiwiFaceLandmarkInference.onnx
+  size=2440358; SHA256=ED487104519B0A88CB2CB2EC3678E183F447FB9DD63560998E960FFBAA8FB335
+- StreamingAssets copyは同size・同SHA。Resources .meta SHA256=ED2961C07FD5E7066A51F740A61BBC58BDCAD32843934639FB65927407DE3E21。
+- License=Assets/KiwiAvatarSystem/ThirdParty/FaceLandmarkONNX_LICENSE.txt
+  SHA256=0D8A5F1F2E715DD43675BC534434F7C78E727AB1D808225E23D9A5B35B277E40
+  keijiro/FaceLandmarkBarracudaおよびMediaPipe由来を明記。
+- ONNX protobufを直接解析:
+  input_1 FLOAT [1,3,192,192]
+  conv2d_20 FLOAT [1,1404,1,1]
+  conv2d_30 FLOAT [1,1,1,1]
+- official upstream FaceLandmarkBarracuda mainのONNXとbyte-for-byte一致。照合時remote SHA=a58cb33127d5608571527a49cd61b1c3025e74e3。
+- upstream postprocessは468点をindex remapなしで、x=raw[3i]/192, y=1-raw[3i+1]/192, z=raw[3i+2]/192とする。
+- Installed FaceLandmarker task bundle:
+  face_landmarker_v2_with_blendshapes.bytes size=2357924
+  SHA256=B261925D4AAD812B47A0E8D58C1BAA1223270A5D1F663D78338BC881C003879D
+  内包 face_landmarks_detector.tflite SHA256=BC5EE5DE06D8C3A5465C3155227615B164480A52105A2B3DF5748250AB4D914F
+  内包 geometry_pipeline_metadata_landmarks.binarypb SHA256=BDBCDA96DFCB7DA883DA124AAA2C55DEE49770D934F0FCC71747F8C21BDC75B4
+- 結論: Production ONNXはinstalled Tasks 478/refined modelと同一artifactではないが、base index 0..467のMediaPipe topology/decode semanticsに互換。
+  MODEL_OUTPUT_CONTRACT=COMPATIBLE_BASE468_SEMANTICS
+
+CURRENT_IE_DATAFLOW
+[Static]
+1. Lane ctor: TensorShape(1,3,192,192)、TextureTransform=NCHW + CoordOrigin.TopLeft。
+2. TryProcessAsync: newest sourceHostTicksを受け、free bounded laneだけにschedule。FIFOなし。
+3. TryScheduleNewestSource: source dimensionsを確定し、BuildCropMatrixをlane-local snapshotとして捕捉。
+4. ScheduleModel: samplingMatrix=BuildFlipMatrix(H,V)*cropMatrix。192x192 crop RTへGPU Blit後、TextureConverterでTopLeft NCHW tensor化しWorkerをschedule。
+5. laneはcropMatrix/sourceHostTicks/anchorRevision/externalAnchorEpoch/trackerGeneration/cameraGeneration/trackingSessionGeneration/minPresenceを同時capture。
+6. PollCompletedLanes: generation/epoch/source orderingをreadback/decode前にreject。worker-owned outputはReadbackAndClone scope内だけで読む。
+7. DecodeReadableOutput: face logit sigmoid、468 XYZ decode、source projection、iris 10点合成、heuristic geometricRotation。
+8. TryProcessAsync public returnはVector3[478], rotation, completedSourceHostTicksのみ。内部generation群はrunnerへ返らない。
+
+CURRENT_RUNNER_DATAFLOW
+[Static]
+- ObserveFreshFrameSource: latest sequenceとhost ticksを読む。duplicate sequenceをdropしfresh generationを進める。
+- WebCam fallback: didUpdateThisFrame/frameCountを用い、Stopwatch ticksをsource timestampにする。
+- ImageSourceのImageTransformationOptionsから得たflip H/Vを、MediaPipe TextureFrame pathとIE pathの両方へ渡す。
+- MediaPipe: sourceHostTicksをGPU/CPU read開始前にlatchし、readback後にsource/camera generationを再検査。timestamp→hostTicks/cameraGeneration ringを作ってDetectAsync。callbackはexact timestampをresolveし、不一致・staleをStoreTrackingData前にreject。
+- MediaPipe resultのlandmarksとfacialTransformationMatrixesは同callback timestamp。ただしcurrent StoreTrackingDataはmatrixからrotationのみ抽出し、full matrixを保持しない。
+- IE: StoreSentisTrackingDataはVector3でgeometryを計算するが、公開semantic stagingへはVector2 x/yのみcopyする。published timestampとsubmissionHostTicks/arrivalHostTicksは保持するが、raw Zとlaneの全generation tupleはcanonical carrierへ出ない。
+- IE rotationは初回MediaPipe auxiliary rotationとのoffsetを掛ける場合がある。これは同一IE sampleから得たFaceGeometry poseではない。
+
+MEDIAPIPE_TENSOR_DECODE
+[Package Source + version-matched official Source]
+- TensorsToLandmarksCalculator::Process:
+  x_crop=raw_x/input_width
+  y_crop=raw_y/input_height
+  z_crop=raw_z/input_width/normalize_z
+- actual input=192x192。TensorsToFaceLandmarksGraphはnormalize_zをoverrideせず、proto default=1.0。
+- Tasks graphは478出力を扱う。0..467はbase mesh identity mapping、468..477はiris refined indices。
+- IE ONNXは468*3+presence。base 0..467は同じstride/orderでdecodeし、その後irisを合成する。
+
+MEDIAPIPE_ROI_PROJECTION
+[Package Source]
+- Graph order: ImagePreprocessingGraph(FIT) -> inference -> TensorsToFaceLandmarksGraph -> LandmarkLetterboxRemoval -> LandmarkProjection。
+- LandmarkProjection ProjectXYはrotated normalized rectをpixel rectへ変換したmatrixを使う。
+- Zはcrop X-axisのsource normalized space上のEuclidean lengthを掛ける。CalculateZScaleにclampはない。
+- next ROIはprojected all-landmark bounds -> detection -> rotation start=33/end=263,target=0 -> RectTransformation scale_x=1.5, scale_y=1.5, square_long=true。
+- installed Tasks graphのROI boundsは478点。FaceGeometry graphだけはfirst 468へsplitする。
+
+MEDIAPIPE_FACE_GEOMETRY
+[Package Source]
+- FaceGeometryFromLandmarksGraphはfirst 468をgeometry pipelineへ渡し、irisを除外する。
+- ScreenToMetricSpaceConverterの確認済み順序:
+  1. screen XYをvirtual camera frustumへprojectしmean Zをdepth offsetとして得る。
+  2. handednessを一時変換してweighted Procrustesでfirst scaleをestimate。
+  3. screen landmarksをresetし、Zをmove/rescaleする。
+  4. XYをunprojectする。
+  5. handednessをmetric right-handedへ変換する。
+  6. second scaleをestimateしtotal scaleでmetric landmarksを確定する。
+- GeometryPipelineImplはcanonical metric landmarksからweighted Procrustes poseを求め、inverse poseでresidual metric meshを作る。
+- official references:
+  https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.22/mediapipe/tasks/cc/vision/face_geometry/libs/geometry_pipeline.cc
+  https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.22/mediapipe/tasks/cc/vision/face_geometry/libs/procrustes_solver.cc
+- current Kiwi CalculateGeometricRotationはこのsolverではなくheuristic。reuse不可。
+
+STATEMENT_EQUIVALENCE_TABLE
+[Static comparison]
+Boundary | MediaPipe | current IE | Result
+tensor X | raw_x/192 | raw[3i]/192 | EXACT
+tensor Y | raw_y/192 top-left | 1-raw[3i+1]/192 bottom-left、projection後top-leftへ戻す | EXACT after basis transform
+tensor Z | raw_z/192 | raw[3i+2]/192 | EXACT in crop space
+XY ROI projection | rotated pixel rect matrix | BuildCropMatrix bottom-left basis | EXACT when same rect parameters are supplied
+Z ROI scale | |projected crop X-axis|, no clamp | ExtractRegionZScale then Clamp(0.02,3.0) | DIFFERENT
+ROI bounds | all 478 Tasks landmarks | first 468 | DIFFERENT statement/domain
+ROI square | pixel square, no clamp | pixel squareを作るがwidth/heightを別々にnormalized clamp | DIFFERENT outside unclipped domain
+letterbox | FIT + explicit removal | square tensor direct crop, explicit removalなし | equivalent only if pixel square invariant holds
+rotation | 33->263, top-left sign | 33->263, bottom-left sign | EXACT after basis transform
+flip | TextureFrame preflip | samplingMatrix preflip | same single logical transform owner
+base index | 0..467 identity | 0..467 identity | COMPATIBLE
+iris | actual model 468..477 | synthesized 468..477 | DIFFERENT, excluded from geometry
+timestamp | task timestamp + runner correlation | sourceHostTicks | correlated but different public representation
+generation/lifetime | callback result transaction | lane tuple checked internally | safe internally; incomplete geometry carrier externally
+
+SYMBOLIC_XYZ_EQUATIONS
+[Static proof]
+Let W,H=source pixels; ROI center top-left=(Cx,Cy); ROI pixel size=(a,b); top-left rotation=r;
+model local top-left=(u,v)=(raw_x/192,raw_y/192); z0=raw_z/192.
+
+MediaPipe:
+  xM=Cx/W + (a/W)cos(r)(u-1/2) - (b/W)sin(r)(v-1/2)
+  yM=Cy/H + (a/H)sin(r)(u-1/2) + (b/H)cos(r)(v-1/2)
+  s=sqrt(((a/W)cos(r))^2 + ((a/H)sin(r))^2)
+  zM=z0*s
+
+Kiwi uses bottom-left CyB=H-Cy, rB=-r, vB=1-v:
+  xK=Cx/W + (a/W)cos(rB)(u-1/2) - (b/W)sin(rB)(vB-1/2)
+  yBK=CyB/H + (a/H)sin(rB)(u-1/2) + (b/H)cos(rB)(vB-1/2)
+  yK=1-yBK
+Substitution gives xK=xM and yK=yM.
+But:
+  zK=z0*Clamp(s,0.02,3.0)
+Therefore zK=zM only on 0.02<=s<=3.0, not over the full accepted input domain.
+Concrete counterexample: W/H=16/9, normalized ROI width=2.5, r=90 degrees.
+  s=2.5*W/H=4.444..., MediaPipe=4.444..., Kiwi=3.0.
+
+ROI_MATRIX_EQUATIONS
+[Static proof]
+- Kiwi BuildCropMatrix:
+  MK=D^-1 * T(Cx,CyB) * R(rB) * S(a,b) * T(-1/2,-1/2)
+  D=diag(W,H,1), a=regionWidth*W, b=regionHeight*H。
+- MediaPipe GetRotatedSubRectToRectTransformMatrixのXY式は、top-left/bottom-left basis conversionを施すと上記MKと同値。
+- Kiwi BuildFlipMatrix(H,V)*MKはsamplingだけへ適用され、decode projectionにはMKを使う。よって出力はflip後のlogical image座標に一度だけ正規化される。
+- 差はmatrix本体ではなく、matrixへ入るrect size生成とZ scale postprocessにある。
+
+LETTERBOX_PROOF
+[Static]
+- MediaPipe RectTransformation(square_long=true)はlongSide=max(boxWidthPx,boxHeightPx)*1.5を作り、aM=bM=longSide。192x192 FITのletterbox paddingは0になり、removalはidentity。
+- Kiwi unclipped domainでは:
+  width=longSide/W, height=longSide/H -> aK=bK=longSide。したがってdirect 192x192 cropはMediaPipe FITと同値。
+- Kiwiは各normalized componentを独立にClamp(0.04,2.5):
+  aK=W*Clamp(longSide/W,0.04,2.5)
+  bK=H*Clamp(longSide/H,0.04,2.5)
+  一方だけclipする入力ではaK!=bK。pixel-square invariantが壊れ、明示letterbox/removalを持たないIE pathはMediaPipeと同値でない。
+- ApplyExternalAnchorも同じ独立clampを使う。commentの「MediaPipe」を根拠にせずstatementでFAIL判定した。
+
+FLIP_MIRROR_SIGN_TABLE
+[Static]
+Operation | MediaPipe path | IE path | effective owner
+H flip | TextureFrame scale.x=-1, offset.x=1 | BuildFlipMatrix x'=1-x before crop | ImageSource transform once
+V flip | TextureFrame scale.y=-1, offset.y=1 | BuildFlipMatrix y'=1-y before crop | ImageSource transform once
+tensor origin | task input top-left | TextureTransform CoordOrigin.TopLeft; compute shader flips texture Y for TopLeft tensor | top-left
+decode Y | normalized top-left | bottom-left internal then 1-y | top-left output
+ROI roll | atan2(dyTop,dx) convention | -atan2(dyTop,dx) in bottom-left | equivalent after basis conversion
+FacePart mirror | scene mirrorX=0 | no x inversion | inactive
+eye swap | scene swapEyes=0 | no semantic index swap | inactive
+UV Y | result top-left | FacePartCropper uses 1-y | texture UV conversion only
+
+LANDMARK_INDEX_PROOF
+[Static]
+- Production ONNX conv2d_20 length=1404=468*3。Kiwi loop i=0..467 and stride 3; remap tableなし。
+- upstream producing repoも同じidentity loop/order。installed Tasks graphは478 mappingの先頭468をbase face meshとして維持。
+- MediaPipe FaceGeometryはfirst 468だけを入力とするため、geometry topology上は互換。
+- ただしnext-frame ROI: installed Tasksはprojected 478全点からbounds、Kiwiは468点からbounds。irisが常にbase bounds内という全数値入力proofはないためstatement equivalenceはFAIL。
+- synthesized irisはgeometryへ入れてはならない。
+
+TRANSACTION_IDENTITY
+[Static]
+- IE lane内部のexact tuple:
+  sourceHostTicks, arrivalHostTicks, startedHostTicks, anchorRevision, externalAnchorEpoch,
+  trackerGeneration, cameraGeneration, trackingSessionGeneration, cropMatrix, minimumPresence, output lifetime。
+- PollCompletedLanesはtracker/anchor/source order/camera/session mismatchをreadback前にrejectし、newest valid completionだけをpublish候補にする。この内部boundaryは良好。
+- public TryProcessAsync returnはlandmarks/rotation/completedSourceHostTicksだけ。
+- Runner StoreSentisTrackingDataはZをcanonical semantic landmarksへ保持せずVector2化し、lane generation tupleも運ばない。
+- KiwiTrackingFrameはsemantic Vector2 arrayをprivate copyし、timestamp/generation metadataを持つがraw XYZ + exact lane tuple + same-sample FaceGeometry poseの一体carrierではない。
+- IE_GEOMETRY_IDENTITY_CARRIER=NONE
+- よって将来solverを追加する場合、solver入力はlaneの同一completion内でfirst468 XYZとsourceHostTicks/cropMatrix/generationsを不可分に保持し、stale check後だけpublishする必要がある。今回Gate FAILのため実装しない。
+
+FIRST_FAILING_BOUNDARY
+[Confirmed Static Failure]
+- Ordered contract auditの最初のfailure:
+  Assets/Script/KiwiInferenceFaceTracker.cs
+  method=ExtractRegionZScale(Matrix4x4 cropMatrix)
+  statement=lines 2745-2749: Mathf.Clamp(scale, 0.02f, 3.0f)
+  consumer=DecodeReadableOutput lines 2566-2568 and 2600-2606
+  dataflow=cropMatrix X-axis -> magnitude -> clamp -> every base landmark z
+- MediaPipe LandmarkProjectionCalculator::CalculateZScaleは同じX-axis magnitudeを返すがclampしない。
+- Counterexampleによりsemantic differenceを静的に実証。comment、visual、validator、通常範囲の経験則では反証できない。
+- 後続にも独立ROI normalized clamp / 468-vs-478 bounds差があるが、ordered gateでは最初のZ boundaryで停止する。
+
+STATIC_NORMALIZED_LANDMARK_CONTRACT
+[Decision]
+STATIC_NORMALIZED_LANDMARK_CONTRACT=FAIL
+理由: X/Yおよびcrop-space XYZ decodeは閉じたが、source-space Z projectionがfull domainで非等価。さらに後続ROI/letterbox contractにも差がある。
+
+GEOMETRY_REUSE_DECISION
+[Not entered by Gate]
+- PASS条件未達のためProduction solver reuse/portを実施しない。
+- Feasibility観測のみ: installed bundleにはcanonical metadata binarypbがあるが、installed C# Tasks APIに任意normalized landmarksからFaceGeometryだけを呼ぶpublic APIは確認できない。将来はversion-matched geometry pipelineの最小portが候補だが、P1 contract closure前に採用しない。
+- REUSE_DECISION=DEFERRED_BY_STATIC_GATE
+
+GEOMETRY_SOLVER_DESIGN
+[Not executed]
+- 01 taskの条件どおりStatic PASS時だけ詳細設計へ進むため、solver implementation/design freezeは未実施。
+- 必須条件だけ記録: first468 only、virtual camera parameters明示、left/right handedness barrier明示、weighted canonical landmarks、same-sample identity carrier、one rigid pose owner、allocation/lifecycle bounded。
+
+DETERMINISTIC_SELFTEST
+[Not run]
+- Gate FAILのためFaceGeometry deterministic self-testを作成・実行していない。
+- GEOMETRY_SOLVER_SELFTEST=NOT_RUN
+
+RUNTIME_REQUIRED
+[Decision]
+- 現在のgeometry semantics claimはStatic/Package Sourceと数式counterexampleで閉じた。
+- 同じbuild/imageのreplayやcamera Runtimeを増やしても、clamped functionとunclamped functionの同一性は成立しない。
+- RUNTIME_REQUIRED_FOR_GEOMETRY_SEMANTICS=NO
+
+[Runtime — corroboration only]
+- ProjectVersion.txtのauthorityはUnity 6000.0.80f1。実体
+  C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe を確認。
+- Unity 6000.0.80f1 batch compile/validatorはcompile成功。Inference Engine GPU model smoke subcheckはfailure listに無く、input/output shapeとGPU scheduleを補助確認した。
+- overall validatorは9/40 FAIL。失敗はstale/heuristic expectationを含み、本contractのPASS/FAIL authorityとして使っていない。
+- Runtime ZIPは作成していない。
+
+OBSERVER_VALIDATOR_REAUDIT
+[Static]
+- Validatorのmodel smokeはexact ONNX pathをAssetDatabaseからloadし、GPUCompute WorkerへTensor(1,3,192,192)をschedule、conv2d_20/conv2d_30をreadbackし1404/1を検査する。model shape/lifetimeのcorroborationとしては妥当。
+- ただしvalidatorはnormalized XYZ、ROI matrix、letterbox、index topology、source identityを検査しないため、このcontractの証明器ではない。
+- tracker内ORT observersは同じ192 crop/output timestamp比較を意図するがobserver-only commentだけではnon-interferenceを証明しない。今回のsemantic conclusionには使用していない。
+- 過去REPORT、validator PASS文字列、commercial adoptionはauthorityへ昇格していない。
+
+LIFECYCLE_RESOURCE
+[Static]
+- bounded laneとfree-lane scheduleでFIFO growthなし。
+- per-lane crop RT/material/tensor/worker、pending output lifetimeはlane所有。completed outputはReadbackAndClone後にdispose scope。
+- stale generation/epoch/source結果はdecode前にretire。
+- 将来geometry solverを入れる場合もlane completion内で同期実行し、別queue/thread/process/serialization/readbackを恒久追加しないことが必要。
+- 今回はsolver/H1/Camera/Native/KiwiFaceMotion/threshold/smoothing/predictionを変更していない。
+
+CHANGED_FILES
+[This task]
+- D:\KiwiAvatarSystem\KiwiCodexConsolidatedReport_IEFaceGeometryDetailedClosure_20260909-083217JST.txt (this report only)
+- Production source change=NONE
+- External user-owned local command authority correction (user manual edit):
+  C:\Users\main\.codex\rules\default.rules の2 ruleはUnity 6000.0.80f1へ更新済み。
+  This is Codex local approval configuration, not Kiwi Production source or a Codex-authored change.
+
+BEFORE_CANDIDATE_AFTER_SHA
+[Production]
+- 全監査対象Production source: candidate code changeなし。上記CURRENT_LOCAL_SHAの各SHAがbefore=after。
+- Packages/packages-lock.json:
+  BEFORE=23845C132DBF51CB53A5CFDE4EF606FA68D10DCB53AE5FF21F4305613A5F9CE1
+  CANDIDATE=NOT_CAPTURED
+  AFTER=23845C132DBF51CB53A5CFDE4EF606FA68D10DCB53AE5FF21F4305613A5F9CE1
+  誤ってUnity 2022.3.62f2を一度起動した際にpackage resolution差を検出。git reset/checkout/cleanを使わずapply_patchで元内容へ戻し、after==beforeとgit diffなしを確認。Candidate SHA未採取は手順上の欠陥として隠さない。
+- 正しいUnity 6000.0.80f1を起動しPackageCacheを2.4.1 fingerprintへ復旧、compile確認した。
+[External command config]
+- C:\Users\main\.codex\rules\default.rules
+  BEFORE=E0F73783437CDD45D7FCAB3BA464E9F8EE9435E5868AC4725D080BCEDD5EE76B
+  AFTER=A4B7B5425BEC98812067249D255029F9C0580B6E80ADD90B37C87F4AF952A78C
+  ユーザー手動変更により2行のEditor pathが2022.3.62f2から6000.0.80f1へ置換された。現在のProjectVersion.txtと一致。
+
+REJECTED
+- Unity 2022.3.62f2 run: wrong Editor authority。結果・生成cache・validator出力をRejectedとし、current判断に使用しない。
+- clampを「安全策だから同値」とみなすこと: REJECT。数式counterexampleあり。
+- square_long commentのみでletterbox equivalentとみなすこと: REJECT。独立normalized clampがpixel-squareを破る。
+- full 478とbase 468のROI boundsが常に同じと仮定すること: REJECT。producer/domain proofなし。
+- heuristic CalculateGeometricRotationをFaceGeometry poseとして再利用: REJECT。
+- Static FAIL後のsolver実装、self-test、same-image Runtime、H1再導入: REJECT by ordered Gate。
+- Camera/Native/KiwiFaceMotion/tracking threshold/smoothing/predictionの変更: scope外、実施なし。
+
+UNKNOWN
+- Installed 0.16.3 native DLLのexact C++ build definition/toolchain/flagsはpackage内に完全同梱されず、DLL SHAだけでは閉じない。
+- all real camera samplesでclampが発火する頻度は未測定。これはsource equivalence FAILの成立には不要。
+- iris 10点がbase468 bounds外へ出る実データ頻度は未測定。full-domain statement equivalenceは未証明。
+- 2022.3誤起動時のpackages-lock candidate SHAは未採取。
+- H1 human visual qualityは本taskでは再評価していない。
+
+FIXPOINT_STATUS
+[Re-audit]
+1. report-time HEAD、主要file SHA、package fingerprint、ProjectVersionを再取得。
+2. X/Y basis、Z scale、ROI square/letterbox、flip、index、identityをproducerからconsumerまで再追跡。
+3. first boundaryより後のsolver pathへ進んでいないことを確認。
+4. protected Production sourceに差分がないこと、user-owned untracked filesを保持したことを確認。
+5. report必須section/final blockの存在を機械検査する。
+- Evidenceに基づき本task内で安全に直すべきProduction変更はない。Fixpoint=REACHED_FOR_AUDIT_SCOPE。
+
+DECISION
+[Final]
+- current IE decodeはbase468 model-space topologyとX/Y projectionでMediaPipe互換だが、source-space normalized landmark contract全体はPASSしない。
+- 第一原因はZ projection scale clamp。後続にROI/letterbox domain差もある。
+- よってmetric FaceGeometry solver feasibility implementation/self-testへ進まない。
+- Production変更なし。H1 Presentation再導入なし。commit/push/reset/checkout/cleanなし。
+
+NEXT_SINGLE_ACTION
+KiwiInferenceFaceTracker.ExtractRegionZScale()を、MediaPipe CalculateZScaleと同じ非clamp式（非有限または非正値だけを局所reject）へ置換する最小変更を別タスクで行い、同じordered Static Gateを先頭から再実行する。
+
+STATIC_NORMALIZED_LANDMARK_CONTRACT=FAIL
+MODEL_OUTPUT_CONTRACT=COMPATIBLE_BASE468_SEMANTICS
+FIRST_FAILING_BOUNDARY=Assets/Script/KiwiInferenceFaceTracker.cs::ExtractRegionZScale lines 2745-2749, Mathf.Clamp(scale,0.02f,3.0f), cropMatrix-X-axis-to-every-landmark-Z dataflow
+GEOMETRY_SOLVER_SELFTEST=NOT_RUN
+RUNTIME_REQUIRED_FOR_GEOMETRY_SEMANTICS=NO
+PRODUCTION_CHANGE=NO
+H1_PRESENTATION_REINTRODUCED=NO
+COMMIT_PUSH=NO
+NEXT_SINGLE_ACTION=Replace only ExtractRegionZScale clamp with MediaPipe-equivalent unclamped CalculateZScale semantics plus local nonfinite/nonpositive rejection, then rerun the ordered Static Gate from the start.
