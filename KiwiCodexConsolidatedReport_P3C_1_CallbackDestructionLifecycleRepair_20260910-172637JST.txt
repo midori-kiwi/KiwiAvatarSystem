@@ -1,0 +1,370 @@
+KiwiAvatarSystem
+P3C_1_CALLBACK_DESTRUCTION_AND_GRAPH_DISPOSAL_LIFECYCLE_REPAIR
+CONSOLIDATED CODEX REPORT
+Report time: 2026-09-10 17:26:37 JST
+
+======================================================================
+1. RESULT
+======================================================================
+
+P3C_1_RESULT=PASS
+
+The first proven P3C lifecycle boundary was repaired in the current local
+Production service. Result-publication retirement is now independent from
+callback lifetime accounting. Callback registry/delegate roots remain alive
+while CalculatorGraph.Dispose destroys the native graph. Only after Dispose
+returns is the no-future-callback boundary established; already-entered
+callbacks must then drain to zero before callback roots are released.
+
+This result is Static/Package/compile/deterministic synthetic lifecycle
+evidence. It is not Live Camera Runtime, P3D Runtime, H1, Human Visual, or final
+Production adoption authority.
+
+======================================================================
+2. CLAIM-SCOPED AUTHORITY AND PREFLIGHT
+======================================================================
+
+Project root: D:\KiwiAvatarSystem
+Branch: work/raw-direct-motion
+HEAD: cc2ea33daa84e9543b2b5a631d759de0ee60d521
+Upstream: origin/work/raw-direct-motion (ahead 6, behind 0 at preflight)
+
+Exact Unity project identity:
+- ProjectVersion.txt: 6000.0.80f1, revision 2dfd32957da2
+- Editor: C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe
+- Editor ProductVersion: 6000.0.80f1_2dfd32957da2
+- Editor SHA256: 7FC68434F4FCCF2781648C398FBAA4E8ADFB568251605E990D887FE36CF1376F
+
+ProjectContext\Current directory membership was enumerated before design:
+- KiwiAvatarSystem_CoreRules.txt
+  SHA256=3A934022C1F249D8F24E445F062AA085FA9D3B1FF5B9EA8C962F164FA1CFA48E
+- KiwiAvatarSystem_CurrentRoadmap.txt
+  SHA256=2658966F780A75048D89DDD77706B42099A6F10F799FA3F940057759FB6918A2
+
+Their Current/Rejected/Superseded/Unknown/Do Not Change/Next Action claims
+were reconciled. Both identify P3C_1 callback destruction lifecycle repair as
+the current first boundary and prohibit advancing to P3D/H1 in this task.
+
+Pre-existing user-owned dirty state was preserved and was not attributed to
+this repair:
+- tracked deletion under ProjectContext\Current:
+  KiwiAvatarSystem_latest integrated information / roadmap R13_7 document
+- untracked ProjectContext\Current\KiwiAvatarSystem_CoreRules.txt
+- untracked ProjectContext\Current\KiwiAvatarSystem_CurrentRoadmap.txt
+- untracked earlier P3D stop report
+
+No reset, checkout, restore, clean, stash, commit, or push was performed.
+
+======================================================================
+3. INSTALLED PACKAGE AND OFFICIAL LIFETIME CONTRACT
+======================================================================
+
+Actually installed MediaPipeUnityPlugin package:
+- package version: 0.16.3
+- package cache fingerprint: 66127f8e750d
+- package.json SHA256:
+  EEBBFF4550FA9CA3C2C76AB05BD0EDBDB3A0A4C2800883E244DC9E40D8FF2A2D
+- mediapipe_c.dll SHA256:
+  B9B620F2707DEA371BE3FCEF9F2D05468CA1471FAEE3BE6637BBD7DA77E21C54
+- project TGZ SHA256:
+  CC3E77A219E0B99618AE3BE64C31A566197DEEDC69C1E136ACF52D65D7CF2E79
+
+Official MediaPipe v0.10.22 CalculatorGraph contract:
+- an output callback can be invoked until the graph object is destroyed,
+  including after Cancel/WaitUntilDone;
+- Cancel aborts the scheduler but does not itself wait for completion;
+- graph destruction therefore supplies the relevant no-future-callback
+  boundary, not a pre-destroy active-callback count of zero.
+Source:
+https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.22/mediapipe/framework/calculator_graph.h
+
+Installed/official wrapper deletion path:
+CalculatorGraph.Dispose -> MpResourceHandle.Dispose/DeleteMpPtr ->
+mp_CalculatorGraph__delete.
+Version-matched wrapper source:
+https://raw.githubusercontent.com/homuler/MediaPipeUnityPlugin/v0.16.3/Packages/com.github.homuler.mediapipe/Runtime/Scripts/Framework/CalculatorGraph.cs
+
+This closes the package/source design premise only. It does not turn the
+synthetic test into Live Camera Runtime authority.
+
+======================================================================
+4. PRODUCTION CHANGE
+======================================================================
+
+Only one Production source file was changed:
+D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\TrackingFoundation\KiwiFaceGeometryTransactionService.cs
+
+BEFORE SHA256:
+B85A4E2A4A6FC94FE720690B3D0E1CC4A844FDA0F608CFBF2192BE4C2D976129
+
+CANDIDATE / AFTER SHA256:
+699A54FDEBB6C2ACDCD0B278A3647EBD49E6A6F5905B44F18CAAA07118791F02
+
+The former conflated callback-acceptance/disposal state was replaced by
+separate state for:
+- resultPublicationAccepting
+- nativeGraphAlive
+- nativeGraphDestroyStarted
+- noFutureCallbacks
+- activeCallbacks
+- callbackRootsReleased
+
+Exact repaired order:
+1. stop new transaction admission through the existing shutdown/reset path;
+2. retire result publication independently;
+3. retain callback registry, registration, run, and static native delegate;
+4. continue lifetime-counting every callback that resolves its registration,
+   even after publication retirement;
+5. retain the existing CloseAllPacketSources/Cancel behavior;
+6. call CalculatorGraph.Dispose while roots are alive;
+7. only after Dispose returns mark nativeGraphAlive=false and
+   noFutureCallbacks=true;
+8. wait only through callback exit accounting, without blocking, until
+   activeCallbacks reaches zero;
+9. atomically mark roots released and remove the registry entry once;
+10. clear the retired run only after root release succeeds.
+
+The callback path now resolves the registry and enters lifetime accounting
+under the registry lock before testing result-publication authority. A late
+post-retirement callback is counted but returns without publishing. The exit
+is in finally and can perform the final nonblocking root release after native
+destruction.
+
+Concurrency audit:
+- callback begins before retirement: counted; publication depends on the
+  independent publication gate; exit is always balanced;
+- callback begins after retirement but before graph destruction: counted and
+  discarded without publication;
+- callback is active when Dispose returns: no-future is marked, root release
+  remains gated until that callback exits;
+- callback lookup and root release are serialized by CallbackRegistryLock;
+- callbackGate is not held while acquiring CallbackRegistryLock during final
+  release, so the reviewed paths introduce no lock-order cycle;
+- duplicate destruction/root release and counter underflow fail closed.
+
+No sleep, delay, polling loop, spin wait, WaitUntilIdle, WaitUntilDone,
+OutputStreamPoller, FIFO Queue, GPU fence/flush, or blocking main-thread wait
+was added.
+
+No changes were made to Camera, Native, packages, model bundle, Runner,
+KiwiFaceMotion, KiwiInferenceFaceTracker, RuntimeGenerationContext,
+ProviderHub, Canonical, Scene, H1/Head/FacePart/Avatar publication, or P3D.
+
+======================================================================
+5. DIAGNOSTIC AND DETERMINISTIC SYNTHETIC STRESS
+======================================================================
+
+Diagnostic source:
+D:\KiwiAvatarSystem\Assets\CodexTasks\P3C1_CallbackLifecycle_20260910\Editor\P3C1CallbackLifecycleDiagnostic.cs
+SHA256=B7DD60505157F0532DD55C24999B1F908CAF50503A72B60F3B0A8A628BEF9276
+
+The diagnostic invokes the actual private lifecycle/registry implementation by
+reflection and uses real installed CalculatorGraph.Dispose for repeated native
+graph disposal. It adds no Production test hook and uses no sleep/polling.
+
+Result:
+D:\KiwiAvatarSystem\CodexTasks\P3C_1_CALLBACK_LIFECYCLE_STRESS_RESULT.txt
+SHA256=CE9C2288E30CD1B5BC8815090E0F675817C06D398F698372475134932B522036
+
+Log:
+D:\KiwiAvatarSystem\CodexTasks\P3C_1_CallbackLifecycle_Stress_20260910.log
+SHA256=94E2E083573908BC50ECCF71E4BA9589944A87C3E1585FD358C778694BE78D39
+
+Unity process exit code: 0
+
+Cases:
+- CASE_1 normal callback completion: PASS
+- CASE_2 callback during retire: PASS
+- CASE_3 callback after retirement: PASS
+- CASE_4 callback overlapping graph destruction: PASS
+- CASE_5 repeated graph disposal: PASS_32_REPEATS
+- CASE_6 shutdown/dispose re-entry safety: PASS
+
+Counters:
+- CALLBACK_ENTER_COUNT=8
+- CALLBACK_EXIT_COUNT=8
+- ACTIVE_CALLBACKS_FINAL=0
+- POST_RETIRE_RESULT_PUBLICATION_COUNT=0
+- PRE_DESTROY_REGISTRY_RELEASE_COUNT=0
+- PRE_DESTROY_DELEGATE_RELEASE_COUNT=0
+- PRE_DRAIN_REGISTRY_RELEASE_COUNT=0
+- DOUBLE_RELEASE_COUNT=0
+- NEGATIVE_ACTIVE_CALLBACK_COUNT=0
+- INVALID_STATE_TRANSITION_COUNT=0
+- GRAPH_RESOURCE_FINAL_LEAK_COUNT=0
+
+GRAPH_RESOURCE_FINAL_LEAK_COUNT is limited to the deterministic resources and
+weak-reference observations exercised by this diagnostic. It is not a claim
+of complete Live Camera native resource/leak closure.
+
+======================================================================
+6. EXACT UNITY COMPILE
+======================================================================
+
+Exact editor:
+C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe
+
+Compile log with explicit process exit status:
+D:\KiwiAvatarSystem\CodexTasks\P3C_1_CallbackLifecycle_UnityCompile_ExactExit_20260910.log
+SHA256=694EF007C883C3CDBEC8D0C0BF03D3A2270B63C0D3CB336C5225584A63C152F2
+
+UNITY_COMPILE=PASS
+- process exit code: 0
+- C# compiler error scan: 0
+
+An initial Unity invocation completed successfully but did not expose a
+reliable synchronous shell exit status. The same exact compile was therefore
+rerun once with Start-Process -Wait -PassThru -WindowStyle Hidden. The rerun
+above is the acceptance evidence. This was not an unexplained repeated test.
+
+======================================================================
+7. WINDOWS POWERSHELL 5.1 STATIC VALIDATION
+======================================================================
+
+Validator:
+D:\KiwiAvatarSystem\CodexTasks\Validate-P3C1-CallbackLifecycle.ps1
+SHA256=D60881F7BCA22D64333D56E86DC4AEA029907B56A243B1C5EF1C2AABFA557B45
+
+Result:
+D:\KiwiAvatarSystem\CodexTasks\P3C_1_STATIC_VALIDATION_RESULT.txt
+SHA256=4BE984DCD68FEA3DCE1B95BA8A8393852FA2F87E63EB3E4C99BBCD0CFA0B1909
+
+- Windows PowerShell: 5.1.26100.9168
+- P3C_1_STATIC_VALIDATION=PASS
+- CHECK_COUNT=67
+- failed checks: 0
+
+The validator independently checks lifecycle state separation, destruction
+ordering, callback enter/finally-exit ordering, drain-before-registry-release,
+forbidden blocking/queue constructs, Production gate default OFF, Scene
+non-activation, protected SHA identities, Unity compile evidence, and all
+required synthetic stress outcomes.
+
+======================================================================
+8. PROTECTED BOUNDARIES / REGRESSION
+======================================================================
+
+Post-repair protected SHA256 identities match preflight:
+- FaceLandmarkerRunner.cs
+  77708DF460584C0FCC041A345CE1736E7E6F4F5950A2D445565926058E662875
+- KiwiInferenceFaceTracker.cs
+  17F55087EFA7D42B14EF7453F35B0720EE79A23A64CB239391171C45241E3744
+- KiwiFaceMotion.cs
+  D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6
+- KiwiRuntimeGenerationContext.cs
+  E74887450A8EBD881A3AEDE7B4789C5D83E4A7C5B7F5A6D4C427DB134D250C40
+- KiwiTrackingProviderHub.cs
+  A5C7DE387FA2E02862BCF64942363AECFB9C7830B52DF5B8953404DF884ECCB1
+- KiwiCanonicalTrackingFrame.cs
+  458FF33E98E054B766F20EB17CE6BDD242C9AD9FD6E73AF53D60BD3961822AFA
+- Face Landmark Detection.unity
+  9BAC89F64B45429B38D41C1A2539C63D5E9A442E8EF920EE13B59245BE166735
+
+P3C transaction contract regression review:
+- acceptedFrameId/sourceHostTicks/pose-only retention: unchanged
+- one-in-flight + one overwriteable latest pending: unchanged
+- FIFO absence: preserved
+- bounded callback handoff: preserved
+- stale/duplicate/run identity gates: preserved
+- Production default gate: OFF
+- Avatar/Canonical/H1 publication: none added
+
+======================================================================
+9. DOUBLE FULL AUDIT
+======================================================================
+
+PRE_REPAIR_FULL_AUDIT_1=PASS
+- full assigned scope audited from live-local identity through official/package
+  lifecycle contract, current source, lock/lifetime design, protected rails,
+  planned diagnostics, rollback, and stop boundary.
+
+PRE_REPAIR_FULL_AUDIT_2=PASS
+- same entire scope independently re-audited without adopting audit 1's
+  conclusion; it converged on the same single-service repair.
+
+POST_REPAIR_FULL_AUDIT_1=PASS
+- full implementation, whole Production diff, exact compile, six-case stress,
+  counters, changed/protected SHA, forbidden constructs, dirty preservation,
+  and scope boundary audited.
+
+POST_REPAIR_FULL_AUDIT_2=PASS
+- same full scope independently re-audited using the PS5.1 67-check validator,
+  direct source state/order inspection, git diff --check, artifact hashes,
+  protected SHA, compile log, stress evidence, and final dirty state.
+
+AUDIT_DISAGREEMENT=NONE
+UNRESOLVED within P3C_1 assigned Static/Package/compile/synthetic scope: NONE
+
+The following remain deliberately UNVERIFIED / NOT RUN:
+- same-build Live Camera Runtime
+- P3D runtime gate
+- Human Visual behavior
+- H1
+- complete native resource/leak behavior under Live Camera lifecycle churn
+
+These do not invalidate the narrow P3C_1 result, but they must not be promoted
+to PASS by this report.
+
+======================================================================
+10. ROLLBACK AND ARTIFACT POLICY
+======================================================================
+
+Rollback authority is the exact pre-change Production file identity:
+B85A4E2A4A6FC94FE720690B3D0E1CC4A844FDA0F608CFBF2192BE4C2D976129
+
+No destructive rollback operation was performed. The existing dirty workspace
+was preserved. No Runtime ZIP was created because Runtime was not authorized or
+required for this P3C_1 boundary.
+
+No commit or push was performed.
+
+======================================================================
+11. MACHINE-READABLE SUMMARY
+======================================================================
+
+CURRENT_HEAD=cc2ea33daa84e9543b2b5a631d759de0ee60d521
+CURRENT_BRANCH=work/raw-direct-motion
+DIRTY_STATE=PRESERVED_PREEXISTING_DIRTY_PLUS_P3C_1_AUTHORIZED_CHANGES
+BEFORE_SHA=B85A4E2A4A6FC94FE720690B3D0E1CC4A844FDA0F608CFBF2192BE4C2D976129
+CANDIDATE_SHA=699A54FDEBB6C2ACDCD0B278A3647EBD49E6A6F5905B44F18CAAA07118791F02
+AFTER_SHA=699A54FDEBB6C2ACDCD0B278A3647EBD49E6A6F5905B44F18CAAA07118791F02
+MEDIAPIPE_CALLBACK_LIFETIME_CONTRACT=CALLBACK_MAY_RUN_UNTIL_GRAPH_OBJECT_DESTROYED
+UNITY_WRAPPER_DELETE_PATH=CalculatorGraph.Dispose_TO_MpResourceHandle.DeleteMpPtr_TO_mp_CalculatorGraph__delete
+P3C_1_RESULT=PASS
+SUBMISSION_ADMISSION_STOP=PASS_EXISTING_SHUTDOWN_RESET_GATE_PRESERVED
+RESULT_PUBLICATION_RETIRE=PASS_SEPARATE_FROM_CALLBACK_LIFETIME
+RETIRE_CALLBACK_LIFETIME_ACCOUNTING=PASS_LATE_CALLBACKS_STILL_COUNTED
+REGISTRY_HELD_UNTIL_NATIVE_DESTROY=PASS
+DELEGATE_HELD_UNTIL_NATIVE_DESTROY=PASS_STATIC_NATIVE_DELEGATE_ROOT
+NATIVE_GRAPH_DESTROY_BOUNDARY=PASS_GRAPH_DISPOSE_RETURN
+NO_FUTURE_CALLBACK_BOUNDARY=PASS_ONLY_AFTER_GRAPH_DISPOSE_RETURN
+ENTERED_CALLBACK_DRAIN=PASS_NONBLOCKING_EXIT_ACCOUNTING
+REGISTRY_RELEASE_AFTER_DRAIN=PASS
+CALLBACK_ENTER_COUNT=8
+CALLBACK_EXIT_COUNT=8
+ACTIVE_CALLBACKS_FINAL=0
+POST_RETIRE_RESULT_PUBLICATION_COUNT=0
+PRE_DESTROY_REGISTRY_RELEASE_COUNT=0
+PRE_DESTROY_DELEGATE_RELEASE_COUNT=0
+PRE_DRAIN_REGISTRY_RELEASE_COUNT=0
+DOUBLE_RELEASE_COUNT=0
+NEGATIVE_ACTIVE_CALLBACK_COUNT=0
+INVALID_STATE_TRANSITION_COUNT=0
+GRAPH_RESOURCE_FINAL_LEAK_COUNT=0_DIAGNOSTIC_SCOPE_ONLY
+SYNTHETIC_LIFECYCLE_STRESS=PASS_ALL_6_CASES_CASE5_32_REPEATS
+UNITY_COMPILE=PASS_EXACT_6000_0_80F1_EXIT_0_CS_ERRORS_0
+P3C_TRANSACTION_CONTRACT_REGRESSION=NONE_FOUND_STATIC_SYNTHETIC_SCOPE
+PRODUCTION_DEFAULT_GATE=OFF
+AVATAR_PUBLICATION=NONE_ADDED
+H1=NOT_AUTHORIZED
+FULL_AUDIT_1=PASS
+FULL_AUDIT_2=PASS
+AUDIT_DISAGREEMENT=NONE
+PRODUCTION_AVATAR_BEHAVIOR_CHANGE=NONE_GATE_OFF_AND_NO_AVATAR_PUBLICATION
+COMMIT_PUSH=NOT_PERFORMED
+RUNTIME_ZIP=NOT_CREATED
+LIVE_CAMERA_RUNTIME=NOT_RUN
+P3D_RUNTIME=NOT_RUN
+NEXT_SINGLE_ACTION=RETURN_REPORT_TO_NORMAL_CHAT_FOR_DOUBLE_FULL_REAUDIT_BEFORE_P3D
+
+END OF REPORT

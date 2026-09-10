@@ -1,0 +1,486 @@
+KiwiAvatarSystem P3D Minimal Same-Build Geometry Transaction Runtime Gate
+Report time: 2026-09-10 00:20:28 JST
+Project: D:\KiwiAvatarSystem
+Requested scope: P3D_MINIMAL_SAME_BUILD_GEOMETRY_TRANSACTION_RUNTIME_CORRECTNESS_LIFECYCLE_GATE
+Execution result: STOPPED BEFORE BUILD/RUNTIME AT P3C ENTRY GATE
+
+======================================================================
+0. CONSOLIDATED DECISION
+======================================================================
+
+P3D_RESULT=STOP_UNRESOLVED_P3C_IMPLEMENTATION_REPORT_LIFECYCLE_MISMATCH
+
+P3D was not authorized to enter build or Live Camera Runtime.
+
+The original P3C Codex report claims P3C_RESULT=PASS. Current live-local
+KiwiFaceGeometryTransactionService.cs is byte-identical to that report-time
+implementation. However, the later claim-scoped Current Roadmap and the 2026-09-09
+22:48 independent lifecycle report supersede that full PASS and identify one exact
+Static/Package lifecycle defect:
+
+  activeCallbacks == 0 before native CalculatorGraph destruction is only a
+  momentary observation. It does not establish that no future native output
+  callback can begin while the CalculatorGraph object remains alive.
+
+The exact MediaPipe v0.10.22 CalculatorGraph public contract states that an
+ObserveOutputStream callback can be invoked until the CalculatorGraph object is
+destroyed, including after Cancel() or WaitUntilDone(). The installed 0.16.3 C#
+wrapper's Dispose path calls mp_CalculatorGraph__delete.
+
+Current live source still uses:
+
+  RetireCallbacks()
+  -> readyToDispose = activeCallbacks == 0
+  -> TryDisposeRetiredRun() requires IsReadyToDispose()
+  -> graph.Dispose()
+  -> UnregisterCallback()
+
+No post-destruction/no-future-callback state and subsequent entered-callback drain
+boundary exists. Therefore the requested entry condition P3C_RESULT=PASS is not
+met. The task explicitly requires STOP_UNRESOLVED when P3C current implementation
+and report disagree; this report stops at that boundary.
+
+No Production code, Scene, package, Native artifact, tracking math, H1, Head,
+Root, Canonical, FacePart, Avatar, Spout, camera, ROI, threshold, smoothing,
+prediction, or generation owner was changed.
+
+No Unity build, Development EXE, Live Camera Runtime, transition injection,
+graph-fault injection, Runtime evidence ZIP, commit, or push was performed.
+
+======================================================================
+1. LIVE-LOCAL AUTHORITY PREFLIGHT
+======================================================================
+
+[Git]
+Project=D:\KiwiAvatarSystem
+Branch=work/raw-direct-motion
+HEAD=cc2ea33daa84e9543b2b5a631d759de0ee60d521
+Upstream=origin/work/raw-direct-motion
+Ahead=6
+Behind=0
+
+[User-Owned Dirty State Preserved]
+- Deleted relative to HEAD:
+  ProjectContext/Current/KiwiAvatarSystem_最新統合情報_統合ロードマップ_R13_7_ProjectWide_DoubleFullAudit.txt
+- Untracked:
+  ProjectContext/Current/KiwiAvatarSystem_CoreRules.txt
+  ProjectContext/Current/KiwiAvatarSystem_CurrentRoadmap.txt
+
+The Current directory replacement is treated as user-owned. No reset, checkout,
+clean, stash, deletion, or attribution to this task occurred.
+
+[Unity]
+ProjectSettings/ProjectVersion.txt:
+  version=6000.0.80f1
+  revision=2dfd32957da2
+  SHA256=EA333D8F6C87FFA35061EC92B7DEF6026D00D0131D7A6A05A23C53EB949B4F77
+Unity.exe=C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe
+Unity.exe FileVersion=6000.0.80.3013938
+Unity.exe ProductVersion=6000.0.80f1_2dfd32957da2
+Unity.exe SHA256=7FC68434F4FCCF2781648C398FBAA4E8ADFB568251605E990D887FE36CF1376F
+
+[Scene]
+ProjectSettings/EditorBuildSettings.asset enables exactly:
+  Assets/Scenes/Face Landmark Detection.unity
+EditorBuildSettings SHA256=611BA53D1627847D786E714A7CC17EB8D5AE06C2EFBA4077DA1F396A81355EAE
+Scene SHA256=9BAC89F64B45429B38D41C1A2539C63D5E9A442E8EF920EE13B59245BE166735
+The Scene contains no serialized P3C activation field.
+The source feature gate remains private serialized false by default.
+
+[Required Current Source SHA256]
+Assets/Script/FaceLandmarkerRunner.cs
+  77708DF460584C0FCC041A345CE1736E7E6F4F5950A2D445565926058E662875
+Assets/Script/KiwiInferenceFaceTracker.cs
+  17F55087EFA7D42B14EF7453F35B0720EE79A23A64CB239391171C45241E3744
+Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiFaceGeometryTransactionService.cs
+  B85A4E2A4A6FC94FE720690B3D0E1CC4A844FDA0F608CFBF2192BE4C2D976129
+Assets/Script/KiwiFaceMotion.cs
+  D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6
+Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiRuntimeGenerationContext.cs
+  E74887450A8EBD881A3AEDE7B4789C5D83E4A7C5B7F5A6D4C427DB134D250C40
+Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiTrackingProviderHub.cs
+  A5C7DE387FA2E02862BCF64942363AECFB9C7830B52DF5B8953404DF884ECCB1
+Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiCanonicalTrackingFrame.cs
+  458FF33E98E054B766F20EB17CE6BDD242C9AD9FD6E73AF53D60BD3961822AFA
+
+The service file is clean relative to HEAD. Git blob identity:
+  a0846b7263e846b1dd5e5bc2ac49aa99e1ac4fe5
+
+======================================================================
+2. PACKAGE / MODEL IDENTITY
+======================================================================
+
+[MediaPipeUnityPlugin]
+Manifest source=file:com.github.homuler.mediapipe-0.16.3.tgz
+TGZ size=290414365
+TGZ SHA256=CC3E77A219E0B99618AE3BE64C31A566197DEEDC69C1E136ACF52D65D7CF2E79
+Installed root=Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d
+Installed package version=0.16.3
+Installed fingerprint=66127f8e750d
+Installed package.json SHA256=EEBBFF4550FA9CA3C2C76AB05BD0EDBDB3A0A4C2800883E244DC9E40D8FF2A2D
+Installed mediapipe_c.dll size=16517120
+Installed mediapipe_c.dll SHA256=B9B620F2707DEA371BE3FCEF9F2D05468CA1471FAEE3BE6637BBD7DA77E21C54
+Version-matched MediaPipe lineage=v0.10.22
+
+[Face Landmarker Bundle]
+Installed bundle:
+  Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d/PackageResources/MediaPipe/face_landmarker_v2_with_blendshapes.bytes
+Production bundle:
+  Assets/StreamingAssets/face_landmarker_v2_with_blendshapes.bytes
+Both size=2357924
+Both SHA256=B261925D4AAD812B47A0E8D58C1BAA1223270A5D1F663D78338BC881C003879D
+
+[Inference Engine]
+Manifest version=2.4.1
+Installed root=Library/PackageCache/com.unity.ai.inference@587873fd5e1b
+Installed package.json version=2.4.1
+Installed fingerprint=587873fd5e1bd2d10f696bceb1a83c296823e927
+Installed package.json SHA256=2F230C84E28A9E3AD516B1A49B79B6F83E172F1C16E6813E0F1DD6FA2B1790EE
+
+Packages/manifest.json SHA256=
+  35F00A89D31A8BF7EE50718F38D4BAC90236D8B691F516C5FC14CAB47AFBFEE1
+Packages/packages-lock.json SHA256=
+  23845C132DBF51CB53A5CFDE4EF606FA68D10DCB53AE5FF21F4305613A5F9CE1
+
+======================================================================
+3. REQUIRED CONTEXT / REPORT RECONCILIATION
+======================================================================
+
+[ProjectContext/Current Enumeration]
+Exactly two files were present and both were read in full:
+
+1. ProjectContext/Current/KiwiAvatarSystem_CoreRules.txt
+   Status=DURABLE_BASELINE
+2. ProjectContext/Current/KiwiAvatarSystem_CurrentRoadmap.txt
+   SHA256=2658966F780A75048D89DDD77706B42099A6F10F799FA3F940057759FB6918A2
+
+Current Roadmap claim relevant to this task:
+  P3C_RESULT=FAIL_AT_CALLBACK_DESTRUCTION_LIFECYCLE_BOUNDARY
+  P3C_CALLBACK_DESTRUCTION_LIFECYCLE=
+    FAIL_STATIC_AT_PRE_DISPOSE_QUIESCENCE_ASSUMPTION
+  NEXT=P3C_1_CALLBACK_DESTRUCTION_AND_GRAPH_DISPOSAL_LIFECYCLE_REPAIR
+  P3D=NOT_AUTHORIZED until lifecycle closure
+
+[Required Reports Read]
+- KiwiCodexConsolidatedReport_P2C_B10SemanticCorrection_B11Closure_20260909-155715JST.txt
+  P1_S_WINDOWS_NATIVE_PRODUCTION=PASS
+- KiwiCodexConsolidatedReport_P3A_FaceGeometryReuseContract_DeterministicSelfTest_20260909-163536JST.txt
+  P3A_RESULT=PASS
+  FACEGEOMETRY_REUSE_DECISION=LOW_LEVEL_CALCULATOR_GRAPH_REUSE
+- KiwiCodexConsolidatedReport_P3B_SameSampleGeometryTransaction_LifecycleDesignFreeze_20260909-213452JST.txt
+  Original pose-only boundary FAIL is superseded by the later claim-scoped decision:
+  P3B_RESULT=PASS_DESIGN_CLOSED_WITH_TRANSIENT_FULL_FACEGEOMETRY_MANAGED_BOUNDARY
+- KiwiCodexConsolidatedReport_P3C_MinimalGeometryTransaction_StaticValidation_20260909-223229JST.txt
+  SHA256=F5B839F5E674D71A3314AD682D8459AD1FFC3AD4DE92B711AA160E7E9AC479C7
+  Original claim=P3C_RESULT=PASS
+
+[Later Claim-Scoped Lifecycle Authority]
+ChatReport/KiwiChat_FaceGeometryTransactionLifecycle_Updated_20260909-2248-JST.zip
+SHA256=7068EC6E3E0178BAA6281B47F9C9F3A3604868560E8A1FB5DF512D9E73FCA63D
+The permanent report inside was read in full. It explicitly supersedes P3C full
+PASS and sets the current first boundary to P3C_1 callback destruction repair.
+
+[Reconciliation]
+P1_S_WINDOWS_NATIVE_PRODUCTION=PASS
+P3A_RESULT=PASS
+P3B_RESULT=PASS_DESIGN_CLOSED_WITH_TRANSIENT_FULL_FACEGEOMETRY_MANAGED_BOUNDARY
+P3C_TRANSACTION_IMPLEMENTATION=PASS_STATIC_SUBCLAIM_ONLY
+P3C_CALLBACK_DESTRUCTION_LIFECYCLE=FAIL_STATIC_AT_PRE_DISPOSE_QUIESCENCE_ASSUMPTION
+P3C_RESULT=FAIL_AT_CALLBACK_DESTRUCTION_LIFECYCLE_BOUNDARY
+P3D_ENTRY_GATE=FAIL
+
+The original P3C report-time PASS is Rejected/Superseded for lifecycle closure.
+It is not promoted back to Current merely because the current source SHA still
+matches the report.
+
+======================================================================
+4. CURRENT SOURCE / INSTALLED PACKAGE LIFECYCLE PROOF
+======================================================================
+
+[Current Production Source]
+KiwiFaceGeometryTransactionService.cs was audited as a whole.
+
+GraphRun.TryEnterCallback:
+- returns false without incrementing activeCallbacks when acceptingCallbacks=false.
+
+GraphRun.RetireCallbacks:
+- sets acceptingCallbacks=false;
+- sets readyToDispose=(activeCallbacks==0).
+
+TryDisposeRetiredRun:
+- does nothing until IsReadyToDispose() is true;
+- removes _retiredRun from service state;
+- calls StopAndDisposeRun.
+
+StopAndDisposeRun:
+- calls Cancel();
+- calls graph.Dispose();
+- then unregisters the callback registry entry.
+
+OnNativeOutput:
+- reads the registry;
+- calls TryEnterCallback;
+- callbacks arriving after RetireCallbacks return OK without being included in
+  activeCallbacks.
+
+[Installed Managed Package]
+CalculatorGraph derives from MpResourceHandle.
+CalculatorGraph.DeleteMpPtr calls mp_CalculatorGraph__delete(ptr).
+MpResourceHandle.DisposeUnmanaged calls DeleteMpPtr while it owns the resource.
+Thus graph.Dispose() is the installed managed-to-native destruction call.
+
+[Version-Matched Official Source]
+Primary source:
+https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.22/mediapipe/framework/calculator_graph.h
+
+The ObserveOutputStream contract states that packet_callback may be called until
+the CalculatorGraph object is destroyed, even after Cancel() or WaitUntilDone().
+After object destruction the callback object is destroyed.
+
+Supporting exact wrapper source:
+https://raw.githubusercontent.com/homuler/MediaPipeUnityPlugin/v0.16.3/Packages/com.github.homuler.mediapipe/Runtime/Scripts/Framework/CalculatorGraph.cs
+
+[Failure]
+The current implementation uses a pre-destruction activeCallbacks==0 observation
+as authorization to destroy and clear the retired run. It does not establish the
+required ordered boundary:
+
+  registry non-accepting
+  -> Cancel/close
+  -> native graph destruction
+  -> no future callback boundary
+  -> drain every callback that entered before/during destruction
+  -> release registry/delegate/service callback state
+
+No current source delta after the 22:48 superseding report repairs this boundary.
+
+This is a Static/Package Source entry failure. A successful prior synthetic
+shutdown instance cannot supersede the general callback lifetime contract.
+
+======================================================================
+5. PRE-RUNTIME DOUBLE FULL AUDIT
+======================================================================
+
+[PRE_RUNTIME_FULL_AUDIT_1]
+Scope=100% of the P3D entry and proposed Runtime authorization scope:
+- live-local branch/HEAD/upstream/status/dirty state;
+- Unity/project/Scene identity;
+- required Production source SHA;
+- MediaPipe TGZ/installed package/DLL/bundle identity;
+- Inference Engine identity;
+- P2C/P3A/P3B/P3C reports;
+- every current-context document;
+- later lifecycle supersession;
+- whole geometry service lifecycle/dataflow;
+- installed managed destruction wrapper;
+- exact version-matched native callback contract;
+- build/runtime authorization and protected boundaries.
+
+Result=FAIL at P3C callback-destruction lifecycle Entry Gate.
+No Runtime design or build activation was allowed to execute past the gate.
+
+PRE_RUNTIME_FULL_AUDIT_1=FAIL
+
+[PRE_RUNTIME_FULL_AUDIT_2 - independent restart]
+The same complete scope was independently restarted from current Git objects and
+hashes. Audit 2 did not accept Audit 1 conclusions as authority.
+
+Independent checks included:
+- recomputing the service SHA and Git blob and proving no working-tree delta;
+- re-enumerating all Current files and re-reading the relevant current claim;
+- re-reading the original P3C report and later permanent lifecycle report;
+- independently tracing TryEnterCallback, RetireCallbacks, IsReadyToDispose,
+  TryDisposeRetiredRun, StopAndDisposeRun, OnNativeOutput and UnregisterCallback;
+- independently inspecting the installed CalculatorGraph/MpResourceHandle delete
+  path and exact v0.10.22 ObserveOutputStream lifetime contract;
+- rechecking feature gate default OFF, Scene non-activation and absence of actual
+  H1/Head/Canonical/FacePart publication references;
+- rechecking that build/runtime/Scene/package/native/forbidden changes remained
+  absent.
+
+Result=FAIL at the same P3C callback-destruction lifecycle Entry Gate.
+
+PRE_RUNTIME_FULL_AUDIT_2=FAIL
+PRE_RUNTIME_AUDIT_DISAGREEMENT=NONE
+FULL_AUDIT_1=FAIL
+FULL_AUDIT_2=FAIL
+REMAINING_UNRESOLVED_CLAIMS=P3C_CALLBACK_DESTRUCTION_AND_GRAPH_DISPOSAL_LIFECYCLE
+
+Both audits agree on the same first failing boundary. No disagreement was averaged
+or converted to PASS.
+
+======================================================================
+6. BUILD / RUNTIME / EVIDENCE STATUS
+======================================================================
+
+Build was forbidden by the failed Entry Gate and therefore not run.
+No diagnostic EXE exists for this task.
+No Scene or serialized feature-gate state was changed.
+No Live Camera session was started.
+No correctness counters, lifecycle transitions, cadence, latency, allocation,
+GC, graph fault, or resource observations were collected.
+
+RUNTIME_EVIDENCE_LIST=NONE
+RUNTIME_EVIDENCE_ZIP=NOT_CREATED_RUNTIME_NOT_AUTHORIZED
+OBSERVER_OVERHEAD_CLASSIFICATION=NONE_OBSERVER_NOT_INSTALLED_OR_RUN
+PERFORMANCE_AUTHORITY=NONE
+
+No zero-count Runtime claim is fabricated from absence of execution. Every Runtime
+counter is NOT_MEASURED, not zero and not PASS.
+
+======================================================================
+7. REJECTED / DEFERRED / UNVERIFIED / PROTECTED
+======================================================================
+
+[Rejected]
+- Promoting the original P3C report PASS over later claim-scoped source/package
+  lifecycle evidence.
+- Treating the prior synthetic shutdown observation as proof of the callback
+  destruction contract.
+- Running P3D Live Camera merely to observe a defect whose prerequisite is already
+  failed statically.
+- Building a diagnostic EXE or temporarily activating the gate before Entry closure.
+
+[Deferred]
+- P3D Runtime observer and all requested counters.
+- Live startup/steady/shutdown and transition matrix.
+- Live graph fault injection.
+- transient full FaceGeometry cost.
+- pose-only Native extraction.
+
+[Unverified]
+- Live geometry correlation/cadence/latency/resource behavior.
+- Actual Product camera/session/provider/model transitions.
+- Clean Performance and Human Visual behavior.
+
+[Protected / No Change]
+- KiwiInferenceFaceTracker tracking math.
+- KiwiFaceMotion.
+- Camera/Native/ROI/normalization/threshold/smoothing/prediction/freshness.
+- Head/Root/Canonical/FacePart/Avatar/Spout/H1.
+- Scene activation and Production default OFF.
+- MediaPipe package/native ABI and Inference Engine package.
+
+POSE_ONLY_NATIVE_EXTRACTION=DEFERRED
+H1=NOT_AUTHORIZED
+
+======================================================================
+8. FILE CHANGE / SHA / ROLLBACK
+======================================================================
+
+[Production / Scene / Package]
+CHANGED_FILES=NONE
+Before SHA equals after SHA for every required source, Scene, package manifest,
+lock, TGZ, installed package, DLL, and bundle listed in this report.
+
+[Created Artifact]
+KiwiCodexConsolidatedReport_P3D_20260910-002028JST.txt
+Before=ABSENT
+Candidate/After=this report; SHA256 is emitted externally after file creation to
+avoid a self-referential hash.
+
+Rollback for Production=NOT_REQUIRED_NO_PRODUCTION_CHANGE
+Runtime ZIP=NONE
+Commit/push=NO
+
+======================================================================
+9. REQUIRED MACHINE-READABLE KEYS
+======================================================================
+
+P3D_RESULT=STOP_UNRESOLVED_P3C_IMPLEMENTATION_REPORT_LIFECYCLE_MISMATCH
+
+LIVE_CAMERA_RUNTIME=NOT_RUN_ENTRY_GATE_FAILED
+
+RUNTIME_BUILD_EXE_SHA256=NONE
+
+GEOMETRY_TRANSACTION_RUNTIME=NOT_RUN
+
+LIVE_SAME_SAMPLE_CORRELATION=NOT_MEASURED
+
+CORRELATION_MISMATCH_COUNT=NOT_MEASURED
+
+VALID_GEOMETRY_ACCEPTED_COUNT=NOT_MEASURED
+
+DUPLICATE_ACCEPTED_COUNT=NOT_MEASURED
+
+OUT_OF_ORDER_ACCEPTED_COUNT=NOT_MEASURED
+
+OLD_EPOCH_ACCEPTED_COUNT=NOT_MEASURED
+
+INVALID_POSE_ACCEPTED_COUNT=NOT_MEASURED
+
+MAX_IN_FLIGHT_GEOMETRY=NOT_MEASURED_RUNTIME;STATIC_DESIGN_TARGET_1
+
+MAX_PENDING_GEOMETRY=NOT_MEASURED_RUNTIME;STATIC_DESIGN_TARGET_1
+
+FIFO_BACKLOG=NOT_MEASURED_RUNTIME;STATIC_SOURCE_HAS_NO_QUEUE_TYPE
+
+PENDING_SUPERSEDE_COUNT=NOT_MEASURED
+
+SOURCE_HOST_TICKS_PRESERVATION=NOT_MEASURED_RUNTIME
+
+SEMANTIC_DIMENSION_RUNTIME=NOT_RUN
+
+GRAPH_START_COUNT=NOT_MEASURED
+
+GRAPH_RESET_COUNT=NOT_MEASURED
+
+GRAPH_FAULT_COUNT=NOT_MEASURED
+
+LATE_CALLBACK_PUBLICATION_COUNT=NOT_MEASURED
+
+STARTUP_LIFECYCLE=NOT_RUN
+
+SHUTDOWN_LIFECYCLE=FAIL_STATIC_PREREQUISITE_NOT_RUNTIME_EXECUTED
+
+CAMERA_RESTART_LIFECYCLE=NOT_RUN
+
+TRACKING_SESSION_LIFECYCLE=NOT_RUN
+
+PROVIDER_TRANSITION_LIFECYCLE=NOT_RUN
+
+MODEL_TRANSITION_LIFECYCLE=NOT_RUN
+
+LIVE_GRAPH_FAULT_RUNTIME=UNVERIFIED
+
+TRANSIENT_FULL_FACEGEOMETRY_COST=UNKNOWN_NOT_MEASURED
+
+PERFORMANCE_AUTHORITY=NONE
+
+POSE_ONLY_NATIVE_EXTRACTION=DEFERRED
+
+HEAD_PUBLICATION=NONE
+
+CANONICAL_PUBLICATION=NONE
+
+FACEPART_PUBLICATION=NONE
+
+H1=NOT_AUTHORIZED
+
+POST_RUNTIME_FULL_AUDIT_1=NOT_RUN_NO_RUNTIME
+
+POST_RUNTIME_FULL_AUDIT_2=NOT_RUN_NO_RUNTIME
+
+AUDIT_DISAGREEMENT=NONE
+
+PRODUCTION_AVATAR_BEHAVIOR_CHANGE=NO
+
+COMMIT_PUSH=NO
+
+NEXT_SINGLE_ACTION=P3C_1_CALLBACK_DESTRUCTION_AND_GRAPH_DISPOSAL_LIFECYCLE_REPAIR
+
+======================================================================
+10. FINAL BOUNDARY
+======================================================================
+
+The requested P3D task stops here.
+
+P3D Runtime must not start from this source identity. The next action is the
+separately scoped and authorized P3C_1 callback destruction/graph disposal
+lifecycle repair, followed by exact Unity compile, targeted synthetic lifecycle
+stress, and two independent full post-repair audits. Only a later claim-scoped
+decision may authorize P3D.
+
+H1 remains NOT_AUTHORIZED.
+
+END_OF_REPORT

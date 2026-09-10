@@ -220,10 +220,12 @@ internal sealed class KiwiFaceGeometryTransactionService
         internal readonly IntPtr graphPtr;
 
         internal readonly object callbackGate = new object();
-        internal bool acceptingCallbacks = true;
+        internal bool resultPublicationAccepting = true;
+        internal bool nativeGraphAlive = true;
+        internal bool nativeGraphDestroyStarted;
+        internal bool noFutureCallbacks;
         internal int activeCallbacks;
-        internal bool readyToDispose;
-        internal bool cleanupPosted;
+        internal bool callbackRootsReleased;
 
         internal GraphRun(
             int runId,
@@ -240,11 +242,11 @@ internal sealed class KiwiFaceGeometryTransactionService
             graphPtr = graph.mpPtr;
         }
 
-        internal bool TryEnterCallback()
+        internal bool TryEnterCallbackLifetime()
         {
             lock (callbackGate)
             {
-                if (!acceptingCallbacks)
+                if (callbackRootsReleased)
                 {
                     return false;
                 }
@@ -254,44 +256,98 @@ internal sealed class KiwiFaceGeometryTransactionService
             }
         }
 
-        internal bool ExitCallback()
+        internal bool ExitCallbackLifetime()
         {
             lock (callbackGate)
             {
+                if (activeCallbacks <= 0)
+                {
+                    throw new InvalidOperationException(
+                        "FaceGeometry callback lifetime counter underflow.");
+                }
+
                 --activeCallbacks;
-                if (
-                    !acceptingCallbacks &&
-                    activeCallbacks == 0)
-                {
-                    readyToDispose = true;
-                }
-
-                if (
-                    readyToDispose &&
-                    !cleanupPosted)
-                {
-                    cleanupPosted = true;
-                    return true;
-                }
-
-                return false;
+                return
+                    noFutureCallbacks &&
+                    activeCallbacks == 0 &&
+                    !callbackRootsReleased;
             }
         }
 
-        internal void RetireCallbacks()
+        internal void RetireResultPublication()
         {
             lock (callbackGate)
             {
-                acceptingCallbacks = false;
-                readyToDispose = activeCallbacks == 0;
+                resultPublicationAccepting = false;
             }
         }
 
-        internal bool IsReadyToDispose()
+        internal bool IsResultPublicationAccepting()
         {
             lock (callbackGate)
             {
-                return readyToDispose;
+                return resultPublicationAccepting;
+            }
+        }
+
+        internal bool TryBeginNativeGraphDestroy()
+        {
+            lock (callbackGate)
+            {
+                if (
+                    nativeGraphDestroyStarted ||
+                    !nativeGraphAlive ||
+                    callbackRootsReleased)
+                {
+                    return false;
+                }
+
+                nativeGraphDestroyStarted = true;
+                return true;
+            }
+        }
+
+        internal void MarkNativeGraphDestroyed()
+        {
+            lock (callbackGate)
+            {
+                if (
+                    !nativeGraphDestroyStarted ||
+                    !nativeGraphAlive ||
+                    callbackRootsReleased)
+                {
+                    throw new InvalidOperationException(
+                        "Invalid FaceGeometry native graph destruction transition.");
+                }
+
+                nativeGraphAlive = false;
+                noFutureCallbacks = true;
+            }
+        }
+
+        internal bool TryMarkCallbackRootsReleased()
+        {
+            lock (callbackGate)
+            {
+                if (
+                    callbackRootsReleased ||
+                    nativeGraphAlive ||
+                    !noFutureCallbacks ||
+                    activeCallbacks != 0)
+                {
+                    return false;
+                }
+
+                callbackRootsReleased = true;
+                return true;
+            }
+        }
+
+        internal bool AreCallbackRootsReleased()
+        {
+            lock (callbackGate)
+            {
+                return callbackRootsReleased;
             }
         }
     }
@@ -320,17 +376,10 @@ internal sealed class KiwiFaceGeometryTransactionService
     private static readonly CalculatorGraph.NativePacketCallback
         NativeOutputCallback = OnNativeOutput;
 
-    private static readonly SendOrPostCallback
-        RetiredRunCleanupCallback =
-            state =>
-                ((KiwiFaceGeometryTransactionService)state)
-                    .TryDisposeRetiredRun();
-
     private static int _nextStreamId;
 
     private readonly object _sync = new object();
     private readonly string _faceLandmarkerBundlePath;
-    private readonly SynchronizationContext _mainThreadContext;
 
     private byte[] _metadataBytes;
     private GraphRun _activeRun;
@@ -381,12 +430,6 @@ internal sealed class KiwiFaceGeometryTransactionService
         }
 
         _faceLandmarkerBundlePath = faceLandmarkerBundlePath;
-        _mainThreadContext = SynchronizationContext.Current;
-        if (_mainThreadContext == null)
-        {
-            throw new InvalidOperationException(
-                "FaceGeometry service requires the Unity main-thread context.");
-        }
     }
 
     internal bool AdmitAcceptedInferenceResult(
@@ -863,7 +906,7 @@ internal sealed class KiwiFaceGeometryTransactionService
                     _activeRun != null ||
                     _retiredRun != null)
                 {
-                    run.RetireCallbacks();
+                    run.RetireResultPublication();
                 }
                 else
                 {
@@ -876,7 +919,7 @@ internal sealed class KiwiFaceGeometryTransactionService
 
             if (run != null)
             {
-                StopAndDisposeRun(run);
+                DestroyGraphAndFinalize(run);
                 return false;
             }
 
@@ -886,8 +929,8 @@ internal sealed class KiwiFaceGeometryTransactionService
         {
             if (run != null)
             {
-                run.RetireCallbacks();
-                StopAndDisposeRun(run);
+                run.RetireResultPublication();
+                DestroyGraphAndFinalize(run);
                 run = null;
                 graph = null;
             }
@@ -937,7 +980,7 @@ internal sealed class KiwiFaceGeometryTransactionService
                 _inFlight = null;
             }
 
-            run.RetireCallbacks();
+            run.RetireResultPublication();
         }
 
         try
@@ -961,36 +1004,61 @@ internal sealed class KiwiFaceGeometryTransactionService
 
     private void TryDisposeRetiredRun()
     {
-        GraphRun run = null;
+        GraphRun run;
 
         lock (_sync)
         {
-            if (
-                _retiredRun == null ||
-                !_retiredRun.IsReadyToDispose())
+            run = _retiredRun;
+            if (run == null)
             {
                 return;
             }
-
-            run = _retiredRun;
-            _retiredRun = null;
         }
 
-        StopAndDisposeRun(run);
+        DestroyGraphAndFinalize(run);
     }
 
-    private static void StopAndDisposeRun(GraphRun run)
+    private void DestroyGraphAndFinalize(GraphRun run)
     {
-        try
+        // Result publication authority is retired independently from callback
+        // lifetime accounting. Callbacks may still enter while the native graph
+        // is alive, but they can no longer publish a completion.
+        run.RetireResultPublication();
+
+        if (run.TryBeginNativeGraphDestroy())
         {
-            run.graph.Cancel();
-        }
-        catch
-        {
+            try
+            {
+                run.graph.Cancel();
+            }
+            catch
+            {
+            }
+
+            // The installed wrapper returns from Dispose only after
+            // mp_CalculatorGraph__delete has returned. Callback registry state
+            // and the static delegate remain rooted throughout this call.
+            run.graph.Dispose();
+            run.MarkNativeGraphDestroyed();
         }
 
-        run.graph.Dispose();
-        UnregisterCallback(run.streamId, run);
+        TryFinalizeDestroyedRun(run);
+    }
+
+    private void TryFinalizeDestroyedRun(GraphRun run)
+    {
+        if (!TryReleaseCallbackRoots(run))
+        {
+            return;
+        }
+
+        lock (_sync)
+        {
+            if (ReferenceEquals(_retiredRun, run))
+            {
+                _retiredRun = null;
+            }
+        }
     }
 
     private void HandleNativeOutput(
@@ -1063,7 +1131,8 @@ internal sealed class KiwiFaceGeometryTransactionService
             if (
                 _shutdownRequested ||
                 _activeRun == null ||
-                _activeRun.runId != run.runId)
+                _activeRun.runId != run.runId ||
+                !run.IsResultPublicationAccepting())
             {
                 return;
             }
@@ -1097,6 +1166,7 @@ internal sealed class KiwiFaceGeometryTransactionService
         IntPtr packetPtr)
     {
         CallbackRegistration registration;
+        GraphRun run;
         lock (CallbackRegistryLock)
         {
             if (!CallbackRegistry.TryGetValue(
@@ -1106,16 +1176,22 @@ internal sealed class KiwiFaceGeometryTransactionService
                 return StatusArgs.NotFound(
                     "FaceGeometry callback registration is retired.");
             }
-        }
 
-        GraphRun run = registration.run;
-        if (!run.TryEnterCallback())
-        {
-            return StatusArgs.Ok();
+            run = registration.run;
+            if (!run.TryEnterCallbackLifetime())
+            {
+                return StatusArgs.NotFound(
+                    "FaceGeometry callback roots are released.");
+            }
         }
 
         try
         {
+            if (!run.IsResultPublicationAccepting())
+            {
+                return StatusArgs.Ok();
+            }
+
             registration.owner.HandleNativeOutput(
                 run,
                 graphPtr,
@@ -1129,11 +1205,9 @@ internal sealed class KiwiFaceGeometryTransactionService
         }
         finally
         {
-            if (run.ExitCallback())
+            if (run.ExitCallbackLifetime())
             {
-                registration.owner._mainThreadContext.Post(
-                    RetiredRunCleanupCallback,
-                    registration.owner);
+                registration.owner.TryFinalizeDestroyedRun(run);
             }
         }
     }
@@ -1148,20 +1222,29 @@ internal sealed class KiwiFaceGeometryTransactionService
         }
     }
 
-    private static void UnregisterCallback(
-        int streamId,
-        GraphRun run)
+    private static bool TryReleaseCallbackRoots(GraphRun run)
     {
         lock (CallbackRegistryLock)
         {
-            if (
-                CallbackRegistry.TryGetValue(
-                    streamId,
-                    out CallbackRegistration registration) &&
-                ReferenceEquals(registration.run, run))
+            if (!CallbackRegistry.TryGetValue(
+                    run.streamId,
+                    out CallbackRegistration registration))
             {
-                CallbackRegistry.Remove(streamId);
+                return run.AreCallbackRootsReleased();
             }
+
+            if (!ReferenceEquals(registration.run, run))
+            {
+                return false;
+            }
+
+            if (!run.TryMarkCallbackRootsReleased())
+            {
+                return false;
+            }
+
+            CallbackRegistry.Remove(run.streamId);
+            return true;
         }
     }
 
