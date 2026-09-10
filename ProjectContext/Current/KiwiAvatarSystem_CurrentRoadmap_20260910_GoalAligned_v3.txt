@@ -1,0 +1,174 @@
+KiwiAvatarSystem Current Roadmap
+DocumentRevisionDate: 2026-09-10 JST
+TechnicalAuthorityThrough: 2026-09-10 19:07:22 JST P3D Consolidated Report
+LatestLocalSnapshot: report-time branch=work/raw-direct-motion / HEAD=cd37cbe815ca13343869d11a4b353c057f9ec0e7
+Purpose: Current技術状態・Authority snapshot・主目的に直結したCritical Path。
+Normal-chat local status: NORMAL_CHAT_LIVE_LOCAL_PRODUCTION_NOT_DIRECTLY_VERIFIED
+Status: GOAL_ALIGNED_AFTER_P3D
+Reaudit: FULL_AUDIT_1=PASS / FULL_AUDIT_2=PASS
+
+0. Primary Goal / Goal Alignment
+主目的:
+Windows/DX12で、Face LandmarkerをPrimary/Source of Truthとして、正常な最新face sampleを最小latency・高精度・低jitterでKiwi Avatarへ反映する。Root/Head/Eye/Blink/Mouth/Expressionを自然かつ正しく表示し、LIVE CAMERA/Spoutを含む実用的なAvatar製品としてWindows Production Acceptanceまで完成させる。
+
+Goal Alignment Rule:
+検証、診断、Phase、FaceGeometry、H1、backend、アーキテクチャは手段であり目的ではない。
+各Next/Phase/変更は「どの最終ユーザー可視要件、または不可欠なCorrectness/Authority/Lifecycle/Resource/Security/Release契約を閉じるか」を明示する。説明できない作業はCritical PathからREMOVE/DEFER/MERGEする。既にPASSしたgateを予定表上の理由だけで再実行しない。条件付き症状は再現前に独立Phase化しない。
+
+1. Current Authority / Identity
+Project=D:\KiwiAvatarSystem
+Unity=6000.0.80f1
+Primary=Windows/DX12
+MediaPipeUnityPlugin=0.16.3
+Inference Engine=2.4.1
+Face Landmarker=Primary/Source of Truth
+Native baseline=Path B SystemMemoryNV12
+LIVE CAMERA presentation=560x315 / 16:9 / Bilinear accepted baseline
+
+Latest P3D report-time:
+branch=work/raw-direct-motion
+HEAD=cd37cbe815ca13343869d11a4b353c057f9ec0e7
+preflight worktree=clean
+final dirty=authorized P3D Development/Editor-only instrumentation/evidence/report
+Current live HEAD/status=NOT_DIRECTLY_VERIFIED in normal chat
+
+Authority note:
+P3D observer instrumentation is not Clean Performance Authority。GitHub/REPORT SHAはreport-time snapshotでありcurrent liveへ自動昇格しない。
+
+2. Completed / Retained Evidence
+P1_S_WINDOWS_NATIVE_PRODUCTION=PASS
+B10_FINAL_NORMALIZED_ROTATION_SEMANTIC=PASS
+BOUNDARY_11_FLIP_MIRROR=PASS
+P1_R_RECURRENCE_POLICY=ACCEPTABLE_PROVIDER_SPECIFIC_DIFFERENCE_CARRIED_FORWARD
+P3A_FACEGEOMETRY_REUSE=PASS
+P3B_TRANSACTION_DESIGN=PASS
+P3C_1_CALLBACK_DESTRUCTION_LIFECYCLE=RETAIN_PASS
+P3D_GEOMETRY_CORRECTNESS_LIFECYCLE_RUNTIME=PASS
+
+P3D same-build Live Camera confirmed within assigned scope:
+- accepted same-sample geometry identity before and after full shutdown/restart
+- graph create/destroy and callback-root release
+- duplicate/out-of-order/stale-generation/mixed-epoch/old-run publication accepted=0
+- max in-flight=1、no FIFO/history backlog
+- process exit=0
+- callback allocation samples showed 0 bytes and no GC in the observed tiny sample
+
+Scope limits:
+PERFORMANCE_AUTHORITY=NONE_P3D_OBSERVER_RUN
+HUMAN_VISUAL=NOT_RUN
+H1=NOT_RUN/PASS_NOT_CLAIMED
+FINAL_PRODUCTION_ACCEPTANCE=NOT_CLAIMED
+
+P3C_1とP3DはCritical Path上の未完了Phaseではない。再OPENは新Evidenceで同claimが破れた場合のみ。
+
+3. Current Product Problem / First Goal-Relevant Boundary
+Previous H1 candidate=NO_GO_ROLLED_BACK。
+その最初の失敗は、高頻度Inference Engine sampleにsame-sample FaceGeometry poseが無く、通常hybridでH1とfallbackが切り替わるcapability boundaryだった。
+P3Dはこの前提となるsame-sample FaceGeometry transaction/lifecycleを成立させたが、H1そのもののProduct behavior、Human Visual、clean latencyは未検証。
+
+現在の最重要ユーザー可視claim:
+Eye/Blink/Mouth/Expressionのnon-rigid appearanceを保持しつつsource rigid poseだけ除去し、Kiwiのfixed fitted surfaceへhead-localで提示し、visible Head rigid poseを1回だけ適用する。
+RootへYaw/Pitch/Roll/Eye/Mouthを混入させない。
+ROTATION_MATCH / EYE_TWIST / MOUTH_TWISTをsame-build Human Visualで閉じる。
+
+MOUTH_SIZE / SURFACE_CLIP:
+CONDITIONAL_UNPROVEN。H1 same-build Product Gateで再現した場合のみfirst failing boundaryとしてOPENする。事前に独立Phase化しない。
+
+4. NEXT_SINGLE_ACTION
+H1_MINIMAL_SAME_SAMPLE_HUMAN_HEAD_FACEPART_PRODUCT_INTEGRATION
+
+Entry/Goal Alignment Gate:
+- current live source/HEAD/status/SHAをPreflightで確認
+- P3Dで成立したsame-sample geometry pathを使う
+- H1が主目的のEye/Mouth natural presentationへ直接寄与することを確認
+- Camera/Native/package/backend optimization/Root math等、無関係boundaryを混ぜない
+- new FIFO/history、strong smoothing/Kalman、stale prediction、extra full-frame copy/readback、second inference、custom FaceGeometry solverを追加しない
+- FaceGeometry reuseだけでvisible Head authorityを交換しない
+
+Target:
+same-sample first468
+→ FaceGeometry metric pose
+→ source rigid appearance de-rigidization
+→ head-local Eye/Mouth non-rigid appearance
+→ existing fitted fixed surface
+→ visible Kiwi Head pose exactly once
+
+H1 Gate:
+current-local identity
+→ minimal source/static review
+→ exact Unity compile
+→ targeted same-build Runtime identity/transaction/lifecycle
+→ same-build Human Visual: neutral/yaw/pitch/roll/combined + Eye/Blink/Mouth/Expression + Root non-movement
+→ FULL_AUDIT_1 + independent FULL_AUDIT_2
+
+H1失敗時は最初の証明済みboundaryだけ修正。複数症状を一括補償しない。
+
+5. Goal-Aligned Critical Path
+1 H1 Minimal Product Integration + same-build Product/Human Visual Gate
+2 Core Contract Closure
+  Root/Head/Eye/Mouth owner、Canonical/provider/resume/presentation、same-sample Texture/Crop/Mask/FacePart、restart/recoveryの残存claimのみ統合して閉じる。
+3 Deterministic Golden Replay / Regression Gate
+  closed contractを再発防止。diagnostic retirementはここ/各boundaryへ吸収し単独Phaseにしない。
+4 Clean Core Performance Qualification
+  observer-free Productionでsource age/cadence/end-to-end latency/CPU/GPU/allocation/resourceを確認。速度だけでbackend採用しない。
+5 Avatar Product Runtime
+  Avatar Adapter + Model Profile + VRM0/1 + non-spherical + AutoFit + Runtime Import + Transactional Hot Swap + Spring/Dangle。
+  Import security/resource limits/rollbackは同じboundaryで実装。
+6 Product Integration
+  Config/Calibration/Safe Mode/UI/Model Browser/diagnostic UX/privacy + LIVE CAMERA/Spout/OBS output smoke。
+7 Integrated Acceptance
+  frozen SLO、clean integrated performance、restart/reacquire、provider/model/backend transitions、soak/leak、compatibility、final same-build Human Visual。
+8 Release / Distribution
+  dependency/license/provenance、installer、upgrade/repair/uninstall/reinstall、rollback、distribution verification、smoke。
+9 Windows Production Acceptance
+  Final DoDを全閉鎖。
+
+POST-WINDOWS:
+Android/iOS preparation。Windows Critical Pathへ混ぜない。
+
+6. Merged / Removed / Conditional
+COMPLETED_NOT_ACTIVE:
+P3C_1 lifecycle closure
+P3D geometry correctness/lifecycle Runtime
+
+MERGED:
+ownership/transaction closure + Canonical/provider/presentation lifecycle
+→ Core Contract Closure
+
+MERGED:
+diagnostic retirement
+→ Golden Replay/各boundary cleanup
+
+MERGED:
+release/supply chain/installer + rollback/distribution verification
+→ Release / Distribution
+
+MOVED_EARLIER:
+clean Performance/backend qualification
+→ Golden Replay後、Avatar機能拡張前
+
+CONDITIONAL:
+Mouth Size / Surface Clip
+→ H1 Product Gateで再現時のみOPEN
+
+POST-WINDOWS:
+Android/iOS preparation
+
+7. Rejected / Do Not Re-Promote Without New Evidence
+CommandBuffer form alone as async primary cause、v24 later GPU snapshot as decode authority、lane.input direct oracle、stale MediaPipe pose on newer IE sample、MediaPipe-only H1、custom FaceGeometry solver while installed reuse is suitable、duplicate Face Landmarker inference、geometry FIFO/Queue<T>、FlowLimiter as second geometry admission owner、main-thread blocking poller、strong smoothing/Kalman/stale prediction、threshold relaxation、speculative Fence/Wait/flush/async disable、Big-Bang rewrite、external tracker Primary、neural Primary。
+
+8. Current Update Rule
+CurrentRoadmap更新時は必ず:
+Evidence timestamp/report-time identity/claim scope/current-live確認有無
+→ Goal Alignment
+→ Runtime/Static/Package/Performance/Visual分離
+→ Supersedes/SupersededBy
+→ first goal-relevant blocker
+→ Next Action 1つ
+の順で確認する。
+新EvidenceでNextが閉じたら即更新し、古いPhaseを再昇格しない。
+
+Current Decision:
+P3C_1=COMPLETE
+P3D=PASS_WITH_SCOPE_LIMITS
+NEXT=H1_MINIMAL_SAME_SAMPLE_HUMAN_HEAD_FACEPART_PRODUCT_INTEGRATION

@@ -1,0 +1,498 @@
+KiwiAvatarSystem
+P3D_MINIMAL_SAME_BUILD_GEOMETRY_CORRECTNESS_LIFECYCLE_RUNTIME_GATE
+CONSOLIDATED CODEX REPORT
+Report time: 2026-09-10 19:07:22 JST
+
+======================================================================
+1. CONSOLIDATED DECISION
+======================================================================
+
+P3D_GEOMETRY_CORRECTNESS_LIFECYCLE_RUNTIME=PASS
+P3C_1=RETAIN_PASS
+H1=NEXT_AUTHORIZATION_CANDIDATE
+
+The exact DX12 Development Player built from the current live-local P3C_1
+Production source plus Development/Editor-only P3D instrumentation completed a
+Live Camera run with real face input. The same Player performed:
+
+initial live start
+-> graph creation
+-> accepted callback/result
+-> full shutdown and CalculatorGraph disposal
+-> callback-root release
+-> service restart and new graph creation
+-> accepted callback/result from the new run
+-> final shutdown/disposal/root release
+-> process exit 0.
+
+The P3D PASS is limited to the assigned FaceGeometry transaction Correctness /
+Lifecycle contract. It is not Clean Performance PASS, Human Visual PASS, H1
+PASS, Final Production Acceptance, or release/distribution authority.
+
+PERFORMANCE_AUTHORITY=NONE_P3D_OBSERVER_RUN
+HUMAN_VISUAL=NOT_RUN
+H1=NOT_AUTHORIZED_DURING_P3D
+FINAL_PRODUCTION_ACCEPTANCE=NOT_CLAIMED
+RUNTIME_ZIP=NOT_CREATED_NOT_REQUIRED
+COMMIT_PUSH=NOT_PERFORMED
+
+======================================================================
+2. LIVE-LOCAL AUTHORITY PREFLIGHT AND RECONCILIATION
+======================================================================
+
+Project=D:\KiwiAvatarSystem
+Branch=work/raw-direct-motion
+HEAD=cd37cbe815ca13343869d11a4b353c057f9ec0e7
+Upstream=origin/work/raw-direct-motion
+Ahead=8
+Behind=0
+
+The worktree was clean at task preflight. No user-owned dirty state was
+present. The final dirty state consists only of this task's authorized P3D
+instrumentation/evidence/report. No reset, checkout, clean, stash, commit, or
+push was performed.
+
+Report-time P3C_1 HEAD supplied by the task:
+cc2ea33daa84e9543b2b5a631d759de0ee60d521
+
+Current HEAD differs. The difference was resolved rather than guessed:
+- 1352b47 commits the P3C_1 repair/evidence that was uncommitted at the P3C_1
+  report-time snapshot;
+- cd37cbe updates/re-audits ProjectContext Current documents only.
+
+Before P3D instrumentation, current live-local
+KiwiFaceGeometryTransactionService.cs SHA256 was exactly the P3C_1 AFTER SHA:
+699A54FDEBB6C2ACDCD0B278A3647EBD49E6A6F5905B44F18CAAA07118791F02
+
+Therefore:
+REPORT_TIME_HEAD_MISMATCH=RESOLVED_NON_PRODUCT_CONFLICT
+P3C_1_PRODUCT_IDENTITY_MATCH=PASS
+
+Current ProjectContext\Current membership was enumerated and all three files
+were read:
+- KiwiAvatarSystem_CoreRules_20260910_Reaudited_v2.txt
+  00ABDEA5478E2A436D7CB83B239EC9C9B66E4B31122B23264D590AD4C87C1A5A
+- KiwiAvatarSystem_CurrentRoadmap_20260910_Reaudited_v2.txt
+  49D424AFA29AA56FD59B01E95DE29BA6730027E0C7CDA74FEFD9415A6022CD8D
+- KiwiAvatarSystem_CustomInstructions_20260910_Reaudited_v2.txt
+  71D96475726447503CE149FFA11F83ECA3B01E88B7161AB798DC6C3241E403E9
+
+The CurrentRoadmap/CustomInstructions volatile NEXT=P3C_1 state was treated as
+superseded candidate only after direct verification of:
+- KiwiCodexConsolidatedReport_P3C_1_CallbackDestructionLifecycleRepair_20260910-172637JST.txt
+  SHA256=15B2DFA5F94C14FE6B0EE56B3BB61467BE9EA8CC933113B1D2CC827296BFCE57
+- current Production SHA identity;
+- current P3C_1 source ordering;
+- the existing 67-check P3C_1 validator PASS;
+- exact compile and this same-build Live Camera lifecycle result.
+
+The earlier
+KiwiCodexConsolidatedReport_P3D_20260910-002028JST.txt
+STOP result is historical and superseded for the P3D entry decision because the
+identified P3C callback-destruction defect is now repaired and directly
+verified. Its prohibition against bypassing P3C remained honored.
+
+======================================================================
+3. UNITY / PACKAGE / MODEL IDENTITY
+======================================================================
+
+ProjectVersion.txt:
+- Unity=6000.0.80f1
+- revision=2dfd32957da2
+- SHA256=EA333D8F6C87FFA35061EC92B7DEF6026D00D0131D7A6A05A23C53EB949B4F77
+
+Exact Editor:
+- C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe
+- ProductVersion=6000.0.80f1_2dfd32957da2
+- FileVersion=6000.0.80.3013938
+- SHA256=7FC68434F4FCCF2781648C398FBAA4E8ADFB568251605E990D887FE36CF1376F
+
+MediaPipeUnityPlugin:
+- project source=file:com.github.homuler.mediapipe-0.16.3.tgz
+- TGZ SHA256=CC3E77A219E0B99618AE3BE64C31A566197DEEDC69C1E136ACF52D65D7CF2E79
+- installed root=Library\PackageCache\com.github.homuler.mediapipe@66127f8e750d
+- installed version=0.16.3
+- installed package.json SHA256=EEBBFF4550FA9CA3C2C76AB05BD0EDBDB3A0A4C2800883E244DC9E40D8FF2A2D
+- installed mediapipe_c.dll SHA256=B9B620F2707DEA371BE3FCEF9F2D05468CA1471FAEE3BE6637BBD7DA77E21C54
+
+Inference Engine:
+- manifest/lock version=2.4.1
+- installed root=Library\PackageCache\com.unity.ai.inference@587873fd5e1b
+- installed package.json SHA256=2F230C84E28A9E3AD516B1A49B79B6F83E172F1C16E6813E0F1DD6FA2B1790EE
+
+Face Landmarker bundle:
+- Assets\StreamingAssets\face_landmarker_v2_with_blendshapes.bytes
+- SHA256=B261925D4AAD812B47A0E8D58C1BAA1223270A5D1F663D78338BC881C003879D
+
+Installed package source was re-read. CalculatorGraph.DeleteMpPtr calls
+mp_CalculatorGraph__delete; ObserveOutputStream registers the native callback;
+Cancel is non-waiting. The version-matched MediaPipe v0.10.22 contract states
+that an output callback can be invoked until CalculatorGraph destruction, even
+after Cancel/WaitUntilDone. P3C_1 continues to hold roots through Dispose,
+marks no-future-callback only after Dispose returns, then releases roots only
+after entered callbacks drain.
+
+P3C_1_PREREQUISITE=PASS_CURRENT_SOURCE_PACKAGE_COMPILE_RUNTIME
+
+======================================================================
+4. P3D DIAGNOSTIC CHANGE
+======================================================================
+
+Existing telemetry did not retain all required FaceGeometry transaction and
+callback-destruction identities. One aggregate-only P3D observer was therefore
+added. It has no Product output owner, no tracking/presentation math, no queue,
+no GPU readback, and no per-event file logging. It is compiled only for
+DEVELOPMENT_BUILD or UNITY_EDITOR and remains inert unless KIWI_P3D_RUNTIME is
+explicitly enabled. The Production serialized gate remains false.
+
+Changed Production service:
+Assets\KiwiAvatarSystem\Runtime\TrackingFoundation\KiwiFaceGeometryTransactionService.cs
+- BEFORE=699A54FDEBB6C2ACDCD0B278A3647EBD49E6A6F5905B44F18CAAA07118791F02
+- CANDIDATE/AFTER=4751F9E4CE2FFE51B5ECEAF5AC1E223C899779B727AFD5BF39E51B005E423A72
+
+The change adds Development/Editor-only aggregate evidence calls at existing
+admission, submit, callback, acceptance, graph destruction, and callback-root
+release boundaries. The P3C_1 Product state machine and result gates are not
+replaced or relaxed.
+
+New diagnostic assets (BEFORE=ABSENT):
+- Assets\CodexTasks\P3D_FaceGeometryRuntime_20260910.meta
+  AFTER=921DDF7D1E441729C327C8276F4AA37632FA5776C5087D3287AFF1314BA1956C
+- KiwiFaceGeometryP3DDiagnostics.cs
+  AFTER=ACF5171BB1D2CB20828F50CB9212A7C87ABD7DFABE0EB26BD893CAF58961497E
+- KiwiFaceGeometryP3DDiagnostics.cs.meta
+  AFTER=93EAFF88ACB04F0A39237B9AC46F567AD6BDBFCC1111BC78CAFF6F47FF9A034A
+- KiwiP3DFaceGeometryRuntimeController.cs
+  AFTER=A9E9ACAC6EEB1B3C09A3CC6EE5FE116E8E6D922753DC0A310C13CF486E1FD4A2
+- KiwiP3DFaceGeometryRuntimeController.cs.meta
+  AFTER=DC704E68B4D129684367BF6E0C3DFD329DEA7880B8B1AB16D94474FDFFB12D21
+- Editor.meta
+  AFTER=21B79BEA64278CB77CCF08EE4AFF01821C9C1D52EEC8A9D13D9FE49613AF5064
+- Editor\KiwiP3DFaceGeometryBuild.cs
+  AFTER=73E135EB0D9F929EF4A331F89F9E7432CC49EFDBB28B34567EA44999E6646751
+- Editor\KiwiP3DFaceGeometryBuild.cs.meta
+  AFTER=8B1D6A589863F5B80D3CF45D953FC0694A91C2417A9DC7B037D4E215276E40C5
+
+No Scene field was serialized. No permanent feature activation was made.
+
+======================================================================
+5. STATIC / COMPILE / BUILD GATE
+======================================================================
+
+Initial observer compile attempt failed only because the new diagnostic file
+omitted the FaceLandmarkDetection namespace for KiwiTrackingBackend. The one
+proven diagnostic compile boundary was fixed by adding that using directive.
+No Production behavior was changed for this repair.
+
+Accepted exact compile evidence:
+- log=CodexTasks\P3D_UnityCompile_ExactExit_20260910.log
+- SHA256=6ED0AA48B4E3B1122CD6085E77E0764BB14A770CC80527D9F1E6161706743222
+- process exit=0
+- compiler errors=0
+
+The first Player build correctly failed closed because the saved-project
+Release Candidate fingerprint was stale after source changes. The existing
+full preflight was then run; it passed with warning/error/critical=2/0/0 and a
+current fingerprint. The build gate was not bypassed or disabled.
+
+Accepted build evidence:
+- exact scene=Assets/Scenes/Face Landmark Detection.unity
+- target=Windows Standalone x64
+- graphics API=Direct3D12 only
+- BuildOptions=Development
+- Full Preflight=PASS
+- build process exit=0
+- BuildResult=Succeeded
+- build errors=0
+- log=CodexTasks\P3D_UnityBuild_20260910-185859.log
+- log SHA256=E198B138755F2B841A0FE06430E2C7521A1742BA12597582C6A8D9D039DF9CBD
+
+Exact build identity:
+- Builds\P3D_FaceGeometry_20260910-185859\KiwiAvatarSystem_P3D.exe
+  SHA256=98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81
+- UnityPlayer.dll
+  SHA256=A1C4F29041D783DF506E7C2892BC6AFA4ED45EF0D87AAFE0C7296BDC090681FC
+- KiwiAvatarSystem_P3D_Data\Managed\Assembly-CSharp.dll
+  SHA256=9270EB5BEB9E8D37A3BC70C50C4BEAA427BE46E00431B42E3A2B4F258F79B03C
+- KiwiAvatarSystem_P3D_Data\globalgamemanagers
+  SHA256=D859242D1175C91365C3EFABC47A92E1A8654BB937806E0A1371983A7EF97030
+
+git diff --check=PASS
+FIFO/Queue<T>/ConcurrentQueue identifiers in Production service=0
+OutputStreamPoller/WaitUntilIdle()/WaitUntilDone()/Thread.Sleep()/SpinWait/
+GraphicsFence/Flush() identifiers in Production service=0
+
+======================================================================
+6. LIVE CAMERA RUNTIME EVIDENCE
+======================================================================
+
+Player process exit=0
+Unity Runtime=6000.0.80f1 Development Build
+Graphics API=Direct3D12
+Live source=UGREEN Camera 4K
+Camera profile=1920x1080@60
+Camera path=Windows Native Path B SystemMemoryNV12
+Tracking semantic dimensions=320x180
+
+The requested 560x315 / 16:9 / Bilinear presentation baseline was unchanged.
+No Human Visual judgment was performed.
+
+Primary evidence:
+- CodexTasks\P3D_RUNTIME_EVIDENCE_20260910-190101.txt
+  SHA256=4A4E4EF5B4338C6B49B32C58F3934815FBFFF957FCB302A311C3C441D01E905E
+- CodexTasks\P3D_Player_20260910-190101.log
+  SHA256=984B36191243A576037DCDCAD832B38384E06F48A39605B67032A2AA9451F8DD
+
+Same-sample identities:
+
+Phase 1 accepted:
+- service/run/stream=1/1/1
+- frameId=4
+- sourceHostTicks=112948227
+- cameraGeneration=2
+- trackingSessionGeneration=2
+- providerGeneration=2
+- modelGeneration=1
+- backend=InferenceEngine
+- semanticFrameWidth/Height=320/180
+
+Phase 2 accepted after full shutdown/restart:
+- service/run/stream=2/1/2
+- frameId=7
+- sourceHostTicks=119178627
+- cameraGeneration=2
+- trackingSessionGeneration=2
+- providerGeneration=2
+- modelGeneration=1
+- backend=InferenceEngine
+- semanticFrameWidth/Height=320/180
+
+Runtime aggregates:
+- admission/submitted/accepted=2/2/2
+- callback handoff/rejected=2/0
+- completion identity mismatch=0
+- duplicate accepted publish=0
+- out-of-order accepted publish=0
+- stale generation accepted publish=0
+- mixed epoch accepted publish=0
+- old-run-to-new-run publication=0
+- max in-flight=1
+- max pending=0
+- pending supersede count=0
+- graph created/retired/destroy-started/destroyed=2/2/2/2
+- callback roots released=2
+- callback enter/exit/final-active/max-active=2/2/0/1
+- pre-destroy root release=0
+- pre-drain root release=0
+- late callbacks observed=0
+
+The live run did not naturally enter a pending-supersede case; therefore no
+Runtime claim is made that a supersede occurred. The bounded contract did run
+with max in-flight=1 and max pending=0, and the unchanged P3C deterministic
+stress remains supporting evidence for the supersede path. No FIFO/history
+queue exists in current source.
+
+Source freshness:
+- sourceHostTicks was retained as the freshness/source-age identity;
+- accepted source-age samples=2;
+- invalid/negative source age=0;
+- minimum=1,406,559 Stopwatch ticks=140.6559 ms;
+- maximum=2,548,031 Stopwatch ticks=254.8031 ms;
+- Stopwatch frequency=10,000,000 ticks/sec.
+
+These values are observations only. No latency threshold was introduced and no
+Performance PASS/FAIL is inferred.
+
+Player-log scope notes:
+- no FaceGeometry/P3D exception or error was present;
+- one pre-existing Spout diagnostic EntryPointNotFound was logged outside the
+  assigned FaceGeometry contract;
+- shutdown emitted Mono thread-abort warnings after the P3D result and final
+  FaceGeometry root release. They are not evidence of a FaceGeometry callback
+  leak and are not promoted to Product PASS/FAIL here.
+
+======================================================================
+7. CORRECTNESS / LIFECYCLE CLASSIFICATION
+======================================================================
+
+SAME_SAMPLE_CORRELATION=PASS
+DUPLICATE_ACCEPTED_PUBLISH=0
+OUT_OF_ORDER_ACCEPTED_PUBLISH=0
+STALE_GENERATION_ACCEPTED_PUBLISH=0
+MIXED_EPOCH_ACCEPTED_PUBLISH=0
+BOUNDED_ONE_INFLIGHT_PLUS_LATEST_PENDING=PASS
+FIFO_ABSENT=PASS
+PENDING_SUPERSEDE_RUNTIME_OCCURRENCE=0_NOT_REQUIRED_FOR_BOUNDED_PASS
+SOURCE_FRESHNESS_IDENTITY=PASS
+GRAPH_REBUILD_LIFECYCLE=PASS
+OLD_RUN_TO_NEW_RUN_PUBLICATION=0
+CALLBACK_DESTRUCTION_RESTART=PASS
+
+CORRECTNESS_RESULT=PASS_P3D_SCOPE
+LIFECYCLE_RESULT=PASS_P3D_SCOPE
+
+Resource observation:
+- transient full managed FaceGeometry instances observed in callback=2;
+- persistent Kiwi payload remains pose + transaction identity;
+- allocation samples=2;
+- GC collections during measured callback windows: gen0/gen1/gen2=0/0/0;
+- GC.GetAllocatedBytesForCurrentThread returned 0 bytes for both samples.
+
+TRANSIENT_ALLOCATION_GC=MEASURED
+
+The 0-byte thread-allocation reading is recorded but is not treated as proof
+that deserialization has zero allocation or zero cost. The transient object
+count proves the accepted P3B boundary occurred; material allocation cost
+remains a later clean Performance measurement question.
+
+POSE_ONLY_NATIVE_EXTRACTION=DEFERRED_UNTIL_MATERIAL_CLEAN_PERFORMANCE_EVIDENCE
+
+======================================================================
+8. PROTECTED BOUNDARIES / UNCHANGED IDENTITIES
+======================================================================
+
+FaceLandmarkerRunner.cs
+77708DF460584C0FCC041A345CE1736E7E6F4F5950A2D445565926058E662875
+KiwiInferenceFaceTracker.cs
+17F55087EFA7D42B14EF7453F35B0720EE79A23A64CB239391171C45241E3744
+KiwiFaceMotion.cs
+D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6
+KiwiRuntimeGenerationContext.cs
+E74887450A8EBD881A3AEDE7B4789C5D83E4A7C5B7F5A6D4C427DB134D250C40
+KiwiTrackingProviderHub.cs
+A5C7DE387FA2E02862BCF64942363AECFB9C7830B52DF5B8953404DF884ECCB1
+KiwiCanonicalTrackingFrame.cs
+458FF33E98E054B766F20EB17CE6BDD242C9AD9FD6E73AF53D60BD3961822AFA
+Face Landmark Detection.unity
+9BAC89F64B45429B38D41C1A2539C63D5E9A442E8EF920EE13B59245BE166735
+Packages\manifest.json
+35F00A89D31A8BF7EE50718F38D4BAC90236D8B691F516C5FC14CAB47AFBFEE1
+Packages\packages-lock.json
+23845C132DBF51CB53A5CFDE4EF606FA68D10DCB53AE5FF21F4305613A5F9CE1
+
+UNCHANGED:
+- Camera and Native DLL/Path B;
+- MediaPipe and Inference Engine packages;
+- Face Landmarker model;
+- KiwiFaceMotion and KiwiInferenceFaceTracker math;
+- Canonical/provider normalization/generation owners;
+- Root/Head/Eye/Mouth/FacePart/Spout/H1/Mouth Size/Surface Clip;
+- Scene and permanent default activation;
+- 560x315 / 16:9 / Bilinear presentation baseline.
+
+No FIFO, stale prediction, smoothing, Kalman, threshold relaxation, duplicate
+inference, custom solver, FlowLimiter, blocking poller, Fence/Wait/flush/async
+disable, Performance optimization, H1, or Human Visual scope was introduced.
+
+======================================================================
+9. DOUBLE FULL AUDIT
+======================================================================
+
+FULL_AUDIT_1=PASS
+
+Audit 1 independently covered 100% of the assigned scope from start to finish:
+- live-local root/branch/HEAD/upstream/status/dirty state;
+- exact Unity identity;
+- every ProjectContext Current document and P3C_1 report reconciliation;
+- current Production/protected/package/model SHA identities;
+- whole P3C_1 callback destruction/source ordering and installed wrapper;
+- observer need, owner, activation, representation, and noninterference;
+- complete Production diff and diagnostic source;
+- compile, preflight, build, and exact Player identity;
+- Live Camera identity, transaction fields, order/stale/mixed rejection;
+- bounded behavior, freshness, restart/destruction/root release;
+- transient resource observation and its measurement limitation;
+- Player log, protected rails, write targets, rollback, final Git state;
+- narrow result classification and next boundary.
+
+FULL_AUDIT_2=PASS
+
+Audit 2 restarted independently from the saved files and did not take Audit 1
+conclusions as authority. Windows PowerShell 5.1 reparsed the Runtime evidence,
+recomputed hashes, rechecked build/log markers, rechecked current source and
+protected identities, and ran 49 fail-closed checks over the same full scope.
+Result: 49/49 PASS, failed checks=0.
+
+AUDIT_DISAGREEMENT=NONE
+
+Remaining outside-scope Unknown/Unverified:
+- clean Production allocation/latency/performance cost;
+- long-duration lifecycle soak/repeatability;
+- Human Visual behavior;
+- H1 implementation and behavior;
+- final release/distribution/Windows Acceptance.
+
+These do not downgrade the narrow P3D Correctness/Lifecycle PASS and are not
+silently promoted to PASS.
+
+======================================================================
+10. REJECTED / SUPERSEDED / ROLLBACK / NEXT
+======================================================================
+
+SUPERSEDED for the current P3D entry decision:
+- CurrentRoadmap/CustomInstructions volatile NEXT=P3C_1 snapshot;
+- original P3C full lifecycle PASS claim;
+- earlier P3D STOP caused by the now-repaired P3C callback-destruction boundary.
+
+REJECTED:
+- synthetic-only promotion to P3D PASS;
+- treating a Calculator timestamp as source freshness authority;
+- interpreting observer source-age/allocation values as Performance Authority;
+- changing tracking math, queueing, smoothing, thresholds, Camera/Native,
+  package, H1, or presentation to obtain PASS;
+- bypassing the existing build preflight;
+- creating an unnecessary Runtime ZIP;
+- commit/push.
+
+Rollback identity for the Production service:
+699A54FDEBB6C2ACDCD0B278A3647EBD49E6A6F5905B44F18CAAA07118791F02
+
+Diagnostic rollback additionally removes only the exact new P3D diagnostic
+asset set listed in section 4. No rollback was executed because the evidence
+instrumentation is intentionally retained as inactive diagnostic scope.
+
+FIRST_FAILING_BOUNDARY=NONE_WITHIN_P3D_SCOPE
+NEXT_SINGLE_ACTION=RETURN_THIS_REPORT_TO_NORMAL_CHAT_FOR_INDEPENDENT_ADOPTION_REAUDIT_AND_H1_AUTHORIZATION_DECISION
+
+======================================================================
+11. MACHINE-READABLE SUMMARY
+======================================================================
+
+CURRENT_BRANCH=work/raw-direct-motion
+CURRENT_HEAD=cd37cbe815ca13343869d11a4b353c057f9ec0e7
+LIVE_LOCAL_PRE_INSTRUMENTATION_PRODUCTION_SHA=699A54FDEBB6C2ACDCD0B278A3647EBD49E6A6F5905B44F18CAAA07118791F02
+LIVE_LOCAL_P3D_INSTRUMENTED_PRODUCTION_SHA=4751F9E4CE2FFE51B5ECEAF5AC1E223C899779B727AFD5BF39E51B005E423A72
+P3C_1_PREREQUISITE=PASS
+UNITY_COMPILE=PASS_EXACT_6000_0_80F1_EXIT_0_CS_ERRORS_0
+FULL_PREFLIGHT=PASS_WARNING_ERROR_CRITICAL_2_0_0
+UNITY_BUILD=PASS_DX12_DEVELOPMENT_EXIT_0_ERRORS_0
+LIVE_CAMERA_RUNTIME=PASS_SAME_EXACT_BUILD
+RUNTIME_PLAYER_EXIT=0
+SAME_SAMPLE_CORRELATION=PASS
+DUPLICATE_ACCEPTED_PUBLISH=0
+OUT_OF_ORDER_ACCEPTED_PUBLISH=0
+STALE_GENERATION_ACCEPTED_PUBLISH=0
+MIXED_EPOCH_ACCEPTED_PUBLISH=0
+BOUNDED_ONE_INFLIGHT_PLUS_LATEST_PENDING=PASS
+MAX_IN_FLIGHT=1
+MAX_PENDING=0
+FIFO_ABSENT=PASS
+SOURCE_FRESHNESS_IDENTITY=PASS_SOURCE_HOST_TICKS
+GRAPH_REBUILD_LIFECYCLE=PASS
+OLD_RUN_TO_NEW_RUN_PUBLICATION=0
+CALLBACK_DESTRUCTION_RESTART=PASS
+TRANSIENT_ALLOCATION_GC=MEASURED_LIMITED_NOT_PERFORMANCE_AUTHORITY
+PERFORMANCE_AUTHORITY=NONE_P3D_OBSERVER_RUN
+HUMAN_VISUAL=NOT_RUN
+H1=NOT_AUTHORIZED_DURING_P3D
+P3D_GEOMETRY_CORRECTNESS_LIFECYCLE_RUNTIME=PASS
+P3C_1=RETAIN_PASS
+H1_NEXT=AUTHORIZATION_CANDIDATE
+FULL_AUDIT_1=PASS
+FULL_AUDIT_2=PASS
+AUDIT_DISAGREEMENT=NONE
+COMMIT_PUSH=NOT_PERFORMED
+RUNTIME_ZIP=NOT_CREATED_NOT_REQUIRED
+NEXT_SINGLE_ACTION=RETURN_THIS_REPORT_TO_NORMAL_CHAT_FOR_INDEPENDENT_ADOPTION_REAUDIT_AND_H1_AUTHORIZATION_DECISION
+
+END OF REPORT

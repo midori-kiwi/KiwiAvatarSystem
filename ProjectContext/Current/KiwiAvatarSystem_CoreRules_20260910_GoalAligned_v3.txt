@@ -1,0 +1,51 @@
+KiwiAvatarSystem Core Rules
+Updated: 2026-09-10 JST
+Purpose: 基本的に変更しないProject-level契約・設計原則。Current状態、SHA、Phase、Next Actionは本ファイルへ入れない。
+Status: DURABLE_BASELINE / PRIMARY_GOAL_ALIGNED
+
+0. Primary Goal / Goal Alignment
+主目的は、Windows/DX12を第一対象として、Face LandmarkerをPrimary/Source of Truthに、正常な最新face sampleを最小latency・高精度・低jitterでKiwi Avatarへ反映し、Root/Head/Eye/Blink/Mouth/Expressionを自然かつ正しく表示し、LIVE CAMERA/Spoutを含む実用的なAvatar製品を完成させること。
+検証、診断、Phase完遂、特定技術の採用、アーキテクチャ整理は目的ではなく手段。各調査・設計・変更・検証・新Phaseは、(a)最終ユーザー可視要件、または(b)不可欠なCorrectness/Authority/Lifecycle/Resource/Security/Release契約のどれに直接寄与するかを明示する。説明できない作業はCritical Pathへ置かず、DEFER/REMOVE/MERGEする。
+Roadmap上に存在すること自体を実行理由にしない。各boundary開始時にGoal Alignmentを再確認し、既に閉じたclaimを再実行しない。技術的に興味深くても主目的に不要ならProductionへ追加しない。新しいowner/state/copy/queue/readback/thread/process hop/latencyを恒久追加する場合は、主目的への利益がそのcostとriskを上回るEvidenceを要求する。
+最終品質を下げるための簡略化は禁止。ただし同じ保証を少ない責務・少ないowner・少ない強いGateで得られる場合は簡素化を優先する。
+
+1. Authority / 時系列
+Claim-Scoped Authority。Implementation=current local Production source+SHA、Runtime=same-build/same-Production、Package=実使用Package Source、Performance=clean Production benchmark、Visual=same-build Human review。通常Chatがlive localを直接確認できない時はNORMAL_CHAT_LIVE_LOCAL_PRODUCTION_NOT_DIRECTLY_VERIFIED。Codex REPORTのSHA/HEADはreport-time snapshotで現在へ自動昇格しない。GitHub remote/mainがlocalより古ければProduction Authorityにしない。EXE/DLL SHA単独をsource/build reproducibility Authorityにしない。SHA推測禁止。Unknown!=PASS、Unknown!=Failure。Observer/Validator/Benchmark/REPORT自身も監査対象。
+時系列もAuthorityの一部。新Evidenceが旧Current/Next/SHAをSupersedeしたら再昇格しない。ChatReport=履歴、CurrentRoadmap=現在状態、CoreRules=恒久契約。
+
+2. 開発原則
+正常なProductionを理由なく再設計しない。変更前にcurrent local source/Runtime、実Package Source、official Source/docs、類似OSS/公開商用方式をclaim単位で比較し、correctness/latency/authority/transaction/lifecycle/resource/rollbackを評価。証明済みfirst boundaryだけ最小修正し、複数unknownを同時修正しない。前提/identity/proxy/observer/validator/benchmark defectなら測定設計まで戻る。Big-Bang rewrite、external tracker Primary置換、Neural replacement Primary化=REJECT。外部流用=SELECTIVE/EVIDENCE-GATED、採用時は旧owner retire。
+
+3. Tracking / Transaction
+Face Landmarker=Primary/Source of Truth。正常sampleを最小latencyでAvatarへ届け、異常sample/transition/presentation破綻だけ局所抑制。latest-frame、persistent ROI、bounded/nonblocking lanes、freshness/liveness/source age分離。FIFO、stale queue、permanent frame buffer、stale prediction、strong smoothing/Kalman、根拠なきthreshold緩和禁止。Camera/Inference/Presentation問題をtracking mathで隠さない。
+Root/Head/Eye/Mouth分離、Head=single rigid authority。Yaw/Pitch/RollやBlink/Mouth/EyeをRoot translationへ混入しない。Provider normalization owner=1、Resume!=Provider Switch、Temporal Presentation owner=1/channel、Prediction owner=1/channel。duplicate/out-of-order/stale/mixed epoch publish禁止。Texture/Crop/Mask/FacePart=same-sample transaction。model-specific処理はTracking Core外。
+
+4. Human-Head FacePart
+Kiwi=変形しない剛体の人間頭部。Eye/Mouthのnon-rigid表情は残しsource rigid poseだけ除去→head-local/canonical appearance→existing fitted fixed surface→visible Kiwi Head rigid poseを1回適用。source appearance de-rigidization referenceとvisible Head authorityは別責務。billboard、2D facial 4x4 inverse UV、model deform補償をProduction解にしない。
+
+5. Native / Inference
+Windows/DX12優先。Native baselineは新Evidenceで置換されるまでPath B SystemMemoryNV12。fixed Unity-visible texture identity、session epoch!=frame sequence、latest/nonblocking。UpdateExternalTexture、IMFSample跨ぎ保持、FIFO/stale蓄積、D3D12 blocking Wait、rotating visible texture、D3D11On12 1080p禁止。Fence/queue flush/async disableはcausal boundary証明なしにProductionへ入れない。Native変更はsource→build definition/toolchain/flags→artifact→installed SHA→Runtimeで追う。速度だけでbackend採用しない。KiwiFaceMotion/KiwiInferenceFaceTrackerをcamera/display workaroundにしない。
+
+6. Validation / Audit
+Static/Package Sourceで閉じるclaimをRuntime化しない。Change-Local Gate、Contract Gate、Milestone Full Product Gateへ集約し、同claim多重observer、superseded diagnostic、毎version Full Runtime/Human Visualを削減。
+Final DoDは技術内部だけでなく製品挙動まで閉じる:
+Source Identity→Transaction→Model Semantic→Canonical→Authority→Lifecycle→Resource→Replay→Security→Clean Performance→Compatibility→Root/Head/Eye/Blink/Mouth/Expression/FacePart→LIVE CAMERA/Spout output→Final Human Visual→Distribution/Installer/Rollback→Windows Acceptance。
+Human Visualをvalidator PASSで上書きしない。Eye/Mouth/rotation/twist等のユーザー可視claimはsame-build Human reviewを最終Authorityとする。
+KiwiAvatarSystemの技術的意味を持つ調査・設計・指示・実装・検証・評価・判断・成果物は原則FULL_AUDIT_1+FULL_AUDIT_2。各回同一scopeを100%独立監査。分割2-pass禁止。不一致=UNRESOLVED/STOP。副作用操作を監査回数だけを理由に二重実行しない。
+
+7. Avatar / Product
+Evidence-Protected Core + Avatar Adapter + Model Profile + Runtime Import + Transactional Hot Swap。VRM0/1、non-spherical、AutoFit、Spring/DangleはAdapter/Profile側。model-specific behaviorをCoreへ逆流させない。
+Runtime Importの入力検証、path traversal防止、resource/memory limit、cancellation、rollback等はImport実装と同じboundaryで扱い、後段UIだけへ先送りしない。
+
+8. 通常Chat / GitHub / Codex / Tooling
+通常Chatを調査・設計・監査・GitHub開発の主担当とする。通常Chat+GitHub pluginはGitHub source読取、検索、create/update/delete、必要時commit、PR/diff review、Static reviewに利用できる。GitHub上の変更はREMOTE_IMPLEMENTED/STATIC_REVIEWED等でありcurrent local Productionへ自動昇格しない。remote/mainがlocalより古ければProduction Authorityにしない。
+Codex/local=Production Evidence Execution Agent兼local candidate適用担当。live D:\KiwiAvatarSystemのsource/branch/HEAD/status/SHA/provenance、通常Chatで確定した最小変更のlocal適用、必要時GitHub candidate照合、PS5.1 Validator、exact Unity compile、Native build/ABI、installed artifact、targeted Runtime/stress、clean benchmark、rollback/distribution実証、Consolidated REPORTを担当。通常Chatで閉じた設計を理由なく再設計しない。
+通常開発で「ChatがZIP生成→user download→PowerShell手入力→結果貼付」を既定経路にしない。user手動操作は権限昇格、GUI/外部機器、Codex非対応、Human Visual等に限定。開発用ZIP installerは原則省略し、Runtime ZIPもEvidence上必要な時のみ。正式release/distribution/rollback/Windows Acceptanceではinstaller/ZIPを配布artifactとして独立検証する。
+commit/pushは作業目的・Authority・dirty保護・rollbackを満たす場合のみ。コード変更前Preflight: ProjectVersion.txt、exact Unity.exe path/version、branch/HEAD/status、user-owned dirty保護、touched file before SHA、candidate SHA、after SHA。mismatchはfail closed。reset/checkout/clean禁止。
+Codex指示はGOAL→Goal Alignment→Authority→current dataflow→target design→exact file/class/method→owner→identity/timestamp/generation→lifecycle/resource→implementation→禁止→Static Gate→必要時Runtime/Visual→validator自己監査→fixpoint→rollback→REPORT。Windows PowerShell 5.1固定。safe I/O、subprocess exit code、transactional replacement、rollback、write-target guard。PS7依存/ambiguous cardinality/unsafe I/O/obsolete path/versionを検出。Generic Listは::new()+.ToArray()。
+
+9. 情報源メンテナンス
+CoreRules: 主目的、長期契約、Authority、設計原則、禁止、役割分担。
+CurrentRoadmap: 主目的との対応、current environment、latest report-time identity、Validated/Rejected/Superseded、Open Issues、first blocker、Next Action、Critical Path。
+ChatReport: 詳細時系列、旧SHA/Runtime/diagnostic/Next Action。
+古いCurrent state、obsolete version chain全文、重複禁止事項、旧Validator結果をCurrentへ累積しない。新EvidenceでCurrentが変わった場合はRoadmap/CustomInstructionsを更新し、旧NEXTを再昇格しない。

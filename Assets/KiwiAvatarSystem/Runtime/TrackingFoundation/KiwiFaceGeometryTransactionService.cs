@@ -218,6 +218,9 @@ internal sealed class KiwiFaceGeometryTransactionService
         internal readonly int height;
         internal readonly CalculatorGraph graph;
         internal readonly IntPtr graphPtr;
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        internal readonly int diagnosticServiceId;
+#endif
 
         internal readonly object callbackGate = new object();
         internal bool resultPublicationAccepting = true;
@@ -232,7 +235,12 @@ internal sealed class KiwiFaceGeometryTransactionService
             int streamId,
             int width,
             int height,
-            CalculatorGraph graph)
+            CalculatorGraph graph
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            ,
+            int diagnosticServiceId
+#endif
+            )
         {
             this.runId = runId;
             this.streamId = streamId;
@@ -240,6 +248,9 @@ internal sealed class KiwiFaceGeometryTransactionService
             this.height = height;
             this.graph = graph;
             graphPtr = graph.mpPtr;
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            this.diagnosticServiceId = diagnosticServiceId;
+#endif
         }
 
         internal bool TryEnterCallbackLifetime()
@@ -350,6 +361,19 @@ internal sealed class KiwiFaceGeometryTransactionService
                 return callbackRootsReleased;
             }
         }
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        internal void CaptureLifecycleForDiagnostics(
+            out bool graphAlive,
+            out int callbacks)
+        {
+            lock (callbackGate)
+            {
+                graphAlive = nativeGraphAlive;
+                callbacks = activeCallbacks;
+            }
+        }
+#endif
     }
 
     private sealed class CallbackRegistration
@@ -391,6 +415,9 @@ internal sealed class KiwiFaceGeometryTransactionService
     private bool _shutdownRequested;
     private int _nextGraphRunId;
     private ulong _lastAcceptedGeometryFrameId;
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+    private readonly int _diagnosticServiceId;
+#endif
 
     internal ulong LastAcceptedGeometryFrameId
     {
@@ -430,6 +457,10 @@ internal sealed class KiwiFaceGeometryTransactionService
         }
 
         _faceLandmarkerBundlePath = faceLandmarkerBundlePath;
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        _diagnosticServiceId =
+            KiwiFaceGeometryP3DDiagnostics.RecordServiceCreated();
+#endif
     }
 
     internal bool AdmitAcceptedInferenceResult(
@@ -470,6 +501,10 @@ internal sealed class KiwiFaceGeometryTransactionService
 
         bool submitNow = false;
         InputTransaction replacedPending = null;
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        int diagnosticInFlight = 0;
+        int diagnosticPending = 0;
+#endif
 
         lock (_sync)
         {
@@ -516,7 +551,18 @@ internal sealed class KiwiFaceGeometryTransactionService
             {
                 submitNow = true;
             }
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            diagnosticInFlight = _inFlight == null ? 0 : 1;
+            diagnosticPending = _latestPending == null ? 0 : 1;
+#endif
         }
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        KiwiFaceGeometryP3DDiagnostics.RecordAdmission(
+            replacedPending != null,
+            diagnosticInFlight,
+            diagnosticPending);
+#endif
 
         replacedPending?.ReleaseLandmarkPayload();
 
@@ -648,6 +694,11 @@ internal sealed class KiwiFaceGeometryTransactionService
             {
                 _inFlight.retired = true;
             }
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            KiwiFaceGeometryP3DDiagnostics.RecordState(
+                _inFlight == null ? 0 : 1,
+                _latestPending == null ? 0 : 1);
+#endif
         }
 
         pending?.ReleaseLandmarkPayload();
@@ -702,6 +753,11 @@ internal sealed class KiwiFaceGeometryTransactionService
 
             run = _activeRun;
             _inFlight = transaction;
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            KiwiFaceGeometryP3DDiagnostics.RecordSubmitted(
+                1,
+                _latestPending == null ? 0 : 1);
+#endif
         }
 
         try
@@ -817,6 +873,9 @@ internal sealed class KiwiFaceGeometryTransactionService
                 completion.frameId != _inFlight.frameId ||
                 _inFlight.consumed)
             {
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                KiwiFaceGeometryP3DDiagnostics.RecordCompletionIdentityMismatch();
+#endif
                 _resetRequested = true;
                 return;
             }
@@ -843,7 +902,28 @@ internal sealed class KiwiFaceGeometryTransactionService
                 // order is retained; no Head/Canonical/FacePart publication and
                 // no Geometry-Core hold-last pose are introduced.
                 _lastAcceptedGeometryFrameId = transaction.frameId;
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                KiwiFaceGeometryP3DDiagnostics.RecordAccepted(
+                    _diagnosticServiceId,
+                    _activeRun.runId,
+                    _activeRun.streamId,
+                    transaction.frameId,
+                    transaction.sourceHostTicks,
+                    transaction.cameraGeneration,
+                    transaction.trackingSessionGeneration,
+                    transaction.providerGeneration,
+                    transaction.modelGeneration,
+                    transaction.backend,
+                    transaction.semanticFrameWidth,
+                    transaction.semanticFrameHeight,
+                    System.Diagnostics.Stopwatch.GetTimestamp());
+#endif
             }
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            KiwiFaceGeometryP3DDiagnostics.RecordState(
+                0,
+                _latestPending == null ? 0 : 1);
+#endif
         }
     }
 
@@ -878,7 +958,21 @@ internal sealed class KiwiFaceGeometryTransactionService
 
             int runId = Interlocked.Increment(ref _nextGraphRunId);
             int streamId = NextStreamId();
-            run = new GraphRun(runId, streamId, width, height, graph);
+            run = new GraphRun(
+                runId,
+                streamId,
+                width,
+                height,
+                graph
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                ,
+                _diagnosticServiceId
+#endif
+                );
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            KiwiFaceGeometryP3DDiagnostics.RecordGraphCreated(
+                run.streamId);
+#endif
 
             RegisterCallback(run);
             graph.ObserveOutputStream(
@@ -981,6 +1075,12 @@ internal sealed class KiwiFaceGeometryTransactionService
             }
 
             run.RetireResultPublication();
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            KiwiFaceGeometryP3DDiagnostics.RecordGraphRetired();
+            KiwiFaceGeometryP3DDiagnostics.RecordState(
+                0,
+                _latestPending == null ? 0 : 1);
+#endif
         }
 
         try
@@ -1027,6 +1127,9 @@ internal sealed class KiwiFaceGeometryTransactionService
 
         if (run.TryBeginNativeGraphDestroy())
         {
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            KiwiFaceGeometryP3DDiagnostics.RecordGraphDestroyStarted();
+#endif
             try
             {
                 run.graph.Cancel();
@@ -1040,6 +1143,9 @@ internal sealed class KiwiFaceGeometryTransactionService
             // and the static delegate remain rooted throughout this call.
             run.graph.Dispose();
             run.MarkNativeGraphDestroyed();
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            KiwiFaceGeometryP3DDiagnostics.RecordGraphDestroyed();
+#endif
         }
 
         TryFinalizeDestroyedRun(run);
@@ -1079,6 +1185,17 @@ internal sealed class KiwiFaceGeometryTransactionService
             status = CompletionStatus.EmptyPacket
         };
 
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        bool diagnosticEnabled = KiwiFaceGeometryP3DDiagnostics.Enabled;
+        long allocatedBefore = diagnosticEnabled
+            ? GC.GetAllocatedBytesForCurrentThread()
+            : 0L;
+        int gc0Before = diagnosticEnabled ? GC.CollectionCount(0) : 0;
+        int gc1Before = diagnosticEnabled ? GC.CollectionCount(1) : 0;
+        int gc2Before = diagnosticEnabled ? GC.CollectionCount(2) : 0;
+        bool transientFaceGeometryCreated = false;
+#endif
+
         try
         {
             using (Packet<FaceGeometryProto> packet =
@@ -1096,6 +1213,9 @@ internal sealed class KiwiFaceGeometryTransactionService
                     {
                         FaceGeometryProto geometry =
                             packet.Get(FaceGeometryProto.Parser);
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                        transientFaceGeometryCreated = true;
+#endif
                         MatrixData matrix = geometry.PoseTransformMatrix;
 
                         if (
@@ -1126,6 +1246,21 @@ internal sealed class KiwiFaceGeometryTransactionService
             completion.status = CompletionStatus.ParseFailure;
         }
 
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        if (diagnosticEnabled)
+        {
+            long allocatedAfter = GC.GetAllocatedBytesForCurrentThread();
+            KiwiFaceGeometryP3DDiagnostics.RecordCallbackAllocation(
+                transientFaceGeometryCreated,
+                allocatedAfter >= allocatedBefore
+                    ? allocatedAfter - allocatedBefore
+                    : -1L,
+                GC.CollectionCount(0) - gc0Before,
+                GC.CollectionCount(1) - gc1Before,
+                GC.CollectionCount(2) - gc2Before);
+        }
+#endif
+
         lock (_sync)
         {
             if (
@@ -1134,16 +1269,25 @@ internal sealed class KiwiFaceGeometryTransactionService
                 _activeRun.runId != run.runId ||
                 !run.IsResultPublicationAccepting())
             {
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                KiwiFaceGeometryP3DDiagnostics.RecordCallbackHandoff(false);
+#endif
                 return;
             }
 
             if (_completion.exists)
             {
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                KiwiFaceGeometryP3DDiagnostics.RecordCallbackHandoff(false);
+#endif
                 _resetRequested = true;
                 return;
             }
 
             _completion = completion;
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            KiwiFaceGeometryP3DDiagnostics.RecordCallbackHandoff(true);
+#endif
         }
     }
 
@@ -1185,6 +1329,11 @@ internal sealed class KiwiFaceGeometryTransactionService
             }
         }
 
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        KiwiFaceGeometryP3DDiagnostics.RecordCallbackEnter(
+            run.IsResultPublicationAccepting());
+#endif
+
         try
         {
             if (!run.IsResultPublicationAccepting())
@@ -1205,7 +1354,11 @@ internal sealed class KiwiFaceGeometryTransactionService
         }
         finally
         {
-            if (run.ExitCallbackLifetime())
+            bool shouldFinalize = run.ExitCallbackLifetime();
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            KiwiFaceGeometryP3DDiagnostics.RecordCallbackExit();
+#endif
+            if (shouldFinalize)
             {
                 registration.owner.TryFinalizeDestroyedRun(run);
             }
@@ -1243,6 +1396,14 @@ internal sealed class KiwiFaceGeometryTransactionService
                 return false;
             }
 
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            run.CaptureLifecycleForDiagnostics(
+                out bool diagnosticGraphAlive,
+                out int diagnosticActiveCallbacks);
+            KiwiFaceGeometryP3DDiagnostics.RecordCallbackRootsReleased(
+                diagnosticGraphAlive,
+                diagnosticActiveCallbacks);
+#endif
             CallbackRegistry.Remove(run.streamId);
             return true;
         }
