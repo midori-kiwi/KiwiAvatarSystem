@@ -1,9 +1,12 @@
 KiwiAvatarSystem Current Roadmap
-DocumentRevisionDate: 2026-09-09 JST
+DocumentRevisionDate: 2026-09-10 JST
 TechnicalAuthorityThrough: 2026-09-09 22:48 JST
 LatestLocalSnapshot: P3C Codex report 2026-09-09 22:32:29 JST / HEAD=2637b089fa5d0673f92887eecda4e9eb4e9de25c
 Purpose: 随時更新するCurrent技術状態・Authority snapshot・Roadmap。
 Normal-chat local status: NORMAL_CHAT_LIVE_LOCAL_PRODUCTION_NOT_DIRECTLY_VERIFIED
+WorkflowPolicyRevision: 2026-09-10 NORMAL_CHAT_GITHUB_DEVELOPMENT_PRIMARY / CODEX_LOCAL_EVIDENCE_EXECUTION
+WorkflowAuthorityNote: process/tooling policy update only; TechnicalAuthorityThrough and latest local Runtime identity remain unchanged.
+
 Reaudit: FULL_AUDIT_1=PASS / FULL_AUDIT_2=PASS_WITH_ARTIFACT_CORRECTIONS
 
 0. Chronology / Source Resolution
@@ -120,13 +123,17 @@ stop admission
 per-frame blocking wait、normal-operation graph blocking、Camera/Native/package変更、KiwiInferenceFaceTracker math変更、H1/Head/FacePart/Canonical publish、performance optimization混入、commit/push。
 
 Repair Gate:
-current-local Authority Preflight
+通常ChatでP3C_1のdesign/source reviewと必要最小変更を確定し、必要に応じGitHubへ最小commitできる。GitHub変更はREMOTE_IMPLEMENTED/STATIC_REVIEWEDまででlocal Productionへ自動昇格しない。
+→ Codex/localがcurrent-local Authority Preflight
+→ GitHub candidateがある場合はlive localとの差分/identityを確認して最小適用。GitHubを経由しない未commit local candidateも可
 → before/candidate/after SHA
 → exact Unity 6000.0.80f1 compile
 → targeted callback/dispose synthetic stress
-→ FULL_AUDIT_1
-→ independent FULL_AUDIT_2
+→ Consolidated REPORT
+→ 通常Chat FULL_AUDIT_1
+→ 同一scope independent FULL_AUDIT_2
 不一致=UNRESOLVED/STOP。
+通常開発ではinstaller ZIP配布→user download→PowerShell手入力を既定経路にしない。Codexがlocalで直接実行できる検証はCodexへ集約する。user手動操作は権限昇格、GUI/外部機器、Codex非対応、Human Visual等に限定。
 
 6. After P3C_1
 P3D=NOT_AUTHORIZED until lifecycle closure。
@@ -146,6 +153,7 @@ SURFACE_CLIP=SEPARATE_UNPROVEN
 historical Human Visual ROTATION_MATCH/EYE_TWIST/MOUTH_TWISTはvalidatorで上書きしない。
 
 8. Later Critical Roadmap
+開発方式: 各boundaryは原則「通常Chatで調査/設計/GitHub開発/Static review→Codex localでremote-local identity確認+Production適用/compile/build/Runtime evidence→通常Chat独立再監査」。GitHubを経由しない未commit local candidateも許容。Codexはlocal Production実証へ集中し、日常のZIP/手動PowerShell中継を削減する。
 P3C_1 lifecycle closure
 → P3D same-build geometry correctness/lifecycle Runtime
 → H1 hybrid implementation
@@ -161,7 +169,8 @@ P3C_1 lifecycle closure
 → clean Performance/backend qualification
 → recovery/soak/compatibility
 → final Human Visual
-→ release/supply chain/installer
+→ release/supply chain/installer（ここで正式installer/ZIPを配布artifactとして検証）
+→ rollback/distribution verification
 → Windows Production Acceptance
 → Android/iOS preparation
 

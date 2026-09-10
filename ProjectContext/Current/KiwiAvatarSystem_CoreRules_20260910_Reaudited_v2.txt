@@ -1,5 +1,5 @@
 KiwiAvatarSystem Core Rules
-Updated: 2026-09-09 JST
+Updated: 2026-09-10 JST
 Purpose: 基本的に変更しないProject-level契約・設計原則。Current状態、SHA、Phase、Next Actionは本ファイルへ入れない。
 Status: DURABLE_BASELINE
 
@@ -27,12 +27,13 @@ KiwiAvatarSystemの技術的意味を持つ調査・設計・指示・実装・�
 7. Avatar / Product
 Evidence-Protected Core + Avatar Adapter + Model Profile + Runtime Import + Transactional Hot Swap。VRM0/1、non-spherical、AutoFit、Spring/DangleはAdapter/Profile側。model-specific behaviorをCoreへ逆流させない。
 
-8. 通常Chat / Codex / Tooling
-通常Chat=外部調査、設計比較、Codex REPORT独立再監査、Runtime/Visual解釈、採用/Reject/Supersede、CurrentRoadmap更新。可能な限り通常Chat。Codex=live local source/SHA/provenance、exact method/dataflow、whole-file実装、PS5.1 Validator、compile/build/ABI/rollback、REPORT。
-Codex指示はGOAL→Authority→current dataflow→target design→exact file/class/method→statement/equation→owner→identity/timestamp/generation→lifecycle/resource→implementation→禁止→Static Gate→必要時Runtime→validator自己監査→fixpoint→rollback→REPORT。commit/pushは明示時のみ。
-コード変更前Preflight: ProjectVersion.txt、exact Unity.exe path、expected version一致、branch/HEAD/status、user-owned dirty保護、touched file before SHA、candidate SHA、after SHA。packages-lock変更時もcandidate SHA必須。mismatchはfail closed。reset/checkout/clean禁止。
-Windows PowerShell 5.1固定。safe I/O、subprocess exit code、transactional replacement、rollback、write-target guard。PS7依存/ambiguous cardinality/unsafe I/O/obsolete path/versionを検出。Generic Listは::new()+.ToArray()。
-Codex成果物はConsolidated REPORT優先、Runtime ZIPは必要時のみ。ZIP配布時はrootにREADME_FIRST.md、詳細TASK、必要資料、SHA manifest。不要なupload/downloadを増やさない。
+8. 通常Chat / GitHub / Codex / Tooling
+通常Chatを調査・設計・監査・GitHub開発の主担当とする。通常Chat+GitHub pluginはGitHub source読取、検索、create/update/delete、commit、PR/diff review、Static reviewに利用できる。GitHub上の変更はREMOTE_IMPLEMENTED/STATIC_REVIEWED等でありcurrent local Productionへ自動昇格しない。remote/mainがlocalより古ければProduction Authorityにしない。
+Codex/local=Production Evidence Execution Agent兼local candidate適用担当。live D:\KiwiAvatarSystemのsource/branch/HEAD/status/SHA/provenance、通常Chatで確定した最小変更の未commit local適用、明示許可されたGitHub candidateとの一致確認、PS5.1 Validator、exact Unity compile、Native build/ABI、installed artifact、targeted Runtime/stress、clean benchmark、rollback/distribution実証、Consolidated REPORTを担当。通常Chatで閉じた設計を理由なく再設計しない。
+通常開発で「ChatがZIP生成→user download→PowerShell手入力→結果貼付」を既定経路にしない。既定は通常Chatで調査/設計/Static reviewし、必要に応じGitHubへ最小変更をcommit→Codex local Preflight→GitHub candidate/local差分・identity確認→local最小適用/検証→REPORT→通常Chat独立再監査。local未commit candidateを直接適用する経路も許容する。user手動PowerShellは権限昇格、GUI/外部機器、Codex非対応操作、Human Visual等、本当に必要な時だけ。開発用ZIP installerは原則省略し、Runtime ZIPもEvidence上必要な時のみ。
+正式release/distribution/rollback/Windows Acceptanceではinstaller/ZIPを維持し、配布artifactとして独立検証する。ZIP配布時はrootにREADME_FIRST.md、詳細TASK、必要資料、SHA manifest。不要なupload/downloadを増やさない。
+commit/pushは作業目的・Authority・dirty保護・rollbackを満たす場合に実行可。不要なcommit/pushは行わない。コード変更前Preflight: ProjectVersion.txt、exact Unity.exe path、expected version一致、branch/HEAD/status、user-owned dirty保護、touched file before SHA、candidate SHA、after SHA。packages-lock変更時もcandidate SHA必須。mismatchはfail closed。reset/checkout/clean禁止。
+Codex指示はGOAL→Authority→current dataflow→target design→exact file/class/method→statement/equation→owner→identity/timestamp/generation→lifecycle/resource→implementation→禁止→Static Gate→必要時Runtime→validator自己監査→fixpoint→rollback→REPORT。Windows PowerShell 5.1固定。safe I/O、subprocess exit code、transactional replacement、rollback、write-target guard。PS7依存/ambiguous cardinality/unsafe I/O/obsolete path/versionを検出。Generic Listは::new()+.ToArray()。
 
 9. 情報源メンテナンス
 CoreRules: 長期契約、Authority、設計原則、禁止、役割分担。
