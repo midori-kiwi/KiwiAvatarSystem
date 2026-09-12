@@ -1,0 +1,739 @@
+KiwiAvatarSystem Consolidated REPORT
+TASK=H1_LOCAL_ACTIVATION_AUTHORITY_STATIC_CLOSURE
+REPORT_TIME_JST=2026-09-11 17:31:19 +09:00
+PROJECT=D:\KiwiAvatarSystem
+EVIDENCE_MODE=STATIC_AND_INSTALLED_PACKAGE_SOURCE_ONLY
+CODE_CHANGE=NONE
+UNITY_COMPILE_BUILD_RUNTIME=NOT_RUN_BY_SCOPE
+
+===============================================================================
+A. Goal Alignment
+===============================================================================
+
+Goal:
+P3D で Correctness/Lifecycle が成立した accepted same-sample FaceGeometry pose から、
+current local Production の actual FacePart consumer までの activation / identity /
+rigid authority / temporal authority を、実装前に静的に閉じる。
+
+この監査が直接閉じるユーザー可視要件と不可欠契約:
+- Eye / Blink / Mouth / Mouth Shape-Open / Expression:
+  actual crop, mask, texture, deformation, visibility owner と temporal owner を確定。
+- Head rigid pose / Root non-movement:
+  source appearance de-rigidization と visible AvatarMotionRoot rigid authority を分離し、
+  FacePart residual が Root へ戻らないことを確認。
+- Correctness / Authority / Transaction / Lifecycle / Resource:
+  FaceGeometry transaction identity、FacePart semantic/pixel transaction、single-owner 条件、
+  bounded history、auto-install と teardown を確定。
+
+Scope alignment:
+- Camera/Native/backend/cadence/queue/fence/threshold の再設計へ展開していない。
+- P3C_1=RETAIN_PASS と P3D Correctness/Lifecycle=PASS は再設計していない。
+- Static/Package claim を Runtime claim に昇格していない。
+- 旧 78933d... は authority に使用していない。
+
+Authority labels used:
+- Confirmed Static: current local source/YAML/meta/asmdef/Git identity から確定。
+- Confirmed Package: actually installed PackageCache と lock/manifest から確定。
+- Runtime: 本作業では新規取得なし。過去 Runtime は current activation の証明に使用しない。
+- Inference: source effect から導く設計上の含意。Static fact と分離。
+- Unknown/Unverified: Runtime/Human Visual/Performance、および実装後の semantic effect。
+- Rejected/Superseded: 旧 H1 candidate と 78933d... を current authority にしない。
+
+===============================================================================
+B. Preflight / Local Production Identity
+===============================================================================
+
+1. ProjectVersion.txt:
+   path=ProjectSettings\ProjectVersion.txt
+   m_EditorVersion=6000.0.80f1
+   m_EditorVersionWithRevision=6000.0.80f1 (2dfd32957da2)
+
+2. Actual Unity executable:
+   C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe
+   ProductVersion=6000.0.80f1_2dfd32957da2
+   FileVersion=6000.0.80.3013938
+   SHA256=7FC68434F4FCCF2781648C398FBAA4E8ADFB568251605E990D887FE36CF1376F
+
+3. Git:
+   branch=work/raw-direct-motion
+   HEAD=7969a47342c712aa2a5bdfa13a5967a73db5e0e0
+   tree=166446995724b17b3cb6297c4feb3a569977ff02
+   subject=p3d
+
+4. Initial status:
+   ## work/raw-direct-motion...origin/work/raw-direct-motion
+   ?? ChatReport/KiwiChat_H1MinimalSameSampleHumanHeadFacePartBoundary_Updated_20260911-JST.zip
+
+5. Dirty protection:
+   上記 ZIP は user-owned untracked と分類。抽出・変更・移動・削除していない。
+   内容参照は tar -xOf による read-only stream のみ。reset/checkout/clean/stash 未実行。
+   tracked diff/staged diff は preflight 時点で空。
+
+6. Current project context selector:
+   ProjectContext\Current\ の directory membership を列挙し、全 3 文書を読了。
+   - KiwiAvatarSystem_CoreRules_20260910_GoalAligned_v3.txt
+     SHA256=2165427AC7D65410829CC49DB35F83EE8E2EB120685516D3EE004F50319F9F1D
+   - KiwiAvatarSystem_CurrentRoadmap_20260910_GoalAligned_v3.txt
+     SHA256=491D79264297D7F4968E5A86DD524F6619280C40EA9A06D5CE7B7365EF42FC14
+   - KiwiAvatarSystem_CustomInstructions_20260910_GoalAligned_v3.txt
+     SHA256=53300857BE44595BFA5EC73BFCAD82B6951D69CC985901EA4BBC2695452EE522
+
+Reconciliation:
+- Current=P3C_1 retained PASS、P3D correctness/lifecycle PASS、H1 は未実装。
+- Next=H1 minimal same-sample Human Head FacePart Product integration。
+- Rejected/Superseded=旧 H1 high-rate IE candidate、78933d...、旧診断結果の自動昇格。
+- Unknown/Unverified=H1 Performance/Human Visual/Product Runtime/Final Acceptance。
+- Do Not Change=Native/Camera/backend/P3D core/KiwiFaceMotion/KiwiInferenceFaceTracker 等。
+- Current 文書の report-time HEAD cd37... は current live-local HEAD ではない。
+  claim-scoped authority に従い live-local 7969a473... を Implementation snapshot とした。
+- Current documents 間に本 task scope の unresolved conflict はない。
+
+Relevant current report/source:
+- KiwiCodexConsolidatedReport_P3D_MinimalSameBuildGeometryCorrectnessLifecycle_
+  20260910-190722JST.txt
+  SHA256=82A352D345F00AC10364568EE5C8EA6D599F99B7F90D8458F8F9ECC03ED0C33A
+- KiwiValidation\KiwiCodexConsolidatedReport_F3_SingleSamplingRotationOwner_
+  20260906_194658.txt
+  SHA256=FD42F880AB05A09B4AA5BDF964B86AD33647BB07457D0F1451F41A94D4E53142
+- 旧 H1 report は Rejected/Superseded history としてのみ比較。
+
+===============================================================================
+C. Remote comparison status
+===============================================================================
+
+reference branch=work/raw-direct-motion
+reference HEAD=7969a47342c712aa2a5bdfa13a5967a73db5e0e0
+reference tree=166446995724b17b3cb6297c4feb3a569977ff02
+
+Local branch/HEAD/tree は提示された reproducible remote reference と一致。
+origin/work/raw-direct-motion も同じ HEAD を指す。
+ただし remote は Local Production Authority へ昇格しておらず、比較参照に限定した。
+78933d... は検索結果や旧 report を含め、採用根拠・SHA 根拠・設計根拠に使用していない。
+
+===============================================================================
+D. Relevant file path / GUID / assembly / before SHA256 table
+===============================================================================
+
+Assembly result:
+- 下表の Assets/Script と Assets/KiwiAvatarSystem/Runtime の対象 source の上位に
+  applicable asmdef はない。current Unity compilation unit は Assembly-CSharp。
+- Assets 内 asmdef は VRM/UniGLTF 系のみで、対象 source を包含しない。
+- installed MediaPipe/Inferences source は package 側 assembly。Package claim のみで使用。
+
+Path | GUID | Assembly | SHA256
+FacePartCropper.cs | 749d9f64b6cbd1d4e8c514f42e4700f4 | Assembly-CSharp | 39C06FEC43B4EA47AD783C233991E830E10B18DA285148E7A34B0C13DAD52CFE
+FaceLandmarkerRunner.cs | 78fe4f7b7ad763b02aa042ef4c50ff6e | Assembly-CSharp | 77708DF460584C0FCC041A345CE1736E7E6F4F5950A2D445565926058E662875
+SurfaceFittedRawImage.cs | 6c59bc4284ebb1e4ebce3cef0a4df83b | Assembly-CSharp | 1EA5B0493A48BE9B64AFD6316C8FBD4A4EC172848F06F8879BA733BB73535167
+FacePartShapeMask.cs | dd3b8e57db439814eaac64aaa9cde497 | Assembly-CSharp | 822D18059988F390F52C40F60DA5F11E8ECF7577008D640272C5CF8D1557D4A6
+KiwiExpressionReaction.cs | 5b58a9e1f35d07b4fa2c4c9532744a39 | Assembly-CSharp | 0D48FB25CD79CE571F2892609E094D0D7DEA7A6C4B9D73A43A4B53B2A2980EF8
+MouthDisplaySizeLock.cs | cc4900181dea71746970c357a3d64ce1 | Assembly-CSharp | 14AF0667E6D32A38EF7598B918AE7C8C76CE091198BF5A9E566E4A6A2958131C
+FacePartAngleLock.cs | 4aaa4ec5f68a0c544a260633cbd654ea | Assembly-CSharp | EE07BF928AC816C4989BFE81C6BE89E1A58979DCE0C6565EDC01C9078052D454
+KiwiFaceMotion.cs | ea0c91b1a00025b49898de00116e93ae | Assembly-CSharp | D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6
+KiwiSurfaceFitter.cs | e53c7e1ed8c9f684f9d58251974fa94f | Assembly-CSharp | 96B18B1D3712F7E15ECE3F7D32529B4F8A40312B93DA63CC1A80385841A575B3
+KiwiRuntimeGenerationContext.cs | 10c28c8a9dcf486c88a88696935150d7 | Assembly-CSharp | E74887450A8EBD881A3AEDE7B4789C5D83E4A7C5B7F5A6D4C427DB134D250C40
+KiwiTrackingProviderHub.cs | a61418a32206466478cdbbe307c41786 | Assembly-CSharp | A5C7DE387FA2E02862BCF64942363AECFB9C7830B52DF5B8953404DF884ECCB1
+KiwiCanonicalTrackingFrame.cs | d04de27392dd4952b5da8d732eb42ebc | Assembly-CSharp | 458FF33E98E054B766F20EB17CE6BDD242C9AD9FD6E73AF53D60BD3961822AFA
+KiwiFaceGeometryTransactionService.cs | 69edab0fbe764f09a62e571ca677ad0e | Assembly-CSharp | 4751F9E4CE2FFE51B5ECEAF5AC1E223C899779B727AFD5BF39E51B005E423A72
+KiwiFacePartTextureTransaction.cs | b756ffac20bc4e769b94d27037de46e3 | Assembly-CSharp | DC78488DCD1D2E45E5AA6F40065D4983087014B501B5FD5A8E37B6D8E0F68849
+KiwiFacePartRigidCenterLock.cs | f66f8e01371ab68428464f8ae9246e8d | Assembly-CSharp | 069688F88355FE1439A72525DC591E2FC8EF0C632D349B4F14E1D37B045B3E35
+KiwiFacePartRigidSampleFrame.cs | 7c4c87f16a9144ca9e824d3211085d01 | Assembly-CSharp | 578CE2ED93A2A78EE1B19D8FF309A115A2FA53596E79BAAB0534A27AC10077C0
+KiwiFacePartSharedTiltLock.cs | 7c6bd16388738c949bdf5ac4b0301d63 | Assembly-CSharp | 0BCCA0B7BD6982B78C0FC18058ACD54D073D786820F7B027B8C2F218EF2CAE70
+KiwiFacePartLiveMotionBridge.cs | b870454300ff3374491a4af91dea6ef9 | Assembly-CSharp | 3A845EA8A0F3939162A1621BFC36A2D2644BF6C28513D66D1BD2F97FD2A17D07
+KiwiFacePartAdaptiveContainment.cs | 3d0262094fffe6e42a7aa0a3f4d14bd5 | Assembly-CSharp | 7EE201DC7B440110C69A8F95795C1921CAB217A0571520B9DB65450F3AEA1EB6
+KiwiModelPrimaryFacePartConstraint.cs | 457b938ac3099d942b03a3207e2f3011 | Assembly-CSharp | 375A10562C7B5AEAADEBD0D7303F544622C15F4B684757A087E9AA0A6F9A6E66
+KiwiFacePartAnatomyGuard.cs | 9bc50ef693df2994ca56ad252bebd87b | Assembly-CSharp | 73F9ED9ED2E011D081F7C17626BE9612D15FFC6A5B726570C23FD71257ED435A
+KiwiFacePartQualityCoordinator.cs | 63590db6f30148a45b6b744889f13e4d | Assembly-CSharp | FB0318460A7EF9CAF0BAC532ABC521504872F038CC8C6F0FE89FD72D24762E00
+KiwiFacePartVisibilityRecovery.cs | 33c9e5c37af9a8b47bf7044872e35c74 | Assembly-CSharp | FC6E98601DB4D10C185AE2F16268835FDAE9C89132AE24DB4B8F719010CDB85B
+KiwiSideViewEyeContinuity.cs | 5ad6d0a4f4caa914c9d9815e0f74abd6 | Assembly-CSharp | 185BFA361A4E32E834F5B4576CB8B48334AE807AC951FCE35AF3E9DCD6EE0AFF
+KiwiFacePartPresentationResolver.cs | 7f0c2696160543e2a6f7ebcc7270af33 | Assembly-CSharp | 4CD36DABF5C69ED15B54E7F93482EF5DA235BDC67CA9453E27F7355E961E5751
+FacePartSoftMask.shader | 6ca3092ebe47d144096029c1a7731b3b | Shader asset | EB6CDCBE0B838053FB5A563641328E42C1BAAFB935D61F367913208D9638E921
+Face Landmark Detection.unity | df0fc3b9f7146dee593f8b5660ae773c | Scene YAML | 9BAC89F64B45429B38D41C1A2539C63D5E9A442E8EF920EE13B59245BE166735
+uni_kiwi_textured_rigged.prefab | 9f9af2b96610a144c83e229a8e7ea5f9 | Prefab YAML | D514FA9B4312F5BB85887E4B7746813539D97565FF518F8A73FE791CE07C5342
+
+Priority .meta SHA256:
+- FacePartCropper.cs.meta=EA34A63320ACABFA327EE8998F32831D29C4ADB41853A3BB2551E5EB3759C07F
+- KiwiFacePartRigidSampleFrame.cs.meta=C5836645CF39F6ACCC7A0EF549E572EA9786E16351CF2714BCAFDA2CC3E03177
+- KiwiFacePartTextureTransaction.cs.meta=E463804B2A9D2ED05D47FD7C70109939C7E45FD45CA2EA85799ABBCF903A1E03
+- KiwiFacePartLiveMotionBridge.cs.meta=A17A98ABBD9A92DBF3125D07844F0771D067DDBFE7E8F82384DA433AAE10724A
+- KiwiFaceGeometryTransactionService.cs.meta=29B4B65B3FA4439A89154CDB96ECB877E04DE1D9FD388D7FD1C9AC27BE5F6CD1
+- KiwiFacePartSharedTiltLock.cs.meta=40E7A88EFD04B19B789A27D2F032A8A432042BADFCDEF4A800CFD78F64AD2CD5
+
+Installed package identity:
+- com.github.homuler.mediapipe:
+  lock=file:com.github.homuler.mediapipe-0.16.3.tgz, PackageCache version=0.16.3
+  tgz SHA256=CC3E77A219E0B99618AE3BE64C31A566197DEEDC69C1E136ACF52D65D7CF2E79
+  package.json SHA256=EEBBFF4550FA9CA3C2C76AB05BD0EDBDB3A0A4C2800883E244DC9E40D8FF2A2D
+  Runtime/Scripts/Framework/CalculatorGraph.cs SHA256=
+  9A5D7CB057854095D99CEB17EBA7C285EDB5A20E892D063F5B3404644DC89BCB
+- com.unity.ai.inference:
+  lock=2.4.1, PackageCache version=2.4.1
+  package.json SHA256=2F230C84E28A9E3AD516B1A49B79B6F83E172F1C16E6813E0F1DD6FA2B1790EE
+  Runtime/Core/Backends/Worker.cs SHA256=
+  011BC050A5CA80BBD313E7B4EE679D142B4740181D7F2380DD142C8910752256
+- Packages/manifest.json SHA256=35F00A89D31A8BF7EE50718F38D4BAC90236D8B691F516C5FC14CAB47AFBFEE1
+- Packages/packages-lock.json SHA256=23845C132DBF51CB53A5CFDE4EF606FA68D10DCB53AE5FF21F4305613A5F9CE1
+
+===============================================================================
+E. Actual activation graph
+===============================================================================
+
+Scene Production-active root:
+Face Landmark Detection.unity (only enabled build scene)
+  -> Solution / FaceLandmarkerRunner [m_Enabled=1]
+     enableSentisHybridTracking=1
+     enableInferenceFaceGeometryTransactions: NOT SERIALIZED
+     field initializer=false, therefore current default P3D activation=OFF
+  -> FacePartController [active]
+     -> FacePartCropper [m_Enabled=1, order 700]
+     -> KiwiExpressionReaction [m_Enabled=1, order 900, strict=1]
+  -> FaceAnchor [active, parent=current prefab head]
+     -> KiwiSurfaceFitter [m_Enabled=1, fitOnStart=1, waitOneFrame=1]
+     -> KiwiFaceCanvas
+        -> LeftEye3D / RightEye3D / Mouth3D
+           SurfaceFittedRawImage + FacePartShapeMask + FacePartAngleLock
+  -> AvatarMotionRoot
+     -> model prefab root
+        -> head
+           -> FaceAnchor
+
+Runtime auto-install graph:
+- KiwiTrackingProviderHub: BeforeSceneLoad, order -28000, DontDestroyOnLoad.
+- KiwiFacePartTextureTransaction: AfterSceneLoad, singleton, order 640,
+  sceneLoaded + onBeforeRender registered and removed in OnDestroy.
+- KiwiCanonicalTrackingFrameCoordinator: AfterSceneLoad, order 650,
+  sceneLoaded subscription, runtime coordinator active on enable.
+- KiwiFacePartLiveMotionBridge: AfterSceneLoad, order 790, but
+  enableLiveFrameTracking=false default, so its uvRect correction path is inactive.
+- KiwiFacePartRigidCenterLock: AfterSceneLoad, order 825,
+  enableRigidMouthAttachment=true default.
+- KiwiFacePartRigidSampleFrame: AfterSceneLoad, order 830,
+  enableHeadLocalSampleFrame=true default.
+- KiwiFacePartSharedTiltLock: BeforeSceneLoad, order 900,
+  enableSharedTiltLock=true default.
+- ModelPrimary/Anatomy/Quality/Visibility/SideView/PresentationResolver and
+  AdaptiveContainment are auto-installed and default enabled where a master flag exists.
+
+P3D construction/lifecycle:
+- FaceGeometry service is a plain internal sealed service, not MonoBehaviour and not an interface.
+- Only FaceLandmarkerRunner.AdmitFaceGeometryTransaction constructs it with new when
+  enableInferenceFaceGeometryTransactions=true and a Sentis result was accepted.
+- Runner.Update calls PumpFaceGeometryTransactionService.
+- flag OFF or tracking results disabled => BeginShutdown + PumpShutdown; completed service is nulled.
+- graph callback roots are registered per stream and released only after graph/callback lifetime gates.
+- one in-flight + one overwriteable latest pending; no growing FIFO.
+
+Diagnostic-only activation:
+- KiwiP3DFaceGeometryRuntimeController exists under DEVELOPMENT_BUILD || UNITY_EDITOR,
+  requires Debug.isDebugBuild and KIWI_P3D_RUNTIME, then reflection-enables the private flag.
+- It is not a Product publisher and does not establish Production default activation.
+
+Priority class lifecycle/caller closure:
+- FacePartCropper: no custom constructor/Awake/OnEnable/OnDisable/OnDestroy; scene constructs it;
+  Start binds state, LateUpdate is sole Product consumer update.
+- RigidSampleFrame: no external Product caller; RuntimeInitialize AutoInstall -> AddComponent;
+  Awake registers sceneLoaded, LateUpdate applies, OnDisable resets, OnDestroy unregisters.
+- TextureTransaction: AutoInstall/EnsureInstance service locator -> AddComponent; Awake subscribes
+  sceneLoaded/onBeforeRender; LateUpdate captures/pins; OnDestroy unsubscribes/releases.
+- LiveMotionBridge: AutoInstall -> AddComponent, lifecycle binding exists, but master flag false.
+- SharedTiltLock: AutoInstall -> AddComponent; Awake/OnEnable/LateUpdate active; OnDestroy unregisters.
+- Priority six have no factory/interface implementation beyond the explicit singleton EnsureInstance
+  and plain service construction described above. No hidden prefab instance was found for the auto services.
+
+===============================================================================
+F. Scene / Prefab ownership
+===============================================================================
+
+Build scene:
+- EditorBuildSettings has one enabled scene:
+  Assets\Scenes\Face Landmark Detection.unity, GUID=df0fc3b9f7146dee593f8b5660ae773c.
+
+Actual FacePart owner:
+- FacePartController (root GameObject, active)
+  - FacePartCropper component fileID=1592355491, enabled=1
+  - runner=Solution/FaceLandmarkerRunner fileID=1064799462
+  - source=MediaPipe screen RawImage fileID=1006057045
+  - outputs: LeftEye3D=842958310, RightEye3D=788061712, Mouth3D=553149536
+  - mirrorX=0, swapEyes=0, strictLandmarkerTracking=0
+
+Output hierarchy:
+- AvatarMotionRoot
+  - uni_kiwi_textured_rigged prefab instance (GUID=9f9af2...)
+    - head (prefab transform source fileID=8864318267428589748)
+      - FaceAnchor (scene-added child, active)
+        - KiwiFaceCanvas (active)
+          - LeftEye3D, RightEye3D, Mouth3D (all active)
+- Each output has enabled SurfaceFittedRawImage, FacePartShapeMask, FacePartAngleLock.
+- Mouth3D also has enabled MouthDisplaySizeLock.
+- ShapeMask strictLandmarkerTracking=0. Mouth ShapeMask lockMouthHeight=0;
+  therefore its conditional mouth uvRect height-lock writer is inactive for Mouth3D.
+- AngleLock is serialized enableAngleLock=1 on all three, but SharedTiltLock order 900 sets all
+  FacePartAngleLock.enableAngleLock=false each LateUpdate; AngleLock order 875 is not an independent
+  effective tilt owner after SharedTiltLock executes.
+
+Fixed surface owner:
+- Scene FaceAnchor/ KiwiSurfaceFitter fileID=1388073755, enabled=1,
+  targetRenderer=embedded prefab SkinnedMeshRenderer, modelRoot=prefab root,
+  partsRoot=KiwiFaceCanvas, fitOnStart=1, waitOneFrame=1.
+- Start waits one frame and calls FitAllNow; FitAllNow raycast-fits the fixed surface and calls
+  SurfaceFittedRawImage.ApplySurfaceFit(Vector3[]) for each part.
+- Runtime avatar manager may re-call FitAllNow on model load/swap; it does not make the surface
+  per-sample deform with FaceGeometry pose.
+
+Prefab audit:
+- Relevant script GUID search over all current Assets *.prefab/*.unity found Product serialization
+  in Face Landmark Detection.unity; none of RigidSampleFrame/TextureTransaction/LiveMotionBridge/
+  FaceGeometryService/SharedTiltLock are prefab-serialized.
+- The embedded model prefab owns model/head topology only. FacePart presentation components are
+  scene-added beneath FaceAnchor.
+- Assets/KiwiAvatarSystem/Backups scene is historical backup, not enabled build-scene authority.
+
+===============================================================================
+G. Same-sample identity dataflow
+===============================================================================
+
+Current Production path (facts; missing boundary is explicit):
+
+Camera presented sample
+  identity={native sequence, hostTicks}
+  -> Runner ObserveFreshFrameSource
+     checks sequence>last; duplicate/old sequence rejected
+     stores sequence only as last-observed gate; carries hostTicks forward
+  -> IE accepted tracking result
+     identity={FacePrecision frameId, backend=InferenceEngine,
+               MediaPipe-style monotonic timestamp(ms), submissionHostTicks,
+               arrivalHostTicks}
+  -> [conditional P3D branch: current default OFF]
+     identity={same accepted frameId, sourceHostTicks=submissionHostTicks,
+               cameraGeneration, trackingSessionGeneration,
+               providerGeneration, modelGeneration, backend,
+               semantic width/height}
+     -> FaceGeometry packet timestamp=(long)frameId
+     -> accepted Pose16 retained inside service only
+     -> MISSING_BOUNDARY: no Product publication / no FacePart consumer bridge
+
+Parallel current Product semantic path from the same Runner tracking snapshot:
+  FacePrecision + landmarks
+  -> ProviderHub selected frame
+  -> Canonical coordinator
+     exact match requires semanticPrecision.timestamp==rigid.timestamp and
+     semanticPrecision.backend==rigid.backend
+     assigns canonicalFrameId on provider/frameId/timestamp/backend/mirror identity change
+  -> FacePartCropper LateUpdate
+     reads canonical semanticTimestamp, prepares texture transaction
+  -> TextureTransaction
+     selects bounded snapshot by minimum abs(slot.hostTicks-submissionHostTicks),
+     requires cameraGeneration/sessionGeneration equality and delta<=55ms
+  -> Cropper per-part accept/reject + CommitPartDecision
+  -> ShapeMask consumes the same canonical semanticTimestamp and per-part adoption decision
+  -> SurfaceFittedRawImage uvRect/material/mesh
+  -> RigidCenter/RigidSampleFrame/SharedTilt/constraints
+  -> fixed fitted surface
+  -> parent FaceAnchor under visible model head
+  -> KiwiFaceMotion applies selected rigid pose once to AvatarMotionRoot
+
+Important identity transformation ledger:
+
+1. Native presentation -> Runner freshness
+   input=native sequence + source hostTicks.
+   output=_lastObservedFreshFrameSequence gate + pending/latest source hostTicks.
+   equality/check=sequence must be nonzero and strictly greater than previous.
+   duplicate/stale=sequence<=last rejected.
+   mixed epoch=camera lifecycle owns generation separately.
+   limitation=native sequence is not copied into FacePrecision, Canonical, P3D, or FacePart transaction.
+
+2. LIVE_STREAM MediaPipe submission/callback
+   input=task timestamp(ms), sourceFrameHostTicks, cameraGeneration.
+   output=bounded RememberSubmittedFrame tuple.
+   equality/check=callback timestamp exact lookup; unmatched callback dropped; current camera generation
+   checked twice around callback lifecycle lock.
+   stale/duplicate=older timestamp cannot overwrite newer result; matched entry cleared after resolve.
+   mixed epoch=cameraGeneration mismatch dropped.
+
+3. IE accepted tracking -> P3D input (conditional)
+   input=acceptedFrameId returned from the exact StoreSentisTrackingData call,
+   completedSourceHostTicks/sourceHostTicks, captured generation tuple, first 468 landmarks.
+   output=InputTransaction with those fields; backend fixed InferenceEngine.
+   equality/check=positive identity/dimensions, finite 468x3 payload.
+   stale/mixed epoch=IsTransactionCurrent compares camera/session/provider/model + dimensions.
+   duplicate/out-of-order=completion frameId must equal in-flight frameId and be greater than
+   lastAcceptedGeometryFrameId. pending is latest-overwrite, not FIFO.
+
+4. P3D graph callback -> accepted Pose16
+   input packet timestamp microseconds=(long)frameId.
+   output CallbackCompletion {graphRunId, frameId, status, Pose16}.
+   equality/check=active graph runId and exact in-flight frameId; finite 4x4; current transaction;
+   graph dimensions equal transaction dimensions.
+   stale/duplicate/mixed=identity mismatch resets run; retired/current generation failures reject.
+   terminal output=_lastAcceptedGeometryFrameId only; Pose16 is not published.
+
+5. Runner/Provider -> Canonical
+   input=FacePrecision frameId/backend/timestamp/submissionHostTicks + landmarks/expression +
+   RuntimeGenerationContext snapshot.
+   output=KiwiTrackingFrame {canonicalFrameId, rigid, semanticTimestamp,
+   expressionTimestamp, normalization, all generation fields}.
+   equality/check=built-in provider + semantic precision timestamp/backend exact equality.
+   stale/duplicate=canonicalFrameId increments only on identity change; semantic mismatch holds.
+   mixed epoch=generation snapshot accompanies frame; downstream checks current scope.
+
+6. Canonical -> FacePart texture/crop/mask
+   input=semanticTimestamp, canonicalFrameId, rigid.submissionHostTicks,
+   cameraGeneration, trackingSessionGeneration.
+   output=staged slot + per-part committed slot, lastCommittedSemanticTimestamp,
+   lastCommittedCanonicalFrameId.
+   equality/check=frame.semanticTimestamp==requested timestamp==frame.rigid.timestamp;
+   hasMatchedSubmissionTiming; generations equal; host delta<=55ms;
+   staged semanticTimestamp must equal commit timestamp.
+   stale/duplicate=unchanged canonical semantic timestamp is not recopied; rejected part holds its
+   prior complete crop/mask/texture transaction.
+   mixed epoch=source/generation changes rebuild slots; old camera/session slot cannot match.
+   limitation=slot hostTicks is Blit capture time, not preserved native source hostTicks;
+   pairing is bounded approximate time match, not native-sequence exact equality.
+
+FacePart transaction identity, exact statement:
+{semanticTimestamp, canonicalFrameId, rigid.submissionHostTicks,
+ cameraGeneration, trackingSessionGeneration, selectedSlot(hostTicks, unityFrame), per-part accept bits}.
+Provider/model/config/calibration generations are present in Canonical but not all are persisted in
+the texture slot/committed public identity. This is reported as current contract, not guessed away.
+
+===============================================================================
+H. Existing bridge determination
+===============================================================================
+
+Search scope:
+- working tree and independent HEAD tree searches over Assets and Packages;
+- all *.cs, *.shader, *.unity, *.prefab, *.meta, *.asmdef;
+- installed MediaPipe PackageCache source;
+- symbols/calls: Pose16, PoseTransformMatrix, LastAcceptedGeometryFrameId,
+  AdmitAcceptedInferenceResult, RecordAccepted, enableInferenceFaceGeometryTransactions,
+  FacePartCropper, SurfaceFittedRawImage, Canonical, Head, Add/Get/TryGet component,
+  reflection, callback registration and publish calls.
+
+Result:
+- Pose16 is created in KiwiFaceGeometryTransactionService.HandleNativeOutput.
+- ConsumeCompletion validates it, then intentionally stores only transaction.frameId as
+  _lastAcceptedGeometryFrameId. The source comment explicitly says no Head/Canonical/FacePart publication.
+- The only accepted notification is P3D diagnostics inside DEVELOPMENT_BUILD || UNITY_EDITOR.
+- No Product getter/event/callback/publication contains Pose16.
+- No current FacePart/Canonical/Head consumer references Pose16 or LastAcceptedGeometryFrameId.
+- Therefore no identity can cross from accepted geometry pose to Product FacePart.
+
+NO_EXISTING_BRIDGE_FOUND
+
+This is not classified as a P3D core defect. It is the intentional end of the P3D scope and the H1
+missing Product boundary.
+
+===============================================================================
+I. Rigid / Roll authority table
+===============================================================================
+
+Responsibility | Owner | Activation | Actual effect | Count/assessment
+
+Visible rigid pose:
+- KiwiFaceMotion.RenderRotation -> kiwiRoot.localRotation.
+- Scene kiwiRoot=AvatarMotionRoot; embedded model and head are descendants.
+- ultra low latency + secondary body motion disabled in scene => direct trackingRotation path.
+- One visible rigid transform writer for the current hierarchy.
+- VISIBLE_HEAD_RIGID_AUTHORITY_COUNT=1.
+- FacePart residual/constraint paths do not write AvatarMotionRoot.
+
+Source appearance de-rigidization, roll owner 1:
+- KiwiFacePartRigidSampleFrame, auto-installed, enableHeadLocalSampleFrame=true.
+- Derives bilateral-eye line roll from rendered crop uvRects.
+- Applies degrees to all three SurfaceFittedRawImage.SetSampleFrameRotationDegrees.
+- SurfaceFittedRawImage.OnPopulateMesh rotates mesh sampling UV0 and mask UV1.
+- Production-active by static default/scene availability.
+
+Source appearance de-rigidization, roll owner 2:
+- KiwiFacePartSharedTiltLock, auto-installed, enableSharedTiltLock=true.
+- Independently derives bilateral-eye line roll, calibrates/interpolates it.
+- Writes material _SampleRotationRad/_SamplePivot/_SourceAspect for all parts.
+- FacePartSoftMask shader rotates already-supplied UV by _SampleRotationRad.
+- Production-active by static default/scene availability.
+
+Effect comparison:
+- Owner 1 rotates mesh UV before shader sampling.
+- Owner 2 rotates shader UV at a subsequent stage.
+- These effects are cumulative and target the same source in-plane roll removal responsibility.
+- SOURCE_APPEARANCE_ROLL_ACTIVE_OWNER_COUNT=2.
+- PRODUCTION_ACTIVE_INDEPENDENT_RIGID_AUTHORITY_OVERLAP=YES.
+
+Other related owners, not counted as alternate visible Head rigid authorities:
+- KiwiFacePartRigidCenterLock: auto-installed/default true; calibrates bilateral eye reference and
+  applies bounded mouth uvRect center correction. It is local mouth rigid attachment translation,
+  not full pose/roll/visible Head rotation.
+- FacePartAngleLock: scene component exists but SharedTiltLock forces enableAngleLock=false each
+  LateUpdate; not an effective concurrent tilt owner.
+- KiwiModelPrimaryFacePartConstraint: small head-local surface offset only; never Root feedback.
+- KiwiFacePartAnatomyGuard: later constraint modifier; scales already-computed surface offsets.
+- KiwiFacePartLiveMotionBridge: contains residual rigid solve/correction code, but master flag false;
+  current Production inactive and not counted.
+
+Source appearance reference and visible Head authority are different responsibilities. The valid target
+is one source de-rigidization owner plus one visible Head rigid owner applied once. Current source has
+one visible owner but two independent source roll-removal owners.
+
+===============================================================================
+J. Temporal / Normalization authority table
+===============================================================================
+
+MediaPipe/IE inference-internal temporal behavior is out of this Presentation owner count.
+The following are Kiwi Product presentation owners/modifiers as statically active.
+
+Channel/subchannel | Production-active owner | State/effect | Overlap assessment
+
+Eye crop rect:
+- FacePartCropper: per-sample center/size filters, rest hold and render interpolation; final uvRect writer.
+- AdaptiveContainment: separately smooths motion-risk and changes Cropper width/height/padding targets;
+  this is an upstream adaptive envelope, then Cropper filters the resulting crop.
+- Candidate layered temporal cascade on crop-size target, but not two final uvRect writers.
+
+Eye source roll:
+- RigidSampleFrame: neutral calibration, dead zone, isolated-jump confirmation, mesh-UV rotation.
+- SharedTiltLock: independent calibration + LerpAngle, shader-UV rotation.
+- OVERLAP_CANDIDATE=CONFIRMED independent same-responsibility double owner.
+
+Blink / eye mask:
+- FacePartShapeMask: canonical expression+geometry fusion, close/open confirmation sample latches,
+  contour interpolation and render-cadence _MaskVisibility fade.
+- KiwiExpressionReaction also exposes BlinkIntensity, but current visible blink mask reads canonical
+  expression itself; scene KiwiFaceMotion blink squash is disabled. It is not a second blink opacity writer.
+- FINAL_BLINK_MASK_TEMPORAL_OWNER_COUNT=1.
+
+Eye visibility:
+- QualityCoordinator supplies filtered cap; VisibilityRecovery supplies hard-hide/front recovery;
+  SideViewEyeContinuity supplies near-eye floor.
+- All are reason-coded policy inputs; KiwiFacePartPresentationResolver is the sole final
+  CanvasRenderer-alpha writer/arbitrator.
+- ShapeMask owns separate semantic _MaskVisibility, not Canvas alpha.
+- FINAL_CANVAS_ALPHA_OWNER_COUNT=1; no independent final-writer overlap.
+
+Eye display deformation / surface:
+- KiwiExpressionReaction directly sets eye visual zoom under scene strict=1 (no expression
+  attack/release filter for eye target).
+- ModelPrimaryFacePartConstraint smooths small fitted-surface offsets.
+- AnatomyGuard applies collision hold/attack/release and later bounds those offsets.
+- These are separate zoom vs attachment/collision subchannels; Anatomy is a sequential modifier,
+  not an alternate Root/Head owner.
+
+Mouth crop/attachment:
+- FacePartCropper owns semantic crop target and render interpolation.
+- RigidCenterLock applies one bounded/calibrated mouth-center correction afterward.
+- Mouth ShapeMask lockMouthHeight=0, so its optional uvRect height writer is inactive.
+- MouthCropGuard is not serialized and has no auto-install; inactive.
+- Cropper -> RigidCenterLock is a declared sequential base+correction chain, not two competing full owners.
+
+Mouth mask/hold:
+- FacePartShapeMask owns contour, invalid-edge zero-order hold, visibility confirmation and fade.
+- It consumes Cropper per-part accept/hold policy and the same canonical timestamp.
+- One semantic mouth-mask/edge-hold owner.
+
+Mouth shape/open/deformation:
+- KiwiExpressionReaction scene strict=1 maps expression samples directly to target intensities,
+  but ApplyVisualReaction uses render-rate AdvanceAmount and safety-release interpolation for mouth
+  open/pout/smile zoom.
+- MouthDisplaySizeLock is the final scale applier receiving SetExpressionZoom; it adds no second
+  smoothing/history.
+- One temporal deformation owner plus one stateless final applier.
+
+Expression:
+- Canonical frame latches expression only when expressionTimestamp<=rigid.timestamp.
+- KiwiExpressionReaction is the Product expression mapper. Scene strict=1 bypasses its generic
+  attack/release smoothing for blink/eyeWide/mouthOpen/smile/surprise/pout/grumpy values.
+- TalkPulse retains previous jaw sample to derive velocity; mouth visual has its own render response.
+- No second Product expression mapper for the same output channel was found.
+
+FacePart texture/presentation:
+- TextureTransaction owns bounded 6..24 GPU snapshot history, per-part pin, hold, and committed
+  semantic/canonical identity. It is the sole RawImage.texture writer after strict presentation begins.
+- Cropper owns crop uvRect; ShapeMask owns mask material; PresentationResolver owns Canvas alpha;
+  RigidSampleFrame + SharedTilt overlap only in source roll.
+- LiveMotionBridge prediction/history/correction code is excluded because enableLiveFrameTracking=false.
+
+No new temporal owner, FIFO, prediction, history, cache, smoothing, or threshold change is proposed.
+
+===============================================================================
+K. Required 9 Claims closure matrix
+===============================================================================
+
+1. FacePartCropper identity/reachability=PASS/CLOSED
+   Exact path/class/Assembly-CSharp/GUID/SHA and enabled Scene reachability established.
+
+2. Actual Production FacePart consumer=PASS/CLOSED
+   FacePartCropper.LateUpdate is the primary semantic crop consumer.
+   Exact calls: ApplyCurrentPresentationTextures; TryGetSemanticLandmarksIfChanged;
+   PrepareSemanticTransaction; UpdateSample; RenderPart; CommitPartDecision.
+   Input=canonical semantic landmarks/timestamp + source image + prior part state.
+   Output=LeftEye3D/RightEye3D/Mouth3D RawImage uvRect and per-part transaction decisions.
+   FacePartShapeMask.LateUpdate is the matching mask consumer; output=runtime mask material.
+
+3. RigidSampleFrame callers/construction/active=PASS/CLOSED
+   All symbol callers searched. No external Product method caller; only runtime AutoInstall constructs
+   it. Its own LateUpdate calls SetSampleFrameRotationDegrees for all three outputs. Default true,
+   scene cropper present, therefore statically Production-active.
+
+4. Runtime activation conditions=PASS/CLOSED
+   Scene active/enabled fields, runtime auto-install, provider/backend gates, fallback and lifecycle
+   paths established. P3D default OFF and diagnostic-only enable path explicitly separated.
+
+5. Scene/Prefab/MonoBehaviour owner=PASS/CLOSED
+   Scene path, hierarchy, component GUID/fileID/enabled/default serialization, embedded prefab head,
+   auto-instantiated services, and absence from prefabs established.
+
+6. Texture/Crop/Mask/FacePart identity=PASS/CLOSED
+   All requested identity names traced without inventing equality. Native sequence terminates at Runner
+   freshness gate; hostTicks carries forward; canonical exact semantic match; texture approximate
+   host-time match and generation equality; per-part complete hold established.
+
+7. P3D accepted pose -> existing FacePart bridge=PASS/CLOSED
+   NO_EXISTING_BRIDGE_FOUND with whole-repository search evidence. This is an H1 boundary, not a P3D defect.
+
+8. Roll/rigid normalization authority count=PASS/CLOSED
+   Visible rigid authority=1. Source appearance roll-removal active independent owners=2.
+   Production-active overlap confirmed by actual mesh-UV then shader-UV effects.
+
+9. Temporal/normalization owner count=PASS/CLOSED
+   Eye/Blink/Mouth/Expression/texture/presentation owners enumerated by exact output subchannel.
+   Final alpha, blink mask, texture and visible rigid writers are single-owner; independent roll removal
+   is the confirmed overlap. Layered target/modifier chains are identified without mislabeling names alone.
+
+===============================================================================
+L. FULL_AUDIT_1
+===============================================================================
+
+Method:
+- froze live-local project/Unity/Git/dirty identity;
+- enumerated/read/reconciled all ProjectContext/Current documents;
+- read newest relevant P3D report and historical F3/Rejected H1 only after live authority;
+- source-first traced definitions, fields, constructors, lifecycle, callbacks, publishers and consumers;
+- searched Assets/Packages/installed PackageCache, Scene/Prefab/meta/asmdef;
+- resolved Scene fileIDs/GUIDs/hierarchy and all relevant SHA256;
+- constructed identity and owner ledgers from exact call/effect paths.
+
+Coverage=all required 9 claims and A/B/C/D classification.
+FULL_AUDIT_1=PASS
+
+===============================================================================
+M. FULL_AUDIT_2
+===============================================================================
+
+Independent method:
+- restarted from immutable HEAD identity using git ls-tree/git grep instead of Audit 1's working-tree
+  navigation conclusions;
+- independently enumerated tracked Assets/Packages Scene/Prefab/asmdef/meta paths;
+- searched definition/calls for FacePartCropper and transaction API;
+- searched all RigidSampleFrame construction/calls and SurfaceFittedRawImage effect writers;
+- searched all Pose16/FaceGeometry accepted/publication symbols for a Product bridge;
+- searched every _SampleRotationRad and SetSampleFrameRotationDegrees writer plus shader consumers;
+- searched temporal primitives/final output writers across Script/Runtime Optimization/Presentation;
+- independently matched GUIDs back to Scene/meta and recomputed relevant hashes;
+- compared each of the nine resulting conclusions and classification only after the fresh search.
+
+Audit 2 results:
+1=CLOSED, 2=CLOSED, 3=CLOSED, 4=CLOSED, 5=CLOSED,
+6=CLOSED, 7=NO_EXISTING_BRIDGE_FOUND,
+8=VISIBLE=1/SOURCE_ROLL=2_OVERLAP,
+9=CLOSED_WITH_ONE_CONFIRMED_ROLL_OVERLAP_AND_DECLARED_LAYERED_MODIFIERS.
+
+Coverage=all required 9 claims and A/B/C/D classification.
+FULL_AUDIT_2=PASS
+
+===============================================================================
+N. Audit disagreement
+===============================================================================
+
+AUDIT_DISAGREEMENT=NONE
+Audit 1 と Audit 2 は全 9 claim、activation OFF、bridge absence、roll owner count、
+classification で一致した。
+REMAINING_UNRESOLVED_STATIC_CLAIMS=NONE_WITHIN_ASSIGNED_SCOPE
+
+Not converted to PASS because outside this static scope:
+- Runtime activation after a future H1 change
+- same-build Human Visual behavior
+- performance/resource telemetry
+- final Production adoption/Windows Acceptance
+
+===============================================================================
+O. A/B/C/D classification
+===============================================================================
+
+CLASSIFICATION=C
+
+Reason:
+- Existing Product bridge is absent.
+- P3D activation is also current Production default OFF.
+- More importantly, current Production-active source appearance roll removal has two independent,
+  cumulative owners (RigidSampleFrame mesh UV + SharedTiltLock shader UV).
+- Consumer/identity/activation/owners themselves are statically closed, so D is not applicable.
+- B requires no rigid-authority overlap and is therefore rejected.
+- A requires an existing identity-preserving bridge and single authority and is rejected.
+
+Classification C decision:
+first close one source appearance de-rigidization authority by minimal design; do not implement yet.
+
+===============================================================================
+P. H1_IMPLEMENTATION_READY verdict
+===============================================================================
+
+H1_IMPLEMENTATION_READY=YES
+
+Meaning under the task's explicit verdict contract:
+- all 9 static claims are closed;
+- two independent full audits agree;
+- classification C is determined.
+
+This token is not authorization to code H1 immediately. Classification C explicitly requires the
+minimal single-rigid-authority design to be frozen first. Runtime/Human Visual remain unverified.
+
+===============================================================================
+Q. First proven missing/failing boundary
+===============================================================================
+
+DATAFLOW_MISSING_BOUNDARY:
+KiwiFaceGeometryTransactionService.ConsumeCompletion accepted Pose16
+  -> actual Product FacePart/Head-local consumer
+does not exist.
+
+FIRST_GATE_BLOCKER_BEFORE_ADDING_THAT_BOUNDARY:
+Current source appearance roll removal has two independent active owners. Adding FaceGeometry-based
+inverse/source pose removal before retiring/selecting one existing roll authority would create a third
+rigid-normalization path and violate the H1 single-authority rail.
+
+ACTIVATION_BOUNDARY:
+enableInferenceFaceGeometryTransactions=false by initializer and absent from Scene YAML. A future H1
+design must define Product-owned activation/lifecycle without using diagnostic reflection. Do not
+modify P3D Geometry Core to solve this ownership question.
+
+===============================================================================
+R. Do Not Change
+===============================================================================
+
+This task changed none of:
+- Native Camera / SystemMemoryNV12 / camera cadence
+- inference backend / execution queue / fence / queue flush / async mode
+- Tracking Core math / thresholds / smoothing / Kalman / Root movement
+- P3D Geometry Core
+- KiwiFaceMotion.cs / KiwiInferenceFaceTracker.cs
+- Scene/Prefab/package/meta/asmdef/source
+
+No FIFO, queue/history, cache, prediction, second temporal owner, second rigid authority, extra
+inference, custom FaceGeometry solver, copy, readback, compile, build, Runtime, commit or push added.
+
+===============================================================================
+S. Exact next action
+===============================================================================
+
+1. Normal Chat/design authority performs a minimal claim-scoped Design Freeze for classification C:
+   select exactly one current source-roll-removal owner. The static effect evidence favors retaining
+   KiwiFacePartRigidSampleFrame (crop-local mesh/mask UV frame) and retiring/suppressing
+   KiwiFacePartSharedTiltLock as the duplicate shader-UV roll path, subject to explicit adoption.
+2. Define one Product activation/bridge owner that consumes the accepted P3D identity tuple and Pose16,
+   publishes no Root translation, preserves same accepted sample identity, removes source rigid pose
+   once in head-local space, uses the existing fixed fitted surface, and lets KiwiFaceMotion remain the
+   sole visible AvatarMotionRoot rigid writer.
+3. After that design is independently approved, authorize one minimal Production repair only:
+   first proven boundary = single source-rigid authority closure plus the smallest required
+   accepted-Pose16 Product handoff. Do not mix Camera/Native/backend/temporal redesign.
+4. Only after source change, run exact Unity compile and the dedicated H1 same-build Runtime/Human Visual
+   gate. Stop at the next first failing evidence boundary.
+
+END_OF_REPORT

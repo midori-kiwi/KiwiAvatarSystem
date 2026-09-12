@@ -11,9 +11,6 @@ using UnityEngine.UI;
 [DisallowMultipleComponent]
 public sealed class KiwiFacePartSharedTiltLock : MonoBehaviour
 {
-    private const string RuntimeObjectName =
-        "[Kiwi] Shared Face-Part Tilt Lock";
-
     private static readonly int SamplePivotId =
         Shader.PropertyToID("_SamplePivot");
     private static readonly int SampleRotationRadId =
@@ -55,22 +52,6 @@ public sealed class KiwiFacePartSharedTiltLock : MonoBehaviour
     private bool _calibrated;
     private float _referenceAngle;
     private float _renderedCorrection;
-
-    [RuntimeInitializeOnLoadMethod(
-        RuntimeInitializeLoadType.BeforeSceneLoad)]
-    private static void AutoInstall()
-    {
-        KiwiFacePartSharedTiltLock existing =
-            FindFirstObjectByType<KiwiFacePartSharedTiltLock>(
-                FindObjectsInactive.Include);
-
-        if (existing != null)
-            return;
-
-        GameObject host = new GameObject(RuntimeObjectName);
-        DontDestroyOnLoad(host);
-        host.AddComponent<KiwiFacePartSharedTiltLock>();
-    }
 
     private void Awake()
     {

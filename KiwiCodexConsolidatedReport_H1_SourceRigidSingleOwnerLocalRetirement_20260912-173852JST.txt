@@ -1,0 +1,422 @@
+KiwiAvatarSystem Consolidated REPORT
+TASK=H1_SOURCE_RIGID_SINGLE_OWNER_LOCAL_RETIREMENT
+REPORT_TIME_JST=2026-09-12 17:38:52 +09:00
+PROJECT=D:\KiwiAvatarSystem
+EVIDENCE_MODE=LIVE_LOCAL_STATIC_PLUS_EXACT_UNITY_COMPILE
+RUNTIME_EXECUTED=NO
+COMMIT=NO
+PUSH=NO
+
+===============================================================================
+A. Result / Scope
+===============================================================================
+
+SUCCESS_STATUS:
+H1_SOURCE_RIGID_SINGLE_OWNER_STATIC=PASS
+
+H1 Product FacePart path now has exactly one active source rigid roll
+de-rigidization writer:
+KiwiFacePartRigidSampleFrame
+
+KiwiFacePartSharedTiltLock is retained as a class but retired from the current
+H1 Product path. GLOBAL_DELETE was not performed.
+
+This task closed one boundary only. It did not implement the accepted P3D
+Pose16 -> FacePart appearance transaction bridge.
+
+NEXT=P3D_TO_FACEPART_SAME_SAMPLE_BRIDGE
+
+Explicitly not passed by this report:
+- H1 Human Visual
+- ROTATION_MATCH
+- EYE_TWIST
+- MOUTH_TWIST
+- MOUTH_SIZE
+- SURFACE_CLIP
+- clean Performance
+- Final Product Acceptance
+- Windows Production Acceptance
+
+===============================================================================
+B. Goal Alignment / Authority
+===============================================================================
+
+Direct contribution:
+Eye/Mouth non-rigid appearance must remain while source rigid roll is removed
+exactly once before the fixed fitted surface receives the one visible Head
+authority. Removing the duplicate downstream shader-roll path closes the first
+required H1 authority boundary without changing Tracking Core, Camera, Native,
+Inference, Root, or visible Head behavior.
+
+Report-time snapshot supplied by the task:
+branch=work/raw-direct-motion
+HEAD=7969a47342c712aa2a5bdfa13a5967a73db5e0e0
+
+Current live-local Implementation Authority at preflight:
+branch=work/raw-direct-motion
+HEAD=7969a47342c712aa2a5bdfa13a5967a73db5e0e0
+
+The live-local branch/HEAD matched the supplied snapshot. There was no identity
+mismatch requiring STOP.
+
+Normal-chat label retained:
+NORMAL_CHAT_LIVE_LOCAL_PRODUCTION_NOT_DIRECTLY_VERIFIED
+
+Current ProjectContext selector was enumerated and all three applicable files
+were read and reconciled:
+- ProjectContext\Current\KiwiAvatarSystem_CoreRules_20260910_GoalAligned_v3.txt
+- ProjectContext\Current\KiwiAvatarSystem_CurrentRoadmap_20260910_GoalAligned_v3.txt
+- ProjectContext\Current\KiwiAvatarSystem_CustomInstructions_20260910_GoalAligned_v3.txt
+
+Reconciliation:
+- Current: P3C_1 retained PASS; P3D correctness/lifecycle retained PASS within
+  its prior scope; H1 Product/Human Visual/Performance not passed.
+- Next: H1 minimal same-sample Human-Head FacePart integration.
+- Rejected/Superseded: old high-rate IE H1 candidate, stale geometry use,
+  duplicate rigid normalization, Camera/Native/backend workarounds.
+- Do Not Change: Camera, Native, installed packages, inference backend, Root,
+  visible Head authority, KiwiFaceMotion, KiwiInferenceFaceTracker, tracking
+  thresholds, smoothing/Kalman, FIFO/history/prediction, texture identity, and
+  the P3D transaction producer.
+- Current documents had no unresolved conflict within this assigned boundary.
+
+The earlier H1 source-authority reaudit proposed a different future Pose16
+authority arrangement. The later H1 Source Rigid Single-Owner Design Freeze and
+this task's explicit STATIC DESIGN FREEZE superseded that proposal for this
+boundary: retain KiwiFacePartRigidSampleFrame and retire SharedTiltLock from the
+H1 Product path. No P3D bridge decision was silently implemented here.
+
+Installed identity was rechecked without modification:
+- com.github.homuler.mediapipe=file:com.github.homuler.mediapipe-0.16.3.tgz
+- com.unity.ai.inference=2.4.1
+No package behavior claim or package change was needed for this wiring repair.
+
+===============================================================================
+C. Preflight / Dirty Protection
+===============================================================================
+
+ProjectVersion.txt:
+m_EditorVersion=6000.0.80f1
+m_EditorVersionWithRevision=6000.0.80f1 (2dfd32957da2)
+
+Exact Unity executable:
+C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe
+ProductVersion=6000.0.80f1_2dfd32957da2
+FileVersion=6000.0.80.3013938
+
+Initial git status:
+## work/raw-direct-motion...origin/work/raw-direct-motion
+?? ChatReport/KiwiChat_H1ActivationAuthorityStaticClosure_Updated_20260911-JST.zip
+?? ChatReport/KiwiChat_H1MinimalSameSampleHumanHeadFacePartBoundary_Updated_20260911-JST.zip
+?? ChatReport/KiwiChat_H1SourceRigidAuthorityReaudit_Updated_20260911-JST.zip
+?? ChatReport/KiwiChat_H1SourceRigidSingleOwnerDesignFreeze_Updated_20260911-JST.zip
+?? KiwiCodexConsolidatedReport_H1_LocalActivationAuthorityStaticClosure_20260911-173119JST.txt
+
+These five pre-existing untracked artifacts were treated as user-owned. They
+were read only where relevant and were not modified, moved, deleted, staged,
+or attributed to this task. reset/checkout/clean/stash were not executed.
+
+Tracked diff/staged diff for the two eventual touched files was empty before
+the change.
+
+===============================================================================
+D. Files / SHA256 / Changes
+===============================================================================
+
+Production touched files:
+1. Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiFacePartSharedTiltLock.cs
+2. Assets\Scenes\Face Landmark Detection.unity
+
+File | Before SHA256 | Candidate SHA256 | After-validation SHA256
+KiwiFacePartSharedTiltLock.cs |
+0BCCA0B7BD6982B78C0FC18058ACD54D073D786820F7B027B8C2F218EF2CAE70 |
+B8ECE6C66F7FA68CF67C31438495EC4E6DF7AB9BE4E438A436F3A8E8D71B787D |
+B8ECE6C66F7FA68CF67C31438495EC4E6DF7AB9BE4E438A436F3A8E8D71B787D
+
+Face Landmark Detection.unity |
+9BAC89F64B45429B38D41C1A2539C63D5E9A442E8EF920EE13B59245BE166735 |
+E9AA13257215C90829BCC04E63E4ED5F84F8965049B9F0AABC28418893E92409 |
+E9AA13257215C90829BCC04E63E4ED5F84F8965049B9F0AABC28418893E92409
+
+Candidate and after-validation hashes are identical. Unity import/compile did
+not rewrite the two source assets.
+
+Supporting unchanged contract files:
+- KiwiFacePartRigidSampleFrame.cs
+  SHA256=578CE2ED93A2A78EE1B19D8FF309A115A2FA53596E79BAAB0534A27AC10077C0
+- SurfaceFittedRawImage.cs
+  SHA256=1EA5B0493A48BE9B64AFD6316C8FBD4A4EC172848F06F8879BA733BB73535167
+- KiwiTrackingQuality10Controller.cs
+  SHA256=06BA86A90FD25341F6173CE3F47F7581BD685D8C35D01F66E897AFD23674134E
+
+Exact source change:
+- Removed KiwiFacePartSharedTiltLock.RuntimeObjectName.
+- Removed KiwiFacePartSharedTiltLock's BeforeSceneLoad RuntimeInitialize
+  AutoInstall method and its AddComponent construction point.
+- Did not change SharedTiltLock roll math, calibration, or lifecycle methods.
+- Retained the SharedTiltLock class for an explicitly wired independent scope;
+  no such Product wiring exists now.
+
+Exact serialized wiring change:
+- Mouth3D FacePartAngleLock fileID=553149539: m_Enabled 1 -> 0.
+- RightEye3D FacePartAngleLock fileID=788061715: m_Enabled 1 -> 0.
+- LeftEye3D FacePartAngleLock fileID=842958313: m_Enabled 1 -> 0.
+
+Why the three existing components were disabled:
+Before this change, SharedTiltLock.LateUpdate forced their enableAngleLock field
+false. Removing SharedTiltLock alone would therefore have reactivated each
+FacePartAngleLock's FaceLandmarkerRunner-based _SampleRotationRad writer. The
+three component-level Scene wiring changes prevent that legacy downstream
+fallback from becoming the replacement second roll owner. No new disable flag,
+compatibility state, gate, or runtime branch was added.
+
+Git diff size after implementation:
+- KiwiFacePartSharedTiltLock.cs: 19 deleted lines, 0 added.
+- Face Landmark Detection.unity: 3 one-line enabled-state replacements.
+- No other tracked files changed.
+- git diff --check found no whitespace error; Git emitted only the repository's
+  existing CRLF/LF advisory for the Scene working-copy representation.
+
+===============================================================================
+E. Scene / Prefab / Component Wiring Before and After
+===============================================================================
+
+Enabled build scene count=1:
+Assets\Scenes\Face Landmark Detection.unity
+
+Before:
+- KiwiFacePartRigidSampleFrame: not serialized; AfterSceneLoad auto-install=1;
+  enableHeadLocalSampleFrame default=true.
+- KiwiFacePartSharedTiltLock: not serialized; BeforeSceneLoad auto-install=1;
+  enableSharedTiltLock default=true.
+- FacePartAngleLock Scene instances=3; enabled instances=3. Their actual roll
+  path was suppressed each LateUpdate by SharedTiltLock.
+- SurfaceFittedRawImage Scene instances=3; enabled instances=3.
+- RigidSampleFrame and SharedTiltLock serialized Scene/Prefab instances=0.
+
+After:
+- KiwiFacePartRigidSampleFrame: unchanged; auto-install=1; active writer owner.
+- KiwiFacePartSharedTiltLock: auto-install=0; Product construction point=0;
+  serialized Scene/Prefab instances=0.
+- FacePartAngleLock Scene instances=3; enabled instances=0.
+- SurfaceFittedRawImage Scene instances=3; enabled instances=3.
+- SharedTiltLock references remaining in Product code are nullable find-and-
+  recalibrate consumers only; none constructs, enables, or serializes it.
+- Historical validation/source-copy Scenes under KiwiValidation and the
+  Assets/KiwiAvatarSystem/Backups historical Scene were not changed and are not
+  enabled build-scene authority.
+
+The shared mask material/shader neutral state is static:
+FacePartSoftMask.shader declares _SampleRotationRad default=0. Therefore the
+disabled legacy AngleLock components do not require a new runtime zeroing owner
+at startup.
+
+===============================================================================
+F. Exact Active Owner Count / Static Exit Gate
+===============================================================================
+
+H1 Product active source-roll de-rigidization writer count=1.
+
+Owner ledger after change:
+1. KiwiFacePartRigidSampleFrame
+   - Constructed once by AfterSceneLoad auto-install.
+   - Reads the bilateral eye crop centers.
+   - Calls SetSampleFrameRotationDegrees for LeftEye3D, RightEye3D, Mouth3D.
+   - This is the only active H1 Product source-roll writer.
+
+Not active in the H1 Product path:
+- KiwiFacePartSharedTiltLock: no Product construction or serialization.
+- FacePartAngleLock: all three Product Scene instances m_Enabled=0.
+- KiwiFacePartLiveMotionBridge: unchanged and default inactive; not introduced
+  or promoted by this change.
+- FacePartShapeMask reads rotation when computing rendered bounds but is not a
+  source-roll writer.
+- F3/control validation components are diagnostic/opt-in readers and were not
+  executed or promoted to Product authority.
+
+Static exit results:
+1. source rigid roll de-rigidization writer exactly 1=PASS
+2. owner is KiwiFacePartRigidSampleFrame=PASS
+3. sample frame and mask frame rotation transaction preserved=PASS
+   SurfaceFittedRawImage is unchanged; one rotateSampleFrame transform supplies
+   texture sampling vertex.uv0 and mask-evaluation vertex.uv1 in the same mesh
+   population.
+4. no downstream active duplicate -roll transform=PASS
+   Shared shader writer is unreachable and all three legacy Runner-based
+   FacePartAngleLock writers are component-disabled.
+5. legacy Runner fallback does not reach H1 path=PASS
+6. no new owner/state/queue/copy/readback/thread/temporal layer=PASS
+7. Root/Head authority unchanged=PASS
+   KiwiFaceMotion.cs and KiwiInferenceFaceTracker.cs are unchanged; no changed
+   file contains AvatarMotionRoot/localRotation/Root publication logic.
+8. Awake/disable/restart stale rotation behavior not regressed=PASS_STATIC
+
+===============================================================================
+G. Lifecycle / Producer Findings
+===============================================================================
+
+KiwiFacePartRigidSampleFrame lifecycle is unchanged:
+- Awake refreshes references and resets neutral state.
+- Scene load rebind resets old part rotations before binding new parts.
+- enableHeadLocalSampleFrame=false resets all three rotations.
+- OnDisable and OnDestroy call ResetPartRotations.
+- ResetPartRotations calls ResetSampleFrameRotation on all live bound parts.
+- static diagnostic rotation/operational state is zeroed on disable/reset.
+
+SharedTiltLock cannot leave an H1 Product stale rotation after this change
+because the Product path no longer constructs it. The runtime mask material is
+newly created from the neutral shader/base material and the shader rotation
+default is zero.
+
+FacePartAngleLock lifecycle fallback is unreachable because all three current
+Product instances are serialized component-disabled. No runtime code was found
+that re-enables those components.
+
+KiwiTrackingQuality10Controller finding:
+The current live-local class is the 17-line RAW_DIRECT_MOTION_V1_RETIRED marker.
+There is no current FacePartRigidPoseSnapshot/PoseSnapshot definition or
+producer in that class or the current Runtime source search. It is not a hidden
+roll owner and was not changed. This absence remains consistent with the next
+missing Product boundary; no P3D -> FacePart bridge was invented in this task.
+
+===============================================================================
+H. Exact Unity Compile / Import
+===============================================================================
+
+Command executable:
+C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe
+
+Mode:
+-batchmode -nographics -quit
+projectPath=D:\KiwiAvatarSystem
+
+Compile/import log:
+KiwiValidation\H1_SourceRigidSingleOwner_Compile_20260912.log
+SHA256=06927AFA1781D902B3028C555B72254CB396C0F7FC049760D3DBB02C5D904DA1
+
+Result:
+- exact Unity identity=6000.0.80f1 (2dfd32957da2)
+- Tundra build success (654 evaluated)
+- script compilation completed
+- Scene imported successfully
+- batchmode return code=0
+- compiler errors=0
+- existing warnings were reported; no warning was treated as an H1 semantic or
+  Human Visual PASS.
+
+COMPILE_RESULT=PASS
+
+Runtime was not executed because active owner cardinality is closed by current
+source construction plus the sole enabled build Scene wiring. No minimal
+Runtime observer is required for this Static claim.
+
+===============================================================================
+I. FULL_AUDIT_1
+===============================================================================
+
+Method:
+- started from the current working tree after implementation;
+- rechecked live branch/HEAD/status and exact changed-file scope;
+- enumerated the one enabled build Scene and parsed the relevant component
+  GUID/fileID/enabled states;
+- searched all non-historical current Assets source for RigidSampleFrame and
+  SharedTiltLock construction/serialization, SetSampleFrameRotationDegrees
+  writers, _SampleRotationRad writers/readers, runtime re-enable paths, and
+  lifecycle reset paths;
+- verified sample/mask UV transaction statements, neutral shader default,
+  unchanged Root/Head files, forbidden-addition diff, hashes, and compile log;
+- evaluated all eight Static exit conditions from start to finish.
+
+An initial checklist run had a measurement-script defect: its lifecycle regex
+did not span newlines and its inline PowerShell if expression was invalid. That
+run produced a false lifecycle FAIL and was rejected as validator evidence. The
+corrected audit was restarted across the complete scope, not only the failed
+line.
+
+Restarted complete results:
+1=PASS, 2=PASS, 3=PASS, 4=PASS,
+5=PASS, 6=PASS, 7=PASS, 8=PASS, compile=PASS.
+ACTIVE_SOURCE_ROLL_OWNER_COUNT=1
+FULL_AUDIT_1=PASS
+
+===============================================================================
+J. FULL_AUDIT_2
+===============================================================================
+
+Independent method:
+- restarted from immutable HEAD tree content rather than Audit 1 conclusions;
+- compared HEAD SharedTiltLock construction and HEAD Scene component wiring to
+  the current working tree;
+- independently counted before/after construction and enabled components;
+- used immutable HEAD content for unchanged RigidSampleFrame,
+  SurfaceFittedRawImage, Root/Head, and lifecycle contract checks;
+- independently enumerated class references, Product Scene serialization,
+  active write reachability, forbidden additions, compile evidence, and exact
+  diff scope;
+- evaluated the same complete eight-condition scope.
+
+Independent before/after results:
+- Shared Product auto-install: 1 -> 0
+- Shared Product AddComponent construction: 1 -> 0
+- Product Scene FacePartAngleLock total: 3 -> 3
+- Product Scene FacePartAngleLock enabled: 3 -> 0
+- RigidSampleFrame auto-install: 1 -> 1
+- Shared/Rigid serialized Product instances: 0/0 -> 0/0
+
+Complete results:
+1=PASS, 2=PASS, 3=PASS, 4=PASS,
+5=PASS, 6=PASS, 7=PASS, 8=PASS, compile=PASS.
+ACTIVE_SOURCE_ROLL_OWNER_COUNT=1
+FULL_AUDIT_2=PASS
+
+AUDIT_DISAGREEMENT=NONE
+REMAINING_UNRESOLVED_STATIC_CLAIMS=NONE_WITHIN_ASSIGNED_SCOPE
+
+The rejected Audit 1 checklist measurement defect was resolved before comparing
+the two valid complete audits. It is not a source/Authority disagreement.
+
+===============================================================================
+K. Rollback
+===============================================================================
+
+No commit, push, reset, checkout, clean, or stash was performed.
+
+Rollback method:
+1. Use apply_patch to reinsert the exact removed RuntimeObjectName and
+   BeforeSceneLoad AutoInstall/AddComponent block in
+   KiwiFacePartSharedTiltLock.cs.
+2. Use apply_patch to restore m_Enabled: 1 for FacePartAngleLock fileIDs
+   553149539, 788061715, and 842958313 in Face Landmark Detection.unity.
+3. Verify the two pre-change SHA256 values listed in section D.
+4. Re-run exact Unity 6000.0.80f1 compile/import.
+
+Rollback was not executed because validation passed. The before hashes and
+two-file diff define the exact reversible boundary without touching any
+pre-existing user-owned artifact.
+
+===============================================================================
+L. Final Status / Next Boundary
+===============================================================================
+
+H1_SOURCE_RIGID_SINGLE_OWNER_STATIC=PASS
+FULL_AUDIT_1=PASS
+FULL_AUDIT_2=PASS
+AUDIT_DISAGREEMENT=NONE
+RUNTIME_EXECUTED=NO
+COMMIT=NO
+PUSH=NO
+
+NEXT=P3D_TO_FACEPART_SAME_SAMPLE_BRIDGE
+
+The next boundary must bind the already-established accepted P3D same-sample
+FaceGeometry pose to the corresponding FacePart appearance transaction, while
+preserving:
+- source appearance and rigid pose from the same sample;
+- source rigid removal exactly once;
+- head-local Eye/Mouth non-rigid appearance;
+- existing fixed fitted surface;
+- visible Head pose exactly once;
+- no Root translation;
+- no duplicate/out-of-order/stale/mixed-epoch publish.
+
+END_OF_REPORT
