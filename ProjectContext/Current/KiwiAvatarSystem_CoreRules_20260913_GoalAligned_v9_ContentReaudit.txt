@@ -400,6 +400,7 @@ GitHub source解析
 →最小修正
 →Static review
 →必要なcommit boundary提示
+→standing permissionに基づくcommit / ordinary push
 まで通常チャットで行う。
 
 GitHub変更はREMOTE_IMPLEMENTED / STATIC_REVIEWED等でありlocal Production PASSではない。
@@ -432,13 +433,13 @@ Human Visual Authorityは人間にある。
 
 通常チャットはその時点で必ず「今がコミット適切時点」と知らせる。
 
-commitはユーザーの明示指示または当該作業での明示的許可がある場合のみ通常チャットが行う。
+2026-09-13にユーザーからKiwiAvatarSystemの今後の通常commitと通常pushへstanding permissionが与えられた。撤回されるまで、適切なcommit boundaryでは個別確認なしでcommitし、そのcommitを通常pushしてよい。
 
 WIPを細切れにcommitしすぎず、複数の独立boundaryを1 commitへまとめない。
 
-pushはユーザー明示指示時のみ。
+standing permissionはforce push、destructive history rewrite、tag/release、reset/clean、user-owned dirtyを破棄するcheckout/restoreを許可しない。これらは別途明示許可を必要とする。
 
-local Production検証前のcommitはProduction採用を意味しない。
+local Production検証前のcommit/pushはProduction採用を意味しない。
 
 ---
 
@@ -500,6 +501,12 @@ CustomInstructions:
 
 AGENTS.md:
 local agent向け固定運用契約。volatile stateを入れない。
+
+`ProjectContext\Current`:
+CoreRules、FullRoadmap、CustomInstructionsの3文書だけをCurrent Authority setとして置く。
+
+`ProjectContext\Support`:
+Current selector運用、通常チャット運用、REPORT作成指示、manifest等の補助運用資料。Support内資料はDirectory membershipによるCurrent Authorityではない。
 
 ChatReport:
 詳細時系列、旧SHA、過去Runtime、旧diagnostic、旧Next、historical decision。

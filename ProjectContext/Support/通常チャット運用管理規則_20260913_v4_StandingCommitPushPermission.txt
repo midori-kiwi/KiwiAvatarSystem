@@ -1,7 +1,7 @@
 # KiwiAvatarSystem 通常チャット運用管理規則
 
 更新日: 2026-09-13 JST
-Revision: v3 / Current Integrated FullRoadmap
+Revision: v4 / Current Three-Document Authority / Standing Commit Push Permission
 
 ## 1. 会話長管理
 
@@ -26,7 +26,7 @@ Revision: v3 / Current Integrated FullRoadmap
 3. Current統合FullRoadmap
 4. CustomInstructions
 5. 最新有効Consolidated REPORT / Runtime / Human Visual
-6. 必要なhistorical evidence
+6. 必要な `ProjectContext\Support` / historical evidence
 
 全履歴を再展開しない。
 別CurrentRoadmapは参照しない。
@@ -62,7 +62,7 @@ Revision: v3 / Current Integrated FullRoadmap
 - Runtime/Human evidence interpretation
 - Adopt/Reject/Supersede
 - CoreRules / FullRoadmap / CustomInstructions整備
-- 明示許可されたcommit
+- 適切なboundaryでのcommit / ordinary push
 
 Codexは原則local-only。
 
@@ -105,22 +105,36 @@ Observer / Validator / REPORT自体も監査する。
 正常コードをcleanup目的だけで作り直さない。
 必要時whole-fileを優先する。
 
-## 8. Commit運用
+## 8. Commit / Push運用
 
 意味のある最小変更がStatic reviewを通り、次local検証の再現可能な基準点を固定すべき時点で:
 
 **「今がコミット適切時点」**
 
 と知らせる。
-commitは明示許可時のみ。pushは明示指示時のみ。
 
-## 9. 手動作業を既定にしない
+2026-09-13にユーザーからKiwiAvatarSystemの今後の通常commitと通常pushへstanding permissionが与えられた。撤回されるまで、適切なcommit boundaryでは個別確認なしでcommitし、そのcommitを通常pushしてよい。
+
+このstanding permissionはforce push、destructive history rewrite、tag/release、reset/clean、user-owned dirtyを破棄するcheckout/restoreを含まない。
+
+local Production検証前のcommit/pushはProduction採用を意味しない。
+
+## 9. 情報源配置
+
+`ProjectContext\Current` は次の3文書だけをCurrent Authority setとする。
+- CoreRules
+- FullRoadmap
+- CustomInstructions
+
+Selector運用、通常チャット運用、REPORT作成指示、manifest等のactive operational helperは `ProjectContext\Support` へ置く。Support directory membershipはCurrent Authorityを意味しない。
+
+## 10. 手動作業を既定にしない
 
 Chat ZIP→download→PowerShell手入力→結果貼付を通常開発の既定経路にしない。
 remote source workは通常チャット+GitHub、local-only workはCodex。
 Human Visual、GUI/hardware、権限境界、tool非対応等のみ手動。
 
-## 10. 成果物最小化
+## 11. 成果物最小化
 
 - Codex: Consolidated REPORT 1個
 - Runtime ZIP: Evidence上必要時のみ
@@ -128,7 +142,7 @@ Human Visual、GUI/hardware、権限境界、tool非対応等のみ手動。
 - Installer/Fix: complete archive 1個
 - duplicate evidenceを毎回再梱包しない
 
-## 11. 文脈保全
+## 12. 文脈保全
 
 Current AuthorityやOpen Issueを削らない一方、old SHA / old Next / obsolete version / retired diagnostic / superseded hypothesisをCurrentへ戻さない。
 

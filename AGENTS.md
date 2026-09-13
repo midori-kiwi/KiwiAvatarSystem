@@ -4,7 +4,7 @@
 >
 > Role: durable project operating policy for local Codex / engineering-agent work.
 >
-> Volatile state such as current SHA, current Runtime result, latest Phase, temporary hypothesis, and Next Action belongs in `ProjectContext\Current\KiwiAvatarSystem_CurrentRoadmap_*.txt`, not here.
+> Volatile state such as current SHA, current Runtime result, latest Phase, temporary hypothesis, and Next Action belongs in `ProjectContext\Current\KiwiAvatarSystem_FullRoadmap_*.txt`, not here.
 
 ---
 
@@ -60,7 +60,9 @@ Before any substantive design, implementation, validation, evaluation, or next-a
 
 ### Current-context selection
 
-Directory membership in `ProjectContext\Current\` is the selector. Do not choose a current document by filename, revision suffix, mtime, directory order, `latest` / `final` wording, GitHub `main`, or an older report recommendation.
+Directory membership in `ProjectContext\Current\` is the selector. The directory must contain only the three active Current roles: CoreRules, FullRoadmap, and CustomInstructions. Do not choose a current document by filename revision suffix, mtime, directory order, `latest` / `final` wording, GitHub `main`, or an older report recommendation.
+
+Operational helper documents belong under `ProjectContext\Support\` and do not become Current Authority by directory membership.
 
 If current-context documents conflict, resolve the conflict with claim-scoped Authority, source identity, report-time SHA / HEAD, same-build Runtime identity, package identity, and claim scope.
 
@@ -69,7 +71,7 @@ If unresolved:
 
 Stop only the affected Gate.
 
-If the directory is missing or has no usable current-context document:
+If the directory is missing or has no usable project-context document:
 `CURRENT_CONTEXT_NOT_FOUND`
 
 Do not silently substitute an older historical document.
@@ -82,16 +84,16 @@ Do not silently substitute an older historical document.
 
 ## 3. Information-source roles
 
-Keep `ProjectContext\Current\` small.
+Keep `ProjectContext\Current\` small and authoritative.
 
-Recommended current set:
+Current set is exactly these three document roles:
 - CoreRules: durable project contracts and long-lived design rails.
-- CurrentRoadmap: current Authority, Decision Ledger, open issues, single Next Action, and roadmap to acceptance.
+- FullRoadmap: current Authority, Decision Ledger, open issues, single Next Action, complete chronology, and roadmap to acceptance.
 - CustomInstructions: compact normal-chat behavior / project context.
 
-Do not place historical Codex reports, Runtime ZIPs, obsolete integrated-information files, old roadmaps, or superseded diagnostics in `ProjectContext\Current\`.
+Do not place selector guidance, manifests, operating helper documents, historical Codex reports, Runtime ZIPs, obsolete integrated-information files, old roadmaps, or superseded diagnostics in `ProjectContext\Current\`.
 
-ChatReport and historical integrated-information documents preserve history. They do not automatically become current authority.
+Active operating helper documents belong under `ProjectContext\Support\`. ChatReport and historical integrated-information documents preserve history. They do not automatically become current authority.
 
 When a current-context document is superseded, move it out of `ProjectContext\Current\` during the same context-maintenance task.
 
@@ -164,7 +166,7 @@ Unless the task genuinely requires live-local capability, Normal Chat is the pri
 - Runtime / Human Visual evidence interpretation;
 - Adopt / Reject / Supersede decisions;
 - roadmap and current-information maintenance;
-- commit, when the user has explicitly authorized it.
+- commit and ordinary push at an appropriate commit boundary under the user's standing authorization.
 
 Do not route ordinary GitHub source analysis or normal code changes to Codex merely because Codex can edit files.
 
@@ -197,14 +199,11 @@ A commit is appropriate when one meaningful minimal change has passed Static rev
 At that point, Normal Chat must explicitly tell the user:
 `今がコミット適切時点`
 
-Do not commit unless:
-- the user explicitly requests commit in the current task; or
-- the user has explicitly granted commit permission for that task.
+Standing authorization granted by the user on 2026-09-13 applies to KiwiAvatarSystem ordinary commits and ordinary pushes until revoked. Therefore, at an appropriate boundary Normal Chat may commit and push without asking for per-commit or per-push confirmation.
 
 Do not:
 - create premature WIP commits;
 - combine independent boundaries into one commit;
-- push without an explicit user request;
 - treat a pre-local-validation GitHub commit as Production adoption.
 
 Commit notes should state:
@@ -212,6 +211,8 @@ Commit notes should state:
 - affected boundary;
 - Static status;
 - local items still unverified.
+
+Ordinary push permission does not authorize force push, destructive history rewrite, tag/release publication, or discarding user-owned local changes.
 
 ---
 
@@ -257,9 +258,9 @@ For Generic List usage, prefer `::new()` plus `.ToArray()` where applicable.
 
 ## 9. Hard human-authorization boundaries
 
+The standing authorization in section 7 covers ordinary `git commit` and ordinary `git push` for KiwiAvatarSystem only.
+
 Do not perform without explicit user authorization in the current task:
-- `git commit`;
-- `git push`;
 - tags / releases;
 - force push;
 - destructive history rewrite;

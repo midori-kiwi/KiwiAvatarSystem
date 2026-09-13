@@ -27,13 +27,13 @@ H1 Human Visual measurementは同一artifactの連続録画+固定segment方式�
 ProductはEvidence Protected Core、Avatar Adapter、Model Profile、Runtime Import、Transactional Hot Swap。VRM0/1、non-spherical、AutoFit/manual Profile fallback、Spring/Dangle、Calibration/User Tuningをmodel側で扱う。Hot Swapはhidden candidate検証後atomic switch、失敗時rollback。Import security、Atomic Config、Safe Mode、Privacy、Support Matrix、Accessibility、installer/rollbackを完成条件とする。Quality Profile/tuningでAuthority、identity、semanticを変えず不具合を隠さない。Hand/Body、OSC/VMC、telemetry upload、auto updateはWindows完成をblockしない。Android/iOSはWindows後。iOS実機testは現要求で必須でない。
 
 情報源
-CurrentはCoreRules、統合FullRoadmap、CustomInstructionsの3文書。別CurrentRoadmapは持たず、旧CurrentRoadmapはHistoricalのみ。FullRoadmapがCurrent Authority、Decision Ledger、first blocker、Next、過去→完成を一元管理する。
+CurrentはCoreRules、統合FullRoadmap、CustomInstructionsの3文書だけ。補助運用資料はProjectContext/Supportへ置きCurrent Authorityにしない。別CurrentRoadmapは持たず、旧CurrentRoadmapはHistoricalのみ。FullRoadmapがCurrent Authority、Decision Ledger、first blocker、Next、過去→完成を一元管理する。
 
 現在地
 Visual Authorityは2026-09-13 00:04:34 JSTのH1同一build Human Visual FAIL。report time branchはwork/raw-direct-motion、HEADはdf75cfa9f6ae386bf4443272929d3cef33a8b138。live localは未確認。P3C_1とP3Dは範囲限定合格。H1 frame identity repairはStatic compile same source DX12 Runtime restart scopeで合格。現症状は単発jumpだけでなくほぼ継続的なposition/rotation jitterを含み、first failing boundaryは未特定。Clean Performance、Final Product、Windows Acceptanceは未合格。次は同一artifactの固定segment連続録画でNEUTRAL_STILLNESS_Aを最優先に、authority、identity、timestamp/source age/liveness、provider transition、Canonical pose、Presentation consume/decision/commit、GeometrySnapshot identityの順に最初の連続性またはidentity/transaction failureだけを特定し、原因前にsmoothing/Kalman/prediction/threshold relaxation/dead zone/strong filtering/Root/Head補償/Camera/Provider workaround/Geometry補償を行わない。
 
 通常チャット GitHub Codex
-通常チャット+GitHubを調査、設計、監査、source解析、修正、Static reviewの主担当とする。Codexはlocal-onlyでlive identity、local反映、exact Unity、Native ABI、artifact、Runtime、clean benchmark、GUI、人間確認補助、rollback/distributionを担当する。通常チャットで完結する作業はCodexへ送らない。Visual Authorityは人間。
+通常チャット+GitHubを調査、設計、監査、source解析、修正、Static review、適切なboundaryでのcommit/通常pushの主担当とする。Codexはlocal-onlyでlive identity、local反映、exact Unity、Native ABI、artifact、Runtime、clean benchmark、GUI、人間確認補助、rollback/distributionを担当する。通常チャットで完結する作業はCodexへ送らない。Visual Authorityは人間。
 
 コミットと安全
-意味のある最小変更がStatic reviewを通り次local検証の基準点を固定すべき時点で、通常チャットは今がコミット適切時点と知らせる。commitは許可時のみ、pushは明示時のみ。変更前PreflightはProjectVersion、exact Unity、branch/HEAD/status、dirty保護、before/candidate/after SHA。mismatchはfail closed。reset/checkout/clean禁止。PowerShell 5.1固定。safe IO、exit code、transactional replace、rollback、write guardを守る。ZIP downloadとPowerShell手入力を通常開発の既定にしない。Authority/Current/Nextが脱落する前に新チャット移行を提案する。
+意味のある最小変更がStatic reviewを通り次local検証の基準点を固定すべき時点で、通常チャットは今がコミット適切時点と知らせる。2026-09-13にユーザーからKiwiAvatarSystemの今後の通常commitと通常pushへstanding permissionが与えられたため、撤回まで個別確認なしでcommit/pushしてよい。force push、destructive history rewrite、tag/release、reset/clean、user-owned dirtyを破棄するcheckout/restoreは含まない。変更前PreflightはProjectVersion、exact Unity、branch/HEAD/status、dirty保護、before/candidate/after SHA。mismatchはfail closed。reset/checkout/clean禁止。PowerShell 5.1固定。safe IO、exit code、transactional replace、rollback、write guardを守る。ZIP downloadとPowerShell手入力を通常開発の既定にしない。Authority/Current/Nextが脱落する前に新チャット移行を提案する。

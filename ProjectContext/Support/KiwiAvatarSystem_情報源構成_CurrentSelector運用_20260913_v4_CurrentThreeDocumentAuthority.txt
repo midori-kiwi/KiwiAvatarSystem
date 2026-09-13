@@ -1,20 +1,20 @@
 # KiwiAvatarSystem 情報源構成・Current Selector運用
 
 更新日: 2026-09-13 JST
-Revision: v3 / Current Integrated Into FullRoadmap / Content-Level Reaudit
+Revision: v4 / Current Three-Document Authority / Support Separation
 
 ## 1. 目的
 
 Current情報源を分散させず、古いNext / SHA / phaseを再昇格させない。
 同時に、完全ロードマップから現在地を切り離さない。
 
-今回から `CurrentRoadmap` 単独文書を廃止し、Currentを完全ロードマップへ統合する。
+`CurrentRoadmap` 単独文書は廃止し、Currentを完全ロードマップへ統合する。
 
 ## 2. Current selector
 
 `D:\KiwiAvatarSystem\ProjectContext\Current\`
 
-Currentとして置くのは原則3ファイルだけ。
+Currentとして置くのは次の3文書だけ。
 
 1. `KiwiAvatarSystem_CoreRules_*.txt`
 2. `KiwiAvatarSystem_FullRoadmap_*.txt`
@@ -23,8 +23,9 @@ Currentとして置くのは原則3ファイルだけ。
 Directory membershipをCurrent selectorとする。
 ファイル名のlatest/final/revision/mtimeだけでCurrentを決めない。
 
-旧 `KiwiAvatarSystem_CurrentRoadmap_*` はCurrentから外し、Historicalへ移す。
-削除して履歴を消す必要はないがCurrent selectorへ残さない。
+Selector運用、通常チャット運用、REPORT作成指示、manifest等の補助資料は `ProjectContext\Support\` へ置く。Support directory membershipはCurrent Authorityを意味しない。
+
+旧 `KiwiAvatarSystem_CurrentRoadmap_*` はCurrentから外し、Historicalへ移す。削除して履歴を消す必要はないがCurrent selectorへ残さない。
 
 ## 3. FullRoadmapの役割
 
@@ -58,7 +59,7 @@ Currentと完全ロードマップを別文書へ分離しない。
 - Human-Head / FacePart contract
 - Validation philosophy
 - Product quality / Security / Privacy / UX
-- workflow / commit / safety
+- workflow / commit / push / safety
 
 Current SHA、current phase、temporary hypothesis、Next Actionは入れない。
 
@@ -76,9 +77,11 @@ Project root固定。Current selector外。
 local agent durable policy、Preflight、Authority、安全、role split、audit contractを持つ。
 volatile SHA / Runtime / Nextは入れない。
 
-## 7. ChatReport / Consolidated REPORT / KiwiValidation
+## 7. Support / ChatReport / Consolidated REPORT / KiwiValidation
 
-Historical Evidence / detailed evidence。
+`ProjectContext\Support\` はactive operational support資料を置くがCurrent Authority selectorではない。
+
+ChatReport / Consolidated REPORT / KiwiValidationはHistorical Evidence / detailed evidence。
 
 - detailed chronology
 - historical SHA
@@ -91,8 +94,7 @@ Historical Evidence / detailed evidence。
 Current selectorへ大量投入しない。
 
 過去を再監査するときはArchive名・タイトルだけで判断しない。
-利用可能な場合はZIP内部の`00_CHAT_PERMANENT_REPORT.md`または対応REPORT本文を開き、
-目的、Evidence、Validated、Rejected、Superseded、Current Result、Open Issues、Next、Do Not Changeを読む。
+利用可能な場合はZIP内部の`00_CHAT_PERMANENT_REPORT.md`または対応REPORT本文を開き、目的、Evidence、Validated、Rejected、Superseded、Current Result、Open Issues、Next、Do Not Changeを読む。
 本文が取得できない場合は「本文未確認」とする。
 
 ## 8. 旧Integrated Information
@@ -108,7 +110,7 @@ R12/R13等の旧巨大統合情報はHistorical Source。
 3. FullRoadmapのCURRENT SNAPSHOT / Decision Ledger / Next
 4. CustomInstructions
 5. latest relevant Consolidated REPORT / Runtime / Human Visual
-6. 必要なhistorical evidence
+6. 必要なSupport / historical evidence
 
 全履歴を毎回再展開しない。
 
@@ -122,17 +124,24 @@ Current文書を更新する場合:
 5. historical storageへ保存
 6. new 3-file Current setだけを残す
 7. local branch/HEAD/statusを直接確認できた場合のみlive-localとして記録
-8. commit/pushは別途明示許可時のみ
+8. 適切なboundaryでstanding permissionに基づきcommit / ordinary pushする
 
-## 11. Current統合後の禁止
+## 11. Commit / Push standing permission
+
+2026-09-13にユーザーからKiwiAvatarSystemの今後の通常commitと通常pushへstanding permissionが与えられた。撤回されるまで、適切なcommit boundaryでは個別確認なしでcommitし、通常pushしてよい。
+
+この許可はforce push、destructive history rewrite、tag/release、reset/clean、user-owned dirtyを破棄するcheckout/restoreを含まない。
+
+## 12. Current統合後の禁止
 
 - CoreRulesとFullRoadmapの双方へvolatile Currentを二重所有させない
 - FullRoadmapと別CurrentRoadmapを並行Currentにしない
+- Support資料をDirectory membershipだけでCurrent Authorityへ昇格しない
 - ChatReportのold NextをFullRoadmap Currentへ戻さない
 - report-time HEADをcurrent liveへ昇格しない
 - historical Runtime PASSをFinal Visual/Performance PASSへ拡張しない
 
-## 12. 現時点のCurrent
+## 13. 現時点のCurrent
 
 最新取得済みHuman Visual Authority:
 2026-09-13 00:04:34 JST H1 same-build Human review = 不合格。
@@ -147,8 +156,8 @@ NEUTRAL_STILLNESS_Aにおける最初のcontinuity / identity / transaction boun
 Next Single Action:
 同一artifactを固定segmentで連続録画し、Human markerを使わず、最優先NEUTRAL_STILLNESS_A全期間についてauthority→identity→timestamp/source age/liveness→provider/transition→Canonical pose→presentation consume/decision/commit→GeometrySnapshot identityの最初のfailureだけを特定する。reject等はHuman Visual不安定windowと継続相関しない限り原因へ昇格しない。
 
-## 13. 最終原則
+## 14. 最終原則
 
 Currentを小さくすること自体が目的ではない。
 Current Authorityと完成ロードマップを一つに保ち、必要な過去経緯は同じFullRoadmapのchronologyへ残す。
-詳細EvidenceはChatReport/REPORTへ委譲する。
+補助運用資料はSupport、詳細EvidenceはChatReport/REPORTへ委譲する。
