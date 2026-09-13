@@ -14,11 +14,12 @@ using FaceGeometryProto =
     Mediapipe.Tasks.Vision.FaceGeometry.Proto.FaceGeometry;
 
 /// <summary>
-/// P3C-only same-sample IE landmark to FaceGeometry transaction owner.
+/// Same-sample IE landmark to FaceGeometry transaction owner.
 ///
-/// This service deliberately has no Avatar, Head, FacePart, Canonical, camera,
-/// ROI, smoothing, or presentation responsibility. The caller owns activation;
-/// current Production keeps that activation disabled by default.
+/// This service owns the bounded graph transaction and one immutable latest
+/// accepted pose snapshot. It does not write Avatar, Head, FacePart, Canonical,
+/// camera, ROI, smoothing, or presentation state; the consumer owns the exact
+/// same-sample appearance gate.
 /// </summary>
 internal sealed class KiwiFaceGeometryTransactionService
 {
@@ -106,6 +107,32 @@ internal sealed class KiwiFaceGeometryTransactionService
                 Finite(m32) && Finite(m33);
         }
 
+        internal bool TryGetImagePlaneRollDegrees(
+            out float degrees)
+        {
+            degrees = 0f;
+
+            // FaceGeometry maps canonical metric coordinates to runtime metric
+            // coordinates. Its first matrix column is therefore the transformed
+            // canonical +X basis. Runtime X/Y are the image-plane axes after the
+            // input y-down -> metric y-up conversion, so this basis direction is
+            // the rigid in-plane roll needed by the UV sample frame. The installed
+            // Unity wrapper flips Z only; m00/m10 and this roll sign are unchanged.
+            float projectedXAxisLengthSquared =
+                m00 * m00 +
+                m10 * m10;
+
+            if (
+                !Finite(projectedXAxisLengthSquared) ||
+                projectedXAxisLengthSquared <= 0.00000001f)
+            {
+                return false;
+            }
+
+            degrees = Mathf.Atan2(m10, m00) * Mathf.Rad2Deg;
+            return Finite(degrees);
+        }
+
         private static float Read(
             MatrixData matrix,
             int row,
@@ -119,6 +146,188 @@ internal sealed class KiwiFaceGeometryTransactionService
             return matrix.PackedData[index];
         }
     }
+
+    internal readonly struct AcceptedSnapshot
+    {
+        internal readonly bool isValid;
+        internal readonly int graphRunId;
+        internal readonly int streamId;
+        internal readonly ulong frameId;
+        internal readonly long sourceHostTicks;
+        internal readonly int cameraGeneration;
+        internal readonly int trackingSessionGeneration;
+        internal readonly int providerGeneration;
+        internal readonly int modelGeneration;
+        internal readonly KiwiTrackingBackend backend;
+        internal readonly int semanticFrameWidth;
+        internal readonly int semanticFrameHeight;
+        internal readonly Pose16 pose;
+
+        internal AcceptedSnapshot(
+            int graphRunId,
+            int streamId,
+            ulong frameId,
+            long sourceHostTicks,
+            int cameraGeneration,
+            int trackingSessionGeneration,
+            int providerGeneration,
+            int modelGeneration,
+            KiwiTrackingBackend backend,
+            int semanticFrameWidth,
+            int semanticFrameHeight,
+            Pose16 pose)
+        {
+            isValid =
+                graphRunId > 0 &&
+                streamId > 0 &&
+                frameId > 0UL &&
+                sourceHostTicks > 0L &&
+                cameraGeneration > 0 &&
+                trackingSessionGeneration > 0 &&
+                providerGeneration > 0 &&
+                modelGeneration > 0 &&
+                backend == KiwiTrackingBackend.InferenceEngine &&
+                semanticFrameWidth > 0 &&
+                semanticFrameHeight > 0 &&
+                pose.IsFinite();
+            this.graphRunId = graphRunId;
+            this.streamId = streamId;
+            this.frameId = frameId;
+            this.sourceHostTicks = sourceHostTicks;
+            this.cameraGeneration = cameraGeneration;
+            this.trackingSessionGeneration = trackingSessionGeneration;
+            this.providerGeneration = providerGeneration;
+            this.modelGeneration = modelGeneration;
+            this.backend = backend;
+            this.semanticFrameWidth = semanticFrameWidth;
+            this.semanticFrameHeight = semanticFrameHeight;
+            this.pose = pose;
+        }
+
+        internal bool Matches(
+            ulong expectedFrameId,
+            long expectedSourceHostTicks,
+            KiwiRuntimeGenerationContext.Snapshot expectedGeneration,
+            KiwiTrackingBackend expectedBackend,
+            int expectedSemanticFrameWidth,
+            int expectedSemanticFrameHeight)
+        {
+            return
+                isValid &&
+                frameId == expectedFrameId &&
+                sourceHostTicks == expectedSourceHostTicks &&
+                cameraGeneration == expectedGeneration.cameraGeneration &&
+                trackingSessionGeneration ==
+                    expectedGeneration.trackingSessionGeneration &&
+                providerGeneration == expectedGeneration.providerGeneration &&
+                modelGeneration == expectedGeneration.modelGeneration &&
+                backend == expectedBackend &&
+                semanticFrameWidth == expectedSemanticFrameWidth &&
+                semanticFrameHeight == expectedSemanticFrameHeight;
+        }
+
+        internal bool HasSameIdentity(AcceptedSnapshot other)
+        {
+            return
+                isValid &&
+                other.isValid &&
+                graphRunId == other.graphRunId &&
+                streamId == other.streamId &&
+                frameId == other.frameId &&
+                sourceHostTicks == other.sourceHostTicks &&
+                cameraGeneration == other.cameraGeneration &&
+                trackingSessionGeneration ==
+                    other.trackingSessionGeneration &&
+                providerGeneration == other.providerGeneration &&
+                modelGeneration == other.modelGeneration &&
+                backend == other.backend &&
+                semanticFrameWidth == other.semanticFrameWidth &&
+                semanticFrameHeight == other.semanticFrameHeight;
+        }
+    }
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+    internal readonly struct PipelineStateSnapshot
+    {
+        internal readonly bool acceptedSnapshotExists;
+        internal readonly int acceptedGraphRunId;
+        internal readonly int acceptedStreamId;
+        internal readonly ulong acceptedFrameId;
+        internal readonly long acceptedSourceHostTicks;
+        internal readonly int acceptedCameraGeneration;
+        internal readonly int acceptedTrackingSessionGeneration;
+        internal readonly int acceptedProviderGeneration;
+        internal readonly int acceptedModelGeneration;
+        internal readonly KiwiTrackingBackend acceptedBackend;
+        internal readonly int acceptedSemanticFrameWidth;
+        internal readonly int acceptedSemanticFrameHeight;
+        internal readonly bool inFlightExists;
+        internal readonly ulong inFlightFrameId;
+        internal readonly long inFlightSourceHostTicks;
+        internal readonly bool latestPendingExists;
+        internal readonly ulong latestPendingFrameId;
+        internal readonly long latestPendingSourceHostTicks;
+        internal readonly bool callbackCompletionExists;
+        internal readonly ulong callbackCompletionFrameId;
+        internal readonly int callbackCompletionStatus;
+        internal readonly bool shutdownRequested;
+        internal readonly bool resetRequested;
+        internal readonly ulong lastAcceptedGeometryFrameId;
+
+        internal PipelineStateSnapshot(
+            bool acceptedSnapshotExists,
+            int acceptedGraphRunId,
+            int acceptedStreamId,
+            ulong acceptedFrameId,
+            long acceptedSourceHostTicks,
+            int acceptedCameraGeneration,
+            int acceptedTrackingSessionGeneration,
+            int acceptedProviderGeneration,
+            int acceptedModelGeneration,
+            KiwiTrackingBackend acceptedBackend,
+            int acceptedSemanticFrameWidth,
+            int acceptedSemanticFrameHeight,
+            bool inFlightExists,
+            ulong inFlightFrameId,
+            long inFlightSourceHostTicks,
+            bool latestPendingExists,
+            ulong latestPendingFrameId,
+            long latestPendingSourceHostTicks,
+            bool callbackCompletionExists,
+            ulong callbackCompletionFrameId,
+            int callbackCompletionStatus,
+            bool shutdownRequested,
+            bool resetRequested,
+            ulong lastAcceptedGeometryFrameId)
+        {
+            this.acceptedSnapshotExists = acceptedSnapshotExists;
+            this.acceptedGraphRunId = acceptedGraphRunId;
+            this.acceptedStreamId = acceptedStreamId;
+            this.acceptedFrameId = acceptedFrameId;
+            this.acceptedSourceHostTicks = acceptedSourceHostTicks;
+            this.acceptedCameraGeneration = acceptedCameraGeneration;
+            this.acceptedTrackingSessionGeneration =
+                acceptedTrackingSessionGeneration;
+            this.acceptedProviderGeneration = acceptedProviderGeneration;
+            this.acceptedModelGeneration = acceptedModelGeneration;
+            this.acceptedBackend = acceptedBackend;
+            this.acceptedSemanticFrameWidth = acceptedSemanticFrameWidth;
+            this.acceptedSemanticFrameHeight = acceptedSemanticFrameHeight;
+            this.inFlightExists = inFlightExists;
+            this.inFlightFrameId = inFlightFrameId;
+            this.inFlightSourceHostTicks = inFlightSourceHostTicks;
+            this.latestPendingExists = latestPendingExists;
+            this.latestPendingFrameId = latestPendingFrameId;
+            this.latestPendingSourceHostTicks = latestPendingSourceHostTicks;
+            this.callbackCompletionExists = callbackCompletionExists;
+            this.callbackCompletionFrameId = callbackCompletionFrameId;
+            this.callbackCompletionStatus = callbackCompletionStatus;
+            this.shutdownRequested = shutdownRequested;
+            this.resetRequested = resetRequested;
+            this.lastAcceptedGeometryFrameId = lastAcceptedGeometryFrameId;
+        }
+    }
+#endif
 
     private sealed class InputTransaction
     {
@@ -411,6 +620,7 @@ internal sealed class KiwiFaceGeometryTransactionService
     private InputTransaction _inFlight;
     private InputTransaction _latestPending;
     private CallbackCompletion _completion;
+    private AcceptedSnapshot _acceptedSnapshot;
     private bool _resetRequested;
     private bool _shutdownRequested;
     private int _nextGraphRunId;
@@ -427,6 +637,79 @@ internal sealed class KiwiFaceGeometryTransactionService
             {
                 return _lastAcceptedGeometryFrameId;
             }
+        }
+    }
+
+    internal bool TryGetAcceptedSnapshot(
+        out AcceptedSnapshot snapshot)
+    {
+        lock (_sync)
+        {
+            snapshot = _acceptedSnapshot;
+            return
+                !_shutdownRequested &&
+                snapshot.isValid;
+        }
+    }
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+    internal void GetLatestPipelineState(
+        out PipelineStateSnapshot snapshot)
+    {
+        lock (_sync)
+        {
+            snapshot = new PipelineStateSnapshot(
+                _acceptedSnapshot.isValid,
+                _acceptedSnapshot.graphRunId,
+                _acceptedSnapshot.streamId,
+                _acceptedSnapshot.frameId,
+                _acceptedSnapshot.sourceHostTicks,
+                _acceptedSnapshot.cameraGeneration,
+                _acceptedSnapshot.trackingSessionGeneration,
+                _acceptedSnapshot.providerGeneration,
+                _acceptedSnapshot.modelGeneration,
+                _acceptedSnapshot.backend,
+                _acceptedSnapshot.semanticFrameWidth,
+                _acceptedSnapshot.semanticFrameHeight,
+                _inFlight != null,
+                _inFlight != null ? _inFlight.frameId : 0UL,
+                _inFlight != null ? _inFlight.sourceHostTicks : 0L,
+                _latestPending != null,
+                _latestPending != null ? _latestPending.frameId : 0UL,
+                _latestPending != null
+                    ? _latestPending.sourceHostTicks
+                    : 0L,
+                _completion.exists,
+                _completion.frameId,
+                (int)_completion.status,
+                _shutdownRequested,
+                _resetRequested,
+                _lastAcceptedGeometryFrameId);
+        }
+    }
+#endif
+
+    internal bool HasCurrentAcceptedSnapshot(
+        int currentSemanticFrameWidth,
+        int currentSemanticFrameHeight)
+    {
+        lock (_sync)
+        {
+            return
+                !_shutdownRequested &&
+                _acceptedSnapshot.isValid &&
+                _acceptedSnapshot.cameraGeneration ==
+                    KiwiRuntimeGenerationContext.CameraGeneration &&
+                _acceptedSnapshot.trackingSessionGeneration ==
+                    KiwiRuntimeGenerationContext.TrackingSessionGeneration &&
+                _acceptedSnapshot.providerGeneration ==
+                    KiwiRuntimeGenerationContext.ProviderGeneration &&
+                _acceptedSnapshot.modelGeneration ==
+                    KiwiRuntimeGenerationContext.ModelGeneration &&
+                _acceptedSnapshot.semanticFrameWidth ==
+                    currentSemanticFrameWidth &&
+                _acceptedSnapshot.semanticFrameHeight ==
+                    currentSemanticFrameHeight;
         }
     }
 
@@ -689,6 +972,7 @@ internal sealed class KiwiFaceGeometryTransactionService
             pending = _latestPending;
             _latestPending = null;
             _completion = default;
+            _acceptedSnapshot = default;
 
             if (_inFlight != null)
             {
@@ -898,9 +1182,22 @@ internal sealed class KiwiFaceGeometryTransactionService
 
             if (valid)
             {
-                // P3C intentionally consumes the pose internally. Only channel
-                // order is retained; no Head/Canonical/FacePart publication and
-                // no Geometry-Core hold-last pose are introduced.
+                // Publish identity and Pose16 as one immutable value. Consumers
+                // may use it only through an exact same-sample gate; this is one
+                // latest accepted value, not a queue or history.
+                _acceptedSnapshot = new AcceptedSnapshot(
+                    _activeRun.runId,
+                    _activeRun.streamId,
+                    transaction.frameId,
+                    transaction.sourceHostTicks,
+                    transaction.cameraGeneration,
+                    transaction.trackingSessionGeneration,
+                    transaction.providerGeneration,
+                    transaction.modelGeneration,
+                    transaction.backend,
+                    transaction.semanticFrameWidth,
+                    transaction.semanticFrameHeight,
+                    completion.pose);
                 _lastAcceptedGeometryFrameId = transaction.frameId;
 #if DEVELOPMENT_BUILD || UNITY_EDITOR
                 KiwiFaceGeometryP3DDiagnostics.RecordAccepted(
@@ -1298,6 +1595,7 @@ internal sealed class KiwiFaceGeometryTransactionService
             if (!_shutdownRequested)
             {
                 _resetRequested = true;
+                _acceptedSnapshot = default;
             }
         }
     }

@@ -1,0 +1,64 @@
+KiwiAvatarSystem Core Rules
+更新日: 2026-09-13 JST
+目的: 基本的に変更しないProject-level契約・設計原則。Current状態、SHA、Phase、Next Actionは本ファイルへ入れない。
+状態: DURABLE_BASELINE / PRIMARY_GOAL_ALIGNED
+
+0. 主目的 / Goal Alignment
+主目的は、Windows/DX12を第一対象としてFace LandmarkerをPrimary / Source of Truthに、正常な最新face sampleを最小latency・高精度・低jitterでKiwi Avatarへ反映し、Root / Head / Eye / Blink / Mouth / Expressionを自然かつ正しく表示し、LIVE CAMERA / Spoutを含む実用的なAvatar製品を完成させること。
+検証、診断、Phase完遂、特定技術採用、architecture整理は手段。各調査・設計・変更・検証・新Phaseは、最終ユーザー可視要件または不可欠なCorrectness / Authority / Lifecycle / Resource / Security / Release契約へ直接寄与する場合だけ行う。説明できない作業はCritical Pathへ置かず、延期・削除・統合する。
+Roadmap上にあること自体を実行理由にしない。各boundary開始時にGoal Alignmentを確認し、閉じたclaimを新Evidenceなしに再実行しない。新owner/state/copy/queue/readback/thread/process hop/latencyを恒久追加する場合は利益がcost/riskを上回るEvidenceを要求する。最終品質を下げる簡略化は禁止するが、同じ保証を少ない責務・owner・強いGateで得られるなら簡素化を優先する。
+
+1. Authority / 時系列
+Claim-Scoped Authority。Implementation=current local Production source+SHA、Runtime=same-build / same-Production、Package=実使用Package Source、Performance=clean Production benchmark、Visual=same-build Human review。
+通常チャットがlive localを直接確認できない時は NORMAL_CHAT_LIVE_LOCAL_PRODUCTION_NOT_DIRECTLY_VERIFIED。Codex REPORTのSHA/HEADはreport-time snapshotで現在へ自動昇格しない。GitHub remote/mainがlocalより古ければProduction Authorityにしない。GitHub上の変更・commitもlocal Runtime Authorityではない。EXE/DLL SHA単独をsource/build reproducibility Authorityにしない。SHA推測禁止。未確認は合格でも不合格でもない。Observer / Validator / Benchmark / REPORT自身も監査対象。
+新Evidenceが旧Current / Next / SHAをSupersedeしたら再昇格しない。ChatReport=履歴、CurrentRoadmap=現在状態、CoreRules=恒久契約。
+
+2. 開発原則
+正常なProductionを理由なく再設計しない。変更前にcurrent local source/Runtime、実Package Source、official Source/docs、類似OSS/公開商用方式をclaim単位で比較し、correctness / latency / authority / transaction / lifecycle / resource / rollbackを評価する。証明済みfirst boundaryだけ最小修正し、複数unknownを同時修正しない。前提/identity/proxy/observer/validator/benchmark defectなら測定設計まで戻る。
+Big-Bang rewrite、external tracker Primary置換、Neural replacement Primary化は棄却。外部流用はSELECTIVE / EVIDENCE-GATEDとし、採用時は旧ownerをretireする。
+
+3. Tracking / Transaction
+Face Landmarker=Primary / Source of Truth。正常sampleを最小latencyでAvatarへ届け、異常sample / transition / presentation破綻だけ局所抑制する。latest-frame、persistent ROI、bounded/nonblocking lanes、freshness/liveness/source age分離。FIFO、stale queue、permanent frame buffer、stale prediction、strong smoothing/Kalman、根拠なきthreshold緩和禁止。Camera/Inference/Presentation問題をtracking mathで隠さない。
+Root / Head / Eye / Mouth分離、Head=single rigid authority。Yaw/Pitch/RollやBlink/Mouth/EyeをRoot translationへ混入しない。Provider normalization owner=1、Resume!=Provider Switch、Temporal Presentation owner=1/channel、Prediction owner=1/channel。duplicate/out-of-order/stale/mixed epoch publish禁止。Texture/Crop/Mask/FacePart=same-sample transaction。model-specific処理はTracking Core外。
+
+4. Human-Head FacePart
+Kiwi=変形しない剛体の人間頭部。Eye/Mouthのnon-rigid表情は残し、source rigid poseだけ除去→head-local/canonical appearance→existing fitted fixed surface→visible Kiwi Head rigid poseを1回適用する。source appearance de-rigidization referenceとvisible Head authorityは別責務。billboard、2D facial inverse UV、model deform補償をProduction解にしない。
+
+5. Native / Inference
+Windows/DX12優先。Native baselineは新Evidenceで置換されるまでPath B SystemMemoryNV12。fixed Unity-visible texture identity、session epoch!=frame sequence、latest/nonblocking。UpdateExternalTexture、IMFSample跨ぎ保持、FIFO/stale蓄積、D3D12 blocking Wait、rotating visible texture、D3D11On12 1080p禁止。Fence / queue flush / async disableはcausal boundary証明なしにProductionへ入れない。Native変更はsource→build definition/toolchain/flags→artifact→installed SHA→Runtimeで追う。速度だけでbackend採用しない。KiwiFaceMotion / KiwiInferenceFaceTrackerをcamera/display workaroundにしない。
+
+6. Validation / Audit / Human Visual
+Static / Package Sourceで閉じるclaimをRuntime化しない。Change-Local Gate、Contract Gate、Milestone Full Product Gateへ集約し、同claim多重observer、superseded diagnostic、毎version Full Runtime/Human Visualを削減する。
+Final DoDはSource Identity→Transaction→Model Semantic→Canonical→Authority→Lifecycle→Resource→Replay→Security→Clean Performance→Compatibility→Root/Head/Eye/Blink/Mouth/Expression/FacePart→LIVE CAMERA/Spout→Final Human Visual→Distribution/Installer/Rollback→Windows Acceptanceを閉じる。
+Human Visualをvalidator/logの合格で上書きしない。Eye/Mouth/rotation/twist等のユーザー可視claimはsame-build Human reviewを最終Authorityとする。
+技術的意味を持つ調査・設計・指示・実装・検証・評価・判断・成果物は原則FULL_AUDIT_1+FULL_AUDIT_2。同一scopeを独立監査し、不一致は未解決として停止する。副作用操作を監査回数だけを理由に二重実行しない。
+
+ユーザー向けチェック項目と判定は可能な限り日本語にする。例: 回転一致、目のねじれ、口のねじれ、回転時Root非移動、まばたき、口表情、LIVE CAMERA。判定は「合格 / 不合格 / 未確認 / 対象外」を基本とする。既存log/reportの英語キーは、正確な照合に必要な時だけ日本語の後へ併記する。
+
+7. Avatar / Product
+Evidence-Protected Core + Avatar Adapter + Model Profile + Runtime Import + Transactional Hot Swap。VRM0/1、non-spherical、AutoFit、Spring/DangleはAdapter/Profile側。model-specific behaviorをCoreへ逆流させない。
+Runtime Importの入力検証、path traversal防止、resource/memory limit、cancellation、rollback等はImport実装と同じboundaryで扱い、後段UIだけへ先送りしない。
+
+8. 通常チャット / GitHub / Codex
+通常チャットを外部調査、設計、監査、GitHub source開発の主担当とする。特に問題がない限り、通常チャット+GitHubでsource読取・検索・解析・create/update/delete・最小修正・Static review・commitまで行う。PR/diff reviewやRoadmap/REPORT再監査も通常チャットで行う。GitHub上の変更はREMOTE_IMPLEMENTED / STATIC_REVIEWED等でありcurrent local Productionへ自動昇格しない。
+
+Codexは原則としてローカル環境でしかできない作業だけを担当する。対象はlive D:\KiwiAvatarSystemのlocal-only file、dirty state、branch/HEAD/status/SHA/provenance、GitHub commitの安全なlocal反映・照合、exact Unity compile/build、Native build/ABI、installed artifact、targeted Runtime/stress、clean benchmark、local hardware/GUIを使うEvidence採取、人間確認用same-buildの起動・証拠採取補助、rollback/distribution実証、必要なConsolidated REPORT。
+通常チャットで完結できる公開情報調査、GitHub source解析、通常のコード修正、設計再検討を理由なくCodexへ渡さない。Codexは通常チャットで閉じた設計を理由なく再設計しない。
+
+人間による確認そのもののAuthorityは人間にあり、Codex/validatorが代替しない。Codexは起動、同一ビルドidentity確認、Evidence採取補助までを担当できる。
+
+9. コミット / push
+GitHub上の意味のある最小変更がStatic reviewを通り、次のlocal検証の再現可能な基準点を固定すべき時点をcommit boundaryとする。通常チャットはその時点で必ず「今がコミット適切時点」とユーザーへ知らせる。commitの担当は通常チャットとし、ユーザーの明示指示または当該作業での明示的なcommit許可がある場合に実行する。
+WIPを細切れにcommitしすぎない。一方で複数の独立boundaryを1 commitへまとめない。commitには変更目的、対象boundary、Static状態、local未検証事項を明示する。pushはユーザーの明示指示時のみ行う。
+local Production検証前のGitHub commitはProduction採用を意味しない。
+
+10. Tooling / Local Safety
+通常開発で「ChatがZIP生成→user download→PowerShell手入力→結果貼付」を既定経路にしない。user手動操作は権限昇格、GUI/外部機器、Codex非対応、人間視認など必要時に限定する。Runtime ZIPはEvidence上必要な時のみ。正式release/distribution/rollback/Windows Acceptanceではinstaller/ZIPを配布artifactとして独立検証する。
+コード変更前Preflight: ProjectVersion.txt、exact Unity.exe path/version、branch/HEAD/status、user-owned dirty保護、touched file before SHA、candidate SHA、after SHA。mismatchはfail closed。reset/checkout/clean禁止。
+Windows PowerShell 5.1固定。safe I/O、subprocess exit code、transactional replacement、rollback、write-target guard。PS7依存、ambiguous cardinality、unsafe I/O、obsolete path/versionを検出。Generic Listは::new()+.ToArray()。
+
+11. 情報源メンテナンス
+CoreRules: 主目的、長期契約、Authority、設計原則、禁止、役割分担。
+CurrentRoadmap: current environment、latest report-time identity、Validated/Rejected/Superseded、Open Issues、first blocker、Next Action、Critical Path。
+ChatReport: 詳細時系列、旧SHA/Runtime/diagnostic/Next Action。
+古いCurrent state、obsolete version chain全文、重複禁止事項、旧Validator結果をCurrentへ累積しない。新EvidenceでCurrentが変わった場合はRoadmap/CustomInstructionsを更新し、旧NEXTを再昇格しない。

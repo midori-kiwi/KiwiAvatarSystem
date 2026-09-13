@@ -1,0 +1,559 @@
+KIWI_H1_GEOMETRY_SNAPSHOT_IDENTITY_SUBBOUNDARY_LOCALIZATION_ONLY
+Consolidated Codex REPORT
+JST: 2026-09-13T18:54:56.254+09:00
+
+================================================================
+0. 最終結論
+================================================================
+
+GEOMETRY_SNAPSHOT_IDENTITY_SUBBOUNDARY=NOT_REPRODUCED_IN_SCOPE
+FIRST_GEOMETRY_SNAPSHOT_IDENTITY_FAILURE=UNRESOLVED_NOT_REPRODUCED_IN_SCOPE
+
+Development限定のO(1) latest diagnosticはStatic review、exact Unity compile、
+1回のDevelopment StandaloneWindows64 / DX12 buildまで合格した。
+同じartifactを1回だけRuntimeした。
+
+RuntimeではHuman jump marker=0、right-side Consume=0であり、
+Presentation decisionのRejectedGeometrySnapshotIdentityを1件もexact correlation
+できなかった。よってA〜Fのsub-boundaryおよび個別failed predicateは判定しない。
+追加Runtime、rebuild、原因推定、repair proposalへ進まず停止した。
+
+FULL_AUDIT_1=PASS
+FULL_AUDIT_2=PASS
+AUDIT_DISAGREEMENT=NO
+SOURCE_CHANGED=YES_DIAGNOSTIC_ONLY_SCOPE
+RUNTIME_EXECUTED=YES_ONCE
+BUILD_COUNT=1
+RUNTIME_COUNT=1
+INTERMEDIATE_REBUILD=NONE
+PERFORMANCE_AUTHORITY=NO
+COMMIT=NONE
+PUSH=NONE
+
+既存H1 Human Visual FAILは変更しない。
+Markerが無いためgeometry failureをHuman symptomへ帰属しない。
+Final Product / Windows Acceptanceへ昇格しない。
+
+================================================================
+1. PRE-FLIGHT / LIVE IDENTITY
+================================================================
+
+Project:
+  D:\KiwiAvatarSystem
+
+ProjectVersion:
+  m_EditorVersion: 6000.0.80f1
+  m_EditorVersionWithRevision: 6000.0.80f1 (2dfd32957da2)
+
+Exact Unity:
+  C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe
+  ProductVersion=6000.0.80f1_2dfd32957da2
+  FileVersion=6000.0.80.3013938
+  SHA256=7FC68434F4FCCF2781648C398FBAA4E8ADFB568251605E990D887FE36CF1376F
+
+Live branch before/after:
+  work/raw-direct-motion
+
+Live HEAD before/after:
+  df75cfa9f6ae386bf4443272929d3cef33a8b138
+
+Expectedとの差:
+  branch=NONE
+  HEAD=NONE
+
+Current directory全7ファイルを列挙し、claim scopeに関係する本文を読了。
+Current reconciliation:
+  H1 same-build Human Visual=FAIL
+  Current First Blocker=LANDMARKER_JUMP_FIRST_CAUSAL_BOUNDARY_NOT_LOCALIZED
+  P3C_1 / P3D / H1 frame identity repairは既存scope-limited PASSのまま
+  Clean Performance / Final Product / Windows Acceptance=UNRUN
+
+最新関連REPORT本文を読了:
+  KiwiCodexConsolidatedReport_H1_
+  PresentationCandidateDecisionFirstBoundaryLocalizationOnly_
+  20260913-145010JST.txt
+
+  KiwiCodexConsolidatedReport_H1_
+  PresentationDecisionSameArtifactRuntimeFirstBoundaryOnly_
+  20260913-181732JST.txt
+
+実Package identity:
+  MediaPipeUnityPlugin=0.16.3
+  package.json SHA256=
+    EEBBFF4550FA9CA3C2C76AB05BD0EDBDB3A0A4C2800883E244DC9E40D8FF2A2D
+  Inference Engine=2.4.1
+  package.json SHA256=
+    2F230C84E28A9E3AD516B1A49B79B6F83E172F1C16E6813E0F1DD6FA2B1790EE
+
+既存dirty/untrackedはuser-ownedとして保持。
+reset / checkout / restore discard / clean / stashは実行していない。
+commit / pushは実行していない。
+
+PRE-FLIGHT_RESULT=PASS
+
+================================================================
+2. BEFORE / CANDIDATE / AFTER SHA256
+================================================================
+
+Assets/Script/FaceLandmarkerRunner.cs
+  before=
+    4D1804459FAC66132ADC21258ED371013969C12C1C491970790FC79C2EA64A56
+  candidate=
+    1A339C7E20E4FE59AE91852624C402E9D29AA723C1935517627EA0027ECDE882
+  after compile/build/runtime=
+    1A339C7E20E4FE59AE91852624C402E9D29AA723C1935517627EA0027ECDE882
+
+Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/
+KiwiFaceGeometryTransactionService.cs
+  before=
+    33E945AC30D1856E57D484CD042CB70DB90775F48A2CC694724F7B119A1EE2DA
+  candidate=
+    01D7984BB9E8181CD52BCD442CF2F2E6B12699A883F03870F397C93E8746D643
+  after compile/build/runtime=
+    01D7984BB9E8181CD52BCD442CF2F2E6B12699A883F03870F397C93E8746D643
+
+Assets/CodexTasks/H1_LandmarkerBoundary_20260913/
+KiwiH1LandmarkerBoundaryObserver.cs
+  before=
+    4C06814A62A226F8B9E43EC8B25B7442CB18EF88F3F3B998261C72D522820186
+  candidate=
+    C5CBFF4B0724F1F68408EA4D3A0FDB90CB6394FA047B02E1D6FD490E8F352051
+  after compile/build/runtime=
+    C5CBFF4B0724F1F68408EA4D3A0FDB90CB6394FA047B02E1D6FD490E8F352051
+
+Candidate sourceの最終write時刻はcompile log作成開始より前であり、
+compile/build/runtime後の各SHAは上記candidateと一致した。
+
+================================================================
+3. EXACT DIAGNOSTIC DELTA
+================================================================
+
+3.1 KiwiFaceGeometryTransactionService
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR 内だけに
+PipelineStateSnapshotとGetLatestPipelineStateを追加。
+
+1回の_sync lock取得からprimitive / enum値だけをコピー:
+  AcceptedSnapshot:
+    exists
+    graphRunId
+    streamId
+    frameId
+    sourceHostTicks
+    cameraGeneration
+    trackingSessionGeneration
+    providerGeneration
+    modelGeneration
+    backend
+    semanticFrameWidth
+    semanticFrameHeight
+
+  in-flight:
+    exists
+    frameId
+    sourceHostTicks
+
+  latest-pending:
+    exists
+    frameId
+    sourceHostTicks
+
+  callback completion:
+    exists
+    frameId
+    status
+
+  service:
+    shutdownRequested
+    resetRequested
+    lastAcceptedGeometryFrameId
+
+Product lifetime、admission、submission、callback handoff、completion消費、
+AcceptedSnapshot publication、shutdown/reset behaviorは変更していない。
+
+3.2 FaceLandmarkerRunner
+
+TryGetFacePartGeometrySnapshotの既存predicateを順番どおり個別観測:
+  Product/service unavailable
+  semantic dimensions invalid
+  Canonical frame unavailable
+  Canonical frame invalid
+  canonical semantic missing
+  semantic timestamp mismatch
+  rigid invalid
+  rigid timestamp mismatch
+  rigid frameId missing
+  normalization invalid
+  providerSourceFrameId missing
+  Canonical backend mismatch
+  matched submission timing missing
+  sourceHostTicks missing
+  AcceptedSnapshot unavailable
+  source frameId mismatch
+  sourceHostTicks mismatch
+  cameraGeneration mismatch
+  trackingSessionGeneration mismatch
+  providerGeneration mismatch
+  modelGeneration mismatch
+  AcceptedSnapshot backend mismatch
+  semantic width mismatch
+  semantic height mismatch
+  accepted
+
+latest diagnosticは固定struct 1件だけを上書きする。
+保持値:
+  semanticTimestamp / canonicalFrameId
+  expected providerSourceFrameId / sourceHostTicks
+  expected 4 generations / backend / dimensions
+  individual predicate bools
+  first failed predicate enum
+  service pipeline state snapshot
+
+3.3 KiwiH1LandmarkerBoundaryObserver
+
+Runner geometry diagnosticを読むのはWriteHumanMarker、すなわち既存Human Space
+marker時だけ。LateUpdate / aggregate / per-frame経路では読まない。
+
+Presentation decisionが:
+  DECISION_FOR_CURRENT_CONSUME
+  かつ RejectedGeometrySnapshotIdentity
+であり、diagnosticのsemanticTimestampとcanonicalFrameIdがdecisionとexact一致
+した場合だけFIRST_GEOMETRY_SNAPSHOT_IDENTITY_FAILUREとA〜Fを出す。
+
+不一致時は:
+  GEOMETRY_DIAGNOSTIC_NOT_CORRELATED
+として原因判定しない。
+
+CSVにexpected/actual identity、全predicate、Accepted/in-flight/pending/
+completion/service state、current expected frameの各state存在bitを追加。
+
+Storage / logging:
+  O(1) latest only
+  List=NONE
+  Queue/FIFO/history=NONE
+  permanent buffer=NONE
+  per-frame file log=NONE
+  marker write=existing Human Space path only
+
+================================================================
+4. PRODUCT BEHAVIOR UNCHANGED
+================================================================
+
+TryGetFacePartGeometrySnapshotのProduct resultは、変更前と同じ順序のpredicateと
+既存snapshot.Matchesから決定する。
+
+保持した既存条件:
+  enable / accept / service
+  dimensions
+  Canonical frame valid + nonzero canonicalFrameId
+  semantic present + exact timestamp
+  rigid valid + exact timestamp + nonzero rigid frameId
+  normalization + nonzero providerSourceFrameId
+  InferenceEngine backend
+  matched submission timing + positive submissionHostTicks
+  TryGetAcceptedSnapshot
+  existing snapshot.Matches exact identity
+
+false時は従来どおりsnapshot=default、canonicalFrameId=0、return false。
+true時だけ従来どおりframe.canonicalFrameIdを返す。
+
+変更していないもの:
+  snapshot.Matches implementation
+  Product gate set / gate order
+  FaceGeometry transaction lifecycle
+  admission/submission/completion/accepted publication
+  Presentation decision/commit
+  camera texture transaction
+  cadence
+  tracking/provider/backend/Root/Head/FacePart behavior
+  threshold/smoothing/prediction
+
+Diagnostic type/state/API/observer correlationは
+#if DEVELOPMENT_BUILD || UNITY_EDITORでReleaseから除外される。
+
+================================================================
+5. STATIC REVIEW / EXACT UNITY COMPILE
+================================================================
+
+git diff --check=PASS
+
+Compile invocation:
+  exact Unity.exe
+  -batchmode -nographics -quit
+  -projectPath D:\KiwiAvatarSystem
+
+Compile result:
+  Unity exit code=0
+  batchmode quit=success
+
+Compile log:
+  D:\KiwiAvatarSystem\KiwiValidation\
+  H1_GeometrySnapshotIdentitySubboundary_Compile_20260913.log
+  SHA256=7F00AC83C1F851B9286928CFD4FD89ADFDDC934A9DF268DF8D64677BE0AE6374
+
+Same-scope warning comparison baseline:
+  H1_PresentationCandidateDecisionFirstBoundary_Compile_20260913-144644.log
+
+Compilation units:
+  baseline=Assembly-CSharp + Assembly-CSharp-Editor
+  candidate=Assembly-CSharp + Assembly-CSharp-Editor
+
+Warnings:
+  raw warning lines baseline/candidate=40/40
+  normalized unique tuple baseline/candidate=20/20
+  added tuples=0
+  removed tuples=0
+  WARNING_REGRESSION=NO
+
+Tuple key:
+  normalized source path/line + CS code + message
+
+================================================================
+6. ONE DEVELOPMENT DX12 BUILD / ARTIFACT IDENTITY
+================================================================
+
+Build count=1
+Build start~=2026-09-13T18:49:08+09:00
+Build end~=2026-09-13T18:49:47+09:00
+
+Invocation:
+  exact Unity.exe
+  -batchmode -nographics -quit
+  -executeMethod KiwiP3DFaceGeometryBuild.BuildWindows64
+
+Build entry checks:
+  StandaloneWindows64
+  Development
+  exact Direct3D12-only
+  enabled Scene exact identity
+  KiwiReleaseCandidatePreflight.RunFullPreflight(true)=PASS
+  passing fingerprint=
+    da92760f5e11ef0563a47b66863e9a4c6eece7fdb6809c90e1aaa1769cb4cca0
+
+Build result:
+  Unity exit code=0
+  BuildPipeline=Succeeded
+  errors=0
+  warnings=204
+  size=276928147
+
+Build summary warning countはC# regressionまたはPerformance Authorityへ使用しない。
+
+Build path:
+  D:\KiwiAvatarSystem\Builds\
+  H1_GeometrySnapshotIdentitySubboundary_20260913-184908
+
+Build log:
+  D:\KiwiAvatarSystem\KiwiValidation\
+  H1_GeometrySnapshotIdentitySubboundary_Build_20260913-184908.log
+  SHA256=C3EDF2222624BB397033DBE00A66022793271624E2423722376C799773F4A1F4
+
+Artifact SHA256:
+  KiwiAvatarSystem.exe
+    98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81
+  UnityPlayer.dll
+    A1C4F29041D783DF506E7C2892BC6AFA4ED45EF0D87AAFE0C7296BDC090681FC
+  KiwiAvatarSystem_Data/Managed/Assembly-CSharp.dll
+    2255E553199F423A38C80A31BABB82FBA168AEEF379F51F4A79F93756CD60CA3
+  KiwiAvatarSystem_Data/Managed/Assembly-CSharp.pdb
+    4CEA37EEE4CF6E48F3B2DDEF3629214FD48C6D3955325328720E222857F6FD19
+  KiwiAvatarSystem_Data/globalgamemanagers
+    5878C3C7E59B93181077AF8A7102AF2BC255343F801F43D6A0171591305E8EA3
+  KiwiAvatarSystem_Data/Plugins/x86_64/KiwiNativeCamera.dll
+    82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+  KiwiAvatarSystem_Data/Plugins/x86_64/mediapipe_c.dll
+    B9B620F2707DEA371BE3FCEF9F2D05468CA1471FAEE3BE6637BBD7DA77E21C54
+
+================================================================
+7. SAME-ARTIFACT RUNTIME / HUMAN MARKER
+================================================================
+
+Runtime count=1
+Intermediate rebuild=NONE
+
+Runtime artifact:
+  D:\KiwiAvatarSystem\Builds\
+  H1_GeometrySnapshotIdentitySubboundary_20260913-184908\
+  KiwiAvatarSystem.exe
+
+Runtime start~=2026-09-13T18:50:05+09:00
+Runtime end~=2026-09-13T18:51:59+09:00
+Player exit code=0
+
+Runtime Evidence:
+  D:\KiwiAvatarSystem\KiwiValidation\
+  H1_GeometrySnapshotIdentitySubboundary_Runtime_20260913-185005
+
+Runtime identity:
+  UNITY_VERSION=6000.0.80f1
+  DEBUG_BUILD=1
+  GRAPHICS_API=Direct3D12
+  Player.log=Forcing GfxDevice: Direct3D 12
+  SCENE=Assets/Scenes/Face Landmark Detection.unity
+  DIAGNOSTIC_ONLY=1
+  OBSERVER_STORAGE=O1_LATEST_ONLY_NO_QUEUE
+  PLAYER_CLOSED=YES
+
+Camera fact observed in Player.log:
+  UGREEN Camera 4K
+  1920x1080@60
+  captureTransport=B:SystemMemoryNV12
+
+Human marker raw rows:
+  NONE
+  human_jump_markers.csvはheader only
+
+Runtime counters:
+  HUMAN_VISUAL_JUMP_MARKER_COUNT=0
+  RIGHT_SIDE_CONSUME_COUNT=0
+  RIGHT_SIDE_PRESENTATION_ELIGIBLE_COUNT=0
+  LAST_PRESENTATION_DECISION_VALID=0
+
+したがって:
+  Presentation decision=UNOBSERVED_IN_SCOPE
+  correlated geometry diagnostic=UNOBSERVED_IN_SCOPE
+  expected/actual identity=UNOBSERVED_IN_SCOPE
+  Accepted/in-flight/pending/completion marker state=UNOBSERVED_IN_SCOPE
+  A/B/C/D/E/F=UNCLASSIFIED_NOT_REPRODUCED
+  FIRST_GEOMETRY_SNAPSHOT_IDENTITY_FAILURE=
+    UNRESOLVED_NOT_REPRODUCED_IN_SCOPE
+
+上記ゼロ件の理由は本taskで推定しない。
+Camera/Native/backend/threshold/trackingへ帰属しない。
+
+Runtime Evidence SHA256:
+  aggregate_1hz.csv
+    65544669F27923B1F062A6E781D473AB0851FF5FDD19A42C7931FC7A73878E00
+  human_jump_markers.csv
+    1B6682D2C4F9F1E88A772C917A12D714C46FA289EE937C27993D5118892DB966
+  Player.log
+    339E8847D551147AA2B3894848C78284829C8550A548081DB11013F433B50C03
+  summary.txt
+    B7BE85C23A19EACAC8F9D8488977A53CCD4BEE47AEE36C7312F527DC9234DCFD
+
+Scope-out Runtime finding:
+  KiwiSpoutV44_20 EntryPointNotFoundを1件観測。
+  Playerは継続しexit code 0で終了。
+  本taskでは原因調査・修正をしていない。
+
+================================================================
+8. CONFIRMED FACTS / INFERENCE SEPARATION
+================================================================
+
+確認済み事実:
+  Preflight identity PASS。
+  before source SHAは依頼値とexact一致。
+  diagnostic sourceは3ファイルscope内のみ変更。
+  Static review / exact Unity compile PASS。
+  Development DX12 buildは1回でPASS。
+  同じartifactのRuntimeは1回、Player exit code 0。
+  marker=0、Consume=0、Presentation decision=unobserved。
+
+推論:
+  NONE。
+
+未確認:
+  RejectedGeometrySnapshotIdentityを構成するfirst failed predicate。
+  A〜Fのどのpipeline sub-boundaryか。
+  current geometryがPresentation要求時点で未publishだったか。
+  正常非同期latency / design fault / producer faultの区別。
+
+Rejected / not performed:
+  原因推定
+  repair proposal
+  tracking tuning
+  threshold変更
+  smoothing / prediction
+  Camera / Native / backend / Root / Head変更
+  Product gate / gate順 / snapshot.Matches変更
+  transaction / cadence変更
+  extra build / extra Runtime
+  commit / push
+
+================================================================
+9. FULL_AUDIT_1 — FORWARD COMPLETE SCOPE
+================================================================
+
+FULL_AUDIT_1=PASS
+
+Independent forward order:
+  Preflight
+  -> current source / before SHA
+  -> diagnostic semantic / O(1) / Development guard
+  -> Product predicate preservation
+  -> exact Unity compile / warning tuple comparison
+  -> one build / mandatory preflight / artifact identity
+  -> same artifact one Runtime
+  -> Human marker evidence
+  -> Presentation decision evidence
+  -> geometry correlation evidence
+  -> exact failed predicate evidence
+  -> pipeline state evidence
+  -> claim boundary
+
+Result:
+  Preflight、source、diagnostic、Product predicate、compile、build、artifact、
+  Runtime identityまではPASS。
+  Human marker row=0のため後続のdecision/correlation/predicate/pipeline claimは
+  UNOBSERVED。指定されたNOT_REPRODUCED_IN_SCOPEへfail-closedで停止した。
+  UNOBSERVEDをPASS/FAILや原因へ昇格していない。
+
+================================================================
+10. FULL_AUDIT_2 — REVERSE COMPLETE SCOPE
+================================================================
+
+FULL_AUDIT_2=PASS
+
+Independent reverse order:
+  GEOMETRY_SNAPSHOT_IDENTITY_SUBBOUNDARY=NOT_REPRODUCED_IN_SCOPE
+  -> human_jump_markers.csv header only
+  -> summary HUMAN_VISUAL_JUMP_MARKER_COUNT=0
+  -> RIGHT_SIDE_CONSUME_COUNT=0
+  -> Presentation decision unobserved
+  -> geometry diagnostic correlation unobserved
+  -> expected/actual identity unobserved
+  -> Accepted/in-flight/pending/completion marker state unobserved
+  -> Product predicate/source preservation
+  -> exact same Runtime artifact
+  -> one successful Development DX12 build
+  -> exact Unity compile
+  -> candidate/after source SHA
+  -> before SHA / branch / HEAD / ProjectVersion / exact Unity
+
+Result:
+  raw evidenceから逆向きに再導出して同じNOT_REPRODUCED結論となった。
+  first predicateやA〜Fを作らずUNRESOLVEDのまま保持した。
+
+AUDIT_DISAGREEMENT=NO
+
+================================================================
+11. FINAL STATUS / UNRESOLVED CLAIMS
+================================================================
+
+GEOMETRY_SNAPSHOT_IDENTITY_SUBBOUNDARY=NOT_REPRODUCED_IN_SCOPE
+FIRST_GEOMETRY_SNAPSHOT_IDENTITY_FAILURE=UNRESOLVED_NOT_REPRODUCED_IN_SCOPE
+
+Unresolved:
+  exact failed predicate
+  AcceptedSnapshot A/B classification
+  in-flight C
+  latest-pending D
+  completion-not-published E
+  nowhere F
+  normal async latency / design fault / producer fault
+
+H1 Human Visual:
+  existing FAIL unchanged
+
+Performance Authority:
+  NONE
+
+Source changed:
+  YES — Development-only localization diagnostic scope
+
+Commit:
+  NONE
+
+Push:
+  NONE
+

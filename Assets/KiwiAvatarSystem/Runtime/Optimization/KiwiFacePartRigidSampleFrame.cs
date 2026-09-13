@@ -2,18 +2,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-/// v5.0.1 commercial head-local camera sample frame.
+/// Sole Product writer for FacePart source-rigid roll removal.
 ///
-/// FacePartCropper intentionally keeps a generous axis-aligned source ROI.
-/// Camera landmarks inside that ROI still contain the actor's rigid head Roll,
-/// while the fitted 3D avatar surface is already rotated by KiwiFaceMotion.
-/// Sampling the raw rolled ROI directly therefore applies rigid Roll twice to
-/// the visible eye/mouth patch. This component estimates the shared rigid Roll
-/// from the bilateral eye crop centers and asks SurfaceFittedRawImage to sample
-/// texture + semantic mask in a de-rolled local frame.
-///
-/// It never writes Avatar Root, RectTransform, crop position, mask contour,
-/// surface fit, or tracking provider state.
+/// An accepted P3D FaceGeometry pose may advance Eye/Mouth sample rotation only
+/// when its complete identity matches the canonical appearance transaction.
+/// Texture and semantic-mask sampling remain coupled in
+/// SurfaceFittedRawImage.SetSampleFrameRotationDegrees.
 /// </summary>
 [DefaultExecutionOrder(830)]
 [DisallowMultipleComponent]
@@ -22,101 +16,90 @@ public sealed class KiwiFacePartRigidSampleFrame : MonoBehaviour
     private const string RuntimeObjectName =
         "[Kiwi] Face-Part Rigid Sample Frame";
 
-    private const string RecoveryDomainSource =
-        "FacePartRigidSampleFrame";
-
     [Header("Head-local sample frame")]
     public bool enableHeadLocalSampleFrame = true;
 
-    [Tooltip("Maximum camera rigid Roll removed from the local eye/mouth sample. Avatar Root still owns the actual visible Roll.")]
+    [Tooltip("Maximum accepted P3D rigid Roll removed from the local eye/mouth sample. Avatar Root still owns the visible Roll.")]
     [Range(5f, 60f)]
     public float maximumCorrectionDegrees = 50f;
 
-    [Tooltip("Very small eye-line angle noise is ignored without adding a temporal low-pass stage.")]
+    [Tooltip("Very small P3D image-plane Roll values are ignored without adding a temporal filter.")]
     [Range(0f, 2f)]
     public float restAngleDeadZoneDegrees = 0.25f;
-
-    [Tooltip("Reject a one-sample eye-line angle jump this large. This protects all three patches from one isolated Eye crop outlier.")]
-    [Range(5f, 45f)]
-    public float maximumAcceptedFrameAngleJumpDegrees = 18f;
-
-    [Header("Actor-neutral eye line")]
-    [Tooltip("The first valid bilateral eye line becomes neutral immediately; nearby early samples only refine that reference.")]
-    [Range(1, 20)]
-    public int neutralRefineSamples = 8;
-
-    [Range(0.5f, 8f)]
-    public float neutralRefineToleranceDegrees = 3.5f;
 
     [Header("Diagnostics")]
     [SerializeField] private bool debugOperational;
     [SerializeField] private float debugEyeLineAngle;
-    [SerializeField] private float debugNeutralEyeLineAngle;
     [SerializeField] private float debugAppliedRotation;
-    [SerializeField] private int debugRejectedAngleJumps;
+
+    private static KiwiFacePartRigidSampleFrame _instance;
 
     private FacePartCropper _cropper;
     private SurfaceFittedRawImage _left;
     private SurfaceFittedRawImage _right;
     private SurfaceFittedRawImage _mouth;
-
-    private bool _hasNeutral;
-    private float _neutralAngle;
-    private float _lastAcceptedAngle;
-    private int _neutralSamples;
     private int _lastBindingSignature;
-    private bool _hasPendingAngleJump;
-    private float _pendingAngleJump;
-    private int _pendingAngleJumpSamples;
-    private bool _semanticRecoveryActive;
+
+    private bool _hasAppliedIdentity;
+    private ulong _lastAppliedFrameId;
+    private int _lastAppliedCameraGeneration;
+    private int _lastAppliedTrackingSessionGeneration;
+    private int _lastAppliedProviderGeneration;
+    private int _lastAppliedModelGeneration;
 
     public static bool IsOperational { get; private set; }
     public static float AppliedRotationDegrees { get; private set; }
     public static float EyeLineAngleDegrees { get; private set; }
-    public static int RejectedAngleJumpCount { get; private set; }
+
+    // Retained for existing diagnostics. The retired bilateral-eye estimator no
+    // longer performs temporal jump rejection, so this value remains zero.
+    public static int RejectedAngleJumpCount => 0;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void AutoInstall()
     {
         if (
             FindFirstObjectByType<KiwiFacePartRigidSampleFrame>(
-                FindObjectsInactive.Include) != null
-        )
+                FindObjectsInactive.Include) != null)
         {
             return;
         }
 
-        GameObject host =
-            new GameObject(RuntimeObjectName);
-
+        GameObject host = new GameObject(RuntimeObjectName);
         DontDestroyOnLoad(host);
         host.AddComponent<KiwiFacePartRigidSampleFrame>();
     }
 
     private void Awake()
     {
-        DontDestroyOnLoad(gameObject);
+        if (_instance != null && _instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
 
+        _instance = this;
+        DontDestroyOnLoad(gameObject);
         SceneManager.sceneLoaded -= HandleSceneLoaded;
         SceneManager.sceneLoaded += HandleSceneLoaded;
-
         RefreshReferences(true);
-        ResetNeutralReference();
+        ResetBridgeStateAndRotations();
+    }
+
+    private void OnDisable()
+    {
+        ResetBridgeStateAndRotations();
     }
 
     private void OnDestroy()
     {
         SceneManager.sceneLoaded -= HandleSceneLoaded;
-        CompleteHeadLocalSemanticRecovery();
-        ResetPartRotations();
-    }
+        ResetBridgeStateAndRotations();
 
-    private void OnDisable()
-    {
-        CompleteHeadLocalSemanticRecovery();
-        ResetPartRotations();
-        IsOperational = false;
-        AppliedRotationDegrees = 0f;
+        if (ReferenceEquals(_instance, this))
+        {
+            _instance = null;
+        }
     }
 
     private void HandleSceneLoaded(
@@ -124,240 +107,266 @@ public sealed class KiwiFacePartRigidSampleFrame : MonoBehaviour
         LoadSceneMode mode)
     {
         RefreshReferences(true);
-        ResetNeutralReference();
+        ResetBridgeStateAndRotations();
     }
 
     private void LateUpdate()
     {
         RefreshReferences(false);
 
-        if (!enableHeadLocalSampleFrame)
+        if (
+            !enableHeadLocalSampleFrame ||
+            _cropper == null ||
+            _cropper.runner == null ||
+            !_cropper.runner.IsFacePartGeometryBridgeOperational)
+        {
+            ResetBridgeStateAndRotations();
+            return;
+        }
+
+        if (!_hasAppliedIdentity)
+        {
+            return;
+        }
+
+        KiwiRuntimeGenerationContext.Snapshot generation =
+            KiwiRuntimeGenerationContext.Capture();
+
+        if (
+            generation.cameraGeneration !=
+                _lastAppliedCameraGeneration ||
+            generation.trackingSessionGeneration !=
+                _lastAppliedTrackingSessionGeneration ||
+            generation.providerGeneration !=
+                _lastAppliedProviderGeneration ||
+            generation.modelGeneration !=
+                _lastAppliedModelGeneration ||
+            !KiwiCanonicalTrackingFrame.TryGetFrame(
+                out KiwiTrackingFrame frame) ||
+            !frame.isValid)
+        {
+            ResetBridgeStateAndRotations();
+        }
+    }
+
+    internal static bool CanCommitSemanticTransaction(
+        FacePartCropper cropper,
+        long semanticTimestamp,
+        ulong canonicalFrameId,
+        KiwiFaceGeometryTransactionService.AcceptedSnapshot snapshot)
+    {
+        KiwiFacePartRigidSampleFrame instance = _instance;
+        return
+            instance != null &&
+            instance.CanAcceptSemanticTransaction(
+                cropper,
+                semanticTimestamp,
+                canonicalFrameId,
+                snapshot,
+                out _);
+    }
+
+    internal static bool CommitSemanticTransaction(
+        FacePartCropper cropper,
+        long semanticTimestamp,
+        ulong canonicalFrameId,
+        KiwiFaceGeometryTransactionService.AcceptedSnapshot snapshot,
+        bool leftEyeAdvanced,
+        bool rightEyeAdvanced,
+        bool mouthAdvanced)
+    {
+        KiwiFacePartRigidSampleFrame instance = _instance;
+        return
+            instance != null &&
+            instance.TryCommitSemanticTransaction(
+                cropper,
+                semanticTimestamp,
+                canonicalFrameId,
+                snapshot,
+                leftEyeAdvanced,
+                rightEyeAdvanced,
+                mouthAdvanced);
+    }
+
+    private bool TryCommitSemanticTransaction(
+        FacePartCropper cropper,
+        long semanticTimestamp,
+        ulong canonicalFrameId,
+        KiwiFaceGeometryTransactionService.AcceptedSnapshot snapshot,
+        bool leftEyeAdvanced,
+        bool rightEyeAdvanced,
+        bool mouthAdvanced)
+    {
+        if (
+            !CanAcceptSemanticTransaction(
+                cropper,
+                semanticTimestamp,
+                canonicalFrameId,
+                snapshot,
+                out float sourceRollDegrees))
+        {
+            return false;
+        }
+
+        if (cropper.mirrorX)
+        {
+            sourceRollDegrees = -sourceRollDegrees;
+        }
+
+        if (
+            Mathf.Abs(sourceRollDegrees) <=
+                Mathf.Max(0f, restAngleDeadZoneDegrees))
+        {
+            sourceRollDegrees = 0f;
+        }
+
+        float correction = Mathf.Clamp(
+            sourceRollDegrees,
+            -Mathf.Max(0f, maximumCorrectionDegrees),
+            Mathf.Max(0f, maximumCorrectionDegrees));
+
+        bool applied = false;
+
+        if (leftEyeAdvanced && _left != null)
+        {
+            _left.SetSampleFrameRotationDegrees(correction);
+            applied = true;
+        }
+
+        if (rightEyeAdvanced && _right != null)
+        {
+            _right.SetSampleFrameRotationDegrees(correction);
+            applied = true;
+        }
+
+        if (mouthAdvanced && _mouth != null)
+        {
+            _mouth.SetSampleFrameRotationDegrees(correction);
+            applied = true;
+        }
+
+        if (!applied)
+        {
+            return true;
+        }
+
+        _hasAppliedIdentity = true;
+        _lastAppliedFrameId = snapshot.frameId;
+        _lastAppliedCameraGeneration = snapshot.cameraGeneration;
+        _lastAppliedTrackingSessionGeneration =
+            snapshot.trackingSessionGeneration;
+        _lastAppliedProviderGeneration = snapshot.providerGeneration;
+        _lastAppliedModelGeneration = snapshot.modelGeneration;
+
+        debugOperational = true;
+        debugEyeLineAngle = sourceRollDegrees;
+        debugAppliedRotation = correction;
+        IsOperational = true;
+        EyeLineAngleDegrees = sourceRollDegrees;
+        AppliedRotationDegrees = correction;
+        return true;
+    }
+
+    private bool CanAcceptSemanticTransaction(
+        FacePartCropper cropper,
+        long semanticTimestamp,
+        ulong canonicalFrameId,
+        KiwiFaceGeometryTransactionService.AcceptedSnapshot snapshot,
+        out float sourceRollDegrees)
+    {
+        sourceRollDegrees = 0f;
+
+        if (
+            !isActiveAndEnabled ||
+            !enableHeadLocalSampleFrame)
+        {
+            return false;
+        }
+
+        RefreshReferences(false);
+        return
+            _cropper == cropper &&
+            _left != null &&
+            _right != null &&
+            _mouth != null &&
+            cropper.runner != null &&
+            semanticTimestamp >= 0L &&
+            canonicalFrameId != 0UL &&
+            snapshot.isValid &&
+            cropper.runner.TryGetFacePartGeometrySnapshot(
+                semanticTimestamp,
+                out KiwiFaceGeometryTransactionService.AcceptedSnapshot
+                    currentSnapshot,
+                out ulong currentCanonicalFrameId) &&
+            currentCanonicalFrameId == canonicalFrameId &&
+            snapshot.HasSameIdentity(currentSnapshot) &&
+            snapshot.frameId > _lastAppliedFrameId &&
+            snapshot.pose.TryGetImagePlaneRollDegrees(
+                out sourceRollDegrees);
+    }
+
+    private void RefreshReferences(bool force)
+    {
+        if (force || _cropper == null)
+        {
+            _cropper = FindFirstObjectByType<FacePartCropper>(
+                FindObjectsInactive.Include);
+        }
+
+        SurfaceFittedRawImage left =
+            _cropper != null
+                ? _cropper.leftEyeImage as SurfaceFittedRawImage
+                : null;
+        SurfaceFittedRawImage right =
+            _cropper != null
+                ? _cropper.rightEyeImage as SurfaceFittedRawImage
+                : null;
+        SurfaceFittedRawImage mouth =
+            _cropper != null
+                ? _cropper.mouthImage as SurfaceFittedRawImage
+                : null;
+
+        int signature =
+            GetInstanceIdSafe(left) * 486187739 ^
+            GetInstanceIdSafe(right) * 16777619 ^
+            GetInstanceIdSafe(mouth);
+
+        if (force || signature != _lastBindingSignature)
         {
             ResetPartRotations();
-            SetDiagnostics(false, 0f, 0f);
-            return;
+            _left = left;
+            _right = right;
+            _mouth = mouth;
+            _lastBindingSignature = signature;
+            ResetBridgeIdentity();
         }
-
-        if (!TryResolveEyeLineAngle(out float angle))
-        {
-            // Keep the last safe local frame during a single missing semantic
-            // sample. Resetting to zero here would create visible Roll flicker.
-            SetDiagnostics(false, debugEyeLineAngle, debugAppliedRotation);
-            return;
-        }
-
-        if (!_hasNeutral)
-        {
-            _hasNeutral = true;
-            _neutralAngle = angle;
-            _lastAcceptedAngle = angle;
-            _neutralSamples = 1;
-
-            ApplyRotation(0f);
-            SetDiagnostics(true, angle, 0f);
-            return;
-        }
-
-        float frameJump =
-            Mathf.Abs(
-                DeltaLineAngle(
-                    _lastAcceptedAngle,
-                    angle));
-
-        if (
-            frameJump >
-            Mathf.Max(
-                1f,
-                maximumAcceptedFrameAngleJumpDegrees)
-        )
-        {
-            // One isolated Eye crop must not rotate every face part. However,
-            // a real fast Roll or a post-loss reacquisition can also move by a
-            // large angle. Adopt a large jump only after two consecutive
-            // geometrically-consistent samples at the new line angle.
-            bool consistentPendingJump =
-                _hasPendingAngleJump &&
-                Mathf.Abs(
-                    DeltaLineAngle(
-                        _pendingAngleJump,
-                        angle)) <= 4f;
-
-            if (!consistentPendingJump)
-            {
-                _hasPendingAngleJump = true;
-                _pendingAngleJump = angle;
-                _pendingAngleJumpSamples = 1;
-            }
-            else
-            {
-                _pendingAngleJumpSamples++;
-            }
-
-            BeginHeadLocalSemanticRecovery();
-
-            if (_pendingAngleJumpSamples < 2)
-            {
-                debugRejectedAngleJumps++;
-                RejectedAngleJumpCount = debugRejectedAngleJumps;
-
-                SetDiagnostics(
-                    true,
-                    _lastAcceptedAngle,
-                    debugAppliedRotation);
-                return;
-            }
-
-            angle = _pendingAngleJump;
-            _hasPendingAngleJump = false;
-            _pendingAngleJumpSamples = 0;
-            CompleteHeadLocalSemanticRecovery();
-        }
-        else
-        {
-            _hasPendingAngleJump = false;
-            _pendingAngleJumpSamples = 0;
-            CompleteHeadLocalSemanticRecovery();
-        }
-
-        _lastAcceptedAngle = angle;
-
-        if (
-            _neutralSamples <
-                Mathf.Max(1, neutralRefineSamples) &&
-            Mathf.Abs(
-                DeltaLineAngle(
-                    _neutralAngle,
-                    angle)) <=
-                Mathf.Max(
-                    0.1f,
-                    neutralRefineToleranceDegrees)
-        )
-        {
-            _neutralSamples++;
-
-            float weight =
-                1f /
-                Mathf.Max(1, _neutralSamples);
-
-            _neutralAngle =
-                NormalizeLineAngle(
-                    _neutralAngle +
-                    DeltaLineAngle(
-                        _neutralAngle,
-                        angle) *
-                    weight);
-        }
-
-        float relativeRoll =
-            DeltaLineAngle(
-                _neutralAngle,
-                angle);
-
-        if (
-            Mathf.Abs(relativeRoll) <=
-            Mathf.Max(0f, restAngleDeadZoneDegrees)
-        )
-        {
-            relativeRoll = 0f;
-        }
-
-        float correction =
-            Mathf.Clamp(
-                relativeRoll,
-                -Mathf.Max(0f, maximumCorrectionDegrees),
-                Mathf.Max(0f, maximumCorrectionDegrees));
-
-        ApplyRotation(correction);
-        SetDiagnostics(true, angle, correction);
     }
 
-    private bool TryResolveEyeLineAngle(
-        out float angle)
+    private void ResetBridgeStateAndRotations()
     {
-        angle = 0f;
-
-        if (
-            _cropper == null ||
-            _left == null ||
-            _right == null ||
-            _cropper.sourceImage == null ||
-            _cropper.sourceImage.texture == null
-        )
-        {
-            return false;
-        }
-
-        Rect leftRect = _left.uvRect;
-        Rect rightRect = _right.uvRect;
-
-        if (
-            !IsValidRect(leftRect) ||
-            !IsValidRect(rightRect)
-        )
-        {
-            return false;
-        }
-
-        float sourceAspect =
-            _cropper.sourceImage.texture.width /
-            (float)Mathf.Max(
-                1,
-                _cropper.sourceImage.texture.height);
-
-        Vector2 delta =
-            rightRect.center -
-            leftRect.center;
-
-        delta.x *=
-            Mathf.Max(0.01f, sourceAspect);
-
-        if (delta.sqrMagnitude < 0.0000001f)
-        {
-            return false;
-        }
-
-        angle =
-            NormalizeLineAngle(
-                Mathf.Atan2(
-                    delta.y,
-                    delta.x) *
-                Mathf.Rad2Deg);
-
-        return
-            !float.IsNaN(angle) &&
-            !float.IsInfinity(angle);
+        ResetPartRotations();
+        ResetBridgeIdentity();
     }
 
-    private void ApplyRotation(
-        float degrees)
+    private void ResetBridgeIdentity()
     {
-        // UnityEngine.Object overloads == / != so a destroyed component compares
-        // equal to null. Do not use the C# null-conditional operator here: ?.
-        // checks only the managed reference and can invoke methods on a destroyed
-        // SurfaceFittedRawImage during scene teardown / Play Mode stop.
-        if (_left != null)
-        {
-            _left.SetSampleFrameRotationDegrees(degrees);
-        }
+        _hasAppliedIdentity = false;
+        _lastAppliedFrameId = 0UL;
+        _lastAppliedCameraGeneration = 0;
+        _lastAppliedTrackingSessionGeneration = 0;
+        _lastAppliedProviderGeneration = 0;
+        _lastAppliedModelGeneration = 0;
 
-        if (_right != null)
-        {
-            _right.SetSampleFrameRotationDegrees(degrees);
-        }
-
-        if (_mouth != null)
-        {
-            _mouth.SetSampleFrameRotationDegrees(degrees);
-        }
-
-        AppliedRotationDegrees = degrees;
+        debugOperational = false;
+        debugEyeLineAngle = 0f;
+        debugAppliedRotation = 0f;
+        IsOperational = false;
+        EyeLineAngleDegrees = 0f;
+        AppliedRotationDegrees = 0f;
     }
 
     private void ResetPartRotations()
     {
-        // Same Unity destroyed-object rule as ApplyRotation. This path runs from
-        // OnDisable/OnDestroy and from scene rebinds, exactly when cached UI
-        // components may already have been destroyed.
         if (_left != null)
         {
             _left.ResetSampleFrameRotation();
@@ -374,176 +383,8 @@ public sealed class KiwiFacePartRigidSampleFrame : MonoBehaviour
         }
     }
 
-    private void RefreshReferences(
-        bool force)
+    private static int GetInstanceIdSafe(Object value)
     {
-        if (force || _cropper == null)
-        {
-            _cropper =
-                FindFirstObjectByType<FacePartCropper>(
-                    FindObjectsInactive.Include);
-        }
-
-        SurfaceFittedRawImage left =
-            _cropper != null
-                ? _cropper.leftEyeImage as SurfaceFittedRawImage
-                : null;
-
-        SurfaceFittedRawImage right =
-            _cropper != null
-                ? _cropper.rightEyeImage as SurfaceFittedRawImage
-                : null;
-
-        SurfaceFittedRawImage mouth =
-            _cropper != null
-                ? _cropper.mouthImage as SurfaceFittedRawImage
-                : null;
-
-        int signature =
-            GetInstanceIdSafe(left) * 486187739 ^
-            GetInstanceIdSafe(right) * 16777619 ^
-            GetInstanceIdSafe(mouth);
-
-        if (
-            force ||
-            signature != _lastBindingSignature
-        )
-        {
-            ResetPartRotations();
-
-            _left = left;
-            _right = right;
-            _mouth = mouth;
-            _lastBindingSignature = signature;
-
-            ResetNeutralReference();
-        }
-    }
-
-    private void BeginHeadLocalSemanticRecovery()
-    {
-        if (_semanticRecoveryActive)
-        {
-            return;
-        }
-
-        _semanticRecoveryActive = true;
-
-        KiwiRecoveryDomainCoordinator.BeginSemanticRecovery(
-            KiwiRecoveryDomainCoordinator.SemanticComponent
-                .HeadLocalSampleFrame,
-            KiwiRecoveryDomainCoordinator.SemanticRecoveryReason
-                .HeadLocalAngleReacquire,
-            RecoveryDomainSource);
-    }
-
-    private void CompleteHeadLocalSemanticRecovery()
-    {
-        if (!_semanticRecoveryActive)
-        {
-            return;
-        }
-
-        _semanticRecoveryActive = false;
-
-        KiwiRecoveryDomainCoordinator.CompleteSemanticRecovery(
-            KiwiRecoveryDomainCoordinator.SemanticComponent
-                .HeadLocalSampleFrame,
-            RecoveryDomainSource);
-    }
-
-    private void ResetNeutralReference()
-    {
-        CompleteHeadLocalSemanticRecovery();
-
-        _hasNeutral = false;
-        _neutralAngle = 0f;
-        _lastAcceptedAngle = 0f;
-        _neutralSamples = 0;
-        _hasPendingAngleJump = false;
-        _pendingAngleJump = 0f;
-        _pendingAngleJumpSamples = 0;
-
-        debugOperational = false;
-        debugEyeLineAngle = 0f;
-        debugNeutralEyeLineAngle = 0f;
-        debugAppliedRotation = 0f;
-        debugRejectedAngleJumps = 0;
-
-        IsOperational = false;
-        AppliedRotationDegrees = 0f;
-        EyeLineAngleDegrees = 0f;
-        RejectedAngleJumpCount = 0;
-    }
-
-    private void SetDiagnostics(
-        bool operational,
-        float eyeLineAngle,
-        float appliedRotation)
-    {
-        debugOperational = operational;
-        debugEyeLineAngle = eyeLineAngle;
-        debugNeutralEyeLineAngle = _neutralAngle;
-        debugAppliedRotation = appliedRotation;
-
-        IsOperational = operational;
-        EyeLineAngleDegrees = eyeLineAngle;
-        AppliedRotationDegrees = appliedRotation;
-        RejectedAngleJumpCount = debugRejectedAngleJumps;
-    }
-
-    private static int GetInstanceIdSafe(
-        Object value)
-    {
-        return value != null
-            ? value.GetInstanceID()
-            : 0;
-    }
-
-    private static bool IsValidRect(
-        Rect rect)
-    {
-        return
-            rect.width > 0.000001f &&
-            rect.height > 0.000001f &&
-            IsFinite(rect.x) &&
-            IsFinite(rect.y) &&
-            IsFinite(rect.width) &&
-            IsFinite(rect.height);
-    }
-
-    private static bool IsFinite(
-        float value)
-    {
-        return
-            !float.IsNaN(value) &&
-            !float.IsInfinity(value);
-    }
-
-    private static float DeltaLineAngle(
-        float from,
-        float to)
-    {
-        return
-            0.5f *
-            Mathf.DeltaAngle(
-                from * 2f,
-                to * 2f);
-    }
-
-    private static float NormalizeLineAngle(
-        float angle)
-    {
-        while (angle >= 90f)
-        {
-            angle -= 180f;
-        }
-
-        while (angle < -90f)
-        {
-            angle += 180f;
-        }
-
-        return angle;
+        return value != null ? value.GetInstanceID() : 0;
     }
 }

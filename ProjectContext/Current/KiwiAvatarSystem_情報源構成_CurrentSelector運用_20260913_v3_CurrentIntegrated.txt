@@ -1,0 +1,154 @@
+# KiwiAvatarSystem 情報源構成・Current Selector運用
+
+更新日: 2026-09-13 JST
+Revision: v3 / Current Integrated Into FullRoadmap / Content-Level Reaudit
+
+## 1. 目的
+
+Current情報源を分散させず、古いNext / SHA / phaseを再昇格させない。
+同時に、完全ロードマップから現在地を切り離さない。
+
+今回から `CurrentRoadmap` 単独文書を廃止し、Currentを完全ロードマップへ統合する。
+
+## 2. Current selector
+
+`D:\KiwiAvatarSystem\ProjectContext\Current\`
+
+Currentとして置くのは原則3ファイルだけ。
+
+1. `KiwiAvatarSystem_CoreRules_*.txt`
+2. `KiwiAvatarSystem_FullRoadmap_*.txt`
+3. `KiwiAvatarSystem_CustomInstructions_*.txt`
+
+Directory membershipをCurrent selectorとする。
+ファイル名のlatest/final/revision/mtimeだけでCurrentを決めない。
+
+旧 `KiwiAvatarSystem_CurrentRoadmap_*` はCurrentから外し、Historicalへ移す。
+削除して履歴を消す必要はないがCurrent selectorへ残さない。
+
+## 3. FullRoadmapの役割
+
+FullRoadmapが次を一元管理する。
+
+- report-time Current identity
+- Current Authority / Environment
+- Current Product Problem
+- Validated / Retained Decision Ledger
+- Rejected / Superseded / Do Not Re-promote
+- Current First Blocker
+- Open Issues
+- Next Single Action
+- プロジェクト開始から現在までの目的 / 内容 / 結果 / 現在の扱い
+- 現在からWindows Production完成までの全Critical Path
+- Windows Definition of Done
+- Optional / Deferred lane
+- Mobile preparation
+
+Currentと完全ロードマップを別文書へ分離しない。
+
+## 4. CoreRules
+
+恒久契約だけを持つ。
+
+- Primary Goal
+- Claim-Scoped Authority
+- Double Full Audit
+- Tracking / Transaction rails
+- Native / Inference rails
+- Human-Head / FacePart contract
+- Validation philosophy
+- Product quality / Security / Privacy / UX
+- workflow / commit / safety
+
+Current SHA、current phase、temporary hypothesis、Next Actionは入れない。
+
+## 5. CustomInstructions
+
+通常チャット用の圧縮コンテキスト。
+CoreRulesとFullRoadmapを短く再現し、Current First Blocker / Nextを保持する。
+詳細履歴はFullRoadmap / REPORTへ委譲する。
+
+## 6. AGENTS.md
+
+`D:\KiwiAvatarSystem\AGENTS.md`
+
+Project root固定。Current selector外。
+local agent durable policy、Preflight、Authority、安全、role split、audit contractを持つ。
+volatile SHA / Runtime / Nextは入れない。
+
+## 7. ChatReport / Consolidated REPORT / KiwiValidation
+
+Historical Evidence / detailed evidence。
+
+- detailed chronology
+- historical SHA
+- Runtime/Visual/Performance evidence
+- old diagnostic
+- old Next
+- observer/validator findings
+- exact method/statement evidence
+
+Current selectorへ大量投入しない。
+
+過去を再監査するときはArchive名・タイトルだけで判断しない。
+利用可能な場合はZIP内部の`00_CHAT_PERMANENT_REPORT.md`または対応REPORT本文を開き、
+目的、Evidence、Validated、Rejected、Superseded、Current Result、Open Issues、Next、Do Not Changeを読む。
+本文が取得できない場合は「本文未確認」とする。
+
+## 8. 旧Integrated Information
+
+R12/R13等の旧巨大統合情報はHistorical Source。
+現在も有効な原則はCoreRules / FullRoadmapへ移管し、旧Current / SHA / Nextは移管しない。
+
+## 9. Current読み順
+
+通常の再開:
+1. AGENTS.md
+2. CoreRules
+3. FullRoadmapのCURRENT SNAPSHOT / Decision Ledger / Next
+4. CustomInstructions
+5. latest relevant Consolidated REPORT / Runtime / Human Visual
+6. 必要なhistorical evidence
+
+全履歴を毎回再展開しない。
+
+## 10. Supersede手順
+
+Current文書を更新する場合:
+1. candidateを作る
+2. FULL_AUDIT_1を同一scope全体で実施
+3. FULL_AUDIT_2を独立に同一scope全体で実施
+4. old CurrentをCurrent directoryから外す
+5. historical storageへ保存
+6. new 3-file Current setだけを残す
+7. local branch/HEAD/statusを直接確認できた場合のみlive-localとして記録
+8. commit/pushは別途明示許可時のみ
+
+## 11. Current統合後の禁止
+
+- CoreRulesとFullRoadmapの双方へvolatile Currentを二重所有させない
+- FullRoadmapと別CurrentRoadmapを並行Currentにしない
+- ChatReportのold NextをFullRoadmap Currentへ戻さない
+- report-time HEADをcurrent liveへ昇格しない
+- historical Runtime PASSをFinal Visual/Performance PASSへ拡張しない
+
+## 12. 現時点のCurrent
+
+最新取得済みHuman Visual Authority:
+2026-09-13 00:04:34 JST H1 same-build Human review = 不合格。
+Landmarker飛び再発。原因未特定。
+
+Retained:
+P3C_1 / P3D scoped PASS、H1 frame identity repair scoped PASS。
+
+Current First Blocker:
+NEUTRAL_STILLNESS_Aにおける最初のcontinuity / identity / transaction boundary未特定。
+
+Next Single Action:
+同一artifactを固定segmentで連続録画し、Human markerを使わず、最優先NEUTRAL_STILLNESS_A全期間についてauthority→identity→timestamp/source age/liveness→provider/transition→Canonical pose→presentation consume/decision/commit→GeometrySnapshot identityの最初のfailureだけを特定する。reject等はHuman Visual不安定windowと継続相関しない限り原因へ昇格しない。
+
+## 13. 最終原則
+
+Currentを小さくすること自体が目的ではない。
+Current Authorityと完成ロードマップを一つに保ち、必要な過去経緯は同じFullRoadmapのchronologyへ残す。
+詳細EvidenceはChatReport/REPORTへ委譲する。

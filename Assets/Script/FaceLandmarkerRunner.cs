@@ -301,6 +301,84 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
     public class FaceLandmarkerRunner
         : VisionTaskApiRunner<FaceLandmarker>
     {
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        internal enum FacePartGeometrySnapshotPredicate
+        {
+            None = 0,
+            ProductServiceUnavailable = 1,
+            SemanticDimensionsInvalid = 2,
+            CanonicalFrameUnavailable = 3,
+            CanonicalFrameInvalid = 4,
+            CanonicalSemanticMissing = 5,
+            SemanticTimestampMismatch = 6,
+            RigidInvalid = 7,
+            RigidTimestampMismatch = 8,
+            RigidFrameIdMissing = 9,
+            NormalizationInvalid = 10,
+            ProviderSourceFrameIdMissing = 11,
+            CanonicalBackendMismatch = 12,
+            MatchedSubmissionTimingMissing = 13,
+            SourceHostTicksMissing = 14,
+            AcceptedSnapshotUnavailable = 15,
+            SourceFrameIdMismatch = 16,
+            SourceHostTicksMismatch = 17,
+            CameraGenerationMismatch = 18,
+            TrackingSessionGenerationMismatch = 19,
+            ProviderGenerationMismatch = 20,
+            ModelGenerationMismatch = 21,
+            AcceptedBackendMismatch = 22,
+            SemanticWidthMismatch = 23,
+            SemanticHeightMismatch = 24,
+            Accepted = 25
+        }
+
+        internal struct FacePartGeometrySnapshotDiagnostic
+        {
+            internal bool valid;
+            internal long observationHostTicks;
+            internal long semanticTimestamp;
+            internal ulong canonicalFrameId;
+            internal ulong expectedProviderSourceFrameId;
+            internal long expectedSourceHostTicks;
+            internal int expectedCameraGeneration;
+            internal int expectedTrackingSessionGeneration;
+            internal int expectedProviderGeneration;
+            internal int expectedModelGeneration;
+            internal KiwiTrackingBackend expectedBackend;
+            internal int expectedSemanticFrameWidth;
+            internal int expectedSemanticFrameHeight;
+            internal bool productServiceAvailable;
+            internal bool semanticDimensionsValid;
+            internal bool canonicalFrameAvailable;
+            internal bool canonicalFrameValid;
+            internal bool canonicalSemanticPresent;
+            internal bool semanticTimestampMatches;
+            internal bool rigidStateValid;
+            internal bool rigidValid;
+            internal bool rigidTimestampMatches;
+            internal bool rigidFrameIdPresent;
+            internal bool normalizationValid;
+            internal bool providerSourceFrameIdPresent;
+            internal bool canonicalBackendMatches;
+            internal bool matchedSubmissionTimingPresent;
+            internal bool sourceHostTicksPresent;
+            internal bool acceptedSnapshotAvailable;
+            internal bool sourceFrameIdMatches;
+            internal bool sourceHostTicksMatches;
+            internal bool cameraGenerationMatches;
+            internal bool trackingSessionGenerationMatches;
+            internal bool providerGenerationMatches;
+            internal bool modelGenerationMatches;
+            internal bool acceptedBackendMatches;
+            internal bool semanticWidthMatches;
+            internal bool semanticHeightMatches;
+            internal bool accepted;
+            internal FacePartGeometrySnapshotPredicate firstFailedPredicate;
+            internal KiwiFaceGeometryTransactionService.PipelineStateSnapshot
+                pipelineState;
+        }
+#endif
+
         [SerializeField]
         private FaceLandmarkerResultAnnotationController
             _faceLandmarkerResultAnnotationController;
@@ -341,9 +419,9 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
         public float sentisMinimumPresence = 0.5f;
 
         [Header("P3C FaceGeometry Transaction")]
-        [Tooltip("Compute bounded same-sample IE FaceGeometry transactions without publishing to Head, Canonical, or FacePart. Keep OFF until the P3D Runtime gate.")]
+        [Tooltip("Compute bounded same-sample IE FaceGeometry transactions and expose only exact-identity accepted pose snapshots to FacePart presentation.")]
         [SerializeField]
-        private bool enableInferenceFaceGeometryTransactions = false;
+        private bool enableInferenceFaceGeometryTransactions = true;
 
 
         private Experimental.TextureFramePool
@@ -378,6 +456,10 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
         private float _latestSentisPresence;
         private KiwiFaceGeometryTransactionService
             _faceGeometryTransactionService;
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        private FacePartGeometrySnapshotDiagnostic
+            _latestFacePartGeometrySnapshotDiagnostic;
+#endif
 
 
         public readonly FaceLandmarkDetectionConfig config =
@@ -605,6 +687,288 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             _sentisPrimaryActive
                 ? "Inference Engine GPU + MediaPipe"
                 : "MediaPipe FaceLandmarker";
+
+        internal bool IsFacePartGeometryBridgeOperational =>
+            enableInferenceFaceGeometryTransactions &&
+            _acceptTrackingResults &&
+            _faceGeometryTransactionService != null &&
+            _faceGeometryTransactionService.HasCurrentAcceptedSnapshot(
+                _trackingInputWidth,
+                _trackingInputHeight);
+
+        internal bool TryGetFacePartGeometrySnapshot(
+            long semanticTimestamp,
+            out KiwiFaceGeometryTransactionService.AcceptedSnapshot snapshot,
+            out ulong canonicalFrameId)
+        {
+            snapshot = default;
+            canonicalFrameId = 0UL;
+
+            bool productServiceAvailable =
+                enableInferenceFaceGeometryTransactions &&
+                _acceptTrackingResults &&
+                _faceGeometryTransactionService != null;
+            bool semanticDimensionsValid =
+                _trackingInputWidth > 0 &&
+                _trackingInputHeight > 0;
+
+            KiwiTrackingFrame frame = default;
+            bool canonicalFrameAvailable =
+                productServiceAvailable &&
+                semanticDimensionsValid &&
+                KiwiCanonicalTrackingFrame.TryGetFrame(out frame);
+            bool canonicalFrameValid =
+                canonicalFrameAvailable &&
+                frame.isValid &&
+                frame.canonicalFrameId > 0UL;
+            bool canonicalSemanticPresent =
+                canonicalFrameValid &&
+                frame.hasSemanticLandmarks;
+            bool semanticTimestampMatches =
+                canonicalSemanticPresent &&
+                frame.semanticTimestamp == semanticTimestamp;
+            bool rigidStateValid =
+                semanticTimestampMatches &&
+                frame.rigid.isValid;
+            bool rigidTimestampMatches =
+                rigidStateValid &&
+                frame.rigid.timestamp == semanticTimestamp;
+            bool rigidFrameIdPresent =
+                rigidTimestampMatches &&
+                frame.rigid.frameId > 0UL;
+            bool rigidValid =
+                rigidStateValid &&
+                rigidFrameIdPresent;
+            bool normalizationValid =
+                rigidFrameIdPresent &&
+                frame.normalization.valid;
+            bool providerSourceFrameIdPresent =
+                normalizationValid &&
+                frame.normalization.providerSourceFrameId > 0UL;
+            bool canonicalBackendMatches =
+                providerSourceFrameIdPresent &&
+                frame.rigid.backend == KiwiTrackingBackend.InferenceEngine;
+            bool matchedSubmissionTimingPresent =
+                canonicalBackendMatches &&
+                frame.rigid.hasMatchedSubmissionTiming;
+            bool sourceHostTicksPresent =
+                matchedSubmissionTimingPresent &&
+                frame.rigid.submissionHostTicks > 0L;
+
+            bool acceptedSnapshotAvailable =
+                sourceHostTicksPresent &&
+                _faceGeometryTransactionService.TryGetAcceptedSnapshot(
+                    out snapshot);
+            bool sourceFrameIdMatches =
+                acceptedSnapshotAvailable &&
+                snapshot.frameId ==
+                    frame.normalization.providerSourceFrameId;
+            bool sourceHostTicksMatches =
+                acceptedSnapshotAvailable &&
+                snapshot.sourceHostTicks ==
+                    frame.rigid.submissionHostTicks;
+            bool cameraGenerationMatches =
+                acceptedSnapshotAvailable &&
+                snapshot.cameraGeneration ==
+                    frame.generation.cameraGeneration;
+            bool trackingSessionGenerationMatches =
+                acceptedSnapshotAvailable &&
+                snapshot.trackingSessionGeneration ==
+                    frame.generation.trackingSessionGeneration;
+            bool providerGenerationMatches =
+                acceptedSnapshotAvailable &&
+                snapshot.providerGeneration ==
+                    frame.generation.providerGeneration;
+            bool modelGenerationMatches =
+                acceptedSnapshotAvailable &&
+                snapshot.modelGeneration ==
+                    frame.generation.modelGeneration;
+            bool acceptedBackendMatches =
+                acceptedSnapshotAvailable &&
+                snapshot.backend == frame.rigid.backend;
+            bool semanticWidthMatches =
+                acceptedSnapshotAvailable &&
+                snapshot.semanticFrameWidth == _trackingInputWidth;
+            bool semanticHeightMatches =
+                acceptedSnapshotAvailable &&
+                snapshot.semanticFrameHeight == _trackingInputHeight;
+
+            bool accepted =
+                productServiceAvailable &&
+                semanticDimensionsValid &&
+                canonicalFrameAvailable &&
+                canonicalFrameValid &&
+                canonicalSemanticPresent &&
+                semanticTimestampMatches &&
+                rigidStateValid &&
+                rigidTimestampMatches &&
+                rigidFrameIdPresent &&
+                normalizationValid &&
+                providerSourceFrameIdPresent &&
+                canonicalBackendMatches &&
+                matchedSubmissionTimingPresent &&
+                sourceHostTicksPresent &&
+                acceptedSnapshotAvailable &&
+                snapshot.Matches(
+                    frame.normalization.providerSourceFrameId,
+                    frame.rigid.submissionHostTicks,
+                    frame.generation,
+                    frame.rigid.backend,
+                    _trackingInputWidth,
+                    _trackingInputHeight);
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            KiwiFaceGeometryTransactionService.PipelineStateSnapshot
+                pipelineState = default;
+            if (_faceGeometryTransactionService != null)
+            {
+                _faceGeometryTransactionService.GetLatestPipelineState(
+                    out pipelineState);
+            }
+
+            var geometryDiagnostic =
+                new FacePartGeometrySnapshotDiagnostic
+                {
+                    valid = true,
+                    observationHostTicks =
+                        System.Diagnostics.Stopwatch.GetTimestamp(),
+                    semanticTimestamp = semanticTimestamp,
+                    canonicalFrameId = canonicalFrameAvailable
+                        ? frame.canonicalFrameId
+                        : 0UL,
+                    expectedProviderSourceFrameId = canonicalFrameAvailable
+                        ? frame.normalization.providerSourceFrameId
+                        : 0UL,
+                    expectedSourceHostTicks = canonicalFrameAvailable
+                        ? frame.rigid.submissionHostTicks
+                        : 0L,
+                    expectedCameraGeneration = canonicalFrameAvailable
+                        ? frame.generation.cameraGeneration
+                        : 0,
+                    expectedTrackingSessionGeneration = canonicalFrameAvailable
+                        ? frame.generation.trackingSessionGeneration
+                        : 0,
+                    expectedProviderGeneration = canonicalFrameAvailable
+                        ? frame.generation.providerGeneration
+                        : 0,
+                    expectedModelGeneration = canonicalFrameAvailable
+                        ? frame.generation.modelGeneration
+                        : 0,
+                    expectedBackend = canonicalFrameAvailable
+                        ? frame.rigid.backend
+                        : KiwiTrackingBackend.Unknown,
+                    expectedSemanticFrameWidth = _trackingInputWidth,
+                    expectedSemanticFrameHeight = _trackingInputHeight,
+                    productServiceAvailable = productServiceAvailable,
+                    semanticDimensionsValid = semanticDimensionsValid,
+                    canonicalFrameAvailable = canonicalFrameAvailable,
+                    canonicalFrameValid = canonicalFrameValid,
+                    canonicalSemanticPresent = canonicalSemanticPresent,
+                    semanticTimestampMatches = semanticTimestampMatches,
+                    rigidStateValid = rigidStateValid,
+                    rigidValid = rigidValid,
+                    rigidTimestampMatches = rigidTimestampMatches,
+                    rigidFrameIdPresent = rigidFrameIdPresent,
+                    normalizationValid = normalizationValid,
+                    providerSourceFrameIdPresent =
+                        providerSourceFrameIdPresent,
+                    canonicalBackendMatches = canonicalBackendMatches,
+                    matchedSubmissionTimingPresent =
+                        matchedSubmissionTimingPresent,
+                    sourceHostTicksPresent = sourceHostTicksPresent,
+                    acceptedSnapshotAvailable = acceptedSnapshotAvailable,
+                    sourceFrameIdMatches = sourceFrameIdMatches,
+                    sourceHostTicksMatches = sourceHostTicksMatches,
+                    cameraGenerationMatches = cameraGenerationMatches,
+                    trackingSessionGenerationMatches =
+                        trackingSessionGenerationMatches,
+                    providerGenerationMatches = providerGenerationMatches,
+                    modelGenerationMatches = modelGenerationMatches,
+                    acceptedBackendMatches = acceptedBackendMatches,
+                    semanticWidthMatches = semanticWidthMatches,
+                    semanticHeightMatches = semanticHeightMatches,
+                    accepted = accepted,
+                    pipelineState = pipelineState
+                };
+            geometryDiagnostic.firstFailedPredicate =
+                DetermineFirstFacePartGeometrySnapshotPredicate(
+                    geometryDiagnostic);
+            _latestFacePartGeometrySnapshotDiagnostic = geometryDiagnostic;
+#endif
+
+            if (!accepted)
+            {
+                snapshot = default;
+                return false;
+            }
+
+            canonicalFrameId = frame.canonicalFrameId;
+            return true;
+        }
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        private static FacePartGeometrySnapshotPredicate
+            DetermineFirstFacePartGeometrySnapshotPredicate(
+                FacePartGeometrySnapshotDiagnostic diagnostic)
+        {
+            if (diagnostic.accepted)
+                return FacePartGeometrySnapshotPredicate.Accepted;
+            if (!diagnostic.productServiceAvailable)
+                return FacePartGeometrySnapshotPredicate.ProductServiceUnavailable;
+            if (!diagnostic.semanticDimensionsValid)
+                return FacePartGeometrySnapshotPredicate.SemanticDimensionsInvalid;
+            if (!diagnostic.canonicalFrameAvailable)
+                return FacePartGeometrySnapshotPredicate.CanonicalFrameUnavailable;
+            if (!diagnostic.canonicalFrameValid)
+                return FacePartGeometrySnapshotPredicate.CanonicalFrameInvalid;
+            if (!diagnostic.canonicalSemanticPresent)
+                return FacePartGeometrySnapshotPredicate.CanonicalSemanticMissing;
+            if (!diagnostic.semanticTimestampMatches)
+                return FacePartGeometrySnapshotPredicate.SemanticTimestampMismatch;
+            if (!diagnostic.rigidStateValid)
+                return FacePartGeometrySnapshotPredicate.RigidInvalid;
+            if (!diagnostic.rigidTimestampMatches)
+                return FacePartGeometrySnapshotPredicate.RigidTimestampMismatch;
+            if (!diagnostic.rigidFrameIdPresent)
+                return FacePartGeometrySnapshotPredicate.RigidFrameIdMissing;
+            if (!diagnostic.normalizationValid)
+                return FacePartGeometrySnapshotPredicate.NormalizationInvalid;
+            if (!diagnostic.providerSourceFrameIdPresent)
+                return FacePartGeometrySnapshotPredicate.ProviderSourceFrameIdMissing;
+            if (!diagnostic.canonicalBackendMatches)
+                return FacePartGeometrySnapshotPredicate.CanonicalBackendMismatch;
+            if (!diagnostic.matchedSubmissionTimingPresent)
+                return FacePartGeometrySnapshotPredicate.MatchedSubmissionTimingMissing;
+            if (!diagnostic.sourceHostTicksPresent)
+                return FacePartGeometrySnapshotPredicate.SourceHostTicksMissing;
+            if (!diagnostic.acceptedSnapshotAvailable)
+                return FacePartGeometrySnapshotPredicate.AcceptedSnapshotUnavailable;
+            if (!diagnostic.sourceFrameIdMatches)
+                return FacePartGeometrySnapshotPredicate.SourceFrameIdMismatch;
+            if (!diagnostic.sourceHostTicksMatches)
+                return FacePartGeometrySnapshotPredicate.SourceHostTicksMismatch;
+            if (!diagnostic.cameraGenerationMatches)
+                return FacePartGeometrySnapshotPredicate.CameraGenerationMismatch;
+            if (!diagnostic.trackingSessionGenerationMatches)
+                return FacePartGeometrySnapshotPredicate.TrackingSessionGenerationMismatch;
+            if (!diagnostic.providerGenerationMatches)
+                return FacePartGeometrySnapshotPredicate.ProviderGenerationMismatch;
+            if (!diagnostic.modelGenerationMatches)
+                return FacePartGeometrySnapshotPredicate.ModelGenerationMismatch;
+            if (!diagnostic.acceptedBackendMatches)
+                return FacePartGeometrySnapshotPredicate.AcceptedBackendMismatch;
+            if (!diagnostic.semanticWidthMatches)
+                return FacePartGeometrySnapshotPredicate.SemanticWidthMismatch;
+            return FacePartGeometrySnapshotPredicate.SemanticHeightMismatch;
+        }
+
+        internal bool TryGetLatestFacePartGeometrySnapshotDiagnostic(
+            out FacePartGeometrySnapshotDiagnostic diagnostic)
+        {
+            diagnostic = _latestFacePartGeometrySnapshotDiagnostic;
+            return diagnostic.valid;
+        }
+#endif
 
 
         private void Update()
@@ -2578,6 +2942,16 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     return;
                 }
 
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                long rawObserverSequence = KiwiH1LandmarkerBoundaryObserver.
+                    ObserveRawFaceLandmarkerCallback(
+                        this,
+                        result,
+                        timestamp,
+                        submissionHostTicks,
+                        arrivalHostTicks,
+                    submissionCameraGeneration);
+#endif
 
                 bool published =
                     StoreTrackingData(
@@ -2587,6 +2961,17 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                         arrivalHostTicks,
                         submissionCameraGeneration
                     );
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                KiwiH1LandmarkerBoundaryObserver.
+                    ObserveRawToRunnerHandoff(
+                        this,
+                        result,
+                        rawObserverSequence,
+                        timestamp,
+                        System.Diagnostics.Stopwatch.GetTimestamp(),
+                        published);
+#endif
 
 
                 // 必ず残す。

@@ -36,6 +36,119 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
     private const long MaximumHistoryBytes = 96L * 1024L * 1024L;
     private const float MaximumSubmissionMatchDeltaMs = 55f;
 
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+    public enum PresentationDecisionReason
+    {
+        None = 0,
+        CandidatePendingPartDecision = 1,
+        RejectedCanonicalFrameUnavailable = 2,
+        RejectedCanonicalFrameInvalid = 3,
+        RejectedCanonicalSemanticMissing = 4,
+        RejectedCanonicalSemanticTimestampMismatch = 5,
+        RejectedCanonicalRigidInvalid = 6,
+        RejectedCanonicalRigidTimestampMismatch = 7,
+        RejectedCanonicalSubmissionTimingMissing = 8,
+        RejectedCanonicalSourceHostTicksMissing = 9,
+        RejectedNoMatchingCameraSlot = 10,
+        RejectedCameraSlotMatchTooOld = 11,
+        RejectedGeometrySnapshotIdentity = 12,
+        RejectedRigidSampleIdentity = 13,
+        RejectedSemanticFreshness = 14,
+        RejectedFaceUnavailable = 15,
+        RejectedLandmarkPayloadInvalid = 16,
+        RejectedStagedTransactionMismatch = 17,
+        RejectedAllParts = 18,
+        Accepted = 19
+    }
+
+    public readonly struct PresentationDecisionSnapshot
+    {
+        public readonly bool valid;
+        public readonly long sequence;
+        public readonly long observationHostTicks;
+        public readonly bool candidateReceived;
+        public readonly bool accepted;
+        public readonly PresentationDecisionReason reason;
+        public readonly long semanticTimestamp;
+        public readonly ulong canonicalFrameId;
+        public readonly string providerId;
+        public readonly KiwiTrackingBackend backend;
+        public readonly ulong providerSourceFrameId;
+        public readonly long providerSourceTimestamp;
+        public readonly long sourceHostTicks;
+        public readonly long arrivalHostTicks;
+        public readonly float sourceAgeMilliseconds;
+        public readonly float arrivalAgeMilliseconds;
+        public readonly bool semanticFreshnessEvaluated;
+        public readonly float semanticFreshnessAgeMilliseconds;
+        public readonly int cameraGeneration;
+        public readonly int providerGeneration;
+        public readonly int trackingSessionGeneration;
+        public readonly bool leftEyeAccepted;
+        public readonly bool rightEyeAccepted;
+        public readonly bool mouthAccepted;
+        public readonly long committedSemanticTimestamp;
+        public readonly ulong committedCanonicalFrameId;
+
+        internal PresentationDecisionSnapshot(
+            bool valid,
+            long sequence,
+            long observationHostTicks,
+            bool candidateReceived,
+            bool accepted,
+            PresentationDecisionReason reason,
+            long semanticTimestamp,
+            ulong canonicalFrameId,
+            string providerId,
+            KiwiTrackingBackend backend,
+            ulong providerSourceFrameId,
+            long providerSourceTimestamp,
+            long sourceHostTicks,
+            long arrivalHostTicks,
+            float sourceAgeMilliseconds,
+            float arrivalAgeMilliseconds,
+            bool semanticFreshnessEvaluated,
+            float semanticFreshnessAgeMilliseconds,
+            int cameraGeneration,
+            int providerGeneration,
+            int trackingSessionGeneration,
+            bool leftEyeAccepted,
+            bool rightEyeAccepted,
+            bool mouthAccepted,
+            long committedSemanticTimestamp,
+            ulong committedCanonicalFrameId)
+        {
+            this.valid = valid;
+            this.sequence = sequence;
+            this.observationHostTicks = observationHostTicks;
+            this.candidateReceived = candidateReceived;
+            this.accepted = accepted;
+            this.reason = reason;
+            this.semanticTimestamp = semanticTimestamp;
+            this.canonicalFrameId = canonicalFrameId;
+            this.providerId = providerId ?? string.Empty;
+            this.backend = backend;
+            this.providerSourceFrameId = providerSourceFrameId;
+            this.providerSourceTimestamp = providerSourceTimestamp;
+            this.sourceHostTicks = sourceHostTicks;
+            this.arrivalHostTicks = arrivalHostTicks;
+            this.sourceAgeMilliseconds = sourceAgeMilliseconds;
+            this.arrivalAgeMilliseconds = arrivalAgeMilliseconds;
+            this.semanticFreshnessEvaluated = semanticFreshnessEvaluated;
+            this.semanticFreshnessAgeMilliseconds =
+                semanticFreshnessAgeMilliseconds;
+            this.cameraGeneration = cameraGeneration;
+            this.providerGeneration = providerGeneration;
+            this.trackingSessionGeneration = trackingSessionGeneration;
+            this.leftEyeAccepted = leftEyeAccepted;
+            this.rightEyeAccepted = rightEyeAccepted;
+            this.mouthAccepted = mouthAccepted;
+            this.committedSemanticTimestamp = committedSemanticTimestamp;
+            this.committedCanonicalFrameId = committedCanonicalFrameId;
+        }
+    }
+#endif
+
     private sealed class Slot
     {
         public RenderTexture texture;
@@ -91,6 +204,12 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
     private long _lastHoldTimestamp = long.MinValue;
     private int _lastExternalWriterFrame = -1;
 
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+    private PresentationDecisionReason _lastPrepareFailureReason;
+    private long _presentationDecisionSequence;
+    private PresentationDecisionSnapshot _lastPresentationDecision;
+#endif
+
     public static bool IsOperational =>
         _instance != null &&
         _instance._cropper != null &&
@@ -136,6 +255,22 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
 
     public static int ExternalTextureWriterCount =>
         _instance != null ? _instance._externalTextureWriterCount : 0;
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+    public static bool TryGetLastPresentationDecision(
+        out PresentationDecisionSnapshot snapshot)
+    {
+        snapshot = default;
+        KiwiFacePartTextureTransaction service = _instance;
+        if (service == null || !service._lastPresentationDecision.valid)
+        {
+            return false;
+        }
+
+        snapshot = service._lastPresentationDecision;
+        return true;
+    }
+#endif
 
     // KIWI_V5_1_PHASE16_19_3_MATCHED_LANDMARK_PREVIEW_EPOCH
     /// <summary>
@@ -289,12 +424,19 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
         {
             // Compatibility path for legacy/early startup. Existing behaviour is
             // preserved until the canonical commercial coordinator is active.
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            service._lastPrepareFailureReason =
+                PresentationDecisionReason.None;
+#endif
             return true;
         }
 
+        bool hasCanonicalFrame =
+            KiwiCanonicalTrackingFrame.TryGetFrame(
+                out KiwiTrackingFrame frame);
+
         if (
-            !KiwiCanonicalTrackingFrame.TryGetFrame(
-                out KiwiTrackingFrame frame) ||
+            !hasCanonicalFrame ||
             !frame.isValid ||
             !frame.hasSemanticLandmarks ||
             frame.semanticTimestamp != semanticTimestamp ||
@@ -304,6 +446,13 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
             frame.rigid.submissionHostTicks <= 0L
         )
         {
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            service._lastPrepareFailureReason =
+                ClassifyCanonicalPrepareFailure(
+                    hasCanonicalFrame,
+                    frame,
+                    semanticTimestamp);
+#endif
             service.RecordTransactionMiss(semanticTimestamp);
             return false;
         }
@@ -315,8 +464,22 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
                 frame.generation.trackingSessionGeneration,
                 out float deltaMs);
 
-        if (bestSlot < 0 || deltaMs > MaximumSubmissionMatchDeltaMs)
+        if (bestSlot < 0)
         {
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            service._lastPrepareFailureReason =
+                PresentationDecisionReason.RejectedNoMatchingCameraSlot;
+#endif
+            service.RecordTransactionMiss(semanticTimestamp);
+            return false;
+        }
+
+        if (deltaMs > MaximumSubmissionMatchDeltaMs)
+        {
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            service._lastPrepareFailureReason =
+                PresentationDecisionReason.RejectedCameraSlotMatchTooOld;
+#endif
             service.RecordTransactionMiss(semanticTimestamp);
             return false;
         }
@@ -326,8 +489,81 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
         service._stagedCanonicalFrameId = frame.canonicalFrameId;
         service._lastMatchDeltaMs = deltaMs;
 
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        service._lastPrepareFailureReason =
+            PresentationDecisionReason.None;
+#endif
+
         return true;
     }
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+    public static void ObserveCandidateDecision(
+        long semanticTimestamp,
+        bool hasFace,
+        bool landmarkPayloadValid,
+        bool semanticTextureReady,
+        bool geometrySnapshotIdentityReady,
+        bool rigidSampleIdentityReady,
+        bool semanticFreshnessEvaluated,
+        bool semanticFreshnessAccepted,
+        float semanticFreshnessAgeMilliseconds)
+    {
+        KiwiFacePartTextureTransaction service = EnsureInstance();
+        if (service == null)
+        {
+            return;
+        }
+
+        PresentationDecisionReason reason =
+            PresentationDecisionReason.CandidatePendingPartDecision;
+
+        if (!hasFace)
+        {
+            reason = PresentationDecisionReason.RejectedFaceUnavailable;
+        }
+        else if (!landmarkPayloadValid)
+        {
+            reason = PresentationDecisionReason.RejectedLandmarkPayloadInvalid;
+        }
+        else if (!semanticTextureReady)
+        {
+            reason =
+                service._lastPrepareFailureReason !=
+                    PresentationDecisionReason.None
+                    ? service._lastPrepareFailureReason
+                    : PresentationDecisionReason.
+                        RejectedCanonicalFrameUnavailable;
+        }
+        else if (!geometrySnapshotIdentityReady)
+        {
+            reason =
+                PresentationDecisionReason.RejectedGeometrySnapshotIdentity;
+        }
+        else if (!rigidSampleIdentityReady)
+        {
+            reason = PresentationDecisionReason.RejectedRigidSampleIdentity;
+        }
+        else if (
+            semanticFreshnessEvaluated &&
+            !semanticFreshnessAccepted)
+        {
+            reason = PresentationDecisionReason.RejectedSemanticFreshness;
+        }
+
+        service._presentationDecisionSequence++;
+        service.RecordPresentationDecision(
+            service._presentationDecisionSequence,
+            semanticTimestamp,
+            false,
+            reason,
+            semanticFreshnessEvaluated,
+            semanticFreshnessAgeMilliseconds,
+            false,
+            false,
+            false);
+    }
+#endif
 
     /// <summary>
     /// Called after FacePartCropper has made its per-part accept/reject decision.
@@ -340,8 +576,15 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
         long semanticTimestamp,
         bool leftEyeAccepted,
         bool rightEyeAccepted,
-        bool mouthAccepted)
+        bool mouthAccepted,
+        out bool leftEyeAdvanced,
+        out bool rightEyeAdvanced,
+        out bool mouthAdvanced)
     {
+        leftEyeAdvanced = false;
+        rightEyeAdvanced = false;
+        mouthAdvanced = false;
+
         KiwiFacePartTextureTransaction service =
             EnsureInstance();
 
@@ -357,6 +600,21 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
             service._stagedSemanticTimestamp != semanticTimestamp
         )
         {
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            service.RecordPresentationDecision(
+                service.ResolveDecisionSequence(semanticTimestamp),
+                semanticTimestamp,
+                false,
+                PresentationDecisionReason.
+                    RejectedStagedTransactionMismatch,
+                service._lastPresentationDecision.
+                    semanticFreshnessEvaluated,
+                service._lastPresentationDecision.
+                    semanticFreshnessAgeMilliseconds,
+                leftEyeAccepted,
+                rightEyeAccepted,
+                mouthAccepted);
+#endif
             service.RecordSemanticHold(semanticTimestamp);
             service.ApplyPinnedTextures();
             return;
@@ -372,27 +630,31 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
         if (service._leftSlot < 0 || leftEyeAccepted)
         {
             service._leftSlot = slot;
+            leftEyeAdvanced = true;
             initializedAnyPart = true;
         }
 
         if (service._rightSlot < 0 || rightEyeAccepted)
         {
             service._rightSlot = slot;
+            rightEyeAdvanced = true;
             initializedAnyPart = true;
         }
 
         if (service._mouthSlot < 0 || mouthAccepted)
         {
             service._mouthSlot = slot;
+            mouthAdvanced = true;
             initializedAnyPart = true;
         }
 
-        if (
+        bool presentationCommitted =
             initializedAnyPart ||
             leftEyeAccepted ||
             rightEyeAccepted ||
-            mouthAccepted
-        )
+            mouthAccepted;
+
+        if (presentationCommitted)
         {
             service._strictPresentationStarted = true;
             service._lastCommittedSlot = slot;
@@ -401,6 +663,22 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
                 service._stagedCanonicalFrameId;
             service._transactionCommitCount++;
         }
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        service.RecordPresentationDecision(
+            service.ResolveDecisionSequence(semanticTimestamp),
+            semanticTimestamp,
+            presentationCommitted,
+            presentationCommitted
+                ? PresentationDecisionReason.Accepted
+                : PresentationDecisionReason.RejectedAllParts,
+            service._lastPresentationDecision.semanticFreshnessEvaluated,
+            service._lastPresentationDecision.
+                semanticFreshnessAgeMilliseconds,
+            leftEyeAccepted,
+            rightEyeAccepted,
+            mouthAccepted);
+#endif
 
         service._stagedSlot = -1;
         service._stagedSemanticTimestamp = -1L;
@@ -783,6 +1061,141 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
         }
     }
 
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+    private static PresentationDecisionReason ClassifyCanonicalPrepareFailure(
+        bool hasCanonicalFrame,
+        KiwiTrackingFrame frame,
+        long semanticTimestamp)
+    {
+        if (!hasCanonicalFrame)
+            return PresentationDecisionReason.RejectedCanonicalFrameUnavailable;
+        if (!frame.isValid)
+            return PresentationDecisionReason.RejectedCanonicalFrameInvalid;
+        if (!frame.hasSemanticLandmarks)
+            return PresentationDecisionReason.RejectedCanonicalSemanticMissing;
+        if (frame.semanticTimestamp != semanticTimestamp)
+            return PresentationDecisionReason.
+                RejectedCanonicalSemanticTimestampMismatch;
+        if (!frame.rigid.isValid)
+            return PresentationDecisionReason.RejectedCanonicalRigidInvalid;
+        if (frame.rigid.timestamp != semanticTimestamp)
+            return PresentationDecisionReason.
+                RejectedCanonicalRigidTimestampMismatch;
+        if (!frame.rigid.hasMatchedSubmissionTiming)
+            return PresentationDecisionReason.
+                RejectedCanonicalSubmissionTimingMissing;
+        return PresentationDecisionReason.
+            RejectedCanonicalSourceHostTicksMissing;
+    }
+
+    private long ResolveDecisionSequence(long semanticTimestamp)
+    {
+        if (
+            !_lastPresentationDecision.valid ||
+            _lastPresentationDecision.semanticTimestamp != semanticTimestamp)
+        {
+            _presentationDecisionSequence++;
+        }
+
+        return _presentationDecisionSequence;
+    }
+
+    private void RecordPresentationDecision(
+        long sequence,
+        long semanticTimestamp,
+        bool accepted,
+        PresentationDecisionReason reason,
+        bool semanticFreshnessEvaluated,
+        float semanticFreshnessAgeMilliseconds,
+        bool leftEyeAccepted,
+        bool rightEyeAccepted,
+        bool mouthAccepted)
+    {
+        long nowHostTicks = System.Diagnostics.Stopwatch.GetTimestamp();
+        KiwiTrackingFrame frame = default;
+        bool hasFrame = KiwiCanonicalTrackingFrame.TryGetFrame(out frame);
+        long sourceHostTicks =
+            hasFrame
+                ? frame.rigid.submissionHostTicks
+                : 0L;
+        long arrivalHostTicks =
+            hasFrame
+                ? frame.rigid.arrivalHostTicks
+                : 0L;
+
+        _lastPresentationDecision =
+            new PresentationDecisionSnapshot(
+                valid: true,
+                sequence: sequence,
+                observationHostTicks: nowHostTicks,
+                candidateReceived: true,
+                accepted: accepted,
+                reason: reason,
+                semanticTimestamp: semanticTimestamp,
+                canonicalFrameId:
+                    hasFrame ? frame.canonicalFrameId : 0UL,
+                providerId:
+                    hasFrame ? frame.providerId : string.Empty,
+                backend:
+                    hasFrame
+                        ? frame.rigid.backend
+                        : KiwiTrackingBackend.Unknown,
+                providerSourceFrameId:
+                    hasFrame && frame.normalization.valid
+                        ? frame.normalization.providerSourceFrameId
+                        : 0UL,
+                providerSourceTimestamp:
+                    hasFrame && frame.normalization.valid
+                        ? frame.normalization.providerSourceTimestamp
+                        : 0L,
+                sourceHostTicks: sourceHostTicks,
+                arrivalHostTicks: arrivalHostTicks,
+                sourceAgeMilliseconds:
+                    CalculateObservedAgeMilliseconds(
+                        nowHostTicks,
+                        sourceHostTicks),
+                arrivalAgeMilliseconds:
+                    CalculateObservedAgeMilliseconds(
+                        nowHostTicks,
+                        arrivalHostTicks),
+                semanticFreshnessEvaluated:
+                    semanticFreshnessEvaluated,
+                semanticFreshnessAgeMilliseconds:
+                    semanticFreshnessAgeMilliseconds,
+                cameraGeneration:
+                    hasFrame ? frame.generation.cameraGeneration : 0,
+                providerGeneration:
+                    hasFrame ? frame.generation.providerGeneration : 0,
+                trackingSessionGeneration:
+                    hasFrame
+                        ? frame.generation.trackingSessionGeneration
+                        : 0,
+                leftEyeAccepted: leftEyeAccepted,
+                rightEyeAccepted: rightEyeAccepted,
+                mouthAccepted: mouthAccepted,
+                committedSemanticTimestamp:
+                    _lastCommittedSemanticTimestamp,
+                committedCanonicalFrameId:
+                    _lastCommittedCanonicalFrameId);
+    }
+
+    private static float CalculateObservedAgeMilliseconds(
+        long nowHostTicks,
+        long observedHostTicks)
+    {
+        if (observedHostTicks <= 0L || nowHostTicks <= observedHostTicks)
+        {
+            return observedHostTicks > 0L ? 0f : -1f;
+        }
+
+        return
+            (float)(
+                KiwiPrecisionTrackingMath.HostTicksToSeconds(
+                    nowHostTicks - observedHostTicks) *
+                1000.0);
+    }
+#endif
+
     private int CountValidSlots()
     {
         if (_slots == null)
@@ -891,6 +1304,11 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
         _lastCommittedCanonicalFrameId = 0UL;
         _lastMatchDeltaMs = -1f;
         _lastCapturedUnityFrame = -1;
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        _lastPrepareFailureReason = PresentationDecisionReason.None;
+        _presentationDecisionSequence = 0L;
+        _lastPresentationDecision = default;
+#endif
     }
 
     private void ResetSourceBinding()
@@ -943,5 +1361,10 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
         _lastCommittedSlot = -1;
         _stagedSlot = -1;
         _strictPresentationStarted = false;
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        _lastPrepareFailureReason = PresentationDecisionReason.None;
+        _presentationDecisionSequence = 0L;
+        _lastPresentationDecision = default;
+#endif
     }
 }

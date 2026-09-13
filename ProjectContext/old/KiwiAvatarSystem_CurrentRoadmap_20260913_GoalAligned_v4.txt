@@ -1,0 +1,157 @@
+KiwiAvatarSystem 現行ロードマップ
+文書改訂日: 2026-09-13 JST
+技術Authority適用範囲: 2026-09-13 00:04:34 JST H1 同一ビルド人間確認 Consolidated REPORTまで
+最新local snapshot: report-time branch=work/raw-direct-motion / HEAD=df75cfa9f6ae386bf4443272929d3cef33a8b138
+通常チャットからのcurrent live状態: NORMAL_CHAT_LIVE_LOCAL_PRODUCTION_NOT_DIRECTLY_VERIFIED
+状態: H1人間視認不合格 / Landmarker飛びの最初の因果boundary未特定
+
+0. 主目的 / Goal Alignment
+Windows/DX12でFace LandmarkerをPrimary / Source of Truthとして、正常な最新face sampleを最小latency・高精度・低jitterでKiwi Avatarへ反映する。Root / Head / Eye / Blink / Mouth / Expressionを自然かつ正しく表示し、LIVE CAMERA / Spoutを含む実用的なAvatar製品としてWindows Production Acceptanceまで完成させる。
+検証、診断、Phase、FaceGeometry、H1、backend、architectureは手段。各Next/変更は、どの最終ユーザー可視要件または不可欠なCorrectness / Authority / Lifecycle / Resource / Security / Release契約を閉じるか説明できる場合だけ行う。閉じたgateを予定表だけを理由に再実行しない。
+
+1. Current Authority / Identity
+Project=D:\KiwiAvatarSystem
+Unity=6000.0.80f1
+Primary=Windows/DX12
+MediaPipeUnityPlugin=0.16.3
+Inference Engine=2.4.1
+Face Landmarker=Primary / Source of Truth
+Native baseline=Path B SystemMemoryNV12
+
+最新report-time local:
+branch=work/raw-direct-motion
+HEAD=df75cfa9f6ae386bf4443272929d3cef33a8b138
+H1人間確認対象build=H1_FrameIdentity_20260912-230622
+人間確認時のProduct source変更=なし
+Performance Authority=なし
+current live HEAD/status=通常チャットでは未確認
+
+GitHub/REPORTのSHAはreport-time snapshotでありcurrent liveへ自動昇格しない。GitHub変更はlocal Runtime合格を意味しない。
+
+2. 保持する確認済みEvidence
+- P3C_1 callback destruction/lifecycle: 範囲限定合格を保持
+- P3D FaceGeometry correctness/lifecycle: 範囲限定合格を保持
+- H1 source rigid single-owner整理: Static合格
+- H1 same-sample bridge / frame identity contract repair:
+  - Static contract=合格
+  - exact Unity compile=合格
+  - same-source DX12 Development build=合格
+  - Runtime exact transaction adoption=合格
+  - restart stale-state rejection=合格
+- duplicate/out-of-order/stale-generation/mixed-epoch/old-run拒否契約は保持
+- FIFO/history backlogを新設していない
+- Root / visible Head authorityは維持
+
+3. 現在の製品問題
+2026-09-13の同一ビルド人間確認では、H1 Product Human Visualは不合格。
+人間確認で「全て問題あり。LandMarkerが飛ぶ問題が再発」と報告され、最初に再現した開放boundaryはLandmarker飛び。
+
+人間向けチェック結果:
+- 回転一致=不合格
+- 目のねじれ=不合格
+- 口のねじれ=不合格
+- 回転時Root非移動=不合格
+- まばたき=不合格
+- 口表情=不合格
+- LIVE CAMERA=不合格
+- 口サイズ=不合格として再現
+- Surface Clip=不合格として再現
+- Player終了=確認済み
+
+重要:
+この人間確認は「Landmarker飛びの原因」を特定していない。tracking math、provider、identity、timestamp、FaceGeometry、FacePart、Camera、Native、backendのどれが原因かは未確認。静止画だけで各時間依存症状の原因を断定しない。Performanceも未評価。
+
+4. 次の単一作業
+同一ビルド Landmarker飛び 最初のboundary特定のみ。
+
+目的:
+Landmarker飛びを同期したsource+Avatar Evidenceで再現し、最初に壊れる authority / identity / timestamp / provider / presentation boundaryを1つだけ特定する。
+
+実行原則:
+- 修正より先に最初の因果boundaryを確定
+- 1-factor / minimal observer
+- 既存identity/timestampを優先利用
+- smoothing / Kalman / stale prediction / threshold緩和で隠さない
+- Camera / Native / backend / Root / Head / FacePartを一括変更しない
+- 複数の可視不具合を一度に補償しない
+- first proven boundaryだけを次の修正候補にする
+
+5. Goal-Aligned Critical Path
+1. Landmarker飛び first-boundary localization
+2. 証明されたboundaryの最小修正
+3. 同一ビルド H1 Product / Human Visual再確認
+4. Core Contract Closure
+   Root/Head/Eye/Mouth owner、Canonical/provider/resume/presentation、same-sample Texture/Crop/Mask/FacePart、restart/recoveryの残存claimのみ閉じる。
+5. Deterministic Golden Replay / Regression Gate
+6. Clean Core Performance Qualification
+7. Avatar Product Runtime
+   Avatar Adapter + Model Profile + VRM0/1 + non-spherical + AutoFit + Runtime Import + Transactional Hot Swap + Spring/Dangle
+8. Product Integration
+   Config / Calibration / Safe Mode / UI / Model Browser / diagnostic UX / privacy + LIVE CAMERA / Spout / OBS smoke
+9. Integrated Acceptance
+10. Release / Distribution
+11. Windows Production Acceptance
+
+Android/iOSはWindows Production後。
+
+6. 条件付き・棄却・再昇格禁止
+口サイズ / Surface Clipは今回の人間確認で再現済みだが、Landmarker飛びの原因特定前に別補償へ進まない。first-boundary localization後に独立原因か再判定する。
+
+新Evidenceなしに再昇格しない:
+- CommandBuffer form単独をasync primary causeとする仮説
+- stale MediaPipe poseを新しいIE sampleへ流用
+- MediaPipe-only H1
+- custom FaceGeometry solver
+- duplicate Face Landmarker inference
+- geometry FIFO / stale queue
+- main-thread blocking poller
+- strong smoothing / Kalman / stale prediction
+- threshold relaxation
+- speculative Fence / Wait / flush / async disable
+- Big-Bang rewrite
+- external tracker Primary
+- neural Primary
+
+7. 通常チャット / GitHub / Codex の役割
+通常チャットを調査・設計・監査・GitHub source開発の主担当とする。特に問題がない限り、GitHub上のsource解析→最小修正→Static review→commitまで通常チャットで行う。GitHub上のcommitはlocal Production合格ではない。
+
+Codexは原則ローカル環境でしかできない作業に限定する:
+- local-only file / dirty state / live branch / HEAD / SHA / provenance確認
+- GitHub commitの安全なlocal反映と差分照合
+- exact Unity compile/build
+- Native build / ABI
+- installed artifact確認
+- Runtime / stress / clean benchmark
+- local hardware/GUIを使うEvidence採取
+- 人間確認用same-buildの起動・証拠採取補助
+- rollback / distribution実証
+通常チャットで完結できるsource解析や通常のGitHub修正を理由なくCodexへ移さない。
+
+8. コミット運用
+意味のある最小変更がStatic reviewを通り、次のlocal検証用の基準点を固定すべき時点で、通常チャットはユーザーへ「今がコミット適切時点」と明示する。
+commitの担当は通常チャットとする。必要なタイミングを先に知らせ、ユーザーの明示指示または当該作業での明示的なcommit許可がある場合にcommitする。WIPの早すぎるcommit、複数boundaryをまとめる遅すぎるcommitを避ける。pushはユーザーの明示指示時のみ。
+現時点ではLandmarker飛びの最初の因果boundaryが未特定のため、原因未特定の補償修正commitは行わない。
+
+9. 表示・報告規則
+ユーザー向けチェック項目と判定は日本語を主表記にする。
+例:
+回転一致=合格/不合格
+目のねじれ=合格/不合格
+口のねじれ=合格/不合格
+回転時Root非移動=合格/不合格
+まばたき=合格/不合格
+口表情=合格/不合格
+LIVE CAMERA=合格/不合格
+
+既存REPORTやvalidatorの英語キーを正確に引用する必要がある場合のみ、対応する日本語の後に内部キーを併記する。Validator/ログの合格でHuman Visual不合格を上書きしない。
+
+10. Current Decision
+P3C_1=範囲限定合格を保持
+P3D=範囲限定合格を保持
+H1 frame identity repair=Correctness / Runtime / restart合格
+H1 Human Visual=不合格
+Performance=未評価
+Final Product=未合格
+Windows Acceptance=未合格
+最初の未解決boundary=Landmarker飛びの因果boundary未特定
+次の単一作業=同一ビルド Landmarker飛び first-boundary localization

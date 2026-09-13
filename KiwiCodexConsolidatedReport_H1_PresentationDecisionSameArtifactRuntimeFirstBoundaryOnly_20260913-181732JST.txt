@@ -1,0 +1,595 @@
+KIWI_H1_PRESENTATION_DECISION_SAME_ARTIFACT_RUNTIME_FIRST_BOUNDARY_ONLY
+Consolidated Codex REPORT
+JST: 2026-09-13T18:17:32.479+09:00
+
+================================================================
+0. 最終結論
+================================================================
+
+FIRST_PRESENTATION_DECISION_FAILURE_BOUNDARY=RejectedGeometrySnapshotIdentity
+FIRST_CAUSAL_BOUNDARY=RejectedGeometrySnapshotIdentity
+
+Humanが右側 MATCHED LANDMARK DEBUG の飛びを認識した時だけ取得する
+Space markerは4件あった。
+
+最初のmarkerは:
+  decisionConsumeRelation=DECISION_FOR_CURRENT_CONSUME
+  decisionReason=RejectedGeometrySnapshotIdentity
+
+Marker 2 / 3も同じrelationと同じ既存reject gateだった。
+Marker 4はDECISION_FOR_CURRENT_CONSUME / Acceptedで、decision timestampと
+canonicalFrameIdがcommitted tupleと一致した。
+
+本結論はMarker 1で最初に確定したPresentation decision gateに限定する。
+Marker 4は別sampleのHuman markerであり、そのsampleについては
+Presentation decision/commitをfirst failureへ帰属しない。
+
+RejectedGeometrySnapshotIdentityの根本原因は本runで調査していない。
+原因推定、補償、repair proposal、追加diagnosticは行っていない。
+
+FULL_AUDIT_1=PASS
+FULL_AUDIT_2=PASS
+AUDIT_DISAGREEMENT=NO
+RUNTIME_EXECUTED=YES_ONCE
+HUMAN_VISUAL_EXECUTED=YES
+PERFORMANCE_AUTHORITY=NO
+SOURCE_CHANGED=NO
+COMMIT=NONE
+PUSH=NONE
+
+既存H1 Human Visual FAILは変更しない。
+Final Product / Windows Acceptanceへ昇格しない。
+
+================================================================
+1. PRE-FLIGHT
+================================================================
+
+Project root:
+  D:\KiwiAvatarSystem
+
+ProjectVersion:
+  m_EditorVersion: 6000.0.80f1
+  m_EditorVersionWithRevision: 6000.0.80f1 (2dfd32957da2)
+
+Exact Unity:
+  C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe
+  ProductVersion=6000.0.80f1_2dfd32957da2
+  FileVersion=6000.0.80.3013938
+  SHA256=7FC68434F4FCCF2781648C398FBAA4E8ADFB568251605E990D887FE36CF1376F
+
+Live git identity before build:
+  branch=work/raw-direct-motion
+  HEAD=df75cfa9f6ae386bf4443272929d3cef33a8b138
+
+Expected report-time branch / HEADとの差:
+  branch=NONE
+  HEAD=NONE
+
+Live git status --short after Runtime / REPORT creation:
+   M AGENTS.md
+   M Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiFacePartRigidSampleFrame.cs
+   M Assets/KiwiAvatarSystem/Runtime/Presentation/KiwiFacePartTextureTransaction.cs
+   M Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiFaceGeometryTransactionService.cs
+   M Assets/Script/FaceLandmarkerRunner.cs
+   M Assets/Script/FacePartCropper.cs
+   D ProjectContext/Current/KiwiAvatarSystem_CoreRules_20260910_GoalAligned_v3.txt
+   D ProjectContext/Current/KiwiAvatarSystem_CurrentRoadmap_20260910_GoalAligned_v3.txt
+   D ProjectContext/Current/KiwiAvatarSystem_CustomInstructions_20260910_GoalAligned_v3.txt
+  ?? Assets/CodexTasks/H1_LandmarkerBoundary_20260913.meta
+  ?? Assets/CodexTasks/H1_LandmarkerBoundary_20260913/
+  ?? Assets/CodexTasks/P3D_FaceGeometryRuntime_20260910/KiwiH1ProductRuntimeObserver.cs
+  ?? Assets/CodexTasks/P3D_FaceGeometryRuntime_20260910/KiwiH1ProductRuntimeObserver.cs.meta
+  ?? ChatReport/KiwiChat_H1FrameIdentityToHumanVisual_Updated_20260912-JST.zip
+  ?? ChatReport/KiwiChat_P3DToFacePartSameSampleBridge_Updated_20260912-JST.zip
+  ?? ChatReport/KiwiChat_WorkflowRoleSplitAndDocsRevision_Updated_20260913-JST.zip
+  ?? KiwiCodexConsolidatedReport_H1_ClaimScopedCompileWarningDeltaResolutionOnly_20260913-060323JST.txt
+  ?? KiwiCodexConsolidatedReport_H1_CommittedPresentationCanonicalCorrelationObserverOnlyRepair_20260913-054416JST.txt
+  ?? KiwiCodexConsolidatedReport_H1_CommittedPresentationCanonicalCorrelation_ControlledRuntimeOnly_20260913-130914JST.txt
+  ?? KiwiCodexConsolidatedReport_H1_CommittedPresentationCanonicalCorrelation_SameArtifactHumanMarker_20260913-135338JST.txt
+  ?? KiwiCodexConsolidatedReport_H1_ControlledSameBuildHumanVisual_20260913-000434JST.txt
+  ?? KiwiCodexConsolidatedReport_H1_FrameIdentityContractRepair_20260912-231933JST.txt
+  ?? KiwiCodexConsolidatedReport_H1_PresentationCandidateDecisionFirstBoundaryLocalizationOnly_20260913-145010JST.txt
+  ?? KiwiCodexConsolidatedReport_H1_PresentationDecisionSameArtifactRuntimeFirstBoundaryOnly_20260913-181732JST.txt
+  ?? KiwiCodexConsolidatedReport_H1_RightSideLandmarkerCadenceVsRawResult_FirstBoundary_20260913-041859JST.txt
+  ?? KiwiCodexConsolidatedReport_H1_SameBuildProductRuntimeHumanVisual_20260912-223923JST.txt
+  ?? KiwiCodexConsolidatedReport_P3D_To_FacePart_SameSampleBridge_20260912-191640JST.txt
+  ?? KiwiValidation/H1_CommittedCanonicalCorrelation_Runtime_20260913-130500/
+  ?? KiwiValidation/H1_CommittedCanonicalCorrelation_SameArtifactHumanMarker_20260913-134855/
+  ?? KiwiValidation/H1_FrameIdentity_Runtime1_20260912-230727.txt
+  ?? KiwiValidation/H1_FrameIdentity_Runtime2_Restart_20260912-230820.txt
+  ?? KiwiValidation/H1_FrameIdentity_Runtime3_RestartRetry_20260912-230910.txt
+  ?? KiwiValidation/H1_LandmarkerBoundary_Runtime_20260913-040757/
+  ?? KiwiValidation/H1_LandmarkerBoundary_Runtime_Retry_20260913-041352/
+  ?? KiwiValidation/H1_PresentationDecision_Runtime_20260913-150852/
+  ?? KiwiValidation/H1_Runtime_Run1_20260912-195500.txt
+  ?? KiwiValidation/H1_Runtime_Run2_20260912-202300.txt
+  ?? KiwiValidation/H1_Runtime_Run3_Restart_20260912-204000.txt
+  ?? KiwiValidation/H1_Runtime_Run4_RestartRetry_20260912-204300.txt
+  ?? ProjectContext/Current/KiwiAvatarSystem_CoreRules_20260913_GoalAligned_v9_ContentReaudit.txt
+  ?? ProjectContext/Current/KiwiAvatarSystem_CustomInstructions_20260913_GoalAligned_v9_CurrentIntegrated.txt
+  ?? ProjectContext/Current/KiwiAvatarSystem_FullRoadmap_20260913_GoalAligned_v2_CurrentIntegrated_ContentReaudit.txt
+  ?? ProjectContext/Current/KiwiAvatarSystem_情報源構成_CurrentSelector運用_20260913_v3_CurrentIntegrated.txt
+  ?? ProjectContext/Current/SHA256SUMS_KiwiAvatarSystem_CurrentIntegratedDocs_20260913.txt
+  ?? ProjectContext/Current/通常チャット用_恒久REPORT_ZIP直接作成指示_20260913_v3_CurrentIntegrated.txt
+  ?? ProjectContext/Current/通常チャット運用管理規則_20260913_v3_CurrentIntegrated.txt
+  ?? ProjectContext/old/
+
+Build target:
+  StandaloneWindows64 / x86_64
+
+Enabled Scene:
+  Assets/Scenes/Face Landmark Detection.unity
+  enabled scene count=1
+
+Graphics API:
+  WindowsStandaloneSupport
+  automatic=0
+  m_APIs=12000000
+  build gate=Direct3D12-only PASS
+
+Current reconciliation:
+  Current selector targetのCoreRules / FullRoadmap / CustomInstructionsを読了。
+  Visual Authority=2026-09-13 00:04:34 JST same-build Human review FAIL。
+  Current First Blocker=LANDMARKER_JUMP_FIRST_CAUSAL_BOUNDARY_NOT_LOCALIZED。
+  Next=同一buildで最初のfailure boundaryだけを特定し、原因前に補償しない。
+
+前提REPORT本文を読了:
+  KiwiCodexConsolidatedReport_H1_
+  PresentationCandidateDecisionFirstBoundaryLocalizationOnly_
+  20260913-145010JST.txt
+
+Live dirty stateはuser-ownedとして保護した。
+build/runtime前後で既存tracked dirty shapeにmaterial changeなし。
+
+Tracked dirty:
+   M AGENTS.md
+   M Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiFacePartRigidSampleFrame.cs
+   M Assets/KiwiAvatarSystem/Runtime/Presentation/KiwiFacePartTextureTransaction.cs
+   M Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiFaceGeometryTransactionService.cs
+   M Assets/Script/FaceLandmarkerRunner.cs
+   M Assets/Script/FacePartCropper.cs
+   D ProjectContext/Current/KiwiAvatarSystem_CoreRules_20260910_GoalAligned_v3.txt
+   D ProjectContext/Current/KiwiAvatarSystem_CurrentRoadmap_20260910_GoalAligned_v3.txt
+   D ProjectContext/Current/KiwiAvatarSystem_CustomInstructions_20260910_GoalAligned_v3.txt
+
+既存untrackedは保持。
+今回追加されたexpected outputだけ:
+  Builds/H1_PresentationDecision_20260913-150717/
+  KiwiValidation/H1_PresentationDecision_Build_20260913-150717.log
+  KiwiValidation/H1_PresentationDecision_Runtime_20260913-150852/
+  本REPORT
+
+禁止操作:
+  reset=NONE
+  checkout/restore discard=NONE
+  clean=NONE
+  stash=NONE
+  commit=NONE
+  push=NONE
+
+PRE-FLIGHT_RESULT=PASS
+
+================================================================
+2. SOURCE IDENTITY / DIAGNOSTIC SCOPE
+================================================================
+
+Candidate before -> build-after -> final:
+
+Assets/KiwiAvatarSystem/Runtime/Presentation/
+KiwiFacePartTextureTransaction.cs
+  6C5262684CE6E85638DD70FD9E2EC1651652856AE16C3D41847169F44CBDA9BA
+  -> same
+  -> same
+
+Assets/Script/FacePartCropper.cs
+  F76672090EB8F5D5B42719B46FEAF53F44077D3574A34C800556FACF6F5882C1
+  -> same
+  -> same
+
+Assets/CodexTasks/H1_LandmarkerBoundary_20260913/
+KiwiH1LandmarkerBoundaryObserver.cs
+  4C06814A62A226F8B9E43EC8B25B7442CB18EF88F3F3B998261C72D522820186
+  -> same
+  -> same
+
+Relevant protected source / configuration SHAも前提REPORT基準と一致:
+  4D1804459FAC66132ADC21258ED371013969C12C1C491970790FC79C2EA64A56
+    Assets/Script/FaceLandmarkerRunner.cs
+  17F55087EFA7D42B14EF7453F35B0720EE79A23A64CB239391171C45241E3744
+    Assets/Script/KiwiInferenceFaceTracker.cs
+  A5C7DE387FA2E02862BCF64942363AECFB9C7830B52DF5B8953404DF884ECCB1
+    Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiTrackingProviderHub.cs
+  458FF33E98E054B766F20EB17CE6BDD242C9AD9FD6E73AF53D60BD3961822AFA
+    Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiCanonicalTrackingFrame.cs
+  AAF22CD49D00724758E3FF66BD623D971F9B19C771B8DD002AF74EFE81BE3124
+    Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiCommercialFacePartPolicy.cs
+  33E945AC30D1856E57D484CD042CB70DB90775F48A2CC694724F7B119A1EE2DA
+    Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiFaceGeometryTransactionService.cs
+  6303C20D8AD0A045F067A2CB2DF118847339B2514B03785C14CF30377A07A5A8
+    Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiFacePartRigidSampleFrame.cs
+  D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6
+    Assets/Script/KiwiFaceMotion.cs
+  611BA53D1627847D786E714A7CC17EB8D5AE06C2EFBA4077DA1F396A81355EAE
+    ProjectSettings/EditorBuildSettings.asset
+  88CB3F68F275E1A7DCBF1FEA8C59D123F50743C6F93B0F861E1FD653865EC6AA
+    ProjectSettings/ProjectSettings.asset
+  E9AA13257215C90829BCC04E63E4ED5F84F8965049B9F0AABC28418893E92409
+    Assets/Scenes/Face Landmark Detection.unity
+
+Diagnostic compile scope:
+  KiwiH1LandmarkerBoundaryObserver.cs全体=
+    #if DEVELOPMENT_BUILD || UNITY_EDITOR
+  PresentationDecision enum/state/API/recording=
+    #if DEVELOPMENT_BUILD || UNITY_EDITOR
+  FacePartCropperからのdecision observation=
+    #if DEVELOPMENT_BUILD || UNITY_EDITOR
+
+Built Assembly-CSharp.dll literal confirmation:
+  KiwiH1LandmarkerBoundaryObserver=PRESENT
+  RejectedGeometrySnapshotIdentity=PRESENT
+
+Storage:
+  O(1) latest-only
+  FIFO/List/Queue/history/permanent buffer=NONE
+
+Source change by this task:
+  NONE
+
+================================================================
+3. ONE DEVELOPMENT BUILD / ARTIFACT IDENTITY
+================================================================
+
+Build count:
+  1
+
+Build start:
+  2026-09-13T15:07:17.3534200+09:00
+Build end:
+  2026-09-13T15:07:59.3157441+09:00
+
+Invocation:
+  exact Unity.exe
+  -batchmode -nographics -quit
+  -projectPath D:\KiwiAvatarSystem
+  -executeMethod KiwiP3DFaceGeometryBuild.BuildWindows64
+
+Build entry fail-closed checks:
+  Direct3D12-only=PASS
+  enabled Production Scene exact identity=PASS
+  KiwiReleaseCandidatePreflight.RunFullPreflight(true)=PASS
+  releaseCandidateReady=PASS
+  current passing fingerprint=
+    f13b1d1ba8969c313e14e79ba36d5e3ceb6173e41a580f0ecdf9bc00fb4be53c
+
+Build result:
+  Unity exit code=0
+  BuildPipeline result=Succeeded
+  errors=0
+  warnings=204
+  total size=276912155
+
+Build summary warning countはC# regressionやPerformance Authorityへ使用していない。
+
+Build path:
+  D:\KiwiAvatarSystem\Builds\H1_PresentationDecision_20260913-150717
+
+Build log:
+  D:\KiwiAvatarSystem\KiwiValidation\
+  H1_PresentationDecision_Build_20260913-150717.log
+  SHA256=B56C166BF19FA36776ED18A29E01BC46C6C70D518D34F29C941F42123EA16262
+
+Artifact SHA256:
+  KiwiAvatarSystem.exe
+    98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81
+  UnityPlayer.dll
+    A1C4F29041D783DF506E7C2892BC6AFA4ED45EF0D87AAFE0C7296BDC090681FC
+  KiwiAvatarSystem_Data/Managed/Assembly-CSharp.dll
+    C726FDEF4B5F0AE34374B2469157E9AEF920397FFA2096E763E8141404F4E25E
+  KiwiAvatarSystem_Data/Managed/Assembly-CSharp.pdb
+    759B599D4746679957A48D3003A200ED83E0F0E4A9E005FC82AAED0C255743C7
+  KiwiAvatarSystem_Data/globalgamemanagers
+    5E6B28021925368DC893BBCB6AD89DC586EE2D3531D6DC3585E676BDAFAFACE8
+  KiwiAvatarSystem_Data/Plugins/x86_64/KiwiNativeCamera.dll
+    82D1FC2910468056C02E8BAE1C72996D8492173A84BEBBCAE322EBEF435678A5
+  KiwiAvatarSystem_Data/Plugins/x86_64/mediapipe_c.dll
+    B9B620F2707DEA371BE3FCEF9F2D05468CA1471FAEE3BE6637BBD7DA77E21C54
+
+================================================================
+4. SAME-ARTIFACT HUMAN MARKER RUNTIME
+================================================================
+
+Runtime count:
+  1
+
+Runtime artifact:
+  D:\KiwiAvatarSystem\Builds\H1_PresentationDecision_20260913-150717\
+  KiwiAvatarSystem.exe
+
+途中rebuild:
+  NONE
+
+Launch:
+  KIWI_H1_BOUNDARY_RUNTIME=1
+  KIWI_H1_BOUNDARY_OUTPUT=<runtime evidence directory>
+  -force-d3d12
+  -screen-fullscreen 0
+  -screen-width 1600
+  -screen-height 900
+  -logFile <runtime evidence directory>\Player.log
+
+Runtime start:
+  2026-09-13T15:08:52.5508613+09:00
+Runtime end:
+  2026-09-13T15:10:47.7369605+09:00
+Player exit code:
+  0
+
+Runtime Evidence directory:
+  D:\KiwiAvatarSystem\KiwiValidation\
+  H1_PresentationDecision_Runtime_20260913-150852
+
+Runtime identity:
+  UNITY_VERSION=6000.0.80f1
+  DEBUG_BUILD=1
+  GRAPHICS_API=Direct3D12
+  Player.log=Forcing GfxDevice: Direct3D 12
+  SCENE=Assets/Scenes/Face Landmark Detection.unity
+  DIAGNOSTIC_ONLY=1
+  OBSERVER_STORAGE=O1_LATEST_ONLY_NO_QUEUE
+  RIGHT_SIDE_VISIBLE_SINK=KiwiFrameComparisonOverlay.MATCHED_LANDMARK_DEBUG
+  PACKAGE_FACE_LANDMARKER_ANNOTATION_ACTIVE=0
+  PLAYER_CLOSED=YES
+
+LIVE CAMERA state:
+  ACTIVE
+  camera=UGREEN Camera 4K
+  profile=1920x1080@60
+  captureTransport=B:SystemMemoryNV12
+  visible right-side consume count=3783
+  final quality acceptanceは本taskで再評価していない。
+
+Human Visual marker:
+  Landmarker飛び=確認
+  marker取得=成功
+  marker count=4
+  marker sequence=1,2,3,4
+  Player終了=確認
+
+上記Human結果は「飛びを実際に確認した時だけSpace」の操作契約と
+marker出力に基づく。marker時刻はHumanが認識してSpaceを押した時刻であり、
+飛び開始frameそのものとは主張しない。
+
+Evidence SHA256:
+  aggregate_1hz.csv
+    AE9DE0C0E1809F9F9A408B76A44BA75F8F720D51F4905553EC953B0A083EF7B1
+  human_jump_markers.csv
+    4F2501FD7E4ABCCF915A5731D253725E900B2FE0A0DA5CA1ED461406A40EF6DC
+  Player.log
+    2A2B19F3FCFB64201C4439D7B1353F27203848CF95A3097DC2F6C3EE99218838
+  summary.txt
+    3C615BF791B0B66303BEB6AD39A8C4837A0978792DF8B787BB8B6104C1A33239
+
+Scope-out Runtime finding:
+  KiwiSpoutV44_20 EntryPointNotFoundが1件。
+  Playerと対象observerは継続しexit code 0で終了した。
+  本taskでは原因調査・修正を行っていない。
+
+================================================================
+5. MARKER DECISION / COMMIT
+================================================================
+
+Marker 1:
+  phase=A_NEUTRAL
+  Human marker hostTicks=328063045
+  Consume timestamp=22308
+  decisionConsumeRelation=DECISION_FOR_CURRENT_CONSUME
+  decisionValid=1
+  decisionCandidateReceived=1
+  decisionAccepted=0
+  decisionReason=RejectedGeometrySnapshotIdentity
+  decision semantic timestamp=22308
+  decision canonicalFrameId=565
+  decision provider/backend=Runner/InferenceEngine / InferenceEngine
+  decision providerSourceFrameId=624
+  decision providerSourceTimestamp=327423423
+  decision sourceHostTicks=327423423
+  decision arrivalHostTicks=327872548
+  committed Presentation timestamp=22266
+  committed canonicalFrameId=563
+  result=FIRST_PRESENTATION_DECISION_FAILURE_BOUNDARY
+
+Marker 2:
+  phase=B_SLOW_YAW
+  Human marker hostTicks=467095823
+  Consume timestamp=36214
+  decisionConsumeRelation=DECISION_FOR_CURRENT_CONSUME
+  decisionValid=1
+  decisionCandidateReceived=1
+  decisionAccepted=0
+  decisionReason=RejectedGeometrySnapshotIdentity
+  decision semantic timestamp=36214
+  decision canonicalFrameId=1202
+  decision provider/backend=Runner/InferenceEngine / InferenceEngine
+  decision providerSourceFrameId=1265
+  decision providerSourceTimestamp=466305760
+  decision sourceHostTicks=466305760
+  decision arrivalHostTicks=466938057
+  committed Presentation timestamp=36182
+  committed canonicalFrameId=1201
+  result=FIRST_PRESENTATION_DECISION_FAILURE_BOUNDARY
+
+Marker 3:
+  phase=B_SLOW_YAW
+  Human marker hostTicks=485518681
+  Consume timestamp=38059
+  decisionConsumeRelation=DECISION_FOR_CURRENT_CONSUME
+  decisionValid=1
+  decisionCandidateReceived=1
+  decisionAccepted=0
+  decisionReason=RejectedGeometrySnapshotIdentity
+  decision semantic timestamp=38059
+  decision canonicalFrameId=1293
+  decision provider/backend=Runner/InferenceEngine / InferenceEngine
+  decision providerSourceFrameId=1356
+  decision providerSourceTimestamp=484716945
+  decision sourceHostTicks=484716945
+  decision arrivalHostTicks=485383386
+  committed Presentation timestamp=38030
+  committed canonicalFrameId=1292
+  result=FIRST_PRESENTATION_DECISION_FAILURE_BOUNDARY
+
+Marker 4:
+  phase=D_NEUTRAL_REPEAT
+  Human marker hostTicks=993119482
+  Consume timestamp=88710
+  decisionConsumeRelation=DECISION_FOR_CURRENT_CONSUME
+  decisionValid=1
+  decisionCandidateReceived=1
+  decisionAccepted=1
+  decisionReason=Accepted
+  decision semantic timestamp=88710
+  decision canonicalFrameId=3289
+  decision provider/backend=Runner/InferenceEngine / InferenceEngine
+  decision providerSourceFrameId=3425
+  decision providerSourceTimestamp=991428530
+  decision sourceHostTicks=991428530
+  decision arrivalHostTicks=991901647
+  committed Presentation timestamp=88710
+  committed canonicalFrameId=3289
+  PRESENTATION_DECISION_AND_COMMIT_FOR_MARKER_SAMPLE=PASS
+  marker-specific FIRST_CAUSAL_BOUNDARY=
+    NOT_IN_THIS_PRESENTATION_DECISION_COMMIT_SCOPE
+
+All marker relations:
+  NO_CONSUME_OBSERVED=0
+  NO_DECISION_OBSERVED=0
+  DECISION_NEWER_THAN_CURRENT_CONSUME=0
+  CURRENT_CONSUME_NOT_RECEIVED_BY_DECISION_OWNER=0
+  DECISION_FOR_CURRENT_CONSUME=4
+
+Existing gate confirmation:
+  KiwiFacePartTextureTransaction.PresentationDecisionReasonに
+  RejectedGeometrySnapshotIdentityが実在する。
+  ObserveCandidateDecisionはgeometrySnapshotIdentityReady=falseを
+  同reasonへ分類する。
+
+ここからgeometry snapshot identityがなぜ不成立だったかは調査していない。
+
+================================================================
+6. FULL AUDIT 1 — FORWARD COMPLETE SCOPE
+================================================================
+
+FULL_AUDIT_1=PASS
+
+Independent forward order:
+  Preflight
+  -> live branch / HEAD / dirty protection
+  -> source/configuration identity
+  -> Development StandaloneWindows64 / DX12 one build
+  -> build/preflight exit and artifact identity
+  -> same artifact one Runtime
+  -> Human conditional marker
+  -> marker Consume timestamp
+  -> decisionConsumeRelation
+  -> decision reason / identity
+  -> committed Presentation identity
+  -> first boundary conclusion
+  -> prohibited actions / claim boundary
+
+Result:
+  ProjectVersion / exact Unity / branch / HEAD / Scene / D3D12 identity PASS。
+  Candidate before/build-after/final SHAは3件すべて一致。
+  Build=1、Runtime=1、途中rebuild=0。
+  Player identity / exit / marker count PASS。
+  最初のmarkerでDECISION_FOR_CURRENT_CONSUMEを確認後、
+  実在reason RejectedGeometrySnapshotIdentityを確認。
+  Marker 2/3は同じ判定。Marker 4は別sampleのAccepted exact commit。
+  原因推定・修正・追加diagnosticなし。
+
+================================================================
+7. FULL AUDIT 2 — REVERSE COMPLETE SCOPE
+================================================================
+
+FULL_AUDIT_2=PASS
+
+Independent reverse order:
+  FIRST_CAUSAL_BOUNDARY=RejectedGeometrySnapshotIdentity
+  -> existing enum / gate mapping
+  -> first raw marker row
+  -> decision accepted=0 / candidateReceived=1 / valid=1
+  -> decision timestamp 22308 == current Consume timestamp 22308
+  -> committed tuple remains 22266 / 563
+  -> all raw marker rows and summary marker count=4
+  -> Runtime Scene / D3D12 / Development / Player close identity
+  -> launched executable path and artifact SHA
+  -> BuildPipeline success / mandatory preflight
+  -> candidate final SHA == before/build-after SHA
+  -> ProjectVersion / Unity / branch / HEAD / dirty protection
+
+Result:
+  最終結論からraw evidenceまで逆向きに再導出して一致。
+  Marker 4のAccepted exact commitは別sampleについてのPASSであり、
+  Marker 1で確定したreject gateとのaudit disagreementではない。
+  ただし全Landmarker飛びを一つの原因へ一般化しない。
+
+AUDIT_DISAGREEMENT=NO
+REMAINING_UNRESOLVED_CLAIM=
+  RejectedGeometrySnapshotIdentityの根本原因
+  Marker 4のHuman jump first boundary（Presentation decision/commit scope外）
+
+================================================================
+8. CLAIM BOUNDARY / REJECTED / UNRUN
+================================================================
+
+This task establishes only:
+  Human marker 1〜3のcurrent Consume sampleがPresentation decision ownerへ届き、
+  実在するRejectedGeometrySnapshotIdentity gateでrejectされた。
+  Marker 4は同sampleのdecision/commitを通過した。
+
+Not claimed:
+  RejectedGeometrySnapshotIdentityの根本原因
+  geometry snapshot producer / transactionのfault owner
+  全Human markerが同一原因であること
+  全H1 Human Visual acceptance
+  Product正常性
+  Clean Performance
+  Final Product / Windows Acceptance
+
+Rejected / not performed:
+  tracking tuning
+  smoothing / Kalman / prediction
+  threshold change
+  Provider switching change
+  backend change
+  Camera / Native change
+  Root / Head change
+  FacePart compensation
+  FIFO / Queue / history / permanent buffer / one-frame delay
+  per-frame大量log
+  新しい仮想reject branch
+  repair proposal
+
+Performance:
+  observer付きCorrectness diagnostic。
+  FPS / latency / source ageをClean Production Performanceへ昇格しない。
+  PERFORMANCE_AUTHORITY=NO
+
+Human Visual:
+  今回はLandmarker飛びmarker取得だけ。
+  2026-09-13 00:04:34 JSTのH1 Human Visual FAILをPASSへ変更しない。
+
+================================================================
+9. FINAL STATUS
+================================================================
+
+FIRST_CAUSAL_BOUNDARY=RejectedGeometrySnapshotIdentity
+
+FULL_AUDIT_1=PASS
+FULL_AUDIT_2=PASS
+AUDIT_DISAGREEMENT=NO
+RUNTIME_EXECUTED=YES_ONCE
+HUMAN_VISUAL_EXECUTED=YES
+PERFORMANCE_AUTHORITY=NO
+SOURCE_CHANGED=NO
+COMMIT=NONE
+PUSH=NONE

@@ -1,0 +1,426 @@
+KIWI CODEX CONSOLIDATED REPORT
+TASK=P3D_TO_FACEPART_SAME_SAMPLE_BRIDGE
+REPORT_TIME=2026-09-12 19:16:40 JST
+PROJECT=D:\KiwiAvatarSystem
+
+===============================================================================
+1. VERDICT
+===============================================================================
+
+STATIC_BRIDGE_CLOSURE=PASS_WITH_SCOPE_LIMITS
+PACKAGE_SOURCE_CLOSURE=PASS
+EXACT_UNITY_COMPILE=PASS
+FULL_AUDIT_1=PASS
+FULL_AUDIT_2=PASS
+RUNTIME=NOT_RUN
+HUMAN_VISUAL=NOT_RUN
+PERFORMANCE=NOT_RUN
+COMMIT=NO
+PUSH=NO
+
+The first proven boundary is implemented:
+
+same accepted IE first468
+ -> accepted P3D FaceGeometry Pose16
+ -> immutable latest accepted geometry snapshot
+ -> exact Canonical/FacePart appearance identity gate
+ -> source-rigid image-plane Roll removal exactly once per advanced part
+ -> existing head-local Eye/Mouth texture + mask sampling
+ -> existing fixed fitted surface
+ -> existing visible AvatarMotionRoot rigid authority unchanged
+
+No Runtime, Human Visual, or Performance PASS is claimed by this report.
+
+===============================================================================
+2. PREFLIGHT / LIVE-LOCAL AUTHORITY
+===============================================================================
+
+Expected base authorized by user:
+- branch=work/raw-direct-motion
+- HEAD=df75cfa9f6ae386bf4443272929d3cef33a8b138
+- expected worktree/index/untracked=clean
+
+Observed before implementation:
+- Project=D:\KiwiAvatarSystem
+- branch=work/raw-direct-motion
+- HEAD=df75cfa9f6ae386bf4443272929d3cef33a8b138
+- upstream=origin/work/raw-direct-motion, ahead=0, behind=0
+- index/worktree/untracked=clean after the user removed the known REPORT
+- ProjectVersion=6000.0.80f1, revision=2dfd32957da2
+- exact Unity executable=
+  C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe
+- Unity ProductVersion=6000.0.80f1_2dfd32957da2
+- Unity executable SHA256=
+  7FC68434F4FCCF2781648C398FBAA4E8ADFB568251605E990D887FE36CF1376F
+
+No reset, checkout, clean, stash, commit, or push was performed.
+
+Current context selector was enumerated and the applicable documents were read:
+- ProjectContext\Current\KiwiAvatarSystem_CoreRules_20260910_GoalAligned_v3.txt
+- ProjectContext\Current\KiwiAvatarSystem_CurrentRoadmap_20260910_GoalAligned_v3.txt
+- ProjectContext\Current\KiwiAvatarSystem_CustomInstructions_20260910_GoalAligned_v3.txt
+
+Reconciliation:
+- the Current documents retain P3C_1 and P3D correctness/lifecycle as
+  scope-limited PASS and identify H1 as next;
+- their older volatile HEAD does not override current live-local authority;
+- the user explicitly authorized df75cfa as the new expected base containing
+  the committed H1 SourceRigidSingleOwner change;
+- the HEAD-local H1 reports identify this bridge as the next missing boundary;
+- no unresolved Current/Rejected/Superseded/Do-Not-Change conflict affected
+  this task.
+
+===============================================================================
+3. CONFIRMED STATIC
+===============================================================================
+
+3.1 Producer -> consumer dataflow
+
+1. FaceLandmarkerRunner receives one accepted Inference Engine landmark result.
+2. The exact StoreSentisTrackingData call returns acceptedFrameId.
+3. The same accepted first 468 landmarks, sourceHostTicks, four relevant
+   generations, IE backend, and semantic dimensions enter
+   KiwiFaceGeometryTransactionService.AdmitAcceptedInferenceResult.
+4. The existing bounded P3D graph produces PoseTransformMatrix at packet
+   timestamp=(long)frameId.
+5. ConsumeCompletion accepts only exact active graphRunId/in-flight frameId,
+   finite pose, current generations/dimensions, and strictly increasing frameId.
+6. Acceptance atomically replaces one immutable AcceptedSnapshot. This is one
+   latest value, not a FIFO, Queue, or geometry history.
+7. FaceLandmarkerRunner.TryGetFacePartGeometrySnapshot requires the current
+   Canonical semantic and rigid timestamps to equal the requested timestamp and
+   matches rigid frameId, submissionHostTicks, IE backend, full four-generation
+   P3D tuple, and semantic dimensions.
+8. FacePartCropper requires both the existing Texture transaction stage and the
+   exact geometry bridge pre-commit gate before ProcessSample can run.
+9. The existing per-part accept decision commits Texture/Crop/Mask. The Texture
+   owner now returns which eye/mouth slots actually advanced.
+10. KiwiFacePartRigidSampleFrame revalidates the snapshot/current Canonical
+    identity and strict frame ordering, then changes sample rotation only for
+    parts whose texture slot advanced.
+11. SurfaceFittedRawImage applies the same rotation to UV0 texture sampling and
+    UV1 mask sampling on the existing fitted surface.
+12. KiwiFaceMotion / visible AvatarMotionRoot rigid application is unchanged.
+
+Key implementation locations:
+- KiwiFaceGeometryTransactionService.cs: Pose roll API near line 110;
+  AcceptedSnapshot near line 150; publication near line 1068; reset near 1471.
+- FaceLandmarkerRunner.cs: Product activation near line 346; exact snapshot API
+  near lines 609-617.
+- FacePartCropper.cs: combined gate near lines 552-569; transaction commit near
+  lines 813-823.
+- KiwiFacePartTextureTransaction.cs: per-part advancement outputs near 338-396.
+- KiwiFacePartRigidSampleFrame.cs: pre-commit/revalidation near 152-305;
+  lifecycle reset near 89-149 and 344 onward.
+
+3.2 Pose16 snapshot, immutability, and lifetime
+
+- Pose16 is a readonly struct containing sixteen readonly float values copied
+  out of the transient package protobuf inside the native callback.
+- AcceptedSnapshot is also readonly and contains the Pose16 plus immutable
+  graph/sample/generation/backend/dimension identity.
+- TryGetAcceptedSnapshot copies the whole value while holding the service lock;
+  no package object, Packet, MatrixData, pointer, or mutable array escapes.
+- One accepted snapshot is replaced atomically on a newer valid completion.
+- BeginShutdown and RequestGraphReset clear it.
+- The consumer re-reads the current snapshot and compares HasSameIdentity before
+  commit, preventing replacement between initial lookup and writer adoption.
+
+3.3 Identity and rejection
+
+AcceptedSnapshot identity:
+{graphRunId, streamId, frameId, sourceHostTicks, cameraGeneration,
+ trackingSessionGeneration, providerGeneration, modelGeneration,
+ backend=InferenceEngine, semanticFrameWidth, semanticFrameHeight, Pose16}
+
+Exact bridge gate additionally binds:
+{canonicalFrameId, semanticTimestamp, rigid.timestamp, rigid.frameId,
+ rigid.submissionHostTicks, canonical generation snapshot}
+
+Confirmed rejection/hold behavior:
+- stale MediaPipe pose: rejected because backend must be InferenceEngine;
+- wrong/newer/older sample: exact frameId/sourceHostTicks/timestamp mismatch holds;
+- duplicate/out-of-order: producer requires increasing frameId and final writer
+  requires snapshot.frameId > last applied frameId;
+- stale generation: camera/session/provider/model mismatch rejects or holds;
+- mixed graph epoch: runId/streamId mismatch rejects and graph reset clears the
+  published snapshot;
+- old dimensions: width/height mismatch rejects or retires the transaction;
+- missing/invalid/non-finite Pose: holds the entire new FacePart adoption;
+- a failed geometry pre-gate occurs before Texture commit, so there is no
+  Texture-only partial commit followed by a rejected rigid-removal commit.
+
+The established P3D-relevant generation tuple remains unchanged. configEpoch,
+calibrationGeneration, observationSequence, and semanticTransactionSequence were
+not added to P3D Core because they are not part of the already-proven geometry
+transaction identity. Graph run/stream identify the P3D epoch; the existing
+FacePart Texture transaction separately binds Canonical camera/session identity.
+
+3.4 Lifecycle / restart / destruction
+
+- service shutdown and graph reset clear the accepted snapshot;
+- old callbacks are still fenced by the existing run/stream callback lifetime;
+- the Product writer resets all part rotations and applied identity on disable,
+  destruction, scene load/rebind, invalid bridge/service state, invalid
+  Canonical state, or generation change;
+- duplicate component instances destroy themselves; the Product auto-install
+  remains one KiwiFacePartRigidSampleFrame instance;
+- no geometry Pose survives as a Queue/history across restart.
+
+3.5 Owner ledger
+
+Before at authorized HEAD:
+- P3D Pose16 terminated inside KiwiFaceGeometryTransactionService;
+- P3D Product activation initializer was false;
+- KiwiFacePartRigidSampleFrame was the active auto-installed source-roll owner,
+  but estimated roll from bilateral Eye crop centers and owned extra temporal
+  neutral/jump state;
+- KiwiFacePartSharedTiltLock had no Product auto-install and no Scene instance;
+- three legacy FacePartAngleLock Scene components were disabled;
+- KiwiFaceMotion remained the visible AvatarMotionRoot rigid writer.
+
+After candidate:
+- P3D activation initializer is true for the Product bridge;
+- KiwiFaceGeometryTransactionService owns only one immutable latest accepted
+  Pose snapshot in addition to its existing bounded transaction;
+- FaceLandmarkerRunner owns the exact Canonical-to-P3D identity query;
+- FacePartCropper owns the existing combined appearance transaction boundary;
+- KiwiFacePartTextureTransaction remains Texture identity owner and only exposes
+  three stack-local advancement booleans;
+- KiwiFacePartRigidSampleFrame remains the sole Product source-roll writer, now
+  consuming exact P3D Pose instead of estimating bilateral Eye angle;
+- the old neutral calibration, jump rejection, temporal response, recovery
+  domain, and Eye-derived rigid estimator were removed from that owner;
+- SurfaceFittedRawImage fixed surface and coupled texture/mask UV application are
+  unchanged;
+- KiwiFaceMotion visible rigid authority is unchanged;
+- SharedTiltLock remains non-installed and the three legacy locks remain disabled.
+
+New retained writer state is limited to the last applied frameId plus the four
+generations required for duplicate/order and lifecycle invalidation. An initially
+added but unused last sourceHostTicks field was removed during full audit because
+its retained-state necessity could not be proven.
+
+3.6 Forbidden-scope confirmation
+
+No changed file is Camera, Native, backend, Root, Scene, Prefab, package,
+SurfaceFittedRawImage, KiwiFaceMotion, or KiwiInferenceFaceTracker.
+
+No new:
+- duplicate Face Landmarker;
+- custom FaceGeometry solver;
+- second rigid authority;
+- geometry FIFO/Queue/history;
+- smoothing, prediction, Kalman, jump filter, or permanent buffer;
+- readback, GPU copy, thread, Task.Run, process hop, or blocking wait;
+- UpdateExternalTexture or Transform write;
+- speculative fallback.
+
+===============================================================================
+4. CONFIRMED PACKAGE
+===============================================================================
+
+Actually installed package identity:
+- Packages manifest=local tarball com.github.homuler.mediapipe-0.16.3.tgz
+- packages-lock source=local-tarball
+- installed cache=Library\PackageCache\com.github.homuler.mediapipe@66127f8e750d
+- installed package version=0.16.3
+- tarball SHA256=
+  CC3E77A219E0B99618AE3BE64C31A566197DEEDC69C1E136ACF52D65D7CF2E79
+
+Installed source confirms:
+- FaceGeometry metric XYZ is right-handed;
+- PoseTransformMatrix maps canonical face -> runtime face and contains uniform
+  scale, rotation, and translation with last row [0 0 0 1];
+- MatrixData defaults to COLUMN_MAJOR and also declares ROW_MAJOR;
+- the installed Unity conversion flips Z only; m00 and m10 are unchanged for
+  both declared layouts.
+
+Package evidence SHA256:
+- package.json=
+  EEBBFF4550FA9CA3C2C76AB05BD0EDBDB3A0A4C2800883E244DC9E40D8FF2A2D
+- FaceLandmarkerResult.cs=
+  4B9CF0957E0C1571102D6EBF3D8B5CF95F29FA761B45E252D05105343F81CBC3
+- FaceGeometry.cs=
+  89D923320B8C21A9682AC6F83979D9E2D7CA6A5C4D150366C3F5625E325F2C45
+- MatrixData.cs=
+  34AC522281819CD774CCBF2703ABB7151AE439583CB2CC3CECFB8BBD2B39F006
+
+Matrix convention used by the candidate:
+- Pose16 decodes the declared storage layout to named row/column values;
+- the transformed canonical +X basis is the first matrix column;
+- image-plane roll = atan2(m10, m00);
+- installed Unity Z inversion does not change that angle;
+- current Scene mirrorX=0 and swapEyes=0;
+- the mirrorX path explicitly negates roll if that configuration is enabled;
+- independent +30 and +37 degree ROW_MAJOR/COLUMN_MAJOR synthetic checks
+  reproduced the same positive roll; mirrorX produced the negative sign.
+
+===============================================================================
+5. CODE CHANGES AND SHA256
+===============================================================================
+
+Diff summary before this REPORT:
+- 5 files changed, 503 insertions, 383 deletions
+
+File | BEFORE | FINAL_CANDIDATE | AFTER_COMPILE
+
+KiwiFaceGeometryTransactionService.cs
+4751F9E4CE2FFE51B5ECEAF5AC1E223C899779B727AFD5BF39E51B005E423A72
+33E945AC30D1856E57D484CD042CB70DB90775F48A2CC694724F7B119A1EE2DA
+33E945AC30D1856E57D484CD042CB70DB90775F48A2CC694724F7B119A1EE2DA
+
+FaceLandmarkerRunner.cs
+77708DF460584C0FCC041A345CE1736E7E6F4F5950A2D445565926058E662875
+EF2D13FF91ECA6F9E44D494E252641AEDA1706CF296F9AF2C0FC34D3B2C53168
+EF2D13FF91ECA6F9E44D494E252641AEDA1706CF296F9AF2C0FC34D3B2C53168
+
+FacePartCropper.cs
+39C06FEC43B4EA47AD783C233991E830E10B18DA285148E7A34B0C13DAD52CFE
+D71064E1E7356F08835BC49AC74A225603CC0DBA287BA19AAB933AA91F5E3DAD
+D71064E1E7356F08835BC49AC74A225603CC0DBA287BA19AAB933AA91F5E3DAD
+
+KiwiFacePartTextureTransaction.cs
+DC78488DCD1D2E45E5AA6F40065D4983087014B501B5FD5A8E37B6D8E0F68849
+F60E80C545A41B64416EBD3E594DDCE3A99527C62F3951BF87B584326EE45365
+F60E80C545A41B64416EBD3E594DDCE3A99527C62F3951BF87B584326EE45365
+
+KiwiFacePartRigidSampleFrame.cs
+578CE2ED93A2A78EE1B19D8FF309A115A2FA53596E79BAAB0534A27AC10077C0
+6303C20D8AD0A045F067A2CB2DF118847339B2514B03785C14CF30377A07A5A8
+6303C20D8AD0A045F067A2CB2DF118847339B2514B03785C14CF30377A07A5A8
+
+Candidate and after-compile hashes are identical for every changed code file.
+
+===============================================================================
+6. VALIDATION / VALIDATOR SELF-AUDIT
+===============================================================================
+
+Exact final compile:
+- executable=Unity 6000.0.80f1 exact path and SHA listed in section 2
+- mode=-batchmode -nographics -quit
+- process launched with Start-Process -Wait -PassThru -WindowStyle Hidden
+- process ExitCode=0
+- error CS count=0
+- warning CS lines=37; warnings include existing generator/obsolete/unused-field
+  warnings and do not establish a warning-free build
+- success marker count=1
+- final log=
+  KiwiValidation\P3D_To_FacePart_Bridge_Compile_20260912_final_verified.log
+
+Compile history transparency:
+- the first candidate compile failed at the first boundary with CS0122 because
+  AcceptedSnapshot's constructor exposed private nested parameter types;
+- the constructor was narrowed to primitive identity arguments;
+- later exact compiles succeeded;
+- only the evidence-derived compile failure was repaired.
+
+Validator self-audit:
+- Windows PowerShell 5.1 was explicitly checked;
+- modified-path cardinality and exact whitelist were checked;
+- assert labels were checked unique;
+- expected assert cardinality was checked;
+- failures throw and return a nonzero process exit;
+- forbidden-mechanism scans inspect added diff lines only;
+- package/source checks read actually installed files;
+- SHA checks use exact literal paths.
+
+Two validator defects were found fail-closed during development and corrected:
+- a loose CommitSemanticTransaction substring also matched CanCommit...;
+- rg returned Windows path separators while the validator expected '/'.
+
+Final audit reruns were performed from the beginning after all code changes:
+- FULL_AUDIT_1=PASS, 22 assertions including self-audit assertions;
+- FULL_AUDIT_2=PASS, 27 assertions including self-audit assertions;
+- Pass 2 independently traversed consumer -> producer, reread installed package
+  semantics, recomputed both matrix layouts, rechecked SHA/compile/lifecycle/
+  ownership/prohibited scope, and did not use Pass 1 conclusions as authority.
+
+Disagreement resolution:
+- Pass 2 challenged retained-state minimality; the unused sourceHostTicks field
+  was removed;
+- both complete audits and exact compile were then rerun on the final candidate;
+- final audit disagreement=NONE.
+
+git diff --check=PASS.
+
+===============================================================================
+7. RUNTIME
+===============================================================================
+
+RUNTIME_AUTHORITY=NONE_FOR_THIS_CANDIDATE
+
+No Play Mode, Live Camera, MP4, synthetic Runtime, restart stress, Human Visual,
+or clean benchmark was run. Exact Unity compilation is a C# build gate only and
+is not promoted to Runtime, Human Visual, or Performance evidence.
+
+===============================================================================
+8. INFERENCE
+===============================================================================
+
+- From installed package convention plus current UV math, atan2(m10,m00) is the
+  geometric image-plane direction of canonical +X and the positive sampling
+  rotation removes the same positive source roll before the already-rigid
+  fitted surface is displayed. This is a Static/Package inference, not a Human
+  Visual result.
+- In the current fixed fitted-surface design, this boundary removes the source
+  rigid image-plane Roll. It does not invent a 2D inverse-UV or model-deform
+  compensation for yaw/pitch.
+- Keeping rejected parts on their prior texture slot and prior rotation should
+  preserve per-part transaction coherence. Visual continuity remains Runtime/
+  Human observation.
+
+===============================================================================
+9. UNKNOWN / UNVERIFIED
+===============================================================================
+
+- same-build Live Camera activation and actual accepted snapshot cadence;
+- real-face sign/orientation across camera rotation/mirror configurations;
+- Human Visual correctness of Eye/Mouth appearance during yaw/pitch/roll;
+- restart/destruction behavior for this new consumer in Runtime, although the
+  source/lifecycle paths are statically closed;
+- clean Production latency, allocation, GPU cost, and end-to-end Performance;
+- pixel-level equality to a native camera sequence number.
+
+Existing FacePart Texture transaction limitation retained deliberately:
+- the Texture owner selects a captured GPU slot by camera/session generation
+  and <=55 ms host-time distance to rigid.submissionHostTicks;
+- native camera sequence is not propagated into Canonical/P3D/FacePart;
+- therefore exact native-sequence pixel identity is not claimed.
+
+This limitation is not hidden by the bridge: the bridge exactly matches Pose to
+the established Canonical/FacePart transaction identity, but does not redesign
+Camera/Native or the existing Texture history owner.
+
+===============================================================================
+10. REJECTED / SUPERSEDED
+===============================================================================
+
+- SUPERSEDED: bilateral-Eye FacePart rigid angle estimator, neutral calibration,
+  temporal jump adoption, and recovery-domain participation inside
+  KiwiFacePartRigidSampleFrame.
+- RETAINED_REJECTED/INACTIVE: KiwiFacePartSharedTiltLock Product activation.
+- RETAINED_DISABLED: three legacy FacePartAngleLock Scene components.
+- REJECTED: stale MediaPipe pose as fallback.
+- REJECTED: geometry FIFO/history, duplicate Face Landmarker, custom geometry
+  solver, second rigid authority, added smoothing/prediction, Camera/Native/
+  backend/Root/visible-rigid changes, and unrelated cleanup.
+- NOT CLAIMED: Validator PASS as Human Visual or Production adoption authority.
+
+===============================================================================
+11. NEXT EVIDENCE BOUNDARY
+===============================================================================
+
+STATIC_BRIDGE_CLOSURE_COMPLETE=YES
+RUNTIME_HUMAN_VISUAL_NECESSITY=YES
+
+Static and installed package source close the bridge design and implementation,
+but cannot prove real camera orientation or human-visible de-rigid appearance.
+The next claim-scoped boundary is one same-build Product Runtime/Human Visual
+gate that correlates accepted geometry identity, per-part texture advancement,
+applied sample rotation, and visible Head pose. It must not be treated as a
+Performance run, and Performance PASS remains a later clean benchmark claim.
+
+No Runtime or Human Visual gate was started in this Static task.
+
+END_OF_REPORT

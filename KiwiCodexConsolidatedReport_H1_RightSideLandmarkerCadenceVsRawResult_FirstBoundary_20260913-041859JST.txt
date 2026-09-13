@@ -1,0 +1,360 @@
+KIWI_H1_RIGHT_SIDE_LANDMARKER_CADENCE_VS_RAW_RESULT_FIRST_BOUNDARY_LOCALIZATION_ONLY
+Consolidated local report
+Report time: 2026-09-13 04:18:59 JST
+
+RESULT
+FIRST_FAILURE_BOUNDARY=UNRESOLVED
+CAUSE_FIX=NOT_PERFORMED
+COMPENSATION=NOT_PERFORMED
+OPTIMIZATION=NOT_PERFORMED
+COMMIT=NOT_PERFORMED
+PUSH=NOT_PERFORMED
+
+1. PREFLIGHT
+
+ProjectRoot:
+  D:\KiwiAvatarSystem
+
+ProjectVersion.txt:
+  m_EditorVersion: 6000.0.80f1
+  m_EditorVersionWithRevision: 6000.0.80f1 (2dfd32957da2)
+
+Exact Unity:
+  C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe
+  FileVersion: 6000.0.80.3013938
+  SHA256: 7FC68434F4FCCF2781648C398FBAA4E8ADFB568251605E990D887FE36CF1376F
+
+Live local Git identity before Runtime and after Runtime:
+  branch: work/raw-direct-motion
+  HEAD: df75cfa9f6ae386bf4443272929d3cef33a8b138
+  expected report-time branch/HEAD snapshot: MATCH
+
+Dirty state:
+  DIRTY. Existing user-owned changes were preserved. No reset, checkout, clean,
+  restore, or unrelated overwrite was used.
+  Modified tracked files observed:
+    AGENTS.md
+    Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiFacePartRigidSampleFrame.cs
+    Assets/KiwiAvatarSystem/Runtime/Presentation/KiwiFacePartTextureTransaction.cs
+    Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiFaceGeometryTransactionService.cs
+    Assets/Script/FaceLandmarkerRunner.cs
+    Assets/Script/FacePartCropper.cs
+  ProjectContext/Current also contained the disclosed deleted old revisions and
+  untracked current revisions. Existing untracked reports, evidence, and task
+  sources were preserved.
+
+Current context:
+  All seven entries in ProjectContext/Current were enumerated. All documents
+  affecting Authority, Current, Rejected/Superseded, Open, and Next were read.
+  Current Visual Authority remains the 2026-09-13 00:04:34 JST H1 same-build
+  Human Visual FAIL. It is not replaced by this diagnostic Runtime.
+
+2. ACTUALLY INSTALLED MEDIAPIPE PACKAGE / PROVENANCE
+
+Manifest and lock identity:
+  file:com.github.homuler.mediapipe-0.16.3.tgz
+
+Package archive:
+  D:\KiwiAvatarSystem\Packages\com.github.homuler.mediapipe-0.16.3.tgz
+  size: 290414365 bytes
+  SHA256: CC3E77A219E0B99618AE3BE64C31A566197DEEDC69C1E136ACF52D65D7CF2E79
+
+Installed PackageCache source:
+  D:\KiwiAvatarSystem\Library\PackageCache\com.github.homuler.mediapipe@66127f8e750d
+  package version: 0.16.3
+  package _fingerprint: 66127f8e750d
+  package.json SHA256: EEBBFF4550FA9CA3C2C76AB05BD0EDBDB3A0A4C2800883E244DC9E40D8FF2A2D
+
+Relevant installed source SHA256:
+  FaceLandmarker.cs
+    6D1B9993679BDF5942C9BF1A1623BB24912BC1A5812D80C589A34EDAB12BE3CE
+  FaceLandmarkerResult.cs
+    4B9CF0957E0C1571102D6EBF3D8B5CF95F29FA761B45E252D05105343F81CBC3
+  Tasks/Components/Containers/ListExtension.cs
+    C4422F362397CAB195404C93585EDFAD5B8BF97F27B29759F296BB2B00222A0E
+  Tasks/Components/Containers/Landmark.cs
+    F555D4EEC77F4CF8A6FF37E39DE2A8273588A99872D8F3AD7DE06FB5F508EF55
+
+3. REQUESTED SOURCE IDENTITY
+
+FaceLandmarkerRunner.cs:
+  path: D:\KiwiAvatarSystem\Assets\Script\FaceLandmarkerRunner.cs
+  pre-observer-extension SHA256:
+    61552740680AE568DA6D3015C3AF113DFB3D38F67679C8648771F12FAB4A1332
+  built candidate SHA256:
+    4D1804459FAC66132ADC21258ED371013969C12C1C491970790FC79C2EA64A56
+
+FaceLandmarkerResultAnnotationController.cs:
+  path: D:\KiwiAvatarSystem\Library\PackageCache\com.github.homuler.mediapipe@66127f8e750d\Runtime\Scripts\Unity\Annotation\FaceLandmarkerResultAnnotationController.cs
+  SHA256: 10FA4E54BBD8106803C86E121CAC62A26BF85D893415EF613ACEF534F500C79D
+
+Base AnnotationController.cs:
+  path: D:\KiwiAvatarSystem\Library\PackageCache\com.github.homuler.mediapipe@66127f8e750d\Runtime\Scripts\Unity\Annotation\AnnotationController.cs
+  SHA256: 397F88B73C8FFBEB9254A7A9AFC6B267BA56EEFFEA6894914933C874ECBB0457
+
+Additional actual sink identity:
+  KiwiFrameComparisonOverlay.cs
+  path: D:\KiwiAvatarSystem\Assets\KiwiAvatarSystem\Runtime\Validation\KiwiFrameComparisonOverlay.cs
+  SHA256: 6DF8CCC9B47A0E2E9BFF4807B4D7CAB4AB11911992A4624EF7A8E40436F39EDD
+
+4. FULL_AUDIT_1 — producer to sink
+
+FULL_AUDIT_1=PASS
+
+Scope read independently in forward order:
+  FaceLandmarker LIVE_STREAM callback
+  -> reused FaceLandmarkerResult
+  -> callback timestamp/submission identity
+  -> FaceLandmarkerRunner.StoreTrackingData
+  -> optional Package DrawLater
+  -> Runner latest semantic storage
+  -> KiwiTrackingProviderHub selection/publication
+  -> KiwiCanonicalTrackingFrame semantic snapshot
+  -> KiwiFrameComparisonOverlay LateUpdate copy/rebuild
+  -> exact-epoch matched texture gate
+  -> OnGUI MATCHED LANDMARK DEBUG visible annotation
+
+Forward findings:
+  a. Installed FaceLandmarker.BuildPacketsCallback allocates one
+     FaceLandmarkerResult outside the callback closure. TryBuildFaceLandmarkerResult
+     repopulates that result, and callbacks receive the same result/list graph on
+     later callbacks. This reuse is serialized by the package callback lock.
+  b. DetectAsync is explicitly latest/low-latency behavior and may drop accepted
+     input images. A callback count lower than input/display cadence is therefore
+     not itself a failure.
+  c. FaceLandmarkerResultAnnotationController.DrawLater does not retain the raw
+     callback graph. Under _currentTargetLock it calls FaceLandmarkerResult.CloneTo.
+     CloneTo resizes destination lists, recursively CloneTo-copies each
+     NormalizedLandmarks list, clears the destination landmark list, and AddRange
+     value-copies readonly NormalizedLandmark structs. LateUpdate/SyncNow reads the
+     copied destination while holding the same lock.
+  d. The scene has renderDebugLandmarkAnnotations=0, and
+     KiwiInferenceRecoveryBootstrap sets it false. Therefore the Package
+     AnnotationController/DrawLater path is not the visible right-side sink in
+     this Production configuration.
+  e. The visible right-side sink is KiwiFrameComparisonOverlay, labelled
+     MATCHED LANDMARK DEBUG. Its LateUpdate calls
+     KiwiCanonicalTrackingFrame.TryGetSemanticLandmarksIfChanged, copies the
+     canonical semantic array into its own landmark array, rebuilds a private
+     overlay texture, and OnGUI draws only over the exact committed matched
+     camera texture epoch.
+  f. While Inference Engine is primary, MediaPipe StoreTrackingData updates only
+     auxiliary data and does not publish the raw MediaPipe XY array. The actual
+     right-side semantic source is then StoreSentisTrackingData/Inference Engine.
+     Raw FaceLandmarkerResult and the right-side semantic sample are not the same
+     transaction in those intervals.
+  g. Storage is latest-snapshot based. No unbounded FIFO was found in the audited
+     producer-to-visible path. Locks cover callback lifecycle, Runner snapshot
+     swap/copy, Package annotation clone/read, and canonical snapshot copy.
+
+5. FULL_AUDIT_2 — visible sink to producer
+
+FULL_AUDIT_2=PASS
+
+Scope read independently in reverse order:
+  OnGUI MATCHED LANDMARK DEBUG
+  -> DrawMatchedLandmarkDebugPreview exact epoch condition
+  -> overlay landmark texture and private copied landmark array
+  -> overlay LateUpdate
+  -> KiwiCanonicalTrackingFrame semantic snapshot
+  -> KiwiTrackingProviderHub selected provider/frame identity
+  -> Runner MediaPipe or Inference Engine latest storage
+  -> optional Package DrawLater snapshot
+  -> callback timestamp/result
+  -> installed FaceLandmarker callback-owned reused result
+
+Reverse findings:
+  a. The pixels named by the Human Visual report are produced by
+     KiwiFrameComparisonOverlay, not by FaceLandmarkerResultAnnotationController.
+  b. The overlay consumes canonical data by timestamp change and copies values
+     before texture rebuild. It does not hold the Package callback result.
+  c. Canonical provider metadata identifies whether the consumed sample came from
+     Runner/MediaPipe or Runner/InferenceEngine. Consequently a raw MediaPipe
+     fingerprint can be identity-compared only during MediaPipe-owned intervals.
+  d. Tracing the MediaPipe branch further backward reaches synchronous
+     StoreTrackingData and then the package callback. Tracing the dominant
+     Inference Engine branch does not reach raw FaceLandmarkerResult XY; the
+     MediaPipe callback is auxiliary at that time.
+  e. Reverse inspection of Package DrawLater again reaches CloneTo under lock,
+     then value-copy of nested landmarks; it does not reach a retained reference
+     to the callback-reused result.
+
+6. AUDIT AGREEMENT
+
+FULL_AUDIT_1 and FULL_AUDIT_2 agree.
+DISAGREEMENT=NONE
+
+Agreed boundary facts:
+  - callback result/list reuse exists in the installed package;
+  - the Package DrawLater path snapshots instead of retaining that reference;
+  - the Package annotation path is inactive for the reported right-side view;
+  - the actual right-side view consumes canonical data and is usually sourced
+    from Inference Engine in the measured Runtime;
+  - the raw MediaPipe result cannot be treated as the same sample as the
+    Inference Engine right-side sample.
+
+7. OBSERVER
+
+OBSERVER_ADDED=YES
+
+Task-only source:
+  D:\KiwiAvatarSystem\Assets\CodexTasks\H1_LandmarkerBoundary_20260913\KiwiH1LandmarkerBoundaryObserver.cs
+  built SHA256: 1F0C7AAC53896CD159DF51D0A524154A9BF11A1EA0D048D41BFDC4DBFE8ED4CC
+
+Design:
+  DEVELOPMENT_BUILD/UNITY_EDITOR only; environment-gated; O(1) latest-only;
+  no Queue/FIFO/history; five fixed landmark indices; Stopwatch host ticks;
+  1 Hz aggregate CSV; Space-only Human marker row; no tracking publication,
+  provider/cadence/backend/threshold/texture-state mutation, or readback.
+  PERFORMANCE_AUTHORITY=NONE.
+
+Measurement audit:
+  The first Runtime attempt is REJECTED as evidence. The callback-thread hook
+  called Debug.isDebugBuild, a Unity main-thread-only API, causing callback
+  exceptions and zero observer counts. Only the observer gate was changed to a
+  main-thread-armed volatile flag. No product behavior/cause fix was made.
+
+Compile after measurement repair:
+  exact Unity exit code: 0
+  log: D:\KiwiAvatarSystem\KiwiValidation\H1_LandmarkerBoundary_Compile_Retry_20260913.log
+  log SHA256: 4F943E285718034BFB118E81B19956819206C5D70A199370B24B86CB80FF28DC
+
+8. RUNTIME
+
+Runtime authority scope:
+  same built artifact, Development Player, Windows, Direct3D12,
+  Assets/Scenes/Face Landmark Detection.unity.
+  This is correctness diagnostic evidence only, not Performance Authority or
+  Human Visual Authority.
+
+Mandatory build preflight:
+  PASS
+  fingerprint: 1e1615aa7fa2ab889277dddd216200fe1c4ec788e1ae0c135478da26638906c2
+
+Build:
+  D:\KiwiAvatarSystem\Builds\H1_LandmarkerBoundary_Retry_20260913-041253
+  Unity build result: Succeeded; errors=0; warnings=204; Unity exit code=0
+  Build log SHA256:
+    41040B4AFDCACAD9240D4A772CF05A7BC791921C42A72C34A0DA5ABF73A13983
+  EXE SHA256:
+    98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81
+  UnityPlayer.dll SHA256:
+    A1C4F29041D783DF506E7C2892BC6AFA4ED45EF0D87AAFE0C7296BDC090681FC
+  Assembly-CSharp.dll SHA256:
+    313F6680B8B50BB5C6A2AC47B2198C7B1C6DB943E671196604E9648D0D271541
+  globalgamemanagers SHA256:
+    5878C3C7E59B93181077AF8A7102AF2BC255343F801F43D6A0171591305E8EA3
+
+Runtime evidence:
+  directory:
+    D:\KiwiAvatarSystem\KiwiValidation\H1_LandmarkerBoundary_Runtime_Retry_20260913-041352
+  Player exit code: 0
+  Player log SHA256:
+    3272B2A3ADB9F4A6F7DA6DA428CF527148F6BB1C20B36640F7C3CFF04540A405
+  summary.txt SHA256:
+    C64B7C7396D57DC7AA2C7D729C96A6F369EE461ACE7900516211A4022C708AAF
+  aggregate_1hz.csv SHA256:
+    935E55EB24233F13EEC4B44038E5EB5C4988FD9808FABDDE19D058A0ED1BBB9A
+  human_jump_markers.csv SHA256:
+    EF74606F8C5F96F1711A5F509277F654708B600C24683F4ED87CBD6C13957E2B
+
+Final counters:
+  raw MediaPipe callback: 839
+  raw result absent: 0
+  raw observer overwrite: 0
+  raw duplicate timestamp: 0
+  raw out-of-order timestamp: 0
+  raw abnormal gap: 2
+  raw auxiliary-only while IE primary: 381
+  raw -> Runner MediaPipe handoff: 458
+  handoff identity mismatch: 0
+  handoff duplicate timestamp: 0
+  handoff out-of-order timestamp: 0
+  intentional latest handoff overwrite: 121
+  right-side consume: 2116
+    MediaPipe: 337
+    Inference Engine: 1779
+  right-side consume identity mismatch for comparable MediaPipe samples: 0
+  right-side consume duplicate timestamp: 0
+  right-side consume out-of-order timestamp: 0
+  exact-epoch presentation eligible: 848
+  presentation duplicate timestamp: 0
+  presentation out-of-order timestamp: 0
+  raw-to-consume age for comparable final MediaPipe sample:
+    latest 10.6821 ms; maximum 59.8205 ms
+
+Machine-only correlation candidates:
+  The 1 Hz snapshots contain several large right-side Inference Engine semantic
+  steps while the nearest MediaPipe raw snapshot changed little. Example at
+  elapsed 93.6449124 s, D_NEUTRAL_REPEAT:
+    raw MediaPipe maxDelta=0.0036424899
+    right-side Inference Engine consume maxDelta=0.4664982557
+  This is not promoted to the reported Human Visual event because no Human
+  marker exists, and the two values are from different providers/transactions.
+
+9. HUMAN VISUAL
+
+Authoritative prior result:
+  2026-09-13 00:04:34 JST H1 same-build Human Visual FAIL;
+  screen-right Landmarker jump confirmed by the human reviewer.
+
+This diagnostic Runtime:
+  HUMAN_VISUAL_JUMP_MARKER_COUNT=0
+  The known jump was not positively time-correlated by the human reviewer in
+  this run. Therefore this run cannot say which raw/handoff/consume/presentation
+  sample coincided with the authoritative visual failure.
+
+10. FIRST FAILURE BOUNDARY
+
+FIRST_FAILURE_BOUNDARY=UNRESOLVED
+
+Reason:
+  - The required same-build Human Visual occurrence has no marker in this run.
+  - Most actual right-side samples were Inference Engine samples, for which raw
+    FaceLandmarkerResult is auxiliary rather than the same semantic transaction.
+  - The observed MediaPipe-comparable path had zero raw->handoff and
+    handoff->right-side identity mismatches, zero duplicate timestamps, and zero
+    out-of-order timestamps.
+  - Two raw cadence gaps and machine-only right-side step candidates were not
+    correlated with a human-confirmed jump.
+  - Therefore A, B, C, and D cannot be selected without crossing Authority or
+    same-sample evidence boundaries.
+
+11. REJECTED HYPOTHESES
+
+Rejected for the actual reported right-side sink:
+  - FaceLandmarkerResultAnnotationController.DrawLater retains the callback-reused
+    FaceLandmarkerResult reference until main-thread draw.
+    Rejected by installed source: synchronous deep/value snapshot under lock.
+  - Package annotation controller is the right-side MATCHED LANDMARK DEBUG owner.
+    Rejected by scene/runtime identity: package annotation disabled; actual owner
+    is KiwiFrameComparisonOverlay.
+  - Lower MediaPipe callback cadence than display cadence alone proves failure.
+    Rejected: installed DetectAsync contract permits latency-preserving input drop.
+  - The first zero-count Runtime proves tracking failure.
+    Rejected: observer itself threw a callback-thread Unity API exception.
+
+Not rejected, but still unproven:
+  - raw MediaPipe source cadence gap corresponds to the authoritative visual jump;
+  - Inference Engine semantic step corresponds to the authoritative visual jump;
+  - provider transition or exact-epoch presentation waiting corresponds to the
+    authoritative visual jump.
+
+12. OPEN
+
+  - No exact timestamp/sample for the known Human Visual jump in this artifact.
+  - The dominant visible sink uses Inference Engine, so its producer-side raw
+    landmark boundary is outside raw FaceLandmarkerResult identity.
+  - The two raw abnormal gaps lack human correlation.
+  - Large Inference Engine right-side steps lack human correlation and upstream
+    same-provider producer snapshots.
+  - Exact first failure boundary remains unverified; no cause is asserted.
+
+13. NEXT SINGLE ACTION
+
+Repeat this exact built artifact once with the same camera and motion sequence,
+and press Space at the first visually observed right-side jump. Use only the
+existing O(1) observer outputs to correlate that marker. If the marker lands on
+an Inference Engine-owned interval, stop this raw-FaceLandmarkerResult gate as
+source-mismatched and open one narrowly scoped Inference Engine producer-to-
+canonical localization task; do not add compensation or change tracking.

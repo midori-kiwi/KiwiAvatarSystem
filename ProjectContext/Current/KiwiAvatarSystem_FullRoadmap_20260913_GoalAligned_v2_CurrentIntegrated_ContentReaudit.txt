@@ -1,0 +1,1673 @@
+KiwiAvatarSystem 完全ロードマップ / Current統合版
+更新日: 2026-09-13 JST
+Revision: FullRoadmap v2 / Current Integrated / Content-Level Double Full Reaudit
+対象: プロジェクト開始時の製品要件整理から現在地、Windows Production Acceptance、Release、Android / iOS準備まで
+Current live-local: NORMAL_CHAT_LIVE_LOCAL_PRODUCTION_NOT_DIRECTLY_VERIFIED
+状態: CURRENT_ROADMAP_AUTHORITY_AND_COMPLETE_CHRONOLOGY
+
+================================================================
+0. この文書の役割 — Currentと完全ロードマップを一本化
+================================================================
+
+この文書をKiwiAvatarSystemの唯一のCurrent Roadmap Authorityとする。
+
+従来の `KiwiAvatarSystem_CurrentRoadmap_*` はCurrent文書として廃止し、
+その役割を本書へ完全統合する。
+
+本書が保持するもの:
+1. Current Authority / Environment
+2. Current Product Problem
+3. Validated / Retained Decision Ledger
+4. Rejected / Superseded / Do Not Re-promote
+5. Current First Blocker
+6. Next Single Action
+7. プロジェクト開始から現在までの目的 / 内容 / 結果 / 現在の扱い
+8. 現在からWindows Production完成までの全Critical Path
+9. Windows Production Definition of Done
+10. Optional / Deferred scopeとWindows完成後のMobile準備
+
+旧Phase名、旧Next、旧SHAは歴史を説明するためにだけ残す。
+後続EvidenceでSupersedeされたものをCurrentへ再昇格しない。
+
+CoreRulesは恒久契約、CustomInstructionsは通常チャット用圧縮文脈、
+ChatReport / Consolidated REPORTは詳細Evidence履歴を担当する。
+Current状態と完成ロードマップは本書だけが担当する。
+
+================================================================
+1. CURRENT SNAPSHOT — 2026-09-13
+================================================================
+
+通常チャットからlive local Productionを直接確認していないため:
+NORMAL_CHAT_LIVE_LOCAL_PRODUCTION_NOT_DIRECTLY_VERIFIED
+
+Current environment / report-time reference:
+- Project: D:\KiwiAvatarSystem
+- Unity: 6000.0.80f1
+- Primary platform: Windows / DX12
+- MediaPipeUnityPlugin: 0.16.3
+- Inference Engine: 2.4.1
+- Tracking Primary: Face Landmarker
+- Native baseline: Path B SystemMemoryNV12
+- report-time branch: work/raw-direct-motion
+- latest retained report-time HEAD: df75cfa9f6ae386bf4443272929d3cef33a8b138
+- H1 human-review build: H1_FrameIdentity_20260912-230622
+- current live-local HEAD/status: 通常チャットでは未確認
+- clean Performance Authority: なし
+
+最新取得済みHuman Visual Authority:
+- Report time: 2026-09-13 00:04:34 JST
+- H1_PRODUCT_HUMAN_VISUAL=FAIL
+- 人間報告: 全て問題あり。LandMarkerが飛ぶ問題が再発
+- 回転一致: 不合格
+- 目のねじれ: 不合格
+- 口のねじれ: 不合格
+- 回転時Root非移動: 不合格
+- まばたき: 不合格
+- 口表情: 不合格
+- LIVE CAMERA: 不合格
+- 口サイズ: 不合格として再現
+- Surface Clip: 不合格として再現
+- Player終了: 確認済み
+- cause: 未特定。Visual-only taskでは調査していない
+- Performance Authority: なし
+
+Human Visual measurement contract（2026-09-13更新）:
+- 旧「Avatarが不自然にjumpした瞬間にSpace」方式は廃止。
+- Human markerは使用しない。
+- 同一artifactの連続録画をHuman Visual Authorityとし、diagnosticが固定segmentの開始/終了をStopwatch host timestampで記録する。
+- 固定segmentは `NEUTRAL_STILLNESS_A`、`SLOW_YAW`、`SLOW_PITCH`、`SLOW_ROLL`、`NEUTRAL_STILLNESS_B`。
+- 最優先scopeは `NEUTRAL_STILLNESS_A`。入力顔が実質静止している同区間でAvatar position/rotationが継続的に揺れる場合、録画上の区間全体を `HUMAN_VISUAL_UNSTABLE_WINDOW` とする。
+- MATCHED LANDMARK DEBUGのWAIT/復帰はHuman Product failureとして扱わない。
+- Observer/validatorはHuman Visual FAILをPASSへ上書きしない。
+
+Retained scope-limited PASS:
+- P3C_1 callback destruction / graph disposal lifecycle: 範囲限定合格
+- P3D FaceGeometry correctness / lifecycle: 範囲限定合格
+- H1 source rigid single-owner: Static / exact Unity compile scopeで合格
+- H1 P3D→FacePart bridge: Static / Package / exact Unity compile scopeで合格
+- H1 frame identity repair: Static / compile / same-source DX12 Runtime / restart scopeで合格
+
+明示的に未合格:
+- H1 final Human Visual
+- Clean Production Performance
+- Final Product Acceptance
+- Windows Production Acceptance
+
+Current First Blocker:
+NEUTRAL_STILLNESS_FIRST_CONTINUITY_OR_IDENTITY_BOUNDARY_NOT_LOCALIZED
+
+Current Next Single Action:
+CONTROLLED_SAME_ARTIFACT_FIXED_SEGMENT_RECORDING_NEUTRAL_STILLNESS_A_ONLY
+
+比較順:
+1. authority
+2. sample / frame identity
+3. timestamp / source age / liveness
+4. provider / transition
+5. presentation transaction
+
+同一artifactの `NEUTRAL_STILLNESS_A` 連続録画とsegment全期間telemetryを相関し、最初に連続性またはidentity/transaction contractが崩れるboundaryだけを特定する。瞬間jump検出やHuman markerは要求しない。
+
+原因特定前にsmoothing、Kalman、prediction、threshold relaxation、dead zone、strong filtering、Root/Head補償、Camera/Provider workaround、Geometry補償、複数症状の一括補償を行わない。
+
+================================================================
+2. CONTENT-LEVEL DOUBLE FULL REAUDIT
+================================================================
+
+今回の再監査はファイル名・ChatReportタイトル・Archive一覧だけでは判定していない。
+タイトル・ファイル名・Archive一覧だけでは判定していない。
+対象本文を開き、少なくともObjective / Executive Summary / Work Performed /
+Validated / Rejected / Superseded / Current Result / Open Issues / Next Action /
+Do Not Change / Handoffを確認して時系列を再構成した。
+
+FULL_AUDIT_1=PASS_WITH_FINDINGS
+FULL_AUDIT_2=PASS_WITH_FINDINGS
+AUDIT_SCOPE=PAST_CHATS_DOCUMENTS_CHATREPORT_REPORT_BODIES_CURRENT_DOCS_COMPLETE_ROADMAP
+MATERIAL_DISAGREEMENT_AFTER_RECONCILIATION=NONE
+
+本文確認済みの主要ChatReport `00_CHAT_PERMANENT_REPORT.md`:
+- KiwiChat_NaturalMotionTrackingFacePartMask_v5_0_1_Updated_20260821-2341-JST
+- KiwiChat_CommercialTrackingLandmarkPresentation_Updated_20260823-JST
+- KiwiChat_NativeCameraPipeline_v12_v18_Updated_20260824-JST
+- KiwiChat_StandaloneDX12InferenceValidation_v37_2_Updated_20260826-1343-JST
+- KiwiChat_OrtDmlZeroCopy_v42_3_Updated_20260827-1947-JST
+- KiwiChat_CPUInferenceSemanticAuthority_Updated_20260902-JST
+- KiwiChat_CommercialTrackingPresentationArchitectureAudit_Updated_20260903-JST
+- KiwiChat_FacePartControlCoordinateAudit_Updated_20260907-JST
+- KiwiChat_HumanHeadFacePartGeometry_R13_4_Updated_20260909-JST
+- KiwiChat_FaceGeometryTransactionLifecycle_Updated_20260909-2248-JST
+- KiwiChat_H1SourceRigidSingleOwnerDesignFreeze_Updated_20260911-JST
+- KiwiChat_P3DToFacePartSameSampleBridge_Updated_20260912-JST
+- KiwiChat_H1FrameIdentityToHumanVisual_Updated_20260912-JST
+- KiwiChat_WorkflowRoleSplitAndDocsRevision_Updated_20260913-JST
+
+直接本文確認した主要Consolidated REPORT / integrated document:
+- P2 Camera→MediaPipe→Canonical Source-Grounded Simplification
+- P2C B10 Semantic Correction / B11 Closure
+- P3A FaceGeometry Reuse Contract / Deterministic Self-Test
+- P3B Same-Sample Geometry Transaction / Lifecycle Design Freeze
+- P3C Minimal Geometry Transaction Static Validation
+- P3C_1 Callback Destruction Lifecycle Repair
+- P3D Minimal Same-Build Geometry Correctness / Lifecycle Runtime
+- H1 Local Activation / Authority Static Closure
+- H1 Source Rigid Single Owner Local Retirement
+- H1 P3D→FacePart Same-Sample Bridge
+- H1 Same-Build Product Runtime / Human Visual
+- H1 Frame Identity Contract Repair
+- H1 Controlled Same-Build Human Visual 2026-09-13 00:04:34
+- 2026-09-03 / 09-04 / 09-06 / R13.4 integrated-information bodies
+
+再監査で保持した重要な本文由来の時系列補正:
+- 旧LIVE CAMERA 560x315 / exact 16:9 / Bilinearは当時の範囲限定Visual受入として保持する。
+  2026-09-06以降のHuman Visual再OPENと2026-09-13の不合格は後続のCurrent Visual Authorityであり、矛盾ではない。
+- P3C初期PASSはcallback destruction lifecycle defectで一度Supersedeされ、P3C_1修復後に該当scopeだけ再PASSした。
+- P3Bのpose-only managed boundary STOPは、P3Cで「transient full FaceGeometryはcorrectness上許容、pose-only extractionはoptional optimization」と狭くSupersedeされた。
+- H1 bridgeの最初のRuntimeではsource accepted frameIdとProviderHub publication frameIdのdomain mismatchが実証され、後続Frame Identity Repairでscope-limited Runtime PASSへ進んだ。
+- H1 Runtime PASSは2026-09-13 Human Visual PASSを意味しない。
+- v29/v31や旧v44.55.xxのNextは歴史として残すだけでCurrentへ戻さない。
+
+================================================================
+3. 最終製品契約
+================================================================
+
+Primary Product Path:
+
+Windows Native Camera
+→ latest valid sample
+→ Face Landmarker Primary / Source of Truth
+→ Canonical Semantic / same-sample transaction
+→ Root / Head / Eye / Blink / Mouth / Expression
+→ Model Profile
+→ Face-Part Binding
+→ Kiwi Avatar Presentation
+→ LIVE CAMERA / Spout / OBS
+
+写実的な別人化:
+不要。
+
+外部trackerやNeural avatar:
+Primary置換しない。
+公開方式から独立実装可能な原則だけEvidence-gatedで採用する。
+
+Target Architecture:
+
+Evidence-Protected Core
++ Avatar Adapter
++ Model Profile
++ Runtime Import
++ Transactional Hot Swap
+
+製品完成品質:
+- 低遅延
+- 高精度
+- 低ジッター
+- 高速追従
+- frontal stillness
+- 正しいYaw / Pitch / Roll
+- 正しいRoot
+- 自然なEye / Blink / Mouth / Expression
+- 正しいFacePart / Crop / Mask / Clip
+- Lost / Reacquire / Restart / transition安全性
+- Runtime Avatar Import
+- non-spherical model
+- AutoFit + manual fallback
+- Calibration / User Tuning
+- Safe Mode / Recovery / Diagnostics
+- LIVE CAMERA / Spout / OBS
+- Security / Privacy
+- Support Matrix / SLO
+- Installer / Upgrade / Repair / Uninstall / Rollback
+
+================================================================
+4. 完全時系列ロードマップ
+================================================================
+
+----------------------------------------------------------------
+FR-00  製品目標・環境・基本Architectureの確立
+時期: 2026-08-09〜2026-08-20頃
+根拠: 過去チャット要件 + 後続統合情報で繰り返し保持された初期Product contract
+状態: DURABLE_REQUIREMENTS_RETAINED
+----------------------------------------------------------------
+
+目的:
+KiwiAvatarSystemを単なるtracking demoではなく、
+Windows第一の商用品質Avatar製品として定義する。
+
+内容:
+- Windows / DX12を第一Production targetにする。
+- Face LandmarkerをPrimary / Source of Truthにする。
+- Tracking Coreとmodel-specific処理を分離する。
+- Avatar Adapter / Model Profile / Runtime Import / Transactional Hot Swapを基本構造にする。
+- 非球形、人型、動物型、縦長、横長等を想定する。
+- Root / Head / Eye / Mouth責務を分ける。
+- model switching、external model追加、FacePart placement、Spring/Dangle、user tuningを製品要件へ入れる。
+- 初期には大きなmotion増幅や驚き時Bounce / Squash等のreaction案も検討・採用された。
+- Windows完成後にAndroid / iOSへ進み、iOS実機testは現要求では必須にしない。
+
+結果:
+基本方向は現在まで保持。
+後続で「FacePart Direct Binding」「Evidence-Protected Core」へ具体化された。
+初期のmotion増幅 / Bounce / Squashは、後続のNear-Raw responsivenessとrigid human-head契約を上書きする固定Core要件へは昇格させない。必要ならAvatar/Profile側のoptional reactionとして、Tracking Correctnessを変えない範囲で再評価する。
+
+現在の扱い:
+有効。
+旧version番号、当時の暫定FPS数値や細部実装案はCurrent Authorityではない。最終Performance数値はFR-22でcurrent ProductionのSLOとして事前登録する。
+
+Exit:
+主目的と責務境界が定義され、以降の変更がこのGoalへ寄与するか評価可能になった。
+
+----------------------------------------------------------------
+FR-01  Natural Motion / FacePart / Root-Head責務の基礎
+時期: 2026-08-21
+歴史ラベル: NaturalMotionTrackingFacePartMask v5.0.1
+状態: HISTORICAL_IMPLEMENTATION / DURABLE_PRINCIPLES_RETAINED
+----------------------------------------------------------------
+
+目的:
+FacePartを自然に表示しながら、Root / Head / Provider / temporal責務を分離する。
+
+内容:
+- Same Provider ResumeとProvider Switchを分離。
+- Source AgeとLivenessを分離。
+- Headをsingle rigid authorityにする。
+- Eye / MouthからRootへのfeedbackを禁止。
+- FacePartをsemantic transactionとして扱う。
+- Head-local FacePart samplingを採用。
+- Root pinning / mask regressionを修正。
+
+結果:
+v5.0.1で当時のRoot pinning / mask regressionを修正。
+実装line自体は後続でSupersedeされたが、責務原則は現在も有効。
+
+現在の扱い:
+原則KEEP。旧実装をCurrentへ戻さない。
+
+----------------------------------------------------------------
+FR-02  Tracking / Presentation / Observer Correctness
+時期: 2026-08-23
+歴史ラベル: Commercial Tracking / TrackingObserver / Phase16.19
+状態: DURABLE_LESSONS_RETAINED
+----------------------------------------------------------------
+
+目的:
+追従品質を改善する前に、tracking状態とobserverを正しく分離する。
+
+内容:
+- continuity機構が本当にactiveかをthreshold tuningより先に確認。
+- isolated landmark rejectionをwhole-frame failureへ昇格しない。
+- provider-local処理をglobal smoothingより優先。
+- writer / authority監査を必須化。
+- LIVE CAMERA pixelと遅延semantic landmarkをsame-frame扱いしない。
+- canonical annotationのdouble mirror等、Observer自身の不具合を監査。
+- strict FacePart temporal contractを弱めず修復。
+
+結果:
+Observer defectがProduction defectに見えるケースを確認。
+Landmarker X/Y scale / aspect / rotationを根拠なく補正する案を棄却。
+「Observer / Validatorも疑う」が恒久ルール化。
+
+現在の扱い:
+KEEP。
+旧96-retry等はREJECTED / HISTORICAL。
+
+----------------------------------------------------------------
+FR-03  Native Camera capability / transport isolation
+時期: 2026-08-24
+主要本文根拠: KiwiChat_NativeCameraPipeline_v12_v18 の恒久REPORT本文
+歴史ラベル: Native Camera Compatibility Reverse Share / v12-v18
+状態: BASELINE_EVIDENCE_RETAINED
+----------------------------------------------------------------
+
+目的:
+UGREEN 1920x1080@60 NV12入力で、カメラ能力とUnity/DX12 transport bottleneckを分離する。
+
+内容:
+- standalone MF/DXGI NV12 capability測定。
+- D3D11 shared CopyResource bridge測定。
+- D3D11On12 1080p試験。
+- stable Unity-visible Presentation Texture identity。
+- cameraGenerationをsession/texture epochとして定義。
+- QPC → Managed Stopwatch timestamp domain校正。
+- callback/worker跨ぎIMFSample保持を排除。
+- FIFO / blocking Wait / rotating textureを避ける。
+
+結果:
+- standalone MF 1080p60能力を確認。
+- shared CopyResource bridgeも約60fps能力を確認。
+- 単純CopyResource/shared ringを旧15fps原因から外した。
+- D3D11On12 1080p Productionは棄却。
+- fixed Presentation Texture / timestamp / generation契約を確立。
+- v18でwait/drop/ring深度等の主要仮説を弱めた。
+- 後続でPath B SystemMemoryNV12がProduction baselineになった。
+
+Superseded:
+「Native sourceは恒久的に13〜20Hz」という古い状態。
+Reverse Shareを最終Production architectureとする案。
+
+現在の扱い:
+Path B SystemMemoryNV12をBaselineとしてKEEP。
+新しいboundary-specific EvidenceなしにNative redesignしない。
+
+----------------------------------------------------------------
+FR-04  Standalone DX12 Inference validity
+時期: 2026-08-26
+主要本文根拠: KiwiChat_StandaloneDX12InferenceValidation_v37_2 の恒久REPORT本文
+歴史ラベル: v37.2
+状態: HISTORICAL_VALIDATION_LESSON
+----------------------------------------------------------------
+
+目的:
+Standalone DX12 inference benchmarkを、packagingと実GPUCompute pathの正当性から検証する。
+
+内容:
+- kernel/package presence確認。
+- serialization labelと実payloadを分離。
+- invalid benchmarkをPerformance Authorityから除外。
+
+結果:
+v35.3 performance evidenceはrequired GPUCompute kernel欠落でinvalid。
+v37.2でvalid Standalone DX12 GPUCompute pathを確認。
+
+現在の扱い:
+後続v44系にSupersede。
+「measurement validity before performance」の原則だけ保持。
+
+----------------------------------------------------------------
+FR-05  ORT DirectML D3D12 Zero-Copy feasibility
+時期: 2026-08-27
+主要本文根拠: KiwiChat_OrtDmlZeroCopy_v42_3 の恒久REPORT本文
+歴史ラベル: v42.3
+状態: HISTORICAL_FEASIBILITY_ONLY
+----------------------------------------------------------------
+
+目的:
+別backend/zero-copyの技術可能性を評価する。
+
+内容:
+- Native graphics-device lifecycle。
+- DirectML / D3D12 Zero-Copy。
+- preload/device readiness。
+- telemetry validity。
+
+結果:
+技術feasibilityは確認。
+preload-only readiness仮説は棄却。
+一部telemetry列はinvalidでAuthorityから除外。
+
+現在の扱い:
+Production backend採用Authorityではない。
+速度だけでbackend変更しない。
+
+----------------------------------------------------------------
+FR-06  Surface Fit / DX12 resource isolation
+時期: 2026-08-29
+歴史ラベル: Surface Fit v44.17
+状態: SCOPED_RESULT_RETAINED
+----------------------------------------------------------------
+
+目的:
+Surface FitとDX12外部resource問題をtracking/cameraから分離する。
+
+内容:
+- PhysX cooking設定比較。
+- exact topology partition。
+- Spout / external resource error隔離。
+
+結果:
+Fast Midphase無効化は約3秒の同期cookingを発生させ不適。
+partitioned exact topologyで約0.5秒まで縮小し意図geometryを維持。
+Spout/resource問題をCamera/Trackingと分離。
+
+現在の扱い:
+Surface Fitの範囲限定結果を保持。
+後続Human VisualでSurface Clip等が再発しているため、最終Visualは未合格。
+
+----------------------------------------------------------------
+FR-07  Native Color / Read Mode semantics
+時期: 2026-08-30
+歴史ラベル: Production Mode 9 / CPUAsync
+状態: SCOPED_PRODUCTION_RESULT_RETAINED
+----------------------------------------------------------------
+
+目的:
+色変換とImage Read Modeのsemantic誤認を除去する。
+
+内容:
+- camera metadataのmatrix/range確認。
+- BT.601/709 × Full/Limitedのmetadata-driven変換。
+- steady-state CPUAsyncとstartup logを分離。
+
+結果:
+旧BT.709 Limited固定仮定を修正。
+metadata-driven変換を採用。
+Production mode 9 Runtimeを当時のscopeで受入。
+steady-state CPUAsyncを確認。
+Windows MediaPipe Delegate=CPUを保持。
+
+現在の扱い:
+Color / read-mode回帰Evidenceなしに再OPENしない。
+現H1 Landmarker飛びの原因へ自動昇格しない。
+
+----------------------------------------------------------------
+FR-08  CPU/GPU backend・preprocessing・transaction semantic監査
+時期: 2026-08-31〜2026-09-02
+主要本文根拠: CPUInferenceSemanticAuthority ChatReport本文 + v44.55.15〜23関連REPORT
+歴史ラベル: v44.54 / v44.55.10〜23
+状態: HISTORICAL_CHAIN / DURABLE_FINDINGS_RETAINED
+----------------------------------------------------------------
+
+目的:
+CPU/GPU差がbackend mathか、preprocessing / frame identity / transactionかを分離する。
+
+内容:
+- same exact host-float tensor CPU/GPU比較。
+- Presentation frame-content identity。
+- subtexel sampling。
+- canonical semantic。
+- common-tensor backend isolation。
+- border/clamp。
+- observer validity。
+- completed-output snapshot。
+
+主要結果:
+- v44.54 same tensorではCPU/GPU raw outputが実質同等。
+- backend math単独を主correctness原因から外した。
+- v44.55.10でmetadata SにS+1/S+2 pixelが入り得るPresentation frame-content raceを確認。
+- v44.55.11 identity correction後も強いsemantic Gateは未合格。
+- v44.55.12 fixed-point subtexel仮説を棄却しFULL_FLOATが最良。
+- v44.55.20 common-tensorでGPU/CPU各armが合格し、差をpreprocessing側へ狭めた。
+- v44.55.21 border/clamp仮説を棄却。
+- v44.55.22 `lane.input` direct readback oracleはobserver自身がmismatchを作り得るため棄却。
+- v44.55.23 completed-output observerはobserver validityを閉じたが、MIXED_TRANSACTIONは暫定のまま。
+
+現在の扱い:
+CPU Production切替根拠にはしない。
+Production lane.input direct readbackをoracleへ戻さない。
+後続のv29/v31/P1/P2/P3/H1にSupersedeされた旧NextはCurrentへ戻さない。
+
+----------------------------------------------------------------
+FR-09  Provenance / Tooling / Standalone Output / Recovery foundation
+時期: 2026-09-02〜2026-09-03
+状態: MIXED_SCOPED_RESULTS_RETAINED
+----------------------------------------------------------------
+
+目的:
+Native provenance、PowerShell、Spout/OBS、Project recovery、tracking/presentation責務を製品開発の土台として整理する。
+
+内容:
+- source → build definition → toolchain/flags → artifact → installed SHA。
+- Windows PowerShell 5.1安全基盤。
+- Standalone → Spout → OBS機能確認。
+- model/Avatar architecture比較。
+- WMC比較。
+- Pure Project recovery。
+- Provider normalization / Root presentation owner監査。
+
+結果:
+- original v44.55.12 packageからNative provenanceをStrongly Supportedまで改善。
+- guessed Native rebuild禁止。
+- ABI parityのみでprovenance completeとしない。
+- PS5.1、安全I/O、rollback、write guard等を恒久化。
+- Standalone Face Landmarker → Spout → OBSの機能成立を当時のchat scopeで確認。
+- WMCを最重要商用比較対象として保持。
+- global strong LP / Kalmanを棄却。
+- one temporal Root presenter等を採用。
+- Pure Project branchでYaw/Root、Roll/Root coupling問題を観測したが、あるdeliverable SHA不一致で一部validator PASSを無効化。
+
+現在の扱い:
+歴史的capabilityは保持。
+current same-build Spout/OBS final acceptanceではない。
+古いbranch codeをcurrent lineage確認なしにmergeしない。
+
+----------------------------------------------------------------
+FR-10  Product Goal再確定 / External architecture selective reuse
+時期: 2026-09-03〜2026-09-04
+状態: DURABLE_PRODUCT_DIRECTION
+----------------------------------------------------------------
+
+目的:
+0から作り直すか、既存CoreをEvidence-Protectedで活かすかを決め、
+VTuber / SNS / neural系から流用できる原則を抽出する。
+
+比較:
+MediaPipe / MediaPipeUnityPlugin / OpenSeeFace / Kalidokit / UniVRM
+Webcam Motion Capture / VTube Studio / Warudo / VSeeFace / VNyan
+TikTok Effect House / Snapchat Lens Studio等の公開範囲
+DeepFaceLive / LivePortrait / FasterLivePortrait等
+
+ユーザー要件再確認:
+写実的な別人化は不要。
+Kiwiモデル上にEye / Blink / Mouth / Mouth Shape / Open / Expression等を自然に出せればよい。
+
+決定:
+Primary path:
+Face Landmarker
+→ Canonical
+→ Model Profile
+→ Face-Part Binding
+→ Kiwi Presentation
+
+採用原則:
+- stage ownership
+- latest/drop
+- explicit Lost/Reacquire
+- persistent tracking
+- bounded in-flight
+- channel-specific policy
+- provider/model/output分離
+- calibration/profile
+- Runtime Import / Hot Swap
+- visual maskとtracking geometry分離
+
+棄却:
+- external tracker Primary replacement
+- Neural Primary
+- Python/OpenCV cameraへの回帰
+- unbounded queue
+- duplicate smoothing owner
+- popularityだけの採用
+
+結果:
+Big-Bang rewrite不要。
+Evidence-Protected Core + Avatar Adapter + Model Profile + Runtime Import + Transactional Hot Swapを確定。
+
+----------------------------------------------------------------
+FR-11  v44.55.25〜31 Execution Context / diagnostic closureと優先順位転換
+時期: 2026-09-04〜2026-09-06
+状態: FROZEN_HISTORICAL_DIAGNOSTIC / PRODUCT_PRIORITY_SUPERSEDED
+----------------------------------------------------------------
+
+目的:
+Inference/transaction差をmethod/resource/queue/lifetime単位へ狭める。
+
+主要chronology:
+v44.55.25:
+published transaction coherentの部分coverage。
+
+v44.55.26:
+decode payload mismatch observer。
+後に一部GPU packed snapshot authorityを棄却。
+
+v44.55.27:
+ACTUAL_EQUALS_NEITHERをobserver/validatorで確認。
+
+v44.55.28:
+Composite A/Bはinvalid。
+raw patternのみsupporting evidence。
+
+v44.55.29:
+3-arm correlated Runtimeをvalidに閉じる。
+Direct Graphics=REF exact
+CommandBuffer Graphics=REF exact
+CommandBuffer Async=NEITHER
+CommandBuffer execution form単独をprimary causeから棄却。
+Async queue/execution contextをcausal contributor candidateまで狭めたが、exact causeは未証明。
+
+v44.55.30:
+observer-only diagnostic。
+Runtime運用/harness問題を含み、Production fixではない。
+
+v44.55.31:
+`minimumPresenceBits` validator failureは実transaction divergenceではなく
+decimal JSONとhex X8のstring比較defectと判明。
+validator修正後、同一Runtime evidenceを再検証。
+E2はcoarse output endpoint divergenceとしてのみ保持。
+
+2026-09-06:
+heavy diagnosticを外したfrozen-v31 same-build Human Visualで要求品質が広範囲に不合格。
+E2と可視不具合のcausal linkは未証明。
+
+結果:
+v44.55.32はNOT AUTHORIZED。
+E2 diagnostic chainはfreeze/deprioritize。
+次P0を「product symptomからfirst boundaryへ」に転換。
+
+現在の扱い:
+historical evidence。
+Fence / Wait / flush / async disableを推測で復活させない。
+
+----------------------------------------------------------------
+FR-12  P1 Product Failure Specification / Visual boundary localization
+時期: 2026-09-06
+状態: SCOPED_LOCALIZATION_COMPLETED
+----------------------------------------------------------------
+
+目的:
+広範囲Human Visual FAILを一つのroot causeにまとめず、最初に観測可能な境界を分ける。
+
+内容:
+- frozen-v31 product-effective equivalenceをplanning scopeで確認。
+- Camera / LIVE CAMERA / Cropをfirst targetにした。
+- same source texture、1:1比較、FULL表示比較。
+- observerが画質へ影響しない形で比較。
+
+結果:
+Original symptom再現。
+FULLとsame-source 1:1はいずれも悪く似ていた。
+display minification-only原因説を棄却または強く弱めた。
+LIVE CAMERA root causeもNative root causeも未確定。
+
+重要な整合:
+2026-09-02〜04の560x315 / exact 16:9 / Bilinear改善は、
+relative layout/pixel-budget改善としての歴史的受入。
+2026-09-06は要求品質全体に対する再OPEN。
+両者は矛盾しない。
+
+----------------------------------------------------------------
+FR-13  P2 Camera→MediaPipe→Canonical Source-Grounded Simplification / Reuse Gate
+時期: 2026-09-06
+主要本文根拠: KiwiCodexConsolidatedReport_P2_CameraMediaPipeCanonicalSimplification_20260906_184245〜2026-09-09
+状態: COMPLETED_AS_DESIGN_AUDIT / FOLLOWUPS_PARTLY_RESOLVED
+----------------------------------------------------------------
+
+目的:
+公式guide/source、installed package、OSS/商用公開方式と現実装をmethod/statement/dataflow単位で比較し、
+不要なowner / state / diagnosticを削減しつつ品質を落とさない。
+
+内容:
+- Native Path Bを保持。
+- Runner freshness / MediaPipe flow limiter / callback copy / timestampを監査。
+- duplicate statementやownerを分類。
+- Canonical expression bypass candidate。
+- FacePart rotation owner重複。
+- FacePart Texture transaction identity。
+- external reuseをSELECTIVE / EVIDENCE-GATEDで評価。
+- 検証をChange-Local → Contract/Replay → Milestone Full Productへ集約する方向を確立。
+
+結果:
+- wide redesign不要。
+- Camera / Nativeを変更する根拠なし。
+- Runner repeated statementはlow-risk cleanupでCritical Path外。
+- KiwiExpressionReaction bypass等はStatic candidateとして残した。
+- RigidSampleFrame + SharedTiltLockのsource-rigid二重owner候補を特定。
+- exact texture/sample identity gapを重要boundaryとして残した。
+- stale geometry / duplicate Landmarker / custom solver等を棄却。
+
+後続:
+source-rigid二重ownerはH1でSharedTiltLockをProduct pathからretire。
+frame identity domain mismatchはH1で修復。
+
+----------------------------------------------------------------
+FR-14  P2C Windows semantic closure
+時期: 2026-09-09
+主要本文根拠: P2B/P2C ordered static reports + B10 Semantic Correction / B11 Closure本文
+状態: PASS_SCOPED
+----------------------------------------------------------------
+
+目的:
+MediaPipe first468とIE first468がどのsource-coordinate semanticに属するかをStatic/Packageで閉じる。
+
+内容:
+- preprocessing rotation / flip / mirror。
+- MediaPipeのprojection back-to-input semantics。
+- IE cropMatrixとの座標関係。
+- XY / Z rotation semantics。
+
+chronology:
+初回B10はFAIL判定。
+再監査でMediaPipeがlandmarksをunrotated/uncropped inputへ投影する公式契約を反映し、B10判断を訂正。
+
+最終結果:
+B1-B11範囲でPASS。
+P1_S_WINDOWS_NATIVE_PRODUCTION=PASS。
+first468 normalized source-coordinate semanticを閉じた。
+
+現在の扱い:
+訂正前B10 FAILはSUPERSEDED。
+最終B10/B11 PASSを保持。
+Human Visual / Performanceを意味しない。
+
+----------------------------------------------------------------
+FR-15  P3 FaceGeometry reuse / transaction / lifecycle
+時期: 2026-09-09〜2026-09-10
+主要本文根拠: P3A / P3B / P3C / P3C_1 / P3D REPORT本文 + lifecycle ChatReport本文
+状態: PASS_SCOPED
+----------------------------------------------------------------
+
+FR-15A P3A:
+目的:
+custom solverやsecond face modelを増やさず、official FaceGeometryを再利用可能か確認。
+
+結果:
+MediaPipe v0.10.22 FaceGeometryPipelineCalculatorをinstalled MediaPipeUnityPlugin 0.16.3から再利用する設計を確認。
+468 normalized landmarks + IMAGE_SIZE → canonical/metric geometry + pose。
+deterministic fixtureで高精度reprojection。
+custom Procrustes不要。
+
+FR-15B P3B:
+目的:
+same-sample Pose16 boundaryを設計。
+
+初期結果:
+managed packageがfull FaceGeometry protoを返すためpose-only boundaryの想定を修正。
+transient full geometryを受け、必要なPose16のみ保持する方針へ。
+
+FR-15C P3C:
+目的:
+bounded / nonblocking transaction serviceを実装。
+
+初期結果:
+Static/compile/syntheticでは一旦合格。
+後続lifecycle再監査でcallback destruction boundaryの前提誤りを発見し、full PASSをSupersede。
+
+FR-15D P3C_1:
+目的:
+graph destroyとcallback root lifetimeを正しくする。
+
+結果:
+Graph.Dispose中はdelegate roots保持。
+Dispose後no-future-callback境界を確立し、entered callback drain後release。
+Static/Package/compile/synthetic scopeでPASS。
+
+FR-15E P3D:
+目的:
+same-build Live Cameraでcorrectness/lifecycle確認。
+
+結果:
+DX12 / UGREEN 1920x1080@60 / Path B。
+restartを跨いでexact accepted samples。
+duplicate / out-of-order / stale generation / mixed epoch / old-run publish=0。
+bounded max in-flight=1。
+lifecycle scoped PASS。
+観測source ageはPerformance Authorityではない。
+
+現在の扱い:
+P3C_1 / P3D scope-limited PASSを保持。
+Human Visual / Clean Performance / Final Product PASSへ昇格しない。
+
+----------------------------------------------------------------
+FR-16  H1 Human-Head / FacePart same-sample integration
+時期: 2026-09-11〜2026-09-13 00:04:34 JST
+主要本文根拠: H1 LocalActivation / SourceRigid / SameSampleBridge / FrameIdentity / Controlled Human Visual本文
+状態: STATIC_RUNTIME_SUBSCOPES_PASS / HUMAN_VISUAL_FAIL
+----------------------------------------------------------------
+
+製品semantics:
+Kiwiは剛体の人間頭部として扱う。
+Eye/Mouth non-rigid appearanceは残す。
+source rigid poseを一度だけ除去。
+head-local/canonical appearanceをfixed fitted surfaceへ。
+visible Head rigid authorityをexactly once適用。
+
+FR-16A Local Activation / Authority Static Closure:
+current activation / wiringをStaticで確認。
+旧candidateや古いRuntimeをcurrent activation proofにしない。
+
+FR-16B Source Rigid Single Owner:
+目的:
+source appearance de-rigidization writerを1つにする。
+
+結果:
+KiwiFacePartRigidSampleFrameをactive writerとして保持。
+KiwiFacePartSharedTiltLockはclassとして残すがcurrent H1 Product pathからretire。
+Static PASS。
+Global deleteなし。
+
+FR-16C P3D→FacePart Bridge Preflight Stop:
+最初の試行ではrequired snapshotとlive-local HEAD/dirty shapeが一致せずFail-Closed STOP。
+source/design/compile/runtimeを進めなかった。
+このSTOPは正しいAuthority動作。
+
+FR-16D Same-Sample Bridge:
+正しいbaseで再実施。
+same accepted IE first468
+→ P3D Pose16
+→ immutable latest accepted geometry
+→ Canonical/FacePart appearance identity gate
+→ source rigid roll removal exactly once
+→ existing Eye/Mouth texture+mask
+→ fixed surface
+→ visible rigid authority unchanged
+をStatic/Package/compileで閉じた。
+Runtime/Human/Performanceはこの時点で未実施。
+
+FR-16E Frame Identity Contract Repair:
+目的:
+CanonicalとP3Dのframe id domain mismatchを修復。
+
+結果:
+P3DはRunner/source frameIdをCanonical `normalization.providerSourceFrameId`と比較。
+Canonical `rigid.frameId`はProviderHub publication sequenceとして維持。
+Static/compile/same-source DX12 Development build/2 Runtime/restartでPASS。
+duplicate / out-of-order / stale / mixed epoch / old-runなし。
+Human Visualはまだ未解決。
+
+FR-16F Controlled Same-Build Human Visual:
+日時:
+2026-09-13 00:04:34 JST
+
+結果:
+H1_PRODUCT_HUMAN_VISUAL=FAIL。
+ユーザーが全要求項目に問題ありと判断。
+Landmarker飛びが再発。
+Player正常終了。
+原因調査はVisual-only scope外。
+
+重要:
+Landmarker飛びをtracking math、provider、identity、timestamp、FaceGeometry、FacePart、Camera、Native、backendのどれかへ自動帰属しない。
+
+Current:
+ここが最新取得済みHuman Visual Authority。
+
+================================================================
+5. CURRENT CRITICAL PATH — FR-17  NEUTRAL_STILLNESS continuous-window first-boundary closure
+================================================================
+
+状態:
+CURRENT_FIRST_BLOCKER
+
+目的:
+同一artifactの連続録画をHuman Visual Authorityとして、
+`NEUTRAL_STILLNESS_A` 全期間でAvatar position/rotation jitterを評価し、
+正常sample path上で最初に連続性またはidentity/transaction contractが壊れるboundaryを1つだけ特定する。
+
+旧方式:
+「Avatarが不自然にjumpした瞬間にSpace」は廃止。Human markerは使用しない。
+
+固定segment:
+1. NEUTRAL_STILLNESS_A
+2. SLOW_YAW
+3. SLOW_PITCH
+4. SLOW_ROLL
+5. NEUTRAL_STILLNESS_B
+
+diagnosticは各segment開始/終了をStopwatch host timestampで記録する。
+最優先scopeは `NEUTRAL_STILLNESS_A`。入力顔が実質静止している同区間でAvatarが継続的に揺れる場合、録画上の区間全体を `HUMAN_VISUAL_UNSTABLE_WINDOW` とする。瞬間的jump検出は要求しない。
+
+比較順:
+1. authority
+2. sample / frame identity
+3. timestamp / source age / liveness
+4. provider / transition
+5. presentation transaction
+
+必要Evidence:
+- same-artifact continuous recording
+- source/sample identity
+- timestamp / source age / liveness
+- provider state / transition
+- Canonical frame id / Canonical pose
+- Presentation consume / decision / committed tuple
+- GeometrySnapshot identity
+- segment start/end host timestamp
+- observer-only。Production behavior変更なし
+- change前に原因を証明
+- Human Visualとlog/validatorを別Authorityとして保持
+
+判定:
+A. Canonical入力自体がNEUTRAL_STILLNESS中に大きく揺れる場合、first failing boundaryをCanonicalより上流へ限定する。
+B. Canonicalは安定しPresentation consume/commit後にAvatarが揺れる場合、first failing boundaryをPresentation以降へ限定する。
+C. Presentation reject/identity failureがVisual jitterと時間的に継続相関する場合、最初のreject/identity boundaryだけを次調査対象とする。
+D. reject等が発生してもHuman Visual jitterと相関しない場合、そのrejectを原因へ昇格しない。
+E. 相関不能ならUNRESOLVEDとしてmeasurement designへ戻る。
+
+MATCHED LANDMARK DEBUGのWAIT/復帰はHuman Product failureとして扱わない。
+
+禁止:
+- smoothing / Kalman
+- prediction / stale prediction
+- threshold relaxation
+- dead zone追加 / strong filtering
+- permanent buffer / 1-frame delay
+- speculative Fence / Wait / flush / async disable
+- Root / Head補償
+- Camera / Provider workaround
+- Geometry補償
+- Camera / Native / backend / Root / Head / FacePart一括変更
+- 複数unknown同時修正
+- 全Human FAILを一原因に統合
+
+Exit:
+FIRST_FAILING_BOUNDARYがclaim-scopedに証明されること。
+未解決ならUNRESOLVEDで停止。
+証明後にのみFR-18の最小repairへ。
+
+================================================================
+6. FUTURE CRITICAL PATH
+================================================================
+
+----------------------------------------------------------------
+FR-18  First proven boundary minimal repair
+状態: BLOCKED_BY_FR17
+----------------------------------------------------------------
+
+目的:
+FR-17で証明された最初のboundaryだけを最小修正する。
+
+内容:
+- before / candidate / after identity。
+- owner / transaction / lifecycle / resource / rollback監査。
+- change-local Gate。
+- unrelated subsystemを変更しない。
+- Static review完了時にcommit boundaryを判断。
+
+Exit:
+対象claimのChange-Local Gate合格。
+次local検証用の再現可能な基準点を固定すべきなら
+「今がコミット適切時点」と明示。
+
+----------------------------------------------------------------
+FR-19  H1 Product / Human Visual再確認
+状態: BLOCKED_BY_FR18
+----------------------------------------------------------------
+
+目的:
+修正が最終可視挙動を本当に改善したかをsame-buildで確認する。
+
+必須Human確認:
+- Head translation
+- Yaw
+- Pitch
+- Roll
+- 回転時Root非移動
+- Eye left/right
+- Blink
+- Mouth Open
+- Mouth Shape / Expression
+- FacePart orientation
+- Mouth size
+- Surface Clip
+- Crop / Mask
+- frontal stillness
+- fast movement response
+- obvious lag
+- stale/freeze
+- Lost / Reacquire
+- LIVE CAMERA
+- Spout / OBS where milestone-scope applies
+
+方向契約:
+- screen-right → Avatar screen-right
+- screen-left → Avatar screen-left
+- face right/left → Head yaw同方向
+- lean right/left → Head roll同方向
+- combined orientation → Headへ
+- YPR / Eye / Blink / Mouth / ExpressionはRoot translationへ混入しない
+
+Exit:
+H1 Product visual scope合格。
+Validator PASSでHuman FAILを上書きしない。
+
+----------------------------------------------------------------
+FR-20  Core Contract Closure
+状態: PENDING
+----------------------------------------------------------------
+
+目的:
+過去のclosed claimを無駄に再実行せず、残存open contractだけ閉じる。
+
+対象:
+- source / provenance
+- sample / frame identity
+- timestamp / generation / epoch
+- model semantic
+- canonical semantic
+- Root / Head / Eye / Mouth ownership
+- provider normalization / Resume / Switch
+- presentation owner
+- prediction owner
+- Texture / Crop / Mask / FacePart same-sample
+- restart / reacquire
+- backend / provider / model epoch transition
+- lifecycle / resource release
+
+Exit:
+duplicate / out-of-order / stale / mixed epoch publishなし。
+各authority ownerが一意または責務分離で説明可能。
+open boundaryがWindows Productへ逆流しない。
+
+----------------------------------------------------------------
+FR-21  Deterministic Regression / Golden Replay
+状態: PENDING
+----------------------------------------------------------------
+
+目的:
+閉じたCorrectnessを将来の変更から守り、毎version Full Runtimeを減らす。
+
+内容:
+- deterministic fixtures
+- semantic / identity / transaction replay
+- lifecycle replay where deterministic
+- bad behaviorをGolden化しない
+- fixture auto-update禁止
+- Runtime behaviorをGoldenへ昇格するのはRuntime PASS後
+- retired ownerのdiagnosticもretire候補
+
+Exit:
+重要contractがCI/Replayで再検証可能。
+Full Product RuntimeはMilestoneへ集約。
+
+----------------------------------------------------------------
+FR-22  Clean Performance / SLO / Quality Profiles
+状態: PENDING_AFTER_CORRECTNESS
+----------------------------------------------------------------
+
+目的:
+Correctness-qualified Productionをobserver-freeで測り、製品SLOを凍結する。
+
+計測:
+- Native source cadence
+- Canonical / Tracking cadence
+- display / output cadence
+- accepted source age
+- end-to-end visible latency
+- inference latency
+- CPU / GPU
+- allocation / GC
+- memory / VRAM
+- dropped / superseded behavior
+- restart / reacquire time
+- import / model switch responsiveness where relevant
+
+原則:
+- heavy observer runをPerformance Authorityにしない。
+- candidate比較前に可能な限りSLOをfreeze。
+- correctness-qualified backendだけ比較。
+- Speedだけでbackend採用しない。
+
+Quality Profile:
+候補はHigh Accuracy / Balanced / Performance等。
+変更可能:
+rendering quality、render FPS、preview、validated inference cadence、optional expensive tasks等。
+変更禁止:
+semantic acceptance、tracking correctness、transaction gate、authority/identity semantics。
+
+Exit:
+registered SLO合格。
+各Quality ProfileがCorrectnessを変えず、負荷と品質の範囲を説明可能。
+
+----------------------------------------------------------------
+FR-23  Avatar Contract Foundation
+状態: PENDING
+----------------------------------------------------------------
+
+目的:
+Tracking Coreをモデル固有処理から隔離したまま、多様なAvatarへFace semanticを接続する。
+
+内容:
+- Avatar Adapter
+- Model Profile
+- generic FacePart Binding
+- model/profile epoch
+- Root / Head / Eye / Mouth mapping
+- FacePartShapeMask / Visual Mask / Occluder
+- expression/blink mapping
+- model-specific gain / offset / scale
+
+禁止:
+Model ProfileでCanonicalを再normalizeしない。
+model-specific workaroundをTracking Coreへ逆流させない。
+
+Exit:
+default Kiwi modelと少なくとも代表的non-spherical profileでsame semantic contractが成立。
+
+----------------------------------------------------------------
+FR-24  Runtime Avatar Import / Non-Spherical AutoFit / Hot Swap / Spring
+状態: PENDING
+----------------------------------------------------------------
+
+目的:
+ユーザーが外部Avatarを安全に追加し、停止や壊れたstateなしに切替できるようにする。
+
+対応:
+- VRM 0.x
+- VRM 1.0
+- non-spherical model
+- generic model profile
+
+AutoFit authority:
+- Head
+- Neck
+- Eye bones
+- model forward
+- head bounds
+- model scale
+- profile hints
+
+AutoFit:
+- FaceAnchor
+- Eye
+- Mouth
+- FaceParts
+
+AutoFit失敗:
+manual Model Profile override。
+
+Transactional Hot Swap:
+load hidden candidate
+→ parse
+→ security/format validate
+→ humanoid/model validate
+→ Model Profile
+→ AutoFit
+→ expression setup
+→ Spring/Dangle setup
+→ Avatar Adapter bind
+→ transaction validation
+→ atomic active switch
+→ old model dispose
+
+失敗:
+old active modelを維持しrollback。
+
+Spring / Dangle:
+Avatar/Profile責務。
+tracking filterと混同しない。
+
+Exit:
+load failure、cancel、invalid model、resource不足でもactive AvatarとTracking Coreを壊さない。
+model/profile epochを跨ぐmixed publicationなし。
+
+----------------------------------------------------------------
+FR-25  Configuration / Calibration / User Tuning / Safe Mode
+状態: PENDING
+----------------------------------------------------------------
+
+目的:
+商用品質の設定永続化、復旧、ユーザー調整を提供する。
+
+Configuration hierarchy:
+Factory Default
+→ Global User Settings
+→ Device Profile
+→ Tracking Profile
+→ Model Profile
+→ Session Override
+
+保存:
+- atomic
+- schema version
+- migration
+- checksum/integrity where justified
+- backup
+- last-known-good
+- safe fallback
+
+Calibration:
+- neutral face
+- head neutral
+- face center
+- eye neutral
+- expression neutral
+- model placement
+
+User Tuning:
+- Head gain
+- Root gain
+- Eye gain
+- Blink sensitivity
+- Mouth sensitivity
+- rest stability
+- dropout behavior
+- model-specific FacePart scale/offset等
+
+重要:
+User tuningとinternal correctness stabilizationを分離。
+設定でbugを隠さない。
+
+Safe Mode:
+- known-good model
+- custom autoload off
+- optional adapter off
+- safe graphics/profile
+- diagnostics/config recovery
+等を必要に応じ使用。
+
+Exit:
+corrupt config / migration failure / startup failureから安全に復旧。
+ユーザー調整がCorrectness Authorityを変更しない。
+
+----------------------------------------------------------------
+FR-26  Product UI / Diagnostics / Security / Privacy / Outputs
+状態: PENDING
+----------------------------------------------------------------
+
+目的:
+最終ユーザーがモデル、Camera、状態、設定、Output、障害を安全・予測可能に扱えるようにする。
+
+UI:
+- Model Browser
+- Camera / Provider state
+- Calibration / Profile
+- Quality Profile
+- model import / progress / cancel
+- Health / Diagnostics
+- clear error / recovery
+- high-DPI / resize / multi-monitor
+- keyboard-accessible core UI
+- Accessibility
+- nonblocking progress
+
+Diagnostics:
+Camera FPS
+Tracking FPS
+Render FPS
+Source Age
+Backend
+Quality Profile
+Health
+必要最小限のsupport bundle。
+
+DiagnosticsはProduct authority ownerにならない。
+
+Import Security:
+- extension allowlist
+- actual format / magic validation
+- path traversal防止
+- generated storage filename
+- external path restriction
+- max file / texture / mesh / node/material等resource limits
+- memory budget
+- cancellation
+- parse isolation
+- atomic failure / rollback
+
+Privacy:
+- local processing境界
+- camera/model dataの扱い
+- diagnostic/support bundleの明示
+- telemetry uploadはWindows core blockerにしない
+
+Output:
+- LIVE CAMERA
+- DX12 Spout
+- OBS
+- output lifecycle/recovery
+
+Exit:
+secure import、clear UX、Output smoke、privacy boundaryが合格。
+
+----------------------------------------------------------------
+FR-27  Reliability / Lifecycle / Compatibility
+状態: PENDING
+----------------------------------------------------------------
+
+目的:
+実運用で壊れないWindows Productionにする。
+
+scenario:
+- startup / shutdown
+- camera restart
+- unplug / replug
+- no frame
+- short dropout
+- long Lost
+- Reacquire
+- provider resume / switch
+- backend switch/failure
+- model load/switch/failure
+- lane fault
+- Spout loss
+- generation / epoch transition
+- duplicate / stale / out-of-order
+- scene/app restart
+- long run / soak
+- memory/resource leak
+
+原則:
+一部subsystem faultで全体restartを強制しない。
+transitionごとにtrigger / timeout / epoch / valid output / recovery / user-visible state / diagnostic codeを定義する。
+
+Compatibility:
+representative Windows GPU / driver / display / camera Support Matrix。
+主要DPI / multi-monitor条件。
+
+Exit:
+Soak / recovery / resource / Support Matrix合格。
+
+----------------------------------------------------------------
+FR-28  Final Same-Build Visual / Output Acceptance
+状態: PENDING
+----------------------------------------------------------------
+
+目的:
+自動validatorでは証明できない最終Product品質をHuman Authorityで閉じる。
+
+同一build Human Visual:
+- Root
+- Head
+- Eye
+- Blink
+- Mouth
+- Expression
+- FacePart
+- Crop / Mask / Clip
+- model placement / non-spherical
+- frontal stillness
+- normal / fast response
+- Lost / Reacquire
+- model hot swap
+- LIVE CAMERA
+- Spout / OBS
+
+原則:
+Human Visual FAILをlog PASSで上書きしない。
+
+Exit:
+最終Human Visual合格。
+
+----------------------------------------------------------------
+FR-29  Release Engineering / Distribution
+状態: PENDING
+----------------------------------------------------------------
+
+目的:
+再現可能でrollback可能なWindows配布物を完成する。
+
+内容:
+- dependency inventory
+- license
+- source/artifact provenance
+- SHA manifest
+- reproducible build information where achievable
+- signing where applicable
+- installer
+- upgrade
+- repair
+- uninstall
+- reinstall
+- rollback
+- release smoke
+- support bundle path
+- release notes / support matrix
+
+Native変更がある場合:
+source → build definition/toolchain/flags → artifact → installed SHA → Runtimeまで追跡。
+
+Exit:
+install / upgrade / repair / uninstall / rollback / clean launchが合格。
+
+----------------------------------------------------------------
+FR-30  Windows Production Acceptance
+状態: FINAL_WINDOWS_GATE
+----------------------------------------------------------------
+
+Definition of Done:
+
+A Camera
+stable / fresh / restart / liveness
+
+B Transaction
+sample / timestamp / generation / epoch
+
+C Semantic
+model / source / canonical semantics
+
+D Authority
+Root / Head / Eye / Mouth / provider / presentation / prediction
+
+E Tracking
+Near-Raw / direction correctness / YPR / Root / Eye / Blink / Mouth / Lost / Reacquire
+
+F FacePart
+same-sample / source rigid removal once / fitted surface / mask / clip / expression
+
+G Backend
+correctness-qualified / no mixed epoch
+
+H Regression
+deterministic protection
+
+I Avatar
+Adapter / Profile / VRM0/1 / non-spherical / AutoFit / manual fallback / Hot Swap / Spring
+
+J Config
+atomic / migration / backup / last-known-good / Safe Mode
+
+K Product UX
+Browser / Camera / Calibration / Tuning / Quality / Diagnostics / Accessibility
+
+L Security / Privacy
+secure import / trust boundary / privacy UX
+
+M Output
+LIVE CAMERA / Spout / OBS
+
+N Reliability
+restart / recover / rollback / soak / leak
+
+O Performance
+registered SLO
+
+P Compatibility
+Support Matrix
+
+Q Distribution
+installer / provenance / signing where applicable / rollback
+
+R Visual
+same-build final Human Visual
+
+Exit:
+A〜Rを全閉鎖。
+この時点でのみWindows Production Acceptance。
+
+----------------------------------------------------------------
+FR-31  Android / iOS Preparation
+状態: DEFERRED_UNTIL_WINDOWS_ACCEPTANCE
+----------------------------------------------------------------
+
+Android:
+- Runtime Import
+- camera / permission
+- storage
+- pause / resume
+- memory fallback
+- rendering profile
+- mobile Support Matrix
+
+iOS:
+- implementation
+- static validation
+- Unity / Xcode preparation
+- 現要求では実機testをWindows製品完成条件にもiOS準備完了条件にも必須化しない
+
+原則:
+Mobile都合でWindows Tracking Coreを壊さない。
+
+================================================================
+7. Optional / Windows coreをblockしない
+================================================================
+
+- Hand / Body
+- OSC / VMC
+- mocopi等optional provider
+- telemetry upload
+- auto update
+- optional neural visual effects
+- ecosystem adapter
+
+追加条件:
+必要性 / Authority / latency / lifecycle / resource / security / privacy Evidenceを閉じる。
+Face channelとは独立task/channelとしてfault isolationする。
+
+================================================================
+8. Validationを増やしすぎないためのGate
+================================================================
+
+Gate 1: Change-Local
+対象変更だけ。
+source/SHA、compile、owner、contract、lifecycle/resource、local claim。
+
+Gate 2: Contract / Replay
+boundary節目。
+semantic、identity、timestamp、transaction、authority、lifecycle、recovery。
+
+Gate 3: Milestone Full Product
+主要milestoneだけ。
+same-build Runtime、clean performance、Human Visual、LIVE CAMERA / Spout / OBS、compatibility。
+
+禁止:
+- Staticで閉じるclaimのRuntime化
+- 毎version Full Human Visual
+- 同claimの多重observer
+- superseded diagnostic常時実行
+- bad behaviorをGolden化
+- observer-heavy runをPerformance Authority化
+
+================================================================
+9. Historical Decision Ledger
+================================================================
+
+RETAIN:
+- Face Landmarker Primary / Source of Truth
+- Path B SystemMemoryNV12
+- latest / bounded / nonblocking
+- fixed visible texture identity
+- session epoch != frame sequence
+- freshness / liveness / source age分離
+- Root / Head / Eye / Mouth分離
+- Head single rigid authority
+- Provider normalization owner 1
+- Resume != Provider Switch
+- Temporal Presentation owner 1/channel
+- Prediction owner 1/channel
+- Texture / Crop / Mask / FacePart same-sample
+- Human-head source rigid removal exactly once
+- P3C_1 scoped PASS
+- P3D scoped PASS
+- H1 frame identity repair scoped PASS
+- selective external reuse
+- Windows PowerShell 5.1 safety foundation
+- validation reduction without quality loss
+
+REJECT / DO NOT RE-PROMOTE:
+- Human Visual瞬間Space markerをcontinuous jitter相関へ再利用
+- FIFO / stale queue
+- permanent one-frame buffer
+- strong smoothing / Kalman as defect mask
+- stale prediction
+- threshold relaxation without evidence
+- UpdateExternalTexture workaround
+- IMFSample cross-callback retention
+- blocking D3D12 queue Wait
+- rotating Unity-visible texture
+- D3D11On12 1080p Production
+- CommandBuffer form alone as root cause
+- speculative Fence / flush / async disable
+- stale MediaPipe pose reused for new sample
+- custom FaceGeometry solver without need
+- duplicate Face Landmarker inference
+- main-thread blocking poller
+- external tracker Primary
+- Neural Primary
+- CPU/OpenCV regression without evidence
+- Big-Bang rewrite
+- performance before correctness
+- old Next Action / old SHA re-promotion
+
+SUPERSEDED EXAMPLES:
+- old Native 13〜20Hz state → later Path B baseline
+- Sep4 LIVE CAMERA scope-limited acceptance → Sep6 product-quality reopening
+- P3C initial full static PASS → lifecycle issue → P3C_1 repair
+- P2C B10 initial FAIL → official semantic correction → final PASS
+- v29 Execution Context-first Next → v31 Product Human FAIL後 product-boundary-first
+- H1 visual unresolved → 2026-09-13 00:04:34 Human Visual FAIL
+
+================================================================
+10. Known historical coverage gaps
+================================================================
+
+旧MASTERが示した既知gap:
+- 画質経路監査の専用ChatReportが不足
+- Native v19 → Path B transitionを一つにまとめた専用archiveが不足
+- v44.55.20〜23を一つにまとめたsequence archiveが不足
+
+扱い:
+HISTORICAL_DOCUMENTATION_GAP。
+既存current Evidenceを無視して再検証する理由にはしない。
+必要なclaimが再OPENした時だけ元Evidenceへ戻る。
+
+================================================================
+11. Current single Next Action
+================================================================
+
+SAME_ARTIFACT_NEUTRAL_STILLNESS_CONTINUOUS_WINDOW_FIRST_BOUNDARY_LOCALIZATION
+
+同一artifactを固定segmentで連続録画し、最優先 `NEUTRAL_STILLNESS_A` 全期間について
+authority → identity → timestamp/source age/liveness → provider/transition → Canonical pose → presentation consume/decision/commit → GeometrySnapshot identity
+の順で最初の連続性またはidentity/transaction failureだけを特定する。
+
+Human markerは使用しない。瞬間jump検出を要求しない。
+reject等は録画上の `HUMAN_VISUAL_UNSTABLE_WINDOW` と継続相関しない限り原因へ昇格しない。
+相関不能ならUNRESOLVEDとしてmeasurement designへ戻る。
+
+原因前に補償修正しない。
+
+================================================================
+12. Commit状態
+================================================================
+
+現在は原因boundary未特定のため、補償修正commitを作る段階ではない。
+
+FR-18でfirst proven boundaryの最小変更がStatic reviewを通り、
+次のlocal validationの再現可能な基準点を固定すべき時点になったら:
+
+「今がコミット適切時点」
+
+と明示する。
+
+commitはユーザー明示指示または当該作業での明示許可時のみ。
+pushはユーザー明示指示時のみ。
+
+================================================================
+13. Current source set / Supersede rule
+================================================================
+
+`D:\KiwiAvatarSystem\ProjectContext\Current\` のCurrent selector対象は3文書だけにする。
+
+1. KiwiAvatarSystem_CoreRules_20260913_GoalAligned_v9_ContentReaudit.txt
+2. KiwiAvatarSystem_FullRoadmap_20260913_GoalAligned_v2_CurrentIntegrated_ContentReaudit.txt
+3. KiwiAvatarSystem_CustomInstructions_20260913_GoalAligned_v9_CurrentIntegrated.txt
+
+本FullRoadmapが旧CurrentRoadmapの全責務を引き継ぐ。
+旧 `KiwiAvatarSystem_CurrentRoadmap_*` はCurrentから外し、historical storageへ移す。
+旧Roadmapを削除して歴史を消すのではなく、Current selectorから退役させる。
+
+AGENTS.mdはProject root固定でCurrent selector外。
+Current Selector運用、通常チャット運用規則、恒久REPORT/ZIP指示もCurrent selector外の運用文書。
+ChatReport / KiwiValidation / old integrated informationはHistorical Evidence。
+
+Current判断時の最小読み順:
+CoreRules
+→ FullRoadmapのCURRENT SNAPSHOT / Decision Ledger / Next
+→ latest relevant Consolidated REPORT / Runtime / Human Visual
+→ 必要なhistorical evidence
+
+全履歴を毎回再展開しないが、過去を再監査する場合はArchive titleだけでなくREPORT本文を読む。
+
+================================================================
+14. Evidence Index
+================================================================
+
+Current selector target after this revision:
+- KiwiAvatarSystem_CoreRules_20260913_GoalAligned_v9_ContentReaudit.txt
+- KiwiAvatarSystem_FullRoadmap_20260913_GoalAligned_v2_CurrentIntegrated_ContentReaudit.txt
+- KiwiAvatarSystem_CustomInstructions_20260913_GoalAligned_v9_CurrentIntegrated.txt
+
+Current selector / operating references outside Current:
+- KiwiAvatarSystem_情報源構成_CurrentSelector運用_20260913_v3_CurrentIntegrated.txt
+- 通常チャット運用管理規則_20260913_v3_CurrentIntegrated.txt
+- 通常チャット用_恒久REPORT_ZIP直接作成指示_20260913_v3_CurrentIntegrated.txt
+
+Superseded Current document:
+- KiwiAvatarSystem_CurrentRoadmap_* はCurrent selectorから外しHISTORICAL_ONLYへ移す。
+  内容は本FullRoadmapのCurrent sections / Decision Ledger / completion roadmapへ統合済み。
+
+Historical master:
+- KIWI_PROJECT_MASTER_REPORT.md
+- ChatReport folder archive inventory
+
+Key later evidence:
+- KiwiCodexConsolidatedReport_v44_55_29_Stage1Ready_20260904-213928
+- KiwiCodexConsolidatedReport_v44_55_31_MinimumPresenceBitsIdentityAudit_20260905-204437
+- KiwiCodexConsolidatedReport_AgentsCleanup_CleanProductImpact_RoadmapReaudit_20260906-024057
+- KiwiCodexConsolidatedReport_ProductFailureSpecification_SymptomBoundaryTriage_20260906-093659
+- KiwiAvatarSystem_最新統合情報_全面再監査確定版_0906_0854
+- KiwiAvatarSystem_最新統合情報_統合ロードマップ_R13_4_0909
+- P3C_1 / P3D Consolidated REPORTs
+- H1 Local Activation / SourceRigidSingleOwner / P3D-To-FacePart / FrameIdentity / Controlled Human Visual REPORTs
+
+Authority caution:
+これらのREPORT内HEAD/SHAはreport-time snapshot。
+current live-localを通常チャットが直接確認したものではない。

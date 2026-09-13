@@ -1,0 +1,485 @@
+KIWI_H1_CLAIM_SCOPED_COMPILE_WARNING_DELTA_RESOLUTION_ONLY
+Consolidated local report
+Report time: 2026-09-13 06:03:23 JST
+
+================================================================
+0. RESULT
+================================================================
+
+RESULT_CLASSIFICATION=2.WARNING_BASELINE_SCOPE_NOT_EQUIVALENT
+WARNING_BASELINE_AUTHORITY=RESOLVED
+WARNING_DELTA_REAL_SAME_SCOPE=NOT_PROVEN_AND_COMPARISON_INVALID
+WARNING_DELTA_ATTRIBUTION=COMPLETE
+RAW_WARNING_INCREASE_GATE_MEASUREMENT=INVALID
+OBSERVER_CANDIDATE_REGRESSION_WARNING=NOT_FOUND
+REPRODUCTION_COMPILE=NOT_RUN_NOT_REQUIRED
+ARTIFACT_BUILD=NOT_RUN
+RUNTIME=NOT_RUN
+HUMAN_VISUAL=NOT_RUN
+PRODUCT_CAUSE_INFERENCE=NOT_PERFORMED
+PRODUCT_SOURCE_WRITE=NONE
+OBSERVER_SOURCE_WRITE=NONE
+CURRENT_ROADMAP_WRITE=NONE
+COMMIT=NOT_PERFORMED
+PUSH=NOT_PERFORMED
+
+結論:
+  37 occurrences / 19 raw-text unique と 40 occurrences / 20 raw-text
+  unique は、同一compilation-unit scopeの比較ではない。
+
+  baselineはAssembly-CSharp.dllだけがCscされた。
+  currentはAssembly-CSharp.dllに加えてAssembly-CSharp-Editor.dllもCscされた。
+
+  raw増分3件はすべて追加されたEditor compilation unitで説明される。
+  1. CS8785 AttributeBasedFieldGenerator compiler emission: +1
+  2. P3FaceGeometryDiagnostic.cs CS0618 compiler emission: +1
+  3. 同P3 CS0618のUnity summary echo: +1
+
+  current Observer sourceを指すwarningは0件。
+  Assembly-CSharp.dllのunit-scoped warning tupleは両runで完全一致した。
+  よって従来のraw warning increase Gate比較はmeasurementとして無効であり、
+  candidate regressionを証明しない。通常チャット再監査へ返す。
+  本taskではbuild / Runtimeへ進まない。
+
+================================================================
+1. AUTHORITY PREFLIGHT
+================================================================
+
+Project root:
+  D:\KiwiAvatarSystem
+
+ProjectVersion.txt:
+  m_EditorVersion: 6000.0.80f1
+  m_EditorVersionWithRevision: 6000.0.80f1 (2dfd32957da2)
+
+Exact Unity live local:
+  path:
+    C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe
+  ProductVersion: 6000.0.80f1_2dfd32957da2
+  FileVersion: 6000.0.80.3013938
+  SHA256:
+    7FC68434F4FCCF2781648C398FBAA4E8ADFB568251605E990D887FE36CF1376F
+
+Live-local Git identity:
+  branch: work/raw-direct-motion
+  HEAD: df75cfa9f6ae386bf4443272929d3cef33a8b138
+  report-time expected snapshot: MATCH
+
+Status:
+  DIRTY / USER_OWNED
+  既存のtracked modified/deletedとuntracked状態を保護した。
+  reset / checkout / clean / restoreは行っていない。
+
+Current context:
+  ProjectContext\Currentの7ファイルを列挙した。
+  Current selector authorityは次の3文書であることを確認した。
+  - KiwiAvatarSystem_CoreRules_20260913_GoalAligned_v9_ContentReaudit.txt
+  - KiwiAvatarSystem_FullRoadmap_20260913_GoalAligned_v2_CurrentIntegrated_ContentReaudit.txt
+  - KiwiAvatarSystem_CustomInstructions_20260913_GoalAligned_v9_CurrentIntegrated.txt
+  selector / operating referencesとSHA256SUMSも確認した。
+
+Observer live-local identity:
+  path:
+    D:\KiwiAvatarSystem\Assets\CodexTasks\H1_LandmarkerBoundary_20260913\KiwiH1LandmarkerBoundaryObserver.cs
+  expected SHA256:
+    CF6CD8185D039295C6C5B926391C9927164FF3D9152A2EA2D3649183064D7A65
+  observed before/after SHA256:
+    CF6CD8185D039295C6C5B926391C9927164FF3D9152A2EA2D3649183064D7A65
+  result: MATCH
+
+================================================================
+2. BASELINE / CURRENT LOG AUTHORITY
+================================================================
+
+Baseline log body:
+  path:
+    D:\KiwiAvatarSystem\KiwiValidation\H1_LandmarkerBoundary_Compile_Retry_20260913.log
+  SHA256:
+    4F943E285718034BFB118E81B19956819206C5D70A199370B24B86CB80FF28DC
+  log start:
+    2026-09-12T19:12:25Z / 2026-09-13 04:12:25 JST
+  file last-write:
+    2026-09-13T04:12:41.6317977+09:00
+  Unity:
+    6000.0.80f1 (2dfd32957da2), revision 3013938,
+    compiler version 193933523
+
+Baseline identity basis:
+  - 04:18:59 JSTの直前Consolidated REPORT本文が、このfileをobserver
+    measurement repair後のexact Unity compile logとしてpath + SHA256で指定する。
+  - 05:44:16 JSTのcurrent Consolidated REPORT本文が、37/19を
+    immediately preceding H1 observer compileとの比較値として指定する。
+  - 同日のH1 observer compile時系列は04:06:18、04:12:41、05:42:27であり、
+    current 05:42:27の直前compileはこの04:12:41 logだけである。
+  - KiwiValidation全体には別runの37/19 logも存在するため、数値だけでは
+    baselineを選んでいない。report本文、topic、時系列、path、SHAを併用した。
+
+Therefore:
+  WARNING_BASELINE_AUTHORITY=RESOLVED
+  baseline本文取得=PASS
+  37/19 runの一意特定=PASS
+
+Current log body:
+  path:
+    D:\KiwiAvatarSystem\KiwiValidation\H1_CommittedCanonicalCorrelation_Compile_20260913.log
+  SHA256:
+    9DF98D5F52D330C81EAFECDB7455F5C2CBA53BB60C990A34C715CA7903B60822
+  log start:
+    2026-09-12T20:42:03Z / 2026-09-13 05:42:03 JST
+  file last-write:
+    2026-09-13T05:42:27.0621318+09:00
+  Unity:
+    6000.0.80f1 (2dfd32957da2), revision 3013938,
+    compiler version 193933523
+
+================================================================
+3. EXACT UNITY / INVOCATION
+================================================================
+
+両logに記録されたchild invocation:
+  "C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe"
+    -batchmode
+    -nographics
+    -quit
+    -projectPath "D:\KiwiAvatarSystem"
+    -logFile "<run-specific log path>"
+
+差はrun固有の-logFile出力先だけ。
+current runは対応Consolidated REPORT本文にWindows PowerShell 5.1および
+Start-Process -Wait -PassThruが明記されている。baseline側のREPORT本文には
+wrapper表記がないため、baselineについて確認済みなのはlog本体に記録された
+上記Unity child invocationである。wrapperを推測しない。
+
+Unity child arguments: SAME_EXCEPT_LOGFILE_PATH
+Unity version/revision/compiler: SAME
+Project path: SAME
+Unity child invocation form: SAME
+
+PowerShell wrapper equality: UNVERIFIED_FOR_BASELINE / comparisonに不要
+
+ただしinvocationが同じでもBeeのincremental Csc target scopeは同じではない。
+
+================================================================
+4. COMPILATION-UNIT COMPARISON
+================================================================
+
+Baseline:
+  ScriptCompilation reason:
+    Assetdatabase observed changes in script compilation related files
+  Assembly-CSharp.dll Csc: YES
+  Assembly-CSharp-Editor.dll Csc: NO
+  Assembly-CSharp-Editor.dll ILPostProcess: YES
+  note:
+    ILPostProcess行は、このrunで同assemblyをCscした証拠ではない。
+
+Current:
+  ScriptCompilation reason:
+    Assetdatabase observed changes in script compilation related files
+  Assembly-CSharp.dll Csc: YES
+  Assembly-CSharp-Editor.dll Csc: YES
+  Assembly-CSharp-Editor.dll ILPostProcess: YES
+
+Compiler-emission counts by unit:
+  baseline Assembly-CSharp.dll:        19
+  baseline Assembly-CSharp-Editor.dll:  0
+  current  Assembly-CSharp.dll:        19
+  current  Assembly-CSharp-Editor.dll:  2
+
+Unit-scoped tuple result:
+  Assembly-CSharp.dll previous/current: IDENTICAL, 19/19
+  Assembly-CSharp-Editor.dll previous/current: NOT_COMPARABLE, 0/2
+
+CS8785 AttributeBasedFieldGenerator:
+  baseline Assembly-CSharp.dll: 1 compiler emission
+  baseline Assembly-CSharp-Editor.dll: not compiled / 0
+  current Assembly-CSharp.dll: 1 compiler emission
+  current Assembly-CSharp-Editor.dll: 1 compiler emission
+
+P3FaceGeometryDiagnostic.cs CS0618 GetProto:
+  baseline Assembly-CSharp-Editor.dll: not compiled / 0
+  current Assembly-CSharp-Editor.dll: 1 compiler emission
+  current Unity summary echo: 1
+
+Pre-existing proof:
+  current candidateより前のlog
+    D:\KiwiAvatarSystem\KiwiValidation\H1_LandmarkerBoundary_Compile_20260913.log
+  SHA256:
+    F29DF31278763CF3CB3A57868B472C996CA69A74FA9DC79D6C6D8FB5D5125D17
+  last-write:
+    2026-09-13T04:06:18.2801432+09:00
+  でもAssembly-CSharp-Editor.dllがCscされ、同一CS8785と同一P3 CS0618が
+  compiler emissionとして発生し、P3 CS0618がsummaryで再掲されている。
+  P3 sourceのlive hashは
+    D3D6A18EEFEDAB147B9640957D7667CE192FF6E9924C8DB6947451DC53101E18
+  で、LastWriteTimeは2026-09-09 16:32:02 JST。今回変更していない。
+
+================================================================
+5. NORMALIZATION RULE
+================================================================
+
+両logを同一規則で解析した。
+
+Compiler tuple:
+  (compilation unit,
+   normalized source path or empty,
+   source line or 0,
+   CS code,
+   normalized warning message)
+
+Raw-text unique identity:
+  (normalized source path or empty,
+   source line or 0,
+   CS code,
+   normalized warning message)
+
+Emission classification:
+  - Csc行からTundra success直前までをcompiler emissionとする。
+  - Tundra success後の同warning再掲をUnity summary echoとする。
+  - summary echoを新しいcompiler emissionへ数えない。
+  - ILPostProcessだけのassemblyをcompiled Csc unitへ数えない。
+
+================================================================
+6. NORMALIZED WARNING TABLE
+================================================================
+
+Count notation:
+  B-C = baseline compiler emission
+  B-E = baseline Unity summary echo
+  C-C = current compiler emission
+  C-E = current Unity summary echo
+
+No. | Unit / source:line | Code | Normalized message | B-C/B-E | C-C/C-E
+----|--------------------|------|--------------------|---------|--------
+1 | Assembly-CSharp.dll / no source | CS8785 | AttributeBasedFieldGenerator failed; IndexOutOfRangeException | 1/0 | 1/0
+2 | Assembly-CSharp-Editor.dll / no source | CS8785 | AttributeBasedFieldGenerator failed; IndexOutOfRangeException | 0/0 | 1/0
+3 | Assembly-CSharp-Editor.dll / Assets\CodexTasks\P3A_FaceGeometry_20260909_162449JST\Editor\P3FaceGeometryDiagnostic.cs:291 | CS0618 | PacketGetterExtension.GetProto<T>(Packet<T>, MessageParser<T>) is obsolete; Use Get instead | 0/0 | 1/1
+4 | Assembly-CSharp.dll / Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiCommercialQualityGovernor.cs:354 | CS0618 | Resolution.refreshRate is obsolete; use refreshRateRatio | 1/1 | 1/1
+5 | Assembly-CSharp.dll / Assets\Script\KiwiInferenceFaceTracker.cs:2267 | CS0168 | variable exception declared but never used | 1/1 | 1/1
+6 | Assembly-CSharp.dll / Assets\Script\FacePartAngleLock.cs:153 | CS0414 | debugCalibrated assigned but never used | 1/1 | 1/1
+7 | Assembly-CSharp.dll / Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiOrtDmlZeroCopyRuntime.cs:80 | CS0414 | _initializing assigned but never used | 1/1 | 1/1
+8 | Assembly-CSharp.dll / Assets\Script\KiwiInferenceFaceTracker.cs:286 | CS0414 | _severeLatencyCompletionStreak assigned but never used | 1/1 | 1/1
+9 | Assembly-CSharp.dll / Assets\KiwiAvatarSystem\Runtime\TrackingFoundation\KiwiTrackingProviderHub.cs:316 | CS0414 | debugCommercialFailoverDeferred assigned but never used | 1/1 | 1/1
+10 | Assembly-CSharp.dll / Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiFacePartRigidSampleFrame.cs:31 | CS0414 | debugOperational assigned but never used | 1/1 | 1/1
+11 | Assembly-CSharp.dll / Assets\Script\FacePartShapeMask.cs:406 | CS0414 | debugMouthCalibrated assigned but never used | 1/1 | 1/1
+12 | Assembly-CSharp.dll / Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiFacePartQualityCoordinator.cs:174 | CS0414 | debugFarEye assigned but never used | 1/1 | 1/1
+13 | Assembly-CSharp.dll / Assets\Script\KiwiInferenceFaceTracker.cs:284 | CS0414 | _lowLatencyCompletionStreak assigned but never used | 1/1 | 1/1
+14 | Assembly-CSharp.dll / Assets\Script\KiwiInferenceFaceTracker.cs:285 | CS0414 | _highLatencyCompletionStreak assigned but never used | 1/1 | 1/1
+15 | Assembly-CSharp.dll / Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiFacePartRigidCenterLock.cs:64 | CS0414 | debugRecoveredPreviousWrite assigned but never used | 1/1 | 1/1
+16 | Assembly-CSharp.dll / Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiFacePartRigidCenterLock.cs:55 | CS0414 | debugCalibrated assigned but never used | 1/1 | 1/1
+17 | Assembly-CSharp.dll / Assets\Script\KiwiInferenceFaceTracker.cs:287 | CS0414 | _recoveryLatencyCompletionStreak assigned but never used | 1/1 | 1/1
+18 | Assembly-CSharp.dll / Assets\Script\FacePartShapeMask.cs:381 | CS0414 | debugSelectedEye assigned but never used | 1/1 | 1/1
+19 | Assembly-CSharp.dll / Assets\Script\FacePartAngleLock.cs:158 | CS0414 | debugTrackedPart assigned but never used | 1/1 | 1/1
+20 | Assembly-CSharp.dll / Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiFacePartSharedTiltLock.cs:38 | CS0414 | debugCalibrated assigned but never used | 1/1 | 1/1
+21 | Assembly-CSharp.dll / Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiFacePartAnatomyGuard.cs:87 | CS0414 | debugRectsValid assigned but never used | 1/1 | 1/1
+
+Exact warning bodies are preserved in the two authoritative log bodies.
+The table shortens only repeated prose while retaining unit, source/line, code,
+and semantic message identity. Parser comparison used the complete messages.
+
+Current Observer source warning:
+  KiwiH1LandmarkerBoundaryObserver.csをsource pathに持つwarning = 0
+
+================================================================
+7. RAW OCCURRENCE / COMPILER EMISSION / ECHO RECONCILIATION
+================================================================
+
+Baseline:
+  compiler emissions: 19
+  Unity summary echoes: 18
+  raw occurrences: 19 + 18 = 37
+  raw-text unique: 19
+  unit-scoped compiler tuples: 19
+
+Current:
+  compiler emissions: 21
+  Unity summary echoes: 19
+  raw occurrences: 21 + 19 = 40
+  raw-text unique: 20
+  unit-scoped compiler tuples: 21
+
+Complete 37/19 -> 40/20 delta:
+  unchanged Assembly-CSharp.dll compiler tuple set: 19 -> 19, delta 0
+  unchanged Assembly-CSharp.dll summary echoes: 18 -> 18, delta 0
+  added Editor CS8785 compiler emission: 0 -> 1, raw delta +1,
+    raw-text unique delta 0 because same text already exists for Assembly-CSharp.dll
+  added Editor P3 CS0618 compiler emission: 0 -> 1, raw delta +1,
+    raw-text unique delta +1
+  added Editor P3 CS0618 summary echo: 0 -> 1, raw delta +1,
+    raw-text unique delta 0
+
+  total raw delta: +3
+  total raw-text unique delta: +1
+  unexplained delta: 0
+
+The generator warning is not summary-echoed in either run.
+The file-based C# warnings are summary-echoed once per compiler emission set.
+
+================================================================
+8. OBSERVER NON-INTERFERENCE / MEASUREMENT SEMANTICS
+================================================================
+
+Observer non-interference:
+  - Observer source SHA256 remained exactly the expected value.
+  - Product source was not written.
+  - Observer source was not written.
+  - No Unity compile, asset build, reimport, Runtime, or source touch was run.
+  - Existing logs and sources were read-only.
+  - This Consolidated REPORT is the only task-created artifact.
+
+Observer measurement semantics limitation:
+
+CANONICAL_ID_MISMATCH means only:
+  観測時のcurrent Canonical snapshot canonicalFrameIdが
+  committedCanonicalFrameIdと一致しなかった。
+
+It does not prove:
+  Productがwrong canonical frameをcommitしたこと。
+
+EXACT_CANONICAL_ID_MATCH alone means:
+  その観測でprovider metadataをcommitted Presentationへexact correlate
+  できた状態。
+
+previousPresentation* means:
+  GUI Repaintで捕捉された直前のdistinct Presentation observation。
+
+It is not proven to be:
+  actual transaction上のimmediately preceding commit。
+
+したがって本REPORTではpreviousPresentation*をactual transaction上の
+immediately preceding commitとは表現しない。
+
+================================================================
+9. RESULT CLASSIFICATION
+================================================================
+
+Primary classification:
+  2. WARNING_BASELINE_SCOPE_NOT_EQUIVALENT
+
+Proven facts:
+  - exact Unity / child invocationはlog path以外同じ。
+  - Csc compilation-unit scopeは同じでない。
+  - Assembly-CSharp.dllのwarning tupleは同一。
+  - 増分はEditor unitのpre-existing warningとsummary echoだけで完全説明可能。
+  - candidate Observer sourceを指すwarningはない。
+
+Consequence:
+  37/19と40/20のraw count比較はcandidate regression Gateとして無効。
+  Compile Warning Gateをsame-scope regression FAILとして維持する根拠にはならない。
+  ただしCodex自身ではcandidateをbuild / Runtimeへ昇格しない。
+  通常チャットの独立再監査へ返す。
+
+================================================================
+10. PROJECT-WIDE BLOCKER / TASK-LOCAL BLOCKER
+================================================================
+
+Project-wide Current First Blocker remains unchanged:
+  LANDMARKER_JUMP_FIRST_CAUSAL_BOUNDARY_NOT_LOCALIZED
+
+Task-local blocker:
+  compile-warning baseline / scope Authority
+
+Task-local result:
+  RESOLVED_AS_SCOPE_NOT_EQUIVALENT
+
+本taskはProject-wide blockerを変更せず、Landmarker飛び原因を推定・確定しない。
+FullRoadmap / Current文書は書き換えていない。
+
+================================================================
+11. FULL_AUDIT_1 — FORWARD COMPLETE SCOPE
+================================================================
+
+FULL_AUDIT_1=PASS
+
+Independent order:
+  Authority
+  -> baseline identity
+  -> current identity
+  -> invocation
+  -> compilation scope
+  -> warning normalization
+  -> warning delta attribution
+  -> Observer non-interference
+  -> result classification
+
+Audit result:
+  - live root/version/Unity/Git/dirty/Observer identity: PASS
+  - baseline body/path/SHA/timestamp/run uniqueness: PASS
+  - current body/path/SHA/timestamp: PASS
+  - invocation equality except log destination: PASS
+  - compilation-unit equivalence: FAIL / proven non-equivalent
+  - same-unit Assembly-CSharp.dll tuple equality: PASS
+  - raw/compiler/echo reconciliation: PASS
+  - all +3 raw and +1 raw-text-unique deltas attributed: PASS
+  - Observer/Product non-interference: PASS
+  - classification 2: PASS
+
+Unresolved material disagreement: NONE
+
+================================================================
+12. FULL_AUDIT_2 — REVERSE COMPLETE SCOPE
+================================================================
+
+FULL_AUDIT_2=PASS
+
+Independent reverse order:
+  result classification
+  -> warning delta attribution
+  -> normalized warnings
+  -> compilation scope
+  -> invocation
+  -> current identity
+  -> baseline identity
+  -> Authority
+  -> Observer non-interference
+
+Independent method:
+  Tundra success位置をboundaryとしてlog末尾側のUnity echoから逆に分離し、
+  Csc行を直接列挙してassembly scopeを再構成した。forward parserの集計値を
+  conclusion authorityとして使用しなかった。
+
+Reverse result:
+  - current 40 = 21 compiler + 19 echo: PASS
+  - baseline 37 = 19 compiler + 18 echo: PASS
+  - current Csc units = runtime + editor: PASS
+  - baseline Csc units = runtime only: PASS
+  - delta lines = Editor CS8785 x1 + Editor P3 CS0618 x2: PASS
+  - prior 04:06 logでsame Editor warnings pre-exist: PASS
+  - current/baseline path/SHA/report-chain Authority: PASS
+  - live Authority and protected Observer hash: PASS
+  - classification 2: PASS
+
+FULL_AUDIT_1 / FULL_AUDIT_2 disagreement:
+  NONE
+
+================================================================
+13. UNRESOLVED / NOT CLAIMED
+================================================================
+
+Unresolved but non-blocking for this task result:
+  - Beeがbaseline runでAssembly-CSharp-Editor.dllのCscを省略し、current runで
+    実行したincremental schedulingの内部trigger自体は特定していない。
+    logはscope差を直接証明しており、原因推定は本taskに不要。
+  - CS8785 root causeは調査・修正していない。
+  - P3FaceGeometryDiagnostic.cs CS0618 root causeは調査・修正していない。
+
+Not claimed:
+  - warning-free compile
+  - artifact correctness
+  - Runtime correctness
+  - Human Visual improvement
+  - Product Landmarker jump cause
+  - Performance Authority
+  - Final Product / Windows Acceptance
+
+================================================================
+14. NEXT / STOP
+================================================================
+
+NEXT:
+  通常チャットで本REPORTと両authoritative log本文を独立再監査し、
+  raw warning increase Gateを同一compilation-unit比較ではなかったmeasurement
+  として扱うか判断する。
+
+STOP:
+  本task終了時点でbuild / IL inspection / Runtime / Human Visualへ進まない。
+  Product/Observer/Current文書変更、warning抑制、原因修正、commit、pushを行わない。

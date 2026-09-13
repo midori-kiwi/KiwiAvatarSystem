@@ -542,12 +542,64 @@ public class FacePartCropper : MonoBehaviour
                     this,
                     timestamp);
 
+        KiwiFaceGeometryTransactionService.AcceptedSnapshot
+            geometrySnapshot = default;
+        ulong geometryCanonicalFrameId = 0UL;
+
+        // The FacePart appearance transaction may advance only with the
+        // accepted P3D pose from the exact same sample. A newer/older pose,
+        // frameId-only match, or mixed generation holds Texture+Crop+Mask.
+        bool geometrySnapshotIdentityReady =
+            !hasNewLandmarks ||
+            (runner != null &&
+             runner.TryGetFacePartGeometrySnapshot(
+                 timestamp,
+                 out geometrySnapshot,
+                 out geometryCanonicalFrameId));
+
+        bool rigidSampleIdentityReady =
+            !hasNewLandmarks ||
+            (geometrySnapshotIdentityReady &&
+             KiwiFacePartRigidSampleFrame.
+                 CanCommitSemanticTransaction(
+                     this,
+                     timestamp,
+                     geometryCanonicalFrameId,
+                     geometrySnapshot));
+
+        bool geometryTextureIdentityReady =
+            geometrySnapshotIdentityReady &&
+            rigidSampleIdentityReady;
+
         bool semanticSampleFresh =
             !hasNewLandmarks ||
             (semanticTextureReady &&
+             geometryTextureIdentityReady &&
              KiwiCommercialFacePartPolicy.IsSemanticSampleAdoptable(
                  runner,
                  timestamp));
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        if (hasNewLandmarks)
+        {
+            bool semanticFreshnessEvaluated =
+                semanticTextureReady &&
+                geometryTextureIdentityReady;
+
+            KiwiFacePartTextureTransaction.ObserveCandidateDecision(
+                timestamp,
+                hasFace,
+                _landmarkBuffer != null && landmarkCount > 0,
+                semanticTextureReady,
+                geometrySnapshotIdentityReady,
+                rigidSampleIdentityReady,
+                semanticFreshnessEvaluated,
+                semanticSampleFresh,
+                semanticFreshnessEvaluated
+                    ? KiwiCommercialFacePartPolicy.LastSemanticSourceAgeMs
+                    : -1f);
+        }
+#endif
 
         if (
             hasFace &&
@@ -570,7 +622,9 @@ public class FacePartCropper : MonoBehaviour
 
             ProcessSample(
                 landmarkCount,
-                timestamp
+                timestamp,
+                geometrySnapshot,
+                geometryCanonicalFrameId
             );
 
 
@@ -641,7 +695,10 @@ public class FacePartCropper : MonoBehaviour
 
     private void ProcessSample(
         int landmarkCount,
-        long timestamp)
+        long timestamp,
+        KiwiFaceGeometryTransactionService.AcceptedSnapshot
+            geometrySnapshot,
+        ulong geometryCanonicalFrameId)
     {
         float sourceAspect =
             sourceImage.texture.width /
@@ -788,7 +845,19 @@ public class FacePartCropper : MonoBehaviour
             timestamp,
             outputLeftEyeAccepted,
             outputRightEyeAccepted,
-            mouthOK);
+            mouthOK,
+            out bool leftEyeAdvanced,
+            out bool rightEyeAdvanced,
+            out bool mouthAdvanced);
+
+        KiwiFacePartRigidSampleFrame.CommitSemanticTransaction(
+            this,
+            timestamp,
+            geometryCanonicalFrameId,
+            geometrySnapshot,
+            leftEyeAdvanced,
+            rightEyeAdvanced,
+            mouthAdvanced);
 
         if (swapEyes)
         {

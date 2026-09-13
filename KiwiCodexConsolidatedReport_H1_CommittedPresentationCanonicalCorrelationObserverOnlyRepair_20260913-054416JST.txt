@@ -1,0 +1,318 @@
+KIWI_H1_COMMITTED_PRESENTATION_CANONICAL_CORRELATION_OBSERVER_ONLY_REPAIR
+Consolidated local report
+Report time: 2026-09-13 05:44:16 JST
+
+RESULT
+TASK_RESULT=FAIL_CLOSED_AT_COMPILE_WARNING_INCREASE
+OBSERVER_CANDIDATE_STATIC_RESULT=PASS
+EXACT_UNITY_COMPILE_EXIT_CODE=0
+COMPILE_WARNING_GATE=FAIL
+NEW_ARTIFACT_BUILD=NOT_RUN
+CONTROLLED_RUNTIME=NOT_RUN
+PRODUCT_CHANGE=NONE
+COMMIT=NOT_PERFORMED
+PUSH=NOT_PERFORMED
+CURRENT_ROADMAP_WRITE=NOT_PERFORMED
+
+1. AUTHORITY PREFLIGHT
+
+ProjectRoot:
+  D:\KiwiAvatarSystem
+
+ProjectVersion.txt:
+  m_EditorVersion: 6000.0.80f1
+  m_EditorVersionWithRevision: 6000.0.80f1 (2dfd32957da2)
+
+Exact Unity:
+  path: C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe
+  ProductVersion: 6000.0.80f1_2dfd32957da2
+  FileVersion: 6000.0.80.3013938
+  SHA256: 7FC68434F4FCCF2781648C398FBAA4E8ADFB568251605E990D887FE36CF1376F
+
+Live local Git identity before change and after compile:
+  branch: work/raw-direct-motion
+  HEAD: df75cfa9f6ae386bf4443272929d3cef33a8b138
+  expected report-time snapshot: MATCH
+
+Dirty protection:
+  DIRTY. The pre-existing modified/deleted/untracked state was treated as
+  user-owned. No reset, checkout, clean, restore, commit, push, or unrelated
+  overwrite was performed. The tracked status set remained the same across
+  this task. The only task source written was the already-untracked observer
+  named below; this report is the only additional task artifact.
+
+Current context:
+  All seven files in ProjectContext\Current were enumerated. CoreRules,
+  FullRoadmap, CustomInstructions, selector/operating references, and checksum
+  evidence affecting Authority, Current, Rejected/Superseded, Open, and Next
+  were read. The latest relevant Consolidated REPORT body was also read:
+  KiwiCodexConsolidatedReport_H1_RightSideLandmarkerCadenceVsRawResult_FirstBoundary_20260913-041859JST.txt
+
+Current Human Visual Authority remains:
+  2026-09-13 00:04:34 JST same-build H1 Human Visual FAIL.
+  This observer-only task does not overwrite that judgment.
+
+2. BEFORE / CANDIDATE / AFTER IDENTITY
+
+Changed task source:
+  Assets\CodexTasks\H1_LandmarkerBoundary_20260913\KiwiH1LandmarkerBoundaryObserver.cs
+
+Before SHA256:
+  1F0C7AAC53896CD159DF51D0A524154A9BF11A1EA0D048D41BFDC4DBFE8ED4CC
+  This exactly matched the previously reported observer SHA256.
+
+Candidate SHA256:
+  CF6CD8185D039295C6C5B926391C9927164FF3D9152A2EA2D3649183064D7A65
+
+After-compile SHA256:
+  CF6CD8185D039295C6C5B926391C9927164FF3D9152A2EA2D3649183064D7A65
+
+Exact task-written source files:
+  Assets\CodexTasks\H1_LandmarkerBoundary_20260913\KiwiH1LandmarkerBoundaryObserver.cs
+
+Product source written by this task:
+  NONE
+
+Relevant protected Product/current source SHA256 after compile:
+  KiwiFacePartRigidSampleFrame.cs
+    6303C20D8AD0A045F067A2CB2DF118847339B2514B03785C14CF30377A07A5A8
+  KiwiFacePartTextureTransaction.cs
+    F60E80C545A41B64416EBD3E594DDCE3A99527C62F3951BF87B584326EE45365
+  KiwiFaceGeometryTransactionService.cs
+    33E945AC30D1856E57D484CD042CB70DB90775F48A2CC694724F7B119A1EE2DA
+  KiwiCanonicalTrackingFrame.cs
+    458FF33E98E054B766F20EB17CE6BDD242C9AD9FD6E73AF53D60BD3961822AFA
+  KiwiTrackingNormalizationContract.cs
+    B98CCBEBDA1969508D421B54F3A0D480B79434C996974B45D3F2EFEB45146BF5
+  FaceLandmarkerRunner.cs
+    4D1804459FAC66132ADC21258ED371013969C12C1C491970790FC79C2EA64A56
+  FacePartCropper.cs
+    D71064E1E7356F08835BC49AC74A225603CC0DBA287BA19AAB933AA91F5E3DAD
+  KiwiFrameComparisonOverlay.cs
+    6DF8CCC9B47A0E2E9BFF4807B4D7CAB4AB11911992A4624EF7A8E40436F39EDD
+
+3. CURRENT SOURCE CONTRACT / ID DOMAINS
+
+A. Commit API:
+  KiwiFacePartTextureTransaction.TryGetLastCommittedPresentationFrame returns
+  the committed texture, committed semanticTimestamp, and committed
+  canonicalFrameId from the latest valid committed slot.
+
+B. Canonical API:
+  KiwiCanonicalTrackingFrame.TryGetFrame(out KiwiTrackingFrame) exposes
+  canonicalFrameId, providerId, rigid.backend, and
+  normalization.providerSourceFrameId. It returns true only for a valid frame
+  with valid rigid data.
+
+C. ID domains:
+  canonicalFrameId is assigned by KiwiCanonicalTrackingFrame's independent
+  _nextCanonicalFrameId counter when canonical identity changes.
+  providerSourceFrameId is carried in normalization metadata from the provider
+  source domain. They are not compared to each other and are not substituted.
+
+D. Existing observation point:
+  CapturePresentationEligibility, called on GUI repaint for the visible
+  MATCHED LANDMARK DEBUG path, was retained. The existing committed texture and
+  semantic-timestamp eligibility checks remain in place.
+
+4. MEASUREMENT CONTRACT / DIFF
+
+Minimal observer-only diff:
+  - Added one scalar PresentationObservation value type containing:
+      valid, observationHostTicks, committedSemanticTimestamp,
+      committedCanonicalFrameId, canonicalCorrelationStatus,
+      providerMetadataExactMatch, normalizationValid, providerId, backend,
+      providerSourceFrameId.
+  - Added exactly two scalar slots:
+      _latestCommittedPresentation
+      _previousCommittedPresentation
+  - Replaced the discarded commit canonicalFrameId (out _) with
+      out ulong committedCanonicalFrameId.
+  - In the same committed Presentation observation, called
+      KiwiCanonicalTrackingFrame.TryGetFrame(out frame)
+    exactly once.
+  - Added fail-closed correlation states:
+      NO_CANONICAL_SNAPSHOT
+      CANONICAL_ID_MISMATCH
+      EXACT_CANONICAL_ID_MATCH
+  - Provider metadata is copied only through the exact equality gate
+      frame.canonicalFrameId == committedCanonicalFrameId.
+    Mismatch/no-snapshot retains empty providerId, Unknown backend, zero source
+    frame ID, and providerMetadataExactMatch=false.
+  - When normalization is invalid on an exact canonical match,
+    normalizationValid=false is emitted and providerSourceFrameId remains the
+    zero sentinel; no value is inferred.
+  - Re-observing the same committedCanonicalFrameId plus
+    committedSemanticTimestamp returns without shifting. A distinct pair alone
+    performs previous=latest; latest=new.
+  - Appended latest/previous tuples to human_jump_markers.csv without deleting
+    or renaming any existing marker field.
+
+Static cardinality checks inside CapturePresentationEligibility:
+  TryGetLastCommittedPresentationFrame calls: 1
+  KiwiCanonicalTrackingFrame.TryGetFrame calls: 1
+  exact canonical equality gate: 1
+  latest-to-previous assignment: 1
+  Queue/ring/history collection: 0
+  blocking wait: 0
+
+Human marker meaning retained:
+  The marker timestamp means the time at which the human recognized a jump in
+  the right-side MATCHED LANDMARK DEBUG view and pressed Space. It is not
+  claimed to be the exact frame at which the visual jump began.
+
+5. NON-INTERFERENCE
+
+STATIC_NON_INTERFERENCE=PASS
+
+The observer remains DEVELOPMENT_BUILD/UNITY_EDITOR and environment gated.
+No Tracking, Provider, Presentation, generation, texture, Transform, inference,
+camera, cadence, backend, threshold, smoothing, prediction, or Product state is
+written. No queue, ring buffer, thread, permanent buffer, readback, or blocking
+wait was added. The committed Texture reference is only checked locally and is
+not retained.
+
+Not added:
+  providerSourceTimestamp, source age, arrival age, liveness decision,
+  providerGeneration, trackingSessionGeneration, provider transition analysis,
+  prediction, smoothing, thresholds, or tracking compensation.
+
+6. STATIC RESULT
+
+OBSERVER_CANDIDATE_STATIC_RESULT=PASS
+
+The candidate implements the requested committed-canonical correlation and
+latest/immediately-previous marker tuples without Product modification.
+
+7. EXACT UNITY COMPILE
+
+PowerShell host:
+  Windows PowerShell 5.1
+
+Invocation discipline:
+  Start-Process -Wait -PassThru
+
+Unity exit code:
+  0
+
+Compile log:
+  D:\KiwiAvatarSystem\KiwiValidation\H1_CommittedCanonicalCorrelation_Compile_20260913.log
+  SHA256: 9DF98D5F52D330C81EAFECDB7455F5C2CBA53BB60C990A34C715CA7903B60822
+
+Compiler errors:
+  0
+
+Warning comparison against the immediately preceding H1 observer compile:
+  previous warning occurrences: 37
+  current warning occurrences: 40
+  previous unique warning texts: 19
+  current unique warning texts: 20
+
+Increase details:
+  - Existing untouched tracked file
+      Assets\CodexTasks\P3A_FaceGeometry_20260909_162449JST\Editor\P3FaceGeometryDiagnostic.cs
+    emitted its pre-existing CS0618 PacketGetterExtension.GetProto warning twice.
+  - The pre-existing CS8785 AttributeBasedFieldGenerator warning was emitted one
+    additional time.
+  - No warning references KiwiH1LandmarkerBoundaryObserver.cs.
+
+Nevertheless, the task explicitly requires stopping on any compile warning
+increase. Therefore:
+  COMPILE_WARNING_GATE=FAIL
+  FAIL_CLOSED_REASON=COMPILE_WARNING_OCCURRENCE_AND_UNIQUE_SET_INCREASE
+
+8. FULL_AUDIT_1 — FORWARD
+
+FULL_AUDIT_1=FAIL
+
+Independent forward scope:
+  Authority -> current source -> commit API -> Canonical API -> ID domain ->
+  observer correlation -> latest/previous -> Human marker -> non-interference ->
+  compile.
+
+Forward conclusion:
+  Authority/source/API/ID-domain/correlation/latest-previous/marker and
+  non-interference checks pass statically. The complete audit fails at its final
+  compile warning-increase gate. It does not promote the candidate to a built or
+  Runtime-validated diagnostic.
+
+9. FULL_AUDIT_2 — REVERSE
+
+FULL_AUDIT_2=FAIL
+
+Independent reverse scope:
+  Human marker output -> stored latest/previous tuple -> exact equality gate ->
+  one Canonical snapshot -> commit API -> source identity -> Authority ->
+  non-interference -> compile.
+
+Reverse conclusion:
+  For each tuple, provider metadata can only originate from the exact same
+  canonicalFrameId as the committed Presentation; mismatch/no-snapshot cannot
+  leak current Canonical metadata into commit metadata. The two scalar slots and
+  distinct-pair shift are present and the legacy marker columns remain.
+  The complete audit independently fails at the compile warning-increase gate.
+
+AUDIT_DISAGREEMENT=NONE
+UNRESOLVED_AUDIT_DISAGREEMENT=NONE
+
+10. ARTIFACT / IL
+
+NEW_DEVELOPMENT_PLAYER_BUILD=NOT_RUN
+ARTIFACT_IL_INSPECTION=NOT_RUN
+
+Reason:
+  Build was prohibited after the compile warning-increase gate failed.
+
+Old artifact explicitly not reused:
+  H1_LandmarkerBoundary_Retry_20260913-041253
+
+Build path: NONE
+EXE SHA256: NONE
+UnityPlayer.dll SHA256: NONE
+Assembly-CSharp.dll SHA256: NONE
+globalgamemanagers SHA256: NONE
+build fingerprint: NONE
+
+11. CONTROLLED RUNTIME / HUMAN MARKER
+
+CONTROLLED_RUNTIME=NOT_RUN
+HUMAN_MARKER_RESULT=NOT_RUN
+HUMAN_VISUAL_AUTHORITY=UNCHANGED
+PERFORMANCE_AUTHORITY=NONE
+
+Latest committed Presentation tuple: NOT_AVAILABLE
+Immediately previous committed Presentation tuple: NOT_AVAILABLE
+Runtime correlation status: NOT_AVAILABLE
+
+No Product identity failure, observer miss, or measurement-blocker closure is
+claimed from an unbuilt candidate.
+
+12. UNRESOLVED / CURRENT FIRST BLOCKER
+
+Unresolved:
+  - compile warning-increase Gate;
+  - artifact/IL identity;
+  - controlled Runtime;
+  - Human marker latest/previous committed Presentation tuples;
+  - Runtime canonical correlation result;
+  - the Product first causal boundary of the Landmarker jump.
+
+Current First Blocker:
+  COMMITTED_CANONICAL_FRAME_ID_NOT_RETAINED_OR_COMPARED_BY_H1_OBSERVER
+
+Status:
+  STATIC_CANDIDATE_REPAIRED_BUT_NOT_COMPILE_GATE_ACCEPTED_OR_RUNTIME_VALIDATED
+
+13. NEXT SINGLE ACTION
+
+CLAIM_SCOPED_COMPILE_WARNING_DELTA_RESOLUTION_ONLY
+
+Establish whether the untouched P3A CS0618 emission and extra CS8785 occurrence
+are a reproducible pre-existing Unity compilation-scope effect under the same
+live source and exact Unity, without changing Product or the observer candidate.
+Only after the warning-increase Gate is resolved may this exact candidate be
+built, IL-inspected, and run for the Human marker correlation task.
+
+Do not proceed to Product repair, timestamp/source-age/liveness, provider
+transition, tracking tuning, Camera/Native/backend changes, performance, commit,
+push, or Current-roadmap modification in this task.

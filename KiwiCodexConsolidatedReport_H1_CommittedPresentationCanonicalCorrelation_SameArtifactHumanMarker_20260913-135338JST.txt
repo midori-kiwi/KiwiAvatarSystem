@@ -1,0 +1,535 @@
+KIWI_H1_COMMITTED_PRESENTATION_CANONICAL_CORRELATION_SAME_ARTIFACT_HUMAN_MARKER_ONE_RUN_ONLY
+Consolidated local report
+Report time: 2026-09-13 13:53:38 JST
+
+================================================================
+0. RESULT
+================================================================
+
+TASK_RESULT=MARKER_CAPTURED_EXACT_CORRELATION_AVAILABLE
+AUTHORITY_PREFLIGHT=PASS
+ARTIFACT_IDENTITY=PASS
+OBSERVER_IDENTITY=PASS
+LAUNCH_IDENTITY=PASS
+CONTROLLED_DX12_RUNTIME_EXECUTION=PASS
+RUNTIME_COUNT=1
+HUMAN_STATEMENT=JUMP_SEEN_AND_SPACE_PRESSED
+HUMAN_VISUAL_JUMP_MARKER_COUNT=3
+HUMAN_INPUT_CAPTURE_CONTRADICTION=NO
+EXACT_CORRELATION_AVAILABLE=YES
+HUMAN_OPERATION_SINGLE_PRESS_CONTRACT=NOT_SATISFIED_MARKER_COUNT_3
+PRODUCT_CAUSE_INFERENCE=NOT_PERFORMED
+PRODUCT_SOURCE_WRITE=NONE
+OBSERVER_SOURCE_WRITE=NONE
+CURRENT_CONTEXT_WRITE=NONE
+BUILD=NONE
+COMPILE=NONE
+COMMIT=NONE
+PUSH=NONE
+
+結論:
+  2026-09-13 13:05 JST runと完全に同一の既存Development Player artifactを使用し、
+  同じlaunch methodでcontrolled DX12 Runtimeを1回だけ実行した。
+
+  Human statementは JUMP_SEEN_AND_SPACE_PRESSED。
+  human_jump_markers.csvには3 data rowsがあり、全markerのlatest/previous
+  committed Presentation tupleは EXACT_CANONICAL_ID_MATCH かつ
+  providerMetadataExactMatch=true だった。したがって本taskのEvidence取得分類は
+  MARKER_CAPTURED_EXACT_CORRELATION_AVAILABLE とする。
+
+  これはHumanがSpaceを押した観察時点のexact correlation evidenceである。
+  visual jump開始frameそのもの、Productの正常、Human Visual PASS、Product原因、
+  first failing boundaryの確定は主張しない。
+
+  指示はSpace 1回だったがCSVには3 markerが記録された。
+  3回が同一eventの連打か別eventかはEvidence/Human statementから確定しない。
+  この操作契約逸脱を記録し、全marker rowを省略せず報告する。
+
+================================================================
+1. AUTHORITY PREFLIGHT
+================================================================
+
+Project:
+  D:\KiwiAvatarSystem
+
+ProjectVersion.txt:
+  m_EditorVersion: 6000.0.80f1
+  m_EditorVersionWithRevision: 6000.0.80f1 (2dfd32957da2)
+
+Exact Unity:
+  path:
+    C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe
+  ProductVersion: 6000.0.80f1_2dfd32957da2
+  FileVersion: 6000.0.80.3013938
+  SHA256:
+    7FC68434F4FCCF2781648C398FBAA4E8ADFB568251605E990D887FE36CF1376F
+
+Live-local Git identity before and after Runtime:
+  branch: work/raw-direct-motion
+  HEAD: df75cfa9f6ae386bf4443272929d3cef33a8b138
+  upstream: origin/work/raw-direct-motion
+  ahead/behind: +0/-0
+  report-time reference: MATCH
+
+Dirty state:
+  DIRTY / USER_OWNED
+  既存tracked modified/deletedおよびuntracked stateを保護した。
+  reset / checkout / clean / restore / stashは行っていない。
+  本taskが追加したのは新規Runtime Evidence directoryと本Consolidated REPORTだけ。
+
+Current selector:
+  ProjectContext\Currentの7 filesを列挙した。
+  CoreRules / FullRoadmap / CustomInstructionsをCurrent Authorityとして確認し、
+  selector/operating referencesおよびSHA256SUMSも確認した。
+  既知6文書のSHA256はCurrent SHA256SUMSと一致。
+  Current文書の変更はNONE。
+
+Protected source / Scene / ProjectSettings:
+  前回2026-09-13 13:09:14 JST Consolidated REPORTに記録されたhashと再照合し、
+  全件一致。unexpected changeなし。
+
+  KiwiFacePartRigidSampleFrame.cs
+    6303C20D8AD0A045F067A2CB2DF118847339B2514B03785C14CF30377A07A5A8
+  KiwiFacePartTextureTransaction.cs
+    F60E80C545A41B64416EBD3E594DDCE3A99527C62F3951BF87B584326EE45365
+  KiwiFaceGeometryTransactionService.cs
+    33E945AC30D1856E57D484CD042CB70DB90775F48A2CC694724F7B119A1EE2DA
+  KiwiCanonicalTrackingFrame.cs
+    458FF33E98E054B766F20EB17CE6BDD242C9AD9FD6E73AF53D60BD3961822AFA
+  KiwiTrackingProviderHub.cs
+    A5C7DE387FA2E02862BCF64942363AECFB9C7830B52DF5B8953404DF884ECCB1
+  FaceLandmarkerRunner.cs
+    4D1804459FAC66132ADC21258ED371013969C12C1C491970790FC79C2EA64A56
+  KiwiInferenceFaceTracker.cs
+    17F55087EFA7D42B14EF7453F35B0720EE79A23A64CB239391171C45241E3744
+  KiwiFaceMotion.cs
+    D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6
+  FacePartCropper.cs
+    D71064E1E7356F08835BC49AC74A225603CC0DBA287BA19AAB933AA91F5E3DAD
+  KiwiFrameComparisonOverlay.cs
+    6DF8CCC9B47A0E2E9BFF4807B4D7CAB4AB11911992A4624EF7A8E40436F39EDD
+  Assets/Scenes/Face Landmark Detection.unity
+    E9AA13257215C90829BCC04E63E4ED5F84F8965049B9F0AABC28418893E92409
+  ProjectSettings/ProjectSettings.asset
+    88CB3F68F275E1A7DCBF1FEA8C59D123F50743C6F93B0F861E1FD653865EC6AA
+
+================================================================
+2. SAME ARTIFACT / OBSERVER IDENTITY
+================================================================
+
+Build directory:
+  D:\KiwiAvatarSystem\Builds\H1_CommittedCanonicalCorrelation_20260913-130123
+
+Artifact SHA256 before and after Runtime:
+  KiwiAvatarSystem.exe
+    98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81
+  UnityPlayer.dll
+    A1C4F29041D783DF506E7C2892BC6AFA4ED45EF0D87AAFE0C7296BDC090681FC
+  Assembly-CSharp.dll
+    C0E2DD1313D6E3AA5913634C81A698B70CF5812242B37FB1719D26CFB0413965
+  Assembly-CSharp.pdb
+    A9F7219F374E4645FD74A6D097690973D1CE48746BC20232C1F0425E897AB439
+  globalgamemanagers
+    5E6B28021925368DC893BBCB6AD89DC586EE2D3531D6DC3585E676BDAFAFACE8
+
+Observer source:
+  D:\KiwiAvatarSystem\Assets\CodexTasks\H1_LandmarkerBoundary_20260913\KiwiH1LandmarkerBoundaryObserver.cs
+  SHA256:
+    CF6CD8185D039295C6C5B926391C9927164FF3D9152A2EA2D3649183064D7A65
+
+Identity result:
+  全required SHA256がexpectedと一致。
+  rebuild=NONE
+  compile=NONE
+
+================================================================
+3. LAUNCH / CONTROLLED RUNTIME IDENTITY
+================================================================
+
+前回local session evidenceからlaunch commandを直接取得し、Evidence output directory
+以外を同一にした。
+
+Environment:
+  KIWI_H1_BOUNDARY_RUNTIME=1
+  KIWI_H1_BOUNDARY_OUTPUT=
+    D:\KiwiAvatarSystem\KiwiValidation\H1_CommittedCanonicalCorrelation_SameArtifactHumanMarker_20260913-134855
+
+Executable:
+  D:\KiwiAvatarSystem\Builds\H1_CommittedCanonicalCorrelation_20260913-130123\KiwiAvatarSystem.exe
+
+Arguments:
+  -force-d3d12
+  -screen-fullscreen 0
+  -screen-width 1600
+  -screen-height 900
+  -logFile <new evidence directory>\Player.log
+
+Process method:
+  Start-Process -Wait -PassThru
+
+Runtime start:
+  2026-09-13T13:48:55.4297580+09:00
+Runtime end:
+  2026-09-13T13:50:44.6934339+09:00
+Player exit code:
+  0
+Runtime count:
+  1
+
+Runtime identity from summary.txt / Player.log:
+  UNITY_VERSION=6000.0.80f1
+  DEBUG_BUILD=1
+  GRAPHICS_API=Direct3D12
+  Player.log: Forcing GfxDevice: Direct3D 12
+  SCENE=Assets/Scenes/Face Landmark Detection.unity
+  DIAGNOSTIC_ONLY=1
+  OBSERVER_STORAGE=O1_LATEST_ONLY_NO_QUEUE
+  RIGHT_SIDE_VISIBLE_SINK=KiwiFrameComparisonOverlay.MATCHED_LANDMARK_DEBUG
+  PACKAGE_FACE_LANDMARKER_ANNOTATION_ACTIVE=0
+  PLAYER_CLOSED=YES
+
+Runtime Evidence directory:
+  D:\KiwiAvatarSystem\KiwiValidation\H1_CommittedCanonicalCorrelation_SameArtifactHumanMarker_20260913-134855
+
+Evidence SHA256:
+  aggregate_1hz.csv
+    0283FF80880F0890CEA442FB76FB2A5AFEE592450080745B5574ED42F010DC92
+  human_jump_markers.csv
+    5B8CF969FB043AE35F575521CEB457CEDD2C6D12584C2D6FBC2CB45A7E24FE3A
+  Player.log
+    28FB099C09CEDF8F325FEE6E5911BD7FEC322C707B469D47C001181995D66939
+  summary.txt
+    5B17B6F6BEFDFD56CE59F161BBA37DED21776B7A4EA4D06200F3521B039E3146
+
+Scope-out Runtime finding:
+  [KiwiSpoutV44_20] EntryPointNotFound: KiwiSpoutDiagGetPluginLoaded
+  が1件記録された。Playerは継続しexit code 0でAutoQuitした。
+  本taskでは原因調査・修正を行わない。
+
+================================================================
+4. HUMAN STATEMENT / MARKER VALIDATION
+================================================================
+
+Human statement:
+  JUMP_SEEN_AND_SPACE_PRESSED
+  「飛びを確認しSpaceを押した」
+
+Important scope:
+  Human marker時刻はHumanが飛びを認識してSpaceを押した時刻であり、
+  visual jump開始frameそのものとは主張しない。
+
+human_jump_markers.csv:
+  header: PRESENT
+  data row count: 3
+  SHA256:
+    5B8CF969FB043AE35F575521CEB457CEDD2C6D12584C2D6FBC2CB45A7E24FE3A
+
+Human=Aかつmarker>=1のためHUMAN_INPUT_CAPTURE_CONTRADICTION=NO。
+ただし1回だけのSpace指示に対して3 rowsであり、single-press contractは不成立。
+本taskで2回目Runtimeは行わない。
+
+CSV header and all data rows, verbatim:
+marker,phase,hostTicks,rawCount,handoffCount,consumeCount,presentationCount,rawAuxOnlyCount,rawPeakDelta,rawPeakTs,handoffPeakDelta,handoffPeakTs,consumePeakDelta,consumePeakTs,lastRawTs,lastRawFingerprint,lastHandoffTs,lastHandoffFingerprint,lastConsumeTs,lastConsumeFingerprint,lastConsumeProvider,lastConsumeBackend,lastPresentationTs,rawToConsumeAgeMs,latestPresentationValid,latestPresentationObservationHostTicks,latestPresentationCommittedSemanticTimestamp,latestPresentationCommittedCanonicalFrameId,latestPresentationCanonicalCorrelationStatus,latestPresentationProviderMetadataExactMatch,latestPresentationNormalizationValid,latestPresentationProviderId,latestPresentationBackend,latestPresentationProviderSourceFrameId,previousPresentationValid,previousPresentationObservationHostTicks,previousPresentationCommittedSemanticTimestamp,previousPresentationCommittedCanonicalFrameId,previousPresentationCanonicalCorrelationStatus,previousPresentationProviderMetadataExactMatch,previousPresentationNormalizationValid,previousPresentationProviderId,previousPresentationBackend,previousPresentationProviderSourceFrameId
+1,C_SLOW_PITCH_ROLL,683880472,530,287,1562,419,243,0.08274252712726593,62960,0.022677566856145859,1486,0.50406640768051147,48701,63370,15164374545965845425,62195,7648372161157739176,63554,11566935289834041398,"Runner/InferenceEngine","InferenceEngine",63457,10.65,1,682933777,63457,1625,"EXACT_CANONICAL_ID_MATCH",1,1,"Runner/InferenceEngine","InferenceEngine",1846,1,682647120,63428,1624,"EXACT_CANONICAL_ID_MATCH",1,1,"Runner/InferenceEngine","InferenceEngine",1845
+2,C_SLOW_PITCH_ROLL,782791343,619,347,1797,496,272,0.12041939795017242,64859,0.043900005519390106,71633,0.51786762475967407,65195,73444,9220896958591771872,73444,9220896958591771872,73387,15709480865798487197,"Runner/MediaPipe","MediaPipe",71542,9.6708,1,763717395,71542,1846,"EXACT_CANONICAL_ID_MATCH",1,1,"Runner/InferenceEngine","InferenceEngine",2082,1,762135454,71381,1839,"EXACT_CANONICAL_ID_MATCH",1,1,"Runner/InferenceEngine","InferenceEngine",2075
+3,D_NEUTRAL_REPEAT,901787699,731,422,2090,601,309,0.0579327829182148,78145,0.0579327829182148,78145,0.54132390022277832,82914,85216,18282026040426000516,84488,8830794979711200469,85332,5886750520276649563,"Runner/InferenceEngine","InferenceEngine",85332,12.2875,1,901560190,85332,2168,"EXACT_CANONICAL_ID_MATCH",1,1,"Runner/InferenceEngine","InferenceEngine",2419,1,901305442,85300,2167,"EXACT_CANONICAL_ID_MATCH",1,1,"Runner/InferenceEngine","InferenceEngine",2418
+
+================================================================
+5. EXACT PRESENTATION / CANONICAL CORRELATION
+================================================================
+
+Marker 1:
+  marker observation:
+    phase=C_SLOW_PITCH_ROLL
+    hostTicks=683880472
+    rawCount=530
+    handoffCount=287
+    consumeCount=1562
+    presentationCount=419
+    rawAuxOnlyCount=243
+    rawPeakDelta=0.08274252712726593
+    rawPeakTimestamp=62960
+    handoffPeakDelta=0.022677566856145859
+    handoffPeakTimestamp=1486
+    consumePeakDelta=0.50406640768051147
+    consumePeakTimestamp=48701
+    raw timestamp=63370
+    raw fingerprint=15164374545965845425
+    handoff timestamp=62195
+    handoff fingerprint=7648372161157739176
+    consume timestamp=63554
+    consume fingerprint=11566935289834041398
+    consume provider=Runner/InferenceEngine
+    consume backend=InferenceEngine
+    presentation timestamp=63457
+    rawToConsumeAgeMs=10.65
+  latest committed Presentation:
+    valid=true
+    observationHostTicks=682933777
+    committedSemanticTimestamp=63457
+    committedCanonicalFrameId=1625
+    canonicalCorrelationStatus=EXACT_CANONICAL_ID_MATCH
+    providerMetadataExactMatch=true
+    normalizationValid=true
+    providerId=Runner/InferenceEngine
+    backend=InferenceEngine
+    providerSourceFrameId=1846
+  previous committed Presentation:
+    valid=true
+    observationHostTicks=682647120
+    committedSemanticTimestamp=63428
+    committedCanonicalFrameId=1624
+    canonicalCorrelationStatus=EXACT_CANONICAL_ID_MATCH
+    providerMetadataExactMatch=true
+    normalizationValid=true
+    providerId=Runner/InferenceEngine
+    backend=InferenceEngine
+    providerSourceFrameId=1845
+  exact provider metadata evidence: YES
+
+Marker 2:
+  marker observation:
+    phase=C_SLOW_PITCH_ROLL
+    hostTicks=782791343
+    rawCount=619
+    handoffCount=347
+    consumeCount=1797
+    presentationCount=496
+    rawAuxOnlyCount=272
+    rawPeakDelta=0.12041939795017242
+    rawPeakTimestamp=64859
+    handoffPeakDelta=0.043900005519390106
+    handoffPeakTimestamp=71633
+    consumePeakDelta=0.51786762475967407
+    consumePeakTimestamp=65195
+    raw timestamp=73444
+    raw fingerprint=9220896958591771872
+    handoff timestamp=73444
+    handoff fingerprint=9220896958591771872
+    consume timestamp=73387
+    consume fingerprint=15709480865798487197
+    consume provider=Runner/MediaPipe
+    consume backend=MediaPipe
+    presentation timestamp=71542
+    rawToConsumeAgeMs=9.6708
+  latest committed Presentation:
+    valid=true
+    observationHostTicks=763717395
+    committedSemanticTimestamp=71542
+    committedCanonicalFrameId=1846
+    canonicalCorrelationStatus=EXACT_CANONICAL_ID_MATCH
+    providerMetadataExactMatch=true
+    normalizationValid=true
+    providerId=Runner/InferenceEngine
+    backend=InferenceEngine
+    providerSourceFrameId=2082
+  previous committed Presentation:
+    valid=true
+    observationHostTicks=762135454
+    committedSemanticTimestamp=71381
+    committedCanonicalFrameId=1839
+    canonicalCorrelationStatus=EXACT_CANONICAL_ID_MATCH
+    providerMetadataExactMatch=true
+    normalizationValid=true
+    providerId=Runner/InferenceEngine
+    backend=InferenceEngine
+    providerSourceFrameId=2075
+  exact provider metadata evidence: YES
+
+Marker 3:
+  marker observation:
+    phase=D_NEUTRAL_REPEAT
+    hostTicks=901787699
+    rawCount=731
+    handoffCount=422
+    consumeCount=2090
+    presentationCount=601
+    rawAuxOnlyCount=309
+    rawPeakDelta=0.0579327829182148
+    rawPeakTimestamp=78145
+    handoffPeakDelta=0.0579327829182148
+    handoffPeakTimestamp=78145
+    consumePeakDelta=0.54132390022277832
+    consumePeakTimestamp=82914
+    raw timestamp=85216
+    raw fingerprint=18282026040426000516
+    handoff timestamp=84488
+    handoff fingerprint=8830794979711200469
+    consume timestamp=85332
+    consume fingerprint=5886750520276649563
+    consume provider=Runner/InferenceEngine
+    consume backend=InferenceEngine
+    presentation timestamp=85332
+    rawToConsumeAgeMs=12.2875
+  latest committed Presentation:
+    valid=true
+    observationHostTicks=901560190
+    committedSemanticTimestamp=85332
+    committedCanonicalFrameId=2168
+    canonicalCorrelationStatus=EXACT_CANONICAL_ID_MATCH
+    providerMetadataExactMatch=true
+    normalizationValid=true
+    providerId=Runner/InferenceEngine
+    backend=InferenceEngine
+    providerSourceFrameId=2419
+  previous committed Presentation:
+    valid=true
+    observationHostTicks=901305442
+    committedSemanticTimestamp=85300
+    committedCanonicalFrameId=2167
+    canonicalCorrelationStatus=EXACT_CANONICAL_ID_MATCH
+    providerMetadataExactMatch=true
+    normalizationValid=true
+    providerId=Runner/InferenceEngine
+    backend=InferenceEngine
+    providerSourceFrameId=2418
+  exact provider metadata evidence: YES
+
+Correlation judgment:
+  3 markers x latest/previous = 6 tuplesすべてで
+  EXACT_CANONICAL_ID_MATCH and providerMetadataExactMatch=true。
+  したがって6 tuplesのprovider metadataはexact correlation evidenceとして扱える。
+
+Not inferred:
+  Marker 2のmarker時consume provider/backendとlatest committed Presentationの
+  provider/backendが異なる事実をProduct defectやjump原因へ昇格しない。
+  近傍aggregate、raw gap、result absent、handoff mismatchもHuman jump原因へ
+  自動対応付けしない。
+
+================================================================
+6. FULL_AUDIT_1 — FORWARD COMPLETE SCOPE
+================================================================
+
+FULL_AUDIT_1=PASS
+
+Independent forward order:
+  Authority
+  -> live identity
+  -> artifact identity
+  -> observer identity
+  -> launch identity
+  -> DX12 Runtime
+  -> Human statement
+  -> marker CSV
+  -> latest/previous Presentation tuple
+  -> Canonical correlation
+  -> result classification
+  -> no prohibited write/action
+
+Result:
+  ProjectVersion / Unity / branch / HEAD / upstream / ahead-behind PASS。
+  protected dirty stateを維持。
+  artifact 5 hashes、observer、Product source、Scene、ProjectSettings PASS。
+  前回launch methodとEvidence directory以外一致。
+  Development / Direct3D12 / Scene / diagnostic-only / O(1) / package annotation
+  inactive / visible sink / Player close / exit code 0 PASS。
+  Human=A、marker rows=3、CSV header+rows、6 Presentation tuplesを確認。
+  6 tuplesすべてexact correlation available。
+  Classification Aを独立導出。
+  build/compile/source/Observer/Scene/ProjectSettings/Current/commit/push/second Runtimeなし。
+
+Finding:
+  single Space指示に対しmarker count=3。操作契約逸脱として記録。
+  Human statementとmarker存在は矛盾しない。
+
+================================================================
+7. FULL_AUDIT_2 — REVERSE COMPLETE SCOPE
+================================================================
+
+FULL_AUDIT_2=PASS
+
+Independent reverse order:
+  result classification
+  -> exact correlation
+  -> Presentation tuples
+  -> marker raw rows
+  -> Human statement
+  -> Runtime exit/identity
+  -> launch method
+  -> artifact hashes
+  -> observer SHA
+  -> Git/Unity/Project Authority
+
+Result:
+  Human=A、marker>=1、latest/previous valid、6 exact status、6 exact metadataを
+  raw CSVから逆順に再確認しClassification Aを独立導出。
+  marker sequence 1..3、summary count=3、Player close、DX12、Development、Scene、
+  launch output path、artifact/observer hashes、Current hashes、Git/Unity Authority PASS。
+  prohibited actionなし。
+
+Finding:
+  single Space instructionに対する3 rowsを同じく記録。
+
+FULL_AUDIT_1 / FULL_AUDIT_2 disagreement:
+  NONE
+
+================================================================
+8. CLAIM BOUNDARY / CURRENT AUTHORITY
+================================================================
+
+This task establishes only:
+  - Humanがjumpを認識しSpaceを押した観察時点のmarkerが存在する。
+  - marker時点のlatest/previous committed PresentationとCanonicalについて、
+    exact Canonical ID correlationおよびexact provider metadataを取得できた。
+
+Not claimed:
+  - markerがvisual jump開始frameそのものであること
+  - Productが正常であること
+  - Product defectがないこと
+  - Canonical transactionがHuman jump原因であること
+  - marker 2のprovider differenceがHuman jump原因であること
+  - raw/handoff/consume/aggregate値がHuman jump原因であること
+  - Spout errorがHuman jump原因であること
+  - Human Visual PASS
+  - Performance Authority
+  - Final Product / Windows Acceptance
+
+Current Human Visual Authority unchanged:
+  2026-09-13 00:04:34 JST
+  H1_PRODUCT_HUMAN_VISUAL=FAIL remains unchanged.
+
+Current First Blocker treatment:
+  LANDMARKER_JUMP_FIRST_CAUSAL_BOUNDARY_NOT_LOCALIZED remains unchanged.
+  exact correlation Evidenceは取得したが、本taskはProduct cause inferenceを行わないため、
+  first failing boundaryは未確定のまま。
+
+================================================================
+9. WRITES / PROHIBITED ACTION AUDIT
+================================================================
+
+Product source write: NONE
+Observer source write: NONE
+Scene write: NONE
+ProjectSettings write: NONE
+Current context write: NONE
+Tracking tuning: NONE
+Smoothing / Kalman / threshold change: NONE
+Buffer / queue / prediction addition: NONE
+Camera / Native / backend / provider / presentation / Spout change: NONE
+Build: NONE
+Compile: NONE
+Runtime count: 1
+Second Runtime: NONE
+Commit: NONE
+Push: NONE
+Reset / checkout / clean / restore / stash: NONE
+Evidence ZIP duplication: NONE
+
+Expected writes only:
+  D:\KiwiAvatarSystem\KiwiValidation\H1_CommittedCanonicalCorrelation_SameArtifactHumanMarker_20260913-134855\
+  D:\KiwiAvatarSystem\KiwiCodexConsolidatedReport_H1_CommittedPresentationCanonicalCorrelation_SameArtifactHumanMarker_20260913-135338JST.txt
+
+================================================================
+10. NEXT / STOP
+================================================================
+
+NEXT:
+  本REPORTを通常チャットへ渡し、通常チャット側で独立再監査する。
+
+STOP:
+  Product原因修正へ進まない。
+  source / Observer / Current文書を変更しない。
+  2回目Runtimeを行わない。
+  tracking tuning、Camera/Native/backend/provider/presentation/Spout修正、
+  clean Performance、commit、pushへ進まない。
+

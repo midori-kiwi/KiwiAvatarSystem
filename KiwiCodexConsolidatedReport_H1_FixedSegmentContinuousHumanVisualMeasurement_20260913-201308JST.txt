@@ -1,0 +1,208 @@
+KiwiAvatarSystem Consolidated REPORT
+H1 Fixed-Segment Continuous Human Visual Measurement
+Report time: 2026-09-13 20:13:08 JST
+
+================================================================
+1. EXECUTIVE SUMMARY
+================================================================
+
+旧Human Visual方式「Avatarが不自然にjumpした瞬間にSpace」を廃止した。
+Human marker入力および human_jump_markers.csv はobserver sourceから除去した。
+
+新方式は同一artifactの連続録画をHuman Visual Authorityとし、diagnosticが
+以下の固定segment開始/終了をStopwatch host timestampで記録する。
+
+1. NEUTRAL_STILLNESS_A
+2. SLOW_YAW
+3. SLOW_PITCH
+4. SLOW_ROLL
+5. NEUTRAL_STILLNESS_B
+
+最優先scopeはNEUTRAL_STILLNESS_A。
+Human Visual上の継続jitter windowと、同期間のsource/sample identity、timestamp、
+source age、liveness、provider state/transition、Canonical frame/pose、
+Presentation consume/decision/commit、GeometrySnapshot identityを相関する。
+
+diagnostic-only。Production behavior変更なし。
+Exact Unity compile=PASS。
+Runtime録画/Human reviewは未実施。
+既存Human Visual FAILは維持し、first failing boundaryはUNRESOLVED。
+
+FULL_AUDIT_1=PASS
+FULL_AUDIT_2=PASS
+AUDIT_DISAGREEMENT=NO
+
+================================================================
+2. AUTHORITY / PREFLIGHT
+================================================================
+
+Project: D:\KiwiAvatarSystem
+Branch: work/raw-direct-motion
+HEAD: df75cfa9f6ae386bf4443272929d3cef33a8b138
+Unity: 6000.0.80f1 (2dfd32957da2)
+Exact Unity.exe:
+  C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe
+
+既存tracked/untracked dirty stateはuser-ownedとして保持した。
+reset / checkout / restore / clean / stash / commit / pushは実施していない。
+
+Visual Authority:
+  2026-09-13 00:04:34 JST same-build Human Visual FAILを維持。
+  本taskのobserver/compile結果でPASSへ変更していない。
+
+================================================================
+3. IMPLEMENTATION
+================================================================
+
+変更対象observer:
+  Assets\CodexTasks\H1_LandmarkerBoundary_20260913\
+  KiwiH1LandmarkerBoundaryObserver.cs
+
+変更内容:
+- Space / Human marker pathを除去。
+- segment_boundaries.csvを追加。
+  START/END、segment名、Stopwatch hostTicks、elapsed、UTCを記録。
+- segment_correlation.csvを追加。
+  Canonical/sample/pose、source/arrival clock、continuity、provider transition、
+  right-side consume、Presentation decision、committed tuple、GeometrySnapshot
+  predicate/pipeline stateを継続記録。
+- 固定schedule:
+  WARMUP 0-10秒
+  NEUTRAL_STILLNESS_A 10-30秒
+  SLOW_YAW 30-50秒
+  SLOW_PITCH 50-70秒
+  SLOW_ROLL 70-90秒
+  NEUTRAL_STILLNESS_B 90-105秒
+- MATCHED LANDMARK DEBUG WAIT/復帰をHuman Product failureにしない契約をsummaryへ明記。
+- すべて DEVELOPMENT_BUILD || UNITY_EDITOR 内のdiagnostic-only source。
+
+Production tracking/presentation挙動、Camera、Native、Provider、Geometry、Root、Head、
+smoothing、prediction、threshold、dead zone、filterは変更していない。
+
+================================================================
+4. CURRENT CONTEXT UPDATE
+================================================================
+
+更新:
+- CoreRules
+- FullRoadmap
+- CustomInstructions
+- Current selector運用文書のCurrent state
+- Current document SHA256 manifest
+
+Current First Blocker:
+  NEUTRAL_STILLNESS_FIRST_CONTINUITY_OR_IDENTITY_BOUNDARY_NOT_LOCALIZED
+
+Current Next Single Action:
+  SAME_ARTIFACT_NEUTRAL_STILLNESS_CONTINUOUS_WINDOW_FIRST_BOUNDARY_LOCALIZATION
+
+判定契約:
+A Canonical入力が大きく揺れる -> Canonicalより上流へ限定。
+B Canonical安定、consume/commit後にAvatarが揺れる -> Presentation以降へ限定。
+C reject/identity failureがVisual jitter windowと継続相関 -> 最初のboundaryだけ次調査。
+D reject等が相関しない -> 原因へ昇格しない。
+E 相関不能 -> UNRESOLVED、measurement designへ戻る。
+
+================================================================
+5. STATIC / COMPILE
+================================================================
+
+Unity invocation:
+  -batchmode -nographics -quit
+  -projectPath D:\KiwiAvatarSystem
+
+Unity exit code=0
+Exiting batchmode successfully now=YES
+C# compile errors=0
+KiwiH1LandmarkerBoundaryObserver warning/error=0
+
+Compile log:
+  D:\KiwiAvatarSystem\KiwiValidation\
+  H1_FixedSegmentMeasurement_Compile_20260913.log
+SHA256:
+  0C87592CB3A2226792494B73CCDB02D89D7AB57875DEF6FFA9B41CBF9AF03320
+
+Runtime build/run=NOT_EXECUTED
+Human continuous recording=NOT_EXECUTED
+Human Visual window verdict=NOT_EXECUTED
+Performance Authority=NONE
+
+================================================================
+6. FILES / SHA256
+================================================================
+
+KiwiH1LandmarkerBoundaryObserver.cs
+  before C5CBFF4B0724F1F68408EA4D3A0FDB90CB6394FA047B02E1D6FD490E8F352051
+  after  5782DE53CE87B50E55C6CB1AA9BDCD8F13B19B8C1E045021CCA94C1B04AE697E
+
+KiwiAvatarSystem_CoreRules_20260913_GoalAligned_v9_ContentReaudit.txt
+  before 1BA6477D8C6B7038AF8E0249F54A51931F8ADB1941C5D9FA68672D448F15F1C9
+  after  1A7C1A6455CE34977B11D0FC9A9416E89B07DDD048A9957CEEBCF01C11DA782E
+
+KiwiAvatarSystem_FullRoadmap_20260913_GoalAligned_v2_CurrentIntegrated_ContentReaudit.txt
+  before 1AACFCCF18BC000E6DBB75BB905C03C7928623E39BE36E9307CD2A725C3B8405
+  after  22334EE62591505487CDC1F5F097A468F206B79A5852EB33556A81D773156F87
+
+KiwiAvatarSystem_CustomInstructions_20260913_GoalAligned_v9_CurrentIntegrated.txt
+  before EC17360318B190BA9ED4B73BD77EB74BA9107EBE694B8E4C20BB3A80C9A94589
+  after  5B78A5D73F9F95B5896C110DFC286C31AA1162BA086C622CAC604AB7898C123A
+
+KiwiAvatarSystem_情報源構成_CurrentSelector運用_20260913_v3_CurrentIntegrated.txt
+  before 11BB837D6B17B0B57E828ED5A4D2665F621FD75911F028B842BAF6C9023E3ACE
+  after  08A692F7907DC307E8A089E7DC551D199336872A155FE4C42A94132E3F23744B
+
+SHA256SUMS_KiwiAvatarSystem_CurrentIntegratedDocs_20260913.txt
+  before 64F879D43773C03A9C91F2A0CB2C66FFE74518160E01763DF322DDC4BD5B6C63
+  after  947553620FC1E15937710C834690EBB87EC877F9E5CDCB1BD5F063C6DDFEDD37
+
+================================================================
+7. DOUBLE FULL AUDIT
+================================================================
+
+Validator repair history:
+- 初回FULL_AUDIT_1は「Human marker」完全一致のみを要求し、CoreRulesの
+  「瞬間Space marker」を誤判定。source/doc defectではなくvalidator defect。
+- 初回FULL_AUDIT_2はPowerShell式の構文不備で監査開始前に停止。
+- 各validator修正後、FULL_AUDIT_1とFULL_AUDIT_2を最初から再実行。
+
+FULL_AUDIT_1=PASS
+Scope:
+  Authority -> observer isolation -> old marker absence -> all segment/output fields
+  -> compile -> Current docs -> manifest hashes -> dirty safety
+
+FULL_AUDIT_2=PASS
+Scope:
+  Desired A-E decision -> exact schedule/start/end -> continuous correlation fields
+  -> old marker absence -> diagnostic isolation -> compile -> docs/hashes
+  -> protected dirty state -> Authority
+
+AUDIT_DISAGREEMENT=NO
+
+================================================================
+8. REJECTED / UNRESOLVED / NEXT
+================================================================
+
+Rejected:
+- 旧Human Space markerをcontinuous jitter原因相関へ再利用。
+- 瞬間jumpを検出条件にする。
+- reject発生だけでHuman Visual原因へ昇格。
+- smoothing / Kalman / prediction / threshold relaxation / dead zone / strong filter。
+- Root/Head、Camera/Provider、Geometry補償。
+
+Unresolved:
+- NEUTRAL_STILLNESS_A録画上のHUMAN_VISUAL_UNSTABLE_WINDOW。
+- Canonicalより上流か、Presentation以降か。
+- reject/identity failureとの継続相関。
+- first failing boundary。
+
+Next:
+1. 本sourceから一意なDevelopment DX12 artifactを1回build。
+2. 同artifactを1回runし、全固定segmentを切れ目なく録画。
+3. segment_boundaries.csvのNEUTRAL_STILLNESS_A START/ENDで録画区間を固定。
+4. segment_correlation.csvと区間全体をA-Eで相関。
+5. 相関不能ならUNRESOLVEDとしてmeasurement designへ戻る。
+
+今がコミット適切時点。
+ただしcommit permissionは与えられていないためCOMMIT=NONE。
+PUSH=NONE。
+

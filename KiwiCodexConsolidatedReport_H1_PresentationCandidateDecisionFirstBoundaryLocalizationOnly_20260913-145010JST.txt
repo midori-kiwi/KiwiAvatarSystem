@@ -1,0 +1,550 @@
+KIWI_H1_PRESENTATION_CANDIDATE_DECISION_FIRST_BOUNDARY_LOCALIZATION_ONLY
+Consolidated Codex REPORT
+JST: 2026-09-13T14:50:10.430+09:00
+
+================================================================
+0. 結論
+================================================================
+
+SOURCE_AUDIT_RESULT=STATIC_ALONE_CANNOT_UNIQUELY_LOCALIZE_MARKER_2
+DIAGNOSTIC_REQUIRED=YES
+DIAGNOSTIC_SCOPE=AUTHORITATIVE_PRESENTATION_DECISION_LATEST_ONE_ONLY
+DIAGNOSTIC_STORAGE=O1_FIXED_STATE_NO_HISTORY_QUEUE
+FULL_AUDIT_1=PASS
+FULL_AUDIT_2=PASS
+AUDIT_DISAGREEMENT=NONE
+EXACT_UNITY_COMPILE=PASS
+RUNTIME_EXECUTED=NO
+HUMAN_VISUAL_EXECUTED=NO
+FIRST_CAUSAL_BOUNDARY=UNRESOLVED_PENDING_SAME_BUILD_MARKER
+
+Staticで確定した最初の事実は以下。
+
+- committed Presentation tupleの更新ownerは
+  Assets/KiwiAvatarSystem/Runtime/Presentation/
+  KiwiFacePartTextureTransaction.cs の CommitPartDecision。
+- candidate取得およびTexture/Geometry/Rigid/Freshness/per-part decisionの
+  orchestration ownerは Assets/Script/FacePartCropper.cs の LateUpdate / ProcessSample。
+- Marker 2で旧tupleが残る経路は複数あり、既存evidenceには
+  「current Consume相当timestampのcandidateがdecision ownerへ到達したか」と
+  「到達後にどの実在gateでrejectされたか」が無い。
+- よってMarker 2を正常holdまたはfaultへ分類していない。
+- 実在しない hold branch / held resultは追加していない。
+
+今回の最小diagnosticは、上記ownerの最新decision 1件だけを上書き保持する。
+次の同一build Markerで、まず
+CURRENT_CONSUME_NOT_RECEIVED_BY_DECISION_OWNER と
+DECISION_FOR_CURRENT_CONSUME を分離し、後者の場合だけ実在reject reasonを読む。
+
+Human Visualは既存FAILのまま。
+LANDMARKER_JUMP_FIRST_CAUSAL_BOUNDARY_NOT_LOCALIZED は未解消。
+P3C_1 / P3D / H1 frame identityの既存claimは変更していない。
+
+================================================================
+1. Authority / Preflight
+================================================================
+
+Project root:
+  D:\KiwiAvatarSystem
+
+ProjectVersion:
+  m_EditorVersion: 6000.0.80f1
+  m_EditorVersionWithRevision: 6000.0.80f1 (2dfd32957da2)
+
+Exact Unity:
+  C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe
+  ProductVersion=6000.0.80f1_2dfd32957da2
+  SHA256=7FC68434F4FCCF2781648C398FBAA4E8ADFB568251605E990D887FE36CF1376F
+
+Live git identity before change:
+  branch=work/raw-direct-motion
+  HEAD=df75cfa9f6ae386bf4443272929d3cef33a8b138
+
+Given report snapshot:
+  branch=work/raw-direct-motion
+  HEAD=df75cfa9f6ae386bf4443272929d3cef33a8b138
+
+Snapshot/live difference:
+  branch=NONE
+  HEAD=NONE
+  dirty state=report snapshotからcurrent liveへ自動昇格せず、下記をliveで取得
+
+Live dirty files before change（user-ownedとして保護）:
+   M AGENTS.md
+   M Assets/KiwiAvatarSystem/Runtime/Optimization/KiwiFacePartRigidSampleFrame.cs
+   M Assets/KiwiAvatarSystem/Runtime/Presentation/KiwiFacePartTextureTransaction.cs
+   M Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiFaceGeometryTransactionService.cs
+   M Assets/Script/FaceLandmarkerRunner.cs
+   M Assets/Script/FacePartCropper.cs
+   D ProjectContext/Current/KiwiAvatarSystem_CoreRules_20260910_GoalAligned_v3.txt
+   D ProjectContext/Current/KiwiAvatarSystem_CurrentRoadmap_20260910_GoalAligned_v3.txt
+   D ProjectContext/Current/KiwiAvatarSystem_CustomInstructions_20260910_GoalAligned_v3.txt
+  ?? Assets/CodexTasks/H1_LandmarkerBoundary_20260913.meta
+  ?? Assets/CodexTasks/H1_LandmarkerBoundary_20260913/
+  ?? Assets/CodexTasks/P3D_FaceGeometryRuntime_20260910/KiwiH1ProductRuntimeObserver.cs
+  ?? Assets/CodexTasks/P3D_FaceGeometryRuntime_20260910/KiwiH1ProductRuntimeObserver.cs.meta
+  ?? ChatReport/KiwiChat_H1FrameIdentityToHumanVisual_Updated_20260912-JST.zip
+  ?? ChatReport/KiwiChat_P3DToFacePartSameSampleBridge_Updated_20260912-JST.zip
+  ?? ChatReport/KiwiChat_WorkflowRoleSplitAndDocsRevision_Updated_20260913-JST.zip
+  ?? KiwiCodexConsolidatedReport_H1_ClaimScopedCompileWarningDeltaResolutionOnly_20260913-060323JST.txt
+  ?? KiwiCodexConsolidatedReport_H1_CommittedPresentationCanonicalCorrelationObserverOnlyRepair_20260913-054416JST.txt
+  ?? KiwiCodexConsolidatedReport_H1_CommittedPresentationCanonicalCorrelation_ControlledRuntimeOnly_20260913-130914JST.txt
+  ?? KiwiCodexConsolidatedReport_H1_CommittedPresentationCanonicalCorrelation_SameArtifactHumanMarker_20260913-135338JST.txt
+  ?? KiwiCodexConsolidatedReport_H1_ControlledSameBuildHumanVisual_20260913-000434JST.txt
+  ?? KiwiCodexConsolidatedReport_H1_FrameIdentityContractRepair_20260912-231933JST.txt
+  ?? KiwiCodexConsolidatedReport_H1_RightSideLandmarkerCadenceVsRawResult_FirstBoundary_20260913-041859JST.txt
+  ?? KiwiCodexConsolidatedReport_H1_SameBuildProductRuntimeHumanVisual_20260912-223923JST.txt
+  ?? KiwiCodexConsolidatedReport_P3D_To_FacePart_SameSampleBridge_20260912-191640JST.txt
+  ?? KiwiValidation/H1_CommittedCanonicalCorrelation_Runtime_20260913-130500/
+  ?? KiwiValidation/H1_CommittedCanonicalCorrelation_SameArtifactHumanMarker_20260913-134855/
+  ?? KiwiValidation/H1_FrameIdentity_Runtime1_20260912-230727.txt
+  ?? KiwiValidation/H1_FrameIdentity_Runtime2_Restart_20260912-230820.txt
+  ?? KiwiValidation/H1_FrameIdentity_Runtime3_RestartRetry_20260912-230910.txt
+  ?? KiwiValidation/H1_LandmarkerBoundary_Runtime_20260913-040757/
+  ?? KiwiValidation/H1_LandmarkerBoundary_Runtime_Retry_20260913-041352/
+  ?? KiwiValidation/H1_Runtime_Run1_20260912-195500.txt
+  ?? KiwiValidation/H1_Runtime_Run2_20260912-202300.txt
+  ?? KiwiValidation/H1_Runtime_Run3_Restart_20260912-204000.txt
+  ?? KiwiValidation/H1_Runtime_Run4_RestartRetry_20260912-204300.txt
+  ?? ProjectContext/Current/KiwiAvatarSystem_CoreRules_20260913_GoalAligned_v9_ContentReaudit.txt
+  ?? ProjectContext/Current/KiwiAvatarSystem_CustomInstructions_20260913_GoalAligned_v9_CurrentIntegrated.txt
+  ?? ProjectContext/Current/KiwiAvatarSystem_FullRoadmap_20260913_GoalAligned_v2_CurrentIntegrated_ContentReaudit.txt
+  ?? ProjectContext/Current/KiwiAvatarSystem_情報源構成_CurrentSelector運用_20260913_v3_CurrentIntegrated.txt
+  ?? ProjectContext/Current/SHA256SUMS_KiwiAvatarSystem_CurrentIntegratedDocs_20260913.txt
+  ?? ProjectContext/Current/通常チャット用_恒久REPORT_ZIP直接作成指示_20260913_v3_CurrentIntegrated.txt
+  ?? ProjectContext/Current/通常チャット運用管理規則_20260913_v3_CurrentIntegrated.txt
+  ?? ProjectContext/old/
+
+禁止操作:
+  reset=NONE
+  checkout/restore discard=NONE
+  clean=NONE
+  stash=NONE
+  commit=NONE
+  push=NONE
+
+Current directory全7ファイルを列挙し、claim scopeへ関係する本文を読了:
+  KiwiAvatarSystem_CoreRules_20260913_GoalAligned_v9_ContentReaudit.txt
+  KiwiAvatarSystem_CustomInstructions_20260913_GoalAligned_v9_CurrentIntegrated.txt
+  KiwiAvatarSystem_FullRoadmap_20260913_GoalAligned_v2_CurrentIntegrated_ContentReaudit.txt
+  KiwiAvatarSystem_情報源構成_CurrentSelector運用_20260913_v3_CurrentIntegrated.txt
+  SHA256SUMS_KiwiAvatarSystem_CurrentIntegratedDocs_20260913.txt
+  通常チャット用_恒久REPORT_ZIP直接作成指示_20260913_v3_CurrentIntegrated.txt
+  通常チャット運用管理規則_20260913_v3_CurrentIntegrated.txt
+
+Current reconciliation:
+  Visual Authority=2026-09-13 00:04:34 JST same-build Human review
+  H1 Human Visual=FAIL
+  first failing boundary=UNRESOLVED
+  Next=同一buildでauthority/identity/time/source age/liveness/provider transition/
+       presentation transactionを順に観測し最初のfailureだけ特定
+  Clean Performance=UNRUN
+  Final Product / Windows Acceptance=UNRUN
+
+================================================================
+2. Actual package / Production target
+================================================================
+
+MediaPipe manifest:
+  com.github.homuler.mediapipe=file:com.github.homuler.mediapipe-0.16.3.tgz
+  tarball:
+    Packages/com.github.homuler.mediapipe-0.16.3.tgz
+    SHA256=CC3E77A219E0B99618AE3BE64C31A566197DEEDC69C1E136ACF52D65D7CF2E79
+  installed source:
+    Library/PackageCache/com.github.homuler.mediapipe@66127f8e750d
+    package version=0.16.3
+    package.json SHA256=EEBBFF4550FA9CA3C2C76AB05BD0EDBDB3A0A4C2800883E244DC9E40D8FF2A2D
+
+Inference manifest:
+  com.unity.ai.inference=2.4.1
+  installed source:
+    Library/PackageCache/com.unity.ai.inference@587873fd5e1b
+    package version=2.4.1
+    package.json SHA256=2F230C84E28A9E3AD516B1A49B79B6F83E172F1C16E6813E0F1DD6FA2B1790EE
+
+Production build/runtime target:
+  enabled Scene=Assets/Scenes/Face Landmark Detection.unity
+  target=StandaloneWindows64 / WindowsStandaloneSupport
+  explicit graphics API=m_APIs:12000000 (Direct3D12)
+
+================================================================
+3. Marker 2 evidenceとmeasurement boundary
+================================================================
+
+Historical same-artifact Human marker REPORTのMarker 2:
+  marker hostTicks=782791343
+  Consume timestamp=73387
+  Consume provider/backend=Runner/MediaPipe / MediaPipe
+  latest committed Presentation timestamp=71542
+  latest committed canonicalFrameId=1846
+  latest committed provider/backend=Runner/InferenceEngine / InferenceEngine
+  latest committed providerSourceFrameId=2082
+  previous committed timestamp/canonicalFrameId/providerSourceFrameId=
+    71381 / 1839 / 2075
+
+Committed Presentation側はcanonicalFrameId exact matchで相関済み。
+
+Observer audit limitation:
+  Existing CaptureActualRightSideConsumeはoverlay timestamp/landmarksを読み、
+  その後のobserver時点におけるKiwiCanonicalTrackingFrame current metadataを付与する。
+  current frame semanticTimestampとconsume timestampの一致checkは無い。
+  よってConsume timestamp/fingerprintはactual sink observationだが、
+  Consume provider/backend labelはexact same-timestamp identityの単独証明ではない。
+  このREPORTではMarker 2の既知観測を捨てない一方、原因境界判定をそのlabelだけへ依存させない。
+
+================================================================
+4. SOURCE AUDIT 1: forward complete trace
+================================================================
+
+4.1 latest face result
+
+Assets/Script/FaceLandmarkerRunner.cs
+  MediaPipe:
+    OnFaceLandmarkDetectionOutput -> StoreTrackingData
+    camera generation mismatch、invalid/absent result、older timestampを拒否。
+    InferenceEnginePrimaryActive中はMediaPipe callbackをauxiliaryのみ更新し、
+    latest landmarks/precisionへpublishしない。
+  InferenceEngine:
+    StoreSentisTrackingData
+    invalid payload/rotation/geometryを拒否し、older/equal timestampは単調増加補正後、
+    Runner-local frameIdを付与してlatest landmarks/precisionへpublish。
+  consumer:
+    TryGetLatestPrecisionTrackingDataは1 lock内でlatest tupleをcopy。
+
+4.2 provider/backend normalization and arbitration
+
+Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiTrackingProviderHub.cs
+  ObserveBuiltInRunner:
+    Runner-local frameIdの重複を無視し、backendでMediaPipe/Inference slotを分離。
+  NormalizeProviderFrame:
+    source timestamp、arrivalHostTicks、providerSourceFrameId、horizontal metadataを保持。
+    duplicate external source frameはliveness arrivalのみ更新しsource identityを変えない。
+  BuildCandidate:
+    slot/data/capability/geometry/mirror epochを確認。
+    source ageとarrival ageを分離。
+    source age > maximumProviderFrameAge または arrival age > adaptive limitならinvalid。
+  RefreshCanonicalSelectionNow:
+    valid candidate無しではpublicationを停止し旧frameをfreshとして返さない。
+    active providerのdwell/score margin/confirmationを適用。
+    真のprovider変更だけproviderGenerationを進めBeginProviderHandoff。
+    same-provider ResumeはProvider Switchではなくgenerationを進めない。
+  PublishIfChanged:
+    provider idまたはslot sourceFrameIdが変わった時だけpublish。
+    hub-local frameIdとproviderSourceFrameIdは別domain。
+    FIFO無し、latest-only。
+  TryGetLatestFrame:
+    publication/active/current validity不成立時はfalseかつoutをdefaultへclear。
+
+4.3 Canonical publish
+
+Assets/KiwiAvatarSystem/Runtime/TrackingFoundation/KiwiCanonicalTrackingFrame.cs
+  KiwiCanonicalTrackingFrameCoordinator.LateUpdate:
+    HubをRunner.Update後に再refreshしてCaptureCanonicalFrame。
+  rigid candidate:
+    Hub published frame/provider/normalization/generationを取得。
+  semantic candidate:
+    Runner latest semanticを取得し、built-in providerで
+    semantic timestamp == rigid timestamp かつ backend一致を要求。
+    canonical semantic geometry coherence不成立ならsemanticMatched=false。
+  Publish:
+    provider、rigid hub frameId、timestamp、backend、mirror identity変化時に
+    canonicalFrameIdを進める。
+    semanticTimestampはmatched rigid.timestamp。
+  TryGetSemanticLandmarksIfChanged:
+    semantic無し/payload無し/count<=0またはpreviousTimestamp重複ならfalse。
+    ここがFacePart candidate未到達を作り得る上流境界。
+
+4.4 Presentation candidate / gate / commit
+
+Assets/Script/FacePartCropper.cs
+  LateUpdate:
+    dependency early return
+    -> TryGetSemanticLandmarksIfChanged
+    -> PrepareSemanticTransaction
+    -> TryGetFacePartGeometrySnapshot exact sample identity
+    -> KiwiFacePartRigidSampleFrame.CanCommitSemanticTransaction
+    -> IsSemanticSampleAdoptable source freshness
+    -> final hasFace/payload gate
+    -> ProcessSample per-part decisions
+    -> CommitPartDecision
+
+Assets/KiwiAvatarSystem/Runtime/Presentation/
+KiwiFacePartTextureTransaction.cs
+  PrepareSemanticTransaction:
+    canonical available/valid/semantic/timestamp/rigid/submission/source ticksを要求。
+    cameraGeneration + trackingSessionGenerationでmatching fixed GPU slotを検索。
+    matching slot無しまたはsubmission delta > 55msを拒否。
+    成功時だけstaged slot/timestamp/canonicalFrameIdを設定。
+  CommitPartDecision:
+    staged tuple mismatchならcommitしない。
+    first proven transactionでは3 partを初期pin。
+    以後はacceptされたpartだけslotを進める。
+    first initまたは1 part以上acceptされた時だけ
+    _lastCommittedSemanticTimestamp / _lastCommittedCanonicalFrameId /
+    _lastCommittedSlotを更新。
+    all parts rejectではtupleを更新しない。
+  ApplyPinnedTextures:
+    strict開始後はlast committed part slotを再適用し、旧tupleを保持する。
+
+================================================================
+5. SOURCE AUDIT 2: reverse complete trace
+================================================================
+
+Reverse writer inventory:
+  _lastCommittedSemanticTimestampのsemanticTimestamp writer=1
+  _lastCommittedCanonicalFrameIdのstaged writer=1
+  runtime CommitPartDecision caller=1 (FacePartCropper.ProcessSample)
+  reset/release時のidentity clearはcommit writerではない。
+
+Reverse path:
+  committed tuple
+  <- CommitPartDecision presentationCommitted branch
+  <- per-part accepted flags / staged exact timestamp
+  <- ProcessSample geometry decisions
+  <- LateUpdate final hasFace/new/fresh/payload gate
+  <- semantic freshness
+  <- rigid sample identity
+  <- FaceGeometry exact sample identity
+  <- texture/camera-slot identity
+  <- Canonical changed semantic
+  <- exact semantic/rigid timestamp+backend correlation
+  <- Hub current latest-only selection
+  <- Runner latest MediaPipe or InferenceEngine result
+
+Reverse auditでも、旧tupleが残る実在条件は次の3群。
+
+A. candidate未到達:
+  FacePart dependency early return;
+  Canonical semantic unavailable/payload unavailable;
+  duplicate semantic timestamp;
+  Hub no valid fresh/live publication;
+  Canonical provider/backend/timestamp/topology mismatch。
+
+B. candidate到達後、commit前reject:
+  face unavailable;
+  landmark payload invalid;
+  canonical frame/semantic/rigid/submission timing/source ticks mismatch;
+  matching camera slot無し/55ms超過;
+  FaceGeometry snapshot identity mismatch;
+  rigid sample identity mismatch;
+  semantic source freshness reject;
+  staged transaction mismatch。
+
+C. decision到達後、commit無し:
+  all three parts rejected。
+
+partial part acceptまたは初回pinはglobal committed tupleを更新するため、
+Marker 2の「global tupleが旧値」の説明はA/B/Cのいずれかである。
+既存evidenceはA/B/Cを一意に選べない。
+
+================================================================
+6. Minimal diagnostic
+================================================================
+
+Modified files:
+  Assets/KiwiAvatarSystem/Runtime/Presentation/KiwiFacePartTextureTransaction.cs
+  Assets/Script/FacePartCropper.cs
+  Assets/CodexTasks/H1_LandmarkerBoundary_20260913/
+    KiwiH1LandmarkerBoundaryObserver.cs
+
+Authoritative O(1) storage:
+  KiwiFacePartTextureTransaction._lastPresentationDecision
+  latest 1 structを上書きするだけ。
+  List/Queue/FIFO/history/permanent buffer無し。
+
+Recorded existing state:
+  candidate received
+  accepted
+  reject reason
+  semantic/source timestamp
+  canonicalFrameId
+  provider/backend
+  providerSourceFrameId/providerSourceTimestamp
+  sourceHostTicks/arrivalHostTicks
+  observed source age/arrival age
+  semantic freshness evaluated/age
+  camera/provider/tracking-session generation
+  per-part accepted flags
+  committed Presentation timestamp/canonicalFrameId
+
+Enumerated decision reasons:
+  CandidatePendingPartDecision
+  RejectedCanonicalFrameUnavailable
+  RejectedCanonicalFrameInvalid
+  RejectedCanonicalSemanticMissing
+  RejectedCanonicalSemanticTimestampMismatch
+  RejectedCanonicalRigidInvalid
+  RejectedCanonicalRigidTimestampMismatch
+  RejectedCanonicalSubmissionTimingMissing
+  RejectedCanonicalSourceHostTicksMissing
+  RejectedNoMatchingCameraSlot
+  RejectedCameraSlotMatchTooOld
+  RejectedGeometrySnapshotIdentity
+  RejectedRigidSampleIdentity
+  RejectedSemanticFreshness
+  RejectedFaceUnavailable
+  RejectedLandmarkPayloadInvalid
+  RejectedStagedTransactionMismatch
+  RejectedAllParts
+  Accepted
+
+Marker-only relation:
+  NO_CONSUME_OBSERVED
+  NO_DECISION_OBSERVED
+  DECISION_FOR_CURRENT_CONSUME
+  CURRENT_CONSUME_NOT_RECEIVED_BY_DECISION_OWNER
+  DECISION_NEWER_THAN_CURRENT_CONSUME
+
+Scope guard:
+  #if DEVELOPMENT_BUILD || UNITY_EDITOR
+  Runtime release behaviorへdiagnostic type/field/callは入らない。
+
+Behavior preservation:
+  existing gateのboolを名前付きに分解してobserverへ渡しただけ。
+  gate順、threshold、provider switching、normalization、smoothing、prediction、
+  cadence、tracking、commit condition、texture writerを変更していない。
+  per-frame log無し。
+  marker/summary writeは既存user-triggered/termination経路のみ。
+
+================================================================
+7. SHA256
+================================================================
+
+Before -> candidate -> after compile:
+
+KiwiFacePartTextureTransaction.cs
+  F60E80C545A41B64416EBD3E594DDCE3A99527C62F3951BF87B584326EE45365
+  -> 6C5262684CE6E85638DD70FD9E2EC1651652856AE16C3D41847169F44CBDA9BA
+  -> 6C5262684CE6E85638DD70FD9E2EC1651652856AE16C3D41847169F44CBDA9BA
+
+FacePartCropper.cs
+  D71064E1E7356F08835BC49AC74A225603CC0DBA287BA19AAB933AA91F5E3DAD
+  -> F76672090EB8F5D5B42719B46FEAF53F44077D3574A34C800556FACF6F5882C1
+  -> F76672090EB8F5D5B42719B46FEAF53F44077D3574A34C800556FACF6F5882C1
+
+KiwiH1LandmarkerBoundaryObserver.cs
+  CF6CD8185D039295C6C5B926391C9927164FF3D9152A2EA2D3649183064D7A65
+  -> 4C06814A62A226F8B9E43EC8B25B7442CB18EF88F3F3B998261C72D522820186
+  -> 4C06814A62A226F8B9E43EC8B25B7442CB18EF88F3F3B998261C72D522820186
+
+Relevant protected source after compile:
+  4D1804459FAC66132ADC21258ED371013969C12C1C491970790FC79C2EA64A56  FaceLandmarkerRunner.cs
+  17F55087EFA7D42B14EF7453F35B0720EE79A23A64CB239391171C45241E3744  KiwiInferenceFaceTracker.cs
+  A5C7DE387FA2E02862BCF64942363AECFB9C7830B52DF5B8953404DF884ECCB1  KiwiTrackingProviderHub.cs
+  458FF33E98E054B766F20EB17CE6BDD242C9AD9FD6E73AF53D60BD3961822AFA  KiwiCanonicalTrackingFrame.cs
+  AAF22CD49D00724758E3FF66BD623D971F9B19C771B8DD002AF74EFE81BE3124  KiwiCommercialFacePartPolicy.cs
+  33E945AC30D1856E57D484CD042CB70DB90775F48A2CC694724F7B119A1EE2DA  KiwiFaceGeometryTransactionService.cs
+  6303C20D8AD0A045F067A2CB2DF118847339B2514B03785C14CF30377A07A5A8  KiwiFacePartRigidSampleFrame.cs
+  D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6  KiwiFaceMotion.cs
+  611BA53D1627847D786E714A7CC17EB8D5AE06C2EFBA4077DA1F396A81355EAE  EditorBuildSettings.asset
+  88CB3F68F275E1A7DCBF1FEA8C59D123F50743C6F93B0F861E1FD653865EC6AA  ProjectSettings.asset
+  E9AA13257215C90829BCC04E63E4ED5F84F8965049B9F0AABC28418893E92409  Face Landmark Detection.unity
+
+================================================================
+8. Exact Unity compile / warning delta
+================================================================
+
+Invocation:
+  Start-Process -Wait -PassThru -WindowStyle Hidden
+  Unity.exe -batchmode -nographics -quit
+    -projectPath D:\KiwiAvatarSystem
+    -logFile D:\KiwiAvatarSystem\KiwiValidation\
+      H1_PresentationCandidateDecisionFirstBoundary_Compile_20260913-144644.log
+
+Unity process exit code=0
+Tundra build=success
+Batchmode exit=0
+Compile log SHA256=
+  9362F49900AE4AE157079D98B24E8E9FDE4D0CAEED73ACA40939D3A883BA0C77
+
+Same-scope baseline:
+  KiwiValidation/H1_CommittedCanonicalCorrelation_Compile_20260913.log
+  SHA256=9DF98D5F52D330C81EAFECDB7455F5C2CBA53BB60C990A34C715CA7903B60822
+
+Compilation units:
+  baseline=Assembly-CSharp + Assembly-CSharp-Editor
+  candidate=Assembly-CSharp + Assembly-CSharp-Editor
+
+Warning accounting:
+  baseline Csc emissions=21
+    Assembly-CSharp=19
+    Assembly-CSharp-Editor=2
+  candidate Csc emissions=21
+    Assembly-CSharp=19
+    Assembly-CSharp-Editor=2
+  baseline Unity summary echoes=19
+  candidate Unity summary echoes=19
+  raw total baseline/candidate=40/40
+  normalized unique tuple baseline/candidate=20/20
+  tuple key=normalized source path + source line + CS code + message
+  added tuples=0
+  removed tuples=0
+  WARNING_REGRESSION=NO
+
+================================================================
+9. Independent full audits
+================================================================
+
+FULL_AUDIT_1=PASS
+  Forward producer-to-commit audit。
+  Runner両backend、Hub normalization/candidate/freshness/liveness/latest-only、
+  Provider Switch/Resume/generation、Canonical identity/semantic、FacePart gates、
+  authoritative commit、diagnostic storage/observer/compile/warning scopeを全確認。
+
+FULL_AUDIT_2=PASS
+  Reverse commit-to-producer audit。
+  committed writer inventoryから唯一のruntime call site、全非commit条件、
+  upstream no-candidate returns、Canonical correlation、Hub publication、
+  Runner backend producer、diagnostic relation、compile/warning scopeを再確認。
+
+AUDIT_DISAGREEMENT=NONE
+REMAINING_UNRESOLVED_CLAIM=
+  Marker 2相当sampleの最初のRuntime failure boundary
+
+================================================================
+10. Rejected / Superseded / Unrun
+================================================================
+
+Rejected:
+  Marker 2をStaticだけでnormal holdまたはfaultへ先行分類
+  Consume provider label単独をexact same-sample authorityへ昇格
+  tracking tuning
+  smoothing / Kalman / prediction
+  threshold変更
+  provider semantic / switching変更
+  FIFO / List / Queue / history diagnostic
+  permanent buffer / permanent one-frame delay
+  per-frame logging
+  product behavior fix
+
+Superseded:
+  NONE
+
+Unrun / not authority:
+  Runtime
+  same-build Human Visual
+  Performance
+  Final Product
+  Windows Acceptance
+
+このcompile PASSはRuntime/Human Visual/Performance/Final Acceptanceを証明しない。
+
+================================================================
+11. Single Next Action
+================================================================
+
+同一source identityでDevelopment StandaloneWindows64 / DX12 buildを1回作成し、
+同一artifactのHuman Visual markerを取得する。
+
+Markerごとに最初に decisionConsumeRelation を読む。
+
+1. CURRENT_CONSUME_NOT_RECEIVED_BY_DECISION_OWNER:
+   Consume相当timestampからFacePart decision owner到達前までを最初のboundaryとする。
+   原因推定や補償をせず停止。
+
+2. DECISION_FOR_CURRENT_CONSUME:
+   decisionReasonを読み、最初の実在reject boundaryまたはAcceptedを確定。
+   原因推定や補償をせず停止。
+
+Human Visual Authorityは人間。今回のREPORTは次Runtimeを実行していないため、
+現時点のadoption judgmentは DIAGNOSTIC_STATIC_READY / PRODUCT_NO_CHANGE。

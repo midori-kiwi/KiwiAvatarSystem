@@ -1,0 +1,215 @@
+KiwiAvatarSystem
+H1_CONTROLLED_SAME_BUILD_HUMAN_VISUAL_LABEL_REVIEW_ONLY
+CONSOLIDATED CODEX REPORT
+Report time: 2026-09-13 00:04:34 JST
+
+===============================================================================
+1. DECISION
+===============================================================================
+
+H1_PRODUCT_HUMAN_VISUAL=FAIL
+FIRST_REPRODUCIBLE_VISUAL_BOUNDARY=
+LANDMARKER_JUMP_RECURRED_DURING_SAME_BUILD_HUMAN_REVIEW
+CAUSE=UNRESOLVED_NOT_INVESTIGATED_IN_VISUAL_ONLY_TASK
+PERFORMANCE_AUTHORITY=NONE
+CODE_OR_PRODUCT_SOURCE_CHANGES=NONE
+REBUILD=NO
+PLAYER_CLOSED=YES
+
+The human reviewer explicitly classified every requested visual item as having
+a problem and reported that the LandMarker-jump problem had recurred. At least
+one required Human Visual label is therefore FAIL, so the H1 Human Visual gate
+is FAIL under the assigned decision rule.
+
+The supplied still image is supporting evidence for a visibly invalid Avatar
+state. It is not used by itself to prove temporal claims such as Blink,
+rotation matching, twist absence, or Root non-movement. Those FAIL labels come
+from the human reviewer's explicit report, not from validator/log inference.
+
+Only the first reproduced visual boundary is opened. This report does not
+attribute the jump to tracking math, provider selection, identity, timestamp,
+FaceGeometry, FacePart presentation, Camera, Native, or backend behavior.
+
+===============================================================================
+2. LIVE-LOCAL / EXISTING BUILD IDENTITY
+===============================================================================
+
+Project=D:\KiwiAvatarSystem
+branch=work/raw-direct-motion
+HEAD=df75cfa9f6ae386bf4443272929d3cef33a8b138
+ProjectVersion=6000.0.80f1
+
+Target existing build:
+D:\KiwiAvatarSystem\Builds\H1_FrameIdentity_20260912-230622
+
+Verified artifacts:
+
+- KiwiAvatarSystem_H1_FrameIdentity.exe
+  SHA256=98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81
+- UnityPlayer.dll
+  SHA256=A1C4F29041D783DF506E7C2892BC6AFA4ED45EF0D87AAFE0C7296BDC090681FC
+- KiwiAvatarSystem_H1_FrameIdentity_Data\Managed\Assembly-CSharp.dll
+  SHA256=5CAE9ADD042C8BF1C96B6182D60A83F714FE6BC2B7CD1177C1F42AA905298D14
+- KiwiAvatarSystem_H1_FrameIdentity_Data\globalgamemanagers
+  SHA256=138B3276452315244975E22ED30493AD28E05B9BD33F6DBE5A05E91FE919FEAF
+
+All four files existed and matched the assigned expected SHA256 exactly before
+launch and again during final Audit 1. No rebuild was performed.
+
+KIWI_H1_RUNTIME_Process=ABSENT
+KIWI_H1_RUNTIME_User=ABSENT
+KIWI_H1_RUNTIME_Machine=ABSENT
+
+The exact target EXE was launched normally in visible windowed mode. Its
+running executable path and SHA256 were reverified. It later exited normally;
+the log records OnApplicationQuit, shutdown cleanup begin/end, no blocking GPU
+wait, and PlayerConnection cleanup.
+
+===============================================================================
+3. DIRTY-STATE / SCOPE PROTECTION
+===============================================================================
+
+The existing user-owned dirty Product candidate was preserved. This task made
+no Product/source/Scene/Package/Native DLL change and no reset, checkout, clean,
+stash, commit, push, ProjectContext update, or Roadmap update.
+
+Protected modified Product files remained at their pre-review candidate SHA:
+
+- Assets\Script\FaceLandmarkerRunner.cs
+  8538E665866EB5EB7B73BB66071EB423A4655AA0F5C33CF4A53CED1EEB84843E
+- Assets\Script\FacePartCropper.cs
+  D71064E1E7356F08835BC49AC74A225603CC0DBA287BA19AAB933AA91F5E3DAD
+- Assets\KiwiAvatarSystem\Runtime\Presentation\KiwiFacePartTextureTransaction.cs
+  F60E80C545A41B64416EBD3E594DDCE3A99527C62F3951BF87B584326EE45365
+- Assets\KiwiAvatarSystem\Runtime\Optimization\KiwiFacePartRigidSampleFrame.cs
+  6303C20D8AD0A045F067A2CB2DF118847339B2514B03785C14CF30377A07A5A8
+- Assets\KiwiAvatarSystem\Runtime\TrackingFoundation\KiwiFaceGeometryTransactionService.cs
+  33E945AC30D1856E57D484CD042CB70DB90775F48A2CC694724F7B119A1EE2DA
+
+===============================================================================
+4. CONTROLLED REVIEW SEQUENCE AND HUMAN LABELS
+===============================================================================
+
+Assigned sequence, in order:
+
+A. NEUTRAL: front-facing neutral Eye/Mouth baseline.
+B. YAW: Neutral -> left -> Neutral -> right -> Neutral.
+C. PITCH: Neutral -> up -> Neutral -> down -> Neutral.
+D. ROLL: Neutral -> left -> Neutral -> right -> Neutral.
+E. ROTATION_ONLY: suppress translation and perform Yaw/Pitch/Roll only.
+F. EYE_ONLY: hold Head near neutral; gaze left/right/up/down.
+G. BLINK: multiple normal blinks at neutral Head.
+H. MOUTH: closed/open/closed repeatedly, then natural mouth shapes.
+I. COMBINED: Head rotation + Eye + Blink + Mouth.
+
+Human review source:
+USER_EXPLICIT_REPORT="全て問題あり。LandMarkerが飛ぶ問題が再発しています。"
+
+Human labels:
+
+ROTATION_MATCH=FAIL
+EYE_TWIST=FAIL
+MOUTH_TWIST=FAIL
+ROOT_NON_MOVEMENT=FAIL
+EYE_BLINK=FAIL
+MOUTH_EXPRESSION=FAIL
+LIVE_CAMERA=FAIL
+
+Conditional labels:
+
+MOUTH_SIZE=FAIL_REPRODUCED
+SURFACE_CLIP=FAIL_REPRODUCED
+
+PLAYER_CLOSED=YES
+
+Step-level timestamps and a synchronized source+Avatar video were not captured.
+That limitation prevents this report from independently localizing each label's
+cause, but it does not override the human reviewer's explicit FAIL labels or the
+gate rule that any one required FAIL makes H1_PRODUCT_HUMAN_VISUAL=FAIL.
+
+===============================================================================
+5. EVIDENCE
+===============================================================================
+
+Player log:
+
+D:\KiwiAvatarSystem\KiwiValidation\H1_ControlledHumanVisual_Player_20260912-235917.log
+SHA256=C2B2ED2B6B9A35C27B2D3E438310F158F84FC95FDD63AA40B95F62515D283E35
+
+Human-supplied screenshot, preserved project-locally without content change:
+
+D:\KiwiAvatarSystem\KiwiValidation\H1_ControlledHumanVisual_UserScreenshot_20260913-000307.png
+SHA256=29AAC3AFF4AC641922F9A1F6D3A1D2F09C7A6F1DA3F223EAFA8631C410B83A09
+
+Original attachment SHA256 matched the preserved copy exactly.
+
+EVIDENCE_LIMIT:
+The still image is not synchronized temporal evidence and is not independently
+used to assign Blink, twist, rotation-match, or Root-motion labels. No new
+capture software, Product observer, or diagnostic code was added.
+
+===============================================================================
+6. PERFORMANCE / REJECTED ACTIONS
+===============================================================================
+
+PERFORMANCE_AUTHORITY=NONE
+PERFORMANCE=NOT_EVALUATED
+
+Not performed:
+
+- Runtime correctness retest;
+- Performance benchmark;
+- Product/source repair or redesign;
+- Camera, Native, backend, Root, Head, FacePart, or tracking-math change;
+- threshold, smoothing, Kalman, prediction, Fence, Wait, flush, or async change;
+- MOUTH_SIZE or SURFACE_CLIP compensation;
+- observer or diagnostic addition;
+- rebuild.
+
+===============================================================================
+7. FULL AUDIT 1 / FULL AUDIT 2
+===============================================================================
+
+FULL_AUDIT_1=PASS
+
+Audit 1 independently covered the complete assigned Human Visual-only scope:
+live-local branch/HEAD, all four build artifact identities, environment gate,
+exact running/closed Player identity, evidence/log hashes, all five protected
+Product source hashes, Human labels, conditional labels, no-rebuild/no-change
+scope, Performance exclusion, first visual boundary, and next action. It passed
+17 machine-checked identity/scope assertions plus the full label/report review.
+
+FULL_AUDIT_2=PASS
+
+Audit 2 restarted independently from the final evidence and report rather than
+using Audit 1 conclusions as authority. It used certutil SHA256 for all four
+build artifacts, both evidence files, and all five protected Product sources;
+independently checked branch/HEAD, environment absence, exact Player closure,
+required/conditional label presence, Performance exclusion, the single first
+visual boundary, and next action. It passed 33 checks.
+
+AUDIT_DISAGREEMENT=NONE
+UNRESOLVED_AUDIT_CONFLICT=NONE
+
+===============================================================================
+8. FIRST REMAINING EVIDENCE BOUNDARY / NEXT SINGLE ACTION
+===============================================================================
+
+FIRST_REMAINING_EVIDENCE_BOUNDARY=
+LANDMARKER_JUMP_FIRST_CAUSAL_BOUNDARY_NOT_LOCALIZED
+
+NEXT_SINGLE_ACTION=
+CONTROLLED_SAME_BUILD_LANDMARKER_JUMP_FIRST_BOUNDARY_LOCALIZATION_ONLY
+
+In a separately authorized task, reproduce the jump with synchronized
+source+Avatar evidence and identify the first failing authority/identity/
+timestamp/provider/presentation boundary before any repair. Stop at that first
+proven boundary. Do not compensate multiple visible defects, add smoothing, or
+change code based only on this still image.
+
+commit=NO
+push=NO
+ProjectContext_update=NO
+Roadmap_update=NO
+
+END_OF_REPORT

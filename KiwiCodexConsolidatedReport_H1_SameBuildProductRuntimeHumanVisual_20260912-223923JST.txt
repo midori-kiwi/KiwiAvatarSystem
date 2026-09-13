@@ -1,0 +1,522 @@
+KiwiAvatarSystem
+H1_SAME_BUILD_PRODUCT_RUNTIME_HUMAN_VISUAL_GATE
+CONSOLIDATED CODEX REPORT
+Report time: 2026-09-12 22:39:23 JST
+
+===============================================================================
+1. CONSOLIDATED DECISION
+===============================================================================
+
+H1_SAME_BUILD_PRODUCT_RUNTIME_HUMAN_VISUAL_GATE=NO_GO
+H1_PRODUCT_HUMAN_VISUAL=NOT_PASS
+RUNTIME_PRODUCT_BRIDGE=FAIL_FAIL_CLOSED
+HUMAN_VISUAL=PENDING_USER_REVIEW
+PERFORMANCE=NOT_PASS_NOT_EVALUATED
+FINAL_PRODUCT=NOT_PASS
+WINDOWS_ACCEPTANCE=NOT_PASS
+
+FIRST_FAILING_BOUNDARY=CANONICAL_TO_P3D_FRAME_ID_DOMAIN_MISMATCH
+
+P3D geometry itself remained live and bounded. The exact Product bridge did not
+adopt one sample. In two runs of the final same build, the P3D snapshot and the
+Canonical rigid frame retained the same sourceHostTicks for the same source
+sample, but their frameId fields were owned by different counters:
+
+- P3D snapshot frameId = FaceLandmarkerRunner source/published tracking frameId.
+- Canonical rigid frameId = KiwiTrackingProviderHub hub-local publication frameId.
+- TryGetFacePartGeometrySnapshot requires exact equality between those two
+  frameId values before Texture/Crop/Mask/FacePart adoption.
+
+Observed final samples:
+
+- Run 2: sourceHostTicks 283568284 == 283568284, but frameId 230 != 444.
+- Run 4 restart retry: sourceHostTicks 250620144 == 250620144, but
+  frameId 366 != 579.
+
+The fail-closed gate therefore held every observed Product sample. Texture
+commit count and applied FacePart roll count both remained zero. No target H1
+appearance reached the Product output, so Human Visual could not evaluate the
+assigned target and was not fabricated from logs.
+
+FULL_AUDIT_1=PASS
+FULL_AUDIT_2=PASS
+AUDIT_DISAGREEMENT=NONE
+
+The two audit PASS values mean the evidence and NO_GO classification were
+independently verified. They do not mean the H1 Product gate passed.
+
+===============================================================================
+2. CONFIRMED LIVE-LOCAL / PREFLIGHT
+===============================================================================
+
+Project=D:\KiwiAvatarSystem
+branch=work/raw-direct-motion
+HEAD=df75cfa9f6ae386bf4443272929d3cef33a8b138
+upstream=origin/work/raw-direct-motion
+ahead=0
+behind=0
+
+ProjectVersion=6000.0.80f1
+ProjectRevision=2dfd32957da2
+UnityExecutable=C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe
+UnityProductVersion=6000.0.80f1_2dfd32957da2
+UnityExecutableSHA256=7FC68434F4FCCF2781648C398FBAA4E8ADFB568251605E990D887FE36CF1376F
+
+Current context selector was enumerated. Every current document was read and
+reconciled:
+
+- ProjectContext\Current\KiwiAvatarSystem_CoreRules_20260910_GoalAligned_v3.txt
+  SHA256=2165427AC7D65410829CC49DB35F83EE8E2EB120685516D3EE004F50319F9F1D
+- ProjectContext\Current\KiwiAvatarSystem_CurrentRoadmap_20260910_GoalAligned_v3.txt
+  SHA256=491D79264297D7F4968E5A86DD524F6619280C40EA9A06D5CE7B7365EF42FC14
+- ProjectContext\Current\KiwiAvatarSystem_CustomInstructions_20260910_GoalAligned_v3.txt
+  SHA256=53300857BE44595BFA5EC73BFCAD82B6951D69CC985901EA4BBC2695452EE522
+
+Reconciliation:
+
+- P3C_1 and P3D retain their prior claim-scoped PASS.
+- H1 Product/Human Visual remains the next goal-relevant boundary.
+- the Current documents' older volatile HEAD does not override live-local HEAD;
+- the 18:04:21 preflight STOP was not re-promoted;
+- the later P3D-to-FacePart report authorizes the exact current candidate for
+  this Runtime gate, but its Static PASS was not promoted to Runtime PASS;
+- no unresolved Current/Rejected/Superseded/Do-Not-Change conflict affected
+  this gate.
+
+Initial user-owned dirty state was protected:
+
+- five authorized candidate Product source modifications;
+- KiwiCodexConsolidatedReport_P3D_To_FacePart_SameSampleBridge_20260912-191640JST.txt.
+
+No reset, checkout, clean, stash, commit, push, ProjectContext update, Camera,
+Native, backend, package, Root, visible Head, KiwiFaceMotion, or
+KiwiInferenceFaceTracker change was performed.
+
+===============================================================================
+3. CANDIDATE SOURCE IDENTITY / STATIC
+===============================================================================
+
+The five Product source SHA values matched the authorized report before compile,
+after compile, after build, and after Runtime:
+
+- KiwiFaceGeometryTransactionService.cs
+  33E945AC30D1856E57D484CD042CB70DB90775F48A2CC694724F7B119A1EE2DA
+- FaceLandmarkerRunner.cs
+  EF2D13FF91ECA6F9E44D494E252641AEDA1706CF296F9AF2C0FC34D3B2C53168
+- FacePartCropper.cs
+  D71064E1E7356F08835BC49AC74A225603CC0DBA287BA19AAB933AA91F5E3DAD
+- KiwiFacePartTextureTransaction.cs
+  F60E80C545A41B64416EBD3E594DDCE3A99527C62F3951BF87B584326EE45365
+- KiwiFacePartRigidSampleFrame.cs
+  6303C20D8AD0A045F067A2CB2DF118847339B2514B03785C14CF30377A07A5A8
+
+The previously reported Static flow is present, but Runtime disproved one of
+its identity assumptions:
+
+1. FaceLandmarkerRunner.StoreSentisTrackingData assigns
+   precisionData.frameId = ++_nextPublishedTrackingFrameId and returns that
+   value as acceptedFrameId (FaceLandmarkerRunner.cs near lines 3610-3613).
+2. The same acceptedFrameId is admitted to P3D
+   (FaceLandmarkerRunner.cs near lines 775-795 and 958-967).
+3. KiwiTrackingProviderHub observes that source data and preserves the source
+   frame in its slot/normalization metadata, but PublishIfChanged then assigns
+   output.frameId = _hubFrameId (KiwiTrackingProviderHub.cs near 2345-2353).
+4. KiwiCanonicalTrackingFrame publishes that hub output as frame.rigid.
+5. FaceLandmarkerRunner.TryGetFacePartGeometrySnapshot compares the P3D
+   source frameId to frame.rigid.frameId through snapshot.Matches
+   (FaceLandmarkerRunner.cs near 643-651).
+
+STATIC_CONCLUSION=THE_BRIDGE_COMPARES_TWO_DIFFERENT_FRAME_ID_DOMAINS
+
+This is not a stale-pixel or timestamp observation: same-sample sourceHostTicks
+matched exactly in both final Runtime runs. It is also not a reason to remove
+frame identity or weaken the other generation/backend/dimension checks.
+
+===============================================================================
+4. PACKAGE / MODEL IDENTITY
+===============================================================================
+
+Actually installed/package inputs were rechecked live:
+
+- Packages\com.github.homuler.mediapipe-0.16.3.tgz
+  SHA256=CC3E77A219E0B99618AE3BE64C31A566197DEEDC69C1E136ACF52D65D7CF2E79
+- Library\PackageCache\com.github.homuler.mediapipe@66127f8e750d\package.json
+  SHA256=EEBBFF4550FA9CA3C2C76AB05BD0EDBDB3A0A4C2800883E244DC9E40D8FF2A2D
+- Library\PackageCache\com.unity.ai.inference@587873fd5e1b\package.json
+  SHA256=2F230C84E28A9E3AD516B1A49B79B6F83E172F1C16E6813E0F1DD6FA2B1790EE
+- Assets\KiwiAvatarSystem\Resources\KiwiFaceLandmarkInference.onnx
+  SHA256=ED487104519B0A88CB2CB2EC3678E183F447FB9DD63560998E960FFBAA8FB335
+- Assets\StreamingAssets\KiwiFaceLandmarkInference.onnx
+  SHA256=ED487104519B0A88CB2CB2EC3678E183F447FB9DD63560998E960FFBAA8FB335
+- Assets\StreamingAssets\face_landmarker_v2_with_blendshapes.bytes
+  SHA256=B261925D4AAD812B47A0E8D58C1BAA1223270A5D1F663D78338BC881C003879D
+
+No package behavior or model semantic defect was implicated before the first
+Runtime failure boundary.
+
+===============================================================================
+5. OBSERVER
+===============================================================================
+
+Existing counters did not expose final applied identity or the failing match
+condition. One aggregate observer was added:
+
+- Assets\CodexTasks\P3D_FaceGeometryRuntime_20260910\KiwiH1ProductRuntimeObserver.cs
+  SHA256=89911BF86997D462840595B80CF118D840950C93928F811DEF26778DFBCD7E95
+- companion .meta
+  SHA256=7CF1EB1A8C8F7CA105E1C2B35AC5E793790D578283962B8611BD2B9195C98589
+
+OBSERVER_CLASSIFICATION=DIAGNOSTIC_ONLY
+OBSERVER_ACTIVATION=KIWI_H1_RUNTIME_ENVIRONMENT_ONLY
+OBSERVER_BUILD_SCOPE=DEVELOPMENT_BUILD_OR_UNITY_EDITOR_ONLY
+OBSERVER_PRODUCT_OUTPUT_OWNER=NO
+OBSERVER_PERFORMANCE_AUTHORITY=NONE
+
+It reads existing aggregate counters and retained identity fields, writes one
+atomic aggregate summary at a bounded two-second cadence, and never changes
+tracking, scheduling, texture, mask, crop, sample rotation, Root, Head, or
+presentation state. It adds no GPU readback, texture copy, wait, queue, FIFO,
+thread/process hop, smoothing, filter, prediction, or per-frame log.
+
+Observer limitations:
+
+- GATE_REASON_* values are poll counts, not independent source-sample counts.
+- APPLIED_DUPLICATE_COUNT is not used as authority; the observer changes its
+  applied-frame evaluation only when the reflected frameId changes.
+- final Product duplicate/out-of-order publication did not need that counter:
+  Product commit/apply count was zero, while the producer's existing aggregate
+  duplicate/out-of-order counters were independently zero.
+
+No Product source SHA changed when the observer was added.
+
+===============================================================================
+6. COMPILE / BUILD IDENTITY
+===============================================================================
+
+Exact compile:
+
+- Unity=6000.0.80f1 exact executable above
+- mode=-batchmode -nographics -quit
+- exit=0
+- C# error count=0
+- warning CS lines=37; existing warnings remain and warning-free build is not claimed
+- log=KiwiValidation\H1_SameBuild_Compile_20260912_202000.log
+- log SHA256=26E7E72272BE9DFFEEE4A6E4D754E5EDF8209CB72AD6FE7437A603093B7E3983
+
+Final same-source standalone build:
+
+- entrypoint=KiwiP3DFaceGeometryBuild.BuildWindows64
+- target=Windows x64
+- graphics API=Direct3D12 only
+- scene=Assets/Scenes/Face Landmark Detection.unity
+- BuildOptions=Development
+- Full Preflight=PASS
+- fingerprint=a6ff647c77a03c8c2d20cd49b85a1cc3b87194b79657bb6eeae118face34dcf6
+- build result=Succeeded
+- build errors=0
+- build warnings=204
+- build log=KiwiValidation\H1_SameBuild_Build_20260912-202100.log
+- build log SHA256=E1EE4B62B8D0BBC57AC521E0426E7F03892917C0E321F2DE9E08994FA552DE6A
+
+Final build directory:
+Builds\H1_SameBuild_20260912-202100
+
+- KiwiAvatarSystem_H1.exe
+  SHA256=98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81
+- UnityPlayer.dll
+  SHA256=A1C4F29041D783DF506E7C2892BC6AFA4ED45EF0D87AAFE0C7296BDC090681FC
+- KiwiAvatarSystem_H1_Data\Managed\Assembly-CSharp.dll
+  SHA256=221697AF61B94B0454301719A3C74941908AE6A8A7E4318AAF75C3D5736D1529
+- KiwiAvatarSystem_H1_Data\globalgamemanagers
+  SHA256=A9D5E570058256CCB55CFE7AB2E2CB877351C40DB6575614F2097A883E2F9B16
+
+The executable loader SHA alone is not build authority. Source SHA, Unity
+identity, build log/fingerprint, managed assembly, payload, and Runtime evidence
+are recorded together.
+
+===============================================================================
+7. RUNTIME
+===============================================================================
+
+Runtime configuration common to final runs:
+
+- exact final Development build above;
+- WindowsPlayer / Direct3D12;
+- scene=Assets/Scenes/Face Landmark Detection.unity;
+- camera='UGREEN Camera 4K';
+- camera mode=1920x1080@60;
+- camera backend=MediaFoundation/NV12/D3D11->D3D12CompatibilityReverseSharedRGBA;
+- capture transport=B:SystemMemoryNV12;
+- tracking input=320x180;
+- inference=Inference Engine hybrid GPU path on Direct3D12;
+- P3D backend=InferenceEngine;
+- observer armed only through KIWI_H1_RUNTIME;
+- Performance Authority=NONE.
+
+Final build Run 2:
+
+- Player exit=42, intentionally emitted by the diagnostic controller because
+  its H1 minimum evidence could not pass; this was not a crash;
+- PLAYER_CLOSED=YES;
+- elapsed=20.021 s;
+- bridge operational polls=1803;
+- P3D admission/submitted/accepted=204/204/202;
+- P3D accepted frameId=13 -> 444;
+- last camera/session/provider/model generations=2/2/5/1;
+- last backend/dimensions=InferenceEngine/320x180;
+- max in-flight=1; max pending=0;
+- geometry duplicate/out-of-order/stale-generation/mixed-epoch/old-run=0/0/0/0/0;
+- geometry completion identity mismatch=0;
+- Canonical sample count=223;
+- geometry gate pass=0; hold=223;
+- frameId mismatch reason polls=1016;
+- final Canonical rigid frameId=230;
+- final P3D snapshot frameId=444;
+- both sourceHostTicks=283568284;
+- Texture commit delta=0;
+- Eye/Mouth per-part texture advance=0/0/0;
+- applied FacePart roll advance=0;
+- applied reset-after-apply count=0 (no apply occurred);
+- initial consumer applied identity/frameId=0/0;
+- result=KiwiValidation\H1_Runtime_Run2_20260912-202300.txt;
+- result SHA256=5FDA2612AA88119F826DAC138A87A22EED5508B09302B61026A124E4A618C924;
+- Player.log SHA256=4935C96028E2FF8D27BC0DECE3882A0EBAF16E55CA319DADFB463081EEA594FD.
+
+Same final build restart retry Run 4:
+
+- Player exit=42 for the same deliberate diagnostic classification;
+- PLAYER_CLOSED=YES;
+- elapsed=22.015 s;
+- bridge operational polls=1779;
+- P3D admission/submitted/accepted=267/267/264;
+- P3D accepted frameId=34 -> 579;
+- last camera/session/provider/model generations=2/2/9/1;
+- last backend/dimensions=InferenceEngine/320x180;
+- max in-flight=1; max pending=0;
+- geometry duplicate/out-of-order/stale-generation/mixed-epoch/old-run=0/0/0/0/0;
+- geometry completion identity mismatch=0;
+- Canonical sample count=358;
+- geometry gate pass=0; hold=358;
+- frameId mismatch reason polls=699;
+- final Canonical rigid frameId=366;
+- final P3D snapshot frameId=579;
+- both sourceHostTicks=250620144;
+- Texture commit delta=0;
+- Eye/Mouth per-part texture advance=0/0/0;
+- applied FacePart roll advance=0;
+- applied reset-after-apply count=0 (no apply occurred);
+- initial consumer applied identity/frameId=0/0;
+- result=KiwiValidation\H1_Runtime_Run4_RestartRetry_20260912-204300.txt;
+- result SHA256=89655EE662D184D44AF9EC8B09C94D1DE66AF59702090E3F358261B3BAAC63A8;
+- Player.log SHA256=06BB9371EA128E36516D86ED7E9141930DC505E72B3050F052493692873D7787.
+
+Lifecycle:
+
+- normal startup, camera activation, active tracking, OnApplicationQuit cleanup,
+  and process closure were observed in both final same-build runs;
+- Run 4 was a new process using the exact same EXE/Assembly-CSharp.dll as Run 2;
+- initial consumer state was clear in both runs;
+- no stale applied rotation could carry over, but a post-apply stale-state test
+  was not exercisable because this defect prevented the first apply;
+- RESTART_STALE_APPLIED_ROTATION=UNKNOWN_NOT_EXERCISED_BEFORE_FIRST_BOUNDARY.
+
+Excluded supporting run:
+
+- Run 3 used the same final build but its 12-second window ended before
+  Inference/P3D admission began; admission=0. It is classified
+  INSUFFICIENT_STARTUP_WINDOW and is not used as H1 defect authority.
+
+Player logs contained the pre-existing Spout diagnostic
+KiwiSpoutDiagGetPluginLoaded EntryPointNotFound. It was outside the assigned H1
+first boundary and was not modified or promoted to this gate's cause.
+
+RUNTIME_ACTIVATION=P3D_ACTIVE_PRODUCT_BRIDGE_OBJECTS_PRESENT
+RUNTIME_GEOMETRY_LIVENESS=PASS_P3D_SCOPE
+RUNTIME_EXACT_TRANSACTION=FAIL_AT_FRAME_ID_DOMAIN_MATCH
+RUNTIME_ORDER_GENERATION_PRODUCER=PASS_P3D_SCOPE
+RUNTIME_FACEPART_PUBLICATION=ZERO_FAIL_CLOSED
+RUNTIME_LIFECYCLE=PASS_STARTUP_SHUTDOWN_PROCESS_SCOPE
+RUNTIME_RESTART=PARTIAL_PASS_INITIAL_CLEAR_BUT_POST_APPLY_NOT_EXERCISED
+
+===============================================================================
+8. HUMAN VISUAL
+===============================================================================
+
+Human Visual was not inferred from logs or validators. The target H1 Product
+output never advanced, so a visual review in these runs would not have evaluated
+the assigned bridge behavior.
+
+HUMAN_VISUAL=PENDING_USER_REVIEW
+ROTATION_MATCH=UNKNOWN_NOT_RUN
+EYE_TWIST=UNKNOWN_NOT_RUN
+MOUTH_TWIST=UNKNOWN_NOT_RUN
+ROOT_NON_MOVEMENT=UNKNOWN_NOT_RUN
+EYE_BLINK=UNKNOWN_NOT_RUN
+MOUTH_EXPRESSION=UNKNOWN_NOT_RUN
+MOUTH_SIZE=UNKNOWN_NOT_REVIEWED
+SURFACE_CLIP=UNKNOWN_NOT_REVIEWED
+LIVE_CAMERA=UNKNOWN_HUMAN_VISUAL_NOT_REVIEWED
+PLAYER_CLOSED=YES
+
+Runtime established that the camera source was active. It did not establish the
+human-visible LIVE CAMERA label. UNKNOWN was not converted to PASS or FAIL.
+
+Human review is not the next action while the exact Product bridge publishes no
+target sample. It should be rerun on a later same-build candidate only after the
+first identity boundary is repaired and Runtime adoption is nonzero.
+
+===============================================================================
+9. PERFORMANCE
+===============================================================================
+
+PERFORMANCE_AUTHORITY=NONE
+PERFORMANCE=NOT_PASS_NOT_EVALUATED
+
+The build was Development and observer-instrumented. Counts and elapsed times
+are correctness/liveness observations only. No FPS, latency, CPU/GPU,
+allocation, throughput, or clean Production benchmark conclusion is made.
+
+===============================================================================
+10. INFERENCE / UNKNOWN / REJECTED-SUPERSEDED
+===============================================================================
+
+CONFIRMED:
+
+- the same sourceHostTicks reached P3D and Canonical for the displayed failing
+  sample while their frameId domains differed;
+- ProviderHub rewrites rigid.frameId to a hub-local publication counter;
+- the bridge compares that hub-local value to the P3D source frameId;
+- the gate held before Texture/Crop/Mask/FacePart commit.
+
+INFERENCE:
+
+- none is required for the first boundary classification. Runtime values and
+  current source directly establish the mismatch.
+
+UNKNOWN / UNVERIFIED:
+
+- Human Visual labels listed in section 8;
+- yaw/pitch/roll appearance correctness;
+- Eye/Blink/Mouth/Expression non-rigid preservation;
+- Root non-movement under the requested human motion set;
+- MOUTH_SIZE and SURFACE_CLIP reproduction;
+- post-apply restart stale-rotation behavior;
+- pixel-level native camera sequence equality;
+- clean Production Performance;
+- Final Product and Windows Acceptance.
+
+REJECTED / NOT PERFORMED:
+
+- no frameId check removal or identity relaxation;
+- no sourceHostTicks-only speculative acceptance;
+- no yaw/pitch compensation, inverse UV, billboard, or model-deform fix;
+- no MOUTH_SIZE or SURFACE_CLIP pre-fix;
+- no Camera/Native/backend/package/Root/Head authority change;
+- no FIFO/history, buffering increase, wait/fence/flush, async disable, second
+  inference, custom FaceGeometry solver, smoothing, Kalman, prediction, or
+  threshold change;
+- no Human Visual or Performance PASS fabricated from diagnostics;
+- the superseded 18:04:21 preflight STOP was not re-promoted.
+
+===============================================================================
+11. FULL AUDIT 1 / FULL AUDIT 2
+===============================================================================
+
+FULL_AUDIT_1=PASS
+
+Audit 1 covered the complete assigned scope: preflight/current context, Product
+and diagnostic source identity, installed package/model identity, exact compile,
+build/preflight/artifact identity, both final Runtime results and Player logs,
+P3D liveness/order/generation, Product gate/commit/apply, lifecycle/restart,
+observer noninterference, Human Visual/Performance scope limits, dirty-state
+protection, first boundary, and next action. Final rerun passed 44/44 assertions.
+
+Audit 1 validator history:
+
+- its first PS5.1 execution used the unsupported [ulong] type alias and stopped
+  fail-closed;
+- it was corrected to [uint64] and the entire audit was rerun from the start;
+- no result was accepted from the failed validator run.
+
+FULL_AUDIT_2=PASS
+
+Audit 2 restarted from saved source/build/runtime evidence without treating
+Audit 1 conclusions as authority. It independently used certutil SHA256,
+line-cardinality Runtime parsing, exact Git scope checks, direct source-owner
+tracing, both final-run comparison, short-run exclusion, process closure, and
+observer mechanism scans. Final rerun passed 56/56 assertions.
+
+Audit 2 validator history:
+
+- its first source-owner check incorrectly required a multiline C# assignment
+  to exist on one physical line and stopped fail-closed;
+- the validator was corrected to whitespace-aware raw-source matching and the
+  entire audit was rerun from the start;
+- no result was accepted from the failed validator run.
+
+Both completed audits independently concluded:
+
+- P3D correctness/liveness remains PASS within its retained claim scope;
+- H1 Product bridge Runtime is NO_GO at the frameId domain boundary;
+- Texture-only and FacePart-only partial adoption did not occur;
+- Human Visual and Performance remain unpassed;
+- first failing boundary and next single action agree.
+
+AUDIT_DISAGREEMENT=NONE
+UNRESOLVED_AUDIT_CONFLICT=NONE
+
+===============================================================================
+12. NEXT SINGLE ACTION / STOP
+===============================================================================
+
+NEXT_SINGLE_ACTION=FRAME_IDENTITY_CONTRACT_REPAIR_DESIGN_AND_MINIMAL_IMPLEMENTATION
+
+In a separately authorized implementation task, define and apply one exact
+source-frame identity contract between the Runner/P3D snapshot and the
+ProviderHub/Canonical frame. The repair must preserve the source frame identity
+separately from the hub-local publication identity and retain sourceHostTicks,
+generation, backend, semantic-dimension, duplicate/out-of-order, and lifecycle
+guards. Existing normalization.providerSourceFrameId is a source field to audit
+as a candidate; it is not adopted by this report.
+
+Do not weaken the frame identity gate, match only by wall/display timing, or add
+visual compensation. After that single boundary is repaired, rebuild the exact
+same-source DX12 Player and rerun this Runtime/Human Visual gate from the start.
+
+This task stops here. No Product repair was implemented.
+
+===============================================================================
+13. ARTIFACT / ROLLBACK / FINAL STATE
+===============================================================================
+
+Report artifact:
+
+- KiwiCodexConsolidatedReport_H1_SameBuildProductRuntimeHumanVisual_20260912-223923JST.txt
+
+Runtime evidence ZIP=NOT_CREATED_NOT_REQUIRED
+
+The raw result files and Player logs are already local and small. A ZIP would
+not add authority for this fail-closed first boundary.
+
+Diagnostic rollback is limited to removing the two untracked observer files in
+Assets\CodexTasks\P3D_FaceGeometryRuntime_20260910. No rollback was performed
+because the observer is explicitly allowed, Development/Editor-only, and the
+task requires its evidence. Product candidate files were not altered by this
+task.
+
+commit=NO
+push=NO
+ProjectContext_update=NO
+CurrentRoadmap_update=NO
+
+FINAL_H1=NOT_PASS
+FINAL_DECISION=NO_GO
+FIRST_FAILING_BOUNDARY=CANONICAL_TO_P3D_FRAME_ID_DOMAIN_MISMATCH
+FULL_AUDIT_1=PASS
+FULL_AUDIT_2=PASS
+AUDIT_DISAGREEMENT=NONE
+PERFORMANCE=NOT_PASS
+FINAL_PRODUCT=NOT_PASS
+WINDOWS_ACCEPTANCE=NOT_PASS
+
+END_OF_REPORT

@@ -1,0 +1,136 @@
+# KiwiAvatarSystem 通常チャット運用管理規則
+
+更新日: 2026-09-13 JST
+Revision: v3 / Current Integrated FullRoadmap
+
+## 1. 会話長管理
+
+通常チャットでは会話量、添付資料、調査結果、長文成果物を監視し、以下が文脈から脱落する前に新チャット移行を提案する。
+
+- Claim-Scoped Authority
+- Current state
+- Validated / Rejected / Superseded
+- Open Issues
+- Do Not Change
+- Next Single Action
+- report-time identity
+- Human Visual result
+
+限界ぎりぎりまで継続しない。
+
+## 2. 新チャットへの移行
+
+新チャットでは原則:
+1. `AGENTS.md`
+2. `ProjectContext\Current` の CoreRules
+3. Current統合FullRoadmap
+4. CustomInstructions
+5. 最新有効Consolidated REPORT / Runtime / Human Visual
+6. 必要なhistorical evidence
+
+全履歴を再展開しない。
+別CurrentRoadmapは参照しない。
+
+## 3. 過去資料の再監査
+
+過去チャット / ドキュメント / ChatReportを再監査する場合、タイトル・ファイル名・Archive一覧だけで技術判断しない。
+利用可能なら本文を開き、少なくとも次を確認する。
+
+- Objective / Goal
+- Authority / identity
+- Work Performed / Evidence
+- Validated Decisions
+- Rejected Approaches
+- Superseded Conclusions
+- Current Result
+- Open Issues
+- Next Action
+- Do Not Change / Handoff
+
+本文未取得資料はその旨を明記し、本文を読んだものとして扱わない。
+
+## 4. 通常チャットの役割
+
+通常チャット + GitHubを主担当とする。
+- official/public research
+- OSS/commercial public comparison
+- design / audit
+- GitHub source analysis
+- ordinary minimal code change
+- Static review
+- REPORT independent re-audit
+- Runtime/Human evidence interpretation
+- Adopt/Reject/Supersede
+- CoreRules / FullRoadmap / CustomInstructions整備
+- 明示許可されたcommit
+
+Codexは原則local-only。
+
+## 5. 回答スタイル
+
+簡潔な日本語を優先。
+ユーザー向け判定は日本語を主表記にする。
+
+例:
+- 回転一致: 合格 / 不合格 / 未確認
+- 目のねじれ
+- 口のねじれ
+- 回転時Root非移動
+- まばたき
+- 口表情
+- LIVE CAMERA
+
+既存英語キーは照合が必要な場合だけ併記する。
+最善の1案を優先し、既知情報を再質問しない。
+
+## 6. 事実分離
+
+必要に応じ:
+- 確認済み事実
+- Runtime
+- Static / Package
+- 公開設計原則
+- 推論
+- 未確認
+- Rejected / Superseded
+を分離する。
+
+Human VisualをValidator PASSで上書きしない。
+Observer / Validator / REPORT自体も監査する。
+
+## 7. コード変更
+
+変更前にcurrent Authority/source、installed Package、official source/docs、relevant public comparison、regression/latency/lifecycle/resource/security/rollbackを確認。
+証明されたfirst boundaryだけ最小修正する。
+正常コードをcleanup目的だけで作り直さない。
+必要時whole-fileを優先する。
+
+## 8. Commit運用
+
+意味のある最小変更がStatic reviewを通り、次local検証の再現可能な基準点を固定すべき時点で:
+
+**「今がコミット適切時点」**
+
+と知らせる。
+commitは明示許可時のみ。pushは明示指示時のみ。
+
+## 9. 手動作業を既定にしない
+
+Chat ZIP→download→PowerShell手入力→結果貼付を通常開発の既定経路にしない。
+remote source workは通常チャット+GitHub、local-only workはCodex。
+Human Visual、GUI/hardware、権限境界、tool非対応等のみ手動。
+
+## 10. 成果物最小化
+
+- Codex: Consolidated REPORT 1個
+- Runtime ZIP: Evidence上必要時のみ
+- Visual evidence: 必要時のみ
+- Installer/Fix: complete archive 1個
+- duplicate evidenceを毎回再梱包しない
+
+## 11. 文脈保全
+
+Current AuthorityやOpen Issueを削らない一方、old SHA / old Next / obsolete version / retired diagnostic / superseded hypothesisをCurrentへ戻さない。
+
+CurrentはFullRoadmapへ一本化する。
+CurrentRoadmapという別Current文書を再作成しない。

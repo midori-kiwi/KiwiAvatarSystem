@@ -1,0 +1,423 @@
+KIWI_H1_COMMITTED_PRESENTATION_CANONICAL_CORRELATION_CONTROLLED_RUNTIME_ONLY
+Consolidated local report
+Report time: 2026-09-13 13:09:14 JST
+
+================================================================
+0. RESULT
+================================================================
+
+TASK_RESULT=UNRESOLVED_NO_HUMAN_MARKER
+AUTHORITY_PREFLIGHT=PASS
+SOURCE_FREEZE=PASS
+EXPECTED_OBSERVER_SHA256=MATCH
+DEVELOPMENT_PLAYER_BUILD=PASS
+ARTIFACT_IL_IDENTITY=PASS
+CONTROLLED_DX12_RUNTIME_RUN_COUNT=1
+CONTROLLED_DX12_RUNTIME_EXECUTION=PASS
+HUMAN_VISUAL_JUMP_MARKER_COUNT=0
+COMMITTED_PRESENTATION_CANONICAL_EXACT_CORRELATION=NOT_AVAILABLE
+PRODUCT_CAUSE_INFERENCE=NOT_PERFORMED
+PRODUCT_SOURCE_WRITE=NONE
+OBSERVER_SOURCE_WRITE=NONE
+CURRENT_CONTEXT_WRITE=NONE
+COMMIT=NOT_PERFORMED
+PUSH=NOT_PERFORMED
+
+結論:
+  exact Observer candidateを変更せず、新規Windows x86_64 Development
+  Playerへbuildし、PDB source checksumとbuilt ILでartifact identityを確認した。
+  controlled RuntimeはDirect3D12で1回だけ実行し、Player exit code 0で正常終了した。
+
+  ただしhuman_jump_markers.csvのdata rowは0で、summaryも
+  HUMAN_VISUAL_JUMP_MARKER_COUNT=0で一致した。したがってHumanが認識した
+  Landmarker飛びに対応するlatest/previous committed PresentationとCanonicalの
+  exact tupleは取得できない。markerなしに近傍sampleをHuman eventへ昇格せず、
+  fail-closedでUNRESOLVEDとする。自動再実行はしていない。
+
+================================================================
+1. AUTHORITY PREFLIGHT
+================================================================
+
+Project root:
+  D:\KiwiAvatarSystem
+
+ProjectVersion.txt:
+  m_EditorVersion: 6000.0.80f1
+  m_EditorVersionWithRevision: 6000.0.80f1 (2dfd32957da2)
+
+Exact Unity live-local:
+  path:
+    C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe
+  ProductVersion: 6000.0.80f1_2dfd32957da2
+  FileVersion: 6000.0.80.3013938
+  SHA256:
+    7FC68434F4FCCF2781648C398FBAA4E8ADFB568251605E990D887FE36CF1376F
+
+Live-local Git identity before build and after Runtime:
+  branch: work/raw-direct-motion
+  HEAD: df75cfa9f6ae386bf4443272929d3cef33a8b138
+  upstream: origin/work/raw-direct-motion
+  ahead/behind: +0/-0
+  report-time reference: MATCH
+
+Dirty state:
+  DIRTY / USER_OWNED
+  既存tracked modified/deletedとuntracked状態を保護した。
+  reset / checkout / clean / restore / stashは使用していない。
+  build/Runtime後も既知protected source hashとtracked status shapeは不変。
+
+Current selector:
+  ProjectContext\Currentの7ファイルを全列挙した。
+  CoreRules / FullRoadmap / CustomInstructionsの3文書をCurrent Authorityとして読み、
+  selector/operating reference 3文書とSHA256SUMSも確認した。
+  2026-09-13 06:03:23 JST REPORT時点からmaterialなAuthority変更なし。
+
+Current Human Visual Authority:
+  2026-09-13 00:04:34 JST same-build H1 Human Visual=FAIL。
+  本runはmarkerなしであり、このAuthorityを上書きしない。
+
+================================================================
+2. SOURCE FREEZE / IDENTITY
+================================================================
+
+Observer:
+  path:
+    D:\KiwiAvatarSystem\Assets\CodexTasks\H1_LandmarkerBoundary_20260913\KiwiH1LandmarkerBoundaryObserver.cs
+  expected/before/after-build/after-Runtime SHA256:
+    CF6CD8185D039295C6C5B926391C9927164FF3D9152A2EA2D3649183064D7A65
+  result: MATCH / UNCHANGED
+
+Protected Product source SHA256:
+  KiwiFacePartRigidSampleFrame.cs
+    6303C20D8AD0A045F067A2CB2DF118847339B2514B03785C14CF30377A07A5A8
+  KiwiFacePartTextureTransaction.cs
+    F60E80C545A41B64416EBD3E594DDCE3A99527C62F3951BF87B584326EE45365
+  KiwiFaceGeometryTransactionService.cs
+    33E945AC30D1856E57D484CD042CB70DB90775F48A2CC694724F7B119A1EE2DA
+  KiwiCanonicalTrackingFrame.cs
+    458FF33E98E054B766F20EB17CE6BDD242C9AD9FD6E73AF53D60BD3961822AFA
+  KiwiTrackingProviderHub.cs
+    A5C7DE387FA2E02862BCF64942363AECFB9C7830B52DF5B8953404DF884ECCB1
+  FaceLandmarkerRunner.cs
+    4D1804459FAC66132ADC21258ED371013969C12C1C491970790FC79C2EA64A56
+  KiwiInferenceFaceTracker.cs
+    17F55087EFA7D42B14EF7453F35B0720EE79A23A64CB239391171C45241E3744
+  KiwiFaceMotion.cs
+    D00D4C86FB79B7F9B9AE3CFE791D7A819449D24D27154B31FFDF45964D8650C6
+  FacePartCropper.cs
+    D71064E1E7356F08835BC49AC74A225603CC0DBA287BA19AAB933AA91F5E3DAD
+  KiwiFrameComparisonOverlay.cs
+    6DF8CCC9B47A0E2E9BFF4807B4D7CAB4AB11911992A4624EF7A8E40436F39EDD
+  Assets/Scenes/Face Landmark Detection.unity
+    E9AA13257215C90829BCC04E63E4ED5F84F8965049B9F0AABC28418893E92409
+  ProjectSettings/ProjectSettings.asset
+    88CB3F68F275E1A7DCBF1FEA8C59D123F50743C6F93B0F861E1FD653865EC6AA
+
+Source/Scene/Prefab/Package/ProjectSettings write by this task:
+  NONE
+
+================================================================
+3. DEVELOPMENT PLAYER BUILD / COMPILER
+================================================================
+
+Old artifact:
+  H1_LandmarkerBoundary_Retry_20260913-041253
+  NOT_REUSED
+
+Build path:
+  D:\KiwiAvatarSystem\Builds\H1_CommittedCanonicalCorrelation_20260913-130123
+
+Executable:
+  D:\KiwiAvatarSystem\Builds\H1_CommittedCanonicalCorrelation_20260913-130123\KiwiAvatarSystem.exe
+
+Build start:
+  2026-09-13T13:01:47.3721646+09:00
+Build end:
+  2026-09-13T13:03:04.9247137+09:00
+Unity exit code:
+  0
+
+Build configuration:
+  target: StandaloneWindows64
+  PE machine: 0x8664 / x86_64
+  options: Development
+  scene: Assets/Scenes/Face Landmark Detection.unity
+  graphics API gate: Direct3D12-only
+
+Mandatory preflight:
+  KiwiReleaseCandidatePreflight.RunFullPreflight(true)=PASS
+  releaseCandidateReady=PASS
+  current passing fingerprint:
+    1e1615aa7fa2ab889277dddd216200fe1c4ec788e1ae0c135478da26638906c2
+
+BuildPipeline summary:
+  result=Succeeded
+  errors=0
+  warnings=204
+  total size=276902951
+
+Compiler claim-scoped result:
+  compiler errors: 0
+  Observer source warning: 0
+  Assembly-CSharp.dll compiler warning unique tuple: 19
+  06:03:23 authoritative candidate compile Assembly-CSharp.dll tuple: 19
+  same-compilation-unit tuple-set difference: 0
+  same-compilation-unit regression: NOT_FOUND
+  Build summary 204 warningをC# warning regression countへ読み替えていない。
+  旧37/19→40/20 raw count比較もFAIL Gateへ再昇格していない。
+
+Build log:
+  D:\KiwiAvatarSystem\KiwiValidation\H1_CommittedCanonicalCorrelation_Build_20260913-130123.log
+  SHA256:
+    4CA23F0C3704EE2D9B1882E813BFF70BFE3FF7852D42083EC502F3EB9E2C58CD
+
+================================================================
+4. ARTIFACT / IL IDENTITY
+================================================================
+
+Built Assembly-CSharp.dllをMono.Cecilで直接読んだ。
+
+PDB exact source identity:
+  document:
+    D:\KiwiAvatarSystem\Assets\CodexTasks\H1_LandmarkerBoundary_20260913\KiwiH1LandmarkerBoundaryObserver.cs
+  PDB hash algorithm: SHA256
+  PDB document checksum:
+    CF6CD8185D039295C6C5B926391C9927164FF3D9152A2EA2D3649183064D7A65
+  live source expected SHA256: same
+  exact match: PASS
+
+Built type/method/field contract:
+  TYPE KiwiH1LandmarkerBoundaryObserver: PRESENT
+  METHOD CapturePresentationEligibility: PRESENT
+  METHOD WriteHumanMarker: PRESENT
+  FIELD _latestCommittedPresentation: PRESENT
+  FIELD _previousCommittedPresentation: PRESENT
+  nested PresentationObservation fields: PRESENT
+    valid
+    observationHostTicks
+    committedSemanticTimestamp
+    committedCanonicalFrameId
+    canonicalCorrelationStatus
+    providerMetadataExactMatch
+    normalizationValid
+    providerId
+    backend
+    providerSourceFrameId
+
+CapturePresentationEligibility IL call contract:
+  KiwiFacePartTextureTransaction.TryGetLastCommittedPresentationFrame(
+    Texture&, Int64&, UInt64&)
+  call count: 1
+
+  KiwiCanonicalTrackingFrame.TryGetFrame(KiwiTrackingFrame&)
+  call count: 1
+
+Correlation state literals in built IL:
+  NO_CANONICAL_SNAPSHOT: PRESENT
+  CANONICAL_ID_MISMATCH: PRESENT
+  EXACT_CANONICAL_ID_MATCH: PRESENT
+
+Human marker path in built IL:
+  human_jump_markers.csv: PRESENT
+  Update -> UnityEngine.Input.GetKeyDown(KeyCode): PRESENT / call count 1
+  Update -> WriteHumanMarker(): PRESENT / call count 1
+
+Artifact fingerprints:
+  KiwiAvatarSystem.exe
+    98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81
+  UnityPlayer.dll
+    A1C4F29041D783DF506E7C2892BC6AFA4ED45EF0D87AAFE0C7296BDC090681FC
+  Assembly-CSharp.dll
+    C0E2DD1313D6E3AA5913634C81A698B70CF5812242B37FB1719D26CFB0413965
+  Assembly-CSharp.pdb
+    A9F7219F374E4645FD74A6D097690973D1CE48746BC20232C1F0425E897AB439
+  globalgamemanagers
+    5E6B28021925368DC893BBCB6AD89DC586EE2D3531D6DC3585E676BDAFAFACE8
+
+================================================================
+5. CONTROLLED DX12 RUNTIME
+================================================================
+
+Runtime evidence directory:
+  D:\KiwiAvatarSystem\KiwiValidation\H1_CommittedCanonicalCorrelation_Runtime_20260913-130500
+
+Runtime start:
+  2026-09-13T13:05:17.4397565+09:00
+  note: wrapper output recorded 13:05:17 local launch boundary
+Runtime end:
+  2026-09-13T13:07:10.3363571+09:00
+Player exit code:
+  0
+
+Runtime identity:
+  UNITY_VERSION=6000.0.80f1
+  DEBUG_BUILD=1
+  GRAPHICS_API=Direct3D12
+  Player.log: Forcing GfxDevice: Direct3D 12
+  SCENE=Assets/Scenes/Face Landmark Detection.unity
+  DIAGNOSTIC_ONLY=1
+  OBSERVER_STORAGE=O1_LATEST_ONLY_NO_QUEUE
+  RIGHT_SIDE_VISIBLE_SINK=KiwiFrameComparisonOverlay.MATCHED_LANDMARK_DEBUG
+  PACKAGE_FACE_LANDMARKER_ANNOTATION_ACTIVE=0
+  PLAYER_CLOSED=YES
+
+Observer outputs:
+  aggregate data rows: 104
+  human marker data rows: 0
+  summary HUMAN_VISUAL_JUMP_MARKER_COUNT=0
+
+Final scope counters:
+  RAW_MEDIAPIPE_CALLBACK_COUNT=1995
+  RAW_RESULT_ABSENT_COUNT=565
+  RAW_DUPLICATE_TIMESTAMP_COUNT=0
+  RAW_OUT_OF_ORDER_TIMESTAMP_COUNT=0
+  RAW_ABNORMAL_SOURCE_GAP_COUNT=1
+  RAW_AUX_ONLY_WHILE_IE_PRIMARY_COUNT=175
+  RAW_TO_RUNNER_MEDIA_PIPE_HANDOFF_COUNT=1820
+  HANDOFF_IDENTITY_MISMATCH_COUNT=565
+  HANDOFF_DUPLICATE_TIMESTAMP_COUNT=0
+  HANDOFF_OUT_OF_ORDER_TIMESTAMP_COUNT=0
+  RIGHT_SIDE_CONSUME_COUNT=2022
+  RIGHT_SIDE_CONSUME_MEDIAPIPE_COUNT=1127
+  RIGHT_SIDE_CONSUME_INFERENCE_ENGINE_COUNT=895
+  RIGHT_SIDE_CONSUME_IDENTITY_MISMATCH_COUNT=0
+  RIGHT_SIDE_CONSUME_DUPLICATE_TIMESTAMP_COUNT=0
+  RIGHT_SIDE_CONSUME_OUT_OF_ORDER_TIMESTAMP_COUNT=0
+  RIGHT_SIDE_PRESENTATION_ELIGIBLE_COUNT=662
+  RIGHT_SIDE_PRESENTATION_DUPLICATE_TIMESTAMP_COUNT=0
+  RIGHT_SIDE_PRESENTATION_OUT_OF_ORDER_TIMESTAMP_COUNT=0
+
+Runtime log finding outside requested correlation claim:
+  [KiwiSpoutV44_20] EntryPointNotFound: KiwiSpoutDiagGetPluginLoaded
+  が1件記録された。Observer candidate warning/errorではなく、Playerは継続して
+  H1 evidenceを生成しexit code 0で終了した。本taskでは原因調査・修正しない。
+
+Evidence SHA256:
+  Player.log
+    861844DE2D5B43DC002AA718099B80176B7D4750B4FD60A1A4E464E875BD2F4B
+  summary.txt
+    93CEA2D01D310C815813F723AFFA062D6E318B9D4D45A55582F4B9388417EB7C
+  aggregate_1hz.csv
+    20DBC5C17B5E66DEE0C0DD884CE2FE73A027598B6725D1784B033D3F1111368C
+  human_jump_markers.csv
+    109DFC220B982EB80685FDFD941D38F6B21B9D6EA71D2A25EBC553C91B15BD55
+
+================================================================
+6. HUMAN MARKER / EXACT CORRELATION
+================================================================
+
+Marker CSV header contract:
+  latest/previous Presentationのvalid、observationHostTicks、
+  committedSemanticTimestamp、committedCanonicalFrameId、
+  canonicalCorrelationStatus、provider metadata、normalization、backend、
+  providerSourceFrameIdを含む。PASS。
+
+Marker data rows:
+  0
+
+Latest committed Presentation tuple at Human marker:
+  NOT_AVAILABLE
+
+Previous distinct committed Presentation tuple at Human marker:
+  NOT_AVAILABLE
+
+Runtime canonical correlation status at Human marker:
+  NOT_AVAILABLE
+
+Humanがjumpを認識しなかったのか、Space入力が行われなかったのかはEvidenceから
+区別できない。built ILにはSpace input pathが存在する。marker 0を
+「jumpなし」とも「Product正常」とも判定しない。
+
+Aggregateの機械的近傍値、raw gap、result absent、handoff mismatch、provider
+intervalをHuman eventへ対応付けない。Human markerなしにProduct cause、first
+failing boundary、Canonical mismatchのいずれも確定しない。
+
+================================================================
+7. FULL_AUDIT_1 — FORWARD COMPLETE SCOPE
+================================================================
+
+FULL_AUDIT_1=UNRESOLVED
+
+Independent order:
+  live Authority
+  -> Current selector
+  -> Observer/Product source identity
+  -> source freeze
+  -> mandatory preflight/build
+  -> compiler same-unit comparison
+  -> artifact hashes
+  -> PDB exact source checksum
+  -> built IL contract
+  -> controlled DX12 Runtime identity
+  -> Human marker
+  -> exact correlation
+
+Result:
+  Preflight/source/build/compiler/artifact/PDB/IL/Runtime identityはPASS。
+  Human marker data row=0のためexact correlationはNOT_AVAILABLE。
+  task objective全体はUNRESOLVED。
+
+================================================================
+8. FULL_AUDIT_2 — REVERSE COMPLETE SCOPE
+================================================================
+
+FULL_AUDIT_2=UNRESOLVED
+
+Independent reverse order:
+  human_jump_markers.csv data rows
+  -> summary marker count
+  -> marker header schema
+  -> built Update input call
+  -> Player close/exit
+  -> scene/DX12/Development identity
+  -> IL call targets/field/state literals
+  -> PDB document checksum
+  -> artifact hashes/build log
+  -> protected source/current/Git/Unity Authority
+
+Result:
+  CSV data row 0とsummary marker count 0は一致。
+  Marker headerとbuilt Space input pathは存在。
+  Runtime/IL/PDB/source/Authorityのreverse checkはPASS。
+  exact tupleは存在しないためtask objective全体はUNRESOLVED。
+
+FULL_AUDIT_1 / FULL_AUDIT_2 disagreement:
+  NONE
+
+================================================================
+9. NOT CLAIMED / CURRENT
+================================================================
+
+Not claimed:
+  - Humanがこのrunでjumpを見なかったこと
+  - Productが正常であること
+  - committed PresentationとCanonicalがmatch/mismatchしたこと
+  - raw/result absent/handoff mismatchがHuman jump原因であること
+  - Spout diagnostic errorがLandmarker jump原因であること
+  - Human Visual PASS
+  - Performance Authority
+  - Final Product / Windows Acceptance
+
+Current Human Visual Authority:
+  H1_PRODUCT_HUMAN_VISUAL=FAIL remains unchanged.
+
+Current project first blocker:
+  LANDMARKER_JUMP_FIRST_CAUSAL_BOUNDARY_NOT_LOCALIZED
+
+Task-local first blocker:
+  HUMAN_VISUAL_JUMP_MARKER_NOT_CAPTURED
+
+================================================================
+10. NEXT / STOP
+================================================================
+
+STOP:
+  Requested controlled Runtime 1回は完了したため、自動再実行しない。
+  Product/Observer/Current文書を変更しない。
+  tracking tuning、timestamp/source-age/liveness、provider transition、
+  Camera/Native/backend、performance、commit、pushへ進まない。
+
+Task-local next:
+  本Evidenceを通常チャットで独立再監査する。
+  exact correlationをなお取得する場合は、同じartifact identityを採用するか
+  新artifactを要求するかをclaim scopeとして明示した別の1-run authorizationが必要。
