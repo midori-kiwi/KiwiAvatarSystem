@@ -1,0 +1,146 @@
+# KiwiAvatarSystem 通常チャット用 恒久REPORT / ZIP直接作成指示
+
+更新日: 2026-09-14 JST
+Revision: v4 / Current Integrated / Artifact Governance
+
+## 1. 適用条件
+
+ユーザーが「恒久REPORT」「ChatReport」「次チャット用Archive」「ZIP化」等を依頼した場合、通常チャットで可能な範囲を一括完了する。不要な確認質問を追加しない。
+
+## 2. 主成果物
+
+原則1個のZIP:
+`KiwiChat_<Topic>_Updated_<LastWorkUpdate>-JST.zip`
+
+曖昧なReport/Latest/Test等の名前を使わない。
+Archive名の日時は作成時刻ではなく、依頼前最後の実質的技術更新時刻。
+不明な時刻を推測しない。
+
+## 3. Local保存先 / Artifact Owner
+
+localへ保存する場合は作業開始時にArtifact Ownerを決め、project rootへ直接置かない。
+
+原則:
+- REPORT: `ProjectArtifacts\<Owner>\Reports\`
+- Evidence: `ProjectArtifacts\<Owner>\Evidence\`
+- Visual: `ProjectArtifacts\<Owner>\Visual\`
+- Logs: `ProjectArtifacts\<Owner>\Logs\`
+- 実行・配布ZIP: `ProjectArtifacts\<Owner>\Packages\`
+
+ChatReport Archive自体はGoogle Drive等の履歴Archiveとlocal技術成果物を無理に完全同期しない。local path / filename / SHA256 / purpose / resultをREPORTへ記録し、巨大Evidenceを毎回複製しない。
+
+既存root成果物をArchive作成だけのために移動しない。
+
+## 4. ZIP内部
+
+通常は:
+`00_CHAT_PERMANENT_REPORT.md` 1個を優先。
+非常に大規模な場合だけCurrent/Decisions/History/Open/Evidence Indexへ分割する。
+
+## 5. REPORT必須内容
+
+- EXECUTIVE SUMMARY
+- OBJECTIVE
+- CONFIRMED FACTS
+- RUNTIME
+- STATIC / PACKAGE SOURCE
+- PUBLIC DESIGN PRINCIPLES
+- INFERENCES / HYPOTHESES
+- PRODUCTION AUTHORITY
+- WORK PERFORMED
+- VALIDATED DECISIONS
+- REJECTED APPROACHES
+- SUPERSEDED CONCLUSIONS
+- OBSERVER / VALIDATOR FINDINGS
+- FILES / SHA256
+- RUNTIME EVIDENCE
+- CURRENT RESULT
+- OPEN ISSUES
+- NEXT ACTION
+- DO NOT CHANGE
+- HANDOFF
+- CHAT ARCHIVE INDEX
+- FullRoadmapへ反映すべきCurrent / chronology / decision項目
+
+## 6. Authority
+
+Archiveは履歴でありCurrent Production Authorityそのものではない。
+Implementation=current live local+SHA、Runtime=same-build Production、Package=actual installed source、Performance=clean benchmark、Visual=same-build Human review。
+live localを通常チャットで直接確認できない場合:
+`NORMAL_CHAT_LIVE_LOCAL_PRODUCTION_NOT_DIRECTLY_VERIFIED`
+
+SHA推測禁止。
+
+## 7. 過去結論の再監査
+
+同テーマの古いChatReport / REPORTに異なる結論がある場合、タイトルだけで比較しない。
+利用可能な本文を開き:
+- Objective
+- Authority/timestamp/build identity
+- Evidence/Work Performed
+- Validated
+- Rejected
+- Superseded
+- Observer validity
+- Current Result
+- Open/Next
+を照合する。
+
+旧結論を消さずSUPERSEDED / OBSOLETE / HISTORICAL_ONLYとして保持する。
+旧NextをCurrentへ戻さない。
+
+## 8. Correctness / Performance / Visual / Provenance分離
+
+Observer-heavy correctness runをPerformance Authorityにしない。
+Human VisualをValidator/logで上書きしない。
+Static claimをRuntime claimへ拡張しない。
+フレーム系列claimは対象capture / segmentの全フレーム解析coverageをREPORTへ記録し、代表frameだけの確認を全体解析として扱わない。
+
+## 9. Current source roles
+
+Current selector:
+- CoreRules: durable contracts
+- FullRoadmap: Current + Decision Ledger + complete chronology + completion roadmap + DoD
+- CustomInstructions: compact normal-chat context
+
+`CurrentRoadmap`は別Current文書として持たない。旧CurrentRoadmapはHistorical。
+
+Current判断はCoreRules + FullRoadmap Current section + latest relevant evidenceを中心にする。
+
+AGENTS.mdはProject root durable policy。
+ChatReportはdetailed history/evidence。
+
+## 10. Evidence梱包
+
+Evidence本体を毎回複製しない。通常はfilename/path/timestamp/SHA/purpose/resultをREPORTへ記録する。
+再取得困難、重要最終Runtime、ユーザー明示指定、小容量で保存価値が高い場合だけEvidence本体を含める。
+巨大MP4は原則再梱包しない。
+
+## 11. 生成後Validation
+
+- ZIP exists / opens
+- REPORT exists / non-empty / UTF-8
+- Topic / LastWorkUpdate correct
+- Current / Superseded混同なし
+- NextがFullRoadmap Currentと矛盾しない
+- SHA推測なし
+- ZIP SHA256計算
+
+## 12. 通常チャット / Codex
+
+Archive作成自体は通常チャットで完結する。
+Codexはlive-local SHA、compile/build/ABI等がArchive内容として本当に必要な場合のみ。
+
+## 13. 最終回答
+
+Archive名、Topic、LastWorkUpdate、Status、Next Action、ZIP SHA256、Download linkを簡潔に示す。
+
+## 14. 横断監査規則
+
+Archive対象の技術作業はCoreRulesに従い、必要な因果経路を1行・1式まで監査する。修正を伴う場合は事前にofficial docs/source、実Package、関連公開実装、実践/検証動画、既存Evidenceとの比較結果をREPORTへ残す。フレーム系列claimは全フレーム解析coverageを記録する。GitHubの通常commit/pushは必要範囲で事前許可済みだが、commit/pushはProduction Authorityを意味しない。
+
+## 15. 最終原則
+
+ArchiveはCurrent Authorityを上書きしない。
+古い結論やNextを再昇格しない。
+Current反映先はCurrent統合FullRoadmapであり、別CurrentRoadmapを新設しない。

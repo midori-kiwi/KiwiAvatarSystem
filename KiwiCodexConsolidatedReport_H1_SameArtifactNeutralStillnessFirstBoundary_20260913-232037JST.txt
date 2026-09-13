@@ -1,0 +1,586 @@
+KiwiAvatarSystem Consolidated REPORT
+H1 SAME ARTIFACT NEUTRAL STILLNESS CONTINUOUS WINDOW FIRST BOUNDARY LOCALIZATION ONLY
+Report time: 2026-09-13 23:20:37 JST
+
+================================================================
+1. TASK / CURRENT RESULT
+================================================================
+
+TASK=H1_SAME_ARTIFACT_NEUTRAL_STILLNESS_CONTINUOUS_WINDOW_FIRST_BOUNDARY_LOCALIZATION_ONLY
+PRODUCT_SOURCE_CHANGE=NONE
+PRODUCT_REPAIR=NONE
+RUNTIME_EXECUTION_COUNT=1
+PERFORMANCE_AUTHORITY=NONE
+HUMAN_VISUAL_AUTHORITY=PENDING_HUMAN_REVIEW
+
+FIRST_TELEMETRY_FAILURE_BOUNDARY=
+  CANONICAL_POSE_CONTINUITY_OR_ITS_UPSTREAM_INFERENCE_ENGINE_SAMPLE_CONTENT
+
+FIRST_CAUSAL_BOUNDARY=UNRESOLVED
+CURRENT_RESULT=UNRESOLVED
+NEXT=MEASUREMENT_DESIGN_REPAIR_ONLY
+
+理由:
+- NEUTRAL_STILLNESS_A中、正常に単調増加するidentity上でCanonical poseの大きな
+  frame-to-frame不連続を確認した。Presentation/Geometryより上流のため、
+  downstream rejectをfirst boundaryへ昇格しない。
+- ただし連続録画がPlayer終了より先に終了し、NEUTRAL_STILLNESS_A後半では
+  Player windowの一部がcapture外へ移動してAvatarが連続して画面内に残らなかった。
+- Human Visual unstable window全期間とtelemetryの継続相関を証明できないため、
+  Canonical discontinuityをHuman Product failureの原因へ昇格しない。
+- Product修正、補償、再build、再Runtimeは行っていない。
+
+================================================================
+2. AUTHORITY PREFLIGHT
+================================================================
+
+Project:
+  D:\KiwiAvatarSystem
+
+Expected branch:
+  work/raw-direct-motion
+
+GitHub remote reference requested:
+  5ed9274a19c3433cda83be6fd31dd6e1c7f65f8b
+
+Initial live-local:
+  branch=work/raw-direct-motion
+  HEAD=732d4b6d9285355dc097f5e48f43c7d75ee16993
+  git status --short=CLEAN
+
+After git fetch:
+  origin/work/raw-direct-motion=5ed9274a19c3433cda83be6fd31dd6e1c7f65f8b
+  local HEAD was a strict ancestor of origin/work/raw-direct-motion.
+  branch matched and dirty state was empty.
+
+Safe sync:
+  git merge --ff-only origin/work/raw-direct-motion
+  result=PASS
+
+Final source authority used for build/runtime:
+  branch=work/raw-direct-motion
+  HEAD=5ed9274a19c3433cda83be6fd31dd6e1c7f65f8b
+  origin/work/raw-direct-motion=5ed9274a19c3433cda83be6fd31dd6e1c7f65f8b
+  pre-build git status --short=CLEAN
+
+Post-runtime status:
+  Product source change=NONE
+  task-owned untracked evidence only:
+    ?? KiwiValidation/H1_FixedSegment_FirstBoundary_20260913-204113/
+
+ProjectVersion:
+  6000.0.80f1 (2dfd32957da2)
+
+Exact Unity executable:
+  C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe
+  ProductVersion=6000.0.80f1_2dfd32957da2
+  FileVersion=6000.0.80.3013938
+
+ProjectContext\Current final selector:
+  KiwiAvatarSystem_CoreRules_20260913_GoalAligned_v9_ContentReaudit.txt
+  KiwiAvatarSystem_FullRoadmap_20260913_GoalAligned_v2_CurrentIntegrated_ContentReaudit.txt
+  KiwiAvatarSystem_CustomInstructions_20260913_GoalAligned_v9_CurrentIntegrated.txt
+  EXACT_THREE_DOCUMENT_SET=PASS
+
+Read in full:
+  AGENTS.md
+  Current CoreRules
+  Current FullRoadmap
+  Current CustomInstructions
+  KiwiCodexConsolidatedReport_H1_FixedSegmentContinuousHumanVisualMeasurement_20260913-201308JST.txt
+
+================================================================
+3. SOURCE / OBSERVER IDENTITY
+================================================================
+
+Observer:
+  Assets\CodexTasks\H1_LandmarkerBoundary_20260913\
+  KiwiH1LandmarkerBoundaryObserver.cs
+
+Observer SHA256:
+  5782DE53CE87B50E55C6CB1AA9BDCD8F13B19B8C1E045021CCA94C1B04AE697E
+
+Verified live-local contract:
+  KIWI_H1_BOUNDARY_RUNTIME
+  KIWI_H1_BOUNDARY_OUTPUT
+  AutoQuitSeconds=107.0
+  WARMUP=0-10 seconds
+  NEUTRAL_STILLNESS_A=10-30 seconds
+  SLOW_YAW=30-50 seconds
+  SLOW_PITCH=50-70 seconds
+  SLOW_ROLL=70-90 seconds
+  NEUTRAL_STILLNESS_B=90-105 seconds
+  segment_boundaries.csv
+  segment_correlation.csv
+  diagnostic-only under DEVELOPMENT_BUILD || UNITY_EDITOR
+
+MEASUREMENT_SOURCE_CONTRACT=PASS
+OBSERVER_SOURCE_CHANGE_IN_THIS_TASK=NONE
+
+================================================================
+4. BUILD / ARTIFACT IDENTITY
+================================================================
+
+Build start:
+  2026-09-13T20:41:29.1244228+09:00
+
+Build end:
+  2026-09-13T20:42:00.2076352+09:00
+
+Build entrypoint:
+  KiwiStandaloneBuildDiagnostic.BuildWindows64
+
+Artifact:
+  D:\KiwiAvatarSystem\Builds\H1_FixedSegment_FirstBoundary_20260913-204113\
+  KiwiAvatarSystem_H1_FixedSegment_FirstBoundary.exe
+
+Artifact EXE SHA256:
+  98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81
+
+Managed artifact:
+  D:\KiwiAvatarSystem\Builds\H1_FixedSegment_FirstBoundary_20260913-204113\
+  KiwiAvatarSystem_H1_FixedSegment_FirstBoundary_Data\Managed\Assembly-CSharp.dll
+
+Assembly-CSharp.dll SHA256:
+  0185F6666F63A76ED0658C7306F787B7944D2AFA4ABB2D2F81B77A5FCA16B92D
+
+Build log:
+  D:\KiwiAvatarSystem\KiwiValidation\H1_FixedSegment_FirstBoundary_20260913-204113\build.log
+  SHA256=8422A964F98CC5250549F85E914C7A5080492B7217CD2CB9C6EBCAAA6CA6E712
+
+Build result:
+  Unity exit code=0
+  BuildResult=Succeeded
+  build errors=0
+  build warnings=204
+  Development build=1
+  Direct3D12 only=1
+  mandatory full preflight=PASS
+  preflight warning/error/critical=2/0/0
+  releaseCandidateArtifact=0
+  PERFORMANCE_AUTHORITY=NONE
+
+================================================================
+5. RUNTIME EVIDENCE
+================================================================
+
+Evidence directory:
+  D:\KiwiAvatarSystem\KiwiValidation\H1_FixedSegment_FirstBoundary_20260913-204113
+
+Process environment:
+  KIWI_H1_BOUNDARY_RUNTIME=1
+  KIWI_H1_BOUNDARY_OUTPUT=<Evidence directory above>
+  machine/user-wide environment change=NONE
+
+Runtime process start request:
+  2026-09-13T20:51:34.2698897+09:00
+
+Observer WARMUP START:
+  2026-09-13T11:51:44.8828073Z
+
+Runtime process end:
+  2026-09-13T20:53:32.6864286+09:00
+
+Runtime exit code:
+  0
+
+Runtime identity:
+  UNITY_VERSION=6000.0.80f1
+  DEBUG_BUILD=1
+  GRAPHICS_API=Direct3D12
+  SCENE=Assets/Scenes/Face Landmark Detection.unity
+  camera=UGREEN Camera 4K
+  active camera profile=1920x1080@60
+  backend=MediaFoundation/NV12 Path B SystemMemoryNV12
+  right-side primary consume=Runner/InferenceEngine
+
+Required evidence present:
+  summary.txt
+  aggregate_1hz.csv
+  segment_boundaries.csv
+  segment_correlation.csv
+  Player.log
+  build.log
+  continuous_recording.mp4
+  artifact/source identity and runtime timestamps/exit code in this REPORT
+
+Evidence SHA256:
+  summary.txt
+    AAC27FAA4A61EC74D53D64CF4B10B605B00B819A58142DC05E398F461440E49C
+  aggregate_1hz.csv
+    15CE5AEB4F78729EE9B47584B5C77A015622F7D2E43A9D648BAF4C445E4533CD
+  segment_boundaries.csv
+    73705EF54F6BB355CE2EA4827F2597A7402E625D9711A77AC09BADC8DD1C22D8
+  segment_correlation.csv
+    C19D7BB082B093E6DD5B326E36F53986D3669A107EF9075A920F91894BD0A1AC
+  Player.log
+    70CA3FD720D3E3766BF7F033E0BC07E41628C921C331B4CB8477E02CF613CCFC
+  continuous_recording.mp4
+    A9BAF48C766CBB2A8DC6C87C9892B4C074BA1304AE48BD675A0E6F3B23BA714B
+
+Runtime summary:
+  PLAYER_CLOSED=YES
+  RIGHT_SIDE_CONSUME_COUNT=2141
+  RIGHT_SIDE_CONSUME_INFERENCE_ENGINE_COUNT=1967
+  RIGHT_SIDE_CONSUME_MEDIA_PIPE_COUNT=174
+  RAW_DUPLICATE_TIMESTAMP_COUNT=0
+  RAW_OUT_OF_ORDER_TIMESTAMP_COUNT=0
+  RIGHT_SIDE_CONSUME_DUPLICATE_TIMESTAMP_COUNT=0
+  RIGHT_SIDE_CONSUME_OUT_OF_ORDER_TIMESTAMP_COUNT=0
+  RIGHT_SIDE_PRESENTATION_DUPLICATE_TIMESTAMP_COUNT=0
+  RIGHT_SIDE_PRESENTATION_OUT_OF_ORDER_TIMESTAMP_COUNT=0
+
+================================================================
+6. CONTINUOUS RECORDING / HUMAN VISUAL EVIDENCE STATUS
+================================================================
+
+Recording:
+  D:\KiwiAvatarSystem\KiwiValidation\H1_FixedSegment_FirstBoundary_20260913-204113\
+  continuous_recording.mp4
+
+Recording start request:
+  2026-09-13T20:51:31.9151623+09:00
+
+Video identity:
+  H.264
+  2560x1440
+  nominal rate=30/1
+  measured average rate=1976/115, approximately 17.18 fps
+  frames=1976
+  duration=115.000 seconds
+  size=76509828 bytes
+
+Recording finding:
+  RECORDING_CONTINUOUS=YES_FOR_RECORDED_DURATION
+  RECORDING_FROM_LAUNCH_TO_PLAYER_EXIT=NO
+
+The recording was configured for a fixed 115 seconds. The Player process ended
+approximately 5.8 seconds after the video timeline ended. The final part of
+NEUTRAL_STILLNESS_B and AutoQuit/exit are therefore not present in the video.
+
+NEUTRAL_STILLNESS_A was fully within the recorded timeline:
+  video approximately 00:22.973 through 00:42.985
+
+However, inspection of that interval showed:
+  - at approximately 00:23.500, Player and Avatar were visible;
+  - near approximately 00:42.500, the Player window was partly outside the
+    captured primary-display region and the Avatar was not continuously visible.
+
+Therefore:
+  HUMAN_VISUAL_UNSTABLE_WINDOW=UNRESOLVED
+  HUMAN_VISUAL_AUTHORITY=PENDING_HUMAN_REVIEW
+  FULL_NEUTRAL_WINDOW_VISUAL_CORRELATION=NOT_ESTABLISHED
+
+The recording is local evidence only and is not Performance Authority.
+
+================================================================
+7. FIXED SEGMENT BOUNDARIES
+================================================================
+
+Clock authority:
+  Stopwatch hostTicks, 10,000,000 ticks/second observed from boundary deltas
+
+WARMUP:
+  START 100091190, elapsed 0.0028765
+  END   200171279, elapsed 10.0108838
+
+NEUTRAL_STILLNESS_A:
+  START 200171279, elapsed 10.0108838,
+        2026-09-13T11:51:54.8882053Z
+  END   400292992, elapsed 30.0230551,
+        2026-09-13T11:52:14.8997840Z
+
+SLOW_YAW:
+  START 400292992, elapsed 30.0230551
+  END   600133888, elapsed 50.0071447
+
+SLOW_PITCH:
+  START 600133888, elapsed 50.0071447
+  END   800068683, elapsed 70.0006242
+
+SLOW_ROLL:
+  START 800068683, elapsed 70.0006242
+  END   1000163095, elapsed 90.0100654
+
+NEUTRAL_STILLNESS_B:
+  START 1000163095, elapsed 90.0100654
+  END   1150095697, elapsed 105.0033256
+
+SEGMENT_BOUNDARY_EVENT_COUNT=12
+SEGMENT_BOUNDARY_COMPLETENESS=PASS
+
+================================================================
+8. NEUTRAL_STILLNESS_A ANALYSIS
+================================================================
+
+Authority:
+  Source/artifact/runtime/segment identity=PASS
+  Human Visual complete-window authority=UNRESOLVED
+
+Rows:
+  segment_correlation rows=1051
+  unique canonicalFrameId=542
+  unique Presentation decisions=786
+
+8.1 sample / frame identity
+
+  canonicalFrameId non-monotonic transitions=0
+  providerSourceFrameId non-monotonic transitions=0
+  valid semanticTimestamp non-monotonic transitions=0
+  canonical-to-consume providerSourceFrameId equal rows=1034
+  canonical-to-consume providerSourceFrameId different rows=9
+
+Five canonical frame IDs were first observed with:
+  semanticTimestamp=-1, semanticLandmarkCount=0
+and were later observed with the same canonicalFrameId and:
+  semanticTimestamp=rigid.timestamp, semanticLandmarkCount=478
+
+Affected canonicalFrameId:
+  476, 487, 526, 575, 675
+
+This is a Canonical transaction/identity finding. It does not by itself prove
+the Human Visual cause because the full visual window is unavailable.
+
+8.2 timestamp / source age / liveness
+
+  canonical unavailable rows=8
+  first-observed semantic timestamp absent frames=9
+  continuity state rows:
+    Stable=1000
+    Reacquiring=27
+    Holding=20
+    Degraded=4
+  continuity source age:
+    mean=93.36 ms, p95=134.34 ms, p99=321.92 ms, max=406.39 ms
+  continuity arrival age:
+    mean=28.70 ms, p95=61.63 ms, p99=163.39 ms, max=346.39 ms
+
+These age/unavailable events occur mainly later in the segment. The first large
+Canonical pose discontinuity below was already present at elapsed 10.3296 while
+continuity was Stable and identities/timestamps were monotonic.
+
+8.3 provider / transition
+
+  provider rows:
+    Runner/InferenceEngine=1043
+    canonical unavailable/empty=8
+  hub active provider=Runner/InferenceEngine for all 1051 rows
+  hubHandoffActive=0 for all 1051 rows
+  hubHandoffIsResume=0 for all 1051 rows
+
+providerTransitionObserved=1 occurred on 16 rows because the observer compared
+the empty provider/generation of a canonical-unavailable sample and its recovery.
+No Hub provider handoff/switch was active. It is not promoted to a causal
+provider transition.
+
+8.4 Canonical pose continuity
+
+For unique Canonical frames that were observed with 478 semantic landmarks:
+  count=538
+  center step normalized:
+    mean=0.0501, p95=0.1338, p99=0.1762, max=0.201173831
+  quaternion angular step:
+    mean=6.3301 degrees, p95=13.5531, p99=19.4783,
+    max=29.3876 degrees
+
+Earliest maximum center discontinuity:
+  previous:
+    elapsed=10.3229238
+    canonicalFrameId=176
+    providerSourceFrameId=182
+    semanticTimestamp=8519
+    faceCenter=(0.5182896852, 0.4306414127)
+    continuity=Stable
+  current:
+    elapsed=10.3296349
+    canonicalFrameId=177
+    providerSourceFrameId=183
+    semanticTimestamp=8526
+    faceCenter=(0.4914492071, 0.6300166845)
+    continuity=Stable
+  normalized center step=0.201173831
+  identity/timestamp/provider progression=monotonic
+
+Maximum angular step:
+  elapsed=29.1163631
+  canonicalFrameId=675
+  providerSourceFrameId=695
+  angular step=29.3876 degrees
+  continuity=Stable
+
+The fixed segment instructed natural frontal stillness. These changes are
+Canonical pose continuity failures or are already present in the immediate
+upstream Inference Engine sample content. The current telemetry does not expose
+enough exact per-sample landmark values to distinguish those two owners.
+
+Supporting 1 Hz aggregate only:
+  Raw MediaPipe callback maxDelta remained approximately 0.0006-0.0056.
+  Right-side Inference Engine consumeMaxDelta reached approximately 0.1888.
+  Raw MediaPipe is auxiliary and not an exact same-sample oracle, so this is not
+  promoted beyond supporting evidence.
+
+8.5 Presentation consume / decision / commit
+
+  unique decisions=786
+  Accepted=248
+  RejectedGeometrySnapshotIdentity=533
+  RejectedSemanticFreshness=5
+
+  latest Presentation canonical correlation:
+    EXACT_CANONICAL_ID_MATCH=1051/1051 rows
+  latest Presentation provider metadata exact match:
+    1051/1051 rows
+  decision relation:
+    DECISION_FOR_CURRENT_CONSUME=1051/1051 rows
+
+Accepted-decision gaps:
+  mean=79.92 ms
+  p95=149.97 ms
+  p99=293.82 ms
+  max=538.03 ms
+  maximum consecutive rejected decisions=12
+
+These are real downstream transaction findings, but the Canonical continuity
+failure is already present earlier in the pipeline. They are not selected as
+the first boundary in this task.
+
+8.6 GeometrySnapshot identity / pipeline state
+
+For the 533 unique RejectedGeometrySnapshotIdentity decisions:
+  firstGeometrySnapshotIdentityFailure=SourceFrameIdMismatch: 533
+  C_CURRENT_EXPECTED_FRAME_IN_FLIGHT: 482
+  E_CURRENT_EXPECTED_FRAME_IN_COMPLETION_NOT_PUBLISHED: 51
+
+The first Geometry reject occurred at elapsed 10.0126529, decision sequence 202.
+Although temporally early, Geometry is downstream of the already unstable
+Canonical/upstream content in the required comparison order. Without complete
+Human Visual correlation it is not promoted to the Human Product cause.
+
+================================================================
+9. CORRELATION EVIDENCE / DECISION CONTRACT
+================================================================
+
+A Canonical discontinuity:
+  TELEMETRY=CONFIRMED
+  Human Visual cause=NOT_CONFIRMED
+  bounded result=Canonical or upstream Inference Engine sample content
+
+B Canonical stable but Presentation unstable:
+  REJECTED. Canonical was not stable in the fixed neutral segment.
+
+C reject/identity failure continuously correlates with Human Visual unstable window:
+  UNRESOLVED. Full visual window was not reviewable.
+
+D isolated reject/WAIT/recovery:
+  MATCHED LANDMARK DEBUG WAIT/recovery was not treated as Human Product failure.
+  Provider-unavailable/recovery flags and Geometry rejects were not promoted
+  without full visual correlation.
+
+E recording/hostTicks/telemetry correlation:
+  HostTicks to NEUTRAL_STILLNESS_A video interval=ESTABLISHED.
+  Full-window Avatar visibility and launch-to-exit capture=NOT_ESTABLISHED.
+  Decision=UNRESOLVED; return to measurement design.
+
+================================================================
+10. REJECTED CAUSAL CANDIDATES
+================================================================
+
+- Actual Hub provider switch/handoff during NEUTRAL_STILLNESS_A:
+  rejected; active provider remained Runner/InferenceEngine and handoffActive=0.
+- Duplicate/out-of-order sample identity:
+  rejected in observed counters and monotonic ID review.
+- GeometrySnapshot reject as first failing boundary:
+  rejected for this task because Canonical/upstream content was already unstable.
+- MATCHED LANDMARK DEBUG WAIT/recovery as Product failure:
+  rejected by measurement contract.
+- Raw MediaPipe as exact oracle for Inference Engine content:
+  rejected; it was auxiliary and not exact same-sample authority.
+- Human Visual PASS/FAIL inferred from validators or telemetry:
+  rejected; Human Visual remains human authority.
+
+No smoothing, Kalman, prediction, threshold relaxation, dead zone, strong filter,
+permanent buffer, permanent one-frame delay, FIFO, Root/Head/Camera/Provider/
+Geometry compensation, fence wait, queue flush, async disable, or backend change
+was performed or recommended as a repair in this task.
+
+================================================================
+11. UNVERIFIED / OPEN
+================================================================
+
+UNVERIFIED:
+- Human verdict for NEUTRAL_STILLNESS_A.
+- Continuous full-window Avatar visibility.
+- Exact owner between Inference Engine consumed landmark content and Canonical
+  rigid pose derivation.
+- Causal relation of GeometrySnapshot identity rejects to visible jitter.
+- Causal relation of brief unavailable/age events to visible jitter.
+- Clean Production Performance.
+- Final Product / Windows Acceptance.
+
+OPEN:
+- A valid launch-to-exit recording whose stop condition follows Player exit.
+- Keep the complete Player viewport and Avatar continuously inside the capture
+  region for all fixed segments.
+- Preserve the same hostTicks and telemetry contract.
+- Obtain the user's Human Visual verdict for the full NEUTRAL_STILLNESS_A window.
+
+================================================================
+12. DOUBLE FULL AUDIT
+================================================================
+
+FULL_AUDIT_1=PASS
+Scope:
+  Authority preflight
+  source/observer identity
+  build/artifact identity
+  Runtime and DX12 identity
+  recording identity and completeness
+  segment boundary authority
+  complete NEUTRAL_STILLNESS_A telemetry correlation
+  identity/timestamp/provider/Canonical/Presentation/Geometry order
+  first-boundary verdict
+  dirty/source safety
+
+FULL_AUDIT_2=PASS
+Scope:
+  The same complete scope was independently recalculated from raw CSV and
+  evidence hashes using a separate parser and aggregation path. It independently
+  reproduced decision counts, Geometry sub-boundaries, identity monotonicity,
+  Canonical center/rotation maxima, evidence sizes, and SHA256 values.
+
+Initial audit disagreement:
+  Audit 1 counted 538 unique canonical IDs that were ever observed with valid
+  semantic landmarks. Audit 2 initially counted 533 IDs whose first observation
+  already had valid semantic landmarks.
+
+Resolution:
+  Raw row review found 542 unique canonical IDs total; 533 were semantic-valid
+  on first observation, five more changed from semantic absent to present under
+  the same canonicalFrameId, and four never became semantic-valid in the segment.
+  Both audits were rerun/reconciled on the explicit ever-valid metric and agreed:
+    ever-valid unique canonical IDs=538
+    max normalized center step=0.201173831
+    max quaternion angular step=29.3876 degrees
+    same-ID semantic state changes=5
+
+AUDIT_DISAGREEMENT_AFTER_RECONCILIATION=NONE
+REMAINING_UNRESOLVED_CLAIMS=HUMAN_VISUAL_CORRELATION_AND_EXACT_UPSTREAM_OWNER
+
+================================================================
+13. NEXT
+================================================================
+
+NEXT=MEASUREMENT_DESIGN_REPAIR_ONLY
+
+One bounded next scope:
+  Re-run the same source/artifact measurement only after explicitly correcting
+  the recording harness so capture begins before launch, remains active until
+  after Player exit, and keeps the full Player/Avatar viewport continuously
+  visible. Do not change Product source or observer contract. Review only the
+  full NEUTRAL_STILLNESS_A window and correlate it with the existing ordered
+  telemetry fields. Do not repair Canonical, Presentation, or Geometry until
+  Human Visual correlation establishes the causal first boundary.
+
+COMMIT=NONE
+PUSH=NONE
+

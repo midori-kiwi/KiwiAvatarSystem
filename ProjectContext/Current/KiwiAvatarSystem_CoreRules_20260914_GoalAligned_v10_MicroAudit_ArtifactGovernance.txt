@@ -1,0 +1,567 @@
+KiwiAvatarSystem Core Rules
+更新日: 2026-09-14 JST
+Revision: GoalAligned v10 / Micro-Level Audit / Research-Before-Repair / Artifact Governance
+状態: DURABLE_BASELINE / PRIMARY_GOAL_ALIGNED / PROJECT_WIDE_DOUBLE_FULL_AUDIT
+
+# 0. 主目的
+
+Windows / DX12を第一対象としてFace LandmarkerをPrimary / Source of Truthに維持し、正常な最新face sampleを最小latency、高精度、低jitterでKiwi Avatarへ反映する。
+
+Root / Head / Eye / Blink / Mouth / Expression / FacePartを自然かつ正しく表示し、LIVE CAMERA、Spout / OBS、Avatar Import、Recovery、Diagnostics、Distributionまで含む実用的な商用品質のAvatar製品としてWindows Production Acceptanceを完成させる。
+
+写実的な別人化は製品目的ではない。正常sampleのPrimary pathは可能な限り短く保ち、
+`Face Landmarker → Canonical Semantic / Transaction → Model Profile → Face-Part Binding → Kiwi Presentation`
+を基本とする。Neural portrait / face replacementはPrimary pipelineへ昇格させない。
+
+検証、診断、Phase、FaceGeometry、H1、backend、architectureは手段であり目的ではない。各作業は最終ユーザー可視要件、または不可欠なCorrectness / Authority / Transaction / Lifecycle / Resource / Security / Privacy / Performance / Compatibility / Release契約へ直接寄与する場合だけCritical Pathへ置く。
+
+閉じたclaimは新Evidenceなしに再実行しない。同じ保証を少ないowner、state、copy、queue、Gateで得られるなら簡素化する。最終品質を下げる簡略化は禁止する。
+
+---
+
+# 1. 品質契約
+
+必須品質:
+- 低遅延
+- 高精度
+- 低ジッター
+- 高速追従
+- 静止安定
+- 正しいYaw / Pitch / Roll
+- 正しいRoot
+- 自然なEye / Blink / Mouth / Expression
+- 正しいFacePart
+- 安全な短時間dropout
+- 安全なLost / Reacquire
+- 安全なProvider / Backend / Model transition
+- 非球形Avatar対応
+- Runtime Avatar Import
+- Transactional Hot Swap
+- Recovery / Diagnostics / Distribution
+
+正常時latencyを犠牲にして問題を隠す設計は採用しない。
+
+Quality Profile / tierはPresentationや計算量の合法な選択肢として設けてもよいが、Authority、identity、semantic correctnessを変えたり、不具合を隠したりしてはならない。
+
+ユーザー可視方向契約:
+- tracked screen-right translation → Avatar screen-right
+- tracked screen-left translation → Avatar screen-left
+- face right / left → Head yawを意図した同方向へ
+- lean right / left → Head rollを意図した同方向へ
+- down-right等の複合orientation → Head orientationへ
+- Yaw / Pitch / RollをRoot translationへ混入しない
+- Eye / Blink / Mouth / ExpressionをRoot translationへ混入しない
+- frontal stillnessは不要な揺れを抑え、通常運動はNear-Raw responsivenessを維持する
+
+---
+
+# 2. Claim-Scoped Authority
+
+Authorityはclaim単位で使う。
+
+- Implementation: current live-local Production source + actual SHA
+- Runtime: same-build / same-Production
+- Package: actually installed Package Source
+- Performance: clean Production benchmark
+- Visual: same-build Human review
+- Provenance: source → build definition/toolchain/flags → artifact → installed SHA → Runtime Evidence
+
+通常チャットがlive localを直接確認できない場合:
+`NORMAL_CHAT_LIVE_LOCAL_PRODUCTION_NOT_DIRECTLY_VERIFIED`
+
+Codex REPORTのbranch / HEAD / SHAはreport-time snapshotでありcurrent liveへ自動昇格しない。
+
+GitHub remote/mainやGitHub commitはlocal Production Runtime Authorityではない。
+
+EXE / DLL SHA単独でreproducible-build Authorityへ昇格しない。
+
+SHA推測禁止。未確認は合格でも不合格でもない。
+
+Observer、Validator、Benchmark、REPORT、capture surface、measurement designも監査対象。
+
+新Evidenceで旧Current / Next / SHAがSupersedeされた場合は再昇格しない。
+
+---
+
+# 3. Project-wide Double Full Audit
+
+KiwiAvatarSystemに関する技術的意味を持つすべての調査、設計、指示、実装、検証、評価、判断、技術成果物は原則FULL_AUDIT_1 + FULL_AUDIT_2の対象とする。
+
+各回は同一対象・同一scopeを最初から最後まで100%独立監査する。
+
+監査粒度は「ミクロからマクロ」とする。対象claimの因果経路では、ファイル名・class・method単位で止めず、必要な範囲を1行・1式・1条件分岐・1代入・1変換・1copy・1timestamp・1identity・1lifetime edgeまで追う。数式は座標系、単位、符号、正規化、clamp、丸め、型変換、評価順序、境界値を式単位で確認する。非同期処理はsubmit→ownership→completion→publication→consume→disposeをstatement/dataflow単位で追う。レビュー対象外の正常領域まで無根拠に全repo再設計しないが、first failing boundaryへ接続する前後の依存は省略しない。
+
+「ミクロ監査」は細部を目的化する規則ではない。最終品質とfirst boundary特定に必要な箇所を徹底的に確認し、見落とし由来の再検証を減らすために使う。
+
+禁止:
+- scope分割による2-pass
+- 1回目=Source、2回目=Runtimeのような不完全分担
+- 2回目=変更箇所だけ
+- 1回目の結論をAuthorityにした追認
+- 不一致の多数決PASS
+
+不一致時はAuthority、identity、assumption、observer / validator、measurement design、claim scopeまで戻る。解消できなければUNRESOLVEDとして affected Gateを停止する。
+
+書込み、build、Runtime capture、installer、commit、push等の副作用操作を監査回数だけを理由に二重実行しない。再現性・determinism・flakinessがclaimの場合のみ必要回数実測する。
+
+過去チャット / ドキュメント / ChatReportを再監査する場合、タイトル、ファイル名、Archive一覧、旧summaryだけで技術結論を出さない。利用可能なら本文を開き、Objective / Evidence / Validated / Rejected / Superseded / Current Result / Open Issues / Next / Do Not Changeまで確認する。本文取得不能な資料は未確認として扱う。
+
+---
+
+# 4. 開発原則 / Research-Before-Repair
+
+Working Coreを理由なく再設計しない。
+
+修正より先に調査で問題を狭める。Runtimeを何度も試行錯誤する前に、対象claimについて可能な範囲で以下を突き合わせる。
+1. current live-local / GitHub current sourceと実際の呼出し経路
+2. actually installed Package Source / version
+3. 公式documentation、official source、API contract、release note / issue等の一次資料
+4. relevant OSS / 公開商用方式 / reference implementation
+5. 実践・学習・検証動画等の公開資料。動画は操作・実挙動・再現手順の補助Evidenceとし、公式contractやsourceを上書きしない
+6. 既存Runtime / REPORT / Visual / Benchmark Evidence
+
+比較はarchitecture名や要約だけでなく、必要な箇所をmethod / statement / expression / dataflow / ownership / timestamp / coordinate / lifecycle単位まで下げる。
+
+調査で「現実装が公式契約どおり」「問題boundaryではない」と閉じた領域は、別Evidenceなしに再修正しない。問題が特定できないまま補償コードを追加しない。調査でfirst failing boundaryを十分に絞った後にだけ最小修正し、そのclaimを閉じるのに必要な最小検証を行う。これは検証ゼロを意味せず、重複・探索的・原因不明の再実行を減らす規則である。
+
+評価対象:
+- correctness
+- latency
+- authority
+- transaction
+- lifecycle
+- resource
+- security / privacy
+- rollback
+- compatibility
+
+最初に証明されたboundaryだけを最小修正し、複数unknownを同時に修正しない。
+
+前提、identity、proxy、observer、validator、benchmarkが欠陥なら測定設計まで戻る。
+
+新owner / state / copy / queue / readback / thread / process hopは利益がcost / riskを上回るEvidenceなしに恒久追加しない。
+
+Big-Bang rewrite、external tracker Primary置換、Neural Primary化は棄却。
+
+---
+
+# 5. Tracking / Transaction
+
+Face Landmarker = Primary / Source of Truth。
+
+正常sampleを最小latencyでAvatarへ届け、異常sample、authority transition、broken transaction、presentation破綻だけ局所抑制する。
+
+維持:
+- latest-frame
+- persistent ROI / persistent tracking where required
+- bounded / nonblocking
+- freshness / liveness / source age分離
+- tracking cadence / presentation cadence分離
+- explicit dropout / Lost / Reacquire state
+- channel-specific temporal policy
+- same-sample transaction
+
+禁止:
+- latency-growing FIFO
+- stale queue / accumulation
+- permanent frame buffer / permanent 1-frame delay
+- stale prediction
+- strong smoothing / Kalmanで根本問題を隠す
+- 根拠なきthreshold緩和
+- aggressive frame reduction first
+
+短いdropoutを即Lostへ変換しない。Lost / Reacquireはage、liveness、quality契約で扱う。
+
+Root / Head / Eye / Mouthを分離し、Headはsingle rigid authority。
+
+Yaw / Pitch / Roll、Blink、Mouth、EyeをRoot translationへ混入しない。
+
+Provider normalization owner=1。
+Resume != Provider Switch。
+Temporal Presentation owner=1/channel。
+Prediction owner=1/channel。
+
+duplicate / out-of-order / stale / mixed epoch publish禁止。
+
+Texture / Crop / Mask / FacePart=same-sample transaction。
+
+Camera / Inference / Presentation問題をtracking mathへ逆流させない。
+
+---
+
+# 6. Human-Head / FacePart
+
+Kiwiは変形しない剛体の人間頭部として扱う。
+
+Eye / Mouthのnon-rigid appearanceを残し、
+source rigid poseのみ除去
+→ head-local / canonical appearance
+→ existing fitted fixed surface
+→ visible Head rigid poseをexactly once適用する。
+
+source appearance de-rigidization referenceとvisible Head authorityは別責務。
+
+FaceGeometry poseがあることだけを理由にvisible Head authorityへ昇格しない。
+
+billboard、2D facial inverse UV、model deform補償をProduction解にしない。
+
+---
+
+# 7. Native / Inference
+
+Windows / DX12優先。
+
+Native baselineは新Evidenceで置換されるまでPath B SystemMemoryNV12。
+
+維持:
+- latest frame
+- fixed Unity-visible texture identity
+- explicit timestamp
+- session / generation epoch
+- session epoch != frame sequence
+- bounded resource
+- nonblocking normal path
+
+禁止:
+- UpdateExternalTexture workaround
+- callback / workerを跨ぐIMFSample保持
+- FIFO / stale蓄積
+- blocking D3D12 queue Wait
+- rotating Unity-visible texture
+- D3D11On12 1080p Production
+
+Fence / queue flush / async disableはcausal proofなしにProductionへ入れない。
+
+Native変更はsource → build definition/toolchain/flags → artifact → installed SHA → Runtimeで追う。実build definition不明のまま推測Rebuildしない。
+
+Inferenceではlogical tensor sizeとbacking capacityを混同しない。worker-owned output lifetime、async queue / readback lifetimeをCorrectness対象とする。
+
+Production lane.input direct readback / copyを新Evidenceなしにoracleへ戻さない。
+
+速度だけでbackend採用しない。backend epochを跨ぐold/new in-flight publicationを分離する。
+
+KiwiFaceMotion / KiwiInferenceFaceTrackerをcamera/display workaroundにしない。
+
+---
+
+# 8. Validation / Regression / Performance / Visual
+
+Static / installed Package Sourceで閉じるclaimをRuntime化しない。
+
+検証は原則:
+Change-Local Gate
+→ Contract / Replay Gate
+→ Milestone Full Product Gate
+
+同claimの多重observer、superseded diagnostic、毎version Full Runtime / Human Visualを削減する。
+
+Golden Replay:
+- bad behaviorをGolden化しない
+- auto-update禁止
+- Runtime transitionはRuntime PASS後にGolden昇格
+
+owner/pathをretireしたら専用diagnostic / validatorもretire候補。
+
+Correctness observer-heavy runをPerformance Authorityにしない。
+
+最終Performance比較では可能な限り事前にSLOをfreezeし、correctness-qualified候補だけ比較する。
+
+Human Visualをvalidator / log PASSで上書きしない。
+
+フレーム系列を扱う検証・解析では、単一フレーム、数枚の代表フレーム、1 Hz抜粋等だけで時系列claimを閉じない。対象capture / segment / evidence windowの全フレームを原則として機械的に走査し、identity、timestamp、欠損、duplicate、out-of-order、step、state transition等を全件評価する。代表フレームやcontact sheetは説明・Human review補助であり全フレーム解析の代替ではない。全フレーム取得自体が不可能な場合はcoverage gapを明記してclaimを狭める。Human Visual Authorityは引き続き人間であり、自動全フレーム解析はHuman判定を上書きしない。
+
+ユーザー向け確認項目と判定は日本語を主表記にする。判定は「合格 / 不合格 / 未確認 / 対象外」を基本とする。英語内部キーは既存log/reportとの照合時だけ日本語の後へ併記する。
+
+---
+
+# 9. Avatar Product / Config / Security / Privacy / UX
+
+Target:
+Evidence-Protected Core
++ Avatar Adapter
++ Model Profile
++ Runtime Import
++ Transactional Hot Swap
+
+VRM 0.x / 1.0、non-spherical、generic FacePart、AutoFit、Spring / Dangle等のmodel-specific behaviorをTracking Coreへ逆流させない。
+
+AutoFit authority:
+- Head / Neck / Eye bones
+- model forward
+- head bounds
+- model scale
+- profile hints
+
+AutoFitはFaceAnchor / Eye / Mouth / FacePart placementをmodel固有層で解く。
+自動配置が成立しない場合はmanual Model Profile overrideへ落とし、Tracking Coreを補償変更しない。
+
+Transactional Hot Swapはhidden candidateで:
+load
+→ parse
+→ security / format validation
+→ model / humanoid validation
+→ Model Profile
+→ AutoFit
+→ expression / Spring setup
+→ Avatar Adapter bind
+→ transaction validation
+→ atomic active switch
+→ old dispose
+の順を基本とする。途中失敗時はactive modelを維持してrollbackする。model / profile epochを跨ぐmixed publicationは禁止。
+
+Runtime Importと同じboundaryで:
+- extension + magic検証
+- path traversal防止
+- parse isolation
+- resource / memory limits
+- cancellation
+- generated storage naming
+- external path restriction where applicable
+- atomic failure
+- rollback
+
+Config:
+- explicit priority hierarchy
+- atomic save
+- versioned migration
+- backup
+- last-known-good
+- safe fallback
+- user tuning boundary
+
+Calibration / User Tuning:
+- neutral face / head / eye / expression
+- face center / model placement
+- Head / Root / Eye gain
+- Blink / Mouth sensitivity
+- rest stability / dropout behavior
+- model-specific FacePart offset / scale where appropriate
+
+User tuningとinternal correctness stabilizationを分離し、設定で不具合を隠さない。
+
+Quality Profileで変更できるのはrendering quality、render FPS、preview、validated inference cadence、optional workload等の合法な範囲に限定する。
+semantic acceptance、tracking correctness、transaction gate、Authority、identityをProfileで変更しない。
+
+Product UX:
+- Model Browser
+- Camera / Provider状態
+- Calibration / Profile / Tuning
+- Quality setting
+- Health / Diagnostics
+- clear error / recovery
+- support bundle where justified
+- privacy / security UX
+- high-DPI / resize / multi-monitor robustness where applicable
+- keyboard operation / Accessibility for core UI where applicable
+- nonblocking progress
+- cancelable import
+
+DiagnosticsはProduct authority ownerにならない。
+
+Windows Product completionではregistered SLOとrepresentative Support Matrixを閉じる。UX / Accessibilityも完成品質に含める。
+
+# 10. External Comparison / Reuse
+
+最重要比較対象はWebcam Motion Capture。
+
+継続比較対象としてMediaPipe、MediaPipeUnityPlugin、OpenSeeFace、Kalidokit、UniVRM、VMC ecosystem、VTuber / AR / SNS系の公開資料を使う。
+
+採用可能な原則:
+- latest / drop
+- explicit dropout state
+- persistent tracking
+- bounded in-flight
+- channel-specific policy
+- quality tier / profile separation
+- task isolation
+- calibration/profile UI
+- format/import responsibility separation
+- downstream output separation
+- optional ecosystem adapter
+
+棄却:
+- unbounded queue
+- authority-less transport
+- duplicate smoothing owner
+- CPU/OpenCV regression without evidence
+- aggressive frame reduction first
+- non-public commercial internalsの推測
+- popularityだけでの採用
+- external tracker Primary replacement
+
+外部流用はSELECTIVE / EVIDENCE-GATED。採用時は旧ownerをretireする。
+
+---
+
+# 11. Optional / Deferred Scope
+
+Hand / Body、OSC / VMC、telemetry upload、auto-update、その他ecosystem extrasはWindows core completionのblockerにしない。
+
+必要性、Authority、latency、lifecycle、security / privacy、resource Evidenceが閉じた後に追加判断する。
+
+Android / iOSはWindows Production Acceptance後。Mobile都合でWindows Coreを壊さない。
+
+iOSは現要求ではimplementation / static validation / Unity-Xcode preparationを対象とし、実機testを必須条件にしない。
+
+---
+
+# 12. 通常チャット / GitHub / Codex
+
+通常チャット + GitHubを公開調査、設計、監査、通常source開発の主担当とする。
+
+特に問題がない限り:
+GitHub source解析
+→最小修正
+→Static review
+→必要なcommit boundary提示
+まで通常チャットで行う。
+
+GitHub変更はREMOTE_IMPLEMENTED / STATIC_REVIEWED等でありlocal Production PASSではない。
+
+Codexは原則local-only work:
+- local file / dirty
+- live branch / HEAD / SHA / provenance
+- GitHub commitのlocal反映 / 照合
+- exact Unity compile/build
+- Native build / ABI
+- installed artifact
+- Runtime / stress
+- clean benchmark
+- local hardware / GUI Evidence
+- human review用same-build起動 / 証拠採取補助
+- rollback / distribution proof
+- Consolidated REPORT
+
+通常チャットで完結できる調査、GitHub source解析、通常修正を理由なくCodexへ送らない。
+
+Codexは閉じた設計を新Evidenceなしに再設計しない。
+
+Human Visual Authorityは人間にある。
+
+---
+
+# 13. Commit / Push
+
+GitHub上で通常開発を進めるために必要なcommit、push、branchへの通常の書込み権限はユーザーから事前許可済みとする。今後、同種の通常GitHub操作ごとに再許可を求めない。
+
+意味のある最小変更がStatic reviewを通り、次のlocal検証用の再現可能な基準点を固定すべき時点がcommit boundary。通常チャットはその時点で「今がコミット適切時点」と知らせ、必要ならcommitを実行できる。
+
+pushは、当該commitを共有remoteへ反映することが作業継続・再現性・local同期に必要で、branch / remote / diff / statusが確認できる場合に実行できる。WIPを細切れにcommitしすぎず、複数の独立boundaryを1 commitへまとめない。
+
+この事前許可は以下を意味しない。
+- local Production PASSやProduction採用
+- force push、history rewrite、reset / checkout / clean、他人の変更破棄
+- branch / remote / targetが不明な状態での推測書込み
+- protected branch policyやrepository ruleの回避
+
+GitHub commit / push後も、live-local Production Authorityは別途current local source + actual SHAで確認する。
+
+---
+
+# 14. Tooling / Local Safety
+
+通常開発で「ChatがZIP生成 → user download → PowerShell手入力 → 結果貼付」を既定経路にしない。
+
+手動操作はHuman Visual、GUI / hardware、権限境界、利用可能toolで直接実行できない場合等に限定する。
+
+コード変更前Preflight:
+- ProjectVersion.txt
+- exact Unity.exe path/version
+- branch / HEAD / status
+- user-owned dirty保護
+- touched file before SHA
+- candidate SHA
+- after SHA
+
+mismatchはfail closed。
+
+reset / checkout / clean禁止。
+
+Windows PowerShell 5.1固定。
+
+safe I/O、subprocess exit code、transactional replacement、rollback、write-target guardを使用。
+
+PS7依存、ambiguous cardinality、unsafe I/O、obsolete path/versionを検出。
+
+Generic Listは`::new()` + `.ToArray()`。
+
+---
+
+# 15. 回答 / 実装出力方針
+
+ユーザー向け説明は簡潔な日本語を優先する。
+
+確認済み事実、Runtime、Static / Package、公開設計原則、推論、未確認、棄却 / Supersededを分離する。
+
+最善の1案を優先し、理由なく多数案を並べない。
+
+既に得ている情報をユーザーへ再質問しない。
+
+ファイル置換をユーザーが行う必要がある場合は、fragileな差分よりwhole-fileを優先する。
+
+---
+
+# 16. 情報源メンテナンス
+
+CoreRules:
+恒久契約、Goal、Authority、設計原則、禁止、長期運用。
+
+FullRoadmap:
+Current Authority、Current Product Problem、Validated / Rejected / Superseded、Open Issues、first blocker、single Next Action、過去から完成までの完全時系列、Windows Definition of Done、Decision Ledger。
+
+`CurrentRoadmap`を別Current文書として持たない。旧CurrentRoadmapはHISTORICAL_ONLYとして保持し、Current selectorから外す。
+
+CustomInstructions:
+通常チャット向け圧縮コンテキスト。
+
+AGENTS.md:
+local agent向け固定運用契約。volatile stateを入れない。
+
+ChatReport:
+詳細時系列、旧SHA、過去Runtime、旧diagnostic、旧Next、historical decision。
+
+旧R12等のintegrated informationはHistorical Sourceとして保持し、Current selectorへ置かない。
+
+古いCurrent、旧Next、旧SHA、閉じたdiagnosticを再昇格しない。
+
+---
+
+# 17. ファイル受け渡し / 会話長
+
+アップロード / ダウンロードを最小化する。
+
+原則:
+- Codex成果物はConsolidated REPORT 1個
+- Runtime ZIPは必要時のみ1個
+- Visualは必要時のみ
+- Installer / Fixはcomplete archive 1個
+- Evidence本体を毎回複製しない
+
+通常チャットは会話量、添付、調査、長文成果物を監視し、Authority / Current / Validated / Rejected / Superseded / Nextが文脈から脱落する前に新チャット移行を提案する。
+
+限界ぎりぎりまで継続しない。
+
+新チャットではCoreRules、FullRoadmapのCurrent section、CustomInstructions、最新有効REPORTを優先し、全履歴を再展開しない。
+---
+
+# 18. 成果物フォルダ / Artifact Governance
+
+`D:\KiwiAvatarSystem`直下を通常REPORT、Runtime Evidence、CSV、録画、compile log、検証ZIP等の作業置き場にしない。
+
+標準:
+- `ProjectContext\Current\`: Current Authority 3文書のみ
+- `ProjectContext\Historical\`: 旧Current / Superseded文書
+- `ProjectContext\Operations\`: Current Selector、通常チャット運用規則、恒久REPORT/ZIP指示、成果物フォルダ規則等の恒久運用文書
+- `ProjectArtifacts\`: 技術成果物
+- `AGENTS.md`、Assets、Packages、ProjectSettings、UserSettings等の実装・設定は従来の責務を維持
+
+技術成果物はArtifact Ownerを最初に決め、`ProjectArtifacts\<Owner>\Reports|Evidence|Logs|Visual|Packages|Archive|Temp`へ責務分離する。Owner例はH1、P3、NativeCamera、Inference、Tracking、FacePart、Product、Performance、Release、Shared。最上位をPhase番号だけで細分化しすぎず、複数領域にまたがるものも安易に複製しない。
+
+Evidenceはsingle sourceを原則とし、REPORTからrelative path、必要時absolute path、filename、SHA256、purpose、resultを参照する。保存場所はAuthorityではない。
+
+ReleaseとPerformanceは独立ownerで管理する。observer-heavy correctness runをPerformance Authorityへ混ぜない。Human Visual録画の存在をHuman PASSとしない。
+
+既存root成果物は整理目的だけで一括移動しない。移動前に参照元、script / validator依存、before path、SHA256を確認し、transactional move、after確認、参照切れ確認を行う。user-owned dirty file、自動分類、mtimeだけのArchive判定、SHA未確認削除は禁止。`reset / checkout / clean`を整理に使わない。
+
+新規成果物から標準適用し、既存成果物の移行は別の安全なtransactionとして段階的に行う。詳細はCurrent selector外の `KiwiAvatarSystem_成果物フォルダ運用規則_*` をAuthorityとする。
+

@@ -1,0 +1,415 @@
+KiwiAvatarSystem Consolidated REPORT
+H1 SAME ARTIFACT NEUTRAL STILLNESS RECORDING HARNESS RETRY ONLY
+Report time: 2026-09-14 00:54:27 JST
+
+================================================================
+1. TASK / CURRENT RESULT
+================================================================
+
+TASK=H1_SAME_ARTIFACT_NEUTRAL_STILLNESS_RECORDING_HARNESS_RETRY_ONLY
+RECORDING_HARNESS_RESULT=PASS
+READY_FOR_HUMAN_VISUAL_REVIEW=YES
+HUMAN_VISUAL_AUTHORITY=PENDING_HUMAN_REVIEW
+FIRST_CAUSAL_BOUNDARY=UNRESOLVED
+RUNTIME_EXECUTION_COUNT=1
+PRODUCT_SOURCE_CHANGE=NONE
+OBSERVER_SOURCE_CHANGE=NONE
+BUILD=NONE
+COMMIT=NONE
+PUSH=NONE
+PERFORMANCE_AUTHORITY=NONE
+
+The same existing artifact was run once. The recorder was confirmed active before
+Player launch, remained active until the Player process exited, and was stopped by
+the graceful ffmpeg q command. The MP4 was finalized successfully.
+
+The complete Player viewport remained inside the primary-display capture region.
+The Avatar was continuously visible throughout the NEUTRAL_STILLNESS_A review
+interval under the recording-harness visibility audit. This is not a Human Visual
+quality verdict. Human Visual remains pending.
+
+================================================================
+2. AUTHORITY PREFLIGHT
+================================================================
+
+Project:
+  D:\KiwiAvatarSystem
+
+ProjectVersion:
+  6000.0.80f1 (2dfd32957da2)
+
+Exact Unity:
+  C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe
+  ProductVersion=6000.0.80f1_2dfd32957da2
+  FileVersion=6000.0.80.3013938
+
+Branch / source identity:
+  branch=work/raw-direct-motion
+  local HEAD=5ed9274a19c3433cda83be6fd31dd6e1c7f65f8b
+  origin/work/raw-direct-motion=5ed9274a19c3433cda83be6fd31dd6e1c7f65f8b
+  expected/current match=PASS
+
+Before Runtime git status --short:
+  ?? KiwiCodexConsolidatedReport_H1_SameArtifactNeutralStillnessFirstBoundary_20260913-232037JST.txt
+  ?? KiwiValidation/H1_FixedSegment_FirstBoundary_20260913-204113/
+
+These were the two declared pre-existing user-owned/prior-task Evidence items.
+They were not deleted, restored, checked out, reset, cleaned, stashed, overwritten,
+merged, or rebased.
+
+After Runtime, before this REPORT, git status --short:
+  ?? KiwiCodexConsolidatedReport_H1_SameArtifactNeutralStillnessFirstBoundary_20260913-232037JST.txt
+  ?? KiwiValidation/H1_FixedSegment_FirstBoundary_20260913-204113/
+  ?? KiwiValidation/H1_SameArtifact_NeutralStillness_RecordingRetry_20260914-004607/
+
+Final after-task git status --short:
+  ?? KiwiCodexConsolidatedReport_H1_SameArtifactNeutralStillnessFirstBoundary_20260913-232037JST.txt
+  ?? KiwiCodexConsolidatedReport_H1_SameArtifactNeutralStillnessRecordingHarnessRetry_20260914-005427JST.txt
+  ?? KiwiValidation/H1_FixedSegment_FirstBoundary_20260913-204113/
+  ?? KiwiValidation/H1_SameArtifact_NeutralStillness_RecordingRetry_20260914-004607/
+
+Tracked working-tree diff=NONE
+Staged diff=NONE
+
+Additional Product-source dirty state=NONE
+PREFLIGHT_RESULT=PASS
+
+ProjectContext Current selector:
+  exactly three files: CoreRules, FullRoadmap, CustomInstructions
+  all three read in full
+
+Latest relevant prior Consolidated REPORT read in full:
+  KiwiCodexConsolidatedReport_H1_SameArtifactNeutralStillnessFirstBoundary_20260913-232037JST.txt
+
+================================================================
+3. SAME ARTIFACT / OBSERVER IDENTITY
+================================================================
+
+Artifact:
+  D:\KiwiAvatarSystem\Builds\H1_FixedSegment_FirstBoundary_20260913-204113\
+  KiwiAvatarSystem_H1_FixedSegment_FirstBoundary.exe
+
+EXE SHA256:
+  98751D0DFF0DD3ADE563C2B505A0E9F7A46E8E8895864212E1B884EDBCB42E81
+  expected match=PASS
+
+Managed artifact:
+  D:\KiwiAvatarSystem\Builds\H1_FixedSegment_FirstBoundary_20260913-204113\
+  KiwiAvatarSystem_H1_FixedSegment_FirstBoundary_Data\Managed\Assembly-CSharp.dll
+
+Assembly-CSharp.dll SHA256:
+  0185F6666F63A76ED0658C7306F787B7944D2AFA4ABB2D2F81B77A5FCA16B92D
+  expected match=PASS
+
+Observer source:
+  Assets\CodexTasks\H1_LandmarkerBoundary_20260913\
+  KiwiH1LandmarkerBoundaryObserver.cs
+
+Observer SHA256:
+  5782DE53CE87B50E55C6CB1AA9BDCD8F13B19B8C1E045021CCA94C1B04AE697E
+  expected match=PASS
+
+Rebuild performed=NO
+Equivalent artifact substitution=NO
+
+================================================================
+4. NEW EVIDENCE / RECORDING METHOD
+================================================================
+
+Evidence directory:
+  D:\KiwiAvatarSystem\KiwiValidation\
+  H1_SameArtifact_NeutralStillness_RecordingRetry_20260914-004607
+
+Old Evidence directory was read-only and was not overwritten.
+
+Process-local environment:
+  KIWI_H1_BOUNDARY_RUNTIME=1
+  KIWI_H1_BOUNDARY_OUTPUT=<new Evidence directory>
+
+Recording method:
+  ffmpeg gdigrab desktop capture
+  capture region=(0,0), 3840x2160 primary display only
+  H.264 libx264 ultrafast, CRF 18, yuv420p
+  requested rate=30 fps
+  fixed duration limit=NONE
+  stop condition=Player process exit
+  stop/finalize=ffmpeg stdin q, exit code 0, MP4 moov finalized
+
+Player window method:
+  -screen-fullscreen 0
+  -popupwindow
+  -screen-width 1600
+  -screen-height 900
+  The fixed borderless Player viewport remained fully inside the capture region.
+  The window was not moved during NEUTRAL_STILLNESS_A or later segments.
+
+Pre-launch capture probe:
+  The first recorder-only probe found that unscoped desktop capture was the
+  9600x2160 multi-monitor virtual desktop. No Player was launched during it.
+  It was gracefully finalized and retained as prelaunch_capture_probe_* Evidence.
+  It is not Runtime Evidence and does not increment Runtime execution count.
+  The primary-display region was then explicitly fixed before the only Player run.
+
+================================================================
+5. PROCESS LIFETIME / VIDEO IDENTITY
+================================================================
+
+Recording process start:
+  2026-09-14T00:47:07.5925080+09:00
+
+Recording input start:
+  epoch=1789314427.664958
+  2026-09-13T15:47:07.6649580Z
+
+Recorder ready evidence:
+  ffmpeg log contained "Press [q] to stop" and captured progress frames before
+  Player launch.
+
+Player start request:
+  2026-09-14T00:47:30.0977251+09:00
+
+Player process start:
+  2026-09-14T00:47:30.2672813+09:00
+  pid=34224
+
+Player process exit:
+  2026-09-14T00:49:28.3502858+09:00
+  exit code=0
+  PLAYER_CLOSED=YES
+
+Recording process end:
+  2026-09-14T00:49:33.9230763+09:00
+  recorder exit code=0
+
+Lifetime order:
+  recording input start < Player process start=PASS
+  lead before Player start=22.6023233 seconds
+  recording process end > Player process exit=PASS
+  tail after Player exit=5.5727905 seconds
+
+continuous_recording.mp4:
+  codec=H.264
+  size=3840x2160
+  nominal rate=30/1
+  measured average rate=45930/4381, approximately 10.483908 fps
+  frame count=1531
+  duration=146.033333 seconds
+  size=142176250 bytes
+  SHA256=F42E4DBA2B7651198B0D1D7AF207F0A4CEE0F50B86B13642F509B8B779DEB8A5
+
+The recording is correctness/visual-correlation Evidence only. Its measured rate
+is reported transparently and is not Performance Authority.
+
+================================================================
+6. RUNTIME IDENTITY
+================================================================
+
+UNITY_VERSION=6000.0.80f1
+DEBUG_BUILD=1
+GRAPHICS_API=Direct3D12
+SCENE=Assets/Scenes/Face Landmark Detection.unity
+camera=UGREEN Camera 4K
+camera profile=1920x1080@60
+backend=MediaFoundation/NV12 Path B
+captureTransport=B:SystemMemoryNV12
+stablePresentation=True
+right-side primary consume=Runner/InferenceEngine
+Runtime identity result=PASS
+
+Runtime summary:
+  PLAYER_CLOSED=YES
+  SEGMENT_BOUNDARY_EVENT_COUNT=12
+  SEGMENT_CORRELATION_ROW_COUNT=4856
+  RAW_DUPLICATE_TIMESTAMP_COUNT=0
+  RAW_OUT_OF_ORDER_TIMESTAMP_COUNT=0
+  RIGHT_SIDE_CONSUME_DUPLICATE_TIMESTAMP_COUNT=0
+  RIGHT_SIDE_CONSUME_OUT_OF_ORDER_TIMESTAMP_COUNT=0
+  RIGHT_SIDE_PRESENTATION_DUPLICATE_TIMESTAMP_COUNT=0
+  RIGHT_SIDE_PRESENTATION_OUT_OF_ORDER_TIMESTAMP_COUNT=0
+
+================================================================
+7. SEGMENT BOUNDARIES / VIDEO CORRELATION
+================================================================
+
+Clock authority:
+  Stopwatch hostTicks with UTC timestamps from segment_boundaries.csv
+
+WARMUP:
+  START hostTicks=97338735, UTC=2026-09-13T15:47:40.6171468Z
+  END   hostTicks=197521539, UTC=2026-09-13T15:47:50.6321306Z
+  video interval approximately 32.9521888 to 42.9671726 seconds
+
+NEUTRAL_STILLNESS_A:
+  START hostTicks=197521539, UTC=2026-09-13T15:47:50.6321306Z
+  END   hostTicks=397358552, UTC=2026-09-13T15:48:10.6154889Z
+  video interval=42.9671726 to 62.9505309 seconds
+  host duration=19.9833583 seconds
+
+SLOW_YAW:
+  START hostTicks=397358552, UTC=2026-09-13T15:48:10.6154889Z
+  END   hostTicks=597341022, UTC=2026-09-13T15:48:30.6137816Z
+
+SLOW_PITCH:
+  START hostTicks=597341022, UTC=2026-09-13T15:48:30.6147882Z
+  END   hostTicks=797389592, UTC=2026-09-13T15:48:50.6192498Z
+
+SLOW_ROLL:
+  START hostTicks=797389592, UTC=2026-09-13T15:48:50.6192498Z
+  END   hostTicks=997373360, UTC=2026-09-13T15:49:10.6175276Z
+
+NEUTRAL_STILLNESS_B:
+  START hostTicks=997373360, UTC=2026-09-13T15:49:10.6175276Z
+  END   hostTicks=1147708738, UTC=2026-09-13T15:49:25.6514378Z
+
+SEGMENT_BOUNDARY_EVENT_COUNT=12
+SEGMENT_BOUNDARY_COMPLETENESS=PASS
+HOST_TICKS_MONOTONIC=PASS
+VIDEO_TELEMETRY_HOSTTICKS_CORRELATION=PASS
+NEUTRAL_STILLNESS_A_FULL_INTERVAL_IN_VIDEO=PASS
+
+================================================================
+8. VIEWPORT / AVATAR VISIBILITY / HUMAN REVIEW DERIVATIVE
+================================================================
+
+Audit evidence:
+  - exact NEUTRAL_STILLNESS_A boundary-adjacent frames
+  - independent start/middle/end frames
+  - 1 Hz contact sheet across the complete NEUTRAL_STILLNESS_A interval
+  - 5-second contact sheet across all scheduled segments
+  - pre-launch and post-exit frames
+
+Complete Player viewport inside capture region:
+  PASS
+
+Player viewport fixed during NEUTRAL_STILLNESS_A:
+  PASS
+
+Avatar continuous visibility during NEUTRAL_STILLNESS_A:
+  PASS for recording-harness visibility scope
+
+Human Visual quality verdict:
+  PENDING_HUMAN_REVIEW
+
+Derived Human Review clip:
+  neutral_stillness_A_review.mp4
+  derived from continuous_recording.mp4 video interval 42.9671726-62.9505309
+  H.264, 3840x2160, 178 frames, 20.000000-second encoded duration
+  SHA256=1F5D7AEA78F1D97281B3920039186FD3112E91DE33A121639366DCE04ABEB486
+
+Authority remains:
+  continuous_recording.mp4
+
+The review clip and contact sheets are derived artifacts. They do not replace the
+continuous recording and do not provide a Codex Human Visual PASS/FAIL verdict.
+
+================================================================
+9. ANALYSIS SCOPE / CAUSAL STATUS
+================================================================
+
+Only NEUTRAL_STILLNESS_A is prepared for first review.
+
+Required future analysis order remains:
+  authority
+  -> sample/frame identity
+  -> timestamp/source age/liveness
+  -> provider/transition
+  -> Canonical pose continuity
+  -> Presentation transaction
+  -> Geometry
+
+This retry establishes the missing measurement-design boundary only. It does not
+promote the prior Canonical/upstream telemetry finding to a Human Product cause.
+No smoothing, Kalman, prediction, threshold relaxation, dead zone, buffering,
+one-frame delay, FIFO, backend, Camera/Native, Provider, Canonical, Presentation,
+or Geometry change was made.
+
+FIRST_CAUSAL_BOUNDARY=UNRESOLVED
+
+================================================================
+10. DOUBLE FULL AUDIT
+================================================================
+
+FULL_AUDIT_1=PASS
+
+Independent scope:
+  authority preflight; exact source/artifact/observer hashes; dirty protection;
+  recorder readiness and graceful finalization; Player lifetime; 12 segment events;
+  hostTicks monotonicity; UTC/video interval calculation; DX12/camera/Path B identity;
+  exact NEUTRAL_STILLNESS_A 1 Hz visual contact-sheet coverage; Evidence identity.
+
+FULL_AUDIT_2=PASS
+
+Independent scope:
+  separate Python CSV/hash/ffprobe/log parser; fresh git identity reads; exact segment
+  sequence; video duration/frame count; neutral interval containment; Player close;
+  recorder q/moov finalization; boundary/start/middle/end and all-segment visual samples;
+  review derivative presence and Evidence identity.
+
+Audit 1 and Audit 2 independently agreed:
+  artifact/source/observer identity=PASS
+  pre-existing dirty protection=PASS
+  recording start before Player=PASS
+  recording end after Player=PASS
+  Player lifetime/exit=PASS
+  complete viewport visibility=PASS
+  Avatar visibility=PASS
+  segment completeness=PASS
+  hostTicks/video correlation=PASS
+  NEUTRAL_STILLNESS_A coverage=PASS
+  Runtime identity=PASS
+
+AUDIT_DISAGREEMENT_AFTER_RECONCILIATION=NONE
+REMAINING_UNRESOLVED_CLAIMS=HUMAN_VISUAL_QUALITY_AND_FIRST_CAUSAL_BOUNDARY
+
+================================================================
+11. EVIDENCE HASHES
+================================================================
+
+Manifest:
+  D:\KiwiAvatarSystem\KiwiValidation\
+  H1_SameArtifact_NeutralStillness_RecordingRetry_20260914-004607\
+  evidence_sha256.txt
+
+Manifest SHA256:
+  239E9EEF4B9B7DBBF228B1EBA7C4620A9510F3C885632727499AA00D38E26EEA
+
+Primary Evidence SHA256:
+  continuous_recording.mp4
+    F42E4DBA2B7651198B0D1D7AF207F0A4CEE0F50B86B13642F509B8B779DEB8A5
+  neutral_stillness_A_review.mp4
+    1F5D7AEA78F1D97281B3920039186FD3112E91DE33A121639366DCE04ABEB486
+  Player.log
+    33B7C9F9C84E0A26F212F36A307B8E262DC62153E1F44CBF3B40982ACB9445FB
+  summary.txt
+    8F6657775E430FC7062866AAF2714D1BD945204CA9AC9D5CE5F5BD7A2100C6F8
+  segment_boundaries.csv
+    A727CAAE67111331436A01CA7B42ACCDBB76FC437AB2D0D138B6A6195AD436C5
+  segment_correlation.csv
+    667928061DC2B196AAE04D7C6325C9AE9FF1089FA8C93D60009C4AEC0500A2B0
+  aggregate_1hz.csv
+    B56DE923C68009B0C9FC7E55E1DE1359E4EE6C4F80095384E15F6F034D100C15
+  ffmpeg_recording.log
+    F5AA3F15D7FBDCBFB11089BCAA64B2B3E017F56035C5B04AD4D506EAE248CAAE
+  harness_timing.txt
+    D875DD4A6FC14989F8F7B1D63B139F4299BFC38B8053EC712986ECBC1C1FE5B2
+
+All remaining generated Evidence hashes are listed in evidence_sha256.txt.
+
+================================================================
+12. CURRENT RESULT / NEXT
+================================================================
+
+RECORDING_HARNESS_RESULT=PASS
+READY_FOR_HUMAN_VISUAL_REVIEW=YES
+HUMAN_VISUAL_AUTHORITY=PENDING_HUMAN_REVIEW
+FIRST_CAUSAL_BOUNDARY=UNRESOLVED
+
+NEXT:
+  The human reviews neutral_stillness_A_review.mp4 for the complete
+  NEUTRAL_STILLNESS_A interval and records the Human Visual verdict. Only after that
+  verdict may the ordered telemetry correlation be used to assess the first causal
+  boundary. Do not run another Runtime or make a Product repair within this task.
+
+COMMIT=NONE
+PUSH=NONE
+PRODUCT_SOURCE_CHANGE=NONE

@@ -1,0 +1,374 @@
+# KiwiAvatarSystem 成果物フォルダ運用規則
+
+更新日: 2026-09-14 JST
+Revision: v1 / Artifact Governance / Current-Authority Separation
+状態: DURABLE_OPERATIONAL_POLICY / CURRENT_SELECTOR_OUTSIDE
+
+## 1. 目的
+
+`D:\KiwiAvatarSystem`直下へREPORT、Runtime Evidence、ログ、録画、検証ZIP等を無秩序に配置しない。
+
+Current Authority、実装source、恒久運用文書、技術成果物、過去資料の責務を分離し、次を満たす。
+
+- Current Authorityを迷わず特定できる
+- H1、P3、Native Camera等の作業系列をまとめて追跡できる
+- REPORTとEvidenceの対応を維持できる
+- 過去EvidenceをCurrentへ誤昇格しない
+- 同一Evidenceの重複コピーを防ぐ
+- Codex、通常チャット、人間確認の成果物を同一規則で管理できる
+- project rootを簡潔に保つ
+- 将来の監査、rollback、release時にprovenanceを追跡できる
+
+フォルダ整理自体を目的化しない。Authority、provenance、再現性、user-owned dirty保護を優先する。
+
+## 2. 標準構成
+
+```text
+D:\KiwiAvatarSystem\
+│
+├─ AGENTS.md
+├─ Assets\
+├─ Packages\
+├─ ProjectSettings\
+├─ UserSettings\
+│
+├─ ProjectContext\
+│  ├─ Current\
+│  │  ├─ KiwiAvatarSystem_CoreRules_*.txt
+│  │  ├─ KiwiAvatarSystem_FullRoadmap_*.txt
+│  │  └─ KiwiAvatarSystem_CustomInstructions_*.txt
+│  │
+│  ├─ Operations\
+│  │  ├─ KiwiAvatarSystem_情報源構成_CurrentSelector運用_*.txt
+│  │  ├─ 通常チャット運用管理規則_*.txt
+│  │  ├─ 通常チャット用_恒久REPORT_ZIP直接作成指示_*.txt
+│  │  ├─ KiwiAvatarSystem_成果物フォルダ運用規則_*.txt
+│  │  └─ SHA256SUMS_*.txt
+│  │
+│  └─ Historical\
+│
+├─ ProjectArtifacts\
+│  ├─ H1\
+│  ├─ P3\
+│  ├─ P2\
+│  ├─ NativeCamera\
+│  ├─ Inference\
+│  ├─ Tracking\
+│  ├─ FacePart\
+│  ├─ Product\
+│  ├─ Performance\
+│  ├─ Release\
+│  └─ Shared\
+│
+└─ その他の実装上必要な既存フォルダ
+```
+
+`ProjectContext\Operations`はCurrent Authorityではない。Current selectorは引き続き`ProjectContext\Current`の3文書だけとする。
+
+project rootには実装・設定・Current selectorを支える固定物を優先して置き、通常REPORT、CSV、Runtime ZIP、録画、compile log等は原則として新規出力しない。
+
+## 3. ProjectContext
+
+### 3.1 Current
+
+`D:\KiwiAvatarSystem\ProjectContext\Current\`
+
+Current Authority専用。原則3文書のみ。
+
+- CoreRules: 恒久契約、Authority、設計原則、禁止事項、長期運用
+- FullRoadmap: Current Authority、現在地、Decision Ledger、Validated / Rejected / Superseded、first blocker、Next Single Action、過去から完成までの完全ロードマップ
+- CustomInstructions: 通常チャット向け圧縮コンテキスト
+
+禁止:
+Codex REPORT、Runtime Evidence、MP4、CSV、compile log、installer、temporary diagnostic、scratch file、運用規則。
+
+### 3.2 Operations
+
+`D:\KiwiAvatarSystem\ProjectContext\Operations\`
+
+Current selector外の恒久運用文書専用。Current Selector規則、通常チャット運用規則、恒久REPORT/ZIP指示、本成果物規則、対応manifest等を置ける。
+
+Operations文書はCurrent技術状態を所有しない。volatile SHA、temporary hypothesis、Current Nextを独自に所有しない。
+
+### 3.3 Historical
+
+旧Current、旧統合情報、Superseded Roadmap等を保存する。
+
+Historicalの文書をfilename、latest/final表記、mtimeだけでCurrentへ戻さない。
+
+## 4. ProjectArtifactsとArtifact Owner
+
+`D:\KiwiAvatarSystem\ProjectArtifacts\`
+
+技術成果物の保存先。作業開始時に最初にArtifact Ownerを決める。
+
+代表owner:
+- H1 Human Head / Human Visual → `H1`
+- P3 FaceGeometry lifecycle → `P3`
+- Native camera source / transport → `NativeCamera`
+- Inference backend / tensor → `Inference`
+- Tracking semantics → `Tracking`
+- FacePart固有成果物 → `FacePart`
+- final product integration → `Product`
+- clean benchmark → `Performance`
+- installer / official release → `Release`
+
+迷う場合でも新規最上位folderを先に増やさず、既存ownerのどれに属するかを判断する。
+
+Phase名と技術領域を混同しない。P3A/P3B/P3C/P3Dをすべて`ProjectArtifacts`直下へ増やさず、まず`ProjectArtifacts\P3`へまとめる。ファイル数や運用上の必要性が明確な場合だけ`ProjectArtifacts\P3\P3D`等を追加する。
+
+## 5. Owner配下の責務分離
+
+標準:
+
+```text
+<Owner>\
+├─ Reports\
+├─ Evidence\
+├─ Logs\
+├─ Visual\
+├─ Packages\
+├─ Archive\
+└─ Temp\
+```
+
+不要なsubfolderは作らなくてよい。
+
+### Reports
+Consolidated REPORT、監査REPORT等。
+
+### Evidence
+Runtime evidence、CSV、測定結果、transaction dump等。
+
+### Logs
+compile / build / Player / validator log等。
+
+### Visual
+Human Visual用MP4、スクリーンショット、録画等。
+録画があること自体はHuman Visual PASSを意味しない。
+
+### Packages
+installer、test build、fix package、実行・配布するRuntime ZIP等。
+単純なEvidence ZIPはEvidenceへ置ける。
+
+### Archive
+同owner内で明確にSupersededされた補助成果物を必要に応じて保存する。
+単に古いことだけでArchiveへ移さない。
+
+### Temp
+恒久Evidenceと一時作業を混ぜないために使用できる。
+正常終了後に不要なTempを恒久Evidenceとして扱わない。rollback fileやbefore snapshotは必要な期間保持する。
+
+## 6. H1
+
+H1は長期かつ成果物数が多いため独立ownerとする。
+
+```text
+ProjectArtifacts\H1\
+├─ Reports\
+├─ Evidence\
+├─ Logs\
+├─ Visual\
+├─ Packages\
+├─ Archive\
+└─ Temp\
+```
+
+今後のH1 REPORT、CSV、Runtime evidence、compile log、録画は原則ここへ出力する。
+
+## 7. Shared
+
+`ProjectArtifacts\Shared\`は複数領域へ本当にまたがる成果物だけに使用する。
+
+可能なら1つのownerを決め、そのsingle sourceを他REPORTから参照する。
+
+禁止:
+- 同一CSVをH1 / P3 / Sharedへ複製
+- 同一MP4を複数folderへ複製
+- 同一REPORTを複数場所へ保存
+
+## 8. Evidence参照とidentity
+
+REPORTには可能な範囲で以下を記録する。
+
+```text
+Evidence:
+ProjectArtifacts\H1\Evidence\human_jump_markers.csv
+
+Visual:
+ProjectArtifacts\H1\Visual\continuous_recording.mp4
+
+Compile Log:
+ProjectArtifacts\H1\Logs\H1_FrameIdentity_Compile_20260913.log
+```
+
+重要Evidenceは必要に応じSHA256、artifact identity、timestamp、purpose、resultも記録する。
+
+folder移動だけでEvidence identityが変わった扱いにしない。移動前後でSHA256が同一ならcontent identityは同一として扱えるが、path-dependent scriptやREPORT参照は別に検証する。
+
+## 9. Authorityとの関係
+
+保存場所はAuthorityではない。
+
+`ProjectArtifacts\H1\Reports\`に最新REPORTがあっても、それだけでProduction Authorityにはならない。
+
+Authorityはclaim単位で:
+- Implementation = current live-local Production source + actual SHA
+- Runtime = same-build Production
+- Package = actually installed Package Source
+- Performance = clean Production benchmark
+- Visual = same-build Human review
+
+を使用する。
+
+Current FullRoadmapには成果物本体を複製せず、必要なEvidence名、REPORT名、owner/path、結果、Authority scope、Validated / Rejected / Supersededを記録する。
+
+## 10. Codex / 通常チャットの出力先
+
+Codexは作業開始時にArtifactRootを決める。
+
+例:
+```text
+H1:
+D:\KiwiAvatarSystem\ProjectArtifacts\H1
+
+P3:
+D:\KiwiAvatarSystem\ProjectArtifacts\P3
+
+Native Camera:
+D:\KiwiAvatarSystem\ProjectArtifacts\NativeCamera
+```
+
+Consolidated REPORTをproject rootへ新規出力しない。
+REPORTは`<ArtifactRoot>\Reports`、Runtime evidenceは`Evidence`、logは`Logs`、録画は`Visual`、実行packageは`Packages`へ出力する。
+
+通常チャットがlocal artifact pathを指示・生成する場合も同じowner規則に従う。
+
+## 11. 全フレーム解析成果物
+
+フレーム系列の検証では対象capture / segmentの全フレーム解析結果をEvidenceとしてowner配下へ保存する。
+
+代表frame、contact sheet、1 Hz集計は説明・Human review補助であり、全フレーム解析の代替ではない。
+全フレーム解析から生成した集計と、元video / frame sequenceのidentityをREPORTで結び付ける。
+
+巨大MP4やframe dumpを複数ownerへコピーしない。single sourceを維持し、他ownerからpath + SHA256で参照する。
+
+## 12. Release
+
+正式Releaseは独立ownerとする。
+
+```text
+ProjectArtifacts\Release\
+├─ Builds\
+├─ Installers\
+├─ Manifests\
+├─ Provenance\
+├─ SmokeTests\
+└─ Logs\
+```
+
+開発test buildと正式release buildを混同しない。
+
+## 13. Performance
+
+Performance Authority候補は`ProjectArtifacts\Performance`へまとめる。
+
+```text
+Performance\
+├─ Benchmarks\
+├─ Reports\
+├─ Logs\
+└─ Evidence\
+```
+
+Correctness observer-heavy runをPerformance Authorityへ混在させない。
+必要ならREPORTで`PerformanceAuthorityEligible: YES / NO`を明記する。
+
+## 14. Human Visual
+
+録画はclaim ownerの`Visual`へ置く。
+
+最終Windows Acceptance等、複数領域に関係する正式Human Visualは`ProjectArtifacts\Product\Visual`または`ProjectArtifacts\Release\SmokeTests`等、claim ownerへ置く。
+
+REPORTにはHuman Visualを「合格 / 不合格 / 未確認 / 対象外」で記録する。
+Visual file存在とHuman判定を分離する。
+
+## 15. 既存root成果物の移行
+
+既に`D:\KiwiAvatarSystem`直下や旧`KiwiValidation`等にある成果物を整理目的だけで一括移動しない。
+
+移行前に:
+1. 対象ファイル一覧
+2. 参照元検索
+3. script / REPORT / validator / build依存確認
+4. before path記録
+5. SHA256記録
+6. user-owned dirty保護
+7. transactional move
+8. after path / SHA確認
+9. 参照切れ確認
+10. 必要ならrollback
+
+を行う。
+
+新規成果物から本規則を適用し、既存成果物の移行は独立した安全作業として段階的に行う。
+
+## 16. 自動整理禁止
+
+禁止:
+- filenameだけで自動分類
+- `H1`文字列だけで無条件移動
+- mtimeだけでArchive判定
+- 最新だけ残して旧Evidence削除
+- 重複に見えるファイルをSHA確認なしで削除
+- Current / Historicalの自動入替え
+- user-owned dirty fileの自動移動
+- root cleanup目的のreset / checkout / clean
+
+整理もtransactionとして扱う。
+
+## 17. 命名
+
+既存の有用な命名規則を維持する。
+
+REPORT:
+`KiwiCodexConsolidatedReport_<Area>_<Topic>_<Timestamp>.txt`
+
+Evidence:
+`<Area>_<Topic>_Evidence_<Timestamp>.<ext>`
+
+Compile:
+`<Area>_<Topic>_Compile_<Timestamp>.log`
+
+Visual:
+`<Area>_<Topic>_<Timestamp>.mp4`
+
+既存Evidence identity保護のため、全既存fileを無理にrenameしない。
+
+## 18. ChatReport Archive
+
+Google Drive等のChatReport Archiveは詳細な会話履歴Evidenceとして保持する。
+local `ProjectArtifacts`はlocal技術成果物管理であり、完全同期を必須にしない。
+
+同一巨大EvidenceをlocalとChatReport ZIPへ毎回複製しない。
+ChatReportには必要に応じlocal path、filename、SHA256、purpose、resultを記録する。
+
+## 19. 運用原則
+
+新しい技術作業開始時に最初に決めるのはArtifact Owner。
+
+project rootを作業置き場にしない。
+Current Authorityは`ProjectContext\Current`。
+恒久運用文書は`ProjectContext\Operations`。
+技術成果物は`ProjectArtifacts`。
+
+保存場所をAuthorityと混同しない。
+Evidenceを重複コピーしない。
+既存成果物を参照確認なしに一括移動しない。
+新規成果物から標準適用し、既存成果物は安全確認後に段階的に整理する。
+
+## 20. 横断開発規則
+
+本フォルダ規則は開発・監査規則を置き換えない。技術作業ではCoreRulesに従い、必要な因果経路を1行・1式まで監査し、修正前にofficial docs/source、実Package、関連公開実装、実践/検証動画、既存Evidenceを比較する。フレーム系列claimは対象windowの全フレーム解析を原則とする。
+
+GitHubの通常commit/pushは必要範囲で事前許可済みだが、成果物整理を理由にforce push、history rewrite、reset / checkout / clean、他人の変更破棄を行わない。
