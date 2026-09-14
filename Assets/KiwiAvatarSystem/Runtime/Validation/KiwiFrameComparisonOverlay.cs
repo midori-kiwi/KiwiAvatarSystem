@@ -527,6 +527,16 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
 
             UpdateLandmarkStepMetrics(count);
             _lastSemanticTimestamp = timestamp;
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            KiwiH1LandmarkerBoundaryObserver.ObserveRightOverlayPreDraw(
+                _canonicalFrame,
+                _landmarks,
+                count,
+                timestamp,
+                System.Diagnostics.Stopwatch.GetTimestamp());
+#endif
+
             RebuildLandmarkOverlay();
             _lastOverlayRigidFrameId =
                 _hasCanonicalFrame

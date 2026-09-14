@@ -30,6 +30,7 @@ internal sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
     private static readonly object Sync = new object();
     private static readonly int[] FingerprintIndices = { 1, 33, 152, 263, 454 };
     private static volatile bool _armed;
+    private static KiwiH1LandmarkerBoundaryObserver _activeInstance;
 
     private struct Sample
     {
@@ -230,6 +231,23 @@ internal sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
 
             float[] ignoredPrevious = null;
             Sample handoff = BuildSample(result, rawSequence, timestamp, handoffHostTicks, ref ignoredPrevious);
+
+            FacePrecisionTrackingData published = default;
+            bool publishedIdentityMatches =
+                runner != null &&
+                runner.TryGetLatestPrecisionTrackingData(out published) &&
+                published.isValid &&
+                published.backend == KiwiTrackingBackend.MediaPipe &&
+                published.timestamp == timestamp &&
+                published.frameId > 0UL;
+
+            if (publishedIdentityMatches)
+            {
+                handoff.provider = "Runner/MediaPipe";
+                handoff.backend = published.backend;
+                handoff.providerSourceFrameId = published.frameId;
+            }
+
             if (_lastHandoffTimestamp != long.MinValue)
             {
                 if (timestamp == _lastHandoffTimestamp) _handoffDuplicateTimestampCount++;
@@ -240,7 +258,8 @@ internal sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
 
             if (!_latestRaw.valid || _latestRaw.sequence != rawSequence ||
                 _latestRaw.timestamp != handoff.timestamp ||
-                _latestRaw.fingerprint != handoff.fingerprint)
+                _latestRaw.fingerprint != handoff.fingerprint ||
+                !publishedIdentityMatches)
                 _handoffIdentityMismatchCount++;
 
             handoff.maxDelta = _latestRaw.sequence == rawSequence ? _latestRaw.maxDelta : 0f;
@@ -249,8 +268,29 @@ internal sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
         }
     }
 
+    internal static void ObserveRightOverlayPreDraw(
+        KiwiTrackingFrame canonicalFrame,
+        Vector2[] landmarks,
+        int count,
+        long timestamp,
+        long observationHostTicks)
+    {
+        if (!_armed) return;
+
+        KiwiH1LandmarkerBoundaryObserver instance = _activeInstance;
+        if (instance == null) return;
+
+        instance.CaptureExactRightSidePreDraw(
+            canonicalFrame,
+            landmarks,
+            count,
+            timestamp,
+            observationHostTicks);
+    }
+
     private void Awake()
     {
+        _activeInstance = this;
         Application.runInBackground = true;
         _startedRealtime = Time.realtimeSinceStartupAsDouble;
         _nextAggregateRealtime = _startedRealtime + AggregatePeriodSeconds;
@@ -329,6 +369,11 @@ internal sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (ReferenceEquals(_activeInstance, this))
+        {
+            _activeInstance = null;
+        }
+
         if (_quitting) return;
         CloseActiveSegment();
         WriteSummary(false);
@@ -353,6 +398,95 @@ internal sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
             _overlayLandmarksField = type.GetField("_landmarks", flags);
             _overlayCountField = type.GetField("_landmarkCount", flags);
         }
+    }
+
+    private void CaptureExactRightSidePreDraw(
+        KiwiTrackingFrame canonicalFrame,
+        Vector2[] landmarks,
+        int count,
+        long timestamp,
+        long observationHostTicks)
+    {
+        if (
+            !canonicalFrame.isValid ||
+            !canonicalFrame.rigid.isValid ||
+            !canonicalFrame.hasSemanticLandmarks ||
+            canonicalFrame.semanticTimestamp != timestamp ||
+            landmarks == null ||
+            count <= 0)
+        {
+            return;
+        }
+
+        Sample consume = BuildSample(
+            landmarks,
+            count,
+            timestamp,
+            observationHostTicks,
+            ref _previousConsumeSelected);
+
+        consume.provider = canonicalFrame.providerId ?? string.Empty;
+        consume.backend = canonicalFrame.rigid.backend;
+        consume.providerSourceFrameId =
+            canonicalFrame.normalization.valid
+                ? canonicalFrame.normalization.providerSourceFrameId
+                : 0UL;
+
+        CommitRightSideConsume(consume);
+    }
+
+    private void CommitRightSideConsume(Sample consume)
+    {
+        if (!consume.valid) return;
+
+        if (
+            _lastConsumeTimestamp != long.MinValue &&
+            consume.timestamp == _lastConsumeTimestamp)
+        {
+            return;
+        }
+
+        if (
+            _lastConsumeTimestamp != long.MinValue &&
+            consume.timestamp < _lastConsumeTimestamp)
+        {
+            _consumeOutOfOrderTimestampCount++;
+        }
+
+        _consumeCount++;
+        if (consume.backend == KiwiTrackingBackend.MediaPipe) _consumeMediaPipeCount++;
+        else if (consume.backend == KiwiTrackingBackend.InferenceEngine) _consumeInferenceEngineCount++;
+        else _consumeOtherCount++;
+
+        lock (Sync)
+        {
+            if (consume.backend == KiwiTrackingBackend.MediaPipe)
+            {
+                if (
+                    !_latestHandoff.valid ||
+                    _latestHandoff.timestamp != consume.timestamp ||
+                    _latestHandoff.fingerprint != consume.fingerprint ||
+                    _latestHandoff.providerSourceFrameId == 0UL ||
+                    consume.providerSourceFrameId == 0UL ||
+                    _latestHandoff.providerSourceFrameId != consume.providerSourceFrameId)
+                {
+                    _consumeIdentityMismatchCount++;
+                }
+                else
+                {
+                    _lastConsumedHandoffSequence = _latestHandoff.sequence;
+                    _rawToConsumeAgeMsLatest =
+                        HostTicksToMilliseconds(
+                            consume.hostTicks - _latestRaw.hostTicks);
+                    if (_rawToConsumeAgeMsLatest > _rawToConsumeAgeMsMaximum)
+                        _rawToConsumeAgeMsMaximum = _rawToConsumeAgeMsLatest;
+                }
+            }
+        }
+
+        _lastConsumeTimestamp = consume.timestamp;
+        _latestConsume = consume;
+        ObservePeak(consume, ref _consumePeakDelta, ref _consumePeakTimestamp);
     }
 
     private void CaptureActualRightSideConsume()
@@ -380,33 +514,7 @@ internal sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
                 : 0UL;
         }
 
-        _consumeCount++;
-        if (consume.backend == KiwiTrackingBackend.MediaPipe) _consumeMediaPipeCount++;
-        else if (consume.backend == KiwiTrackingBackend.InferenceEngine) _consumeInferenceEngineCount++;
-        else _consumeOtherCount++;
-
-        lock (Sync)
-        {
-            if (consume.backend == KiwiTrackingBackend.MediaPipe)
-            {
-                if (!_latestHandoff.valid || _latestHandoff.timestamp != consume.timestamp ||
-                    _latestHandoff.fingerprint != consume.fingerprint)
-                {
-                    _consumeIdentityMismatchCount++;
-                }
-                else
-                {
-                    _lastConsumedHandoffSequence = _latestHandoff.sequence;
-                    _rawToConsumeAgeMsLatest = HostTicksToMilliseconds(consume.hostTicks - _latestRaw.hostTicks);
-                    if (_rawToConsumeAgeMsLatest > _rawToConsumeAgeMsMaximum)
-                        _rawToConsumeAgeMsMaximum = _rawToConsumeAgeMsLatest;
-                }
-            }
-        }
-
-        _lastConsumeTimestamp = timestamp;
-        _latestConsume = consume;
-        ObservePeak(consume, ref _consumePeakDelta, ref _consumePeakTimestamp);
+        CommitRightSideConsume(consume);
     }
 
     private void CapturePresentationEligibility()
