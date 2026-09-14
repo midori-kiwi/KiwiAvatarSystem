@@ -1,0 +1,132 @@
+KiwiCodex Consolidated REPORT
+H1 RawToRightOverlay Exact Boundary Runtime
+Report time: 2026-09-14 17:17:15 JST
+
+1. Authority / identity
+
+Project: D:\KiwiAvatarSystem
+Artifact Owner: H1
+ProjectVersion: 6000.0.80f1 (2dfd32957da2)
+Unity.exe: C:\Program Files\Unity\Hub\Editor\6000.0.80f1\Editor\Unity.exe
+Unity ProductVersion: 6000.0.80f1_2dfd32957da2
+Unity SHA256: 7FC68434F4FCCF2781648C398FBAA4E8ADFB568251605E990D887FE36CF1376F
+Branch: work/raw-direct-motion
+Upstream: origin/work/raw-direct-motion
+Expected remote HEAD: 1c0fdc202cebfc450c26242153e1d0e57f50ffa0
+Observed remote HEAD: 1c0fdc202cebfc450c26242153e1d0e57f50ffa0
+Local HEAD before permitted fast-forward: 6e721e74196777135abf9591a873caa3defdcfea
+Local HEAD after permitted fast-forward: 1c0fdc202cebfc450c26242153e1d0e57f50ffa0
+Fast-forward ancestry: PASS
+Initial worktree: CLEAN
+
+Post-compile authority gate: FAIL_CLOSED
+Reason: worktree changed from clean to dirty after compile and before build/Runtime.
+The changes were not discarded, reset, checked out, cleaned, stashed, or adopted as Codex-owned.
+
+Observed dirty state:
+ D ProjectContext/Current/KiwiAvatarSystem_情報源構成_CurrentSelector運用_20260914_v4_ArtifactGovernance.txt
+ D ProjectContext/Current/KiwiAvatarSystem_成果物フォルダ運用規則_20260914_v1.txt
+ D ProjectContext/Current/通常チャット用_恒久REPORT_ZIP直接作成指示_20260914_v4_ArtifactGovernance.txt
+ D ProjectContext/Current/通常チャット運用管理規則_20260914_v4_MicroAudit_GitHubAuthorized.txt
+?? ProjectContext/Support/KiwiAvatarSystem_情報源構成_CurrentSelector運用_20260914_v4_ArtifactGovernance.txt
+?? ProjectContext/Support/KiwiAvatarSystem_成果物フォルダ運用規則_20260914_v1.txt
+?? ProjectContext/Support/通常チャット用_恒久REPORT_ZIP直接作成指示_20260914_v4_ArtifactGovernance.txt
+?? ProjectContext/Support/通常チャット運用管理規則_20260914_v7_NonDestructiveRevision.txt
+
+2. Scope
+
+Only the first failing boundary was in scope:
+raw FaceLandmarker callback
+-> Runner accepted publication
+-> Canonical semantic
+-> KiwiFrameComparisonOverlay pre-draw normalized landmarks
+
+Exact points: {1,33,152,263,454}
+No source redesign, public research, observer addition, tracking repair, Camera/Native change,
+speculative repair, Runtime ZIP, or recording was performed.
+
+3. Work performed
+
+- Enumerated and reconciled live-local Current authority relevant to this claim.
+- Verified ProjectVersion, exact Unity identity, branch, local HEAD, upstream, clean status,
+  and remote branch HEAD.
+- Performed the explicitly permitted clean, ancestor-only fast-forward to expected HEAD.
+- Compiled expected HEAD once with exact Unity in batchmode.
+- Rechecked branch/HEAD/status before same-build Player build and Runtime.
+- Stopped at the dirty authority gate. Player build and Runtime were not started.
+
+Compile result: PASS
+Tundra build success: YES
+C# compile errors: 0
+Unity final return-code marker: 0
+Compile log:
+D:\KiwiAvatarSystem\ProjectArtifacts\H1\Logs\H1_RawToRightOverlayExactBoundary_Compile_20260914-171448JST.log
+SHA256: A6149F4A97AAB477069F79E689468E334CAD734C2ED6269457C2C85F02FABE51
+
+4. Evidence / all-row coverage
+
+Requested Runtime execution count: 0
+Runtime Evidence directory: NOT_CREATED
+boundary_exact.csv: NOT_CREATED
+Evidence SHA256: N/A
+Total data rows: 0
+Segment rows: WARMUP=0, NEUTRAL_STILLNESS_A=0, SLOW_YAW=0,
+SLOW_PITCH=0, SLOW_ROLL=0, NEUTRAL_STILLNESS_B=0
+invalid/missing: NOT_EVALUABLE
+timestamp duplicate/regression: NOT_EVALUABLE
+providerSourceFrameId duplicate/regression: NOT_EVALUABLE
+rawHandoffExact=false: NOT_EVALUABLE
+handoffConsumeExact=false: NOT_EVALUABLE
+identityExact=false: NOT_EVALUABLE
+five-point maximum steps: NOT_EVALUABLE
+first identity mismatch actual values: NOT_EVALUABLE
+
+Coverage gap:
+The mandatory clean-authority condition failed before same-build Player build/Runtime.
+Therefore no MediaPipe sample or boundary row exists for this run and no causal boundary can be assigned.
+
+5. FULL_AUDIT_1
+
+FULL_AUDIT_1=UNRESOLVED
+Independent method: porcelain-v1 status enumeration, live remote lookup, compile marker/error scan,
+H1 Evidence-directory enumeration, boundary_exact.csv enumeration, and process check.
+Result: expected source identity and compile PASS were confirmed; 8 dirty entries appeared;
+no matching Evidence directory, boundary_exact.csv, or Runtime process existed.
+Conclusion: UNRESOLVED_COVERAGE_GAP.
+
+6. FULL_AUDIT_2
+
+FULL_AUDIT_2=UNRESOLVED
+Independent method: HEAD/ref object identity comparison, tracked diff name-status,
+untracked-file enumeration, Unity ProductVersion check, final-log-tail failure scan,
+compile-log SHA256, and recursive exact Evidence-path search.
+Result: expected source identity and compile PASS were independently confirmed;
+4 tracked deletions plus 4 untracked Support files existed; boundary data rows=0;
+Runtime execution count=0.
+Conclusion: UNRESOLVED_COVERAGE_GAP.
+
+Audit disagreement: NONE
+Remaining unresolved claim: complete requested raw-to-overlay runtime boundary.
+
+7. Judgment
+
+UNRESOLVED_COVERAGE_GAP
+
+This is not a failure assignment to raw->Runner, Runner->Canonical, or
+Canonical->overlay pre-draw. It is not a Product/Human Visual/Performance judgment.
+
+8. Changes
+
+Codex Product/source changes: NONE
+Observer changes: NONE
+Tracking/Camera/Native changes: NONE
+Commit/push: NONE
+Authorized repository synchronization: clean fast-forward only
+Created artifacts: compile log and this Consolidated REPORT
+Preserved non-Codex dirty state: YES
+
+9. Next Single Action
+
+After the Current-to-Support worktree changes are finalized into a clean, non-divergent
+worktree at the intended remote HEAD, rerun this exact task from local Preflight and create
+a new uniquely named same-build artifact/Evidence directory; execute the fixed-segment Runtime once.

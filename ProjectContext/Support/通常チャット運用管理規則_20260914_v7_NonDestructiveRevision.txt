@@ -1,0 +1,246 @@
+# KiwiAvatarSystem 通常チャット運用管理規則
+
+更新日: 2026-09-14 JST
+Revision: v7 / Micro Audit / Research-Before-Repair / Artifact Governance / GitHub Preauthorized / Codex Minimal-Token Execution / Continuation Authority / Non-Destructive Revision
+
+## 1. 会話長管理
+
+通常チャットでは会話量、添付資料、調査結果、長文成果物を監視し、以下が文脈から脱落する前に新チャット移行を提案する。
+
+- Claim-Scoped Authority
+- Current state
+- Validated / Rejected / Superseded
+- Open Issues
+- Do Not Change
+- Next Single Action
+- report-time identity
+- Human Visual result
+
+限界ぎりぎりまで継続しない。
+
+## 2. 新チャットへの移行
+
+新チャットでは原則:
+1. `AGENTS.md`
+2. `ProjectContext\Current` の CoreRules
+3. Current統合FullRoadmap
+4. CustomInstructions
+5. 最新有効Consolidated REPORT / Runtime / Human Visual
+6. 必要なhistorical evidence
+
+全履歴を再展開しない。
+別CurrentRoadmapは参照しない。
+
+## 3. 過去資料の再監査
+
+過去チャット / ドキュメント / ChatReportを再監査する場合、タイトル・ファイル名・Archive一覧だけで技術判断しない。
+利用可能なら本文を開き、少なくとも次を確認する。
+
+- Objective / Goal
+- Authority / identity
+- Work Performed / Evidence
+- Validated Decisions
+- Rejected Approaches
+- Superseded Conclusions
+- Current Result
+- Open Issues
+- Next Action
+- Do Not Change / Handoff
+
+本文未取得資料はその旨を明記し、本文を読んだものとして扱わない。
+
+## 4. 通常チャットの役割
+
+通常チャット + GitHubを主担当とする。
+- official/public research
+- OSS/commercial public comparison
+- design / audit
+- GitHub source analysis
+- ordinary minimal code change
+- Static review
+- REPORT independent re-audit
+- Runtime/Human evidence interpretation
+- Adopt/Reject/Supersede
+- CoreRules / FullRoadmap / CustomInstructions整備
+- 必要なGitHub commit / push（事前許可済み）
+
+Codexは原則local-only。
+
+通常チャットで閉じられる調査、GitHub source解析、設計、Static review、公開情報比較を理由なくCodexへ重複させない。Codexへ渡す前に、通常チャット側で可能な範囲の原因境界、対象scope、禁止事項、成功条件、必要Evidenceを絞る。
+
+## 5. 回答スタイル
+
+簡潔な日本語を優先。
+ユーザー向け判定は日本語を主表記にする。
+
+例:
+- 回転一致: 合格 / 不合格 / 未確認
+- 目のねじれ
+- 口のねじれ
+- 回転時Root非移動
+- まばたき
+- 口表情
+- LIVE CAMERA
+
+既存英語キーは照合が必要な場合だけ併記する。
+最善の1案を優先し、既知情報を再質問しない。
+
+## 6. 事実分離
+
+必要に応じ:
+- 確認済み事実
+- Runtime
+- Static / Package
+- 公開設計原則
+- 推論
+- 未確認
+- Rejected / Superseded
+を分離する。
+
+Human VisualをValidator PASSで上書きしない。
+Observer / Validator / REPORT自体も監査する。
+
+## 7. 調査・解析・コード変更
+
+修正前にcurrent Authority/source、installed Package、official docs/source、release note/issue、relevant OSS/公開商用方式、実践・検証動画、既存Evidenceを比較する。動画は操作・実挙動の補助Evidenceであり公式contract/sourceを上書きしない。
+
+対象claimの因果経路はmethodだけで止めず、必要な範囲を1行・1式・条件分岐・代入・copy・timestamp・identity・lifetime edgeまで監査する。数式は座標系、単位、符号、正規化、clamp、丸め、型変換、境界値まで確認する。
+
+問題を特定できないまま補償修正しない。調査でfirst failing boundaryを十分に絞ってから、そのboundaryだけ最小修正する。正常コードをcleanup目的だけで作り直さない。必要時whole-fileを優先する。
+
+フレーム系列を扱う検証・解析では、対象capture / segmentの全フレームを原則機械的に走査する。代表frame、contact sheet、1 Hz集計だけで時系列claimを閉じない。取得不能部分はcoverage gapとして明記する。Human Visual Authorityは人間のまま。
+
+## 8. Commit / Push運用
+
+GitHubの通常commit / pushは作業継続に必要な範囲で事前許可済み。個別の同種操作ごとに再許可を求めない。
+
+意味のある最小変更がStatic reviewを通り、次local検証の再現可能な基準点を固定すべき時点で**「今がコミット適切時点」**と知らせ、必要ならcommitする。pushはbranch / remote / diff / statusを確認し、共有remote反映が作業継続に必要な場合に実行できる。
+
+force push、history rewrite、reset / checkout / clean、他人の変更破棄、target不明の推測書込みはこの許可に含まれない。commit / pushはlocal Production PASSを意味しない。
+
+## 9. 手動作業を既定にしない
+
+Chat ZIP→download→PowerShell手入力→結果貼付を通常開発の既定経路にしない。
+remote source workは通常チャット+GitHub、local-only workはCodex。
+Human Visual、GUI/hardware、権限境界、tool非対応等のみ手動。
+
+## 10. 成果物最小化
+
+- Codex: Consolidated REPORT 1個
+- Runtime ZIP: Evidence上必要時のみ
+- Visual evidence: 必要時のみ
+- Installer/Fix: complete archive 1個
+- duplicate evidenceを毎回再梱包しない
+
+## 11. 成果物フォルダ
+
+`D:\KiwiAvatarSystem`直下へ通常REPORT、Evidence、CSV、録画、compile log、検証ZIPを新規出力しない。
+
+- Current Authority: `ProjectContext\Current`
+- 恒久運用文書: `ProjectContext\Operations`
+- 技術成果物: `ProjectArtifacts\<ArtifactOwner>\Reports|Evidence|Logs|Visual|Packages...`
+
+作業開始時にArtifact Ownerを決める。H1、P3、NativeCamera、Inference、Tracking、FacePart、Product、Performance、Release等の既存ownerを優先し、最上位folderを細分化しすぎない。Evidenceはsingle source、REPORTからpath + SHA256で参照する。
+
+既存root成果物は参照関係確認なしに一括移動しない。新規成果物から標準適用する。
+
+## 12. 文脈保全
+
+Current AuthorityやOpen Issueを削らない一方、old SHA / old Next / obsolete version / retired diagnostic / superseded hypothesisをCurrentへ戻さない。
+
+CurrentはFullRoadmapへ一本化する。
+CurrentRoadmapという別Current文書を再作成しない。
+
+## 13. Codex最小トークン実行原則
+
+Codexへの指示は原則として「最小トークン実行版」とする。目的は品質や監査強度を落とすことではなく、通常チャットとCodexの重複作業、不要な探索、過剰な再説明、重複Runtime、過剰成果物を削減すること。
+
+通常チャット側で可能な作業は先に閉じる。特にGitHub source解析、official/public research、設計、Static review、既存Evidence解釈、first failing boundaryの絞り込みは通常チャットを主担当とする。
+
+Codexへ渡す指示は、原則として次の必要最小限で構成する。
+- 目的
+- local Authority / identity確認条件
+- 対象file / method / symbol / boundary
+- 実施する作業
+- Do Not Change / 禁止事項
+- 成功条件 / 停止条件
+- 必要Evidence
+- 最小REPORT形式
+
+既に通常チャットまたは有効Evidenceで確認済みの事項を、独立監査上必要な場合を除いてCodexへ再調査させない。GitHubで通常チャットが取得・解析可能なsourceを、local identity確認以外の理由でCodexに全文再解析させない。
+
+対象が特定できる場合、repo全体走査、無制限な全文検索、全履歴再読を既定にしない。対象file / method / symbol / boundaryを明示してscopeを限定する。ただしscope限定によって因果経路、Authority、identity、ownership、lifetime edge、必要な依存関係が欠落する場合は、その必要範囲まで拡張する。
+
+FULL_AUDIT_1 / FULL_AUDIT_2は維持する。トークン削減を理由に監査回数、独立性、Correctness確認を省略しない。ただし各監査は同一の必要scopeに限定し、無関係な巨大資料や閉じたhistorical contextを毎回全文再展開しない。
+
+RuntimeはEvidence上必要な最小回数とする。同一条件の無目的な再実行を避け、可能なら1 runで必要なidentity、timestamp、全フレーム系列、state transition、必要telemetryをまとめて取得する。ただし異なるAuthority、clean benchmark、same-build Human Visual等、別runが必要なclaimは統合しない。
+
+Observer / diagnostic追加は既存観測手段で閉じない最初の未観測boundaryに限定する。観測のためのコード変更が不要ならProduction sourceを変更しない。追加したobserver自体のtiming、allocation、ownership、lifecycle、measurement effectも監査対象とする。
+
+CodexのREPORTは長文再説明を目的にしない。既存Currentを丸ごと転載せず、原則として以下を残す。
+- Authority / identity
+- 実施scope
+- 実施内容
+- Evidence
+- 結果
+- 変更有無
+- Rejected / Superseded（今回発生した場合）
+- Open / coverage gap
+- Next Single Action
+
+問題が確認できなければ変更しない。問題が確認できてもfirst failing boundaryが特定できない段階では補償修正を行わない。最初の破綻boundaryが証明された場合だけ最小修正候補へ進む。
+
+トークン削減、時間短縮、成果物削減はCorrectness、Authority、Transaction、Lifecycle、Resource、Security、Privacy、Performance、Compatibility、Release品質より優先しない。
+
+この運用規則の変更だけでRuntime、Human Visual、Performance、Production Acceptance、FullRoadmapの技術Currentを更新した扱いにはしない。
+
+## 14. 新チャット継続地点の確定
+
+新しいチャットでユーザーから「前回の続きから進めて」「続けて」「進めて」等の継続指示を受けた場合、記憶上の古いNextや単一REPORTだけから継続地点を推測しない。
+
+利用可能な直近チャット、Current Authority、最新有効REPORT / Evidence、必要に応じGitHub snapshotを確認し、時系列とAuthorityを照合して、最新の技術作業地点を確定する。
+
+最低限、次を確認する。
+- 直近の技術対象 / claim / scope
+- 最新の確定Authority / identity
+- 最後に完了した作業と結果
+- Validated / Rejected / Superseded
+- Open / coverage gap
+- Do Not Change
+- Next Single Action
+- 最新Human Visual / Runtime結果が存在する場合はそのsame-build関係
+
+複数チャットが短時間に並行している場合、単純なチャット作成順や古い引き継ぎ情報だけでCurrentを決めない。各候補のtimestamp、作業内容、Authority、Evidence、Superseded関係を比較する。
+
+旧Next、旧Current、古いSHA、古いREPORT、既に閉じたDiagnostic / Phaseを、より新しい作業地点より優先して再昇格させない。
+
+直近チャットの確認に必要な情報が現在の会話に不足している場合、利用可能な会話履歴・personal context・Files等の適切な情報源を実際に検索してから判断する。「前回」が曖昧という理由だけで、検索前にユーザーへ再説明や再添付を求めない。
+
+検索しても複数候補を一意に決められない場合、推測して進めず、候補と不一致点を簡潔に示してユーザー確認を求める。
+
+継続地点のCorrectnessとAuthority保全はCodex最小トークン実行原則より優先する。トークン削減を理由に直近チャット確認を省略しない。
+
+この継続地点確認はCurrentを更新する操作ではない。確認したsnapshotやREPORTを、live local Production Authorityへ自動昇格させない。
+
+
+
+## 15. 情報源改訂時の非破壊原則
+
+既存のCoreRules、FullRoadmap、CustomInstructions、Operations文書、AGENTS、REPORTその他の情報源を改訂する場合、今回の追加・修正要求と無関係な既存情報を理由なく削除、短縮、要約置換、意味変更しない。
+
+改訂前に対象となる現行情報源の本文を可能な範囲で全文確認し、既存の目的、Authority、Current、Validated / Rejected / Superseded、Open、Do Not Change、Next、運用規則、例外、禁止事項、provenance等を把握してから編集する。
+
+追加要求は原則として既存内容へ非破壊的に統合する。重複整理や文章のブラッシュアップを行う場合も、意味・制約・例外・Authorityを落とさない。
+
+既存情報を削除または置換してよいのは、少なくとも次のいずれかを満たす場合に限定する。
+- ユーザーが明示的に削除を要求した
+- より新しいAuthorityにより明確にSupersededとなった
+- 完全な重複であり、統合後も意味と参照可能性が失われない
+- 明確な誤情報であり、根拠を確認して訂正する必要がある
+- 文書の責務外であり、正しい恒久情報源へ移管済みであることを確認できる
+
+削除理由が不明、Authorityが競合、historical valueやDo Not Changeへの影響が不明な場合は、推測で削除しない。必要なら保持したまま注記し、UNRESOLVEDとして扱う。
+
+改訂後は、改訂前の有効情報が意図せず欠落していないかを比較確認する。特に「短くする」「整理する」「最新版へ統合する」「ブラッシュアップする」という要求を、既存情報を自由に削除してよい許可として解釈しない。
+
+トークン削減、可読性向上、重複削減よりも、必要な既存情報、Authority、Correctness、履歴上必要なRejected / Superseded、Open Issue、Do Not Changeの保全を優先する。
