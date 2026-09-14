@@ -44,6 +44,7 @@ internal sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
         public string provider;
         public KiwiTrackingBackend backend;
         public ulong providerSourceFrameId;
+        public float[] selected;
     }
 
     private struct PresentationObservation
@@ -98,6 +99,7 @@ internal sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
     private StreamWriter _aggregateWriter;
     private StreamWriter _segmentBoundaryWriter;
     private StreamWriter _correlationWriter;
+    private StreamWriter _exactBoundaryWriter;
     private string _outputDirectory;
     private string _summaryPath;
     private double _startedRealtime;
@@ -258,7 +260,7 @@ internal sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
 
             if (!_latestRaw.valid || _latestRaw.sequence != rawSequence ||
                 _latestRaw.timestamp != handoff.timestamp ||
-                _latestRaw.fingerprint != handoff.fingerprint ||
+                !SelectedExactlyEqual(_latestRaw, handoff) ||
                 !publishedIdentityMatches)
                 _handoffIdentityMismatchCount++;
 
@@ -301,6 +303,13 @@ internal sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
             "elapsedSeconds,segment,rawCount,handoffCount,consumeCount,presentationCount,rawAuxOnlyCount,intentionalHandoffOverwriteCount,rawDuplicateTs,rawOutOfOrderTs,rawAbnormalGap,rawLatestSeq,rawTs,rawFingerprint,rawMaxDelta,handoffSeq,handoffTs,handoffFingerprint,consumeTs,consumeFingerprint,consumeProvider,consumeBackend,providerSourceFrameId,consumeMaxDelta,rawToConsumeAgeMs,presentationTs");
         _segmentBoundaryWriter = CreateWriter("segment_boundaries.csv",
             "sequence,segment,event,hostTicks,elapsedSeconds,utc");
+        _exactBoundaryWriter = CreateWriter(
+            "boundary_exact.csv",
+            "row,segment,consumeHostTicks,consumeTimestamp,consumeProvider,consumeBackend,consumeProviderSourceFrameId," +
+            "rawValid,rawSequence,rawTimestamp,rawProviderSourceFrameId,rawP1X,rawP1Y,rawP33X,rawP33Y,rawP152X,rawP152Y,rawP263X,rawP263Y,rawP454X,rawP454Y," +
+            "handoffValid,handoffSequence,handoffTimestamp,handoffProviderSourceFrameId,handoffP1X,handoffP1Y,handoffP33X,handoffP33Y,handoffP152X,handoffP152Y,handoffP263X,handoffP263Y,handoffP454X,handoffP454Y," +
+            "consumeValid,consumeP1X,consumeP1Y,consumeP33X,consumeP33Y,consumeP152X,consumeP152Y,consumeP263X,consumeP263Y,consumeP454X,consumeP454Y," +
+            "rawHandoffExact,rawConsumeExact,handoffConsumeExact,identityExact");
         _correlationWriter = CreateWriter("segment_correlation.csv",
             "row,segment,observationHostTicks,elapsedSeconds,canonicalAvailable,canonicalValid,canonicalFrameId,canonicalUnityFrame,semanticTimestamp,semanticLandmarkCount,providerId,backend,rigidFrameId,rigidTimestamp,sourceHostTicks,arrivalHostTicks,normalizationValid,providerSourceFrameId,providerSourceTimestamp,cameraGeneration,trackingSessionGeneration,providerGeneration,modelGeneration,canonicalFaceCenterX,canonicalFaceCenterY,canonicalRotationX,canonicalRotationY,canonicalRotationZ,canonicalRotationW,canonicalEulerX,canonicalEulerY,canonicalEulerZ,continuityAvailable,continuityState,continuityProviderId,continuitySourceAgeMs,continuityArrivalAgeMs,continuityCadenceJitterRatio,hubAvailable,hubActiveProviderId,hubSourceAgeMs,hubArrivalAgeMs,hubHandoffActive,hubHandoffIsResume,hubHandoffCount,providerTransitionObserved,rawSequence,rawTimestamp,rawFingerprint,handoffSequence,handoffTimestamp,handoffFingerprint,consumeValid,consumeTimestamp,consumeFingerprint,consumeProvider,consumeBackend,consumeProviderSourceFrameId,consumeHostTicks," +
             "latestPresentationValid,latestPresentationObservationHostTicks,latestPresentationCommittedSemanticTimestamp,latestPresentationCommittedCanonicalFrameId,latestPresentationCanonicalCorrelationStatus,latestPresentationProviderMetadataExactMatch,latestPresentationNormalizationValid,latestPresentationProviderId,latestPresentationBackend,latestPresentationProviderSourceFrameId," +
@@ -465,7 +474,7 @@ internal sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
                 if (
                     !_latestHandoff.valid ||
                     _latestHandoff.timestamp != consume.timestamp ||
-                    _latestHandoff.fingerprint != consume.fingerprint ||
+                    !SelectedExactlyEqual(_latestHandoff, consume) ||
                     _latestHandoff.providerSourceFrameId == 0UL ||
                     consume.providerSourceFrameId == 0UL ||
                     _latestHandoff.providerSourceFrameId != consume.providerSourceFrameId)
@@ -483,6 +492,8 @@ internal sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
                 }
             }
         }
+
+        WriteExactBoundaryRow(consume);
 
         _lastConsumeTimestamp = consume.timestamp;
         _latestConsume = consume;
@@ -1006,8 +1017,108 @@ internal sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
             hostTicks = hostTicks,
             fingerprint = fingerprint,
             count = count,
-            maxDelta = hadPrevious ? maximum : 0f
+            maxDelta = hadPrevious ? maximum : 0f,
+            selected = selected
         };
+    }
+
+    private static bool SelectedExactlyEqual(Sample a, Sample b)
+    {
+        if (!a.valid || !b.valid || a.selected == null || b.selected == null ||
+            a.selected.Length != b.selected.Length)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < a.selected.Length; i++)
+        {
+            if (BitConverter.SingleToInt32Bits(a.selected[i]) !=
+                BitConverter.SingleToInt32Bits(b.selected[i]))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private void WriteExactBoundaryRow(Sample consume)
+    {
+        if (_exactBoundaryWriter == null) return;
+
+        Sample raw;
+        Sample handoff;
+        lock (Sync)
+        {
+            raw = _latestRaw;
+            handoff = _latestHandoff;
+        }
+
+        bool rawHandoffExact =
+            raw.valid && handoff.valid &&
+            raw.sequence == handoff.sequence &&
+            raw.timestamp == handoff.timestamp &&
+            SelectedExactlyEqual(raw, handoff);
+
+        bool rawConsumeExact =
+            raw.valid && consume.valid &&
+            raw.timestamp == consume.timestamp &&
+            SelectedExactlyEqual(raw, consume);
+
+        bool handoffConsumeExact =
+            handoff.valid && consume.valid &&
+            handoff.timestamp == consume.timestamp &&
+            SelectedExactlyEqual(handoff, consume);
+
+        bool identityExact =
+            handoffConsumeExact &&
+            handoff.providerSourceFrameId > 0UL &&
+            consume.providerSourceFrameId > 0UL &&
+            handoff.providerSourceFrameId == consume.providerSourceFrameId;
+
+        _exactBoundaryWriter.WriteLine(
+            _consumeCount + "," +
+            Csv(_activeSegment) + "," +
+            consume.hostTicks + "," +
+            consume.timestamp + "," +
+            Csv(consume.provider ?? string.Empty) + "," +
+            Csv(consume.backend.ToString()) + "," +
+            consume.providerSourceFrameId + "," +
+            B(raw.valid) + "," +
+            raw.sequence + "," +
+            raw.timestamp + "," +
+            raw.providerSourceFrameId + "," +
+            SelectedCsv(raw) + "," +
+            B(handoff.valid) + "," +
+            handoff.sequence + "," +
+            handoff.timestamp + "," +
+            handoff.providerSourceFrameId + "," +
+            SelectedCsv(handoff) + "," +
+            B(consume.valid) + "," +
+            SelectedCsv(consume) + "," +
+            B(rawHandoffExact) + "," +
+            B(rawConsumeExact) + "," +
+            B(handoffConsumeExact) + "," +
+            B(identityExact));
+        _exactBoundaryWriter.Flush();
+    }
+
+    private static string SelectedCsv(Sample sample)
+    {
+        if (sample.selected == null ||
+            sample.selected.Length != FingerprintIndices.Length * 2)
+        {
+            return ",,,,,,,,,";
+        }
+
+        StringBuilder builder = new StringBuilder(160);
+        for (int i = 0; i < sample.selected.Length; i++)
+        {
+            if (i > 0) builder.Append(',');
+            builder.Append(sample.selected[i].ToString("R", Invariant));
+        }
+
+        return builder.ToString();
     }
 
     private static ulong Mix(ulong hash, ulong value)
@@ -1041,6 +1152,7 @@ internal sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
         if (_aggregateWriter != null) { _aggregateWriter.Flush(); _aggregateWriter.Dispose(); _aggregateWriter = null; }
         if (_segmentBoundaryWriter != null) { _segmentBoundaryWriter.Flush(); _segmentBoundaryWriter.Dispose(); _segmentBoundaryWriter = null; }
         if (_correlationWriter != null) { _correlationWriter.Flush(); _correlationWriter.Dispose(); _correlationWriter = null; }
+        if (_exactBoundaryWriter != null) { _exactBoundaryWriter.Flush(); _exactBoundaryWriter.Dispose(); _exactBoundaryWriter = null; }
     }
 
     private string ResolveOutputDirectory()
