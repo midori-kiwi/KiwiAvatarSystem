@@ -496,8 +496,6 @@ internal sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
 
         long timestamp = (long)_overlayTimestampField.GetValue(_overlay);
         if (timestamp == long.MinValue || timestamp == _lastConsumeTimestamp) return;
-        if (_lastConsumeTimestamp != long.MinValue && timestamp < _lastConsumeTimestamp)
-            _consumeOutOfOrderTimestampCount++;
 
         Vector2[] landmarks = _overlayLandmarksField.GetValue(_overlay) as Vector2[];
         int count = (int)_overlayCountField.GetValue(_overlay);
@@ -943,6 +941,9 @@ internal sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
 
         var landmarks = result.faceLandmarks[0].landmarks;
         int count = landmarks.Count;
+        if (count <= FingerprintIndices[FingerprintIndices.Length - 1])
+            return new Sample { sequence = sequence, timestamp = timestamp, hostTicks = hostTicks };
+
         float[] selected = new float[FingerprintIndices.Length * 2];
         for (int i = 0; i < FingerprintIndices.Length; i++)
         {
@@ -960,6 +961,9 @@ internal sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
         if (landmarks == null || count <= 0)
             return new Sample { timestamp = timestamp, hostTicks = hostTicks };
         int safeCount = Math.Min(count, landmarks.Length);
+        if (safeCount <= FingerprintIndices[FingerprintIndices.Length - 1])
+            return new Sample { timestamp = timestamp, hostTicks = hostTicks };
+
         float[] selected = new float[FingerprintIndices.Length * 2];
         for (int i = 0; i < FingerprintIndices.Length; i++)
         {
