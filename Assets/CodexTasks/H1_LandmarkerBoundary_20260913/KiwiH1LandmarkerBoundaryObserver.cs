@@ -1100,7 +1100,6 @@ internal sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
             B(rawConsumeExact) + "," +
             B(handoffConsumeExact) + "," +
             B(identityExact));
-        _exactBoundaryWriter.Flush();
     }
 
     private static string SelectedCsv(Sample sample)
