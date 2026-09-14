@@ -248,6 +248,15 @@ internal sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
                 handoff.provider = "Runner/MediaPipe";
                 handoff.backend = published.backend;
                 handoff.providerSourceFrameId = published.frameId;
+
+                if (_latestRaw.valid && _latestRaw.sequence == rawSequence)
+                {
+                    Sample rawWithPublishedIdentity = _latestRaw;
+                    rawWithPublishedIdentity.provider = "Runner/MediaPipe";
+                    rawWithPublishedIdentity.backend = published.backend;
+                    rawWithPublishedIdentity.providerSourceFrameId = published.frameId;
+                    _latestRaw = rawWithPublishedIdentity;
+                }
             }
 
             if (_lastHandoffTimestamp != long.MinValue)
