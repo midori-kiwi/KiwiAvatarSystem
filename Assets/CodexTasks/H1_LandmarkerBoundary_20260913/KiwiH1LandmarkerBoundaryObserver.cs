@@ -1068,6 +1068,20 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
             return;
         }
 
+        _overlay.StartCsvRecording();
+        if (!_overlay.IsCsvRecording ||
+            string.IsNullOrWhiteSpace(_overlay.CurrentCsvPath))
+        {
+            _armed = false;
+            Debug.LogError(
+                "[KiwiH1Boundary] FAIL_CLOSED frame_comparison_csv_not_armed=1");
+            WriteSummary(false);
+            Application.Quit(3);
+            return;
+        }
+
+        WriteSummary(false);
+
         _startedRealtime = Time.realtimeSinceStartupAsDouble;
         _nextAggregateRealtime = _startedRealtime + AggregatePeriodSeconds;
         UpdateSegmentBoundary();
@@ -1882,6 +1896,9 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
             "OVERLAY_PREVIEW_SEMANTIC_TIMESTAMP=" + _lastOverlayVisibilityState.previewSemanticTimestamp,
             "OVERLAY_LAST_SEMANTIC_TIMESTAMP=" + _lastOverlayVisibilityState.lastSemanticTimestamp,
             "OVERLAY_ON_GUI_OWNED_TIMESTAMP_ADVANCED=" + B(_previewTimestampAdvanceLogged),
+            "FRAME_COMPARISON_CSV_RECORDING=" + B(_overlay != null && _overlay.IsCsvRecording),
+            "FRAME_COMPARISON_CSV_PATH=" + (_overlay != null ? _overlay.CurrentCsvPath : string.Empty),
+            "FRAME_COMPARISON_CSV_RECORDED_ROWS=" + (_overlay != null ? _overlay.RecordedFrameCount : 0),
             "RIGHT_SIDE_VISIBLE_SINK=KiwiFrameComparisonOverlay.MATCHED_LANDMARK_DEBUG",
             "PACKAGE_FACE_LANDMARKER_ANNOTATION_ACTIVE=" + B(_runner != null && _runner.renderDebugLandmarkAnnotations),
             "RAW_MEDIAPIPE_CALLBACK_COUNT=" + rawCount,
