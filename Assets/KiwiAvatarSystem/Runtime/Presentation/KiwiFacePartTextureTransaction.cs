@@ -149,6 +149,52 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
     }
 #endif
 
+    public readonly struct CommittedPresentationSnapshot
+    {
+        public readonly long semanticTimestamp;
+        public readonly ulong canonicalFrameId;
+        public readonly int textureInstanceId;
+        public readonly int captureUnityFrame;
+        public readonly int cameraGeneration;
+        public readonly int trackingSessionGeneration;
+        public readonly bool nativePresentedIdentityValid;
+        public readonly int nativeCameraSessionGeneration;
+        public readonly ulong nativePresentedSequence;
+        public readonly long nativePresentedHostTicks;
+        public readonly int captureSourceTextureId;
+        public readonly int nativePresentationTextureId;
+
+        internal CommittedPresentationSnapshot(
+            long semanticTimestamp,
+            ulong canonicalFrameId,
+            int textureInstanceId,
+            int captureUnityFrame,
+            int cameraGeneration,
+            int trackingSessionGeneration,
+            bool nativePresentedIdentityValid,
+            int nativeCameraSessionGeneration,
+            ulong nativePresentedSequence,
+            long nativePresentedHostTicks,
+            int captureSourceTextureId,
+            int nativePresentationTextureId)
+        {
+            this.semanticTimestamp = semanticTimestamp;
+            this.canonicalFrameId = canonicalFrameId;
+            this.textureInstanceId = textureInstanceId;
+            this.captureUnityFrame = captureUnityFrame;
+            this.cameraGeneration = cameraGeneration;
+            this.trackingSessionGeneration = trackingSessionGeneration;
+            this.nativePresentedIdentityValid = nativePresentedIdentityValid;
+            this.nativeCameraSessionGeneration =
+                nativeCameraSessionGeneration;
+            this.nativePresentedSequence = nativePresentedSequence;
+            this.nativePresentedHostTicks = nativePresentedHostTicks;
+            this.captureSourceTextureId = captureSourceTextureId;
+            this.nativePresentationTextureId =
+                nativePresentationTextureId;
+        }
+    }
+
     private sealed class Slot
     {
         public RenderTexture texture;
@@ -157,6 +203,12 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
         public int unityFrame;
         public int cameraGeneration;
         public int trackingSessionGeneration;
+        public bool nativePresentedIdentityValid;
+        public int nativeCameraSessionGeneration;
+        public ulong nativePresentedSequence;
+        public long nativePresentedHostTicks;
+        public int captureSourceTextureId;
+        public int nativePresentationTextureId;
     }
 
     private static KiwiFacePartTextureTransaction _instance;
@@ -320,6 +372,59 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
             service._lastCommittedSemanticTimestamp;
         canonicalFrameId =
             service._lastCommittedCanonicalFrameId;
+
+        return true;
+    }
+
+    /// <summary>
+    /// Observer-only immutable identity snapshot for the latest committed
+    /// camera slot. No ownership of the slot texture is transferred.
+    /// </summary>
+    public static bool TryGetLastCommittedPresentationSnapshot(
+        out CommittedPresentationSnapshot snapshot)
+    {
+        snapshot = default;
+
+        KiwiFacePartTextureTransaction service =
+            _instance;
+
+        if (
+            service == null ||
+            !service._strictPresentationStarted ||
+            service._slots == null ||
+            service._lastCommittedSlot < 0 ||
+            service._lastCommittedSlot >= service._slots.Length
+        )
+        {
+            return false;
+        }
+
+        Slot slot =
+            service._slots[service._lastCommittedSlot];
+
+        if (
+            slot == null ||
+            !slot.valid ||
+            slot.texture == null ||
+            service._lastCommittedSemanticTimestamp < 0L
+        )
+        {
+            return false;
+        }
+
+        snapshot = new CommittedPresentationSnapshot(
+            service._lastCommittedSemanticTimestamp,
+            service._lastCommittedCanonicalFrameId,
+            slot.texture.GetInstanceID(),
+            slot.unityFrame,
+            slot.cameraGeneration,
+            slot.trackingSessionGeneration,
+            slot.nativePresentedIdentityValid,
+            slot.nativeCameraSessionGeneration,
+            slot.nativePresentedSequence,
+            slot.nativePresentedHostTicks,
+            slot.captureSourceTextureId,
+            slot.nativePresentationTextureId);
 
         return true;
     }
@@ -826,6 +931,38 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
         long captureTicks =
             System.Diagnostics.Stopwatch.GetTimestamp();
 
+        bool nativePresentedIdentityValid = false;
+        int nativeCameraSessionGeneration = 0;
+        ulong nativePresentedSequence = 0UL;
+        long nativePresentedHostTicks = 0L;
+        int captureSourceTextureId = _source.GetInstanceID();
+        int nativePresentationTextureId = 0;
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        bool nativeTelemetryAvailable =
+            Mediapipe.Unity.KiwiNativeCameraTelemetry.TryGetSnapshot(
+                out Mediapipe.Unity.KiwiNativeCameraTelemetrySnapshot
+                    nativeTelemetry);
+
+        nativeCameraSessionGeneration =
+            nativeTelemetry.sessionGeneration;
+        nativePresentedSequence =
+            nativeTelemetry.latestPresentedSequence;
+        nativePresentedHostTicks =
+            nativeTelemetry.latestPresentedHostTicks;
+        nativePresentationTextureId =
+            nativeTelemetry.presentationTextureId;
+        nativePresentedIdentityValid =
+            nativeTelemetryAvailable &&
+            nativeTelemetry.active &&
+            nativeTelemetry.sessionGeneration > 0 &&
+            nativeTelemetry.latestPresentedSequence > 0UL &&
+            nativeTelemetry.latestPresentedHostTicks > 0L &&
+            nativeTelemetry.presentationTextureId != 0 &&
+            nativeTelemetry.presentationTextureId ==
+                captureSourceTextureId;
+#endif
+
         Graphics.Blit(_source, slot.texture);
 
         KiwiRuntimeGenerationContext.Snapshot generation =
@@ -837,6 +974,15 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
         slot.cameraGeneration = generation.cameraGeneration;
         slot.trackingSessionGeneration =
             generation.trackingSessionGeneration;
+        slot.nativePresentedIdentityValid =
+            nativePresentedIdentityValid;
+        slot.nativeCameraSessionGeneration =
+            nativeCameraSessionGeneration;
+        slot.nativePresentedSequence = nativePresentedSequence;
+        slot.nativePresentedHostTicks = nativePresentedHostTicks;
+        slot.captureSourceTextureId = captureSourceTextureId;
+        slot.nativePresentationTextureId =
+            nativePresentationTextureId;
 
         _lastCapturedUnityFrame = Time.frameCount;
         _writeCursor = (slotIndex + 1) % _slots.Length;

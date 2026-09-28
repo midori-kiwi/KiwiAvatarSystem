@@ -197,3 +197,23 @@ KiwiValidation/ChatReport/
 # Do not ignore KiwiValidation/LiveCameraPixelAudit/ as a whole. Generated files
 # inside it are already excluded by the artifact-extension rules above, while any
 # future scripts/source/report files remain visible to Git.
+
+# ============================================================
+# KiwiAvatarSystem - local technical artifact payloads
+# ============================================================
+
+# ProjectArtifacts are local technical outputs by default. Existing tracked
+# reports remain tracked; a newly selected report can still be added explicitly
+# with git add -f after review. Ignore generated evidence, builds, recordings,
+# logs, packages, reports, archives, and scratch data for every artifact owner.
+/ProjectArtifacts/*/Evidence/
+/ProjectArtifacts/*/Logs/
+/ProjectArtifacts/*/Packages/
+/ProjectArtifacts/*/Reports/
+/ProjectArtifacts/*/Temp/
+/ProjectArtifacts/*/Visual/
+/ProjectArtifacts/*/Archive/
+
+# Accidental FFmpeg report produced at the project root by a malformed FFREPORT
+# target. Keep the exact path local without hiding other root files.
+/D

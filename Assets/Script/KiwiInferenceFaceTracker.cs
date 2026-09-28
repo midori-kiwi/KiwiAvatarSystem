@@ -122,6 +122,18 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             public int pendingCameraGeneration;
             public int pendingTrackingSessionGeneration;
 
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            // H1 diagnostic identity only. These fields travel with the
+            // already-bounded inference lane; they do not add a queue/history.
+            public ulong pendingSourceFrameId;
+            public bool pendingSourceFrameIdIsNativeSequence;
+            public int pendingSourceGeneration;
+            public int pendingSourceWidth;
+            public int pendingSourceHeight;
+            public readonly Vector3[] diagnosticRawLandmarks =
+                new Vector3[BaseLandmarkCount];
+#endif
+
             // Decode policy belongs to the submitted job. A UI/profile threshold
             // change while GPU work is pending must not reinterpret an older
             // result with a newer presence threshold.
@@ -220,6 +232,14 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 pendingTrackingSessionGeneration = 0;
                 pendingMinimumPresence = 0f;
 
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                pendingSourceFrameId = 0UL;
+                pendingSourceFrameIdIsNativeSequence = false;
+                pendingSourceGeneration = 0;
+                pendingSourceWidth = 0;
+                pendingSourceHeight = 0;
+#endif
+
                 if (asyncCommandBuffer != null)
                 {
                     asyncCommandBuffer.Release();
@@ -264,6 +284,13 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             public float rawPresence;
             public float presence;
             public Quaternion rotation;
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            public ulong sourceFrameId;
+            public bool sourceFrameIdIsNativeSequence;
+            public int sourceGeneration;
+            public int sourceWidth;
+            public int sourceHeight;
+#endif
         }
 
         private readonly Lane[] _lanes;
@@ -385,6 +412,14 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
         private int _anchorRevision;
         private int _externalAnchorEpoch;
         private int _trackerGeneration;
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        private long _roiWriterSequence;
+        private string _lastRoiWriterKind = "NONE";
+        private long _lastRoiWriterSourceHostTicks;
+        private int _lastRoiWriterSourceGeneration;
+        private int _lastRoiWriterCameraGeneration;
+        private int _lastRoiWriterTrackingSessionGeneration;
+#endif
         private int _consecutiveFailures;
         private int _nextLaneIndex;
 
@@ -996,6 +1031,10 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
         public void Reset()
         {
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            KiwiH1LandmarkerBoundaryObserver.RoiStateSnapshot roiBeforeReset =
+                CaptureRoiState();
+#endif
             _trackerGeneration++;
 
             _hasRegion =
@@ -1099,6 +1138,19 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             _latestCompletedArrivalHostTicks =
                 0L;
 
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            KiwiH1LandmarkerBoundaryObserver.ResetAcceptedWinnerSnapshot();
+            RecordRoiWriterEvent(
+                "TRACKER_RESET",
+                true,
+                roiBeforeReset,
+                default,
+                null,
+                null,
+                default,
+                default);
+#endif
+
             // Existing GPU requests cannot be cancelled. Keep each occupied
             // lane pending and discard it later by trackerGeneration.
         }
@@ -1106,8 +1158,18 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
         public void ApplyExternalAnchor(
             UnityEngine.Rect regionTopLeft,
             float rollRadiansBottomLeft,
-            bool force)
+            bool force
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            ,
+            KiwiH1LandmarkerBoundaryObserver.RoiSampleIdentity diagnosticIdentity,
+            KiwiH1LandmarkerBoundaryObserver.RoiLandmarkSummary diagnosticSummary
+#endif
+            )
         {
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            long applyHostTicks =
+                System.Diagnostics.Stopwatch.GetTimestamp();
+#endif
             float width =
                 Mathf.Abs(
                     regionTopLeft.width);
@@ -1138,6 +1200,11 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     1f -
                     centerTopLeft.y);
 
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            KiwiH1LandmarkerBoundaryObserver.RoiStateSnapshot roiBefore =
+                CaptureRoiState();
+#endif
+
             if (
                 !_hasRegion ||
                 force
@@ -1148,7 +1215,22 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     width,
                     height,
                     rollRadiansBottomLeft,
-                    true);
+                    true
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                    ,
+                    roiBefore,
+                    diagnosticIdentity,
+                    diagnosticSummary,
+                    BuildExternalAnchorDecisionMetrics(
+                        centerBottomLeft,
+                        width,
+                        height,
+                        rollRadiansBottomLeft,
+                        force,
+                        "HARD_ADOPT",
+                        applyHostTicks)
+#endif
+                    );
 
                 return;
             }
@@ -1245,7 +1327,22 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     width,
                     height,
                     rollRadiansBottomLeft,
-                    false);
+                    false
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                    ,
+                    roiBefore,
+                    diagnosticIdentity,
+                    diagnosticSummary,
+                    BuildExternalAnchorDecisionMetrics(
+                        centerBottomLeft,
+                        width,
+                        height,
+                        rollRadiansBottomLeft,
+                        force,
+                        "SOFT_ADOPT",
+                        applyHostTicks)
+#endif
+                    );
 
                 return;
             }
@@ -1255,7 +1352,29 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             // persistent lease. A sub-threshold 1-3 inference failure streak is
             // intentionally preserved; only an already-unhealthy backend is
             // explicitly re-armed by the next trusted anchor.
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            KiwiH1LandmarkerBoundaryObserver.RoiDecisionMetrics trustDecisionMetrics =
+                BuildExternalAnchorDecisionMetrics(
+                    centerBottomLeft,
+                    width,
+                    height,
+                    rollRadiansBottomLeft,
+                    force,
+                    "TRUST_ONLY",
+                    applyHostTicks);
+#endif
             MarkExternalAnchorTrusted();
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            RecordRoiWriterEvent(
+                "EXTERNAL_ANCHOR_TRUST_ONLY",
+                true,
+                roiBefore,
+                diagnosticIdentity,
+                null,
+                null,
+                diagnosticSummary,
+                trustDecisionMetrics);
+#endif
         }
 
         private void AdoptExternalAnchor(
@@ -1263,7 +1382,15 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             float width,
             float height,
             float rollRadiansBottomLeft,
-            bool invalidatePending)
+            bool invalidatePending
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            ,
+            KiwiH1LandmarkerBoundaryObserver.RoiStateSnapshot roiBefore,
+            KiwiH1LandmarkerBoundaryObserver.RoiSampleIdentity diagnosticIdentity,
+            KiwiH1LandmarkerBoundaryObserver.RoiLandmarkSummary diagnosticSummary,
+            KiwiH1LandmarkerBoundaryObserver.RoiDecisionMetrics decisionMetrics
+#endif
+            )
         {
             _regionCenter =
                 centerBottomLeft;
@@ -1293,6 +1420,20 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             {
                 _softExternalAnchorUpdateCount++;
             }
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            RecordRoiWriterEvent(
+                invalidatePending
+                    ? "EXTERNAL_ANCHOR_HARD_ADOPT"
+                    : "EXTERNAL_ANCHOR_SOFT_ADOPT",
+                true,
+                roiBefore,
+                diagnosticIdentity,
+                null,
+                null,
+                diagnosticSummary,
+                decisionMetrics);
+#endif
         }
 
         /// <summary>
@@ -1335,6 +1476,11 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             Matrix4x4 cropMatrix =
                 BuildCropMatrix();
 
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            KiwiH1LandmarkerBoundaryObserver.RoiStateSnapshot scheduleRoiState =
+                CaptureRoiState();
+#endif
+
             try
             {
                 ScheduleModel(
@@ -1344,6 +1490,26 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     flipVertically,
                     cropMatrix,
                     0L);
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                KiwiRuntimeGenerationContext.Snapshot syncGenerationSnapshot =
+                    KiwiRuntimeGenerationContext.Capture();
+                KiwiH1LandmarkerBoundaryObserver.ObserveRoiSchedule(
+                    "SYNC_COMPATIBILITY",
+                    new KiwiH1LandmarkerBoundaryObserver.RoiSampleIdentity
+                    {
+                        trackerGeneration = _trackerGeneration,
+                        cameraGeneration = syncGenerationSnapshot.cameraGeneration,
+                        trackingSessionGeneration =
+                            syncGenerationSnapshot.trackingSessionGeneration
+                    },
+                    _sourceWidth,
+                    _sourceHeight,
+                    _roiWriterSequence,
+                    _lastRoiWriterKind,
+                    scheduleRoiState,
+                    cropMatrix);
+#endif
 
                 Tensor<float> packedOutput =
                     lane.worker.PeekOutput(0)
@@ -1392,15 +1558,40 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     return false;
                 }
 
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                CopyRawLandmarks(
+                    readableOutput,
+                    lane.diagnosticRawLandmarks);
+                KiwiH1LandmarkerBoundaryObserver.RoiStateSnapshot roiBeforeUpdate =
+                    CaptureRoiState();
+#endif
+
                 Array.Copy(
                     lane.decodedLandmarks,
                     _landmarks,
                     CompatibleLandmarkCount);
 
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                bool regionUpdated =
+#endif
                 UpdateRegionFromLandmarks(
                     _landmarks);
 
                 MarkRegionTrusted();
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                RecordRoiWriterEvent(
+                    regionUpdated
+                        ? "INTERNAL_LANDMARK_UPDATE"
+                        : "INTERNAL_LANDMARK_UPDATE_SKIPPED_INVALID_BOUNDS",
+                    regionUpdated,
+                    roiBeforeUpdate,
+                    default,
+                    lane.diagnosticRawLandmarks,
+                    _landmarks,
+                    default,
+                    default);
+#endif
 
                 _completedFrameCount++;
 
@@ -1434,6 +1625,11 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             bool flipHorizontally,
             bool flipVertically,
             long latestSourceHostTicks,
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            ulong latestSourceFrameId,
+            bool latestSourceFrameIdIsNativeSequence,
+            int latestSourceGeneration,
+#endif
             bool scheduleLatestSource,
             out bool scheduledLatestSource,
             out Vector3[] landmarks,
@@ -1500,7 +1696,15 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                         source,
                         flipHorizontally,
                         flipVertically,
-                        latestSourceHostTicks);
+                        latestSourceHostTicks
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                        ,
+                        latestSourceFrameId,
+                        latestSourceFrameIdIsNativeSequence,
+                        latestSourceGeneration,
+                        "SCHEDULE_BEFORE_POLL"
+#endif
+                        );
             }
 
             PollCompletedLanes(
@@ -1539,6 +1743,14 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     newestValidCompletion.sourceHostTicks,
                     System.Diagnostics.Stopwatch.GetTimestamp());
 
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                KiwiH1LandmarkerBoundaryObserver.RoiStateSnapshot roiBeforeUpdate =
+                    CaptureRoiState();
+                bool regionUpdated = false;
+                string internalWriterKind =
+                    "INTERNAL_LANDMARK_UPDATE_SKIPPED_EXTERNAL_EPOCH";
+#endif
+
                 // A pre-correction result remains valid for presentation in
                 // the crop matrix/source frame it was submitted with, but it must
                 // not roll a newer external ROI correction backwards.
@@ -1546,8 +1758,16 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     newestValidCompletion.externalAnchorEpoch ==
                     _externalAnchorEpoch)
                 {
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                    regionUpdated =
+#endif
                     UpdateRegionFromLandmarks(
                         _landmarks);
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                    internalWriterKind = regionUpdated
+                        ? "INTERNAL_LANDMARK_UPDATE"
+                        : "INTERNAL_LANDMARK_UPDATE_SKIPPED_INVALID_BOUNDS";
+#endif
                 }
                 else
                 {
@@ -1555,6 +1775,30 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 }
 
                 MarkRegionTrusted();
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                RecordRoiWriterEvent(
+                    internalWriterKind,
+                    regionUpdated,
+                    roiBeforeUpdate,
+                    new KiwiH1LandmarkerBoundaryObserver.RoiSampleIdentity
+                    {
+                        sourceFrameId = newestValidCompletion.sourceFrameId,
+                        sourceFrameIdIsNativeSequence =
+                            newestValidCompletion.sourceFrameIdIsNativeSequence,
+                        sourceGeneration = newestValidCompletion.sourceGeneration,
+                        trackerGeneration = newestValidCompletion.trackerGeneration,
+                        cameraGeneration = newestValidCompletion.cameraGeneration,
+                        trackingSessionGeneration =
+                            newestValidCompletion.trackingSessionGeneration,
+                        sourceHostTicks = newestValidCompletion.sourceHostTicks,
+                        arrivalHostTicks = newestValidCompletion.arrivalHostTicks
+                    },
+                    winner.diagnosticRawLandmarks,
+                    _landmarks,
+                    default,
+                    default);
+#endif
 
                 _completedFrameCount++;
 
@@ -1566,7 +1810,7 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             }
             else if (anyNonStaleFailure)
             {
-                RegisterFailure();
+                RegisterFailure(newestCompletion);
             }
 
             if (newestCompletion.exists)
@@ -1603,7 +1847,15 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                             source,
                             flipHorizontally,
                             flipVertically,
-                            latestSourceHostTicks);
+                            latestSourceHostTicks
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                            ,
+                            latestSourceFrameId,
+                            latestSourceFrameIdIsNativeSequence,
+                            latestSourceGeneration,
+                            "SCHEDULE_AFTER_POLL"
+#endif
+                            );
                 }
 
                 if (!scheduledLatestSource)
@@ -1687,6 +1939,23 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 int completedTrackingSessionGeneration =
                     lane.pendingTrackingSessionGeneration;
 
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                ulong completedSourceFrameId =
+                    lane.pendingSourceFrameId;
+
+                bool completedSourceFrameIdIsNativeSequence =
+                    lane.pendingSourceFrameIdIsNativeSequence;
+
+                int completedSourceGeneration =
+                    lane.pendingSourceGeneration;
+
+                int completedSourceWidth =
+                    lane.pendingSourceWidth;
+
+                int completedSourceHeight =
+                    lane.pendingSourceHeight;
+#endif
+
                 float completedMinimumPresence =
                     lane.pendingMinimumPresence;
 
@@ -1726,6 +1995,14 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 lane.pendingMinimumPresence =
                     0f;
 
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                lane.pendingSourceFrameId = 0UL;
+                lane.pendingSourceFrameIdIsNativeSequence = false;
+                lane.pendingSourceGeneration = 0;
+                lane.pendingSourceWidth = 0;
+                lane.pendingSourceHeight = 0;
+#endif
+
                 _readbackCompletedFrameCount++;
 
                 RecordReadbackCompletionInterval(
@@ -1763,6 +2040,15 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                             completedCameraGeneration,
                         trackingSessionGeneration =
                             completedTrackingSessionGeneration
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                        ,
+                        sourceFrameId = completedSourceFrameId,
+                        sourceFrameIdIsNativeSequence =
+                            completedSourceFrameIdIsNativeSequence,
+                        sourceGeneration = completedSourceGeneration,
+                        sourceWidth = completedSourceWidth,
+                        sourceHeight = completedSourceHeight
+#endif
                     };
 
                 // KIWI_V5_1_PHASE2_INFERENCE_ASYNC_IDENTITY
@@ -1852,6 +2138,21 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                         startedTicks,
                         arrivalHostTicks);
 
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                    KiwiH1LandmarkerBoundaryObserver.ObserveInferenceDecodeFailure(
+                        completedSourceFrameId,
+                        completedSourceFrameIdIsNativeSequence,
+                        completedSourceGeneration,
+                        completedGeneration,
+                        completedCameraGeneration,
+                        completedTrackingSessionGeneration,
+                        completedSourceWidth,
+                        completedSourceHeight,
+                        completedSourceTicks,
+                        arrivalHostTicks,
+                        preDecodeStaleStatus.ToString());
+#endif
+
                     if (
                         !newestCompletion.exists ||
                         IsCompletionNewer(
@@ -1910,9 +2211,38 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                             out float rawPresence,
                             out float presence,
                             out Quaternion rotation);
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                    if (status == DecodeStatus.Valid)
+                    {
+                        CopyRawLandmarks(
+                            readableOutput,
+                            lane.diagnosticRawLandmarks);
+                    }
+#endif
+
                     KiwiInferenceReadbackBoundaryDiagnostics.RecordDecodeMathCpu(
                         decodeMathStartHostTicks,
                         System.Diagnostics.Stopwatch.GetTimestamp());
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                    KiwiH1LandmarkerBoundaryObserver.ObserveInferenceDecode(
+                        completedSourceFrameId,
+                        completedSourceFrameIdIsNativeSequence,
+                        completedSourceGeneration,
+                        completedGeneration,
+                        completedCameraGeneration,
+                        completedTrackingSessionGeneration,
+                        completedSourceWidth,
+                        completedSourceHeight,
+                        completedSourceTicks,
+                        arrivalHostTicks,
+                        completedCropMatrix,
+                        readableOutput,
+                        lane.decodedLandmarks,
+                        status == DecodeStatus.Valid,
+                        status.ToString());
+#endif
 
                     completion.rawPresence =
                         rawPresence;
@@ -1976,6 +2306,21 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
                     anyNonStaleFailure =
                         true;
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                    KiwiH1LandmarkerBoundaryObserver.ObserveInferenceDecodeFailure(
+                        completedSourceFrameId,
+                        completedSourceFrameIdIsNativeSequence,
+                        completedSourceGeneration,
+                        completedGeneration,
+                        completedCameraGeneration,
+                        completedTrackingSessionGeneration,
+                        completedSourceWidth,
+                        completedSourceHeight,
+                        completedSourceTicks,
+                        arrivalHostTicks,
+                        DecodeStatus.Exception.ToString());
+#endif
                 }
 
                 RecordDecodeCpu(
@@ -2111,7 +2456,15 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
         private bool TryScheduleNewestSource(            Texture source,
             bool flipHorizontally,
             bool flipVertically,
-            long sourceHostTicks)
+            long sourceHostTicks
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            ,
+            ulong sourceFrameId,
+            bool sourceFrameIdIsNativeSequence,
+            int sourceGeneration,
+            string schedulePhase
+#endif
+            )
         {
             int laneIndex =
                 FindFreeLane();
@@ -2135,6 +2488,11 @@ UpdateSourceDimensions(
                 
 Matrix4x4 cropMatrix =
                     BuildCropMatrix();
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                KiwiH1LandmarkerBoundaryObserver.RoiStateSnapshot scheduleRoiState =
+                    CaptureRoiState();
+#endif
 
                 
 ScheduleModel(
@@ -2206,6 +2564,35 @@ Tensor<float> packedOutput =
 
                 lane.pendingTrackingSessionGeneration =
                     generationSnapshot.trackingSessionGeneration;
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                lane.pendingSourceFrameId = sourceFrameId;
+                lane.pendingSourceFrameIdIsNativeSequence =
+                    sourceFrameIdIsNativeSequence;
+                lane.pendingSourceGeneration = sourceGeneration;
+                lane.pendingSourceWidth = _sourceWidth;
+                lane.pendingSourceHeight = _sourceHeight;
+
+                KiwiH1LandmarkerBoundaryObserver.ObserveRoiSchedule(
+                    schedulePhase,
+                    new KiwiH1LandmarkerBoundaryObserver.RoiSampleIdentity
+                    {
+                        sourceFrameId = sourceFrameId,
+                        sourceFrameIdIsNativeSequence = sourceFrameIdIsNativeSequence,
+                        sourceGeneration = sourceGeneration,
+                        trackerGeneration = _trackerGeneration,
+                        cameraGeneration = lane.pendingCameraGeneration,
+                        trackingSessionGeneration =
+                            lane.pendingTrackingSessionGeneration,
+                        sourceHostTicks = lane.pendingSourceHostTicks
+                    },
+                    _sourceWidth,
+                    _sourceHeight,
+                    _roiWriterSequence,
+                    _lastRoiWriterKind,
+                    scheduleRoiState,
+                    cropMatrix);
+#endif
 
                 lane.pendingMinimumPresence =
                     Mathf.Clamp01(MinimumPresence);
@@ -2301,6 +2688,14 @@ _scheduledFrameCount++;
 
                 lane.pendingMinimumPresence =
                     0f;
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                lane.pendingSourceFrameId = 0UL;
+                lane.pendingSourceFrameIdIsNativeSequence = false;
+                lane.pendingSourceGeneration = 0;
+                lane.pendingSourceWidth = 0;
+                lane.pendingSourceHeight = 0;
+#endif
 
                 RegisterDecodeFailure(
                     DecodeStatus.Exception);
@@ -2766,6 +3161,151 @@ Graphics.Blit(
                     source.height);
         }
 
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        private KiwiH1LandmarkerBoundaryObserver.RoiStateSnapshot CaptureRoiState()
+        {
+            return new KiwiH1LandmarkerBoundaryObserver.RoiStateSnapshot
+            {
+                centerX = _regionCenter.x,
+                centerYBottom = _regionCenter.y,
+                width = _regionWidth,
+                height = _regionHeight,
+                rollRadians = _regionRollRadians,
+                hasRegion = _hasRegion,
+                anchorRevision = _anchorRevision,
+                externalAnchorEpoch = _externalAnchorEpoch,
+                lastWriterSequence = _roiWriterSequence,
+                lastWriterKind = _lastRoiWriterKind,
+                lastWriterSourceHostTicks = _lastRoiWriterSourceHostTicks,
+                lastWriterSourceGeneration = _lastRoiWriterSourceGeneration,
+                lastWriterCameraGeneration = _lastRoiWriterCameraGeneration,
+                lastWriterTrackingSessionGeneration =
+                    _lastRoiWriterTrackingSessionGeneration
+            };
+        }
+
+        private KiwiH1LandmarkerBoundaryObserver.RoiDecisionMetrics
+            BuildExternalAnchorDecisionMetrics(
+                Vector2 centerBottomLeft,
+                float width,
+                float height,
+                float rollRadiansBottomLeft,
+                bool force,
+                string decision,
+                long applyHostTicks)
+        {
+            float imageWidth = Mathf.Max(1f, _sourceWidth);
+            float imageHeight = Mathf.Max(1f, _sourceHeight);
+            float centerDxPixels =
+                (centerBottomLeft.x - _regionCenter.x) * imageWidth;
+            float centerDyPixels =
+                (centerBottomLeft.y - _regionCenter.y) * imageHeight;
+            float centerDistancePixels = Mathf.Sqrt(
+                centerDxPixels * centerDxPixels +
+                centerDyPixels * centerDyPixels);
+            float regionSidePixels = Mathf.Max(
+                _regionWidth * imageWidth,
+                _regionHeight * imageHeight);
+
+            return new KiwiH1LandmarkerBoundaryObserver.RoiDecisionMetrics
+            {
+                valid = true,
+                applyHostTicks = applyHostTicks,
+                force = force,
+                hasRegion = _hasRegion,
+                regionRetentionActive = _regionRetentionActive,
+                centerDistancePixels = centerDistancePixels,
+                centerThresholdPixels = Mathf.Max(
+                    12f,
+                    regionSidePixels * 0.20f),
+                widthRatioDelta = Mathf.Abs(width - _regionWidth) /
+                    Mathf.Max(0.001f, _regionWidth),
+                heightRatioDelta = Mathf.Abs(height - _regionHeight) /
+                    Mathf.Max(0.001f, _regionHeight),
+                rollDeltaDegrees = Mathf.Abs(Mathf.DeltaAngle(
+                    _regionRollRadians * Mathf.Rad2Deg,
+                    rollRadiansBottomLeft * Mathf.Rad2Deg)),
+                sizeRatioThreshold = 0.22f,
+                rollThresholdDegrees = 18f,
+                decision = decision
+            };
+        }
+
+        private static KiwiH1LandmarkerBoundaryObserver.RoiSampleIdentity CompletionIdentity(
+            Completion completion)
+        {
+            return new KiwiH1LandmarkerBoundaryObserver.RoiSampleIdentity
+            {
+                sourceFrameId = completion.sourceFrameId,
+                sourceFrameIdIsNativeSequence =
+                    completion.sourceFrameIdIsNativeSequence,
+                sourceGeneration = completion.sourceGeneration,
+                trackerGeneration = completion.trackerGeneration,
+                cameraGeneration = completion.cameraGeneration,
+                trackingSessionGeneration =
+                    completion.trackingSessionGeneration,
+                sourceHostTicks = completion.sourceHostTicks,
+                arrivalHostTicks = completion.arrivalHostTicks
+            };
+        }
+
+        private void RecordRoiWriterEvent(
+            string writerKind,
+            bool roiStateWritten,
+            KiwiH1LandmarkerBoundaryObserver.RoiStateSnapshot before,
+            KiwiH1LandmarkerBoundaryObserver.RoiSampleIdentity identity,
+            Vector3[] rawLandmarks,
+            Vector3[] normalizedLandmarks,
+            KiwiH1LandmarkerBoundaryObserver.RoiLandmarkSummary suppliedSummary,
+            KiwiH1LandmarkerBoundaryObserver.RoiDecisionMetrics decision)
+        {
+            if (roiStateWritten)
+            {
+                _roiWriterSequence++;
+                _lastRoiWriterKind = writerKind ?? string.Empty;
+                _lastRoiWriterSourceHostTicks = identity.sourceHostTicks;
+                _lastRoiWriterSourceGeneration = identity.sourceGeneration;
+                _lastRoiWriterCameraGeneration = identity.cameraGeneration;
+                _lastRoiWriterTrackingSessionGeneration =
+                    identity.trackingSessionGeneration;
+            }
+
+            KiwiH1LandmarkerBoundaryObserver.ObserveRoiWriterEvent(
+                _roiWriterSequence,
+                writerKind,
+                roiStateWritten,
+                before,
+                CaptureRoiState(),
+                identity,
+                rawLandmarks,
+                normalizedLandmarks,
+                _sourceWidth,
+                _sourceHeight,
+                suppliedSummary,
+                decision);
+        }
+
+        private static void CopyRawLandmarks(
+            Tensor<float> readableOutput,
+            Vector3[] destination)
+        {
+            if (readableOutput == null || destination == null ||
+                destination.Length < BaseLandmarkCount)
+            {
+                return;
+            }
+
+            for (int i = 0; i < BaseLandmarkCount; i++)
+            {
+                int offset = i * 3;
+                destination[i] = new Vector3(
+                    readableOutput[offset],
+                    readableOutput[offset + 1],
+                    readableOutput[offset + 2]);
+            }
+        }
+#endif
+
         /// <summary>
         /// Crop-local UV -> original source UV.
         ///
@@ -2877,7 +3417,7 @@ Graphics.Blit(
         /// tight full-landmark bounds -> eye-line rotation -> 1.5x
         /// square_long in PIXELS.
         /// </summary>
-        private void UpdateRegionFromLandmarks(
+        private bool UpdateRegionFromLandmarks(
             Vector3[] points)
         {
             if (
@@ -2886,7 +3426,7 @@ Graphics.Blit(
                     BaseLandmarkCount
             )
             {
-                return;
+                return false;
             }
 
             float imageWidth =
@@ -2922,7 +3462,7 @@ Graphics.Blit(
 
                 if (!IsFinite(point))
                 {
-                    return;
+                    return false;
                 }
 
                 float xPixels =
@@ -2972,7 +3512,7 @@ Graphics.Blit(
                     1f
             )
             {
-                return;
+                return false;
             }
 
             Vector2 targetCenter =
@@ -3000,7 +3540,7 @@ Graphics.Blit(
 
             if (!IsFinite(squareSidePixels))
             {
-                return;
+                return false;
             }
 
             float targetWidth =
@@ -3046,6 +3586,8 @@ Graphics.Blit(
 
             _regionRollRadians =
                 targetRoll;
+
+            return true;
         }
 
         private static Quaternion
@@ -3211,10 +3753,11 @@ Graphics.Blit(
                 _rejectedInvalidFrameCount++;
             }
 
-            RegisterFailure();
+            RegisterFailure(default);
         }
 
-        private void RegisterFailure()
+        private void RegisterFailure(
+            Completion diagnosticCompletion)
         {
             _consecutiveFailures++;
 
@@ -3250,11 +3793,14 @@ Graphics.Blit(
 
                 _retainedRegionFailureCount++;
 
-                ExpandRegionForRecovery();
+                ExpandRegionForRecovery(
+                    diagnosticCompletion);
                 return;
             }
 
-            ReleasePersistentRegion();
+            ReleasePersistentRegion(
+                diagnosticCompletion,
+                "FAILURE_LEASE_EXPIRED");
         }
 
         private void EvaluateRegionLeaseExpiry()
@@ -3278,16 +3824,25 @@ Graphics.Blit(
 
             if (leaseExpired)
             {
-                ReleasePersistentRegion();
+                ReleasePersistentRegion(
+                    default,
+                    "LEASE_TIMER_EXPIRED");
             }
         }
 
-        private void ReleasePersistentRegion()
+        private void ReleasePersistentRegion(
+            Completion diagnosticCompletion,
+            string diagnosticReason)
         {
             if (!_hasRegion)
             {
                 return;
             }
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            KiwiH1LandmarkerBoundaryObserver.RoiStateSnapshot roiBefore =
+                CaptureRoiState();
+#endif
 
             // The trusted ROI lease has genuinely expired. Retire already
             // submitted jobs from this ROI before allowing a future external
@@ -3304,6 +3859,22 @@ Graphics.Blit(
             _regionReleaseCount++;
 
             _anchorRevision++;
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            RecordRoiWriterEvent(
+                "REGION_RELEASE",
+                true,
+                roiBefore,
+                CompletionIdentity(diagnosticCompletion),
+                null,
+                null,
+                default,
+                new KiwiH1LandmarkerBoundaryObserver.RoiDecisionMetrics
+                {
+                    valid = true,
+                    decision = diagnosticReason ?? string.Empty
+                });
+#endif
         }
 
         private void MarkExternalAnchorTrusted()
@@ -3366,7 +3937,8 @@ Graphics.Blit(
                 _regionHeight;
         }
 
-        private void ExpandRegionForRecovery()
+        private void ExpandRegionForRecovery(
+            Completion diagnosticCompletion)
         {
             if (
                 _trustedRegionWidth <= 0.0001f ||
@@ -3379,6 +3951,11 @@ Graphics.Blit(
                     1f;
                 return;
             }
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            KiwiH1LandmarkerBoundaryObserver.RoiStateSnapshot roiBefore =
+                CaptureRoiState();
+#endif
 
             float t =
                 Mathf.InverseLerp(
@@ -3417,6 +3994,18 @@ Graphics.Blit(
 
             _regionHeight =
                 targetHeight;
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            RecordRoiWriterEvent(
+                "RECOVERY_EXPANSION",
+                true,
+                roiBefore,
+                CompletionIdentity(diagnosticCompletion),
+                null,
+                null,
+                default,
+                default);
+#endif
         }
 
         private float GetTrustedRegionAgeMs(

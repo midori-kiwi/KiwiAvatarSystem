@@ -385,7 +385,8 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
                 "singlePresentationAuthority,quality10PolicyOnly,quality10SharedRootBinding,quality10SuppressedLateUpdateCount,quality10SuppressedBeforeRenderCount,quality10LegacyRootWriteCount,quality10LegacyWriteViolationCount,faceMotionDisplayRateSmoothing,faceMotionStaticRestEnabled,faceMotionAdaptiveMicroFilter,faceMotionPredictionDisabled," +
                 "singleHandoffAuthority,canonicalHandoffNormalizationEnabled,canonicalHandoffActive,canonicalHandoffIsResume,localRootProviderBridgeActive,localRootProviderBridgeSuppressedCount,handoffAuthorityViolationCount,hubHandoffEnvelopeGuardActivationCount," +
                 "strictFacePartPresentationEpoch,facePartPredictionDisabled,facePartMatchedAgeCompensationDisabled,facePartDirectMotionDisabled,facePartLiveResidualDisabled,facePartPresentationEpochAligned,facePartPresentationEpochViolationCount,facePartEpochSemanticTimestamp,facePartEpochTextureCanonicalFrameId," +
-                "faceTextureTransactionOperational,faceTextureSceneBindingValid,faceTextureStrictPresentation,faceTextureSemanticTimestamp,faceTextureCanonicalFrameId,faceTextureMatchDeltaMs,faceTextureBufferedFrames,faceTextureCaptureCount,faceTextureCommitCount,faceTextureMissCount,faceTextureHoldCount,faceTextureExternalWriter,faceTextureExternalWriterCount,liveTextureAdvancedWhileSemanticHeld");
+                "faceTextureTransactionOperational,faceTextureSceneBindingValid,faceTextureStrictPresentation,faceTextureSemanticTimestamp,faceTextureCanonicalFrameId,faceTextureMatchDeltaMs,faceTextureBufferedFrames,faceTextureCaptureCount,faceTextureCommitCount,faceTextureMissCount,faceTextureHoldCount,faceTextureExternalWriter,faceTextureExternalWriterCount,liveTextureAdvancedWhileSemanticHeld," +
+                "matchedSlotIdentityAvailable,matchedSlotSemanticTimestamp,matchedSlotCanonicalFrameId,matchedSlotTextureId,matchedSlotCaptureUnityFrame,matchedSlotCameraGeneration,matchedSlotTrackingSessionGeneration,matchedNativeIdentityValid,matchedNativeCameraSessionGeneration,matchedNativePresentedSequence,matchedNativePresentedHostTicks,matchedCaptureSourceTextureId,matchedNativePresentationTextureId");
 
             recordedFrameCount = 0;
             _framesSinceCsvFlush = 0;
@@ -1418,6 +1419,12 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
             int sourceWidth = sourceTexture != null ? sourceTexture.width : 0;
             int sourceHeight = sourceTexture != null ? sourceTexture.height : 0;
 
+            bool matchedSlotIdentityAvailable =
+                KiwiFacePartTextureTransaction.
+                    TryGetLastCommittedPresentationSnapshot(
+                        out KiwiFacePartTextureTransaction.
+                            CommittedPresentationSnapshot matchedSlot);
+
             KiwiRuntimeGenerationContext.Snapshot generation =
                 _hasCanonicalFrame
                     ? _canonicalFrame.generation
@@ -1795,7 +1802,67 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
                 (
                     _cropper.sourceImage.texture is WebCamTexture ||
                     _hasNativeCameraTelemetry
-                ));
+                )); Sep(row);
+            Append(row, matchedSlotIdentityAvailable); Sep(row);
+            Append(
+                row,
+                matchedSlotIdentityAvailable
+                    ? matchedSlot.semanticTimestamp
+                    : -1L); Sep(row);
+            Append(
+                row,
+                matchedSlotIdentityAvailable
+                    ? matchedSlot.canonicalFrameId
+                    : 0UL); Sep(row);
+            Append(
+                row,
+                matchedSlotIdentityAvailable
+                    ? matchedSlot.textureInstanceId
+                    : 0); Sep(row);
+            Append(
+                row,
+                matchedSlotIdentityAvailable
+                    ? matchedSlot.captureUnityFrame
+                    : -1); Sep(row);
+            Append(
+                row,
+                matchedSlotIdentityAvailable
+                    ? matchedSlot.cameraGeneration
+                    : 0); Sep(row);
+            Append(
+                row,
+                matchedSlotIdentityAvailable
+                    ? matchedSlot.trackingSessionGeneration
+                    : 0); Sep(row);
+            Append(
+                row,
+                matchedSlotIdentityAvailable &&
+                    matchedSlot.nativePresentedIdentityValid); Sep(row);
+            Append(
+                row,
+                matchedSlotIdentityAvailable
+                    ? matchedSlot.nativeCameraSessionGeneration
+                    : 0); Sep(row);
+            Append(
+                row,
+                matchedSlotIdentityAvailable
+                    ? matchedSlot.nativePresentedSequence
+                    : 0UL); Sep(row);
+            Append(
+                row,
+                matchedSlotIdentityAvailable
+                    ? matchedSlot.nativePresentedHostTicks
+                    : 0L); Sep(row);
+            Append(
+                row,
+                matchedSlotIdentityAvailable
+                    ? matchedSlot.captureSourceTextureId
+                    : 0); Sep(row);
+            Append(
+                row,
+                matchedSlotIdentityAvailable
+                    ? matchedSlot.nativePresentationTextureId
+                    : 0);
 
             _csvWriter.WriteLine(row.ToString());
             recordedFrameCount++;

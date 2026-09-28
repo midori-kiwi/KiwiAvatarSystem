@@ -446,6 +446,12 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
         private UnityEngine.Rect _latestSentisAnchorRegion;
         private float _latestSentisAnchorRollRadians;
         private bool _hasLatestSentisAnchor;
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        private KiwiH1LandmarkerBoundaryObserver.RoiSampleIdentity
+            _latestSentisAnchorDiagnosticIdentity;
+        private KiwiH1LandmarkerBoundaryObserver.RoiLandmarkSummary
+            _latestSentisAnchorDiagnosticSummary;
+#endif
         private volatile bool _sentisPrimaryActive;
         private long _lastMediaPipeRefreshHostTicks;
         private Quaternion _latestMediaPipeAuxRotation = Quaternion.identity;
@@ -1002,6 +1008,12 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             float anchorRoll = 0f;
             long anchorTimestamp = -1L;
             bool hasAnchor = false;
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            KiwiH1LandmarkerBoundaryObserver.RoiSampleIdentity anchorDiagnosticIdentity =
+                default;
+            KiwiH1LandmarkerBoundaryObserver.RoiLandmarkSummary anchorDiagnosticSummary =
+                default;
+#endif
 
             lock (_trackingLock)
             {
@@ -1009,6 +1021,12 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 anchorRegion = _latestSentisAnchorRegion;
                 anchorRoll = _latestSentisAnchorRollRadians;
                 anchorTimestamp = _lastSentisAnchorTimestamp;
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                anchorDiagnosticIdentity =
+                    _latestSentisAnchorDiagnosticIdentity;
+                anchorDiagnosticSummary =
+                    _latestSentisAnchorDiagnosticSummary;
+#endif
             }
 
             if (
@@ -1019,7 +1037,13 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 _sentisTracker.ApplyExternalAnchor(
                     anchorRegion,
                     anchorRoll,
-                    !_sentisTracker.HasRegion);
+                    !_sentisTracker.HasRegion
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                    ,
+                    anchorDiagnosticIdentity,
+                    anchorDiagnosticSummary
+#endif
+                    );
                 _lastSentisAnchorTimestampApplied = anchorTimestamp;
             }
 
@@ -1034,6 +1058,13 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     _sentisFlipHorizontally,
                     _sentisFlipVertically,
                     sourceHostTicks,
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                    _lastObservedFreshFrameSequence > 0UL
+                        ? _lastObservedFreshFrameSequence
+                        : (ulong)Mathf.Max(0, _freshWebCamGeneration),
+                    _lastObservedFreshFrameSequence > 0UL,
+                    _freshWebCamGeneration,
+#endif
                     hasFreshSentisSource,
                     out bool scheduledSentisSource,
                     out Vector3[] landmarks,
@@ -2960,6 +2991,10 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                         submissionHostTicks,
                         arrivalHostTicks,
                         submissionCameraGeneration
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                        ,
+                        rawObserverSequence
+#endif
                     );
 
 #if DEVELOPMENT_BUILD || UNITY_EDITOR
@@ -2997,7 +3032,12 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             long timestamp,
             long submissionHostTicks,
             long arrivalHostTicks = 0L,
-            int cameraGeneration = 0)
+            int cameraGeneration = 0
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            ,
+            long externalAnchorObserverSequence = 0L
+#endif
+            )
         {
             if (
                 !_acceptTrackingResults ||
@@ -3330,6 +3370,11 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 _sourceTextureHeight >
                     0;
 
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            KiwiH1LandmarkerBoundaryObserver.RoiLandmarkSummary
+                sentisAnchorDiagnosticSummary = default;
+#endif
+
             if (hasSentisAnchor)
             {
                 float minX =
@@ -3343,6 +3388,13 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
                 float maxY =
                     float.NegativeInfinity;
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                int minXIndex = -1;
+                int minYIndex = -1;
+                int maxXIndex = -1;
+                int maxYIndex = -1;
+#endif
 
                 for (
                     int i = 0;
@@ -3368,6 +3420,13 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
                         break;
                     }
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                    if (x < minX) minXIndex = i;
+                    if (y < minY) minYIndex = i;
+                    if (x > maxX) maxXIndex = i;
+                    if (y > maxY) maxYIndex = i;
+#endif
 
                     minX =
                         Mathf.Min(
@@ -3499,6 +3558,53 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                                 -Mathf.Atan2(
                                     eyeDyPixels,
                                     eyeDxPixels);
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                            sentisAnchorDiagnosticSummary =
+                                new KiwiH1LandmarkerBoundaryObserver.RoiLandmarkSummary
+                                {
+                                    valid = true,
+                                    sourceKind = "MEDIAPIPE_CALLBACK_ALL_LANDMARKS",
+                                    landmarkCount = count,
+                                    maxA0XyStepIndex = -1,
+                                    maxA0XyzStepIndex = -1,
+                                    maxA1XyStepIndex = -1,
+                                    minXPixels = minX * imageWidth,
+                                    minXIndex = minXIndex,
+                                    minXPoint = new Vector2(
+                                        landmarks[minXIndex].x,
+                                        landmarks[minXIndex].y),
+                                    maxXPixels = maxX * imageWidth,
+                                    maxXIndex = maxXIndex,
+                                    maxXPoint = new Vector2(
+                                        landmarks[maxXIndex].x,
+                                        landmarks[maxXIndex].y),
+                                    minYPixelsBottom = (1f - maxY) * imageHeight,
+                                    minYIndex = maxYIndex,
+                                    minYPoint = new Vector2(
+                                        landmarks[maxYIndex].x,
+                                        landmarks[maxYIndex].y),
+                                    maxYPixelsBottom = (1f - minY) * imageHeight,
+                                    maxYIndex = minYIndex,
+                                    maxYPoint = new Vector2(
+                                        landmarks[minYIndex].x,
+                                        landmarks[minYIndex].y),
+                                    boxWidthPixels = boxWidthPixels,
+                                    boxHeightPixels = boxHeightPixels,
+                                    squareSidePixels = squareSidePixels,
+                                    targetCenterX = anchorCenter.x,
+                                    targetCenterYBottom = 1f - anchorCenter.y,
+                                    targetWidth = anchorWidth,
+                                    targetHeight = anchorHeight,
+                                    targetRollRadians = sentisAnchorRollRadians,
+                                    eye33 = new Vector2(
+                                        landmarks[33].x,
+                                        landmarks[33].y),
+                                    eye263 = new Vector2(
+                                        landmarks[263].x,
+                                        landmarks[263].y)
+                                };
+#endif
                         }
                     }
                 }
@@ -3604,6 +3710,23 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                             sentisAnchorRollRadians;
                         _lastSentisAnchorTimestamp = timestamp;
                         _hasLatestSentisAnchor = true;
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                        _latestSentisAnchorDiagnosticIdentity =
+                            new KiwiH1LandmarkerBoundaryObserver.RoiSampleIdentity
+                            {
+                                externalAnchorObserverSequence =
+                                    externalAnchorObserverSequence,
+                                cameraGeneration = cameraGeneration,
+                                trackingSessionGeneration =
+                                    KiwiRuntimeGenerationContext.
+                                        TrackingSessionGeneration,
+                                sourceHostTicks = submissionHostTicks,
+                                callbackTimestamp = timestamp,
+                                arrivalHostTicks = arrivalHostTicks
+                            };
+                        _latestSentisAnchorDiagnosticSummary =
+                            sentisAnchorDiagnosticSummary;
+#endif
                     }
 
 
@@ -3736,6 +3859,24 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 !IsValidQuaternion(rotation)
             )
             {
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                KiwiH1LandmarkerBoundaryObserver.ObserveInferenceRunnerPublication(
+                    submissionHostTicks,
+                    timestamp,
+                    arrivalHostTicks,
+                    false,
+                    acceptedFrameId,
+                    !_acceptTrackingResults
+                        ? "STORE_RESULTS_DISABLED_OR_RESET"
+                        : landmarks == null
+                            ? "STORE_LANDMARKS_NULL"
+                            : landmarks.Length < KiwiInferenceFaceTracker.CompatibleLandmarkCount
+                                ? "STORE_LANDMARK_COUNT_LOW"
+                                : "STORE_ROTATION_INVALID",
+                    landmarks,
+                    null,
+                    0);
+#endif
                 return false;
             }
 
@@ -3801,6 +3942,18 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 float.IsNaN(faceHeight2D) ||
                 float.IsInfinity(faceHeight2D))
             {
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                KiwiH1LandmarkerBoundaryObserver.ObserveInferenceRunnerPublication(
+                    submissionHostTicks,
+                    timestamp,
+                    arrivalHostTicks,
+                    false,
+                    acceptedFrameId,
+                    "STORE_GEOMETRY_DEGENERATE_OR_NONFINITE",
+                    landmarks,
+                    null,
+                    0);
+#endif
                 return false;
             }
 
@@ -3842,6 +3995,18 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
                 if (!coherentWithPublishedFace)
                 {
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                    KiwiH1LandmarkerBoundaryObserver.ObserveInferenceRunnerPublication(
+                        submissionHostTicks,
+                        timestamp,
+                        arrivalHostTicks,
+                        false,
+                        acceptedFrameId,
+                        "STORE_GEOMETRY_QUALITY_NONPOSITIVE_AND_INCOHERENT",
+                        landmarks,
+                        null,
+                        0);
+#endif
                     return false;
                 }
 
@@ -3898,6 +4063,18 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 {
                     if (!_acceptTrackingResults)
                     {
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                        KiwiH1LandmarkerBoundaryObserver.ObserveInferenceRunnerPublication(
+                            submissionHostTicks,
+                            timestamp,
+                            arrivalHostTicks,
+                            false,
+                            acceptedFrameId,
+                            "STORE_RESULTS_DISABLED_AFTER_STAGING",
+                            landmarks,
+                            null,
+                            0);
+#endif
                         return false;
                     }
 
@@ -3947,6 +4124,19 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     precisionData.backend =
                         KiwiTrackingBackend.InferenceEngine;
                     _latestPrecisionData = precisionData;
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                    KiwiH1LandmarkerBoundaryObserver.ObserveInferenceRunnerPublication(
+                        submissionHostTicks,
+                        timestamp,
+                        arrivalHostTicks,
+                        true,
+                        acceptedFrameId,
+                        "ACCEPTED",
+                        landmarks,
+                        _latestLandmarks,
+                        _latestLandmarkCount);
+#endif
 
                     // Preserve MediaPipe's learned 52-coefficient result while it
                     // is fresh. Geometry expressions keep the API alive during
