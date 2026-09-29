@@ -203,6 +203,13 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
         public int unityFrame;
         public int cameraGeneration;
         public int trackingSessionGeneration;
+
+        // Product-owned source identity captured from IKiwiFreshFrameSource.
+        // Observer/telemetry identity below remains diagnostic only.
+        public bool sourceFrameIdentityValid;
+        public ulong sourceFrameSequence;
+        public long sourceFrameHostTicks;
+
         public bool nativePresentedIdentityValid;
         public int nativeCameraSessionGeneration;
         public ulong nativePresentedSequence;
@@ -928,6 +935,11 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
             return;
         }
 
+        bool sourceFrameIdentityValid =
+            TryGetCurrentSourceFrameIdentity(
+                out ulong sourceFrameSequence,
+                out long sourceFrameHostTicks);
+
         long captureTicks =
             System.Diagnostics.Stopwatch.GetTimestamp();
 
@@ -974,6 +986,12 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
         slot.cameraGeneration = generation.cameraGeneration;
         slot.trackingSessionGeneration =
             generation.trackingSessionGeneration;
+        slot.sourceFrameIdentityValid =
+            sourceFrameIdentityValid;
+        slot.sourceFrameSequence =
+            sourceFrameSequence;
+        slot.sourceFrameHostTicks =
+            sourceFrameHostTicks;
         slot.nativePresentedIdentityValid =
             nativePresentedIdentityValid;
         slot.nativeCameraSessionGeneration =
@@ -1018,6 +1036,28 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
             slotIndex == _mouthSlot;
     }
 
+    private static bool TryGetCurrentSourceFrameIdentity(
+        out ulong sequence,
+        out long hostTicks)
+    {
+        sequence = 0UL;
+        hostTicks = 0L;
+
+        if (
+            !(Mediapipe.Unity.Sample.ImageSourceProvider.ImageSource
+                is Mediapipe.Unity.IKiwiFreshFrameSource freshFrameSource))
+        {
+            return false;
+        }
+
+        return
+            freshFrameSource.TryGetLatestPresentedFrame(
+                out sequence,
+                out hostTicks) &&
+            sequence > 0UL &&
+            hostTicks > 0L;
+    }
+
     private int FindClosestSlot(
         long submissionHostTicks,
         int cameraGeneration,
@@ -1025,7 +1065,6 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
         out float deltaMs)
     {
         deltaMs = float.PositiveInfinity;
-        int best = -1;
 
         if (
             _slots == null ||
@@ -1034,6 +1073,38 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
         {
             return -1;
         }
+
+        if (TryGetCurrentSourceFrameIdentity(out _, out _))
+        {
+            for (int i = 0; i < _slots.Length; i++)
+            {
+                Slot slot = _slots[i];
+                if (
+                    slot == null ||
+                    !slot.valid ||
+                    slot.cameraGeneration != cameraGeneration ||
+                    slot.trackingSessionGeneration != trackingSessionGeneration ||
+                    !slot.sourceFrameIdentityValid ||
+                    slot.sourceFrameSequence == 0UL ||
+                    slot.sourceFrameHostTicks <= 0L
+                )
+                {
+                    continue;
+                }
+
+                if (slot.sourceFrameHostTicks == submissionHostTicks)
+                {
+                    deltaMs = 0f;
+                    return i;
+                }
+            }
+
+            // Exact identity is available from the active source. Do not
+            // substitute a temporally-near slot from another source sample.
+            return -1;
+        }
+
+        int best = -1;
 
         for (int i = 0; i < _slots.Length; i++)
         {
