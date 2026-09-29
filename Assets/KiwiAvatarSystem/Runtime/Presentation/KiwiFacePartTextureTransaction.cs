@@ -923,6 +923,21 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
             return;
         }
 
+        bool sourceFrameIdentityValid =
+            TryGetCurrentSourceFrameIdentity(
+                out ulong sourceFrameSequence,
+                out long sourceFrameHostTicks);
+
+        if (
+            sourceFrameIdentityValid &&
+            HasCapturedSourceFrameIdentity(
+                sourceFrameSequence,
+                sourceFrameHostTicks))
+        {
+            _lastCapturedUnityFrame = Time.frameCount;
+            return;
+        }
+
         int slotIndex = FindWritableSlot();
         if (slotIndex < 0)
         {
@@ -934,11 +949,6 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
         {
             return;
         }
-
-        bool sourceFrameIdentityValid =
-            TryGetCurrentSourceFrameIdentity(
-                out ulong sourceFrameSequence,
-                out long sourceFrameHostTicks);
 
         long captureTicks =
             System.Diagnostics.Stopwatch.GetTimestamp();
@@ -1034,6 +1044,38 @@ public sealed class KiwiFacePartTextureTransaction : MonoBehaviour
             slotIndex == _leftSlot ||
             slotIndex == _rightSlot ||
             slotIndex == _mouthSlot;
+    }
+
+    private bool HasCapturedSourceFrameIdentity(
+        ulong sequence,
+        long hostTicks)
+    {
+        if (
+            _slots == null ||
+            sequence == 0UL ||
+            hostTicks <= 0L)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < _slots.Length; i++)
+        {
+            Slot slot = _slots[i];
+            if (
+                slot != null &&
+                slot.valid &&
+                slot.sourceFrameIdentityValid &&
+                slot.sourceFrameSequence == sequence &&
+                slot.sourceFrameHostTicks == hostTicks &&
+                slot.cameraGeneration == _boundCameraGeneration &&
+                slot.trackingSessionGeneration ==
+                    _boundTrackingSessionGeneration)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static bool TryGetCurrentSourceFrameIdentity(

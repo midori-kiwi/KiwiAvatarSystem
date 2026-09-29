@@ -2013,37 +2013,6 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 imageSource.GetCurrentTexture() as WebCamTexture;
             _observedFreshFrameSource =
                 imageSource as IKiwiFreshFrameSource;
-            _observedFreshFrameSource =
-                imageSource as IKiwiFreshFrameSource;
-            _observedFreshFrameSource =
-                imageSource as IKiwiFreshFrameSource;
-            _observedFreshFrameSource =
-                imageSource as IKiwiFreshFrameSource;
-            _observedFreshFrameSource =
-                imageSource as IKiwiFreshFrameSource;
-            _observedFreshFrameSource =
-                imageSource as IKiwiFreshFrameSource;
-            _observedFreshFrameSource =
-                imageSource as IKiwiFreshFrameSource;
-            _observedFreshFrameSource =
-                imageSource as IKiwiFreshFrameSource;
-            _observedFreshFrameSource =
-                imageSource as IKiwiFreshFrameSource;
-            _observedFreshFrameSource =
-                imageSource as IKiwiFreshFrameSource;
-            _observedFreshFrameSource =
-                imageSource as IKiwiFreshFrameSource;
-            _observedFreshFrameSource =
-                imageSource as IKiwiFreshFrameSource;
-            _observedFreshFrameSource =
-                imageSource as IKiwiFreshFrameSource;
-            _observedFreshFrameSource =
-                imageSource as IKiwiFreshFrameSource;
-            _observedFreshFrameSource =
-                imageSource as IKiwiFreshFrameSource;
-
-            _observedFreshFrameSource =
-                imageSource as IKiwiFreshFrameSource;
 
 
             _sourceName =
@@ -2275,52 +2244,6 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 {
                     ObserveFreshWebCamFrame(webCamTexture);
                 }
-                ObserveFreshFrameSource(
-                    _observedFreshFrameSource
-                );
-                ObserveFreshFrameSource(
-                    _observedFreshFrameSource
-                );
-                ObserveFreshFrameSource(
-                    _observedFreshFrameSource
-                );
-                ObserveFreshFrameSource(
-                    _observedFreshFrameSource
-                );
-                ObserveFreshFrameSource(
-                    _observedFreshFrameSource
-                );
-                ObserveFreshFrameSource(
-                    _observedFreshFrameSource
-                );
-                ObserveFreshFrameSource(
-                    _observedFreshFrameSource
-                );
-                ObserveFreshFrameSource(
-                    _observedFreshFrameSource
-                );
-                ObserveFreshFrameSource(
-                    _observedFreshFrameSource
-                );
-                ObserveFreshFrameSource(
-                    _observedFreshFrameSource
-                );
-                ObserveFreshFrameSource(
-                    _observedFreshFrameSource
-                );
-                ObserveFreshFrameSource(
-                    _observedFreshFrameSource
-                );
-                ObserveFreshFrameSource(
-                    _observedFreshFrameSource
-                );
-                ObserveFreshFrameSource(
-                    _observedFreshFrameSource
-                );
-                ObserveFreshFrameSource(
-                    _observedFreshFrameSource
-                );
-
                 ObserveFreshFrameSource(
                     _observedFreshFrameSource
                 );
