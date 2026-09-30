@@ -1959,6 +1959,24 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 float completedMinimumPresence =
                     lane.pendingMinimumPresence;
 
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                KiwiH1CropTensorContentObserver.TryCapture(
+                    completedSourceFrameId,
+                    completedSourceFrameIdIsNativeSequence,
+                    completedSourceGeneration,
+                    completedSourceTicks,
+                    completedGeneration,
+                    completedCameraGeneration,
+                    completedTrackingSessionGeneration,
+                    completedSourceWidth,
+                    completedSourceHeight,
+                    completedCropMatrix,
+                    lane.cropTexture,
+                    lane.input,
+                    !_asyncComputeProbeEnabled &&
+                        !_commandBufferGraphicsProbeEnabled);
+#endif
+
                 lane.readbackPending =
                     false;
 
