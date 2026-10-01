@@ -99,11 +99,15 @@ internal sealed class KiwiH1CropTensorContentObserver : MonoBehaviour
         int[][] p={new[]{0,1,2},new[]{0,2,1},new[]{1,0,2},new[]{1,2,0},new[]{2,0,1},new[]{2,1,0}};string[] n={"RGB","RBG","GRB","GBR","BRG","BGR"};bool set=false;Match best=default;
         for(int o=0;o<2;o++)for(int k=0;k<6;k++){var m=Eval(crop,tensor,o==0,p[k],n[k]);if(!set||Better(m,best)){best=m;set=true;}}return best;
     }
-    static Match Eval(byte[] crop,float[] tensor,bool top,int[] map,string order)
+    static Match Eval(byte[] crop,float[] tensor,bool topLeft,int[] map,string order)
     {
         int bit=0,num=0,first=-1,eb0=0,ab0=0;float max=0;double sum=0;
-        for(int ch=0;ch<3;ch++)for(int y=0;y<Size;y++){int cy=top?y:Size-1-y,row=cy*Size*4,tbase=ch*Plane+y*Size;for(int x=0;x<Size;x++){int ti=tbase+x;float e=crop[row+x*4+map[ch]]/255f,a=tensor[ti];int eb=BitConverter.SingleToInt32Bits(e),ab=BitConverter.SingleToInt32Bits(a);if(eb!=ab){bit++;if(first<0){first=ti;eb0=eb;ab0=ab;}}float d;if(float.IsNaN(a)||float.IsInfinity(a)){num++;d=float.PositiveInfinity;}else{d=Mathf.Abs(a-e);if(d>Tol)num++;}if(d>max)max=d;sum+=d;}}
-        return new Match(top?"TOP_LEFT":"BOTTOM_LEFT",order,bit,num,max,sum/Count,first,eb0,ab0);
+        // Inference Engine 2.4.1 defines CoordOrigin.TopLeft by sampling
+        // texture row (Height - 1 - tensorY) into tensor row tensorY.
+        // The raw AsyncGPUReadback row index is therefore not itself the
+        // tensor coordinate origin label.
+        for(int ch=0;ch<3;ch++)for(int y=0;y<Size;y++){int cy=topLeft?Size-1-y:y,row=cy*Size*4,tbase=ch*Plane+y*Size;for(int x=0;x<Size;x++){int ti=tbase+x;float e=crop[row+x*4+map[ch]]/255f,a=tensor[ti];int eb=BitConverter.SingleToInt32Bits(e),ab=BitConverter.SingleToInt32Bits(a);if(eb!=ab){bit++;if(first<0){first=ti;eb0=eb;ab0=ab;}}float d;if(float.IsNaN(a)||float.IsInfinity(a)){num++;d=float.PositiveInfinity;}else{d=Mathf.Abs(a-e);if(d>Tol)num++;}if(d>max)max=d;sum+=d;}}
+        return new Match(topLeft?"TOP_LEFT":"BOTTOM_LEFT",order,bit,num,max,sum/Count,first,eb0,ab0);
     }
     static bool Better(Match a,Match b){if(a.bit!=b.bit)return a.bit<b.bit;if(a.numeric!=b.numeric)return a.numeric<b.numeric;if(a.max!=b.max)return a.max<b.max;return a.mean<b.mean;}
 
