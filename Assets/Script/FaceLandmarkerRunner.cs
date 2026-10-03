@@ -2111,6 +2111,19 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             var flipVertically =
                 transformationOptions.flipVertically;
 
+            // MediaPipe's vertical flip belongs to TextureFrame upload and
+            // includes the Unity(bottom-left) -> MediaPipe(top-left) origin
+            // conversion. The Sentis crop stays in Unity UV space and its
+            // TextureTransform already owns tensor CoordOrigin.TopLeft.
+            // For Rotation0, only correct actual source-content vertical
+            // mirroring at the crop sampler; do not reuse the MediaPipe
+            // input-origin flip.
+            var sentisFlipVertically =
+                transformationOptions.rotationAngle ==
+                    RotationAngle.Rotation0
+                    ? imageSource.isVerticallyFlipped
+                    : flipVertically;
+
 
             var imageProcessingOptions =
                 new Tasks.Vision.Core.ImageProcessingOptions(
@@ -2122,7 +2135,7 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
             InitializeSentisTracker(
                 imageSource.GetCurrentTexture(),
                 flipHorizontally,
-                flipVertically
+                sentisFlipVertically
             );
 
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
@@ -2208,7 +2221,11 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
                     _sentisSourceTexture = sourceTexture;
                     _sentisFlipHorizontally = flipHorizontally;
-                    _sentisFlipVertically = flipVertically;
+                    _sentisFlipVertically =
+                        refreshedTransformationOptions.rotationAngle ==
+                            RotationAngle.Rotation0
+                            ? imageSource.isVerticallyFlipped
+                            : flipVertically;
                 }
 
                 if (_kiwiTrackingResourceRebuildPending)
