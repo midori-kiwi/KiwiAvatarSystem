@@ -1670,12 +1670,22 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
             visual.visualSequence;
 
         if (
-            !visual.acceptedPublicationExact ||
             visual.backend !=
                 KiwiTrackingBackend.InferenceEngine
         )
         {
             _gpuDrawInputOutOfScopeCount++;
+            return;
+        }
+
+        if (!visual.acceptedPublicationExact)
+        {
+            _gpuDrawInputCoverageGapCount++;
+            WriteGpuDrawInputGap(
+                visual,
+                overlayTexture,
+                observationHostTicks,
+                "COVERAGE_GAP_ACCEPTED_PUBLICATION_NOT_EXACT");
             return;
         }
 
