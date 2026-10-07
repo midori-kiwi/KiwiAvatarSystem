@@ -3,22 +3,32 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using Mediapipe.Tasks.Vision.FaceLandmarker;
 using Mediapipe.Unity.Sample.FaceLandmarkDetection;
 using Unity.InferenceEngine;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 /// <summary>
 /// DIAGNOSTIC_ONLY, O(1), latest-only observer for the right-side
 /// MATCHED LANDMARK DEBUG path. It never publishes tracking state, changes
-/// cadence/backend/settings, queues samples, or reads back a texture.
+/// cadence/backend/settings or queues Product samples. The only GPU readback
+/// is a bounded DEVELOPMENT_BUILD/UNITY_EDITOR diagnostic snapshot taken at
+/// the existing right-overlay draw-input boundary; it never feeds Product state.
 /// </summary>
 [DefaultExecutionOrder(40000)]
 public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
 {
     private const string EnableEnvironment = "KIWI_H1_BOUNDARY_RUNTIME";
     private const string OutputDirectoryEnvironment = "KIWI_H1_BOUNDARY_OUTPUT";
+    private const int GpuDrawInputWidth = 384;
+    private const int GpuDrawInputHeight = 384;
+    private const int GpuDrawInputBytesPerPixel = 4;
+    private const int GpuDrawInputByteCount =
+        GpuDrawInputWidth * GpuDrawInputHeight * GpuDrawInputBytesPerPixel;
+    private const int GpuDrawInputSlotCount = 8;
     private const double AutoQuitSeconds = 107.0;
     private const double AggregatePeriodSeconds = 1.0;
     private const double WarmupEndSeconds = 10.0;
@@ -196,6 +206,110 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
         }
     }
 
+    private readonly struct GpuDrawInputIdentity
+    {
+        public readonly long requestSequence;
+        public readonly long requestHostTicks;
+        public readonly string segment;
+        public readonly long visualSequence;
+        public readonly int unityFrame;
+        public readonly long semanticTimestamp;
+        public readonly ulong canonicalFrameId;
+        public readonly ulong publicationSequence;
+        public readonly ulong sourceFrameId;
+        public readonly string sourceFrameIdDomain;
+        public readonly int sourceGeneration;
+        public readonly long sourceHostTicks;
+        public readonly int textureInstanceId;
+        public readonly int width;
+        public readonly int height;
+        public readonly string format;
+        public readonly string graphicsFormat;
+        public readonly bool sourceReadable;
+        public readonly string cpuSha256;
+
+        public GpuDrawInputIdentity(
+            long requestSequence,
+            long requestHostTicks,
+            string segment,
+            VisualIdentitySnapshot visual,
+            Texture2D texture,
+            string cpuSha256)
+        {
+            this.requestSequence = requestSequence;
+            this.requestHostTicks = requestHostTicks;
+            this.segment = segment ?? string.Empty;
+            visualSequence = visual.visualSequence;
+            unityFrame = visual.unityFrame;
+            semanticTimestamp = visual.semanticTimestamp;
+            canonicalFrameId = visual.canonicalFrameId;
+
+            AcceptedPublicationObservation publication =
+                visual.acceptedPublication;
+            InferenceDecodeObservation decode =
+                publication.decode;
+
+            publicationSequence =
+                visual.acceptedPublicationExact
+                    ? publication.publicationSequence
+                    : 0UL;
+            sourceFrameId =
+                visual.acceptedPublicationExact
+                    ? decode.sourceFrameId
+                    : 0UL;
+            sourceFrameIdDomain =
+                !visual.acceptedPublicationExact
+                    ? string.Empty
+                    : decode.sourceFrameIdIsNativeSequence
+                        ? "NATIVE_PRESENTED_SEQUENCE"
+                        : "RUNNER_FRESH_SOURCE_GENERATION_FALLBACK";
+            sourceGeneration =
+                visual.acceptedPublicationExact
+                    ? decode.sourceGeneration
+                    : 0;
+            sourceHostTicks =
+                visual.acceptedPublicationExact
+                    ? decode.sourceHostTicks
+                    : 0L;
+            textureInstanceId =
+                texture != null
+                    ? texture.GetInstanceID()
+                    : 0;
+            width =
+                texture != null
+                    ? texture.width
+                    : 0;
+            height =
+                texture != null
+                    ? texture.height
+                    : 0;
+            format =
+                texture != null
+                    ? texture.format.ToString()
+                    : string.Empty;
+            graphicsFormat =
+                texture != null
+                    ? texture.graphicsFormat.ToString()
+                    : string.Empty;
+            sourceReadable =
+                texture != null &&
+                texture.isReadable;
+            this.cpuSha256 =
+                cpuSha256 ?? string.Empty;
+        }
+    }
+
+    private sealed class GpuDrawInputSlot
+    {
+        public Texture2D snapshot;
+        public readonly byte[] cpuBytes =
+            new byte[GpuDrawInputByteCount];
+        public readonly byte[] gpuBytes =
+            new byte[GpuDrawInputByteCount];
+        public bool inFlight;
+        public long requestSequence;
+    }
+
     public struct RoiStateSnapshot
     {
         public float centerX;
@@ -355,6 +469,7 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
     private StreamWriter _roiScheduleLinkWriter;
     private StreamWriter _visualIdentityWriter;
     private StreamWriter _full468BoundaryWriter;
+    private StreamWriter _gpuDrawInputWriter;
     private string _outputDirectory;
     private string _summaryPath;
     private double _startedRealtime;
@@ -406,6 +521,20 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
     private bool _previewTimestampAdvanceLogged;
     private int _previewEpochStateMask;
     private long _overlayVisibilityLogCount;
+    private GpuDrawInputSlot[] _gpuDrawInputSlots;
+    private long _gpuDrawInputRequestSequence;
+    private long _lastGpuDrawInputVisualSequence;
+    private int _gpuDrawInputInFlight;
+    private int _gpuDrawInputMaxInFlight;
+    private long _gpuDrawInputRequestedCount;
+    private long _gpuDrawInputCompletedCount;
+    private long _gpuDrawInputExactCount;
+    private long _gpuDrawInputNonidenticalCount;
+    private long _gpuDrawInputVerticalFlipOnlyCount;
+    private long _gpuDrawInputReadbackErrorCount;
+    private long _gpuDrawInputCoverageGapCount;
+    private long _gpuDrawInputPoolExhaustedCount;
+    private long _gpuDrawInputOutOfScopeCount;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void Bootstrap()
@@ -561,6 +690,25 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
             landmarks,
             count,
             timestamp,
+            observationHostTicks);
+    }
+
+    internal static void ObserveRightOverlayGpuDrawInput(
+        Texture2D overlayTexture,
+        Color32[] cpuPixels,
+        long semanticTimestamp,
+        long observationHostTicks)
+    {
+        if (!_armed) return;
+
+        KiwiH1LandmarkerBoundaryObserver instance =
+            _activeInstance;
+        if (instance == null) return;
+
+        instance.CaptureGpuDrawInput(
+            overlayTexture,
+            cpuPixels,
+            semanticTimestamp,
             observationHostTicks);
     }
 
@@ -1027,6 +1175,12 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
             Full468ComparisonHeader("storePublication") + "," +
             Full468ComparisonHeader("publicationConsume") + "," +
             "identityExact,coverageStatus");
+        _gpuDrawInputWriter = CreateWriter(
+            "gpu_draw_input_exact.csv",
+            "requestSequence,requestHostTicks,completionHostTicks,segment,h1VisualId,visualSequence,unityFrame,semanticTimestamp,canonicalFrameId," +
+            "publicationSequence,sourceFrameId,sourceFrameIdDomain,sourceGeneration,sourceHostTicks," +
+            "textureInstanceId,width,height,format,graphicsFormat,sourceReadable,copyTextureSupport,asyncGpuReadbackSupported," +
+            "cpuSha256,gpuSha256,byteCount,directExact,verticalFlipExact,mismatchByteCount,firstMismatchByte,firstMismatchPixel,firstMismatchChannel,readbackError,coverageStatus");
         _correlationWriter = CreateWriter("segment_correlation.csv",
             "row,segment,observationHostTicks,elapsedSeconds,canonicalAvailable,canonicalValid,canonicalFrameId,canonicalUnityFrame,semanticTimestamp,semanticLandmarkCount,providerId,backend,rigidFrameId,rigidTimestamp,sourceHostTicks,arrivalHostTicks,normalizationValid,providerSourceFrameId,providerSourceTimestamp,cameraGeneration,trackingSessionGeneration,providerGeneration,modelGeneration,canonicalFaceCenterX,canonicalFaceCenterY,canonicalRotationX,canonicalRotationY,canonicalRotationZ,canonicalRotationW,canonicalEulerX,canonicalEulerY,canonicalEulerZ,continuityAvailable,continuityState,continuityProviderId,continuitySourceAgeMs,continuityArrivalAgeMs,continuityCadenceJitterRatio,hubAvailable,hubActiveProviderId,hubSourceAgeMs,hubArrivalAgeMs,hubHandoffActive,hubHandoffIsResume,hubHandoffCount,providerTransitionObserved,rawSequence,rawTimestamp,rawFingerprint,handoffSequence,handoffTimestamp,handoffFingerprint,consumeValid,consumeTimestamp,consumeFingerprint,consumeProvider,consumeBackend,consumeProviderSourceFrameId,consumeHostTicks," +
             "latestPresentationValid,latestPresentationObservationHostTicks,latestPresentationCommittedSemanticTimestamp,latestPresentationCommittedCanonicalFrameId,latestPresentationCanonicalCorrelationStatus,latestPresentationProviderMetadataExactMatch,latestPresentationNormalizationValid,latestPresentationProviderId,latestPresentationBackend,latestPresentationProviderSourceFrameId," +
@@ -1494,6 +1648,686 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
         ObservePeak(consume, ref _consumePeakDelta, ref _consumePeakTimestamp);
     }
 
+    private void CaptureGpuDrawInput(
+        Texture2D overlayTexture,
+        Color32[] cpuPixels,
+        long semanticTimestamp,
+        long observationHostTicks)
+    {
+        VisualIdentitySnapshot visual =
+            _latestVisualIdentity;
+        if (
+            !visual.valid ||
+            visual.visualSequence <= 0L ||
+            visual.visualSequence ==
+                _lastGpuDrawInputVisualSequence
+        )
+        {
+            return;
+        }
+
+        _lastGpuDrawInputVisualSequence =
+            visual.visualSequence;
+
+        if (
+            !visual.acceptedPublicationExact ||
+            visual.backend !=
+                KiwiTrackingBackend.InferenceEngine
+        )
+        {
+            _gpuDrawInputOutOfScopeCount++;
+            return;
+        }
+
+        if (
+            semanticTimestamp !=
+                visual.semanticTimestamp
+        )
+        {
+            _gpuDrawInputCoverageGapCount++;
+            WriteGpuDrawInputGap(
+                visual,
+                overlayTexture,
+                observationHostTicks,
+                "COVERAGE_GAP_VISUAL_IDENTITY_TIMESTAMP_MISMATCH");
+            return;
+        }
+
+        if (
+            overlayTexture == null ||
+            cpuPixels == null ||
+            overlayTexture.width !=
+                GpuDrawInputWidth ||
+            overlayTexture.height !=
+                GpuDrawInputHeight ||
+            overlayTexture.format !=
+                TextureFormat.RGBA32 ||
+            cpuPixels.Length !=
+                GpuDrawInputWidth *
+                GpuDrawInputHeight
+        )
+        {
+            _gpuDrawInputCoverageGapCount++;
+            WriteGpuDrawInputGap(
+                visual,
+                overlayTexture,
+                observationHostTicks,
+                "COVERAGE_GAP_SOURCE_TEXTURE_OR_CPU_PIXELS_INVALID");
+            return;
+        }
+
+        if (
+            !SystemInfo.supportsAsyncGPUReadback ||
+            (
+                SystemInfo.copyTextureSupport &
+                CopyTextureSupport.Basic
+            ) == 0
+        )
+        {
+            _gpuDrawInputCoverageGapCount++;
+            WriteGpuDrawInputGap(
+                visual,
+                overlayTexture,
+                observationHostTicks,
+                "COVERAGE_GAP_GPU_COPY_OR_ASYNC_READBACK_UNSUPPORTED");
+            return;
+        }
+
+        EnsureGpuDrawInputSlots();
+
+        int slotIndex =
+            FindFreeGpuDrawInputSlot();
+        if (slotIndex < 0)
+        {
+            _gpuDrawInputPoolExhaustedCount++;
+            _gpuDrawInputCoverageGapCount++;
+            WriteGpuDrawInputGap(
+                visual,
+                overlayTexture,
+                observationHostTicks,
+                "COVERAGE_GAP_READBACK_POOL_EXHAUSTED");
+            return;
+        }
+
+        GpuDrawInputSlot slot =
+            _gpuDrawInputSlots[slotIndex];
+        EncodeColor32Bytes(
+            cpuPixels,
+            slot.cpuBytes);
+
+        string cpuSha256 =
+            Sha256Hex(slot.cpuBytes);
+        long requestSequence =
+            ++_gpuDrawInputRequestSequence;
+        var identity =
+            new GpuDrawInputIdentity(
+                requestSequence,
+                observationHostTicks,
+                SegmentName(),
+                visual,
+                overlayTexture,
+                cpuSha256);
+
+        slot.inFlight = true;
+        slot.requestSequence =
+            requestSequence;
+        _gpuDrawInputInFlight++;
+        _gpuDrawInputRequestedCount++;
+        _gpuDrawInputMaxInFlight =
+            Math.Max(
+                _gpuDrawInputMaxInFlight,
+                _gpuDrawInputInFlight);
+
+        var commandBuffer =
+            new CommandBuffer
+            {
+                name =
+                    "Kiwi H1 Overlay GPU Draw Input Exact"
+            };
+
+        try
+        {
+            commandBuffer.CopyTexture(
+                new RenderTargetIdentifier(
+                    overlayTexture),
+                new RenderTargetIdentifier(
+                    slot.snapshot));
+
+            commandBuffer.RequestAsyncReadback(
+                slot.snapshot,
+                0,
+                TextureFormat.RGBA32,
+                request =>
+                    CompleteGpuDrawInputReadback(
+                        slotIndex,
+                        identity,
+                        request));
+
+            Graphics.ExecuteCommandBuffer(
+                commandBuffer);
+        }
+        catch (Exception ex)
+        {
+            slot.inFlight = false;
+            slot.requestSequence = 0L;
+            _gpuDrawInputInFlight =
+                Math.Max(
+                    0,
+                    _gpuDrawInputInFlight - 1);
+            _gpuDrawInputCoverageGapCount++;
+
+            WriteGpuDrawInputRow(
+                identity,
+                System.Diagnostics.Stopwatch.GetTimestamp(),
+                string.Empty,
+                0,
+                false,
+                false,
+                0L,
+                -1,
+                -1,
+                -1,
+                true,
+                "COVERAGE_GAP_REQUEST_EXCEPTION_" +
+                    ex.GetType().Name);
+        }
+        finally
+        {
+            commandBuffer.Release();
+        }
+    }
+
+    private void EnsureGpuDrawInputSlots()
+    {
+        if (_gpuDrawInputSlots != null)
+        {
+            return;
+        }
+
+        _gpuDrawInputSlots =
+            new GpuDrawInputSlot[
+                GpuDrawInputSlotCount];
+
+        for (
+            int i = 0;
+            i < _gpuDrawInputSlots.Length;
+            i++)
+        {
+            var slot =
+                new GpuDrawInputSlot();
+
+            slot.snapshot =
+                new Texture2D(
+                    GpuDrawInputWidth,
+                    GpuDrawInputHeight,
+                    TextureFormat.RGBA32,
+                    false,
+                    true)
+                {
+                    name =
+                        "Kiwi H1 GPU Draw Input Snapshot " +
+                        i,
+                    filterMode =
+                        FilterMode.Point,
+                    wrapMode =
+                        TextureWrapMode.Clamp,
+                    hideFlags =
+                        HideFlags.DontSave
+                };
+
+            slot.snapshot.Apply(
+                false,
+                true);
+
+            _gpuDrawInputSlots[i] =
+                slot;
+        }
+    }
+
+    private int FindFreeGpuDrawInputSlot()
+    {
+        if (_gpuDrawInputSlots == null)
+        {
+            return -1;
+        }
+
+        for (
+            int i = 0;
+            i < _gpuDrawInputSlots.Length;
+            i++)
+        {
+            if (
+                !_gpuDrawInputSlots[i]
+                    .inFlight
+            )
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    private void CompleteGpuDrawInputReadback(
+        int slotIndex,
+        GpuDrawInputIdentity identity,
+        AsyncGPUReadbackRequest request)
+    {
+        if (
+            _gpuDrawInputSlots == null ||
+            slotIndex < 0 ||
+            slotIndex >=
+                _gpuDrawInputSlots.Length
+        )
+        {
+            _gpuDrawInputCoverageGapCount++;
+            return;
+        }
+
+        GpuDrawInputSlot slot =
+            _gpuDrawInputSlots[slotIndex];
+
+        if (
+            !slot.inFlight ||
+            slot.requestSequence !=
+                identity.requestSequence
+        )
+        {
+            _gpuDrawInputCoverageGapCount++;
+            return;
+        }
+
+        long completionHostTicks =
+            System.Diagnostics.Stopwatch.GetTimestamp();
+        string gpuSha256 =
+            string.Empty;
+        int byteCount = 0;
+        bool directExact = false;
+        bool verticalFlipExact = false;
+        long mismatchByteCount = 0L;
+        int firstMismatchByte = -1;
+        int firstMismatchPixel = -1;
+        int firstMismatchChannel = -1;
+        bool readbackError =
+            request.hasError;
+        string coverageStatus =
+            "COVERAGE_GAP_UNSET";
+
+        try
+        {
+            if (readbackError)
+            {
+                _gpuDrawInputReadbackErrorCount++;
+                _gpuDrawInputCoverageGapCount++;
+                coverageStatus =
+                    "COVERAGE_GAP_ASYNC_READBACK_ERROR";
+            }
+            else
+            {
+                var data =
+                    request.GetData<byte>();
+                byteCount =
+                    data.Length;
+
+                if (
+                    byteCount !=
+                        GpuDrawInputByteCount
+                )
+                {
+                    _gpuDrawInputCoverageGapCount++;
+                    coverageStatus =
+                        "COVERAGE_GAP_UNEXPECTED_READBACK_BYTE_COUNT";
+                }
+                else
+                {
+                    data.CopyTo(
+                        slot.gpuBytes);
+
+                    gpuSha256 =
+                        Sha256Hex(
+                            slot.gpuBytes);
+
+                    directExact =
+                        CompareBytes(
+                            slot.cpuBytes,
+                            slot.gpuBytes,
+                            out mismatchByteCount,
+                            out firstMismatchByte);
+
+                    if (directExact)
+                    {
+                        _gpuDrawInputExactCount++;
+                        coverageStatus =
+                            "COMPLETE_EXACT";
+                    }
+                    else
+                    {
+                        _gpuDrawInputNonidenticalCount++;
+
+                        verticalFlipExact =
+                            CompareVerticalFlip(
+                                slot.cpuBytes,
+                                slot.gpuBytes);
+
+                        if (verticalFlipExact)
+                        {
+                            _gpuDrawInputVerticalFlipOnlyCount++;
+                        }
+
+                        if (
+                            firstMismatchByte >=
+                                0
+                        )
+                        {
+                            firstMismatchPixel =
+                                firstMismatchByte /
+                                GpuDrawInputBytesPerPixel;
+                            firstMismatchChannel =
+                                firstMismatchByte %
+                                GpuDrawInputBytesPerPixel;
+                        }
+
+                        coverageStatus =
+                            verticalFlipExact
+                                ? "UNRESOLVED_READBACK_LAYOUT_VERTICAL_FLIP_ONLY"
+                                : "UNRESOLVED_NONIDENTICAL_READBACK_BYTES";
+                    }
+                }
+            }
+
+            WriteGpuDrawInputRow(
+                identity,
+                completionHostTicks,
+                gpuSha256,
+                byteCount,
+                directExact,
+                verticalFlipExact,
+                mismatchByteCount,
+                firstMismatchByte,
+                firstMismatchPixel,
+                firstMismatchChannel,
+                readbackError,
+                coverageStatus);
+        }
+        catch (Exception ex)
+        {
+            _gpuDrawInputReadbackErrorCount++;
+            _gpuDrawInputCoverageGapCount++;
+
+            WriteGpuDrawInputRow(
+                identity,
+                completionHostTicks,
+                gpuSha256,
+                byteCount,
+                false,
+                false,
+                mismatchByteCount,
+                firstMismatchByte,
+                firstMismatchPixel,
+                firstMismatchChannel,
+                true,
+                "COVERAGE_GAP_READBACK_CALLBACK_EXCEPTION_" +
+                    ex.GetType().Name);
+        }
+        finally
+        {
+            _gpuDrawInputCompletedCount++;
+            slot.inFlight = false;
+            slot.requestSequence = 0L;
+            _gpuDrawInputInFlight =
+                Math.Max(
+                    0,
+                    _gpuDrawInputInFlight - 1);
+        }
+    }
+
+    private void WriteGpuDrawInputGap(
+        VisualIdentitySnapshot visual,
+        Texture2D texture,
+        long hostTicks,
+        string coverageStatus)
+    {
+        var identity =
+            new GpuDrawInputIdentity(
+                0L,
+                hostTicks,
+                SegmentName(),
+                visual,
+                texture,
+                string.Empty);
+
+        WriteGpuDrawInputRow(
+            identity,
+            hostTicks,
+            string.Empty,
+            0,
+            false,
+            false,
+            0L,
+            -1,
+            -1,
+            -1,
+            false,
+            coverageStatus);
+    }
+
+    private void WriteGpuDrawInputRow(
+        GpuDrawInputIdentity identity,
+        long completionHostTicks,
+        string gpuSha256,
+        int byteCount,
+        bool directExact,
+        bool verticalFlipExact,
+        long mismatchByteCount,
+        int firstMismatchByte,
+        int firstMismatchPixel,
+        int firstMismatchChannel,
+        bool readbackError,
+        string coverageStatus)
+    {
+        if (_gpuDrawInputWriter == null)
+        {
+            return;
+        }
+
+        _gpuDrawInputWriter.WriteLine(
+            identity.requestSequence + "," +
+            identity.requestHostTicks + "," +
+            completionHostTicks + "," +
+            Csv(identity.segment) + "," +
+            Csv(
+                VisualId(
+                    identity.visualSequence)) + "," +
+            identity.visualSequence + "," +
+            identity.unityFrame + "," +
+            identity.semanticTimestamp + "," +
+            identity.canonicalFrameId + "," +
+            identity.publicationSequence + "," +
+            identity.sourceFrameId + "," +
+            Csv(
+                identity.sourceFrameIdDomain) + "," +
+            identity.sourceGeneration + "," +
+            identity.sourceHostTicks + "," +
+            identity.textureInstanceId + "," +
+            identity.width + "," +
+            identity.height + "," +
+            Csv(identity.format) + "," +
+            Csv(identity.graphicsFormat) + "," +
+            B(identity.sourceReadable) + "," +
+            Csv(
+                SystemInfo.copyTextureSupport
+                    .ToString()) + "," +
+            B(
+                SystemInfo
+                    .supportsAsyncGPUReadback) + "," +
+            Csv(identity.cpuSha256) + "," +
+            Csv(gpuSha256) + "," +
+            byteCount + "," +
+            B(directExact) + "," +
+            B(verticalFlipExact) + "," +
+            mismatchByteCount + "," +
+            firstMismatchByte + "," +
+            firstMismatchPixel + "," +
+            firstMismatchChannel + "," +
+            B(readbackError) + "," +
+            Csv(coverageStatus));
+    }
+
+    private static void EncodeColor32Bytes(
+        Color32[] pixels,
+        byte[] destination)
+    {
+        for (
+            int i = 0;
+            i < pixels.Length;
+            i++)
+        {
+            int offset =
+                i *
+                GpuDrawInputBytesPerPixel;
+            Color32 pixel =
+                pixels[i];
+
+            destination[offset] =
+                pixel.r;
+            destination[offset + 1] =
+                pixel.g;
+            destination[offset + 2] =
+                pixel.b;
+            destination[offset + 3] =
+                pixel.a;
+        }
+    }
+
+    private static string Sha256Hex(
+        byte[] bytes)
+    {
+        using (
+            SHA256 sha256 =
+                SHA256.Create())
+        {
+            byte[] hash =
+                sha256.ComputeHash(
+                    bytes);
+            var builder =
+                new StringBuilder(
+                    hash.Length * 2);
+
+            for (
+                int i = 0;
+                i < hash.Length;
+                i++)
+            {
+                builder.Append(
+                    hash[i].ToString(
+                        "X2",
+                        Invariant));
+            }
+
+            return builder.ToString();
+        }
+    }
+
+    private static bool CompareBytes(
+        byte[] expected,
+        byte[] actual,
+        out long mismatchCount,
+        out int firstMismatchByte)
+    {
+        mismatchCount = 0L;
+        firstMismatchByte = -1;
+
+        if (
+            expected == null ||
+            actual == null ||
+            expected.Length !=
+                actual.Length
+        )
+        {
+            return false;
+        }
+
+        for (
+            int i = 0;
+            i < expected.Length;
+            i++)
+        {
+            if (
+                expected[i] ==
+                actual[i]
+            )
+            {
+                continue;
+            }
+
+            if (
+                firstMismatchByte <
+                    0
+            )
+            {
+                firstMismatchByte =
+                    i;
+            }
+
+            mismatchCount++;
+        }
+
+        return mismatchCount == 0L;
+    }
+
+    private static bool CompareVerticalFlip(
+        byte[] cpu,
+        byte[] gpu)
+    {
+        if (
+            cpu == null ||
+            gpu == null ||
+            cpu.Length !=
+                GpuDrawInputByteCount ||
+            gpu.Length !=
+                GpuDrawInputByteCount
+        )
+        {
+            return false;
+        }
+
+        int rowBytes =
+            GpuDrawInputWidth *
+            GpuDrawInputBytesPerPixel;
+
+        for (
+            int y = 0;
+            y < GpuDrawInputHeight;
+            y++)
+        {
+            int cpuOffset =
+                y * rowBytes;
+            int gpuOffset =
+                (
+                    GpuDrawInputHeight -
+                    1 -
+                    y
+                ) *
+                rowBytes;
+
+            for (
+                int x = 0;
+                x < rowBytes;
+                x++)
+            {
+                if (
+                    cpu[cpuOffset + x] !=
+                    gpu[gpuOffset + x]
+                )
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     private void CaptureActualRightSideConsume()
     {
         if (_overlay == null || _overlayTimestampField == null ||
@@ -1822,6 +2656,7 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
         if (_acceptedFull468Writer != null) _acceptedFull468Writer.Flush();
         if (_roiWriterEventsWriter != null) _roiWriterEventsWriter.Flush();
         if (_roiScheduleLinkWriter != null) _roiScheduleLinkWriter.Flush();
+        if (_gpuDrawInputWriter != null) _gpuDrawInputWriter.Flush();
     }
 
     private void WriteSummary(bool playerClosed)
@@ -1932,6 +2767,19 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
             "RIGHT_SIDE_PRESENTATION_ELIGIBLE_COUNT=" + _presentationCount,
             "RIGHT_SIDE_PRESENTATION_DUPLICATE_TIMESTAMP_COUNT=" + _presentationDuplicateTimestampCount,
             "RIGHT_SIDE_PRESENTATION_OUT_OF_ORDER_TIMESTAMP_COUNT=" + _presentationOutOfOrderTimestampCount,
+            "GPU_DRAW_INPUT_SLOT_COUNT=" + GpuDrawInputSlotCount,
+            "GPU_DRAW_INPUT_BLOCKING_WAIT_COUNT=0",
+            "GPU_DRAW_INPUT_REQUESTED_COUNT=" + _gpuDrawInputRequestedCount,
+            "GPU_DRAW_INPUT_COMPLETED_COUNT=" + _gpuDrawInputCompletedCount,
+            "GPU_DRAW_INPUT_IN_FLIGHT_AT_SUMMARY=" + _gpuDrawInputInFlight,
+            "GPU_DRAW_INPUT_MAX_IN_FLIGHT=" + _gpuDrawInputMaxInFlight,
+            "GPU_DRAW_INPUT_EXACT_COUNT=" + _gpuDrawInputExactCount,
+            "GPU_DRAW_INPUT_NONIDENTICAL_COUNT=" + _gpuDrawInputNonidenticalCount,
+            "GPU_DRAW_INPUT_VERTICAL_FLIP_ONLY_COUNT=" + _gpuDrawInputVerticalFlipOnlyCount,
+            "GPU_DRAW_INPUT_READBACK_ERROR_COUNT=" + _gpuDrawInputReadbackErrorCount,
+            "GPU_DRAW_INPUT_COVERAGE_GAP_COUNT=" + _gpuDrawInputCoverageGapCount,
+            "GPU_DRAW_INPUT_POOL_EXHAUSTED_COUNT=" + _gpuDrawInputPoolExhaustedCount,
+            "GPU_DRAW_INPUT_OUT_OF_SCOPE_COUNT=" + _gpuDrawInputOutOfScopeCount,
             "SEGMENT_BOUNDARY_EVENT_COUNT=" + _segmentBoundaryCount,
             "SEGMENT_CORRELATION_ROW_COUNT=" + _correlationRowCount,
             "LAST_RAW_SEQUENCE=" + raw.sequence,
@@ -2957,6 +3805,7 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
         if (_roiScheduleLinkWriter != null) { _roiScheduleLinkWriter.Flush(); _roiScheduleLinkWriter.Dispose(); _roiScheduleLinkWriter = null; }
         if (_visualIdentityWriter != null) { _visualIdentityWriter.Flush(); _visualIdentityWriter.Dispose(); _visualIdentityWriter = null; }
         if (_full468BoundaryWriter != null) { _full468BoundaryWriter.Flush(); _full468BoundaryWriter.Dispose(); _full468BoundaryWriter = null; }
+        if (_gpuDrawInputWriter != null) { _gpuDrawInputWriter.Flush(); _gpuDrawInputWriter.Dispose(); _gpuDrawInputWriter = null; }
     }
 
     private string ResolveOutputDirectory()
