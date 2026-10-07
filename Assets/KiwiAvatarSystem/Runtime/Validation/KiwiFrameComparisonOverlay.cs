@@ -83,6 +83,7 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
     private KiwiTrackingFrame _canonicalFrame;
     private ulong _lastOverlayRigidFrameId;
     private bool _cameraFreshThisFrame;
+    private long _gpuDrawInputCallAttemptSequence;
     // KIWI_V5_1_PHASE16_20_7_V13_NATIVE_CAMERA_TELEMETRY
     // KIWI_V5_1_PHASE16_20_7_V14_ASYNC_ACQUISITION_TELEMETRY
     // KIWI_V5_1_PHASE16_20_7_V15_NV12_INGEST_TELEMETRY
@@ -897,6 +898,26 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
     // Root presentation, provider authority, or FacePart production state.
     private void OnGUI()
     {
+        Event currentEvent = Event.current;
+        EventType gpuDrawInputEventType =
+            currentEvent != null
+                ? currentEvent.type
+                : EventType.Ignore;
+        long gpuDrawInputCallAttemptSequence = 0L;
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        gpuDrawInputCallAttemptSequence =
+            ++_gpuDrawInputCallAttemptSequence;
+        KiwiH1LandmarkerBoundaryObserver.
+            ObserveRightOverlayGpuDrawInputOnGui(
+                gpuDrawInputCallAttemptSequence,
+                gpuDrawInputEventType,
+                Time.frameCount,
+                visible,
+                debugSemanticTimestamp,
+                debugLandmarkPreviewSemanticTimestamp,
+                System.Diagnostics.Stopwatch.GetTimestamp());
+#endif
+
         if (!visible)
         {
             return;
@@ -914,6 +935,11 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
             previewEpochMatched;
         debugLandmarkPreviewSemanticTimestamp =
             previewSemanticTimestamp;
+
+        Texture matchedPreviewTexture =
+            KiwiCameraPreviewQualityService.
+                GetMatchedPreviewOrSource(
+                    matchedTexture);
 
         Texture aspectTexture =
             liveSourceTexture != null
@@ -1047,12 +1073,27 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
             finalPreviewWidth,
             finalPreviewHeight);
 
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        KiwiH1LandmarkerBoundaryObserver.
+            ObserveRightOverlayGpuDrawInputCallSite(
+                gpuDrawInputCallAttemptSequence,
+                gpuDrawInputEventType,
+                Time.frameCount,
+                previewEpochMatched,
+                matchedPreviewTexture != null,
+                _landmarkOverlayTexture != null,
+                debugSemanticTimestamp,
+                previewSemanticTimestamp,
+                System.Diagnostics.Stopwatch.GetTimestamp());
+#endif
+
         DrawMatchedLandmarkDebugPreview(
             matchedPreviewRect,
-            KiwiCameraPreviewQualityService.
-                GetMatchedPreviewOrSource(
-                    matchedTexture),
-            previewEpochMatched);
+            matchedPreviewTexture,
+            previewEpochMatched,
+            gpuDrawInputCallAttemptSequence,
+            gpuDrawInputEventType,
+            previewSemanticTimestamp);
 
         float textY = matchedPreviewRect.yMax + 5f;
         bool semanticMatched =
@@ -1210,7 +1251,10 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
     private void DrawMatchedLandmarkDebugPreview(
         Rect previewRect,
         Texture matchedTexture,
-        bool previewEpochMatched)
+        bool previewEpochMatched,
+        long gpuDrawInputCallAttemptSequence,
+        EventType gpuDrawInputEventType,
+        long previewSemanticTimestamp)
     {
         if (!previewEpochMatched || matchedTexture == null)
         {
@@ -1237,6 +1281,11 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
         {
 #if DEVELOPMENT_BUILD || UNITY_EDITOR
             KiwiH1LandmarkerBoundaryObserver.ObserveRightOverlayGpuDrawInput(
+                gpuDrawInputCallAttemptSequence,
+                gpuDrawInputEventType,
+                Time.frameCount,
+                previewEpochMatched,
+                previewSemanticTimestamp,
                 _landmarkOverlayTexture,
                 _landmarkPixels,
                 debugSemanticTimestamp,

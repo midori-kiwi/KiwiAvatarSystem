@@ -299,6 +299,30 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
         }
     }
 
+    private enum GpuDrawInputEntryDisposition
+    {
+        ONGUI_ENTRY_REACHED,
+        CALL_SITE_PENDING,
+        CALL_NOT_ATTEMPTED_OVERLAY_NOT_VISIBLE,
+        CALL_NOT_ATTEMPTED_PREVIEW_EPOCH_MISMATCH,
+        CALL_NOT_ATTEMPTED_MATCHED_PREVIEW_TEXTURE_NULL,
+        CALL_NOT_ATTEMPTED_LANDMARK_OVERLAY_TEXTURE_NULL,
+        ENTRY_REACHED,
+        NOT_ARMED,
+        ACTIVE_INSTANCE_NULL,
+        VISUAL_INVALID,
+        VISUAL_SEQUENCE_NONPOSITIVE,
+        VISUAL_SEQUENCE_DUPLICATE,
+        BACKEND_OUT_OF_SCOPE,
+        ACCEPTED_PUBLICATION_NOT_EXACT,
+        SEMANTIC_TIMESTAMP_MISMATCH,
+        SOURCE_TEXTURE_OR_CPU_PIXELS_INVALID,
+        GPU_COPY_OR_ASYNC_READBACK_UNSUPPORTED,
+        READBACK_POOL_EXHAUSTED,
+        REQUEST_EXCEPTION,
+        REQUEST_SUBMITTED
+    }
+
     private sealed class GpuDrawInputSlot
     {
         public Texture2D snapshot;
@@ -470,6 +494,7 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
     private StreamWriter _visualIdentityWriter;
     private StreamWriter _full468BoundaryWriter;
     private StreamWriter _gpuDrawInputWriter;
+    private StreamWriter _gpuDrawInputDispositionWriter;
     private string _outputDirectory;
     private string _summaryPath;
     private double _startedRealtime;
@@ -693,19 +718,232 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
             observationHostTicks);
     }
 
+    internal static void ObserveRightOverlayGpuDrawInputOnGui(
+        long callAttemptSequence,
+        EventType eventType,
+        int callUnityFrame,
+        bool overlayVisible,
+        long semanticTimestamp,
+        long previewSemanticTimestamp,
+        long observationHostTicks)
+    {
+        GpuDrawInputEntryDisposition disposition =
+            overlayVisible
+                ? GpuDrawInputEntryDisposition.ONGUI_ENTRY_REACHED
+                : GpuDrawInputEntryDisposition.
+                    CALL_NOT_ATTEMPTED_OVERLAY_NOT_VISIBLE;
+
+        KiwiH1LandmarkerBoundaryObserver instance =
+            _activeInstance;
+        if (instance == null)
+        {
+            LogGpuDrawInputDispositionFallback(
+                callAttemptSequence,
+                "ONGUI_ENTRY",
+                disposition,
+                eventType,
+                callUnityFrame,
+                overlayVisible,
+                false,
+                false,
+                false,
+                false,
+                semanticTimestamp,
+                previewSemanticTimestamp,
+                observationHostTicks);
+            return;
+        }
+
+        instance.WriteGpuDrawInputDisposition(
+            callAttemptSequence,
+            "ONGUI_ENTRY",
+            disposition,
+            eventType,
+            callUnityFrame,
+            overlayVisible,
+            false,
+            false,
+            false,
+            false,
+            semanticTimestamp,
+            previewSemanticTimestamp,
+            observationHostTicks);
+    }
+
+    internal static void ObserveRightOverlayGpuDrawInputCallSite(
+        long callAttemptSequence,
+        EventType eventType,
+        int callUnityFrame,
+        bool previewEpochMatched,
+        bool matchedPreviewTextureAvailable,
+        bool landmarkOverlayTextureAvailable,
+        long semanticTimestamp,
+        long previewSemanticTimestamp,
+        long observationHostTicks)
+    {
+        GpuDrawInputEntryDisposition disposition =
+            !previewEpochMatched
+                ? GpuDrawInputEntryDisposition.
+                    CALL_NOT_ATTEMPTED_PREVIEW_EPOCH_MISMATCH
+                : !matchedPreviewTextureAvailable
+                    ? GpuDrawInputEntryDisposition.
+                        CALL_NOT_ATTEMPTED_MATCHED_PREVIEW_TEXTURE_NULL
+                    : !landmarkOverlayTextureAvailable
+                        ? GpuDrawInputEntryDisposition.
+                            CALL_NOT_ATTEMPTED_LANDMARK_OVERLAY_TEXTURE_NULL
+                        : GpuDrawInputEntryDisposition.
+                            CALL_SITE_PENDING;
+
+        KiwiH1LandmarkerBoundaryObserver instance =
+            _activeInstance;
+        if (instance == null)
+        {
+            LogGpuDrawInputDispositionFallback(
+                callAttemptSequence,
+                "CALL_SITE",
+                disposition,
+                eventType,
+                callUnityFrame,
+                true,
+                true,
+                previewEpochMatched,
+                matchedPreviewTextureAvailable,
+                landmarkOverlayTextureAvailable,
+                semanticTimestamp,
+                previewSemanticTimestamp,
+                observationHostTicks);
+            return;
+        }
+
+        instance.WriteGpuDrawInputDisposition(
+            callAttemptSequence,
+            "CALL_SITE",
+            disposition,
+            eventType,
+            callUnityFrame,
+            true,
+            true,
+            previewEpochMatched,
+            matchedPreviewTextureAvailable,
+            landmarkOverlayTextureAvailable,
+            semanticTimestamp,
+            previewSemanticTimestamp,
+            observationHostTicks);
+    }
+
     internal static void ObserveRightOverlayGpuDrawInput(
+        long callAttemptSequence,
+        EventType eventType,
+        int callUnityFrame,
+        bool previewEpochMatched,
+        long previewSemanticTimestamp,
         Texture2D overlayTexture,
         Color32[] cpuPixels,
         long semanticTimestamp,
         long observationHostTicks)
     {
-        if (!_armed) return;
-
         KiwiH1LandmarkerBoundaryObserver instance =
             _activeInstance;
-        if (instance == null) return;
+
+        if (instance != null)
+        {
+            instance.WriteGpuDrawInputDisposition(
+                callAttemptSequence,
+                "OBSERVER_ENTRY",
+                GpuDrawInputEntryDisposition.ENTRY_REACHED,
+                eventType,
+                callUnityFrame,
+                true,
+                true,
+                previewEpochMatched,
+                true,
+                overlayTexture != null,
+                semanticTimestamp,
+                previewSemanticTimestamp,
+                observationHostTicks);
+        }
+        else
+        {
+            LogGpuDrawInputDispositionFallback(
+                callAttemptSequence,
+                "OBSERVER_ENTRY",
+                GpuDrawInputEntryDisposition.ENTRY_REACHED,
+                eventType,
+                callUnityFrame,
+                true,
+                true,
+                previewEpochMatched,
+                true,
+                overlayTexture != null,
+                semanticTimestamp,
+                previewSemanticTimestamp,
+                observationHostTicks);
+        }
+
+        if (!_armed)
+        {
+            if (instance != null)
+            {
+                instance.WriteGpuDrawInputDisposition(
+                    callAttemptSequence,
+                    "TERMINAL",
+                    GpuDrawInputEntryDisposition.NOT_ARMED,
+                    eventType,
+                    callUnityFrame,
+                    true,
+                    true,
+                    previewEpochMatched,
+                    true,
+                    overlayTexture != null,
+                    semanticTimestamp,
+                    previewSemanticTimestamp,
+                    observationHostTicks);
+            }
+            else
+            {
+                LogGpuDrawInputDispositionFallback(
+                    callAttemptSequence,
+                    "TERMINAL",
+                    GpuDrawInputEntryDisposition.NOT_ARMED,
+                    eventType,
+                    callUnityFrame,
+                    true,
+                    true,
+                    previewEpochMatched,
+                    true,
+                    overlayTexture != null,
+                    semanticTimestamp,
+                    previewSemanticTimestamp,
+                    observationHostTicks);
+            }
+            return;
+        }
+
+        if (instance == null)
+        {
+            LogGpuDrawInputDispositionFallback(
+                callAttemptSequence,
+                "TERMINAL",
+                GpuDrawInputEntryDisposition.ACTIVE_INSTANCE_NULL,
+                eventType,
+                callUnityFrame,
+                true,
+                true,
+                previewEpochMatched,
+                true,
+                overlayTexture != null,
+                semanticTimestamp,
+                previewSemanticTimestamp,
+                observationHostTicks);
+            return;
+        }
 
         instance.CaptureGpuDrawInput(
+            callAttemptSequence,
+            eventType,
+            callUnityFrame,
+            previewEpochMatched,
+            previewSemanticTimestamp,
             overlayTexture,
             cpuPixels,
             semanticTimestamp,
@@ -1181,6 +1419,10 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
             "publicationSequence,sourceFrameId,sourceFrameIdDomain,sourceGeneration,sourceHostTicks," +
             "textureInstanceId,width,height,format,graphicsFormat,sourceReadable,copyTextureSupport,asyncGpuReadbackSupported," +
             "cpuSha256,gpuSha256,byteCount,directExact,verticalFlipExact,mismatchByteCount,firstMismatchByte,firstMismatchPixel,firstMismatchChannel,readbackError,coverageStatus");
+        _gpuDrawInputDispositionWriter = CreateWriter(
+            "gpu_draw_input_entry_disposition.csv",
+            "callAttemptSequence,stage,disposition,observationHostTicks,segment,eventType,callUnityFrame,overlayVisible,previewEvaluated,previewEpochMatched,matchedPreviewTextureAvailable,landmarkOverlayTextureAvailable,armed,activeInstancePresent," +
+            "h1VisualId,visualSequence,visualUnityFrame,semanticTimestamp,previewSemanticTimestamp,canonicalFrameId,acceptedPublicationExact,publicationSequence,sourceFrameId,sourceFrameIdDomain,sourceGeneration,sourceHostTicks");
         _correlationWriter = CreateWriter("segment_correlation.csv",
             "row,segment,observationHostTicks,elapsedSeconds,canonicalAvailable,canonicalValid,canonicalFrameId,canonicalUnityFrame,semanticTimestamp,semanticLandmarkCount,providerId,backend,rigidFrameId,rigidTimestamp,sourceHostTicks,arrivalHostTicks,normalizationValid,providerSourceFrameId,providerSourceTimestamp,cameraGeneration,trackingSessionGeneration,providerGeneration,modelGeneration,canonicalFaceCenterX,canonicalFaceCenterY,canonicalRotationX,canonicalRotationY,canonicalRotationZ,canonicalRotationW,canonicalEulerX,canonicalEulerY,canonicalEulerZ,continuityAvailable,continuityState,continuityProviderId,continuitySourceAgeMs,continuityArrivalAgeMs,continuityCadenceJitterRatio,hubAvailable,hubActiveProviderId,hubSourceAgeMs,hubArrivalAgeMs,hubHandoffActive,hubHandoffIsResume,hubHandoffCount,providerTransitionObserved,rawSequence,rawTimestamp,rawFingerprint,handoffSequence,handoffTimestamp,handoffFingerprint,consumeValid,consumeTimestamp,consumeFingerprint,consumeProvider,consumeBackend,consumeProviderSourceFrameId,consumeHostTicks," +
             "latestPresentationValid,latestPresentationObservationHostTicks,latestPresentationCommittedSemanticTimestamp,latestPresentationCommittedCanonicalFrameId,latestPresentationCanonicalCorrelationStatus,latestPresentationProviderMetadataExactMatch,latestPresentationNormalizationValid,latestPresentationProviderId,latestPresentationBackend,latestPresentationProviderSourceFrameId," +
@@ -1649,6 +1891,11 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
     }
 
     private void CaptureGpuDrawInput(
+        long callAttemptSequence,
+        EventType eventType,
+        int callUnityFrame,
+        bool previewEpochMatched,
+        long previewSemanticTimestamp,
         Texture2D overlayTexture,
         Color32[] cpuPixels,
         long semanticTimestamp,
@@ -1656,13 +1903,64 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
     {
         VisualIdentitySnapshot visual =
             _latestVisualIdentity;
+
+        if (!visual.valid)
+        {
+            WriteGpuDrawInputDisposition(
+                callAttemptSequence,
+                "TERMINAL",
+                GpuDrawInputEntryDisposition.VISUAL_INVALID,
+                eventType,
+                callUnityFrame,
+                true,
+                true,
+                previewEpochMatched,
+                true,
+                overlayTexture != null,
+                semanticTimestamp,
+                previewSemanticTimestamp,
+                observationHostTicks);
+            return;
+        }
+
+        if (visual.visualSequence <= 0L)
+        {
+            WriteGpuDrawInputDisposition(
+                callAttemptSequence,
+                "TERMINAL",
+                GpuDrawInputEntryDisposition.VISUAL_SEQUENCE_NONPOSITIVE,
+                eventType,
+                callUnityFrame,
+                true,
+                true,
+                previewEpochMatched,
+                true,
+                overlayTexture != null,
+                semanticTimestamp,
+                previewSemanticTimestamp,
+                observationHostTicks);
+            return;
+        }
+
         if (
-            !visual.valid ||
-            visual.visualSequence <= 0L ||
             visual.visualSequence ==
                 _lastGpuDrawInputVisualSequence
         )
         {
+            WriteGpuDrawInputDisposition(
+                callAttemptSequence,
+                "TERMINAL",
+                GpuDrawInputEntryDisposition.VISUAL_SEQUENCE_DUPLICATE,
+                eventType,
+                callUnityFrame,
+                true,
+                true,
+                previewEpochMatched,
+                true,
+                overlayTexture != null,
+                semanticTimestamp,
+                previewSemanticTimestamp,
+                observationHostTicks);
             return;
         }
 
@@ -1675,11 +1973,39 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
         )
         {
             _gpuDrawInputOutOfScopeCount++;
+            WriteGpuDrawInputDisposition(
+                callAttemptSequence,
+                "TERMINAL",
+                GpuDrawInputEntryDisposition.BACKEND_OUT_OF_SCOPE,
+                eventType,
+                callUnityFrame,
+                true,
+                true,
+                previewEpochMatched,
+                true,
+                overlayTexture != null,
+                semanticTimestamp,
+                previewSemanticTimestamp,
+                observationHostTicks);
             return;
         }
 
         if (!visual.acceptedPublicationExact)
         {
+            WriteGpuDrawInputDisposition(
+                callAttemptSequence,
+                "TERMINAL",
+                GpuDrawInputEntryDisposition.ACCEPTED_PUBLICATION_NOT_EXACT,
+                eventType,
+                callUnityFrame,
+                true,
+                true,
+                previewEpochMatched,
+                true,
+                overlayTexture != null,
+                semanticTimestamp,
+                previewSemanticTimestamp,
+                observationHostTicks);
             _gpuDrawInputCoverageGapCount++;
             WriteGpuDrawInputGap(
                 visual,
@@ -1694,6 +2020,20 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
                 visual.semanticTimestamp
         )
         {
+            WriteGpuDrawInputDisposition(
+                callAttemptSequence,
+                "TERMINAL",
+                GpuDrawInputEntryDisposition.SEMANTIC_TIMESTAMP_MISMATCH,
+                eventType,
+                callUnityFrame,
+                true,
+                true,
+                previewEpochMatched,
+                true,
+                overlayTexture != null,
+                semanticTimestamp,
+                previewSemanticTimestamp,
+                observationHostTicks);
             _gpuDrawInputCoverageGapCount++;
             WriteGpuDrawInputGap(
                 visual,
@@ -1717,6 +2057,20 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
                 GpuDrawInputHeight
         )
         {
+            WriteGpuDrawInputDisposition(
+                callAttemptSequence,
+                "TERMINAL",
+                GpuDrawInputEntryDisposition.SOURCE_TEXTURE_OR_CPU_PIXELS_INVALID,
+                eventType,
+                callUnityFrame,
+                true,
+                true,
+                previewEpochMatched,
+                true,
+                overlayTexture != null,
+                semanticTimestamp,
+                previewSemanticTimestamp,
+                observationHostTicks);
             _gpuDrawInputCoverageGapCount++;
             WriteGpuDrawInputGap(
                 visual,
@@ -1734,6 +2088,20 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
             ) == 0
         )
         {
+            WriteGpuDrawInputDisposition(
+                callAttemptSequence,
+                "TERMINAL",
+                GpuDrawInputEntryDisposition.GPU_COPY_OR_ASYNC_READBACK_UNSUPPORTED,
+                eventType,
+                callUnityFrame,
+                true,
+                true,
+                previewEpochMatched,
+                true,
+                overlayTexture != null,
+                semanticTimestamp,
+                previewSemanticTimestamp,
+                observationHostTicks);
             _gpuDrawInputCoverageGapCount++;
             WriteGpuDrawInputGap(
                 visual,
@@ -1749,6 +2117,20 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
             FindFreeGpuDrawInputSlot();
         if (slotIndex < 0)
         {
+            WriteGpuDrawInputDisposition(
+                callAttemptSequence,
+                "TERMINAL",
+                GpuDrawInputEntryDisposition.READBACK_POOL_EXHAUSTED,
+                eventType,
+                callUnityFrame,
+                true,
+                true,
+                previewEpochMatched,
+                true,
+                overlayTexture != null,
+                semanticTimestamp,
+                previewSemanticTimestamp,
+                observationHostTicks);
             _gpuDrawInputPoolExhaustedCount++;
             _gpuDrawInputCoverageGapCount++;
             WriteGpuDrawInputGap(
@@ -1815,9 +2197,38 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
 
             Graphics.ExecuteCommandBuffer(
                 commandBuffer);
+
+            WriteGpuDrawInputDisposition(
+                callAttemptSequence,
+                "TERMINAL",
+                GpuDrawInputEntryDisposition.REQUEST_SUBMITTED,
+                eventType,
+                callUnityFrame,
+                true,
+                true,
+                previewEpochMatched,
+                true,
+                overlayTexture != null,
+                semanticTimestamp,
+                previewSemanticTimestamp,
+                observationHostTicks);
         }
         catch (Exception ex)
         {
+            WriteGpuDrawInputDisposition(
+                callAttemptSequence,
+                "TERMINAL",
+                GpuDrawInputEntryDisposition.REQUEST_EXCEPTION,
+                eventType,
+                callUnityFrame,
+                true,
+                true,
+                previewEpochMatched,
+                true,
+                overlayTexture != null,
+                semanticTimestamp,
+                previewSemanticTimestamp,
+                observationHostTicks);
             slot.inFlight = false;
             slot.requestSequence = 0L;
             _gpuDrawInputInFlight =
@@ -2089,6 +2500,130 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
                     0,
                     _gpuDrawInputInFlight - 1);
         }
+    }
+
+    private void WriteGpuDrawInputDisposition(
+        long callAttemptSequence,
+        string stage,
+        GpuDrawInputEntryDisposition disposition,
+        EventType eventType,
+        int callUnityFrame,
+        bool overlayVisible,
+        bool previewEvaluated,
+        bool previewEpochMatched,
+        bool matchedPreviewTextureAvailable,
+        bool landmarkOverlayTextureAvailable,
+        long semanticTimestamp,
+        long previewSemanticTimestamp,
+        long observationHostTicks)
+    {
+        if (_gpuDrawInputDispositionWriter == null)
+        {
+            LogGpuDrawInputDispositionFallback(
+                callAttemptSequence,
+                stage,
+                disposition,
+                eventType,
+                callUnityFrame,
+                overlayVisible,
+                previewEvaluated,
+                previewEpochMatched,
+                matchedPreviewTextureAvailable,
+                landmarkOverlayTextureAvailable,
+                semanticTimestamp,
+                previewSemanticTimestamp,
+                observationHostTicks);
+            return;
+        }
+
+        VisualIdentitySnapshot visual =
+            _latestVisualIdentity;
+        AcceptedPublicationObservation publication =
+            visual.acceptedPublication;
+        InferenceDecodeObservation decode =
+            publication.decode;
+
+        _gpuDrawInputDispositionWriter.WriteLine(
+            callAttemptSequence + "," +
+            Csv(stage) + "," +
+            Csv(disposition.ToString()) + "," +
+            observationHostTicks + "," +
+            Csv(SegmentName()) + "," +
+            Csv(eventType.ToString()) + "," +
+            callUnityFrame + "," +
+            B(overlayVisible) + "," +
+            B(previewEvaluated) + "," +
+            B(previewEpochMatched) + "," +
+            B(matchedPreviewTextureAvailable) + "," +
+            B(landmarkOverlayTextureAvailable) + "," +
+            B(_armed) + "," +
+            B(ReferenceEquals(_activeInstance, this)) + "," +
+            Csv(
+                visual.valid
+                    ? VisualId(visual.visualSequence)
+                    : string.Empty) + "," +
+            (visual.valid ? visual.visualSequence : 0L) + "," +
+            (visual.valid ? visual.unityFrame : 0) + "," +
+            semanticTimestamp + "," +
+            previewSemanticTimestamp + "," +
+            (visual.valid ? visual.canonicalFrameId : 0UL) + "," +
+            B(visual.valid && visual.acceptedPublicationExact) + "," +
+            (visual.valid && visual.acceptedPublicationExact
+                ? publication.publicationSequence
+                : 0UL) + "," +
+            (visual.valid && visual.acceptedPublicationExact
+                ? decode.sourceFrameId
+                : 0UL) + "," +
+            Csv(
+                !visual.valid || !visual.acceptedPublicationExact
+                    ? string.Empty
+                    : decode.sourceFrameIdIsNativeSequence
+                        ? "NATIVE_PRESENTED_SEQUENCE"
+                        : "RUNNER_FRESH_SOURCE_GENERATION_FALLBACK") + "," +
+            (visual.valid && visual.acceptedPublicationExact
+                ? decode.sourceGeneration
+                : 0) + "," +
+            (visual.valid && visual.acceptedPublicationExact
+                ? decode.sourceHostTicks
+                : 0L));
+    }
+
+    private static void LogGpuDrawInputDispositionFallback(
+        long callAttemptSequence,
+        string stage,
+        GpuDrawInputEntryDisposition disposition,
+        EventType eventType,
+        int callUnityFrame,
+        bool overlayVisible,
+        bool previewEvaluated,
+        bool previewEpochMatched,
+        bool matchedPreviewTextureAvailable,
+        bool landmarkOverlayTextureAvailable,
+        long semanticTimestamp,
+        long previewSemanticTimestamp,
+        long observationHostTicks)
+    {
+        Debug.Log(
+            "[KiwiH1GpuDrawDisposition]" +
+            " callAttemptSequence=" + callAttemptSequence +
+            " stage=" + stage +
+            " disposition=" + disposition +
+            " hostTicks=" + observationHostTicks +
+            " eventType=" + eventType +
+            " callUnityFrame=" + callUnityFrame +
+            " overlayVisible=" + B(overlayVisible) +
+            " previewEvaluated=" + B(previewEvaluated) +
+            " previewEpochMatched=" + B(previewEpochMatched) +
+            " matchedPreviewTextureAvailable=" +
+                B(matchedPreviewTextureAvailable) +
+            " landmarkOverlayTextureAvailable=" +
+                B(landmarkOverlayTextureAvailable) +
+            " armed=" + B(_armed) +
+            " activeInstancePresent=" +
+                B(_activeInstance != null) +
+            " semanticTimestamp=" + semanticTimestamp +
+            " previewSemanticTimestamp=" +
+                previewSemanticTimestamp);
     }
 
     private void WriteGpuDrawInputGap(
@@ -2667,6 +3202,7 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
         if (_roiWriterEventsWriter != null) _roiWriterEventsWriter.Flush();
         if (_roiScheduleLinkWriter != null) _roiScheduleLinkWriter.Flush();
         if (_gpuDrawInputWriter != null) _gpuDrawInputWriter.Flush();
+        if (_gpuDrawInputDispositionWriter != null) _gpuDrawInputDispositionWriter.Flush();
     }
 
     private void WriteSummary(bool playerClosed)
@@ -3816,6 +4352,7 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
         if (_visualIdentityWriter != null) { _visualIdentityWriter.Flush(); _visualIdentityWriter.Dispose(); _visualIdentityWriter = null; }
         if (_full468BoundaryWriter != null) { _full468BoundaryWriter.Flush(); _full468BoundaryWriter.Dispose(); _full468BoundaryWriter = null; }
         if (_gpuDrawInputWriter != null) { _gpuDrawInputWriter.Flush(); _gpuDrawInputWriter.Dispose(); _gpuDrawInputWriter = null; }
+        if (_gpuDrawInputDispositionWriter != null) { _gpuDrawInputDispositionWriter.Flush(); _gpuDrawInputDispositionWriter.Dispose(); _gpuDrawInputDispositionWriter = null; }
     }
 
     private string ResolveOutputDirectory()
