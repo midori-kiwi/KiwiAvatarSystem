@@ -1235,6 +1235,13 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
             _landmarkOverlayTexture != null
         )
         {
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            KiwiH1LandmarkerBoundaryObserver.ObserveRightOverlayGpuDrawInput(
+                _landmarkOverlayTexture,
+                _landmarkPixels,
+                debugSemanticTimestamp,
+                System.Diagnostics.Stopwatch.GetTimestamp());
+#endif
             GUI.DrawTexture(
                 previewRect,
                 _landmarkOverlayTexture,
