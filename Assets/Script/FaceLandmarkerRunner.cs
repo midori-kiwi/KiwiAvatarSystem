@@ -489,6 +489,10 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
         // callback queued DrawLater after teardown had already started.
         private readonly object _callbackLifecycleLock =
             new object();
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        [System.ThreadStatic] private static bool _h1RawDiagnosticEnabled;
+        [System.ThreadStatic] private static KiwiH1LandmarkerBoundaryObserver.RawStoreDisposition _h1RawDiagnostic;
+#endif
 
         private Vector2[] _latestLandmarks;
         private Vector2[] _stagingLandmarks;
@@ -2924,18 +2928,32 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     submissionCameraGeneration);
 #endif
 
-                bool published =
-                    StoreTrackingData(
-                        result,
-                        timestamp,
-                        submissionHostTicks,
-                        arrivalHostTicks,
-                        submissionCameraGeneration
+                bool published = false;
 #if DEVELOPMENT_BUILD || UNITY_EDITOR
-                        ,
-                        rawObserverSequence
+                _h1RawDiagnostic = default;
+                _h1RawDiagnosticEnabled = rawObserverSequence > 0L;
+                bool rawStoreReturnedNormally = false;
+                try
+                {
+#endif
+                    published = StoreTrackingData(
+                        result, timestamp, submissionHostTicks,
+                        arrivalHostTicks, submissionCameraGeneration
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                        , rawObserverSequence
 #endif
                     );
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                    rawStoreReturnedNormally = true;
+                }
+                finally
+                {
+                    KiwiH1LandmarkerBoundaryObserver.ObserveRawStoreCompletion(
+                        rawObserverSequence, rawStoreReturnedNormally, published, _h1RawDiagnostic);
+                    _h1RawDiagnosticEnabled = false;
+                    _h1RawDiagnostic = default;
+                }
+#endif
 
 #if DEVELOPMENT_BUILD || UNITY_EDITOR
                 KiwiH1LandmarkerBoundaryObserver.
@@ -2985,6 +3003,10 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                  cameraGeneration !=
                     KiwiRuntimeGenerationContext.CameraGeneration))
             {
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                if (_h1RawDiagnosticEnabled)
+                    _h1RawDiagnostic.outcome = KiwiH1LandmarkerBoundaryObserver.RawStoreOutcome.REJECTED_GATE;
+#endif
                 return false;
             }
 
@@ -3624,6 +3646,14 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                 {
                     // Never let an older asynchronous callback overwrite a newer
                     // tracking snapshot that has already been published.
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                    bool h1StoreGateReject = !_acceptTrackingResults ||
+                        (cameraGeneration > 0 &&
+                         cameraGeneration != KiwiRuntimeGenerationContext.CameraGeneration);
+                    bool h1StoreStaleReject = _latestResultTimestamp >= 0L &&
+                        timestamp < _latestResultTimestamp;
+                    if (h1StoreGateReject || h1StoreStaleReject)
+#else
                     if (
                         !_acceptTrackingResults ||
                         (cameraGeneration > 0 &&
@@ -3634,7 +3664,14 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                             timestamp < _latestResultTimestamp
                         )
                     )
+#endif
                     {
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                        if (_h1RawDiagnosticEnabled)
+                            _h1RawDiagnostic.outcome = h1StoreGateReject
+                                ? KiwiH1LandmarkerBoundaryObserver.RawStoreOutcome.REJECTED_GATE
+                                : KiwiH1LandmarkerBoundaryObserver.RawStoreOutcome.REJECTED_STALE;
+#endif
                         return false;
                     }
 
@@ -3688,6 +3725,10 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                             _latestExpressionTimestamp = timestamp;
                         }
 
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                        if (_h1RawDiagnosticEnabled)
+                            _h1RawDiagnostic.outcome = KiwiH1LandmarkerBoundaryObserver.RawStoreOutcome.AUXILIARY_ACCEPTED;
+#endif
                         return true;
                     }
 
@@ -3762,7 +3803,19 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
 
                     _latestPrecisionData =
                         precisionData;
-
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                    if (_h1RawDiagnosticEnabled)
+                    {
+                        _h1RawDiagnostic.outcome = precisionData.isValid
+                            ? KiwiH1LandmarkerBoundaryObserver.RawStoreOutcome.MEDIAPIPE_SNAPSHOT_WRITTEN_VALID
+                            : KiwiH1LandmarkerBoundaryObserver.RawStoreOutcome.MEDIAPIPE_SNAPSHOT_WRITTEN_INVALID_PRECISION;
+                        _h1RawDiagnostic.publicationOccurred = true;
+                        _h1RawDiagnostic.precisionValid = precisionData.isValid;
+                        _h1RawDiagnostic.publishedBackend = precisionData.backend;
+                        _h1RawDiagnostic.publishedFrameId = precisionData.frameId;
+                        _h1RawDiagnostic.publishedTimestamp = precisionData.timestamp;
+                    }
+#endif
 
                     _latestExpressionData =
                         expression;
@@ -4477,6 +4530,14 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
         {
             lock (_trackingLock)
             {
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                bool h1ClearGateReject = !_acceptTrackingResults ||
+                    (cameraGeneration > 0 &&
+                     cameraGeneration != KiwiRuntimeGenerationContext.CameraGeneration);
+                bool h1ClearStaleReject = _latestResultTimestamp >= 0L &&
+                    timestamp < _latestResultTimestamp;
+                if (h1ClearGateReject || h1ClearStaleReject)
+#else
                 if (
                     !_acceptTrackingResults ||
                     (cameraGeneration > 0 &&
@@ -4487,7 +4548,14 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                         timestamp < _latestResultTimestamp
                     )
                 )
+#endif
                 {
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                    if (_h1RawDiagnosticEnabled)
+                        _h1RawDiagnostic.outcome = h1ClearGateReject
+                            ? KiwiH1LandmarkerBoundaryObserver.RawStoreOutcome.REJECTED_GATE
+                            : KiwiH1LandmarkerBoundaryObserver.RawStoreOutcome.REJECTED_STALE;
+#endif
                     return false;
                 }
 
@@ -4501,11 +4569,18 @@ namespace Mediapipe.Unity.Sample.FaceLandmarkDetection
                     // A delayed auxiliary no-face callback must not blank a
                     // valid newer Inference Engine frame. It has its own four-frame
                     // loss hysteresis and falls back here only after that gate.
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                    if (_h1RawDiagnosticEnabled)
+                        _h1RawDiagnostic.outcome = KiwiH1LandmarkerBoundaryObserver.RawStoreOutcome.NO_FACE_CLEAR_ACCEPTED_PRIMARY_PRESERVED;
+#endif
                     return true;
                 }
 
-
                 ResetLatestTrackingDataLocked();
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                if (_h1RawDiagnosticEnabled)
+                    _h1RawDiagnostic.outcome = KiwiH1LandmarkerBoundaryObserver.RawStoreOutcome.NO_FACE_CLEAR_ACCEPTED_RESET;
+#endif
                 return true;
             }
         }

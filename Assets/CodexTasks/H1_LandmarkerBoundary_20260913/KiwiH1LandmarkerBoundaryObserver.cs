@@ -419,6 +419,41 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
     }
 
     private static bool _installed;
+
+    public enum RawStoreOutcome
+    {
+        UNASSIGNED = 0, REJECTED_GATE, REJECTED_STALE,
+        NO_FACE_CLEAR_ACCEPTED_RESET, NO_FACE_CLEAR_ACCEPTED_PRIMARY_PRESERVED,
+        AUXILIARY_ACCEPTED, MEDIAPIPE_SNAPSHOT_WRITTEN_VALID,
+        MEDIAPIPE_SNAPSHOT_WRITTEN_INVALID_PRECISION
+    }
+
+    public struct RawStoreDisposition
+    {
+        public RawStoreOutcome outcome;
+        public bool publicationOccurred;
+        public bool precisionValid;
+        public KiwiTrackingBackend publishedBackend;
+        public ulong publishedFrameId;
+        public long publishedTimestamp;
+    }
+
+    private struct RawDispositionRecord
+    {
+        public long sequence, callbackTimestamp, submissionHostTicks, arrivalHostTicks;
+        public int cameraGeneration, faceCount, firstLandmarksNull, firstLandmarkCount;
+        public bool faceLandmarksNull, observerValid455, storeInputNonEmpty;
+        public bool completed, storeReturnedNormally, storeReturnValue;
+        public RawStoreDisposition store;
+    }
+
+    private const int RawRingCapacity = 4096;
+    private const int RawDrainPerFrame = 96;
+    private static readonly RawDispositionRecord[] RawRing = new RawDispositionRecord[RawRingCapacity];
+    private static long _rawNextDrain = 1L, _rawWritten, _rawOverflow, _rawMissing;
+    private static bool _rawWriteFault, _rawClosed;
+    private StreamWriter _rawWriter;
+    private string _rawSessionId;
     private static long _rawSequence;
     private static long _rawCallbackCount;
     private static long _rawLatestOverwriteCount;
@@ -597,6 +632,36 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
         {
             long sequence = ++_rawSequence;
             _rawCallbackCount++;
+            if (_rawClosed || sequence - _rawNextDrain >= RawRingCapacity)
+            {
+                if (_rawClosed) _rawMissing++; else _rawOverflow++;
+            }
+            else
+            {
+                var faces = result.faceLandmarks;
+                int faceCount = faces == null ? -1 : faces.Count;
+                int firstNull = -1, firstCount = -1;
+                if (faceCount > 0)
+                {
+                    var points = faces[0].landmarks;
+                    firstNull = points == null ? 1 : 0;
+                    firstCount = points == null ? -1 : points.Count;
+                }
+                RawRing[(int)((sequence - 1L) % RawRingCapacity)] = new RawDispositionRecord
+                {
+                    sequence = sequence,
+                    callbackTimestamp = callbackTimestamp,
+                    submissionHostTicks = submissionHostTicks,
+                    arrivalHostTicks = arrivalHostTicks,
+                    cameraGeneration = cameraGeneration,
+                    faceLandmarksNull = faces == null,
+                    faceCount = faceCount,
+                    firstLandmarksNull = firstNull,
+                    firstLandmarkCount = firstCount,
+                    observerValid455 = firstCount >= 455,
+                    storeInputNonEmpty = firstCount > 0
+                };
+            }
 
             if (_latestRaw.valid && _lastRawSequenceObservedByMain < _latestRaw.sequence)
                 _rawLatestOverwriteCount++;
@@ -625,6 +690,93 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
             ObservePeak(sample, ref _rawPeakDelta, ref _rawPeakTimestamp);
             return sequence;
         }
+    }
+
+
+    internal static void ObserveRawStoreCompletion(
+        long rawSequence, bool returnedNormally, bool storeReturnValue, RawStoreDisposition disposition)
+    {
+        if (rawSequence <= 0L) return;
+        lock (Sync)
+        {
+            if (rawSequence < _rawNextDrain || rawSequence - _rawNextDrain >= RawRingCapacity)
+            {
+                _rawMissing++;
+                return;
+            }
+            int index = (int)((rawSequence - 1L) % RawRingCapacity);
+            var record = RawRing[index];
+            if (record.sequence != rawSequence || record.completed)
+            {
+                _rawMissing++;
+                return;
+            }
+            record.completed = true;
+            record.storeReturnedNormally = returnedNormally;
+            record.storeReturnValue = storeReturnValue;
+            record.store = disposition;
+            RawRing[index] = record;
+        }
+    }
+
+    private void DrainRawRecords(int maxRows, bool includeIncomplete)
+    {
+        if (_rawWriter == null || _rawWriteFault) return;
+        for (int n = 0; n < maxRows; n++)
+        {
+            RawDispositionRecord record;
+            bool found;
+            lock (Sync)
+            {
+                if (_rawNextDrain > _rawSequence) break;
+                long sequence = _rawNextDrain;
+                int index = (int)((sequence - 1L) % RawRingCapacity);
+                record = RawRing[index];
+                if (record.sequence == sequence && !record.completed && !includeIncomplete) break;
+                found = record.sequence == sequence;
+                _rawNextDrain++;
+                if (!found) _rawMissing++;
+            }
+            if (!found) continue;
+            var outcome = record.store.outcome;
+            string completion = !record.completed ? "INCOMPLETE"
+                : !record.storeReturnedNormally ? "EXCEPTION_OR_INCOMPLETE"
+                : outcome == RawStoreOutcome.UNASSIGNED ? "UNCLASSIFIED_STORE_RETURN" : "COMPLETE";
+            try
+            {
+                _rawWriter.WriteLine(
+                    Csv(_rawSessionId) + "," + record.sequence + "," +
+                    record.callbackTimestamp + "," + record.submissionHostTicks + "," +
+                    record.arrivalHostTicks + "," + record.cameraGeneration + "," +
+                    "UNAVAILABLE,UNAVAILABLE,UNAVAILABLE,UNAVAILABLE," +
+                    B(record.faceLandmarksNull) + "," + record.faceCount + "," +
+                    record.firstLandmarksNull + "," + record.firstLandmarkCount + "," +
+                    B(record.observerValid455) + "," + B(record.storeInputNonEmpty) + "," +
+                    B(record.completed) + "," + B(record.storeReturnedNormally && record.storeReturnValue) + "," +
+                    Csv(outcome.ToString()) + "," + B(record.store.publicationOccurred) + "," +
+                    B(record.store.precisionValid) + "," + Csv(record.store.publishedBackend.ToString()) + "," +
+                    record.store.publishedFrameId + "," + record.store.publishedTimestamp + "," + Csv(completion));
+                _rawWritten++;
+            }
+            catch (IOException) { _rawWriteFault = true; break; }
+            catch (UnauthorizedAccessException) { _rawWriteFault = true; break; }
+        }
+        // Shutdown must flush the new diagnostic before summary declares coverage.
+        if (includeIncomplete && !_rawWriteFault)
+        {
+            try { _rawWriter.Flush(); }
+            catch (IOException) { _rawWriteFault = true; }
+            catch (UnauthorizedAccessException) { _rawWriteFault = true; }
+        }
+    }
+
+    private static string RawStatus()
+    {
+        lock (Sync)
+            return "produced=" + _rawSequence + ",written=" + _rawWritten +
+                ",overflow=" + _rawOverflow + ",missing=" + _rawMissing +
+                ",pending=" + (_rawSequence - _rawNextDrain + 1L) +
+                ",writeFault=" + B(_rawWriteFault);
     }
 
     internal static void ObserveRawToRunnerHandoff(
@@ -1354,6 +1506,13 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
         _outputDirectory = ResolveOutputDirectory();
         Directory.CreateDirectory(_outputDirectory);
         _summaryPath = Path.Combine(_outputDirectory, "summary.txt");
+        _rawSessionId = Guid.NewGuid().ToString("N");
+        _rawWriter = CreateWriter("raw_callback_disposition.csv",
+            "sessionId,rawSequence,callbackTimestamp,submissionHostTicks,arrivalHostTicks,cameraGeneration," +
+            "trackingSessionGeneration,providerGeneration,submittedSourceSequence,submittedSourceSequenceAvailability," +
+            "faceLandmarksNull,faceCount,firstLandmarksNull,firstLandmarkCount,observerValid455,storeInputNonEmpty," +
+            "storeCalled,storeReturned,storeOutcome,publicationOccurred,publicationPrecisionValid,publishedBackend," +
+            "publishedFrameId,publishedTimestamp,recordCompletionStatus");
         _aggregateWriter = CreateWriter("aggregate_1hz.csv",
             "elapsedSeconds,segment,rawCount,handoffCount,consumeCount,presentationCount,rawAuxOnlyCount,intentionalHandoffOverwriteCount,rawDuplicateTs,rawOutOfOrderTs,rawAbnormalGap,rawLatestSeq,rawTs,rawFingerprint,rawMaxDelta,handoffSeq,handoffTs,handoffFingerprint,consumeTs,consumeFingerprint,consumeProvider,consumeBackend,providerSourceFrameId,consumeMaxDelta,rawToConsumeAgeMs,presentationTs");
         _segmentBoundaryWriter = CreateWriter("segment_boundaries.csv",
@@ -1497,6 +1656,7 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
             CaptureOverlayVisibilityState(),
             false);
         if (!_visibilityGatePassed) return;
+        DrainRawRecords(RawDrainPerFrame, false);
         CaptureActualRightSideConsume();
         KiwiFacePartTextureTransaction.TryGetLastPresentationDecision(
             out _latestPresentationDecision);
@@ -1567,6 +1727,8 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
     {
         _armed = false;
         _quitting = true;
+        lock (Sync) _rawClosed = true;
+        DrainRawRecords(int.MaxValue, true);
         CloseActiveSegment();
         WriteAggregate(Time.realtimeSinceStartupAsDouble - _startedRealtime);
         WriteSummary(true);
@@ -1581,6 +1743,8 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
         }
 
         if (_quitting) return;
+        lock (Sync) _rawClosed = true;
+        DrainRawRecords(int.MaxValue, true);
         CloseActiveSegment();
         WriteSummary(false);
         CloseWriters();
@@ -3259,6 +3423,7 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
             "OBSERVER_STORAGE=STREAMED_CORRELATION_NO_PRODUCT_QUEUE",
             "AGGREGATE_RATE_HZ=1",
             "PERFORMANCE_AUTHORITY=NONE",
+            "RAW_CALLBACK_DISPOSITION_STATUS=" + RawStatus(),
             "PLAYER_CLOSED=" + (playerClosed ? "YES" : "NO"),
             "OVERLAY_VISIBILITY_PRE_SEGMENT_GATE=" +
                 (!_visibilityGateEvaluated
@@ -4340,6 +4505,7 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
 
     private void CloseWriters()
     {
+        if (_rawWriter != null) { _rawWriter.Flush(); _rawWriter.Dispose(); _rawWriter = null; }
         if (_aggregateWriter != null) { _aggregateWriter.Flush(); _aggregateWriter.Dispose(); _aggregateWriter = null; }
         if (_segmentBoundaryWriter != null) { _segmentBoundaryWriter.Flush(); _segmentBoundaryWriter.Dispose(); _segmentBoundaryWriter = null; }
         if (_correlationWriter != null) { _correlationWriter.Flush(); _correlationWriter.Dispose(); _correlationWriter = null; }
