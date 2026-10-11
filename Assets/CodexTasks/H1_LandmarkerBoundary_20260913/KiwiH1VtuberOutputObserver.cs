@@ -19,6 +19,7 @@ using UnityEngine.Rendering;
 public sealed class KiwiH1VtuberOutputObserver : MonoBehaviour
 {
     private const string EnableEnvironment = "KIWI_H1_BOUNDARY_RUNTIME";
+    private const string SeparateEnableEnvironment = "KIWI_H1_VTUBER_OUTPUT_RUNTIME";
     private const string OutputDirectoryEnvironment = "KIWI_H1_BOUNDARY_OUTPUT";
     private const string VtuberCameraName = "VTuberCamera";
     private const string SpoutObjectName = "SpoutOutput";
@@ -257,11 +258,20 @@ public sealed class KiwiH1VtuberOutputObserver : MonoBehaviour
 
     private static bool IsEnabled()
     {
-        string value = Environment.GetEnvironmentVariable(EnableEnvironment);
+        // This diagnostic is separate from the Game View framebuffer gate.
+        // Keep its camera/Spout probe and screen-visible fiducials disabled
+        // unless explicitly requested in addition to the H1 base flag.
         return Debug.isDebugBuild &&
-            (string.Equals(value, "1", StringComparison.OrdinalIgnoreCase) ||
-             string.Equals(value, "true", StringComparison.OrdinalIgnoreCase) ||
-             string.Equals(value, "on", StringComparison.OrdinalIgnoreCase));
+            EnabledByEnvironment(EnableEnvironment) &&
+            EnabledByEnvironment(SeparateEnableEnvironment);
+    }
+
+    private static bool EnabledByEnvironment(string name)
+    {
+        string value = Environment.GetEnvironmentVariable(name);
+        return string.Equals(value, "1", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(value, "true", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(value, "on", StringComparison.OrdinalIgnoreCase);
     }
 
     internal static void ObserveDraw(
