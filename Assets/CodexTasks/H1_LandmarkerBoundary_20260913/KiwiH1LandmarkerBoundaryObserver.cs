@@ -3142,7 +3142,7 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
             return;
         }
 
-        VisualIdentitySnapshot visual = _latestVisualIdentity;
+        VisualIdentitySnapshot visual = instance._latestVisualIdentity;
         AcceptedPublicationObservation publication = visual.acceptedPublication;
         InferenceDecodeObservation decode = publication.decode;
         KiwiFacePartTextureTransaction.CommittedPresentationSnapshot slot =
