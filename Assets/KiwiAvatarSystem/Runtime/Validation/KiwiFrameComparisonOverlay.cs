@@ -1396,6 +1396,12 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
                 ScaleMode.StretchToFill,
                 true);
 #if DEVELOPMENT_BUILD || UNITY_EDITOR
+            // Positive GUI-surface control, excluded from the landmark drawRect.
+            KiwiH1FinalFramebufferObserver.ObserveGuiSurfaceWitness(
+                gpuDrawInputCallAttemptSequence,
+                gpuDrawInputEventType,
+                Time.frameCount,
+                previewRect);
             if (
                 gpuDrawInputEventType ==
                     EventType.Repaint

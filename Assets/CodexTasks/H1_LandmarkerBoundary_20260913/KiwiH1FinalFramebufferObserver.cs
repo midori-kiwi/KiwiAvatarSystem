@@ -158,6 +158,9 @@ public sealed class KiwiH1FinalFramebufferObserver : MonoBehaviour
     private StreamWriter _requestWriter;
     private StreamWriter _exactWriter;
     private StreamWriter _firstFailureWriter;
+    private StreamWriter _witnessWriter;
+    private long _witnessAttemptCount;
+    private long _witnessGapCount;
     private string _outputDirectory;
     private string _summaryPath;
     private readonly Pending _pending = new Pending();
@@ -333,6 +336,13 @@ public sealed class KiwiH1FinalFramebufferObserver : MonoBehaviour
             "expectedRMin,expectedRMax,expectedGMin,expectedGMax," +
             "expectedBMin,expectedBMax," + IdentityHeader());
 
+        _witnessWriter = CreateWriter(
+            "gui_surface_witness.csv",
+            "callAttemptSequence,callUnityFrame,eventHostTicks," +
+            "screenWidth,screenHeight,drawX,drawY,drawWidth,drawHeight," +
+            "barcodeX,barcodeY,barcodeCell,guiDepth,guiEnabled," +
+            "guiMatrix,guiColor,cameraCandidates,disposition");
+
         for (int i = 0; i < _slots.Length; i++)
         {
             _slots[i] = new Slot();
@@ -350,6 +360,151 @@ public sealed class KiwiH1FinalFramebufferObserver : MonoBehaviour
             if (_quitting) yield break;
             CapturePendingAtEndOfFrame();
         }
+    }
+
+    // Camera.targetTexture is a camera output, NOT proof of an IMGUI target.
+    // All witness rectangles lie outside the source landmark drawRect.
+    internal static void ObserveGuiSurfaceWitness(
+        long callAttemptSequence, EventType eventType,
+        int callUnityFrame, Rect drawRect)
+    {
+        KiwiH1FinalFramebufferObserver instance = _activeInstance;
+        if (instance == null || !_armed || !instance._accepting ||
+            eventType != EventType.Repaint) return;
+        instance.RecordGuiSurfaceWitness(
+            callAttemptSequence, callUnityFrame, drawRect);
+    }
+
+    private void RecordGuiSurfaceWitness(
+        long callAttemptSequence, int callUnityFrame, Rect rect)
+    {
+        Matrix4x4 matrix = GUI.matrix;
+        Color savedColor = GUI.color;
+        int depth = GUI.depth;
+        bool guiEnabled = GUI.enabled;
+        int cell = Mathf.Clamp(Mathf.FloorToInt((rect.width - 16f) / 56f), 2, 6);
+        Rect token = new Rect(
+            rect.xMin + 8f, rect.yMin - 18f, cell * 56f, 12f);
+        Rect tl = new Rect(rect.xMin - 8f, rect.yMin - 8f, 6f, 6f);
+        Rect tr = new Rect(rect.xMax + 2f, rect.yMin - 8f, 6f, 6f);
+        Rect bl = new Rect(rect.xMin - 8f, rect.yMax + 2f, 6f, 6f);
+        Rect br = new Rect(rect.xMax + 2f, rect.yMax + 2f, 6f, 6f);
+        Rect residual = new Rect(rect.xMax + 2f, rect.center.y - 3f, 6f, 6f);
+        bool boundsValid = WitnessInScreen(token) &&
+            WitnessInScreen(tl) && WitnessInScreen(tr) &&
+            WitnessInScreen(bl) && WitnessInScreen(br) &&
+            WitnessInScreen(residual);
+        string cameraCandidates = "UNVERIFIED";
+        string outcome = "NOT_ATTEMPTED";
+        try
+        {
+            cameraCandidates = WitnessCameraCandidates();
+            if (!guiEnabled) outcome = "COVERAGE_GAP_GUI_DISABLED";
+            else if (!boundsValid) outcome = "COVERAGE_GAP_OUTSIDE_SCREEN";
+            else
+            {
+                WitnessPatch(tl, Color.red);
+                WitnessPatch(tr, Color.green);
+                WitnessPatch(bl, Color.blue);
+                WitnessPatch(br, Color.yellow);
+                WitnessPatch(residual, Color.magenta);
+                WitnessPatch(token, Color.black);
+                for (int bit = 0; bit < 56; bit++)
+                    if (WitnessBit(callAttemptSequence, callUnityFrame, bit))
+                        WitnessPatch(
+                            new Rect(token.xMin + cell * bit,
+                                token.yMin, cell, token.height),
+                            Color.white);
+                outcome = "FIDUCIAL_AND_TOKEN_DRAW_ATTEMPTED";
+                _witnessAttemptCount++;
+            }
+        }
+        catch (Exception ex)
+        {
+            outcome = "COVERAGE_GAP_EXCEPTION_" + ex.GetType().Name;
+            _witnessGapCount++;
+        }
+        finally { GUI.color = savedColor; }
+        try
+        {
+            _witnessWriter.WriteLine(
+                callAttemptSequence + "," + callUnityFrame + "," +
+                System.Diagnostics.Stopwatch.GetTimestamp() + "," +
+                Screen.width + "," + Screen.height + "," +
+                F(rect.x) + "," + F(rect.y) + "," +
+                F(rect.width) + "," + F(rect.height) + "," +
+                F(token.x) + "," + F(token.y) + "," + cell + "," +
+                depth + "," + B(guiEnabled) + "," +
+                Csv(WitnessMatrix(matrix)) + "," +
+                Csv(F(savedColor.r) + "|" + F(savedColor.g) + "|" +
+                    F(savedColor.b) + "|" + F(savedColor.a)) + "," +
+                Csv(cameraCandidates) + "," + Csv(outcome));
+        }
+        catch (Exception ex)
+        {
+            _witnessGapCount++;
+            Debug.LogError("[KiwiH1GuiWitness] write failure=" +
+                ex.GetType().Name);
+        }
+    }
+
+    private static bool WitnessInScreen(Rect r)
+    {
+        return r.xMin >= 0f && r.yMin >= 0f &&
+            r.xMax <= Screen.width && r.yMax <= Screen.height;
+    }
+
+    private static void WitnessPatch(Rect r, Color c)
+    {
+        GUI.color = c;
+        GUI.DrawTexture(
+            r, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
+    }
+
+    private static bool WitnessBit(long sequence, int frame, int bit)
+    {
+        // 1011 | uint32 callAttemptSequence | uint16 frame | 1101,
+        // MSB first. Matching must decode BOTH identifiers exactly.
+        if (bit < 4) return ((0xB >> (3 - bit)) & 1) != 0;
+        if (bit < 36)
+            return ((unchecked((uint)sequence) >> (35 - bit)) & 1u) != 0u;
+        if (bit < 52)
+            return ((unchecked((uint)frame) >> (51 - bit)) & 1u) != 0u;
+        return ((0xD >> (55 - bit)) & 1) != 0;
+    }
+
+    private static string WitnessMatrix(Matrix4x4 m)
+    {
+        var sb = new StringBuilder(255);
+        for (int i = 0; i < 16; i++)
+        {
+            if (i > 0) sb.Append('|');
+            sb.Append(F(m[i]));
+        }
+        return sb.ToString();
+    }
+
+    private static string WitnessCameraCandidates()
+    {
+        // Cameras are candidate output context, not GUI destination identity.
+        Camera[] cameras = Camera.allCameras;
+        var sb = new StringBuilder(256);
+        foreach (Camera cam in cameras)
+        {
+            if (cam == null) continue;
+            if (sb.Length > 0) sb.Append('|');
+            RenderTexture rt = cam.targetTexture;
+            sb.Append(cam.GetInstanceID()).Append(':')
+                .Append(cam.name.Replace('|', '_')).Append(':')
+                .Append(F(cam.depth)).Append(':')
+                .Append(cam.targetDisplay).Append(':')
+                .Append(B(cam.enabled)).Append(':')
+                .Append(rt != null ? rt.GetInstanceID() : 0).Append(':')
+                .Append(rt != null ? rt.width : 0).Append(':')
+                .Append(rt != null ? rt.height : 0).Append(':')
+                .Append(rt != null ? rt.graphicsFormat.ToString() : "SCREEN");
+        }
+        return sb.ToString();
     }
 
     private void QueueDraw(
@@ -1393,7 +1548,10 @@ public sealed class KiwiH1FinalFramebufferObserver : MonoBehaviour
             "MAX_IN_FLIGHT=" + _maxInFlight,
             "PENDING_AT_SUMMARY=" + B(_pending.valid),
             "SHUTDOWN_REQUESTED=" + B(_shutdownRequested),
-            "FIRST_FAILURE_WRITTEN=" + B(_firstFailureWritten)
+            "FIRST_FAILURE_WRITTEN=" + B(_firstFailureWritten),
+            "GUI_WITNESS_ATTEMPTED=" + _witnessAttemptCount,
+            "GUI_WITNESS_GAPS=" + _witnessGapCount,
+            "GUI_WITNESS_TARGET_IDENTITY=UNRESOLVED_UNTIL_POSITIVE_PIXEL_CONTROL"
         };
         File.WriteAllLines(
             _summaryPath,
@@ -1418,6 +1576,7 @@ public sealed class KiwiH1FinalFramebufferObserver : MonoBehaviour
         Close(ref _requestWriter);
         Close(ref _exactWriter);
         Close(ref _firstFailureWriter);
+        Close(ref _witnessWriter);
     }
 
     private static void Close(ref StreamWriter writer)
