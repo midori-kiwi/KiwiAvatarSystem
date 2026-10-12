@@ -875,15 +875,25 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
         out bool epochMatched,
         out long previewSemanticTimestamp)
     {
+        return GetLandmarkPreviewTexture(
+            out epochMatched, out previewSemanticTimestamp, out _);
+    }
+
+    private Texture GetLandmarkPreviewTexture(
+        out bool epochMatched,
+        out long previewSemanticTimestamp,
+        out ulong previewCanonicalFrameId)
+    {
         epochMatched = false;
         previewSemanticTimestamp = -1L;
+        previewCanonicalFrameId = 0UL;
 
         if (
             !KiwiFacePartTextureTransaction.
                 TryGetLastCommittedPresentationFrame(
                     out Texture matchedTexture,
                     out long matchedSemanticTimestamp,
-                    out _) ||
+                    out ulong matchedCanonicalFrameId) ||
             matchedTexture == null
         )
         {
@@ -892,6 +902,8 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
 
         previewSemanticTimestamp =
             matchedSemanticTimestamp;
+        previewCanonicalFrameId =
+            matchedCanonicalFrameId;
 
         epochMatched =
             debugSemanticTimestamp >= 0L &&
@@ -937,6 +949,22 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
 
         if (!visible)
         {
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            if (gpuDrawInputEventType == EventType.Repaint)
+            {
+                KiwiH1LandmarkerBoundaryObserver.
+                    ObserveRightOverlayRepaintDisposition(
+                        new KiwiH1LandmarkerBoundaryObserver.RepaintCallDisposition
+                        {
+                            callAttemptSequence = gpuDrawInputCallAttemptSequence,
+                            eventType = gpuDrawInputEventType,
+                            callUnityFrame = Time.frameCount,
+                            overlayVisible = false,
+                            guardSemanticTimestamp = debugSemanticTimestamp,
+                            terminalDisposition = "OVERLAY_NOT_VISIBLE"
+                        });
+            }
+#endif
             return;
         }
 
@@ -946,7 +974,16 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
         Texture matchedTexture =
             GetLandmarkPreviewTexture(
                 out bool previewEpochMatched,
-                out long previewSemanticTimestamp);
+                out long previewSemanticTimestamp,
+                out ulong previewCanonicalFrameId);
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        bool committedSlotAvailable =
+            KiwiFacePartTextureTransaction.TryGetLastCommittedPresentationSnapshot(
+                out KiwiFacePartTextureTransaction.CommittedPresentationSnapshot committedSlot);
+        int returnedMatchedTextureId =
+            matchedTexture != null ? matchedTexture.GetInstanceID() : 0;
+#endif
 
         debugLandmarkPreviewEpochMatched =
             previewEpochMatched;
@@ -1110,7 +1147,43 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
             previewEpochMatched,
             gpuDrawInputCallAttemptSequence,
             gpuDrawInputEventType,
-            previewSemanticTimestamp);
+            previewSemanticTimestamp,
+            out bool waitLabelAttempted,
+            out bool matchedCameraDrawAttempted,
+            out bool landmarkOverlayDrawAttempted);
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        if (gpuDrawInputEventType == EventType.Repaint)
+        {
+            KiwiH1LandmarkerBoundaryObserver.ObserveRightOverlayRepaintDisposition(
+                new KiwiH1LandmarkerBoundaryObserver.RepaintCallDisposition
+                {
+                    callAttemptSequence = gpuDrawInputCallAttemptSequence,
+                    eventType = gpuDrawInputEventType,
+                    callUnityFrame = Time.frameCount,
+                    overlayVisible = true,
+                    guardSemanticTimestamp = debugSemanticTimestamp,
+                    previewSemanticTimestamp = previewSemanticTimestamp,
+                    previewCanonicalFrameId = previewCanonicalFrameId,
+                    previewEpochMatched = previewEpochMatched,
+                    returnedMatchedTextureId = returnedMatchedTextureId,
+                    qualityMatchedPreviewTextureId =
+                        matchedPreviewTexture != null ? matchedPreviewTexture.GetInstanceID() : 0,
+                    landmarkOverlayTextureId =
+                        _landmarkOverlayTexture != null ? _landmarkOverlayTexture.GetInstanceID() : 0,
+                    committedSlotAvailable = committedSlotAvailable,
+                    committedSlot = committedSlot,
+                    waitLabelAttempted = waitLabelAttempted,
+                    matchedCameraDrawAttempted = matchedCameraDrawAttempted,
+                    landmarkOverlayDrawAttempted = landmarkOverlayDrawAttempted,
+                    terminalDisposition = waitLabelAttempted
+                        ? "WAIT_LABEL_ATTEMPTED"
+                        : landmarkOverlayDrawAttempted
+                            ? "MATCHED_CAMERA_AND_OVERLAY_ATTEMPTED"
+                            : "MATCHED_CAMERA_ONLY_ATTEMPTED"
+                });
+        }
+#endif
 
         float textY = matchedPreviewRect.yMax + 5f;
         bool semanticMatched =
@@ -1271,10 +1344,17 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
         bool previewEpochMatched,
         long gpuDrawInputCallAttemptSequence,
         EventType gpuDrawInputEventType,
-        long previewSemanticTimestamp)
+        long previewSemanticTimestamp,
+        out bool waitLabelAttempted,
+        out bool matchedCameraDrawAttempted,
+        out bool landmarkOverlayDrawAttempted)
     {
+        waitLabelAttempted = false;
+        matchedCameraDrawAttempted = false;
+        landmarkOverlayDrawAttempted = false;
         if (!previewEpochMatched || matchedTexture == null)
         {
+            waitLabelAttempted = true;
             GUI.Label(
                 previewRect,
                 "Waiting for semantic-frame-matched camera snapshot",
@@ -1282,6 +1362,7 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
             return;
         }
 
+        matchedCameraDrawAttempted = true;
         GUI.DrawTextureWithTexCoords(
             previewRect,
             matchedTexture,
@@ -1308,6 +1389,7 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
                 debugSemanticTimestamp,
                 System.Diagnostics.Stopwatch.GetTimestamp());
 #endif
+            landmarkOverlayDrawAttempted = true;
             GUI.DrawTexture(
                 previewRect,
                 _landmarkOverlayTexture,

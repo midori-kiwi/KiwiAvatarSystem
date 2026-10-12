@@ -348,6 +348,28 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
         }
     }
 
+    // One immutable record per completed Repaint; never feeds Product state.
+    internal struct RepaintCallDisposition
+    {
+        internal long callAttemptSequence;
+        internal EventType eventType;
+        internal int callUnityFrame;
+        internal bool overlayVisible;
+        internal long guardSemanticTimestamp;
+        internal long previewSemanticTimestamp;
+        internal ulong previewCanonicalFrameId;
+        internal bool previewEpochMatched;
+        internal int returnedMatchedTextureId;
+        internal int qualityMatchedPreviewTextureId;
+        internal int landmarkOverlayTextureId;
+        internal bool committedSlotAvailable;
+        internal KiwiFacePartTextureTransaction.CommittedPresentationSnapshot committedSlot;
+        internal bool waitLabelAttempted;
+        internal bool matchedCameraDrawAttempted;
+        internal bool landmarkOverlayDrawAttempted;
+        internal string terminalDisposition;
+    }
+
     private enum GpuDrawInputEntryDisposition
     {
         ONGUI_ENTRY_REACHED,
@@ -583,6 +605,7 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
     private StreamWriter _gpuDrawInputWriter;
     private StreamWriter _gpuDrawInputRasterSourceWriter;
     private StreamWriter _gpuDrawInputDispositionWriter;
+    private StreamWriter _repaintCallDispositionWriter;
     private string _outputDirectory;
     private string _summaryPath;
     private double _startedRealtime;
@@ -1741,6 +1764,15 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
             "gpu_draw_input_entry_disposition.csv",
             "callAttemptSequence,stage,disposition,observationHostTicks,segment,eventType,callUnityFrame,overlayVisible,previewEvaluated,previewEpochMatched,matchedPreviewTextureAvailable,landmarkOverlayTextureAvailable,armed,activeInstancePresent," +
             "h1VisualId,visualSequence,visualUnityFrame,semanticTimestamp,previewSemanticTimestamp,canonicalFrameId,acceptedPublicationExact,publicationSequence,sourceFrameId,sourceFrameIdDomain,sourceGeneration,sourceHostTicks,eligibleRepaintCallAttemptSequence,eligibleRepaintRequestSequence");
+        _repaintCallDispositionWriter = CreateWriter(
+            "repaint_call_disposition.csv",
+            "callAttemptSequence,eventType,callUnityFrame,terminalHostTicks,segment,overlayVisible,terminalDisposition," +
+            "waitLabelAttempted,matchedCameraDrawAttempted,landmarkOverlayDrawAttempted,previewEpochMatched," +
+            "guardSemanticTimestamp,previewSemanticTimestamp,previewCanonicalFrameId,returnedMatchedTextureId,qualityMatchedPreviewTextureId,landmarkOverlayTextureId," +
+            "committedSlotAvailable,slotSemanticTimestamp,slotCanonicalFrameId,slotTextureId,slotCaptureUnityFrame,slotCameraGeneration,slotTrackingSessionGeneration," +
+            "slotNativeIdentityValid,slotNativeCameraSessionGeneration,slotNativePresentedSequence,slotNativePresentedHostTicks,slotCaptureSourceTextureId,slotNativePresentationTextureId," +
+            "returnedFrameSlotExact,h1IdentityAvailable,h1VisualId,visualSequence,visualUnityFrame,h1SemanticTimestamp,h1CanonicalFrameId,acceptedPublicationExact," +
+            "publicationSequence,sourceFrameId,sourceFrameIdDomain,sourceGeneration,sourceHostTicks");
         _correlationWriter = CreateWriter("segment_correlation.csv",
             "row,segment,observationHostTicks,elapsedSeconds,canonicalAvailable,canonicalValid,canonicalFrameId,canonicalUnityFrame,semanticTimestamp,semanticLandmarkCount,providerId,backend,rigidFrameId,rigidTimestamp,sourceHostTicks,arrivalHostTicks,normalizationValid,providerSourceFrameId,providerSourceTimestamp,cameraGeneration,trackingSessionGeneration,providerGeneration,modelGeneration,canonicalFaceCenterX,canonicalFaceCenterY,canonicalRotationX,canonicalRotationY,canonicalRotationZ,canonicalRotationW,canonicalEulerX,canonicalEulerY,canonicalEulerZ,continuityAvailable,continuityState,continuityProviderId,continuitySourceAgeMs,continuityArrivalAgeMs,continuityCadenceJitterRatio,hubAvailable,hubActiveProviderId,hubSourceAgeMs,hubArrivalAgeMs,hubHandoffActive,hubHandoffIsResume,hubHandoffCount,providerTransitionObserved,rawSequence,rawTimestamp,rawFingerprint,handoffSequence,handoffTimestamp,handoffFingerprint,consumeValid,consumeTimestamp,consumeFingerprint,consumeProvider,consumeBackend,consumeProviderSourceFrameId,consumeHostTicks," +
             "latestPresentationValid,latestPresentationObservationHostTicks,latestPresentationCommittedSemanticTimestamp,latestPresentationCommittedCanonicalFrameId,latestPresentationCanonicalCorrelationStatus,latestPresentationProviderMetadataExactMatch,latestPresentationNormalizationValid,latestPresentationProviderId,latestPresentationBackend,latestPresentationProviderSourceFrameId," +
@@ -3098,6 +3130,83 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
         }
     }
 
+    internal static void ObserveRightOverlayRepaintDisposition(
+        RepaintCallDisposition call)
+    {
+        if (call.eventType != EventType.Repaint || !_armed) return;
+        KiwiH1LandmarkerBoundaryObserver instance = _activeInstance;
+        if (instance == null || instance._repaintCallDispositionWriter == null)
+        {
+            Debug.LogError("[KiwiH1Boundary] REPAINT_TERMINAL_UNRECORDED call=" +
+                call.callAttemptSequence);
+            return;
+        }
+
+        VisualIdentitySnapshot visual = _latestVisualIdentity;
+        AcceptedPublicationObservation publication = visual.acceptedPublication;
+        InferenceDecodeObservation decode = publication.decode;
+        KiwiFacePartTextureTransaction.CommittedPresentationSnapshot slot =
+            call.committedSlot;
+        bool frameSlotExact = call.committedSlotAvailable &&
+            call.returnedMatchedTextureId != 0 &&
+            slot.textureInstanceId == call.returnedMatchedTextureId &&
+            slot.semanticTimestamp == call.previewSemanticTimestamp &&
+            slot.canonicalFrameId == call.previewCanonicalFrameId;
+
+        instance._repaintCallDispositionWriter.WriteLine(
+            call.callAttemptSequence + "," +
+            Csv(call.eventType.ToString()) + "," +
+            call.callUnityFrame + "," +
+            System.Diagnostics.Stopwatch.GetTimestamp() + "," +
+            Csv(instance.SegmentName()) + "," +
+            B(call.overlayVisible) + "," +
+            Csv(call.terminalDisposition) + "," +
+            B(call.waitLabelAttempted) + "," +
+            B(call.matchedCameraDrawAttempted) + "," +
+            B(call.landmarkOverlayDrawAttempted) + "," +
+            B(call.previewEpochMatched) + "," +
+            call.guardSemanticTimestamp + "," +
+            call.previewSemanticTimestamp + "," +
+            call.previewCanonicalFrameId + "," +
+            call.returnedMatchedTextureId + "," +
+            call.qualityMatchedPreviewTextureId + "," +
+            call.landmarkOverlayTextureId + "," +
+            B(call.committedSlotAvailable) + "," +
+            (call.committedSlotAvailable ? slot.semanticTimestamp : -1L) + "," +
+            (call.committedSlotAvailable ? slot.canonicalFrameId : 0UL) + "," +
+            (call.committedSlotAvailable ? slot.textureInstanceId : 0) + "," +
+            (call.committedSlotAvailable ? slot.captureUnityFrame : -1) + "," +
+            (call.committedSlotAvailable ? slot.cameraGeneration : 0) + "," +
+            (call.committedSlotAvailable ? slot.trackingSessionGeneration : 0) + "," +
+            B(call.committedSlotAvailable && slot.nativePresentedIdentityValid) + "," +
+            (call.committedSlotAvailable ? slot.nativeCameraSessionGeneration : 0) + "," +
+            (call.committedSlotAvailable ? slot.nativePresentedSequence : 0UL) + "," +
+            (call.committedSlotAvailable ? slot.nativePresentedHostTicks : 0L) + "," +
+            (call.committedSlotAvailable ? slot.captureSourceTextureId : 0) + "," +
+            (call.committedSlotAvailable ? slot.nativePresentationTextureId : 0) + "," +
+            B(frameSlotExact) + "," +
+            B(visual.valid) + "," +
+            Csv(visual.valid ? VisualId(visual.visualSequence) : string.Empty) + "," +
+            (visual.valid ? visual.visualSequence : 0L) + "," +
+            (visual.valid ? visual.unityFrame : 0) + "," +
+            (visual.valid ? visual.semanticTimestamp : -1L) + "," +
+            (visual.valid ? visual.canonicalFrameId : 0UL) + "," +
+            B(visual.valid && visual.acceptedPublicationExact) + "," +
+            (visual.valid && visual.acceptedPublicationExact
+                ? publication.publicationSequence : 0UL) + "," +
+            (visual.valid && visual.acceptedPublicationExact
+                ? decode.sourceFrameId : 0UL) + "," +
+            Csv(!visual.valid || !visual.acceptedPublicationExact
+                ? string.Empty
+                : decode.sourceFrameIdIsNativeSequence
+                    ? "NATIVE_PRESENTED_SEQUENCE"
+                    : "RUNNER_FRESH_SOURCE_GENERATION_FALLBACK") + "," +
+            (visual.valid && visual.acceptedPublicationExact
+                ? decode.sourceGeneration : 0) + "," +
+            (visual.valid && visual.acceptedPublicationExact
+                ? decode.sourceHostTicks : 0L));
+    }
+
     private void WriteGpuDrawInputDisposition(
         long callAttemptSequence,
         string stage,
@@ -3819,6 +3928,7 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
         if (_gpuDrawInputWriter != null) _gpuDrawInputWriter.Flush();
         if (_gpuDrawInputRasterSourceWriter != null) _gpuDrawInputRasterSourceWriter.Flush();
         if (_gpuDrawInputDispositionWriter != null) _gpuDrawInputDispositionWriter.Flush();
+        if (_repaintCallDispositionWriter != null) _repaintCallDispositionWriter.Flush();
     }
 
     private void WriteSummary(bool playerClosed)
@@ -4975,6 +5085,7 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
         if (_gpuDrawInputWriter != null) { _gpuDrawInputWriter.Flush(); _gpuDrawInputWriter.Dispose(); _gpuDrawInputWriter = null; }
         if (_gpuDrawInputRasterSourceWriter != null) { _gpuDrawInputRasterSourceWriter.Flush(); _gpuDrawInputRasterSourceWriter.Dispose(); _gpuDrawInputRasterSourceWriter = null; }
         if (_gpuDrawInputDispositionWriter != null) { _gpuDrawInputDispositionWriter.Flush(); _gpuDrawInputDispositionWriter.Dispose(); _gpuDrawInputDispositionWriter = null; }
+        if (_repaintCallDispositionWriter != null) { _repaintCallDispositionWriter.Flush(); _repaintCallDispositionWriter.Dispose(); _repaintCallDispositionWriter = null; }
     }
 
     private string ResolveOutputDirectory()
