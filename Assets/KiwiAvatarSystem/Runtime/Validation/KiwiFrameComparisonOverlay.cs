@@ -781,6 +781,8 @@ public sealed class KiwiFrameComparisonOverlay : MonoBehaviour
             _hasCanonicalFrame
                 ? _canonicalFrame.rigid
                 : default,
+            _landmarkOverlayTexture,
+            _landmarkPixels,
             System.Diagnostics.Stopwatch.GetTimestamp());
 #endif
     }

@@ -313,6 +313,11 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
         public readonly bool valid;
         public readonly long rasterSequence;
         public readonly long captureHostTicks;
+        public readonly int applyUnityFrame;
+        public readonly int textureInstanceId;
+        public readonly int postApplyCpuByteCount;
+        public readonly string postApplyCpuSha256;
+        public readonly string postApplyStatus;
         public readonly long semanticTimestamp;
         public readonly ulong canonicalFrameId;
         public readonly bool drawAllLandmarks;
@@ -325,6 +330,11 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
         public GpuDrawInputRasterSourceSnapshot(
             long rasterSequence,
             long captureHostTicks,
+            int applyUnityFrame,
+            int textureInstanceId,
+            int postApplyCpuByteCount,
+            string postApplyCpuSha256,
+            string postApplyStatus,
             long semanticTimestamp,
             ulong canonicalFrameId,
             bool drawAllLandmarks,
@@ -337,6 +347,11 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
             valid = true;
             this.rasterSequence = rasterSequence;
             this.captureHostTicks = captureHostTicks;
+            this.applyUnityFrame = applyUnityFrame;
+            this.textureInstanceId = textureInstanceId;
+            this.postApplyCpuByteCount = postApplyCpuByteCount;
+            this.postApplyCpuSha256 = postApplyCpuSha256 ?? string.Empty;
+            this.postApplyStatus = postApplyStatus ?? string.Empty;
             this.semanticTimestamp = semanticTimestamp;
             this.canonicalFrameId = canonicalFrameId;
             this.drawAllLandmarks = drawAllLandmarks;
@@ -1260,6 +1275,8 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
         bool drawRigidAnchors,
         bool hasCanonicalFrame,
         FacePrecisionTrackingData rigid,
+        Texture2D rasterTexture,
+        Color32[] submittedPixels,
         long captureHostTicks)
     {
         if (!_armed) return;
@@ -1277,6 +1294,8 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
             drawRigidAnchors,
             hasCanonicalFrame,
             rigid,
+            rasterTexture,
+            submittedPixels,
             captureHostTicks);
     }
 
@@ -1772,7 +1791,9 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
             "committedSlotAvailable,slotSemanticTimestamp,slotCanonicalFrameId,slotTextureId,slotCaptureUnityFrame,slotCameraGeneration,slotTrackingSessionGeneration," +
             "slotNativeIdentityValid,slotNativeCameraSessionGeneration,slotNativePresentedSequence,slotNativePresentedHostTicks,slotCaptureSourceTextureId,slotNativePresentationTextureId," +
             "returnedFrameSlotExact,h1IdentityAvailable,h1VisualId,visualSequence,visualUnityFrame,h1SemanticTimestamp,h1CanonicalFrameId,acceptedPublicationExact," +
-            "publicationSequence,sourceFrameId,sourceFrameIdDomain,sourceGeneration,sourceHostTicks");
+            "publicationSequence,sourceFrameId,sourceFrameIdDomain,sourceGeneration,sourceHostTicks," +
+            "rasterSequence,rasterCaptureHostTicks,rasterApplyUnityFrame,rasterTextureId,rasterSemanticTimestamp,rasterCanonicalFrameId," +
+            "rasterPostApplyCpuByteCount,rasterPostApplyCpuSha256,rasterPostApplyStatus,rasterRepaintIdentityExact,rasterVisualSemanticExact,visualFrameEqualsRepaintFrame");
         _correlationWriter = CreateWriter("segment_correlation.csv",
             "row,segment,observationHostTicks,elapsedSeconds,canonicalAvailable,canonicalValid,canonicalFrameId,canonicalUnityFrame,semanticTimestamp,semanticLandmarkCount,providerId,backend,rigidFrameId,rigidTimestamp,sourceHostTicks,arrivalHostTicks,normalizationValid,providerSourceFrameId,providerSourceTimestamp,cameraGeneration,trackingSessionGeneration,providerGeneration,modelGeneration,canonicalFaceCenterX,canonicalFaceCenterY,canonicalRotationX,canonicalRotationY,canonicalRotationZ,canonicalRotationW,canonicalEulerX,canonicalEulerY,canonicalEulerZ,continuityAvailable,continuityState,continuityProviderId,continuitySourceAgeMs,continuityArrivalAgeMs,continuityCadenceJitterRatio,hubAvailable,hubActiveProviderId,hubSourceAgeMs,hubArrivalAgeMs,hubHandoffActive,hubHandoffIsResume,hubHandoffCount,providerTransitionObserved,rawSequence,rawTimestamp,rawFingerprint,handoffSequence,handoffTimestamp,handoffFingerprint,consumeValid,consumeTimestamp,consumeFingerprint,consumeProvider,consumeBackend,consumeProviderSourceFrameId,consumeHostTicks," +
             "latestPresentationValid,latestPresentationObservationHostTicks,latestPresentationCommittedSemanticTimestamp,latestPresentationCommittedCanonicalFrameId,latestPresentationCanonicalCorrelationStatus,latestPresentationProviderMetadataExactMatch,latestPresentationNormalizationValid,latestPresentationProviderId,latestPresentationBackend,latestPresentationProviderSourceFrameId," +
@@ -2751,6 +2772,8 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
         bool drawRigidAnchors,
         bool hasCanonicalFrame,
         FacePrecisionTrackingData rigid,
+        Texture2D rasterTexture,
+        Color32[] submittedPixels,
         long captureHostTicks)
     {
         Vector2[] snapshot = null;
@@ -2768,10 +2791,66 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
                 landmarkCount);
         }
 
+        // Diagnostic CPU copy after Apply, not GPU or final framebuffer proof.
+        int textureInstanceId =
+            rasterTexture != null ? rasterTexture.GetInstanceID() : 0;
+        int postApplyCpuByteCount = 0;
+        string postApplyCpuSha256 = string.Empty;
+        string postApplyStatus = "POST_APPLY_CPU_INPUT_UNAVAILABLE";
+        try
+        {
+            if (rasterTexture != null &&
+                rasterTexture.isReadable &&
+                rasterTexture.format == TextureFormat.RGBA32 &&
+                rasterTexture.width == GpuDrawInputWidth &&
+                rasterTexture.height == GpuDrawInputHeight &&
+                submittedPixels != null &&
+                submittedPixels.Length == GpuDrawInputWidth * GpuDrawInputHeight)
+            {
+                byte[] postApplyBytes = rasterTexture.GetRawTextureData();
+                postApplyCpuByteCount = postApplyBytes.Length;
+                if (postApplyCpuByteCount != GpuDrawInputByteCount)
+                {
+                    postApplyStatus = "POST_APPLY_CPU_BYTE_COUNT_MISMATCH";
+                }
+                else
+                {
+                    bool exact = true;
+                    for (int i = 0; i < submittedPixels.Length; i++)
+                    {
+                        int p = i * GpuDrawInputBytesPerPixel;
+                        Color32 c = submittedPixels[i];
+                        if (postApplyBytes[p] != c.r ||
+                            postApplyBytes[p + 1] != c.g ||
+                            postApplyBytes[p + 2] != c.b ||
+                            postApplyBytes[p + 3] != c.a)
+                        {
+                            exact = false;
+                            break;
+                        }
+                    }
+                    postApplyCpuSha256 = Sha256Hex(postApplyBytes);
+                    postApplyStatus = exact
+                        ? "POST_APPLY_CPU_EXACT"
+                        : "POST_APPLY_CPU_SUBMITTED_MISMATCH";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            postApplyStatus = "POST_APPLY_CPU_EXCEPTION_" +
+                ex.GetType().Name;
+        }
+
         _latestGpuDrawInputRasterSource =
             new GpuDrawInputRasterSourceSnapshot(
                 ++_gpuDrawInputRasterSequence,
                 captureHostTicks,
+                Time.frameCount,
+                textureInstanceId,
+                postApplyCpuByteCount,
+                postApplyCpuSha256,
+                postApplyStatus,
                 semanticTimestamp,
                 canonicalFrameId,
                 drawAllLandmarks,
@@ -3152,12 +3231,28 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
             slot.textureInstanceId == call.returnedMatchedTextureId &&
             slot.semanticTimestamp == call.previewSemanticTimestamp &&
             slot.canonicalFrameId == call.previewCanonicalFrameId;
+        GpuDrawInputRasterSourceSnapshot raster =
+            instance._latestGpuDrawInputRasterSource;
+        long terminalHostTicks = System.Diagnostics.Stopwatch.GetTimestamp();
+        bool rasterRepaintExact = raster.valid && call.overlayVisible &&
+            raster.textureInstanceId != 0 &&
+            raster.textureInstanceId == call.landmarkOverlayTextureId &&
+            raster.semanticTimestamp == call.guardSemanticTimestamp &&
+            raster.applyUnityFrame <= call.callUnityFrame &&
+            raster.captureHostTicks <= terminalHostTicks &&
+            raster.postApplyStatus == "POST_APPLY_CPU_EXACT";
+        bool rasterVisualSemanticExact = rasterRepaintExact &&
+            visual.valid &&
+            visual.semanticTimestamp == raster.semanticTimestamp &&
+            visual.canonicalFrameId == raster.canonicalFrameId;
+        bool visualFrameEqualsRepaintFrame = visual.valid &&
+            visual.unityFrame == call.callUnityFrame;
 
         instance._repaintCallDispositionWriter.WriteLine(
             call.callAttemptSequence + "," +
             Csv(call.eventType.ToString()) + "," +
             call.callUnityFrame + "," +
-            System.Diagnostics.Stopwatch.GetTimestamp() + "," +
+            terminalHostTicks + "," +
             Csv(instance.SegmentName()) + "," +
             B(call.overlayVisible) + "," +
             Csv(call.terminalDisposition) + "," +
@@ -3204,7 +3299,19 @@ public sealed class KiwiH1LandmarkerBoundaryObserver : MonoBehaviour
             (visual.valid && visual.acceptedPublicationExact
                 ? decode.sourceGeneration : 0) + "," +
             (visual.valid && visual.acceptedPublicationExact
-                ? decode.sourceHostTicks : 0L));
+                ? decode.sourceHostTicks : 0L) + "," +
+            (raster.valid ? raster.rasterSequence : 0L) + "," +
+            (raster.valid ? raster.captureHostTicks : 0L) + "," +
+            (raster.valid ? raster.applyUnityFrame : -1) + "," +
+            (raster.valid ? raster.textureInstanceId : 0) + "," +
+            (raster.valid ? raster.semanticTimestamp : -1L) + "," +
+            (raster.valid ? raster.canonicalFrameId : 0UL) + "," +
+            (raster.valid ? raster.postApplyCpuByteCount : 0) + "," +
+            Csv(raster.valid ? raster.postApplyCpuSha256 : string.Empty) + "," +
+            Csv(raster.valid ? raster.postApplyStatus : "RASTER_NOT_OBSERVED") + "," +
+            B(rasterRepaintExact) + "," +
+            B(rasterVisualSemanticExact) + "," +
+            B(visualFrameEqualsRepaintFrame));
     }
 
     private void WriteGpuDrawInputDisposition(
