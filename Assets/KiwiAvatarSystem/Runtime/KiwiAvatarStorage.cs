@@ -122,6 +122,10 @@ public static class KiwiAvatarStorage
 
         if (string.Equals(sourceFull, destinationFull, StringComparison.OrdinalIgnoreCase))
         {
+            using (FileStream existing = File.OpenRead(sourceFull))
+            {
+                ValidateVrmGlbHeader(existing);
+            }
             return destinationFull;
         }
 
@@ -139,6 +143,8 @@ public static class KiwiAvatarStorage
                 if (maximumBytes > 0 && input.Length > maximumBytes)
                     throw new InvalidDataException(
                         "Selected VRM exceeds the configured runtime model size limit.");
+
+                ValidateVrmGlbHeader(input);
 
                 using (FileStream output = new FileStream(
                     temp, FileMode.CreateNew, FileAccess.Write, FileShare.None))
@@ -175,6 +181,48 @@ public static class KiwiAvatarStorage
                 try { File.Delete(temp); } catch { }
             }
         }
+    }
+
+    // VRM 0.x and 1.0 use the GLB 2.0 container. This is a cheap
+    // pre-publication container check, not VRM JSON/mesh validation.
+    private static void ValidateVrmGlbHeader(FileStream input)
+    {
+        const int headerSize = 20; // GLB header and first JSON chunk header.
+        if (input.Length < headerSize)
+            throw new InvalidDataException("Selected VRM has an invalid GLB header.");
+
+        byte[] header = new byte[headerSize];
+        int offset = 0;
+        while (offset < header.Length)
+        {
+            int count = input.Read(header, offset, header.Length - offset);
+            if (count == 0)
+                throw new InvalidDataException("Selected VRM has a truncated GLB header.");
+            offset += count;
+        }
+
+        uint version = ReadGlbUInt32(header, 4);
+        uint totalLength = ReadGlbUInt32(header, 8);
+        uint jsonLength = ReadGlbUInt32(header, 12);
+        uint jsonType = ReadGlbUInt32(header, 16);
+        if (header[0] != (byte)'g' || header[1] != (byte)'l' ||
+            header[2] != (byte)'T' || header[3] != (byte)'F' ||
+            version != 2 || totalLength != input.Length ||
+            jsonType != 0x4E4F534A || jsonLength == 0 ||
+            (jsonLength & 3) != 0 || jsonLength > input.Length - headerSize)
+        {
+            throw new InvalidDataException("Selected VRM is not a valid GLB 2.0 container header.");
+        }
+
+        input.Position = 0;
+    }
+
+    private static uint ReadGlbUInt32(byte[] header, int offset)
+    {
+        return (uint)header[offset] |
+               ((uint)header[offset + 1] << 8) |
+               ((uint)header[offset + 2] << 16) |
+               ((uint)header[offset + 3] << 24);
     }
 
     private static string MakeUniqueDestination(string requestedPath)
