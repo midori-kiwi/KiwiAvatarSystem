@@ -126,28 +126,52 @@ public static class KiwiAvatarStorage
         }
 
         destinationFull = MakeUniqueDestination(destinationFull);
-        string temp = destinationFull + ".importing";
+        // An existing .importing file may belong to another operation.
+        // CreateNew is the only way this invocation acquires a temporary leaf.
+        string temp = destinationFull + "." + Guid.NewGuid().ToString("N") + ".importing";
+        bool tempOwned = false;
         try
         {
-            if (File.Exists(temp))
-            {
-                File.Delete(temp);
-            }
-
             using (FileStream input = File.OpenRead(sourceFull))
-            using (FileStream output = new FileStream(temp, FileMode.CreateNew, FileAccess.Write, FileShare.None))
             {
-                input.CopyTo(output, 1024 * 1024);
-                output.Flush(true);
+                if (input.Length <= 0)
+                    throw new InvalidDataException("Selected VRM file is empty.");
+                if (maximumBytes > 0 && input.Length > maximumBytes)
+                    throw new InvalidDataException(
+                        "Selected VRM exceeds the configured runtime model size limit.");
+
+                using (FileStream output = new FileStream(
+                    temp, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+                {
+                    tempOwned = true;
+                    byte[] buffer = new byte[1024 * 1024];
+                    long copied = 0;
+                    int read;
+                    while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+                    {
+                        long nextLength = checked(copied + read);
+                        if (maximumBytes > 0 && nextLength > maximumBytes)
+                            throw new InvalidDataException(
+                                "Selected VRM exceeds the configured runtime model size limit.");
+                        output.Write(buffer, 0, read);
+                        copied = nextLength;
+                    }
+                    if (copied <= 0)
+                        throw new InvalidDataException("Selected VRM file is empty.");
+                    output.Flush(true);
+                }
             }
 
+            // The two-argument File.Move rejects an existing destination.
             File.Move(temp, destinationFull);
+            tempOwned = false;
             return destinationFull;
         }
         finally
         {
-            if (File.Exists(temp))
+            if (tempOwned)
             {
+                // Preserve the original import failure if cleanup also fails.
                 try { File.Delete(temp); } catch { }
             }
         }
