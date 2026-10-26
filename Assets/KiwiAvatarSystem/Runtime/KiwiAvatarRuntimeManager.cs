@@ -75,6 +75,7 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
         public string faceFitMethod;
         public float faceFitConfidence;
         public string avatarName;
+        public bool modelActive;
         public bool fallbackActive;
         public Transform faceAnchorParent;
         public Vector3 faceAnchorLocalPosition;
@@ -406,10 +407,8 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
 
             CompleteActiveProfileAfterMeshOptimization();
 
-            // All fallible preparation has completed. The following operations are
-            // the transactional presentation commit.
-            swapCommitted = true;
-
+            // Keep rollback enabled until the old presentation is hidden and
+            // the candidate's render hold has been successfully released.
             if (previousState.model != null && previousState.model != candidateRoot)
             {
                 previousState.model.gameObject.SetActive(false);
@@ -423,12 +422,11 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
             candidateRenderHold.Dispose();
             candidateRenderHold = null;
 
-            // KIWI_V5_1_MODEL_GENERATION_COMMIT
-            // Advance only after the transactional hot-swap has
-            // committed. Pending async face-part work from the
-            // previous model will then fail generation identity.
+            // Commit only after all reversible presentation changes succeed.
+            // Keep the generation change and ownership transfer adjacent,
+            // with no await and no potentially fallible call between them.
             KiwiRuntimeGenerationContext.AdvanceModelGeneration();
-
+            swapCommitted = true;
             candidate = null;
 
             if (
@@ -454,22 +452,34 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
                 TryRestorePreviousAvatarPresentation(previousState);
             }
 
-            if (candidate != null && candidate.Root != null)
+            if (!swapCommitted && candidate != null && candidate.Root != null)
             {
                 Destroy(candidate.Root);
             }
-            status = "Load failed: " + exception.Message;
+            status = swapCommitted
+                ? "Avatar switched, but finalization failed: " + exception.Message
+                : "Load failed: " + exception.Message;
             Debug.LogException(exception, this);
         }
         finally
         {
-            if (candidateRenderHold != null)
+            try
             {
-                candidateRenderHold.Dispose();
-                candidateRenderHold = null;
+                if (candidateRenderHold != null)
+                {
+                    candidateRenderHold.Dispose();
+                }
             }
-
-            busy = false;
+            catch (Exception cleanupException)
+            {
+                Debug.LogWarning("[KiwiAvatarSystem] Avatar rendering hold cleanup failed: " +
+                    cleanupException.Message, this);
+            }
+            finally
+            {
+                candidateRenderHold = null;
+                busy = false;
+            }
         }
     }
 
@@ -486,6 +496,7 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
             faceFitMethod = _activeFaceFitMethod,
             faceFitConfidence = _activeFaceFitConfidence,
             avatarName = currentAvatarName,
+            modelActive = _activeModel != null && _activeModel.gameObject.activeSelf,
             fallbackActive =
                 fallbackModel != null && fallbackModel.gameObject.activeSelf
         };
@@ -519,6 +530,11 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
         _activeFaceFitMethod = state.faceFitMethod;
         _activeFaceFitConfidence = state.faceFitConfidence;
         currentAvatarName = state.avatarName;
+
+        if (state.model != null)
+        {
+            state.model.gameObject.SetActive(state.modelActive);
+        }
 
         if (fallbackModel != null)
         {
