@@ -183,6 +183,123 @@ public static class KiwiAvatarStorage
         }
     }
 
+
+    // A new file is loaded outside the top-level Models list until activation commits.
+    public sealed class PendingImport : IDisposable
+    {
+        private readonly string _stageDirectory;
+        private bool _ownsStage;
+        private bool _ownsPublished;
+        private bool _committed;
+        public string LoadPath { get; }
+        public string DestinationPath { get; }
+
+        internal PendingImport(string loadPath, string destinationPath, string stageDirectory)
+        {
+            LoadPath = loadPath;
+            DestinationPath = destinationPath;
+            _stageDirectory = stageDirectory;
+        }
+
+        internal void OwnCreatedFile() { _ownsStage = true; }
+
+        public void Publish()
+        {
+            if (_stageDirectory == null || _ownsPublished) return;
+            if (!_ownsStage) throw new InvalidOperationException("Import file is not owned.");
+            File.Move(LoadPath, DestinationPath); // Does not replace an existing file.
+            _ownsStage = false;
+            _ownsPublished = true;
+        }
+
+        public void Commit()
+        {
+            if (_stageDirectory != null && !_ownsPublished)
+                throw new InvalidOperationException("Import file was not published.");
+            _committed = true;
+            RemoveEmptyStageDirectory();
+        }
+
+        public void Dispose()
+        {
+            if (_committed) return;
+            try
+            {
+                if (_ownsStage) File.Delete(LoadPath);
+                if (_ownsPublished) File.Delete(DestinationPath);
+            }
+            finally { RemoveEmptyStageDirectory(); }
+        }
+
+        private void RemoveEmptyStageDirectory()
+        {
+            if (_stageDirectory == null) return;
+            // Nonrecursive: never remove unexpected foreign files.
+            try { Directory.Delete(_stageDirectory, false); }
+            catch (DirectoryNotFoundException) { }
+            catch (IOException e) { Debug.LogWarning("[KiwiAvatarSystem] Import folder cleanup: " + e.Message); }
+            catch (UnauthorizedAccessException e) { Debug.LogWarning("[KiwiAvatarSystem] Import folder cleanup: " + e.Message); }
+        }
+    }
+
+    public static PendingImport StageExternalFile(string sourcePath, long maximumBytes)
+    {
+        if (string.IsNullOrWhiteSpace(sourcePath) || !File.Exists(sourcePath))
+            throw new FileNotFoundException("Selected VRM file was not found.", sourcePath);
+        if (!string.Equals(Path.GetExtension(sourcePath), ".vrm", StringComparison.OrdinalIgnoreCase))
+            throw new InvalidDataException("Only .vrm files are supported.");
+
+        EnsureDirectories();
+        string inputPath = Path.GetFullPath(sourcePath);
+        string cleanName = NormalizeDuplicateSuffixes(SanitizeFileName(Path.GetFileName(inputPath)));
+        if (!cleanName.EndsWith(".vrm", StringComparison.OrdinalIgnoreCase))
+            cleanName += ".vrm";
+        string destination = Path.GetFullPath(Path.Combine(ModelsDirectory, cleanName));
+
+        using (FileStream input = File.OpenRead(inputPath))
+        {
+            if (input.Length <= 0 || (maximumBytes > 0 && input.Length > maximumBytes))
+                throw new InvalidDataException("Selected VRM is empty or exceeds the size limit.");
+            ValidateVrmGlbHeader(input);
+
+            if (string.Equals(inputPath, destination, StringComparison.OrdinalIgnoreCase))
+                return new PendingImport(inputPath, destination, null); // Existing and not owned.
+
+            destination = MakeUniqueDestination(destination);
+            string folder = Path.Combine(ModelsDirectory, ".kiwi-import-" + Guid.NewGuid().ToString("N"));
+            if (Directory.Exists(folder) || File.Exists(folder))
+                throw new IOException("Import staging directory collision.");
+            Directory.CreateDirectory(folder);
+            string staged = Path.Combine(folder, Path.GetFileName(destination));
+            PendingImport pending = new PendingImport(staged, destination, folder);
+            try
+            {
+                using (FileStream output = new FileStream(staged, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+                {
+                    pending.OwnCreatedFile(); // Only after successful CreateNew.
+                    byte[] buffer = new byte[1024 * 1024];
+                    long copied = 0;
+                    int read;
+                    while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+                    {
+                        copied = checked(copied + read);
+                        if (maximumBytes > 0 && copied > maximumBytes)
+                            throw new InvalidDataException("Selected VRM exceeds the size limit.");
+                        output.Write(buffer, 0, read);
+                    }
+                    if (copied == 0) throw new InvalidDataException("Selected VRM is empty.");
+                    output.Flush(true);
+                }
+                return pending;
+            }
+            catch
+            {
+                pending.Dispose();
+                throw;
+            }
+        }
+    }
+
     // VRM 0.x and 1.0 use the GLB 2.0 container. This is a cheap
     // pre-publication container check, not VRM JSON/mesh validation.
     private static void ValidateVrmGlbHeader(FileStream input)

@@ -236,7 +236,7 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
         }
     }
 
-    public void ImportVrmFromPicker()
+    public async void ImportVrmFromPicker()
     {
         if (busy)
         {
@@ -262,35 +262,54 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
             return;
         }
 
-        ImportAndSwitch(selectedPath, maximumBytes);
+        await ImportAndSwitchAsync(selectedPath, maximumBytes);
     }
 
-    private void OnMobileModelPicked(string selectedPath)
+    private async void OnMobileModelPicked(string selectedPath)
     {
         long maximumBytes = (long)EffectiveModelSizeLimitMB * 1024L * 1024L;
-        try
-        {
-            ImportAndSwitch(selectedPath, maximumBytes);
-        }
-        finally
-        {
-            KiwiMobileFilePicker.CleanupTemporaryResult(selectedPath);
-        }
+        try { await ImportAndSwitchAsync(selectedPath, maximumBytes); }
+        finally { KiwiMobileFilePicker.CleanupTemporaryResult(selectedPath); }
     }
 
-    private void ImportAndSwitch(string selectedPath, long maximumBytes)
+    private async Task ImportAndSwitchAsync(string selectedPath, long maximumBytes)
     {
+        if (busy)
+        {
+            status = "Another avatar operation is in progress";
+            return;
+        }
+        KiwiAvatarStorage.PendingImport pending = null;
         try
         {
-            string importedPath = KiwiAvatarStorage.ImportExternalFile(selectedPath, maximumBytes);
-            ScanModels();
-            SwitchToModel(importedPath);
+            pending = KiwiAvatarStorage.StageExternalFile(selectedPath, maximumBytes);
+            await SwitchToModelAsync(pending.LoadPath, pending.DestinationPath, pending);
         }
         catch (Exception exception)
         {
             status = "Import failed: " + exception.Message;
             Debug.LogException(exception, this);
         }
+        finally
+        {
+            if (pending != null)
+            {
+                try { pending.Dispose(); }
+                catch (Exception exception)
+                {
+                    status = "Import rollback incomplete: " + exception.Message;
+                    Debug.LogError("[KiwiAvatarSystem] Import cleanup failed: " + exception, this);
+                }
+            }
+        }
+    }
+
+    private void RegisterPublishedModel(string path)
+    {
+        foreach (string existing in _modelFiles)
+            if (string.Equals(existing, path, StringComparison.OrdinalIgnoreCase)) return;
+        _modelFiles.Add(path);
+        _modelFiles.Sort(StringComparer.OrdinalIgnoreCase);
     }
 
     public void OpenModelsFolder()
@@ -301,24 +320,36 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
 
     public async void SwitchToModel(string path)
     {
-        if (busy || string.IsNullOrWhiteSpace(path))
+        try { await SwitchToModelAsync(path, path, null); }
+        catch (Exception exception)
         {
-            return;
+            status = "Load failed: " + exception.Message;
+            Debug.LogException(exception, this);
         }
+    }
 
-        path = Path.GetFullPath(path);
-        if (!File.Exists(path) || !KiwiAvatarStorage.IsPathInsideDirectory(path, KiwiAvatarStorage.ModelsDirectory))
+    private async Task<bool> SwitchToModelAsync(
+        string loadPath, string persistentPath, KiwiAvatarStorage.PendingImport pending)
+    {
+        if (busy || string.IsNullOrWhiteSpace(loadPath) || string.IsNullOrWhiteSpace(persistentPath))
+            return false;
+
+        loadPath = Path.GetFullPath(loadPath);
+        persistentPath = Path.GetFullPath(persistentPath);
+        string path = persistentPath;
+        if (!File.Exists(loadPath) ||
+            !KiwiAvatarStorage.IsPathInsideDirectory(loadPath, KiwiAvatarStorage.ModelsDirectory) ||
+            !KiwiAvatarStorage.IsPathInsideDirectory(persistentPath, KiwiAvatarStorage.ModelsDirectory))
         {
             status = "Model file is unavailable";
-            return;
+            return false;
         }
-
-        FileInfo info = new FileInfo(path);
+        FileInfo info = new FileInfo(loadPath);
         long maximumBytes = (long)EffectiveModelSizeLimitMB * 1024L * 1024L;
         if (maximumBytes > 0 && info.Length > maximumBytes)
         {
             status = "Model exceeds the " + EffectiveModelSizeLimitMB + " MB runtime limit";
-            return;
+            return false;
         }
 
         busy = true;
@@ -331,7 +362,7 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
 
         try
         {
-            candidate = await VrmUtility.LoadAsync(path, new RuntimeOnlyAwaitCaller());
+            candidate = await VrmUtility.LoadAsync(loadPath, new RuntimeOnlyAwaitCaller());
             if (candidate == null || candidate.Root == null)
             {
                 throw new InvalidDataException("VRM importer returned no model root.");
@@ -355,11 +386,11 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
                 throw new InvalidDataException("The VRM has no usable head transform.");
             }
 
-            KiwiAvatarProfile profile = LoadProfile(path);
+            KiwiAvatarProfile profile = LoadProfile(persistentPath);
             _activeInstance = candidate;
             _activeModel = candidateRoot;
             _activeHead = head;
-            _activeModelPath = path;
+            _activeModelPath = persistentPath;
             _activeProfile = profile;
             candidateBound = true;
 
@@ -425,8 +456,14 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
             // Commit only after all reversible presentation changes succeed.
             // Keep the generation change and ownership transfer adjacent,
             // with no await and no potentially fallible call between them.
+            if (pending != null) pending.Publish();
             KiwiRuntimeGenerationContext.AdvanceModelGeneration();
             swapCommitted = true;
+            if (pending != null)
+            {
+                pending.Commit();
+                RegisterPublishedModel(persistentPath);
+            }
             candidate = null;
 
             if (
@@ -481,6 +518,7 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
                 busy = false;
             }
         }
+        return swapCommitted;
     }
 
     private ActiveAvatarState CaptureActiveAvatarState()
