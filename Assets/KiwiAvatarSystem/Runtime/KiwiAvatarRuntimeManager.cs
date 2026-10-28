@@ -990,21 +990,30 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
 
     private KiwiAvatarProfile LoadProfile(string modelPath)
     {
-        KiwiAvatarProfile profile = null;
+        KiwiAvatarProfile profile;
         string profilePath = GetProfilePath(modelPath);
-        try
+        if (File.Exists(profilePath))
         {
-            if (File.Exists(profilePath))
+            // An existing profile is user data; never replace it with defaults
+            // simply because its content is empty, corrupt, or unreadable.
+            try
             {
                 profile = JsonUtility.FromJson<KiwiAvatarProfile>(File.ReadAllText(profilePath));
             }
-        }
-        catch (Exception exception)
-        {
-            Debug.LogWarning("[KiwiAvatarSystem] Profile load failed: " + exception.Message, this);
-        }
+            catch (Exception exception)
+            {
+                throw new InvalidDataException(
+                    "Could not load existing profile for " + Path.GetFileName(modelPath),
+                    exception);
+            }
 
-        if (profile == null)
+            if (profile == null)
+            {
+                throw new InvalidDataException(
+                    "Existing profile is empty for " + Path.GetFileName(modelPath));
+            }
+        }
+        else
         {
             profile = KiwiAvatarProfile.CreateDefault(
                 Path.GetFileName(modelPath),
