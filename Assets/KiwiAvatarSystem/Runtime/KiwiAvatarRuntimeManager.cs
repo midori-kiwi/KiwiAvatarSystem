@@ -787,12 +787,59 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
             KiwiAvatarStorage.EnsureDirectories();
             _activeProfile.modelFileName = Path.GetFileName(_activeModelPath);
             string json = JsonUtility.ToJson(_activeProfile, true);
-            File.WriteAllText(GetProfilePath(_activeModelPath), json);
+            WriteProfileAtomically(GetProfilePath(_activeModelPath), json);
         }
         catch (Exception exception)
         {
             status = "Profile save failed: " + exception.Message;
             Debug.LogException(exception, this);
+        }
+    }
+
+    private static void WriteProfileAtomically(string profilePath, string json)
+    {
+        // Finish and flush the new content before touching the existing profile.
+        string directory = Path.GetDirectoryName(profilePath);
+        string temporaryPath = Path.Combine(
+            directory, "." + Guid.NewGuid().ToString("N") + ".writing");
+        bool ownsTemporary = false;
+        try
+        {
+            byte[] bytes = new System.Text.UTF8Encoding(false).GetBytes(json);
+            using (FileStream stream = new FileStream(
+                temporaryPath, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+            {
+                ownsTemporary = true;
+                stream.Write(bytes, 0, bytes.Length);
+                stream.Flush(true);
+            }
+
+            if (File.Exists(profilePath))
+            {
+                // Preserve the first original; never overwrite an existing backup.
+                string originalBackup = profilePath + ".bak";
+                File.Replace(
+                    temporaryPath, profilePath,
+                    File.Exists(originalBackup) ? null : originalBackup, false);
+            }
+            else
+            {
+                // Two-argument Move refuses to overwrite a newly-created target.
+                File.Move(temporaryPath, profilePath);
+            }
+            ownsTemporary = false;
+        }
+        finally
+        {
+            if (ownsTemporary)
+            {
+                try { File.Delete(temporaryPath); }
+                catch (Exception exception)
+                {
+                    Debug.LogWarning("[KiwiAvatarSystem] Profile temp cleanup failed: " +
+                                     exception.Message);
+                }
+            }
         }
     }
 
@@ -1030,6 +1077,14 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
         {
             throw new InvalidDataException(
                 "Profile model identity mismatch for " + Path.GetFileName(modelPath));
+        }
+
+        // Unsupported schema must not be migrated and silently rewritten as v7.
+        if (profile.version < 0 || profile.version > KiwiAvatarProfile.CurrentVersion)
+        {
+            throw new InvalidDataException(
+                "Unsupported profile version " + profile.version + " for " +
+                Path.GetFileName(modelPath));
         }
 
         profile.MigrateIfNeeded();
