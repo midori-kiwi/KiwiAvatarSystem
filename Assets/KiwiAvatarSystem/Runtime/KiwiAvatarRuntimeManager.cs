@@ -1012,6 +1012,17 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
             );
         }
 
+        // Reject foreign or unidentified profile settings before candidate binding.
+        // Preserve the existing JSON and previous active avatar on mismatch.
+        if (!string.Equals(
+            profile.modelFileName,
+            Path.GetFileName(modelPath),
+            StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidDataException(
+                "Profile model identity mismatch for " + Path.GetFileName(modelPath));
+        }
+
         profile.MigrateIfNeeded();
         return profile;
     }
