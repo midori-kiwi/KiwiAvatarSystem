@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using UniGLTF;
 using UnityEngine;
@@ -59,6 +60,7 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
     private Transform _activeHead;
     private KiwiAvatarProfile _activeProfile;
     private string _activeModelPath = string.Empty;
+    private string _activeModelContentSha256 = string.Empty;
     private KiwiHeadGeometry _fallbackGeometry;
     private KiwiHeadGeometry _activeGeometry;
     private string _activeFaceFitMethod = "Embedded";
@@ -71,6 +73,7 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
         public Transform head;
         public KiwiAvatarProfile profile;
         public string modelPath;
+        public string modelContentSha256;
         public KiwiHeadGeometry geometry;
         public string faceFitMethod;
         public float faceFitConfidence;
@@ -362,6 +365,8 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
 
         try
         {
+            // Import-only IO. Bind the exact staged bytes, never the filename.
+            string modelContentSha256 = await Task.Run(() => ComputeModelContentSha256(loadPath));
             candidate = await VrmUtility.LoadAsync(loadPath, new RuntimeOnlyAwaitCaller());
             if (candidate == null || candidate.Root == null)
             {
@@ -386,11 +391,14 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
                 throw new InvalidDataException("The VRM has no usable head transform.");
             }
 
-            KiwiAvatarProfile profile = LoadProfile(persistentPath);
+            bool legacyProfilePreserved;
+            KiwiAvatarProfile profile = LoadProfile(
+                persistentPath, modelContentSha256, out legacyProfilePreserved);
             _activeInstance = candidate;
             _activeModel = candidateRoot;
             _activeHead = head;
             _activeModelPath = persistentPath;
+            _activeModelContentSha256 = modelContentSha256;
             _activeProfile = profile;
             candidateBound = true;
 
@@ -423,6 +431,11 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
                     "Candidate avatar was destroyed during async mesh preparation."
                 );
             }
+
+            // Detect changes while model loading or optimization was in flight.
+            string finalContentSha256 = await Task.Run(() => ComputeModelContentSha256(loadPath));
+            if (!string.Equals(finalContentSha256, modelContentSha256, StringComparison.Ordinal))
+                throw new InvalidDataException("Model content changed during import.");
 
             // Return to candidate authority only after worker completion. No await
             // occurs after this point before the presentation flip, so intermediate
@@ -476,7 +489,9 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
             currentAvatarName = string.IsNullOrWhiteSpace(profile.displayName)
                 ? Path.GetFileNameWithoutExtension(path)
                 : profile.displayName;
-            status = "Ready";
+            status = legacyProfilePreserved
+                ? "Ready - legacy settings preserved; new defaults used"
+                : "Ready";
             PlayerPrefs.SetString(LastAvatarKey, path);
             PlayerPrefs.Save();
             SaveActiveProfile();
@@ -530,6 +545,7 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
             head = _activeHead,
             profile = _activeProfile,
             modelPath = _activeModelPath,
+            modelContentSha256 = _activeModelContentSha256,
             geometry = _activeGeometry,
             faceFitMethod = _activeFaceFitMethod,
             faceFitConfidence = _activeFaceFitConfidence,
@@ -564,6 +580,7 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
         _activeHead = state.head;
         _activeProfile = state.profile;
         _activeModelPath = state.modelPath;
+        _activeModelContentSha256 = state.modelContentSha256;
         _activeGeometry = state.geometry;
         _activeFaceFitMethod = state.faceFitMethod;
         _activeFaceFitConfidence = state.faceFitConfidence;
@@ -680,6 +697,7 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
         _activeHead = null;
         _activeProfile = null;
         _activeModelPath = string.Empty;
+        _activeModelContentSha256 = string.Empty;
         _activeGeometry = default;
         _activeFaceFitMethod = "Embedded";
         _activeFaceFitConfidence = 1f;
@@ -785,9 +803,19 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
         try
         {
             KiwiAvatarStorage.EnsureDirectories();
-            _activeProfile.modelFileName = Path.GetFileName(_activeModelPath);
+            // A stale/mutated avatar must not overwrite any profile.
+            ValidateProfileBinding(_activeProfile, _activeModelPath, _activeModelContentSha256);
+            if (!string.Equals(ComputeModelContentSha256(_activeModelPath),
+                               _activeModelContentSha256, StringComparison.Ordinal))
+                throw new InvalidDataException("Active model content changed; profile not saved.");
+            string profilePath = GetProfilePath(_activeModelPath, _activeModelContentSha256);
+            if (File.Exists(profilePath))
+            {
+                KiwiAvatarProfile existing = ReadProfile(profilePath);
+                ValidateProfileBinding(existing, _activeModelPath, _activeModelContentSha256);
+            }
             string json = JsonUtility.ToJson(_activeProfile, true);
-            WriteProfileAtomically(GetProfilePath(_activeModelPath), json);
+            WriteProfileAtomically(profilePath, json);
         }
         catch (Exception exception)
         {
@@ -1035,66 +1063,94 @@ public sealed class KiwiAvatarRuntimeManager : MonoBehaviour
         }
     }
 
-    private KiwiAvatarProfile LoadProfile(string modelPath)
+    private KiwiAvatarProfile LoadProfile(
+        string modelPath, string modelContentSha256, out bool legacyProfilePreserved)
     {
+        // Legacy name-only profiles cannot prove which VRM bytes they belonged
+        // to. Preserve them untouched; create a separate content-bound profile.
+        // An explicit, user-verified migration may be provided separately.
+        string profilePath = GetProfilePath(modelPath, modelContentSha256);
+        legacyProfilePreserved = false;
         KiwiAvatarProfile profile;
-        string profilePath = GetProfilePath(modelPath);
         if (File.Exists(profilePath))
         {
-            // An existing profile is user data; never replace it with defaults
-            // simply because its content is empty, corrupt, or unreadable.
-            try
-            {
-                profile = JsonUtility.FromJson<KiwiAvatarProfile>(File.ReadAllText(profilePath));
-            }
-            catch (Exception exception)
-            {
-                throw new InvalidDataException(
-                    "Could not load existing profile for " + Path.GetFileName(modelPath),
-                    exception);
-            }
-
-            if (profile == null)
-            {
-                throw new InvalidDataException(
-                    "Existing profile is empty for " + Path.GetFileName(modelPath));
-            }
+            profile = ReadProfile(profilePath);
         }
         else
         {
+            legacyProfilePreserved = File.Exists(GetLegacyProfilePath(modelPath));
             profile = KiwiAvatarProfile.CreateDefault(
                 Path.GetFileName(modelPath),
-                Path.GetFileNameWithoutExtension(modelPath)
-            );
+                Path.GetFileNameWithoutExtension(modelPath),
+                modelContentSha256);
         }
 
-        // Reject foreign or unidentified profile settings before candidate binding.
-        // Preserve the existing JSON and previous active avatar on mismatch.
-        if (!string.Equals(
-            profile.modelFileName,
-            Path.GetFileName(modelPath),
-            StringComparison.OrdinalIgnoreCase))
-        {
-            throw new InvalidDataException(
-                "Profile model identity mismatch for " + Path.GetFileName(modelPath));
-        }
-
-        // Unsupported schema must not be migrated and silently rewritten as v7.
-        if (profile.version < 0 || profile.version > KiwiAvatarProfile.CurrentVersion)
-        {
-            throw new InvalidDataException(
-                "Unsupported profile version " + profile.version + " for " +
-                Path.GetFileName(modelPath));
-        }
-
+        ValidateProfileBinding(profile, modelPath, modelContentSha256);
         profile.MigrateIfNeeded();
         return profile;
     }
 
-    private static string GetProfilePath(string modelPath)
+    private static KiwiAvatarProfile ReadProfile(string profilePath)
+    {
+        try
+        {
+            KiwiAvatarProfile profile = JsonUtility.FromJson<KiwiAvatarProfile>(
+                File.ReadAllText(profilePath));
+            if (profile == null)
+                throw new InvalidDataException("Profile is empty.");
+            return profile;
+        }
+        catch (Exception exception)
+        {
+            throw new InvalidDataException(
+                "Could not read existing profile: " + Path.GetFileName(profilePath),
+                exception);
+        }
+    }
+
+    private static void ValidateProfileBinding(
+        KiwiAvatarProfile profile, string modelPath, string modelContentSha256)
+    {
+        if (profile == null ||
+            string.IsNullOrWhiteSpace(modelContentSha256) ||
+            modelContentSha256.Length != 64 ||
+            profile.version < 0 || profile.version > KiwiAvatarProfile.CurrentVersion ||
+            !string.Equals(profile.modelFileName, Path.GetFileName(modelPath),
+                           StringComparison.OrdinalIgnoreCase) ||
+            !string.Equals(profile.modelContentSha256, modelContentSha256,
+                           StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidDataException(
+                "Profile content identity mismatch or unsupported version for " +
+                Path.GetFileName(modelPath));
+        }
+    }
+
+    private static string GetProfilePath(string modelPath, string modelContentSha256)
+    {
+        if (string.IsNullOrWhiteSpace(modelContentSha256) ||
+            modelContentSha256.Length != 64)
+            throw new InvalidDataException("Invalid model content identity.");
+        string safeName = KiwiAvatarStorage.SanitizeFileName(Path.GetFileName(modelPath));
+        return Path.Combine(KiwiAvatarStorage.ProfilesDirectory,
+                            safeName + "." + modelContentSha256 + ".json");
+    }
+
+    private static string GetLegacyProfilePath(string modelPath)
     {
         string safeName = KiwiAvatarStorage.SanitizeFileName(Path.GetFileName(modelPath));
         return Path.Combine(KiwiAvatarStorage.ProfilesDirectory, safeName + ".json");
+    }
+
+    private static string ComputeModelContentSha256(string modelPath)
+    {
+        using (FileStream stream = new FileStream(
+            modelPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+        using (SHA256 sha256 = SHA256.Create())
+        {
+            return BitConverter.ToString(sha256.ComputeHash(stream))
+                .Replace("-", string.Empty).ToLowerInvariant();
+        }
     }
 
     private void StoreFaceAnchorInProfile()
