@@ -18,11 +18,13 @@ public enum KiwiAvatarFaceFitMode
 [Serializable]
 public sealed class KiwiAvatarProfile
 {
-    public const int CurrentVersion = 7;
+    public const int CurrentVersion = 8;
     public const int AdaptiveGeometryCacheVersion = 3;
 
     public int version = CurrentVersion;
     public string modelFileName = string.Empty;
+    // SHA-256 of the entire VRM file, not its name, size or modified time.
+    public string modelContentSha256 = string.Empty;
     public string displayName = string.Empty;
 
     [Header("Model Fit")]
@@ -68,12 +70,14 @@ public sealed class KiwiAvatarProfile
 
     public static KiwiAvatarProfile CreateDefault(
         string fileName,
-        string defaultDisplayName)
+        string defaultDisplayName,
+        string modelContentSha256 = null)
     {
         return new KiwiAvatarProfile
         {
             version = CurrentVersion,
             modelFileName = fileName ?? string.Empty,
+            modelContentSha256 = modelContentSha256 ?? string.Empty,
             displayName = string.IsNullOrWhiteSpace(defaultDisplayName)
                 ? System.IO.Path.GetFileNameWithoutExtension(fileName)
                 : defaultDisplayName,
@@ -210,6 +214,8 @@ public sealed class KiwiAvatarProfile
             }
         }
 
+        // Legacy unbound profiles must never reach migration without prior
+        // content-identity validation by the calling profile loader.
         version = CurrentVersion;
         return changed;
     }
