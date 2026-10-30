@@ -19,6 +19,15 @@ public sealed class KiwiAvatarBuildPostprocessor : IPostprocessBuildWithReport
             return;
         }
 
+        // G4-D is an explicit, empty, isolated Player build. This check MUST
+        // stay outside the legacy warning-only catch: a route mismatch is a
+        // build failure, not a reason to copy existing Models/Profiles.
+        if (KiwiG4DMainIsolationBuild.RequiresIsolation(report))
+        {
+            KiwiG4DMainIsolationBuild.RequireAuthorizedCallback(report);
+            return;
+        }
+
         try
         {
             string buildPath = report.summary.outputPath;
