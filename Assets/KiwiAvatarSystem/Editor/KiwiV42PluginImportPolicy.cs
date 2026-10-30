@@ -283,6 +283,21 @@ public sealed class KiwiV42PluginBuildGuard : IPreprocessBuildWithReport
         if (report.summary.platform != BuildTarget.StandaloneWindows64)
             return;
 
+        // G4-D Build must only inspect the existing native plugin import policy.
+        // Mismatches stop this isolated build; other builds retain the original path.
+        if (KiwiG4DMainIsolationBuild.RequiresIsolation(report))
+        {
+            KiwiG4DMainIsolationBuild.RequireAuthorizedCallback(report);
+            KiwiV42PluginImportPolicy.PolicyState isolatedState =
+                KiwiV42PluginImportPolicy.ReadState();
+            if (!isolatedState.IsValid ||
+                !string.Equals(isolatedState.cpu, "x86_64", StringComparison.OrdinalIgnoreCase))
+                throw new BuildFailedException(
+                    "G4D native plugin policy is not read-only valid: " +
+                    KiwiV42PluginImportPolicy.Describe(isolatedState));
+            return;
+        }
+
         KiwiV42PluginImportPolicy.PolicyState state =
             KiwiV42PluginImportPolicy.ApplyAndValidateInternal(true);
         if (!state.IsValid)

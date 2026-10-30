@@ -13,6 +13,16 @@ public sealed class KiwiReleaseCandidateBuildGate : IPreprocessBuildWithReport
 
     public void OnPreprocessBuild(BuildReport report)
     {
+        // Only a verified run-owned G4-D Development build can bypass RC stamps.
+        // A profile or destination alone does not authorize the exemption.
+        if (report != null && KiwiG4DMainIsolationBuild.RequiresIsolation(report))
+        {
+            KiwiG4DMainIsolationBuild.RequireAuthorizedCallback(report);
+            if ((report.summary.options & UnityEditor.BuildOptions.Development) == 0)
+                throw new BuildFailedException("G4D isolation requires a Development build.");
+            return;
+        }
+
         if (!KiwiReleaseCandidatePreflight.HasCurrentPassingStamp(
                 out string reason))
         {
