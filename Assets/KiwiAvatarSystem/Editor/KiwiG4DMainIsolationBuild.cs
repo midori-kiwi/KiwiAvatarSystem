@@ -29,7 +29,23 @@ public static class KiwiG4DMainIsolationBuild
     private static string ReservedRoot => Path.GetFullPath(Path.Combine(
         ProjectRoot, "ProjectArtifacts", "Product", "G4D_MainOnlyIsolation"));
 
-    [MenuItem("Tools/Kiwi Avatar System/Product/G4D Main-only isolated build")]
+    // A non-building inspection entry point. This does not create folders,
+    // build a Player, change ProjectSettings, or open the target HKCU values.
+    [MenuItem("Tools/Kiwi Avatar System/Product/G4D Read-only isolation preflight")]
+    public static void AuditOnly()
+    {
+        if (Application.platform != RuntimePlatform.WindowsEditor ||
+            EditorUserBuildSettings.activeBuildTarget != BuildTarget.StandaloneWindows64)
+            throw new BuildFailedException("G4D requires Windows x64 Editor target.");
+        VerifyProfile(AssetDatabase.LoadAssetAtPath<BuildProfile>(ProfilePath));
+        VerifyPreferenceNamespaceUnused();
+        RequireSafeExistingDirectory(ReservedRoot);
+        Debug.Log("[Kiwi G4D] STATIC_PREFLIGHT_CONFIG_ONLY: completed; " +
+                  "not a Build, Runtime or HKCU isolation PASS.");
+    }
+
+    // Not exposed as a GUI menu until the exact Unity profile and local guards
+    // have been independently validated. Invoke explicitly only after approval.
     public static void Build()
     {
         if (_expectedOutput != null)
